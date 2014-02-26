@@ -1,0 +1,1 @@
+<?= $front['Action_Layout'][0]->render() ?>

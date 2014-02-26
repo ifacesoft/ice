@@ -1,0 +1,401 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: dp
+ * Date: 30.12.13
+ * Time: 19:00
+ */
+
+namespace ice\core;
+
+use ice\Exception;
+
+class Query
+{
+    const ASC = 'ASC';
+    const DELETE = 'DELETE';
+    const INSERT = 'INSERT';
+    const VALUES = 'VALUES';
+    const REPLACE = 'REPLACE';
+    const SHOW = 'SHOW';
+    const UPDATE = 'UPDATE';
+    const SET = 'SET';
+    const DESC = 'DESC';
+    const DISTINCT = 'DISTINCT';
+    const EXPLAIN = 'EXPLAIN';
+    const FROM = 'FROM';
+    const GROUP = 'GROUP';
+    const HAVING = 'HAVING';
+    const INDEX = 'INDEX';
+    const INDEXES = 'INDEXES';
+    const INNER_JOIN = 'INNER JOIN';
+    const JOIN = 'JOIN';
+    const LEFT_JOIN = 'LEFT JOIN';
+    const RIGHT_JOIN = 'RIGHT JOIN';
+    const ORDER = 'ORDER';
+    const SELECT = 'SELECT';
+    const TABLE = 'TABLE';
+    const TYPE = 'TYPE';
+    const LIMIT_COUNT = 'LIMITCOUNT';
+    const LIMIT_OFFSET = 'LIMITOFFSET';
+    const VALUE = 'VALUE';
+    const WHERE = 'WHERE';
+    const SQL_AND = 'AND';
+    const SQL_OR = 'OR';
+    const USE_INDEX = 'USE INDEX';
+    const FORCE_INDEX = 'FORCE INDEX';
+    const CALC_FOUND_ROWS = 'CALC_FOUND_ROWS';
+    const BIND = 'BIND';
+
+    private $_result = null;
+    private $_statementType = null;
+    private $_select = array();
+    private $_where = array();
+    private $_limit = array();
+    private $_join = array();
+    private $_values = array();
+    private $_set = array();
+
+    private $_modelClass = null;
+    private $_tableAlias = null;
+
+    private function __construct($statementType, $modelClass, $tableAlias)
+    {
+        $this->_statementType = $statementType;
+        $this->_modelClass = $modelClass;
+        if (!$tableAlias) {
+            $this->_tableAlias = $modelClass::getModelName();
+        }
+    }
+
+    public static function getInstance($statementType, $modelClass, $tableAlias = null)
+    {
+        return new Query($statementType, $modelClass, $tableAlias);
+    }
+
+    /**
+     * @return string
+     */
+    public function getStatementType()
+    {
+        return $this->_statementType;
+    }
+
+    /**
+     * @return string
+     */
+    public function getModelClass()
+    {
+        return $this->_modelClass;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTableAlias()
+    {
+        return $this->_tableAlias;
+    }
+
+    public function select($column, $alias = null)
+    {
+        if (is_array($column) && !empty($column)) {
+            foreach ($column as $columnName => $alias) {
+                if (is_string($columnName)) {
+                    $this->select($columnName, $alias);
+                } else {
+                    $this->select($alias);
+                }
+            }
+
+            return $this;
+        }
+
+        /** @var Model $modelClass */
+        $modelClass = $this->getModelClass();
+
+        if ($this->_select === null) {
+            $pkName = $modelClass::getPkName();
+
+            $this->_select[$pkName] = $pkName;
+        }
+
+        if (!empty($column)) {
+            $column = $modelClass::getFieldName($column);
+
+            if (!$alias) {
+                $alias = $column;
+            }
+
+            $this->_select[$alias] = $column;
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Data_Source $dataSource
+     * @return Data_Source
+     */
+    private function getDataSource(Data_Source $dataSource = null)
+    {
+        if (!$dataSource) {
+            /** @var Model $modelName */
+            $modelName = $this->getModelClass();
+
+            $dataSource = $modelName::getDataSource();
+        }
+
+        return $dataSource;
+    }
+
+    /**
+     * @param Data_Source $dataSource
+     * @return Data
+     */
+    public function execute(Data_Source $dataSource = null)
+    {
+        return $this->getDataSource($dataSource)->execute($this);
+    }
+
+    public function notNull($columnName)
+    {
+        /** @var Model $modelClass */
+        $modelClass = $this->getModelClass();
+        return $this->where($modelClass::getFieldName($columnName) . ' IS NOT NULL', null);
+    }
+
+    public function isNull($columnName)
+    {
+        /** @var Model $modelClass */
+        $modelClass = $this->getModelClass();
+        return $this->where($modelClass::getFieldName($columnName) . ' IS NULL', null);
+    }
+
+    public function ne($columnName, $value)
+    {
+        /** @var Model $modelClass */
+        $modelClass = $this->getModelClass();
+        return $this->where($modelClass::getFieldName($columnName) . ' <> ?', $value);
+    }
+
+    public function eq($columnName, $value)
+    {
+        /** @var Model $modelClass */
+        $modelClass = $this->getModelClass();
+        return $this->where($modelClass::getFieldName($columnName) . ' = ?', $value);
+    }
+
+    public function pk($value)
+    {
+        return $this->eq('::pk', $value);
+    }
+
+    public function in($condition, array $value)
+    {
+        if (empty($value)) {
+            return $this;
+        }
+
+        return $this->where($condition . ' IN (?)', $value);
+    }
+
+    /**
+     * @desc Добавляет условие к запросу
+     * @param string $condition Условие
+     * @param $value
+     * @throws Exception
+     * @internal param string $value[optional] Значение, подставляемое в условие.
+     * @return Query
+     */
+    private function where($condition, $value = null)
+    {
+        if ($this->_result !== null) {
+            throw new Exception('Запрос уже оттранслирован ранее. Внесение изменений в запрос не принесет никаких результатов');
+        }
+
+        if (is_array($value)) {
+            $condition = str_replace('?', '?' . str_repeat(',?', count($value) - 1), $condition);
+        }
+
+        $where = array(
+            0 => array(
+                0 => Query::SQL_AND,
+                1 => $condition
+            ),
+            1 => $value
+        );
+
+        $this->_where[] = $where;
+
+        return $this;
+    }
+
+    public function limit($limit, $offset = null)
+    {
+        $this->_limit = array($limit, $offset);
+        return $this;
+    }
+
+    public function inner($modelClass)
+    {
+        return $this->join(Query::INNER_JOIN, $modelClass);
+    }
+
+    public function left($modelClass)
+    {
+        return $this->join(Query::LEFT_JOIN, $modelClass);
+    }
+
+    private function join($joinType, $modelClass, $tableAlias = null, $condition = null)
+    {
+        if ($this->_result !== null) {
+            throw new Exception('Запрос уже оттранслирован ранее. Внесение изменений в запрос не принесет никаких результатов');
+        }
+
+        if (!$tableAlias) {
+            $tableAlias = $modelClass::getModelName();
+        }
+
+        if (!$condition) {
+            $modelColumnNames = $modelClass::getScheme()->getColumnNames();
+            $modelName = $modelClass::getModelName();
+
+            $joins = array(
+                array(
+                    'class' => $this->getModelClass(),
+                    'alias' => $this->getTableAlias()
+                )
+            );
+
+            array_push($joins, $this->getJoin());
+
+            foreach ($joins as $join) {
+                $joinModelClass = $join['class'];
+                $joinTableAlias = $join['alias'];
+                $joinModelName = $joinModelClass::getModelName();
+
+                if (in_array(strtolower($joinModelName . '__fk'), $modelColumnNames)) {
+                    $condition = $tableAlias . '.' . strtolower($joinModelName) . '__fk = ' .
+                        $joinTableAlias . '.' . strtolower($joinModelName) . '_pk';
+                    break;
+                }
+
+                $joinModelColumnNames = $joinModelClass::getScheme()->getColumnNames();
+                if (in_array(strtolower($modelName . '__fk'), $joinModelColumnNames)) {
+                    $condition = $tableAlias . '.' . strtolower($modelName) . '_pk = ' .
+                        $joinTableAlias . '.' . strtolower($modelName . '__fk');
+                    break;
+                }
+            }
+
+            if (!$condition) {
+                throw new Exception('Could not defined condition for join part of sql query');
+            }
+        }
+
+        $this->_join[] = array(
+            'type' => $joinType,
+            'class' => $modelClass,
+            'alias' => $tableAlias,
+            'on' => $condition
+        );
+
+        return $this;
+    }
+
+    /**
+     * @param array $values
+     * @return Query
+     */
+    public function values(array $values)
+    {
+        if (is_array(reset($values))) {
+            $this->_values += $values;
+        } else {
+            $this->_values[] = $values;
+        }
+
+        return $this;
+    }
+
+    public function set($key, $value = null)
+    {
+        if (is_array($key)) {
+            foreach ($key as $k => $v) {
+                $this->set($k, $v);
+            }
+
+            return $this;
+        }
+
+        if (empty($key)) {
+            throw new Exception('Имя поля не может быть пустым');
+        }
+
+        $this->_set[$key] = $value;
+
+        return $this;
+    }
+
+    public function getResult($dataSourceName = 'Mysqli')
+    {
+        if ($this->_result !== null) {
+            return $this->_result;
+        }
+
+        $this->_result = Query_Translator::get('\ice\query\translator\\' . $dataSourceName)->translate($this);
+
+        return $this->_result;
+    }
+
+    /**
+     * @return array
+     */
+    public function getSelect()
+    {
+        return $this->_select;
+    }
+
+    /**
+     * @return array
+     */
+    public function getWhere()
+    {
+        return $this->_where;
+    }
+
+    /**
+     * @return array
+     */
+    public function getLimit()
+    {
+        return $this->_limit;
+    }
+
+    /**
+     * @return array
+     */
+    public function getJoin()
+    {
+        return $this->_join;
+    }
+
+    /**
+     * @return array
+     */
+    public function getValues()
+    {
+        return $this->_values;
+    }
+
+    /**
+     * @return array
+     */
+    public function getSet()
+    {
+        return $this->_set;
+    }
+
+
+}

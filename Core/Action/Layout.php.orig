@@ -1,0 +1,61 @@
+<?php
+namespace ice\core\action;
+
+use ice\core\Action;
+use ice\core\Context;
+
+/**
+ * Created by PhpStorm.
+ * User: dp
+ * Date: 08.12.13
+ * Time: 15:48
+ */
+class Layout extends Action
+{
+    protected function init()
+    {
+        $this->setViewRenderName('Php');
+    }
+
+    /**
+     * Запускает Экшин
+     *
+     * @param array $input
+     * @throws /ErrorException
+     * @return array
+     */
+    protected function run(array $input)
+    {
+        if (isset($input['layoutTemplate'])) {
+            $this->setTemplate($input['layoutTemplate']);
+            unset($input['layoutTemplate']);
+        }
+
+        $action = $input['routeActions'];
+
+        $params = array();
+
+        if (strpos($action, '/')) {
+            $params['controllerAction'] = $action;
+            $action = 'Legacy';
+        }
+        $this->addAction($action, $params);
+
+        return array(
+            'layout' => array(
+                'Action' => $action
+            )
+        );
+    }
+
+    protected function flush(Context &$context)
+    {
+        $data = $context->getData();
+
+        foreach ($data['layout'] as &$action) {
+            $action = $data[$action];
+        }
+
+        $context->setData($data);
+    }
+} 
