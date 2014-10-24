@@ -1,0 +1,64 @@
+<?php
+/**
+ * Ice validator implementation pattern class
+ *
+ * @link http://www.iceframework.net
+ * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
+ * @license https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
+ */
+
+namespace Ice\Validator;
+
+use Ice\Core\Validator;
+
+/**
+ * Class Pattern
+ *
+ * Validate pattern data
+ *
+ * @see Ice\Core\Validator
+ *
+ * @author dp <denis.a.shestakov@gmail.com>
+ *
+ * @package Ice
+ * @subpackage Validator
+ *
+ * @version stable_0
+ * @since stable_0
+ */
+class Pattern extends Validator
+{
+    /**
+     * Validate data by pattern
+     *
+     * example usage:
+     * ```php
+     *      $scheme = [
+     *          'name' => [
+     *              'Ice:Pattern' => '/^[a-z]+$/i'
+     *          ]
+     *      ];
+     * ```
+     * or
+     * ```php
+     *      $scheme = [
+     *          'name' => [
+     *              'Ice:Pattern' => [
+     *                  'params' => /^[a-z]+$/i'
+     *                  'message => 'not matched'
+     *              ]
+     *          ]
+     *      ];
+     * ```
+     *
+     * @param $data
+     * @param mixed|null $scheme
+     * @return boolean
+     */
+    public function validate($data, $scheme = null)
+    {
+        $params = is_array($scheme) ? $scheme['params'] : $scheme;
+
+        return preg_match($params, $data);
+    }
+}

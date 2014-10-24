@@ -1,0 +1,120 @@
+<?php
+/**
+ * Ice core validator abstract class
+ *
+ * @link http://www.iceframework.net
+ * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
+ * @license https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
+ */
+
+namespace Ice\Core;
+
+use Ice;
+use Ice\Helper\Object;
+
+/**
+ * Class Validator
+ *
+ * Abstarct validator class
+ *
+ * @see Ice\Core\Container
+ *
+ * @author dp <denis.a.shestakov@gmail.com>
+ *
+ * @package Ice
+ * @subpackage Core
+ *
+ * @version stable_0
+ * @since stable_0
+ */
+abstract class Validator extends Container
+{
+
+    /**
+     * Validate data via data scheme
+     *
+     * examples data and validate scheme:
+     * ```php
+     *      $data = [
+     *          'param1' => 'value',
+     *          'param2' => 'value'
+     *      ];
+     *
+     *      $validateScheme = [
+     *          'param1' => 'Ice:Not_Null',
+     *          'param2' => 'Ice:Model'
+     *      ];
+     * ```
+     *
+     * @param array $data
+     * @param array $validateScheme
+     * @return array
+     */
+    public static function validateByScheme(array $data, array $validateScheme)
+    {
+        $errors = '';
+
+        foreach ($validateScheme as $param => $scheme) {
+//            if (!isset($data[$param])) {
+//                $errors .= Validator::getLogger()->info([Validator::getClassName() . ': param {$0} not defined in input data', $param], Logger::YELLOW);
+//                continue;
+//            }
+
+            foreach ((array)$scheme as $validatorName => $params) {
+                $validator = null;
+
+                if (is_int($validatorName)) {
+                    $validatorName = $params;
+                    $params = null;
+                }
+
+                $validator = Validator::getInstance($validatorName);
+
+                if ($validator->validate($data[$param], $params)) {
+                    continue;
+                }
+
+                $validatorClassName = $validator::getClassName();
+
+                $errors .= !empty($params) && isset($params['message'])
+                    ? Validator::getLogger()->info([$validatorClassName . ': ' . $params['message'], $param], Logger::WARNING)
+                    : Validator::getLogger()->info([$validatorClassName . ': param {$0} is not valid', $param], Logger::WARNING);
+            }
+        }
+
+        return $errors;
+    }
+
+    /**
+     * Create new instance of validator
+     *
+     * @param $class
+     * @param null $hash
+     * @return Validator
+     */
+    protected static function create($class, $hash = null)
+    {
+        $class = Object::getClass(__CLASS__, $class);
+        return new $class();
+    }
+
+    /**
+     * Validate data by scheme
+     *
+     * example:
+     * ```php
+     *      'user_name' => [
+     *          [
+     *              'Ice:Not_Empty' => [
+     *                  'message' => 'Введите имя пользователя.'
+     *              ]
+     *          ],
+     *      ],
+     *      'name' => 'Ice:Not_Null'
+     *
+     * @param $data
+     * @param null $scheme
+     * @return boolean
+     */
+    public abstract function validate($data, $scheme = null);
+}

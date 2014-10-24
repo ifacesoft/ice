@@ -1,0 +1,55 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: dp
+ * Date: 23.05.14
+ * Time: 15:39
+ */
+
+namespace Ice\Action;
+
+use Ice\Core\Action;
+use Ice\Core\Action_Context;
+use Ice\Core\Config;
+
+class Migration extends Action
+{
+    /**  public static $config = [
+     *      'staticActions' => [],          // actions
+     *      'layout' => null,               // Emmet style layout
+     *      'template' => null,             // Template of view
+     *      'output' => null,               // Output type: standart|file
+     *      'viewRenderClassName' => null,  // Render class for view (example: Ice:Php)
+     *      'inputDefaults' => [],          // Default input data
+     *      'inputValidators' => [],        // Input data validators
+     *      'inputDataProviderKeys' => [],  // InputDataProviders keys
+     *      'outputDataProviderKeys' => [], // OutputDataProviders keys
+     *      'cacheDataProviderKey' => ''    // Cache data provider key
+     *  ];
+     */
+    public static $config = [
+
+    ];
+
+    /**
+     * Run action
+     *
+     * @param array $input
+     * @param Action_Context $actionContext
+     * @return array
+     */
+    protected function run(array $input, Action_Context $actionContext)
+    {
+        $config = $this->getConfig();
+
+        if (!$config) {
+            return;
+        }
+
+        foreach ($config->gets() as $moduleName => $data) {
+            foreach ($data as $moduleVersion => $migration) {
+
+            }
+        }
+    }
+}

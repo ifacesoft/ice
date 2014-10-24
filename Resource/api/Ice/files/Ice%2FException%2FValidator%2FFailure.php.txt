@@ -1,0 +1,25 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: dp
+ * Date: 24.05.14
+ * Time: 16:45
+ */
+
+namespace Ice\Exception;
+
+use Ice\Core\Exception;
+
+class Validator_Failure extends Exception
+{
+    public function __construct($errstr, $errcontext = [], $previous = null, $errfile = null, $errline = null, $errno = 0)
+    {
+        if (is_array($errstr)) {
+            $errstr[0] = 'ValidatorFailureException: ' . $errstr[0];
+        } else {
+            $errstr = 'ValidatorFailureException: ' . $errstr;
+        }
+
+        parent::__construct($errstr, $errcontext, $previous, $errfile, $errline, E_USER_ERROR);
+    }
+}

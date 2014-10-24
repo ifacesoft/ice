@@ -1,0 +1,76 @@
+<?php
+namespace Ice\Model\Ice;
+
+use Ice\Core\Data_Provider;
+use Ice\Core\Model;
+use Ice\Core\Request;
+use Ice\Helper\Date;
+
+class Session extends Model
+{
+    /**
+     * @desc Текущая сессия
+     *
+     * var Session
+     */
+    private static $_session = null;
+
+    /**
+     * Очистить сессию
+     */
+    public static function clearSession()
+    {
+        $session = self::getCurrent();
+        $session->delete();
+        self::$_session = null;
+    }
+
+//    /**
+//     * @param Account $account
+//     */
+//    public static function switchAccount($account)
+//    {
+//        $user = $account->getUser();
+//
+//        if ($user) {
+//            Session::getCurrent()->update(
+//                [
+//                    'account__fk' => $account->getPk(),
+//                    'last_active' => Helper_Date::toUnix(),
+//                    'auth_date' => Helper_Date::toUnix(),
+//                    '_use_pk' => $user->getPk()
+//                ]
+//            );
+//        }
+//    }
+
+    /**
+     * Получаем текущую сессию
+     *
+     * @return Session|null
+     */
+    public static function getCurrent()
+    {
+        if (self::$_session) {
+            return self::$_session;
+        }
+
+        self::$_session = Session::getModel(session_id(), ['/pk', 'data__json']);
+
+        if (self::$_session) {
+            self::$_session->update('last_active', Date::get());
+
+            return self::$_session;
+        }
+
+        return self::$_session = Session::create(
+            [
+                'session_pk' => session_id(),
+                'last_active' => Date::get(),
+                'ip' => Request::ip(),
+                'user_agent' => Request::agent(),
+                'auth_date' => Date::get(),
+            ]
+        )->insert();
+    }
+}

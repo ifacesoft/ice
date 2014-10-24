@@ -1,0 +1,14 @@
+syntax: regexp
+\.orig\..*$
+\.orig$
+\.chg\..*$
+\.rej$
+\.conflict\~$
+
+^/.git
+^/.hg
+
+^composer\.lock$
+
+^Resource/api
+^Resource/uml

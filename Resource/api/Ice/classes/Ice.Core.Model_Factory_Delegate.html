@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+    <meta charset="utf-8"/>
+    <title>API Documentation</title>
+    <meta name="author" content=""/>
+    <meta name="description" content=""/>
+
+    <link href="../css/bootstrap-combined.no-icons.min.css" rel="stylesheet">
+    <link href="../css/font-awesome.min.css" rel="stylesheet">
+    <link href="../css/prism.css" rel="stylesheet" media="all"/>
+    <link href="../css/template.css" rel="stylesheet" media="all"/>
+    
+    <!--[if lt IE 9]>
+    <script src="../js/html5.js"></script>
+    <![endif]-->
+    <script src="../js/jquery-1.11.0.min.js"></script>
+    <script src="../js/ui/1.10.4/jquery-ui.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script src="../js/jquery.smooth-scroll.js"></script>
+    <script src="../js/prism.min.js"></script>
+    <!-- TODO: Add http://jscrollpane.kelvinluck.com/ to style the scrollbars for browsers not using webkit-->
+        <script type="text/javascript">
+        function loadExternalCodeSnippets() {
+            Array.prototype.slice.call(document.querySelectorAll('pre[data-src]')).forEach(function (pre) {
+                var src = pre.getAttribute('data-src');
+                var extension = (src.match(/\.(\w+)$/) || [, ''])[1];
+                var language = 'php';
+
+                var code = document.createElement('code');
+                code.className = 'language-' + language;
+
+                pre.textContent = '';
+
+                code.textContent = 'Loading…';
+
+                pre.appendChild(code);
+
+                var xhr = new XMLHttpRequest();
+
+                xhr.open('GET', src, true);
+
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState == 4) {
+
+                        if (xhr.status < 400 && xhr.responseText) {
+                            code.textContent = xhr.responseText;
+
+                            Prism.highlightElement(code);
+                        }
+                        else if (xhr.status >= 400) {
+                            code.textContent = '✖ Error ' + xhr.status + ' while fetching file: ' + xhr.statusText;
+                        }
+                        else {
+                            code.textContent = '✖ Error: File does not exist or is empty';
+                        }
+                    }
+                };
+
+                xhr.send(null);
+            });
+        }
+
+        $(document).ready(function(){
+            loadExternalCodeSnippets();
+        });
+        $('#source-view').on('shown', function () {
+            loadExternalCodeSnippets();
+        })
+    </script>
+
+    <link rel="shortcut icon" href="../images/favicon.ico"/>
+    <link rel="apple-touch-icon" href="../images/apple-touch-icon.png"/>
+    <link rel="apple-touch-icon" sizes="72x72" href="../images/apple-touch-icon-72x72.png"/>
+    <link rel="apple-touch-icon" sizes="114x114" href="../images/apple-touch-icon-114x114.png"/>
+</head>
+<body>
+
+<div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container">
+            <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <i class="icon-ellipsis-vertical"></i>
+            </a>
+            <a class="brand" href="../index.html">API Documentation</a>
+
+            <div class="nav-collapse">
+                <ul class="nav pull-right">
+                                        <li class="dropdown">
+                        <a href="../index.html" class="dropdown-toggle" data-toggle="dropdown">
+                            API Documentation <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                                                        <li><a href="../namespaces/Ice.html">\Ice</a></li>
+                                                    </ul>
+                    </li>
+                                        <li class="dropdown" id="charts-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            Charts <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="../graphs/class.html">
+                                    <i class="icon-list-alt"></i>&#160;Class hierarchy diagram
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="dropdown" id="reports-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            Reports <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="../reports/errors.html">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <i class="icon-list-alt"></i>&#160;Errors <span class="label label-info pull-right">0</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="../reports/markers.html">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <i class="icon-list-alt"></i>&#160;Markers <span class="label label-info pull-right">858</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="../reports/deprecated.html">
+                                                                                                                                                                                                                                                                                                                                                                                                                            <i class="icon-list-alt"></i>&#160;Deprecated <span class="label label-info pull-right">4</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!--<div class="go_to_top">-->
+    <!--<a href="#___" style="color: inherit">Back to top&#160;&#160;<i class="icon-upload icon-white"></i></a>-->
+    <!--</div>-->
+</div>
+
+<div id="___" class="container-fluid">
+        <section class="row-fluid">
+        <div class="span2 sidebar">
+                                <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-371986560"></a>
+                                <a href="../namespaces/default.html" style="margin-left: 30px; padding-left: 0">\</a>
+            </div>
+            <div id="namespace-371986560" class="accordion-body collapse in">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1121888612"></a>
+                                <a href="../namespaces/Ice.html" style="margin-left: 30px; padding-left: 0">Ice</a>
+            </div>
+            <div id="namespace-1121888612" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-97551668"></a>
+                                <a href="../namespaces/Ice.Action.html" style="margin-left: 30px; padding-left: 0">Action</a>
+            </div>
+            <div id="namespace-97551668" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Ice.Action.Blank.html">Blank</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Action.Cache_Clear.html">Cache_Clear</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Action.Composer_Update.html">Composer_Update</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Action.Data_Scheme_Update.html">Data_Scheme_Update</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Action.Form.html">Form</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Action.Form_Model.html">Form_Model</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Action.Form_Submit.html">Form_Submit</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Action.Front.html">Front</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Action.Front_Ajax.html">Front_Ajax</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Action.Front_Cli.html">Front_Cli</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Action.Hello_World_Cli.html">Hello_World_Cli</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Action.Http_Status_404.html">Http_Status_404</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Action.Http_Status_500.html">Http_Status_500</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Action.Layout.html">Layout</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Action.Layout_Blank.html">Layout_Blank</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Action.Layout_Main.html">Layout_Main</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Action.Model_Defined_Sync.html">Model_Defined_Sync</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Action.Model_Delete.html">Model_Delete</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Action.Module_Create.html">Module_Create</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Action.Module_Deploy.html">Module_Deploy</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Action.Module_Update.html">Module_Update</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Action.Paginator.html">Paginator</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Action.Phpdoc_Generate.html">Phpdoc_Generate</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Action.Phpuml_Generate.html">Phpuml_Generate</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Action.Resources.html">Resources</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Action.Title.html">Title</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1490334893"></a>
+                                <a href="../namespaces/Ice.Code.html" style="margin-left: 30px; padding-left: 0">Code</a>
+            </div>
+            <div id="namespace-1490334893" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-66103336"></a>
+                                <a href="../namespaces/Ice.Code.Generator.html" style="margin-left: 30px; padding-left: 0">Generator</a>
+            </div>
+            <div id="namespace-66103336" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Ice.Code.Generator.Action.html">Action</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Code.Generator.Model.html">Model</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Code.Generator.Validator.html">Validator</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Code.Generator.View_Render_Php.html">View_Render_Php</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Code.Generator.View_Render_Smarty.html">View_Render_Smarty</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Code.Generator.View_Render_Twig.html">View_Render_Twig</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1397711461"></a>
+                                <a href="../namespaces/Ice.Core.html" style="margin-left: 30px; padding-left: 0">Core</a>
+            </div>
+            <div id="namespace-1397711461" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-409847369"></a>
+                                <a href="../namespaces/Ice.Core.Action.html" style="margin-left: 30px; padding-left: 0">Action</a>
+            </div>
+            <div id="namespace-409847369" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                    <li class="interface"><a href="../classes/Ice.Core.Action.Factory.html">Factory</a></li>
+                                                                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-47285471"></a>
+                                <a href="../namespaces/Ice.Core.Model.html" style="margin-left: 30px; padding-left: 0">Model</a>
+            </div>
+            <div id="namespace-47285471" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-707563091"></a>
+                                <a href="../namespaces/Ice.Core.Model.Collection.html" style="margin-left: 30px; padding-left: 0">Collection</a>
+            </div>
+            <div id="namespace-707563091" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Ice.Core.Model.Collection.Iterator.html">Iterator</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Ice.Core.Model.Collection.html">Collection</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                    <li class="interface"><a href="../classes/Ice.Core.Cacheable.html">Cacheable</a></li>
+                                                    <li class="interface"><a href="../classes/Ice.Core.Model_Factory_Delegate.html">Model_Factory_Delegate</a></li>
+                                                                                                    <li class="class"><a href="../classes/Ice.Core.Action.html">Action</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Core.Action_Context.html">Action_Context</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Core.Cache.html">Cache</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Core.Code_Generator.html">Code_Generator</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Core.Config.html">Config</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Core.Container.html">Container</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Core.Data.html">Data</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Core.Data_Provider.html">Data_Provider</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Core.Data_Scheme.html">Data_Scheme</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Core.Data_Source.html">Data_Source</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Core.Data_Transformation.html">Data_Transformation</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Core.Environment.html">Environment</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Core.Exception.html">Exception</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Core.Form.html">Form</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Core.Loader.html">Loader</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Core.Logger.html">Logger</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Core.Model.html">Model</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Core.Model_Child.html">Model_Child</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Core.Model_Defined.html">Model_Defined</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Core.Model_Factory.html">Model_Factory</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Core.Model_Scheme.html">Model_Scheme</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Core.Module.html">Module</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Core.Query.html">Query</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Core.Query_Builder.html">Query_Builder</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Core.Query_Translator.html">Query_Translator</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Core.Registry.html">Registry</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Core.Request.html">Request</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Core.Resource.html">Resource</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Core.Response.html">Response</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Core.Route.html">Route</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Core.Session.html">Session</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Core.Validator.html">Validator</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Core.View.html">View</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Core.View_Render.html">View_Render</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-227531329"></a>
+                                <a href="../namespaces/Ice.Data.html" style="margin-left: 30px; padding-left: 0">Data</a>
+            </div>
+            <div id="namespace-227531329" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1805085357"></a>
+                                <a href="../namespaces/Ice.Data.Provider.html" style="margin-left: 30px; padding-left: 0">Provider</a>
+            </div>
+            <div id="namespace-1805085357" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Ice.Data.Provider.Apc.html">Apc</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Data.Provider.Cli.html">Cli</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Data.Provider.Defined.html">Defined</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Data.Provider.Factory.html">Factory</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Data.Provider.File.html">File</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Data.Provider.Mysqli.html">Mysqli</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Data.Provider.Object.html">Object</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Data.Provider.Redis.html">Redis</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Data.Provider.Registry.html">Registry</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Data.Provider.Request.html">Request</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Data.Provider.Router.html">Router</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Data.Provider.Session.html">Session</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Data.Provider.String.html">String</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-888581401"></a>
+                                <a href="../namespaces/Ice.Data.Source.html" style="margin-left: 30px; padding-left: 0">Source</a>
+            </div>
+            <div id="namespace-888581401" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Ice.Data.Source.Defined.html">Defined</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Data.Source.Factory.html">Factory</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Data.Source.Mysqli.html">Mysqli</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1832295866"></a>
+                                <a href="../namespaces/Ice.Exception.html" style="margin-left: 30px; padding-left: 0">Exception</a>
+            </div>
+            <div id="namespace-1832295866" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Ice.Exception.File_Not_Found.html">File_Not_Found</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Exception.Page_Not_Found.html">Page_Not_Found</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Exception.Template_Not_Found.html">Template_Not_Found</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1766092707"></a>
+                                <a href="../namespaces/Ice.Form.html" style="margin-left: 30px; padding-left: 0">Form</a>
+            </div>
+            <div id="namespace-1766092707" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Ice.Form.Model.html">Model</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-754788383"></a>
+                                <a href="../namespaces/Ice.Helper.html" style="margin-left: 30px; padding-left: 0">Helper</a>
+            </div>
+            <div id="namespace-754788383" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Ice.Helper.Arrays.html">Arrays</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Helper.Console.html">Console</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Helper.Date.html">Date</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Helper.Directory.html">Directory</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Helper.Emmet.html">Emmet</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Helper.File.html">File</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Helper.Hash.html">Hash</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Helper.Json.html">Json</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Helper.Logger.html">Logger</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Helper.Memory.html">Memory</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Helper.Model.html">Model</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Helper.Object.html">Object</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Helper.Phone.html">Phone</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Helper.Php.html">Php</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Helper.Query.html">Query</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Helper.Route.html">Route</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Helper.Serializer.html">Serializer</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Helper.Spatial.html">Spatial</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Helper.String.html">String</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Helper.Transliterator.html">Transliterator</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Helper.Vcs.html">Vcs</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1645109479"></a>
+                                <a href="../namespaces/Ice.Query.html" style="margin-left: 30px; padding-left: 0">Query</a>
+            </div>
+            <div id="namespace-1645109479" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-869693157"></a>
+                                <a href="../namespaces/Ice.Query.Translator.html" style="margin-left: 30px; padding-left: 0">Translator</a>
+            </div>
+            <div id="namespace-869693157" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Ice.Query.Translator.Defined.html">Defined</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Query.Translator.Factory.html">Factory</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Query.Translator.Mysqli.html">Mysqli</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-687497504"></a>
+                                <a href="../namespaces/Ice.Validator.html" style="margin-left: 30px; padding-left: 0">Validator</a>
+            </div>
+            <div id="namespace-687497504" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Ice.Validator.Arrays.html">Arrays</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Validator.Email.html">Email</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Validator.Emptys.html">Emptys</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Validator.Is_Data.html">Is_Data</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Validator.Is_Form.html">Is_Form</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Validator.Is_Model.html">Is_Model</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Validator.Length_Max.html">Length_Max</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Validator.Length_Min.html">Length_Min</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Validator.Not_Empty.html">Not_Empty</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Validator.Not_Null.html">Not_Null</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Validator.Numeric.html">Numeric</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Validator.Numeric_Positive.html">Numeric_Positive</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Validator.Pattern.html">Pattern</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Validator.Phone.html">Phone</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Validator.Url.html">Url</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-666275033"></a>
+                                <a href="../namespaces/Ice.View.html" style="margin-left: 30px; padding-left: 0">View</a>
+            </div>
+            <div id="namespace-666275033" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1700553167"></a>
+                                <a href="../namespaces/Ice.View.Render.html" style="margin-left: 30px; padding-left: 0">Render</a>
+            </div>
+            <div id="namespace-1700553167" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Ice.View.Render.Cli.html">Cli</a></li>
+                                                    <li class="class"><a href="../classes/Ice.View.Render.Json.html">Json</a></li>
+                                                    <li class="class"><a href="../classes/Ice.View.Render.Php.html">Php</a></li>
+                                                    <li class="class"><a href="../classes/Ice.View.Render.Replace.html">Replace</a></li>
+                                                    <li class="class"><a href="../classes/Ice.View.Render.Smarty.html">Smarty</a></li>
+                                                    <li class="class"><a href="../classes/Ice.View.Render.Twig.html">Twig</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                            <li class="trait"><a href="../classes/Ice.Core.html">Core</a></li>
+                                                                            <li class="class"><a href="../classes/Ice.Bootstrap.html">Bootstrap</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Ice.html">Ice</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        </div>
+    </section>
+    <section class="row-fluid">
+        <div class="span10 offset2">
+            <div class="row-fluid">
+                <div class="span8 content class">
+                    <nav>
+                                                <a href="../namespaces/Ice.Core.html">\Ice\Core</a>
+                                            </nav>
+                    <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal"><i class="icon-code"></i></a>
+
+                    <h1><small>\Ice\Core</small>Model_Factory_Delegate</h1>
+                    <p><em>Interface Model_Factory_Delegate</em></p>
+                    <p>Core model factory delegate interface</p>
+
+                    <section id="summary">
+                        <h2>Summary</h2>
+                        <section class="row-fluid heading">
+                            <section class="span6">
+                                <a href="#methods">Methods</a>
+                            </section>
+                            <section class="span6">
+                                <a href="#constants">Constants</a>
+                            </section>
+                        </section>
+                        <section class="row-fluid public">
+                            <section class="span6">
+                                                                    <em>No public methods found</em>
+                                                            </section>
+                            <section class="span6">
+                                                                    <em>No constants found</em>
+                                                            </section>
+                        </section>
+                        <section class="row-fluid protected">
+                            <section class="span6">
+                                                                    <em>No protected methods found</em>
+                                                            </section>
+                            <section class="span6">
+                                <em>N/A</em>
+                            </section>
+                        </section>
+                        <section class="row-fluid private">
+                            <section class="span6">
+                                                                    <em>No private methods found</em>
+                                                            </section>
+                            <section class="span6">
+                                <em>N/A</em>
+                            </section>
+                        </section>
+                    </section>
+                </div>
+                <aside class="span4 detailsbar">
+                                        <dl>
+                        <dt>File</dt>
+                            <dd>
+                                <a href="../files/Ice.Core.Model.Factory.Delegate.html"><div class="path-wrapper">Ice/Core/Model/Factory/Delegate.php</div></a>
+                            </dd>
+                                                <dt>Package</dt>
+                            <dd><div class="namespace-wrapper">\Ice\Core</div></dd>
+                                                
+                                            </dl>
+                    <h2>Tags</h2>
+                    <table class="table table-condensed">
+                                            <tr>
+                            <th>author</th>
+                            <td>
+                                                                    <p>dp <a href="mailto:denis.a.shestakov@gmail.com">denis.a.shestakov@gmail.com</a></p>
+                                                            </td>
+                        </tr>
+                                            <tr>
+                            <th>version</th>
+                            <td>
+                                                                    <p>stable_0</p>
+                                                            </td>
+                        </tr>
+                                            <tr>
+                            <th>since</th>
+                            <td>
+                                                                    <p>stable_0</p>
+                                                            </td>
+                        </tr>
+                                        </table>
+                </aside>
+            </div>
+
+            
+                    </div>
+    </section>
+
+    <div id="source-view" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="source-view-label" aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="source-view-label">Delegate.php</h3>
+        </div>
+        <div class="modal-body">
+            <pre data-src="../files/Ice/Core/Model/Factory/Delegate.php.txt" class="language-php"></pre>
+        </div>
+    </div>
+
+    <footer class="row-fluid">
+        <section class="span10 offset2">
+            <section class="row-fluid">
+                <section class="span10 offset1">
+                    <section class="row-fluid footer-sections">
+                        <section class="span4">
+                                                        <h1><i class="icon-code"></i></h1>
+                            <div>
+                                <ul>
+                                                                            <li><a href="../namespaces/Ice.html">\Ice</a></li>
+                                                                    </ul>
+                            </div>
+                        </section>
+                        <section class="span4">
+                                                        <h1><i class="icon-bar-chart"></i></h1>
+                            <div>
+                                <ul>
+                                    <li><a href="../graphs/class.html">Class Hierarchy Diagram</a></li>
+                                </ul>
+                            </div>
+                        </section>
+                        <section class="span4">
+                                                        <h1><i class="icon-pushpin"></i></h1>
+                            <div>
+                                <ul>
+                                    <li><a href="../reports/errors.html">Errors</a></li>
+                                    <li><a href="../reports/markers.html">Markers</a></li>
+                                </ul>
+                            </div>
+                        </section>
+                    </section>
+                </section>
+            </section>
+            <section class="row-fluid">
+                <section class="span10 offset1">
+                    <hr />
+                    Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor </a> and authored
+                    on October 23rd, 2014 at 13:26.
+                </section>
+            </section>
+        </section>
+    </footer>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,33 @@
+{
+    "name": "ifacesoft/ice",
+    "type": "library",
+    "description": "Ice PHP framework",
+    "keywords": ["framework"],
+    "homepage": "http://iceframework.net",
+    "license": "BSD ICE",
+    "config": {
+        "vendor-dir": "../_vendor"
+    },
+    "repositories": [
+        {
+            "type": "package",
+            "package": {
+                "name": "jquery/jquery-ui",
+                "version": "1.11.1",
+                "dist": {
+                    "url": "http://jqueryui.com/resources/download/jquery-ui-1.11.1.zip",
+                    "type": "zip"
+                }
+            }
+        }
+    ],
+    "require": {
+        "php": ">=5.4",
+        "smarty/smarty": "3.1.19",
+        "twig/twig": "1.16.1",
+        "twbs/bootstrap": "3.2.0",
+        "jquery/jquery-ui": "1.11.1",
+        "mrclay/minify": "dev-master",
+        "firephp/firephp-core": "dev-master"
+    }
+}

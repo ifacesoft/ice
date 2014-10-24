@@ -1,0 +1,2847 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+    <meta charset="utf-8"/>
+    <title>API Documentation</title>
+    <meta name="author" content=""/>
+    <meta name="description" content=""/>
+
+    <link href="../css/bootstrap-combined.no-icons.min.css" rel="stylesheet">
+    <link href="../css/font-awesome.min.css" rel="stylesheet">
+    <link href="../css/prism.css" rel="stylesheet" media="all"/>
+    <link href="../css/template.css" rel="stylesheet" media="all"/>
+    
+    <!--[if lt IE 9]>
+    <script src="../js/html5.js"></script>
+    <![endif]-->
+    <script src="../js/jquery-1.11.0.min.js"></script>
+    <script src="../js/ui/1.10.4/jquery-ui.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script src="../js/jquery.smooth-scroll.js"></script>
+    <script src="../js/prism.min.js"></script>
+    <!-- TODO: Add http://jscrollpane.kelvinluck.com/ to style the scrollbars for browsers not using webkit-->
+    <script type="text/javascript">
+    function loadExternalCodeSnippets() {
+        Array.prototype.slice.call(document.querySelectorAll('pre[data-src]')).forEach(function (pre) {
+            var src = pre.getAttribute('data-src');
+            var extension = (src.match(/\.(\w+)$/) || [, ''])[1];
+            var language = 'php';
+
+            var code = document.createElement('code');
+            code.className = 'language-' + language;
+
+            pre.textContent = '';
+
+            code.textContent = 'Loading…';
+
+            pre.appendChild(code);
+
+            var xhr = new XMLHttpRequest();
+
+            xhr.open('GET', src, true);
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4) {
+
+                    if (xhr.status < 400 && xhr.responseText) {
+                        code.textContent = xhr.responseText;
+
+                        Prism.highlightElement(code);
+                    }
+                    else if (xhr.status >= 400) {
+                        code.textContent = '✖ Error ' + xhr.status + ' while fetching file: ' + xhr.statusText;
+                    }
+                    else {
+                        code.textContent = '✖ Error: File does not exist or is empty';
+                    }
+                }
+            };
+
+            xhr.send(null);
+        });
+    }
+
+    $(document).ready(function(){
+        loadExternalCodeSnippets();
+    });
+    $('#source-view').on('shown', function () {
+        loadExternalCodeSnippets();
+    })
+</script>
+
+    <link rel="shortcut icon" href="../images/favicon.ico"/>
+    <link rel="apple-touch-icon" href="../images/apple-touch-icon.png"/>
+    <link rel="apple-touch-icon" sizes="72x72" href="../images/apple-touch-icon-72x72.png"/>
+    <link rel="apple-touch-icon" sizes="114x114" href="../images/apple-touch-icon-114x114.png"/>
+</head>
+<body>
+
+<div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container">
+            <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <i class="icon-ellipsis-vertical"></i>
+            </a>
+            <a class="brand" href="../index.html">API Documentation</a>
+
+            <div class="nav-collapse">
+                <ul class="nav pull-right">
+                                        <li class="dropdown">
+                        <a href="../index.html" class="dropdown-toggle" data-toggle="dropdown">
+                            API Documentation <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                                                        <li><a href="../namespaces/Ice.html">\Ice</a></li>
+                                                    </ul>
+                    </li>
+                                        <li class="dropdown" id="charts-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            Charts <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="../graphs/class.html">
+                                    <i class="icon-list-alt"></i>&#160;Class hierarchy diagram
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="dropdown" id="reports-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            Reports <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="../reports/errors.html">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <i class="icon-list-alt"></i>&#160;Errors <span class="label label-info pull-right">0</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="../reports/markers.html">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <i class="icon-list-alt"></i>&#160;Markers <span class="label label-info pull-right">858</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="../reports/deprecated.html">
+                                                                                                                                                                                                                                                                                                                                                                                                                            <i class="icon-list-alt"></i>&#160;Deprecated <span class="label label-info pull-right">4</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!--<div class="go_to_top">-->
+    <!--<a href="#___" style="color: inherit">Back to top&#160;&#160;<i class="icon-upload icon-white"></i></a>-->
+    <!--</div>-->
+</div>
+
+<div id="___" class="container-fluid">
+        <section class="row-fluid">
+        <div class="span2 sidebar">
+                                <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-951064983"></a>
+                                <a href="../namespaces/default.html" style="margin-left: 30px; padding-left: 0">\</a>
+            </div>
+            <div id="namespace-951064983" class="accordion-body collapse in">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-465294128"></a>
+                                <a href="../namespaces/Ice.html" style="margin-left: 30px; padding-left: 0">Ice</a>
+            </div>
+            <div id="namespace-465294128" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1969394206"></a>
+                                <a href="../namespaces/Ice.Action.html" style="margin-left: 30px; padding-left: 0">Action</a>
+            </div>
+            <div id="namespace-1969394206" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Ice.Action.Blank.html">Blank</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Action.Cache_Clear.html">Cache_Clear</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Action.Composer_Update.html">Composer_Update</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Action.Data_Scheme_Update.html">Data_Scheme_Update</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Action.Form.html">Form</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Action.Form_Model.html">Form_Model</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Action.Form_Submit.html">Form_Submit</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Action.Front.html">Front</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Action.Front_Ajax.html">Front_Ajax</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Action.Front_Cli.html">Front_Cli</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Action.Hello_World_Cli.html">Hello_World_Cli</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Action.Http_Status_404.html">Http_Status_404</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Action.Http_Status_500.html">Http_Status_500</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Action.Layout.html">Layout</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Action.Layout_Blank.html">Layout_Blank</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Action.Layout_Main.html">Layout_Main</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Action.Model_Defined_Sync.html">Model_Defined_Sync</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Action.Model_Delete.html">Model_Delete</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Action.Module_Create.html">Module_Create</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Action.Module_Deploy.html">Module_Deploy</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Action.Module_Update.html">Module_Update</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Action.Paginator.html">Paginator</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Action.Phpdoc_Generate.html">Phpdoc_Generate</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Action.Phpuml_Generate.html">Phpuml_Generate</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Action.Resources.html">Resources</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Action.Title.html">Title</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-627016802"></a>
+                                <a href="../namespaces/Ice.Code.html" style="margin-left: 30px; padding-left: 0">Code</a>
+            </div>
+            <div id="namespace-627016802" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-672185450"></a>
+                                <a href="../namespaces/Ice.Code.Generator.html" style="margin-left: 30px; padding-left: 0">Generator</a>
+            </div>
+            <div id="namespace-672185450" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Ice.Code.Generator.Action.html">Action</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Code.Generator.Model.html">Model</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Code.Generator.Validator.html">Validator</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Code.Generator.View_Render_Php.html">View_Render_Php</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Code.Generator.View_Render_Smarty.html">View_Render_Smarty</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Code.Generator.View_Render_Twig.html">View_Render_Twig</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-198376672"></a>
+                                <a href="../namespaces/Ice.Core.html" style="margin-left: 30px; padding-left: 0">Core</a>
+            </div>
+            <div id="namespace-198376672" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1310116117"></a>
+                                <a href="../namespaces/Ice.Core.Action.html" style="margin-left: 30px; padding-left: 0">Action</a>
+            </div>
+            <div id="namespace-1310116117" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                    <li class="interface"><a href="../classes/Ice.Core.Action.Factory.html">Factory</a></li>
+                                                                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-2118333188"></a>
+                                <a href="../namespaces/Ice.Core.Model.html" style="margin-left: 30px; padding-left: 0">Model</a>
+            </div>
+            <div id="namespace-2118333188" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-495648776"></a>
+                                <a href="../namespaces/Ice.Core.Model.Collection.html" style="margin-left: 30px; padding-left: 0">Collection</a>
+            </div>
+            <div id="namespace-495648776" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Ice.Core.Model.Collection.Iterator.html">Iterator</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Ice.Core.Model.Collection.html">Collection</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                    <li class="interface"><a href="../classes/Ice.Core.Cacheable.html">Cacheable</a></li>
+                                                    <li class="interface"><a href="../classes/Ice.Core.Model_Factory_Delegate.html">Model_Factory_Delegate</a></li>
+                                                                                                    <li class="class"><a href="../classes/Ice.Core.Action.html">Action</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Core.Action_Context.html">Action_Context</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Core.Cache.html">Cache</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Core.Code_Generator.html">Code_Generator</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Core.Config.html">Config</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Core.Container.html">Container</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Core.Data.html">Data</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Core.Data_Provider.html">Data_Provider</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Core.Data_Scheme.html">Data_Scheme</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Core.Data_Source.html">Data_Source</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Core.Data_Transformation.html">Data_Transformation</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Core.Environment.html">Environment</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Core.Exception.html">Exception</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Core.Form.html">Form</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Core.Loader.html">Loader</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Core.Logger.html">Logger</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Core.Model.html">Model</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Core.Model_Child.html">Model_Child</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Core.Model_Defined.html">Model_Defined</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Core.Model_Factory.html">Model_Factory</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Core.Model_Scheme.html">Model_Scheme</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Core.Module.html">Module</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Core.Query.html">Query</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Core.Query_Builder.html">Query_Builder</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Core.Query_Translator.html">Query_Translator</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Core.Registry.html">Registry</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Core.Request.html">Request</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Core.Resource.html">Resource</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Core.Response.html">Response</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Core.Route.html">Route</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Core.Session.html">Session</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Core.Validator.html">Validator</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Core.View.html">View</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Core.View_Render.html">View_Render</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-810318216"></a>
+                                <a href="../namespaces/Ice.Data.html" style="margin-left: 30px; padding-left: 0">Data</a>
+            </div>
+            <div id="namespace-810318216" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-51491983"></a>
+                                <a href="../namespaces/Ice.Data.Provider.html" style="margin-left: 30px; padding-left: 0">Provider</a>
+            </div>
+            <div id="namespace-51491983" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Ice.Data.Provider.Apc.html">Apc</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Data.Provider.Cli.html">Cli</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Data.Provider.Defined.html">Defined</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Data.Provider.Factory.html">Factory</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Data.Provider.File.html">File</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Data.Provider.Mysqli.html">Mysqli</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Data.Provider.Object.html">Object</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Data.Provider.Redis.html">Redis</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Data.Provider.Registry.html">Registry</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Data.Provider.Request.html">Request</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Data.Provider.Router.html">Router</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Data.Provider.Session.html">Session</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Data.Provider.String.html">String</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-808487283"></a>
+                                <a href="../namespaces/Ice.Data.Source.html" style="margin-left: 30px; padding-left: 0">Source</a>
+            </div>
+            <div id="namespace-808487283" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Ice.Data.Source.Defined.html">Defined</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Data.Source.Factory.html">Factory</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Data.Source.Mysqli.html">Mysqli</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1974499957"></a>
+                                <a href="../namespaces/Ice.Exception.html" style="margin-left: 30px; padding-left: 0">Exception</a>
+            </div>
+            <div id="namespace-1974499957" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Ice.Exception.File_Not_Found.html">File_Not_Found</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Exception.Page_Not_Found.html">Page_Not_Found</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Exception.Template_Not_Found.html">Template_Not_Found</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1647979137"></a>
+                                <a href="../namespaces/Ice.Form.html" style="margin-left: 30px; padding-left: 0">Form</a>
+            </div>
+            <div id="namespace-1647979137" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Ice.Form.Model.html">Model</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-836265180"></a>
+                                <a href="../namespaces/Ice.Helper.html" style="margin-left: 30px; padding-left: 0">Helper</a>
+            </div>
+            <div id="namespace-836265180" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Ice.Helper.Arrays.html">Arrays</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Helper.Console.html">Console</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Helper.Date.html">Date</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Helper.Directory.html">Directory</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Helper.Emmet.html">Emmet</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Helper.File.html">File</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Helper.Hash.html">Hash</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Helper.Json.html">Json</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Helper.Logger.html">Logger</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Helper.Memory.html">Memory</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Helper.Model.html">Model</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Helper.Object.html">Object</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Helper.Phone.html">Phone</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Helper.Php.html">Php</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Helper.Query.html">Query</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Helper.Route.html">Route</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Helper.Serializer.html">Serializer</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Helper.Spatial.html">Spatial</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Helper.String.html">String</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Helper.Transliterator.html">Transliterator</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Helper.Vcs.html">Vcs</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-565018861"></a>
+                                <a href="../namespaces/Ice.Query.html" style="margin-left: 30px; padding-left: 0">Query</a>
+            </div>
+            <div id="namespace-565018861" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-610871702"></a>
+                                <a href="../namespaces/Ice.Query.Translator.html" style="margin-left: 30px; padding-left: 0">Translator</a>
+            </div>
+            <div id="namespace-610871702" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Ice.Query.Translator.Defined.html">Defined</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Query.Translator.Factory.html">Factory</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Query.Translator.Mysqli.html">Mysqli</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-189770474"></a>
+                                <a href="../namespaces/Ice.Validator.html" style="margin-left: 30px; padding-left: 0">Validator</a>
+            </div>
+            <div id="namespace-189770474" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Ice.Validator.Arrays.html">Arrays</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Validator.Email.html">Email</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Validator.Emptys.html">Emptys</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Validator.Is_Data.html">Is_Data</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Validator.Is_Form.html">Is_Form</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Validator.Is_Model.html">Is_Model</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Validator.Length_Max.html">Length_Max</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Validator.Length_Min.html">Length_Min</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Validator.Not_Empty.html">Not_Empty</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Validator.Not_Null.html">Not_Null</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Validator.Numeric.html">Numeric</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Validator.Numeric_Positive.html">Numeric_Positive</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Validator.Pattern.html">Pattern</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Validator.Phone.html">Phone</a></li>
+                                                    <li class="class"><a href="../classes/Ice.Validator.Url.html">Url</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1288675356"></a>
+                                <a href="../namespaces/Ice.View.html" style="margin-left: 30px; padding-left: 0">View</a>
+            </div>
+            <div id="namespace-1288675356" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-901314234"></a>
+                                <a href="../namespaces/Ice.View.Render.html" style="margin-left: 30px; padding-left: 0">Render</a>
+            </div>
+            <div id="namespace-901314234" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Ice.View.Render.Cli.html">Cli</a></li>
+                                                    <li class="class"><a href="../classes/Ice.View.Render.Json.html">Json</a></li>
+                                                    <li class="class"><a href="../classes/Ice.View.Render.Php.html">Php</a></li>
+                                                    <li class="class"><a href="../classes/Ice.View.Render.Replace.html">Replace</a></li>
+                                                    <li class="class"><a href="../classes/Ice.View.Render.Smarty.html">Smarty</a></li>
+                                                    <li class="class"><a href="../classes/Ice.View.Render.Twig.html">Twig</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                            <li class="trait"><a href="../classes/Ice.Core.html">Core</a></li>
+                                                                            <li class="class"><a href="../classes/Ice.Bootstrap.html">Bootstrap</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Ice.html">Ice</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        </div>
+    </section>
+    <section class="row-fluid">
+        <div class="span10 offset2">
+            <div class="row-fluid">
+                <div class="span8 content class">
+                    <nav>
+                                                <a href="../namespaces/Ice.Core.html">\Ice\Core</a> <i class="icon-level-up"></i>
+                                            </nav>
+                    <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal"><i class="icon-code"></i></a>
+
+                    <h1><small>\Ice\Core</small>Data</h1>
+                    <p><em>Class Data</em></p>
+                    <p>Core Data class</p>
+                    
+                                        
+                    <section id="summary">
+                        <h2>Summary</h2>
+                        <section class="row-fluid heading">
+                            <section class="span4">
+                                <a href="#methods">Methods</a>
+                            </section>
+                            <section class="span4">
+                                <a href="#properties">Properties</a>
+                            </section>
+                            <section class="span4">
+                                <a href="#constants">Constants</a>
+                            </section>
+                        </section>
+                        <section class="row-fluid public">
+                            <section class="span4">
+                                                                    <a href="../classes/Ice.Core.Container.html#method_getInstance" class="">getInstance()</a><br />
+                                                                    <a href="../classes/Ice.Core.html#method_getShortName" class="">getShortName()</a><br />
+                                                                    <a href="../classes/Ice.Core.html#method_getClass" class="">getClass()</a><br />
+                                                                    <a href="../classes/Ice.Core.html#method_getModuleAlias" class="">getModuleAlias()</a><br />
+                                                                    <a href="../classes/Ice.Core.html#method_getResource" class="">getResource()</a><br />
+                                                                    <a href="../classes/Ice.Core.html#method_getConfig" class="">getConfig()</a><br />
+                                                                    <a href="../classes/Ice.Core.html#method_getDataProvider" class="">getDataProvider()</a><br />
+                                                                    <a href="../classes/Ice.Core.html#method_getClassName" class="">getClassName()</a><br />
+                                                                    <a href="../classes/Ice.Core.html#method_getCodeGenerator" class="">getCodeGenerator()</a><br />
+                                                                    <a href="../classes/Ice.Core.html#method_getNamespace" class="">getNamespace()</a><br />
+                                                                    <a href="../classes/Ice.Core.html#method_getBaseClass" class="">getBaseClass()</a><br />
+                                                                    <a href="../classes/Ice.Core.html#method_getLogger" class="">getLogger()</a><br />
+                                                                    <a href="../classes/Ice.Core.Data.html#method___construct" class="">__construct()</a><br />
+                                                                    <a href="../classes/Ice.Core.Data.html#method_getCache" class="">getCache()</a><br />
+                                                                    <a href="../classes/Ice.Core.Data.html#method_getRows" class="">getRows()</a><br />
+                                                                    <a href="../classes/Ice.Core.Data.html#method_getCollection" class="">getCollection()</a><br />
+                                                                    <a href="../classes/Ice.Core.Data.html#method_getValue" class="">getValue()</a><br />
+                                                                    <a href="../classes/Ice.Core.Data.html#method_getRow" class="">getRow()</a><br />
+                                                                    <a href="../classes/Ice.Core.Data.html#method_getModel" class="">getModel()</a><br />
+                                                                    <a href="../classes/Ice.Core.Data.html#method_setRow" class="">setRow()</a><br />
+                                                                    <a href="../classes/Ice.Core.Data.html#method_getNumRows" class="">getNumRows()</a><br />
+                                                                    <a href="../classes/Ice.Core.Data.html#method_current" class="">current()</a><br />
+                                                                    <a href="../classes/Ice.Core.Data.html#method_next" class="">next()</a><br />
+                                                                    <a href="../classes/Ice.Core.Data.html#method_key" class="">key()</a><br />
+                                                                    <a href="../classes/Ice.Core.Data.html#method_valid" class="">valid()</a><br />
+                                                                    <a href="../classes/Ice.Core.Data.html#method_rewind" class="">rewind()</a><br />
+                                                                    <a href="../classes/Ice.Core.Data.html#method_delete" class="">delete()</a><br />
+                                                                    <a href="../classes/Ice.Core.Data.html#method_addTransformation" class="">addTransformation()</a><br />
+                                                                    <a href="../classes/Ice.Core.Data.html#method_filter" class="">filter()</a><br />
+                                                                    <a href="../classes/Ice.Core.Data.html#method_getFoundRows" class="">getFoundRows()</a><br />
+                                                                    <a href="../classes/Ice.Core.Data.html#method_getColumn" class="">getColumn()</a><br />
+                                                                    <a href="../classes/Ice.Core.Data.html#method_getKeys" class="">getKeys()</a><br />
+                                                                    <a href="../classes/Ice.Core.Data.html#method_offsetGet" class="">offsetGet()</a><br />
+                                                                    <a href="../classes/Ice.Core.Data.html#method_offsetExists" class="">offsetExists()</a><br />
+                                                                    <a href="../classes/Ice.Core.Data.html#method_offsetSet" class="">offsetSet()</a><br />
+                                                                    <a href="../classes/Ice.Core.Data.html#method_offsetUnset" class="">offsetUnset()</a><br />
+                                                                    <a href="../classes/Ice.Core.Data.html#method_count" class="">count()</a><br />
+                                                                    <a href="../classes/Ice.Core.Data.html#method_serialize" class="">serialize()</a><br />
+                                                                    <a href="../classes/Ice.Core.Data.html#method_unserialize" class="">unserialize()</a><br />
+                                                                    <a href="../classes/Ice.Core.Data.html#method_getInsertId" class="">getInsertId()</a><br />
+                                                                    <a href="../classes/Ice.Core.Data.html#method_getRandKey" class="">getRandKey()</a><br />
+                                                                    <a href="../classes/Ice.Core.Data.html#method_getLimit" class="">getLimit()</a><br />
+                                                                    <a href="../classes/Ice.Core.Data.html#method_getPage" class="">getPage()</a><br />
+                                                                    <a href="../classes/Ice.Core.Data.html#method_getModelClass" class="">getModelClass()</a><br />
+                                                            </section>
+                            <section class="span4">
+                                                                    <em>No public properties found</em>
+                                                            </section>
+                            <section class="span4">
+                                                                    <a href="../classes/Ice.Core.Data.html#constant_RESULT_MODEL_CLASS" class="">RESULT_MODEL_CLASS</a><br />
+                                                                    <a href="../classes/Ice.Core.Data.html#constant_RESULT_ROWS" class="">RESULT_ROWS</a><br />
+                                                                    <a href="../classes/Ice.Core.Data.html#constant_QUERY_FULL_HASH" class="">QUERY_FULL_HASH</a><br />
+                                                                    <a href="../classes/Ice.Core.Data.html#constant_NUM_ROWS" class="">NUM_ROWS</a><br />
+                                                                    <a href="../classes/Ice.Core.Data.html#constant_AFFECTED_ROWS" class="">AFFECTED_ROWS</a><br />
+                                                                    <a href="../classes/Ice.Core.Data.html#constant_INSERT_ID" class="">INSERT_ID</a><br />
+                                                                    <a href="../classes/Ice.Core.Data.html#constant_FOUND_ROWS" class="">FOUND_ROWS</a><br />
+                                                                    <a href="../classes/Ice.Core.Data.html#constant_PAGE" class="">PAGE</a><br />
+                                                                    <a href="../classes/Ice.Core.Data.html#constant_LIMIT" class="">LIMIT</a><br />
+                                                            </section>
+                        </section>
+                        <section class="row-fluid protected">
+                            <section class="span4">
+                                                                    <a href="../classes/Ice.Core.Data.html#method_create" class="">create()</a><br />
+                                                                    <a href="../classes/Ice.Core.html#method_getDefaultKey" class="">getDefaultKey()</a><br />
+                                                                    <a href="../classes/Ice.Core.Data.html#method_getResult" class="">getResult()</a><br />
+                                                            </section>
+                            <section class="span4">
+                                                                    <a href="../classes/Ice.Core.Data.html#property__result" class="">$_result</a><br />
+                                                            </section>
+                            <section class="span4">
+                                <em>N/A</em>
+                            </section>
+                        </section>
+                        <section class="row-fluid private">
+                            <section class="span4">
+                                                                    <a href="../classes/Ice.Core.Data.html#method_applyTransformations" class="">applyTransformations()</a><br />
+                                                            </section>
+                            <section class="span4">
+                                                                    <a href="../classes/Ice.Core.Data.html#property_isValid" class="">$isValid</a><br />
+                                                                    <a href="../classes/Ice.Core.Data.html#property_position" class="">$position</a><br />
+                                                                    <a href="../classes/Ice.Core.Data.html#property__transformations" class="">$_transformations</a><br />
+                                                            </section>
+                            <section class="span4">
+                                <em>N/A</em>
+                            </section>
+                        </section>
+                    </section>
+                </div>
+                <aside class="span4 detailsbar">
+                                        
+                    
+                    <dl>
+                        <dt>File</dt>
+                            <dd><a href="../files/Ice.Core.Data.html"><div class="path-wrapper">Ice/Core/Data.php</div></a></dd>
+                                                <dt>Package</dt>
+                            <dd><div class="namespace-wrapper">Ice\Core</div></dd>
+                                                <dt>Class hierarchy</dt>
+                            <dd class="hierarchy">
+                                                                                                                                                                                                                                                                                                
+                                        <div class="namespace-wrapper"><a href="../classes/Ice.Core.Container.html">\Ice\Core\Container</a></div>
+                                                                                                    <div class="namespace-wrapper">\Ice\Core\Data</div>
+                            </dd>
+
+                                                                            <dt>Implements</dt>
+                                                        <dd><a href=""><div class="namespace-wrapper"></div></a></dd>
+                                                                                <dd><a href=""><div class="namespace-wrapper"></div></a></dd>
+                                                                                <dd><a href=""><div class="namespace-wrapper"></div></a></dd>
+                                                                                <dd><a href=""><div class="namespace-wrapper"></div></a></dd>
+                                                                                <dd><a href="../classes/Ice.Core.Cacheable.html"><div class="namespace-wrapper">\Ice\Core\Cacheable</div></a></dd>
+                        
+                        
+                        
+                                                                            <dt>See also</dt>
+                                                                                    <dd><a href=""><div class="namespace-wrapper"></div></a></dd>
+                                                    
+                                                                        </dl>
+                    <h2>Tags</h2>
+                    <table class="table table-condensed">
+                                            <tr>
+                            <th>
+                                author
+                            </th>
+                            <td>
+                                                                    <p>dp <a href="mailto:denis.a.shestakov@gmail.com">denis.a.shestakov@gmail.com</a></p>
+                                                            </td>
+                        </tr>
+                                            <tr>
+                            <th>
+                                version
+                            </th>
+                            <td>
+                                                                    <p>stable_0</p>
+                                                            </td>
+                        </tr>
+                                            <tr>
+                            <th>
+                                since
+                            </th>
+                            <td>
+                                                                    <p>stable_0</p>
+                                                            </td>
+                        </tr>
+                                        </table>
+                </aside>
+            </div>
+
+                                    <a id="constants" name="constants"></a>
+            <div class="row-fluid">
+                <div class="span8 content class">
+                    <h2>Constants</h2>
+                </div>
+                <aside class="span4 detailsbar"></aside>
+            </div>
+
+                                <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="constant_RESULT_MODEL_CLASS" name="constant_RESULT_MODEL_CLASS" class="anchor"></a>
+            <article id="constant_RESULT_MODEL_CLASS" class="constant">
+                <h3 class="">RESULT_MODEL_CLASS</h3>
+                <pre class="signature">RESULT_MODEL_CLASS</pre>
+                <p><em></em></p>
+                
+            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="constant_RESULT_ROWS" name="constant_RESULT_ROWS" class="anchor"></a>
+            <article id="constant_RESULT_ROWS" class="constant">
+                <h3 class="">RESULT_ROWS</h3>
+                <pre class="signature">RESULT_ROWS</pre>
+                <p><em></em></p>
+                
+            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="constant_QUERY_FULL_HASH" name="constant_QUERY_FULL_HASH" class="anchor"></a>
+            <article id="constant_QUERY_FULL_HASH" class="constant">
+                <h3 class="">QUERY_FULL_HASH</h3>
+                <pre class="signature">QUERY_FULL_HASH</pre>
+                <p><em></em></p>
+                
+            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="constant_NUM_ROWS" name="constant_NUM_ROWS" class="anchor"></a>
+            <article id="constant_NUM_ROWS" class="constant">
+                <h3 class="">NUM_ROWS</h3>
+                <pre class="signature">NUM_ROWS</pre>
+                <p><em></em></p>
+                
+            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="constant_AFFECTED_ROWS" name="constant_AFFECTED_ROWS" class="anchor"></a>
+            <article id="constant_AFFECTED_ROWS" class="constant">
+                <h3 class="">AFFECTED_ROWS</h3>
+                <pre class="signature">AFFECTED_ROWS</pre>
+                <p><em></em></p>
+                
+            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="constant_INSERT_ID" name="constant_INSERT_ID" class="anchor"></a>
+            <article id="constant_INSERT_ID" class="constant">
+                <h3 class="">INSERT_ID</h3>
+                <pre class="signature">INSERT_ID</pre>
+                <p><em></em></p>
+                
+            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="constant_FOUND_ROWS" name="constant_FOUND_ROWS" class="anchor"></a>
+            <article id="constant_FOUND_ROWS" class="constant">
+                <h3 class="">FOUND_ROWS</h3>
+                <pre class="signature">FOUND_ROWS</pre>
+                <p><em></em></p>
+                
+            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="constant_PAGE" name="constant_PAGE" class="anchor"></a>
+            <article id="constant_PAGE" class="constant">
+                <h3 class="">PAGE</h3>
+                <pre class="signature">PAGE</pre>
+                <p><em></em></p>
+                
+            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="constant_LIMIT" name="constant_LIMIT" class="anchor"></a>
+            <article id="constant_LIMIT" class="constant">
+                <h3 class="">LIMIT</h3>
+                <pre class="signature">LIMIT</pre>
+                <p><em></em></p>
+                
+            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                            
+                                    <a id="properties" name="properties"></a>
+            <div class="row-fluid">
+                <div class="span8 content class">
+                    <h2>Properties</h2>
+                </div>
+                <aside class="span4 detailsbar"></aside>
+            </div>
+
+                                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property__result" name="property__result" class="anchor"></a>
+            <article class="property">
+                <h3 class="protected ">$_result</h3>
+                <pre class="signature">$_result : array</pre>
+                <p><em>Default data</em></p>
+                
+
+                                <h4>Type</h4>
+                array
+                                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_isValid" name="property_isValid" class="anchor"></a>
+            <article class="property">
+                <h3 class="private ">$isValid</h3>
+                <pre class="signature">$isValid : boolean</pre>
+                <p><em>Valid data flag</em></p>
+                
+
+                                <h4>Type</h4>
+                boolean
+                                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_position" name="property_position" class="anchor"></a>
+            <article class="property">
+                <h3 class="private ">$position</h3>
+                <pre class="signature">$position : integer</pre>
+                <p><em>Row index of iterator</em></p>
+                
+
+                                <h4>Type</h4>
+                integer
+                                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property__transformations" name="property__transformations" class="anchor"></a>
+            <article class="property">
+                <h3 class="private ">$_transformations</h3>
+                <pre class="signature">$_transformations : array</pre>
+                <p><em>Attached transformations</em></p>
+                
+
+                                <h4>Type</h4>
+                array
+                                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                            
+                                    <a id="methods" name="methods"></a>
+            <div class="row-fluid">
+                <div class="span8 content class"><h2>Methods</h2></div>
+                <aside class="span4 detailsbar"></aside>
+            </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getInstance" name="method_getInstance" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">getInstance()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getInstance(string  <span class="argument">$key = null</span>, null  <span class="argument">$ttl = null</span>) : mixed</pre>
+                <p><em>Get instance from container</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$key </td>
+                                <td></td>
+                            </tr>
+                                                    <tr>
+                                <td>null</td>
+                                <td>$ttl </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                                    <h4>Throws</h4>
+                    <dl>
+                                                    <dt>\Ice\Core\Exception</dt>
+                            <dd></dd>
+                                                                    </dl>
+                
+                                    <h4>Returns</h4>
+                    mixed
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Ice.Core.Container.html"><div class="path-wrapper">\Ice\Core\Container</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getShortName" name="method_getShortName" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">getShortName()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getShortName() : string</pre>
+                <p><em>Return short name of class (Ice:Class_Name)</em></p>
+                
+
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Ice.Core.html"><div class="path-wrapper">\Ice\Core</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getClass" name="method_getClass" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">getClass()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getClass(null  <span class="argument">$className = null</span>) : \Ice\Core</pre>
+                <p><em>Return class by base class</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>null</td>
+                                <td>$className </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    <a href="../classes/Ice.Core.html">\Ice\Core</a>
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Ice.Core.html"><div class="path-wrapper">\Ice\Core</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getModuleAlias" name="method_getModuleAlias" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">getModuleAlias()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getModuleAlias() : string</pre>
+                <p><em>Get module name of object</em></p>
+                <p>'Ice/Model/Ice/User' => 'Ice'</p>
+
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Ice.Core.html"><div class="path-wrapper">\Ice\Core</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getResource" name="method_getResource" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">getResource()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getResource() : \Ice\Core\Resource</pre>
+                <p><em>Return instance of resource for self class</em></p>
+                
+
+                
+                
+                                    <h4>Returns</h4>
+                    <a href="../classes/Ice.Core.Resource.html">\Ice\Core\Resource</a>
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Ice.Core.html"><div class="path-wrapper">\Ice\Core</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getConfig" name="method_getConfig" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">getConfig()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getConfig(array  <span class="argument">$config = array()</span>, null  <span class="argument">$postfix = null</span>) : \Ice\Core\Config</pre>
+                <p><em>Return config of self class</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>array</td>
+                                <td>$config </td>
+                                <td></td>
+                            </tr>
+                                                    <tr>
+                                <td>null</td>
+                                <td>$postfix </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                                    <h4>Throws</h4>
+                    <dl>
+                                                    <dt>\Ice\Core\Exception</dt>
+                            <dd></dd>
+                                                                    </dl>
+                
+                                    <h4>Returns</h4>
+                    <a href="../classes/Ice.Core.Config.html">\Ice\Core\Config</a>
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Ice.Core.html"><div class="path-wrapper">\Ice\Core</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getDataProvider" name="method_getDataProvider" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">getDataProvider()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getDataProvider(null  <span class="argument">$postfix = null</span>) : \Ice\Core\Data_Provider</pre>
+                <p><em>Return dat provider for self class</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>null</td>
+                                <td>$postfix </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    <a href="../classes/Ice.Core.Data_Provider.html">\Ice\Core\Data_Provider</a>
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Ice.Core.html"><div class="path-wrapper">\Ice\Core</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getClassName" name="method_getClassName" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">getClassName()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getClassName() : string</pre>
+                <p><em>Return class name (without namespace)</em></p>
+                
+
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Ice.Core.html"><div class="path-wrapper">\Ice\Core</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getCodeGenerator" name="method_getCodeGenerator" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">getCodeGenerator()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getCodeGenerator() : \Ice\Core\Code_Generator</pre>
+                <p><em>Return code generator for self class type</em></p>
+                
+
+                
+                
+                                    <h4>Returns</h4>
+                    <a href="../classes/Ice.Core.Code_Generator.html">\Ice\Core\Code_Generator</a>
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Ice.Core.html"><div class="path-wrapper">\Ice\Core</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getNamespace" name="method_getNamespace" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">getNamespace()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getNamespace() : string</pre>
+                <p><em>Return namespace by base class</em></p>
+                
+
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Ice.Core.html"><div class="path-wrapper">\Ice\Core</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getBaseClass" name="method_getBaseClass" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">getBaseClass()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getBaseClass() : \Ice\Core</pre>
+                <p><em>Return base class for self class (class extends Container)</em></p>
+                
+
+                
+                
+                                    <h4>Returns</h4>
+                    <a href="../classes/Ice.Core.html">\Ice\Core</a>
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Ice.Core.html"><div class="path-wrapper">\Ice\Core</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getLogger" name="method_getLogger" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">getLogger()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getLogger() : \Ice\Core\Logger</pre>
+                <p><em>Return logger for self class</em></p>
+                
+
+                
+                
+                                    <h4>Returns</h4>
+                    <a href="../classes/Ice.Core.Logger.html">\Ice\Core\Logger</a>
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Ice.Core.html"><div class="path-wrapper">\Ice\Core</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method___construct" name="method___construct" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">__construct()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">__construct(array  <span class="argument">$result</span>) </pre>
+                <p><em>Constructor of data object</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>array</td>
+                                <td>$result </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getCache" name="method_getCache" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">getCache()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getCache(  <span class="argument">$data</span>,   <span class="argument">$hash</span>) : \Ice\Core\Data</pre>
+                <p><em>Return data from cache</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$data </td>
+                                <td></td>
+                            </tr>
+                                                    <tr>
+                                <td></td>
+                                <td>$hash </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                                    <h4>Throws</h4>
+                    <dl>
+                                                    <dt>\Ice\Core\Exception</dt>
+                            <dd></dd>
+                                                                    </dl>
+                
+                                    <h4>Returns</h4>
+                    <a href="../classes/Ice.Core.Data.html">\Ice\Core\Data</a>
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getRows" name="method_getRows" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">getRows()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getRows() : array</pre>
+                <p><em>Return all rows from data as array</em></p>
+                
+
+                
+                
+                                    <h4>Returns</h4>
+                    array
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getCollection" name="method_getCollection" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">getCollection()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getCollection() : \Ice\Core\Model\Collection</pre>
+                <p><em>Get collection from data</em></p>
+                
+
+                
+                
+                                    <h4>Returns</h4>
+                    <a href="../classes/Ice.Core.Model.Collection.html">\Ice\Core\Model\Collection</a>
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getValue" name="method_getValue" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">getValue()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getValue(null  <span class="argument">$columnName = null</span>) : mixed</pre>
+                <p><em>Get value from data</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>null</td>
+                                <td>$columnName </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    mixed
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            desc
+                        </th>
+                        <td>
+                                                                                            <p>Результат запроса - единственное значение.</p>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getRow" name="method_getRow" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">getRow()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getRow(null  <span class="argument">$pk = null</span>) : array|null</pre>
+                <p><em>Get first row from data</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>null</td>
+                                <td>$pk </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    array|null
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            desc
+                        </th>
+                        <td>
+                                                                                            <p>Результат запроса - единственная запись таблицы.</p>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getModel" name="method_getModel" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">getModel()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getModel(null  <span class="argument">$pk = null</span>) : \Ice\Core\Model|null</pre>
+                <p><em>Return model from data</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>null</td>
+                                <td>$pk </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    <a href="../classes/Ice.Core.Model.html">\Ice\Core\Model</a>|null
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_setRow" name="method_setRow" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">setRow()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">setRow(  <span class="argument">$pk</span>,   <span class="argument">$fieldName</span>, null  <span class="argument">$value = null</span>) </pre>
+                <p><em>Add row to data</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$pk </td>
+                                <td></td>
+                            </tr>
+                                                    <tr>
+                                <td></td>
+                                <td>$fieldName </td>
+                                <td></td>
+                            </tr>
+                                                    <tr>
+                                <td>null</td>
+                                <td>$value </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getNumRows" name="method_getNumRows" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">getNumRows()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getNumRows() : mixed</pre>
+                <p><em>Return count of rows returned by query</em></p>
+                
+
+                
+                
+                                    <h4>Returns</h4>
+                    mixed
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_current" name="method_current" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">current()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">current() : mixed</pre>
+                <p><em>Return the current row of iterator</em></p>
+                <p>(PHP 5 &gt;= 5.0.0)<br/>
+Return the current element</p>
+
+                
+                
+                                    <h4>Returns</h4>
+                    mixed
+                                            &mdash; <p>Can return any type.</p>
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                                            <dt>See also</dt>
+                                                                <dd><a href="http://php.net/manual/en/iterator.current.php"><span class="namespace-wrapper">http://php.net/manual/en/iterator.current.php</span></a></dd>
+                                                                </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_next" name="method_next" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">next()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">next() : void</pre>
+                <p><em>Move forward to next row of iterator</em></p>
+                <p>(PHP 5 &gt;= 5.0.0)<br/>
+Move forward to next element</p>
+
+                
+                
+                				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                                            <dt>See also</dt>
+                                                                <dd><a href="http://php.net/manual/en/iterator.next.php"><span class="namespace-wrapper">http://php.net/manual/en/iterator.next.php</span></a></dd>
+                                                                </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_key" name="method_key" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">key()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">key() : mixed</pre>
+                <p><em>Return index of iterator row</em></p>
+                <p>(PHP 5 &gt;= 5.0.0)<br/>
+Return the key of the current element</p>
+
+                
+                                    <h4>Throws</h4>
+                    <dl>
+                                                    <dt>\Ice\Core\Exception</dt>
+                            <dd></dd>
+                                                                    </dl>
+                
+                                    <h4>Returns</h4>
+                    mixed
+                                            &mdash; <p>scalar on success, or null on failure.</p>
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                                            <dt>See also</dt>
+                                                                <dd><a href="http://php.net/manual/en/iterator.key.php"><span class="namespace-wrapper">http://php.net/manual/en/iterator.key.php</span></a></dd>
+                                                                </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_valid" name="method_valid" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">valid()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">valid() : boolean</pre>
+                <p><em>Validation current row position of iterator</em></p>
+                <p>(PHP 5 &gt;= 5.0.0)<br/>
+Checks if current position is valid</p>
+
+                
+                
+                                    <h4>Returns</h4>
+                    boolean
+                                            &mdash; <p>The return value will be casted to boolean and then evaluated.
+Returns true on success or false on failure.</p>
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                                            <dt>See also</dt>
+                                                                <dd><a href="http://php.net/manual/en/iterator.valid.php"><span class="namespace-wrapper">http://php.net/manual/en/iterator.valid.php</span></a></dd>
+                                                                </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_rewind" name="method_rewind" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">rewind()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">rewind() : void</pre>
+                <p><em>Reset iterator</em></p>
+                <p>(PHP 5 &gt;= 5.0.0)<br/>
+Rewind the Iterator to the first element</p>
+
+                
+                
+                				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                                            <dt>See also</dt>
+                                                                <dd><a href="http://php.net/manual/en/iterator.rewind.php"><span class="namespace-wrapper">http://php.net/manual/en/iterator.rewind.php</span></a></dd>
+                                                                </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_delete" name="method_delete" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">delete()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">delete(  <span class="argument">$pk = null</span>) : array</pre>
+                <p><em>Remove row from data by pk</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$pk </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    array
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_addTransformation" name="method_addTransformation" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">addTransformation()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">addTransformation(  <span class="argument">$transformation</span>,   <span class="argument">$params</span>) : $this</pre>
+                <p><em>Attach data transformation</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$transformation </td>
+                                <td></td>
+                            </tr>
+                                                    <tr>
+                                <td></td>
+                                <td>$params </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    $this
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_filter" name="method_filter" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">filter()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">filter(  <span class="argument">$filterScheme</span>) : \Ice\Core\Data</pre>
+                <p><em>Filter data</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$filterScheme </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    <a href="../classes/Ice.Core.Data.html">\Ice\Core\Data</a>
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getFoundRows" name="method_getFoundRows" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">getFoundRows()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getFoundRows() : integer</pre>
+                <p><em>Return count all found rows</em></p>
+                
+
+                
+                
+                                    <h4>Returns</h4>
+                    integer
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getColumn" name="method_getColumn" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">getColumn()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getColumn(null  <span class="argument">$fieldName = null</span>, null  <span class="argument">$indexKey = null</span>) : array</pre>
+                <p><em>Return column in data</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>null</td>
+                                <td>$fieldName </td>
+                                <td></td>
+                            </tr>
+                                                    <tr>
+                                <td>null</td>
+                                <td>$indexKey </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    array
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getKeys" name="method_getKeys" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">getKeys()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getKeys() : array</pre>
+                <p><em>Return keys of data</em></p>
+                
+
+                
+                
+                                    <h4>Returns</h4>
+                    array
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_offsetGet" name="method_offsetGet" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">offsetGet()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">offsetGet(mixed  <span class="argument">$offset</span>) : mixed</pre>
+                <p><em>(PHP 5 &amp;gt;= 5.0.0)&lt;br/&gt;
+Offset to retrieve</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>mixed</td>
+                                <td>$offset </td>
+                                <td><p>
+The offset to retrieve.
+</p></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    mixed
+                                            &mdash; <p>Can return all value types.</p>
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                                            <dt>See also</dt>
+                                                                <dd><a href="http://php.net/manual/en/arrayaccess.offsetget.php"><span class="namespace-wrapper">http://php.net/manual/en/arrayaccess.offsetget.php</span></a></dd>
+                                                                </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_offsetExists" name="method_offsetExists" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">offsetExists()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">offsetExists(mixed  <span class="argument">$offset</span>) : boolean</pre>
+                <p><em>(PHP 5 &amp;gt;= 5.0.0)&lt;br/&gt;
+Whether a offset exists</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>mixed</td>
+                                <td>$offset </td>
+                                <td><p>
+An offset to check for.
+</p></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    boolean
+                                            &mdash; <p>true on success or false on failure.
+</p></p>
+<p>
+The return value will be casted to boolean if non-boolean was returned.
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                                            <dt>See also</dt>
+                                                                <dd><a href="http://php.net/manual/en/arrayaccess.offsetexists.php"><span class="namespace-wrapper">http://php.net/manual/en/arrayaccess.offsetexists.php</span></a></dd>
+                                                                </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_offsetSet" name="method_offsetSet" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">offsetSet()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">offsetSet(mixed  <span class="argument">$offset</span>, mixed  <span class="argument">$value</span>) : void</pre>
+                <p><em>(PHP 5 &amp;gt;= 5.0.0)&lt;br/&gt;
+Offset to set</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>mixed</td>
+                                <td>$offset </td>
+                                <td><p>
+The offset to assign the value to.
+</p></td>
+                            </tr>
+                                                    <tr>
+                                <td>mixed</td>
+                                <td>$value </td>
+                                <td><p>
+The value to set.
+</p></td>
+                            </tr>
+                                            </table>
+                
+                
+                				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                                            <dt>See also</dt>
+                                                                <dd><a href="http://php.net/manual/en/arrayaccess.offsetset.php"><span class="namespace-wrapper">http://php.net/manual/en/arrayaccess.offsetset.php</span></a></dd>
+                                                                </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_offsetUnset" name="method_offsetUnset" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">offsetUnset()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">offsetUnset(mixed  <span class="argument">$offset</span>) : void</pre>
+                <p><em>(PHP 5 &amp;gt;= 5.0.0)&lt;br/&gt;
+Offset to unset</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>mixed</td>
+                                <td>$offset </td>
+                                <td><p>
+The offset to unset.
+</p></td>
+                            </tr>
+                                            </table>
+                
+                
+                				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                                            <dt>See also</dt>
+                                                                <dd><a href="http://php.net/manual/en/arrayaccess.offsetunset.php"><span class="namespace-wrapper">http://php.net/manual/en/arrayaccess.offsetunset.php</span></a></dd>
+                                                                </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_count" name="method_count" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">count()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">count() : integer</pre>
+                <p><em>(PHP 5 &amp;gt;= 5.1.0)&lt;br/&gt;
+Count elements of an object</em></p>
+                
+
+                
+                
+                                    <h4>Returns</h4>
+                    integer
+                                            &mdash; <p>The custom count as an integer.
+</p></p>
+<p>
+The return value is cast to an integer.
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                                            <dt>See also</dt>
+                                                                <dd><a href="http://php.net/manual/en/countable.count.php"><span class="namespace-wrapper">http://php.net/manual/en/countable.count.php</span></a></dd>
+                                                                </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_serialize" name="method_serialize" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">serialize()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">serialize() : string</pre>
+                <p><em>(PHP 5 &amp;gt;= 5.1.0)&lt;br/&gt;
+String representation of object</em></p>
+                
+
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                            &mdash; <p>the string representation of the object or null</p>
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                                            <dt>See also</dt>
+                                                                <dd><a href="http://php.net/manual/en/serializable.serialize.php"><span class="namespace-wrapper">http://php.net/manual/en/serializable.serialize.php</span></a></dd>
+                                                                </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_unserialize" name="method_unserialize" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">unserialize()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">unserialize(string  <span class="argument">$serialized</span>) : void</pre>
+                <p><em>(PHP 5 &amp;gt;= 5.1.0)&lt;br/&gt;
+Constructs the object</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$serialized </td>
+                                <td><p>
+The string representation of the object.
+</p></td>
+                            </tr>
+                                            </table>
+                
+                
+                				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                                            <dt>See also</dt>
+                                                                <dd><a href="http://php.net/manual/en/serializable.unserialize.php"><span class="namespace-wrapper">http://php.net/manual/en/serializable.unserialize.php</span></a></dd>
+                                                                </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getInsertId" name="method_getInsertId" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">getInsertId()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getInsertId() : integer</pre>
+                <p><em>Return inserted id</em></p>
+                
+
+                
+                
+                                    <h4>Returns</h4>
+                    integer
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getRandKey" name="method_getRandKey" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">getRandKey()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getRandKey() : mixed</pre>
+                <p><em>Return random key</em></p>
+                
+
+                
+                
+                                    <h4>Returns</h4>
+                    mixed
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getLimit" name="method_getLimit" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">getLimit()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getLimit() : mixed</pre>
+                <p><em>Return data limit</em></p>
+                
+
+                
+                
+                                    <h4>Returns</h4>
+                    mixed
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getPage" name="method_getPage" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">getPage()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getPage() : integer</pre>
+                <p><em>Return data page</em></p>
+                
+
+                
+                
+                                    <h4>Returns</h4>
+                    integer
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getModelClass" name="method_getModelClass" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">getModelClass()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getModelClass() : \Ice\Core\Model</pre>
+                <p><em>Return target model class of data</em></p>
+                
+
+                
+                
+                                    <h4>Returns</h4>
+                    <a href="../classes/Ice.Core.Model.html">\Ice\Core\Model</a>
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_create" name="method_create" class="anchor"></a>
+            <article class="method">
+                <h3 class="protected ">create()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">create(  <span class="argument">$data</span>, null  <span class="argument">$hash = null</span>) : \Ice\Core\Data</pre>
+                <p><em>Create new instance of data</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$data </td>
+                                <td></td>
+                            </tr>
+                                                    <tr>
+                                <td>null</td>
+                                <td>$hash </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    <a href="../classes/Ice.Core.Data.html">\Ice\Core\Data</a>
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getDefaultKey" name="method_getDefaultKey" class="anchor"></a>
+            <article class="method">
+                <h3 class="protected ">getDefaultKey()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getDefaultKey() : string</pre>
+                <p><em>Return default data provider key</em></p>
+                
+
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Ice.Core.html"><div class="path-wrapper">\Ice\Core</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getResult" name="method_getResult" class="anchor"></a>
+            <article class="method">
+                <h3 class="protected ">getResult()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getResult() : array</pre>
+                <p><em>Result data</em></p>
+                
+
+                
+                
+                                    <h4>Returns</h4>
+                    array
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_applyTransformations" name="method_applyTransformations" class="anchor"></a>
+            <article class="method">
+                <h3 class="private ">applyTransformations()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">applyTransformations(  <span class="argument">$rows</span>) : mixed</pre>
+                <p><em>Apply all attached transformations</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$rows </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    mixed
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    </div>
+    </section>
+
+    <div id="source-view" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="source-view-label" aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="source-view-label">Data.php</h3>
+        </div>
+        <div class="modal-body">
+            <pre data-src="../files/Ice/Core/Data.php.txt" class="language-php line-numbers"></pre>
+        </div>
+    </div>
+
+    <footer class="row-fluid">
+        <section class="span10 offset2">
+            <section class="row-fluid">
+                <section class="span10 offset1">
+                    <section class="row-fluid footer-sections">
+                        <section class="span4">
+                                                        <h1><i class="icon-code"></i></h1>
+                            <div>
+                                <ul>
+                                                                            <li><a href="../namespaces/Ice.html">\Ice</a></li>
+                                                                    </ul>
+                            </div>
+                        </section>
+                        <section class="span4">
+                                                        <h1><i class="icon-bar-chart"></i></h1>
+                            <div>
+                                <ul>
+                                    <li><a href="../graphs/class.html">Class Hierarchy Diagram</a></li>
+                                </ul>
+                            </div>
+                        </section>
+                        <section class="span4">
+                                                        <h1><i class="icon-pushpin"></i></h1>
+                            <div>
+                                <ul>
+                                    <li><a href="../reports/errors.html">Errors</a></li>
+                                    <li><a href="../reports/markers.html">Markers</a></li>
+                                </ul>
+                            </div>
+                        </section>
+                    </section>
+                </section>
+            </section>
+            <section class="row-fluid">
+                <section class="span10 offset1">
+                    <hr />
+                    Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor </a> and authored
+                    on October 23rd, 2014 at 13:26.
+                </section>
+            </section>
+        </section>
+    </footer>
+</div>
+
+</body>
+</html>

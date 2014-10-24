@@ -1,0 +1,26 @@
+<?php
+use Ice\Helper\Php;
+
+?><meta charset="UTF-8"/>
+<div style="font-size: 12px;font-family: Tahoma, Geneva, sans-serif; background-color: #ffffff; color: #000000;">
+    <div id="<?= microtime(true); ?>" class="alert alert-<?= $type ?>">
+        <?php if (isset($previous)) { ?>
+            <hr>
+            <div style="color: #000000;">
+                <em><?= $time ?></em> -
+                host: <strong><?= $host ?></strong>
+                | uri: <strong><?= $uri ?></strong>
+                <?php if (!empty($referer)) { ?> | referer: <strong><?= $referer ?></strong><?php } ?>
+                <?php if (!empty($lastTemplate)) { ?> | lastTemplate: <strong><?= $lastTemplate ?></strong><?php } ?>
+            </div>
+        <?php } ?>
+        <pre><span style="color: red;"><?= $message ?></span><?= "\n\t" ?><span style="color: blue;"><?= $errPoint ?></span></pre>
+        <?php if (!empty($errcontext)) { ?>
+            <span style="font-size: 12px;"><?= highlight_string(Php::varToPhpString($errcontext), true) ?></span>
+        <?php } ?>
+        <pre style="margin: 0;"><?= str_replace('#', '</span>#', str_replace('):', '):<span style="color: grey;">', str_replace(ROOT_DIR, '/', $stackTrace))) ?></pre>
+        <?php if (isset($previous)) { ?>
+            <?= $previous ?>
+        <?php } ?>
+    </div>
+</div>

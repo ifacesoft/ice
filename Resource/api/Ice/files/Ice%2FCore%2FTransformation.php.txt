@@ -1,0 +1,36 @@
+<?php
+namespace Ice\Core;
+
+/**
+ * Transformation of data rows
+ *
+ * @package Ice\Core
+ * @author dp <denis.a.shestakov@gmail.com>
+ * @version stable_0
+ */
+abstract class Transformation
+{
+
+    /**
+     * Return inctance of Transform class
+     *
+     * @param $transformationName
+     * @return Transformation
+     */
+    public static function getInstance($transformationName)
+    {
+        $transformation = $transformationName;
+
+        return new \Transformation_User_Avatar();
+    }
+
+    /**
+     * Apply transformation for data rows
+     *
+     * @param $modelClass
+     * @param array $rows
+     * @param $params
+     * @return array
+     */
+    abstract function transform($modelClass, array $rows, $params);
+} 

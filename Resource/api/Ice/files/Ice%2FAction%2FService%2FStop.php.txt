@@ -1,0 +1,48 @@
+<?php
+
+namespace Ice\Action;
+
+use Ice\Core\Action_Context;
+
+/**
+ * Stop action service
+ *
+ * @package Ice\Action
+ * @author dp <denis.a.shestakov@gmail.com>
+ */
+class Service_Stop extends Service
+{
+    /**
+     * Run action
+     *
+     *  public static $config = [
+     *      'staticActions' => [],          // предопределенные экшины
+     *      'layout' => null,               // Emmet style layout
+     *      'template' => null,             // Template of view
+     *      'output' => null,               // Output type: standart|file
+     *      'viewRenderClassName' => null,  // Render class for view (example: Ice:Php)
+     *      'inputDefaults' => [],          // Default input data
+     *      'inputValidators' => [],        // Input data validators
+     *      'inputDataProviderKeys' => [],  // InputDataProviders keys
+     *      'outputDataProviderKeys' => [], // OutputDataProviders keys
+     *      'cacheDataProviderKey' => ''    // Cache data provider key
+     *  ];
+     *
+     * @param array $input
+     * @param Action_Context $actionContext
+     * @return array
+     */
+    protected function run(array $input, Action_Context $actionContext)
+    {
+        $actionService = $this->getActionService($input);
+
+        switch ($actionService->getStatus()) {
+            case Service::STATUS_OFF:
+                echo 'Сервис "' . $actionService->getClassName() . '" уже остановлен' . "\n";
+                break;
+            default:
+                $actionService->setStatus(Service::STATUS_OFF);
+                echo 'Сервису "' . $actionService->getClassName() . '" послан сигнал для останова' . "\n";
+        }
+    }
+}
