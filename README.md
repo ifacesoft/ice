@@ -110,3 +110,8 @@ Ice project structure
 Ice Quick Guide
 -------------------
 
+      $ curl -s http://getcomposer.org/installer | php
+      $ php composer.phar create-project ifacesoft/ice Ice dev-master
+      $ ./Ice/cli Ice:Module_Create
+      
+Good luck! 
