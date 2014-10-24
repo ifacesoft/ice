@@ -1,4 +1,4 @@
-[Ice](http://iceframework.net)
+Ice [iceframework.net](http://iceframework.net)
 ===
 
 Ice is a general purpose PHP-framework.
@@ -9,7 +9,7 @@ flexible configuration and the ability to easily extend existing functionality.
 History
 -------------------
 
-Development of the project began in December 2013.
+Development of the project since at December 2013.
 
 Features
 -------------------
@@ -49,24 +49,64 @@ Abilities
 * Performing the action on the route, defined by the requested address (url)
 * Override the default settings through creation of the configuration file
 
-Directory structure
+Ice project structure
 -------------------
 
-      Action/               All User actions
-      Config/               Configuration files
-      Core/                 Core classes, interfaces
-      Data/
-            Provider/       Imlementations of data providers (such as Redis, File, Apc etc.)
-            Source/         Imlementations of data sources (such as Mysqli, Defined etc.)
-      Helper/               Helper classes
-      Model/                Models
-      Query/
-            Translator/     Imlementations translators for translate query
-      Resource/             Project resources (css, js, images, etc.)
-      Validator/            Validators
-      Vendor/               Third-party libraries
-      View/
-            Render/         Implementations of view renders
+      _cache/                 Cache files for separate projects
+      _log/                   Log files for separate projects
+      _resource/              Resource files (javascript, css, images etc.) for separate projects
+      _storage/               File storage
+      _vendor/                Vendors (loaded via composer)
+      
+      Ice/              Ice module (Main required module)
+            Config/           Configuration files (php format)
+                  Ice/              Configuration files for Ice module
+            Resources/        Resource files
+                  css/              Css resources
+                  Ice/              Resource for Ice module (views, localization files etc.)
+                  img/              Image resources 
+                  js/               Javascript resources
+            Source/           Source files
+                  Ice/              Source files for Ice module
+                        Action/           Ice actions (Ice:Model_Create, Ice:Resource, Ice:Composer_Update, Ice:Phpdoc_Generate etc.)
+                        Core/             Core classes and interfaces
+                        Data/
+                              Provider/   Implementations of data providers (Ice:Apc, Ice:Redis, Ice:File etc.)
+                              Source/     Implementations of data sources (now only Ice:Mysqli)
+                        Exception/        Exceptions
+                        Form/             Forms
+                        Helper            Helpers
+                        Query/Translator/ Implementations of query translators (now only Ice:Mysqli)
+                        Validator/        Implementations of validators (Ice:Not_Null, Ice:Pattern etc.)
+                        View/Render/      Implementations of view renders
+                        Bootstrap.php     Bootstrapping class file
+                        Core.php          Core trait file
+                  Ice.php           Main application class file
+            Web/              Web root directory
+                  index.php         Directory index file
+            app.php           Application run script file
+            branch.conf.php   module branch in vcs
+            cli               Command line interface
+            composer.json     Composer settings
+            composer.phar     Composer run script
+            
+      MyProject/        Your module
+            Config /          Configuration files (php format)
+                  Ice/              Overridden configuration files for Ice module
+                  Mp/               Configuration files for your module (MyProject)
+            Resource/         Resource files
+                  Ice/              Overridden resource files for Ice module
+                  Mp/               Resource for your module (MyProject) (views, localization files etc.)
+            Source/           Source files
+                  Ice/              Overridden source files for Ice module (not recommended)
+                  Mp/               Source files for your module (MyProject)
+                        Action/           Action classes for your module (MyProject)
+                        Model/            Model classes for your module (MyProject)
+                        ...               Other implementations of core ice classes and interfaces
+            Web/              Web root directory
+                  index.php         Directory index file
 
 
-Ice is Great!!!
+Ice Quick Guide
+-------------------
+

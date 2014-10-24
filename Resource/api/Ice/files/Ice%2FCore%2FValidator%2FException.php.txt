@@ -1,9 +1,0 @@
-<?php
-namespace Ice\Core;
-
-use Ice\Core\Exception;
-
-class Validator_Exception extends Exception
-{
-
-}
