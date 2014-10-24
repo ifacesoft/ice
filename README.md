@@ -27,7 +27,7 @@ Features
 Architecture
 -------------------
 
-Ice is originally written in the programming language PHP 5.5. Basic functionality is written using namespaces.
+Ice is originally written in the programming language PHP 5.4. Basic functionality is written using namespaces.
 All classes, with rare exceptions, are loaded using the integrated automatic class loading mechanism.
 By default web applications made with the Ice framework use a Model-View-Action approach.
 Framework supports modular structure. Thus, the functional expansion can be achieved by adding new modules to your web project.
