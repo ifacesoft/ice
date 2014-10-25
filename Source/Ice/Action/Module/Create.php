@@ -51,7 +51,6 @@ class Module_Create extends Action
      *  ];
      */
     public static $config = [
-//        'staticActions' => 'Ice:Module_Update',
         'viewRenderClassName' => 'Ice:Php',
         'inputDefaults' => [
             'name' => [
