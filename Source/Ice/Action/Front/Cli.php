@@ -51,30 +51,17 @@ class Front_Cli extends Action
         'inputDataProviderKeys' => [Data_Provider_Cli::DEFAULT_KEY],
         'inputDefaults' => [
             'action' => [
-                'default' => 'Ice:Deploy',
+                'default' => 'Ice:Module_Deploy',
                 'title' => 'Action [{$0}]: ',
                 'validators' => [
-                    'validator' => 'Ice:Pattern',
-                    'params' => '/^[:a-z]+$/i',
-                    'message' => 'Action mast conteints only letters and sign ":"'
+                    'Ice:Pattern' => [
+                        'params' => '/^[:a-z]+$/i',
+                        'message' => 'Action mast conteints only letters and sign ":"'
+                    ]
                 ]
             ],
         ]
     ];
-
-    /**
-     * Run action
-     *
-     * @param array $input
-     * @param Action_Context $actionContext
-     * @return array
-     */
-    protected function run(array $input, Action_Context $actionContext)
-    {
-        ini_set('memory_limit', '1024M');
-
-        $actionContext->addAction($input['action'], $input, 'cli');
-    }
 
     /**
      * Flush action context.
@@ -97,5 +84,19 @@ class Front_Cli extends Action
         $view->setParams($data);
 
         return $view;
+    }
+
+    /**
+     * Run action
+     *
+     * @param array $input
+     * @param Action_Context $actionContext
+     * @return array
+     */
+    protected function run(array $input, Action_Context $actionContext)
+    {
+        ini_set('memory_limit', '1024M');
+
+        $actionContext->addAction($input['action'], $input, 'cli');
     }
 }
