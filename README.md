@@ -1,4 +1,4 @@
-Ice [iceframework.net](http://iceframework.net)
+Ice &rarr; [iceframework.net](http://iceframework.net)
 ===
 
 Ice is a general purpose PHP-framework.
@@ -6,10 +6,12 @@ You may fully rely on Ice while developing complex web-applications.
 Ice key features are the built-in cache support of the main components,
 flexible configuration and the ability to easily extend existing functionality.
 
+
 History
 -------------------
 
 Development of the project since at December 2013.
+
 
 Features
 -------------------
@@ -24,6 +26,7 @@ Features
 * Includes a convenient tools for profiling and debugging
 * Distributed under the copyleft license
 
+
 Architecture
 -------------------
 
@@ -37,6 +40,7 @@ All data structures are stored in the configuration files of model schemas.
 Model data fields are based on the model mapping configuration file.
 This ensures adherence to a naming model fields.
 
+
 Abilities
 -------------------
 
@@ -49,7 +53,8 @@ Abilities
 * Performing the action on the route, defined by the requested address (url)
 * Override the default settings through creation of the configuration file
 
-Ice project structure
+
+Project structure
 -------------------
 
       _cache/                 Cache files for separate projects
@@ -107,11 +112,32 @@ Ice project structure
                   index.php         Directory index file
 
 
-Ice Quick Guide
+Quick Start Guide
 -------------------
+
+bash:
 
       $ curl -s http://getcomposer.org/installer | php
       $ php composer.phar create-project ifacesoft/ice Ice dev-master
       $ ./Ice/cli Ice:Module_Create
-      
+
+cmd (require php extensions: openssl):
+
+      >set PATH=%PATH%;C:\php;C:\Program Files\Mercurial;C:\Program Files (x86)\Git\bin;C:\Program Files (x86)\Subversion\bin
+      >php -r "readfile('https://getcomposer.org/installer');" | php
+      >php composer.phar create-project ifacesoft/ice Ice dev-master
+      >php .\Ice\app.php Ice:Module_Create
+      >mkdir .\_log\{$YOUR MODULE NAME}
+
+
+Documentation
+-------------------
+
+More info on [iceframework.net](http://iceframework.net) such as:
+
+* [Handbook](http://iceframework.net/handbook)
+* [Cookbook](http://iceframework.net/cookbook)
+* [FAQ](http://iceframework.net/faq)
+* [Api](http://iceframework.net/api)
+
 Good luck! 
