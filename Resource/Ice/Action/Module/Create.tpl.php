@@ -2,14 +2,14 @@
 use Ice\Helper\Console;
 ?>
 
-<?= Console::getText('Please modify your hosts file (\'/etc/hosts\' or \'%SystemRoot%\system32\drivers\etc\host\')', Console::C_GRAY_B, Console::BG_GREEN) ?>
+<?= Console::getText('Please modify your hosts file (\'/etc/hosts\' or \'%SystemRoot%\system32\drivers\etc\host\')', Console::C_BLACK_B, Console::BG_GREEN) ?>
 
 
 127.0.0.1       <?= strtolower($moduleName) . '.global' ?> <?= strtolower($moduleName) . '.test' ?> <?= strtolower($moduleName) . '.local' ?>
 
 
 
-<?= Console::getText('For nginx web-server add new \'server\' section', Console::C_GRAY_B, Console::BG_GREEN) ?>
+<?= Console::getText('For nginx web-server add new \'server\' section', Console::C_BLACK_B, Console::BG_GREEN) ?>
 
 
 server {
