@@ -63,7 +63,7 @@ server {
 }
 
 
-<?= Console::getText('For nginx web-server add new \'server\' section', Console::C_GRAY_B, Console::BG_GREEN) ?>
+<?= Console::getText('For nginx web-server add new \'server\' section', Console::C_BLACK_B, Console::BG_GREEN) ?>
 
 
 <VirtualHost *:80>
