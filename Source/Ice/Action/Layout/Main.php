@@ -10,6 +10,7 @@
 namespace Ice\Action;
 
 use Ice\Core\Action;
+use Ice\Core\Action_Context;
 
 /**
  * Class Layout_Main

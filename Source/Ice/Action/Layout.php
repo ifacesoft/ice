@@ -61,5 +61,7 @@ abstract class Layout extends Action
         foreach ($input['actions'] as $var => $action) {
             $actionContext->addAction($action, [], $var);
         }
+
+        return ['moduleName' => basename(MODULE_DIR)];
     }
 }

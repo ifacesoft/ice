@@ -11,15 +11,58 @@
     <?= $Resources[0] ?>
 </head>
 <body>
-<div id="iceMessages" class='notifications top-right'></div>
-<!--[if lt IE 7]>
-<p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade
-    your browser</a> to improve your experience.</p>
-<![endif]-->
+<div id="Layout_Main" class="container">
+    <div id="iceMessages" class='notifications top-right'></div>
 
-<div id="Layout_Main">
-    <div class="container">
+    <!--[if lt IE 7]>
+    <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade
+        your browser</a> to improve your experience.</p>
+    <![endif]-->
+
+    <div>
+        <div style="font-size: 32px;">
+            <a href="http://iceframework.net">
+                <img src="/resource/img/logo/ice400.jpg" style="height: 100px;"/> Ice
+            </a>
+            PHP Framework
+        </div>
+        <div class="jumbotron">
+            <h1 style="text-align: center">
+                Congratulations!
+                You've done it <span class="glyphicon glyphicon-thumbs-up">
+                </span>
+            </h1>
+        </div>
+        <nav class="navbar navbar-default" role="navigation">
+            <div class="container-fluid">
+                <!-- Brand and toggle get grouped for better mobile display -->
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="/">
+                        <img alt="Brand" src="/resource/img/logo/ice400.jpg" style="height: 22px;">
+                        <?= $moduleName ?>
+                    </a>
+                </div>
+
+                <!-- Collect the nav links, forms, and other content for toggling -->
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                    <ul class="nav navbar-nav nav-justified" style="width: 80%;">
+                        <li class="first" style="float: none;"><a href="http://iceframework.net">Iceframework</a></li>
+                        <li style="float: none;"><a href="#">Ice on github</a></li>
+                        <li style="float: none;"><a href="http://iceframework.net/handbook">Handbook</a></li>
+                        <li style="float: none;"><a href="http://iceframework.net/cookbook">Cookbook</a></li>
+                        <li style="float: none;"><a href="http://iceframework.net/api">Api</a></li>
+                        <li style="float: none;"><a href="http://iceframework.net/faq">Faq</a></li>
+                        <li class="last" style="float: none;"><a href="http://iceframework.net/demo">Demo</a></li>
+                    </ul>
+                </div><!-- /.navbar-collapse -->
+            </div><!-- /.container-fluid -->
+        </nav>
         <?= $main ?>
+    </div>
+</div>
+<div class="footer">
+    <div class="container" style="text-align: right; font-size: 24px;">
+        Powered by <a href="http://iceframework.net"><strong>Ice</strong></a>
     </div>
 </div>
 </body>

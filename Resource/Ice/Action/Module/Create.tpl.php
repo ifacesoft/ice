@@ -2,14 +2,14 @@
 use Ice\Helper\Console;
 ?>
 
-<?= Console::getText('Please modify your hosts file (\'/etc/hosts\' or \'%SystemRoot%\system32\drivers\etc\host\')', Console::C_BLACK_B, Console::BG_GREEN) ?>
+<?= Console::getText(' Please modify your hosts file (\'/etc/hosts\' or \'%SystemRoot%\system32\drivers\etc\host\') ', Console::C_BLACK_B, Console::BG_GREEN) ?>
 
 
 127.0.0.1       <?= strtolower($moduleName) . '.global' ?> <?= strtolower($moduleName) . '.test' ?> <?= strtolower($moduleName) . '.local' ?>
 
 
 
-<?= Console::getText('For nginx web-server add new \'server\' section', Console::C_BLACK_B, Console::BG_GREEN) ?>
+<?= Console::getText(' For nginx web-server add new \'server\' section ', Console::C_BLACK_B, Console::BG_GREEN) ?>
 
 
 server {
@@ -63,7 +63,7 @@ server {
 }
 
 
-<?= Console::getText('For nginx web-server add new \'server\' section', Console::C_BLACK_B, Console::BG_GREEN) ?>
+<?= Console::getText(' For apache web-server add new \'vhost\' directive ', Console::C_BLACK_B, Console::BG_GREEN) ?>
 
 
 <VirtualHost *:80>
@@ -86,12 +86,9 @@ server {
 </VirtualHost>
 
 
-<?= Console::getText('READ UPPER FOR VALID INSTALL!', Console::C_RED_B, Console::BG_YELLOW) ?>
+<?= Console::getText('ATTENTION!!! FIRST READ UPPER FOR VALID INSTALL! ', Console::C_RED_B, Console::BG_YELLOW) ?>
 
 
-<?= Console::getText('Congratulations! Open in browser: http://' . strtolower($moduleName) . '.local', Console::C_GREEN_B) ?>
-
-
-<?= Console::getText('Don\'t worry! First time errors is norm ', Console::C_BLUE) ?>
+<?= Console::getText('Congratulations!' . "\n" .  'After web-server setting open in browser: http://' . strtolower($moduleName) . '.local', Console::C_GREEN_B) ?>
 
 

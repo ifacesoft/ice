@@ -55,6 +55,6 @@ class <?=$actionName?> extends Action
      */
     protected function run(array $input, Action_Context $actionContext)
     {
-        return ['errors' => 'Implement run() method of action class <?=$actionName?>.'];
+        return ['errors' => 'Need implement run() method of action class <?=$actionName?>.'];
     }
 }
