@@ -18,6 +18,7 @@ use Ice\Core\Loader;
 use Ice\Core\Model;
 use Ice\Core\Module;
 use Ice\Data\Provider\Router;
+use Ice\Helper\Arrays;
 use Ice\Helper\Directory;
 use JSMin;
 
@@ -270,10 +271,10 @@ class Resources extends Action
 
         $this->pack($resources);
 
-        return [
-            'js' => array_unique(array_column($resources['js'], 'url')),
-            'css' => array_unique(array_column($resources['css'], 'url'))
-        ];
+        return array(
+            'js' => array_unique(Arrays::column($resources['js'], 'url')),
+            'css' => array_unique(Arrays::column($resources['css'], 'url'))
+        );
     }
 
     /**

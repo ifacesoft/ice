@@ -23,8 +23,8 @@ server {
     access_log  <?= LOG_DIR ?>access.log  combined;
     error_log  <?= LOG_DIR ?>error.log;
 
-    root   <?= ROOT_DIR ?><?= $moduleName ?>/Web;
-    index  index.php;
+    root <?= ROOT_DIR ?><?= $moduleName ?>/Web;
+    index index.php;
 
     location ^~ /resource
     {
@@ -43,7 +43,7 @@ server {
     }
 
     location / {
-        try_files $uri $uri/ /index.php?$args;
+        try_files $uri /index.php?$is_args$args;
     }
 
     location ~ \.php$ {
@@ -56,7 +56,35 @@ server {
         fastcgi_buffers 4 256k;
         fastcgi_busy_buffers_size 512k;
     }
+
+    location ~ /\. {
+        deny  all;
+    }
 }
+
+
+<?= Console::getText('For nginx web-server add new \'server\' section', Console::C_GRAY_B, Console::BG_GREEN) ?>
+
+
+<VirtualHost *:80>
+    ServerName <?= strtolower($moduleName) . '.local' ?>
+    ServerAlias <?= strtolower($moduleName) . '.global' ?> <?= strtolower($moduleName) . '.test' ?>
+
+    DocumentRoot <?= ROOT_DIR ?><?= $moduleName ?>/Web
+    DirectoryIndex index.php
+
+    Alias /resource/ <?= RESOURCE_DIR ?>
+
+    CustomLog <?= LOG_DIR ?>access.log combined
+    ErrorLog <?= LOG_DIR ?>error.log
+
+    <Directory <?= ROOT_DIR ?>>
+        AllowOverride All
+        Order allow,deny
+        Allow from All
+    </Directory>
+</VirtualHost>
+
 
 <?= Console::getText('READ UPPER FOR VALID INSTALL!', Console::C_RED_B, Console::BG_YELLOW) ?>
 
