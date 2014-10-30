@@ -38,7 +38,7 @@ use Ice\Helper\Vcs;
 class Module_Create extends Action
 {
     /**  public static $config = [
-     *      'staticActions' => [],          // actions
+     *      'afterActions' => [],          // actions
      *      'layout' => null,               // Emmet style layout
      *      'template' => null,             // Template of view
      *      'output' => null,               // Output type: standart|file
@@ -51,7 +51,7 @@ class Module_Create extends Action
      *  ];
      */
     public static $config = [
-//        'staticActions' => 'Ice:Module_Update',
+//        'afterActions' => 'Ice:Module_Update',
         'viewRenderClassName' => 'Ice:Php',
         'inputDefaults' => [
             'name' => [

@@ -89,15 +89,16 @@ class Collection implements IteratorAggregate
     /**
      * Return raw data
      *
+     * @param string $fieldNames
      * @return Data
      */
-    public function getData()
+    public function getData($fieldNames = '*')
     {
         if ($this->_data !== null) {
             return $this->_data;
         }
 
-        $this->_data = $this->getQueryBuilder()->select('*')->getQuery()->getData();
+        $this->_data = $this->getQueryBuilder()->select($fieldNames)->getQuery()->getData();
 
         return $this->_data;
     }

@@ -33,7 +33,7 @@ use Ice\Data\Provider\Cli as Data_Provider_Cli;
 class Front_Cli extends Action
 {
     /**  public static $config = [
-     *      'staticActions' => [],          // actions
+     *      'afterActions' => [],          // actions
      *      'layout' => null,               // Emmet style layout
      *      'template' => null,             // Template of view
      *      'output' => null,               // Output type: standart|file
@@ -51,7 +51,7 @@ class Front_Cli extends Action
         'inputDataProviderKeys' => [Data_Provider_Cli::DEFAULT_KEY],
         'inputDefaults' => [
             'action' => [
-                'default' => 'Ice:Deploy',
+                'default' => 'Ice:Module_Deploy',
                 'title' => 'Action [{$0}]: ',
                 'validators' => [
                     'validator' => 'Ice:Pattern',

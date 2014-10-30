@@ -39,7 +39,7 @@ abstract class Action extends Container
      * @var array
      */
     public static $configDefaults = [
-        'staticActions' => [],
+        'afterActions' => [],
         'layout' => null,
         'template' => null,
         'output' => null,
@@ -194,7 +194,7 @@ abstract class Action extends Container
                 }
             }
 
-            $actionContext->addAction($config->gets('staticActions', false));
+            $actionContext->addAction($config->gets('afterActions', false));
 
             $params = $this->getParams($config->gets('outputDataProviderKeys', false), (array)$this->run($input, $actionContext));
 
@@ -275,7 +275,7 @@ abstract class Action extends Container
 
     /**
      *  public static $config = [
-     *      'staticActions' => [],          // actions
+     *      'afterActions' => [],          // actions
      *      'layout' => null,               // Emmet style layout
      *      'template' => null,             // Template of view
      *      'output' => null,               // Output type: standart|file

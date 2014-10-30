@@ -576,10 +576,8 @@ abstract class Model
      */
     public static function getRows($fieldNames)
     {
-        return self::getQueryBuilder()
-            ->select($fieldNames)
-            ->getQuery()
-            ->getData()
+        return self::getCollection()
+            ->getData($fieldNames)
             ->getRows();
     }
 

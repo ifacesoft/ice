@@ -34,7 +34,7 @@ class Phpuml_Generate extends Action
 
     /**
      *  public static $config = [
-     *      'staticActions' => [],          // actions
+     *      'afterActions' => [],          // actions
      *      'layout' => null,               // Emmet style layout
      *      'template' => null,             // Template of view
      *      'output' => null,               // Output type: standart|file
@@ -48,7 +48,7 @@ class Phpuml_Generate extends Action
      */
     public static $config = [
         'template' => '',
-        'staticActions' => [
+        'afterActions' => [
             'Ice:Cache_Clear'
         ]
     ];

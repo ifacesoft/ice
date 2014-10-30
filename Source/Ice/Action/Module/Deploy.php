@@ -31,7 +31,7 @@ use Ice\Core\Action_Context;
 class Module_Deploy extends Action
 {
     /**  public static $config = [
-     *      'staticActions' => [],          // actions
+     *      'afterActions' => [],          // actions
      *      'layout' => null,               // Emmet style layout
      *      'template' => null,             // Template of view
      *      'output' => null,               // Output type: standart|file
@@ -44,7 +44,7 @@ class Module_Deploy extends Action
      *  ];
      */
     public static $config = [
-        'staticActions' => [
+        'afterActions' => [
             'Ice:Cache_Clear',
             'Ice:Data_Scheme_Update',
         ],

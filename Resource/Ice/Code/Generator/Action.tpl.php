@@ -8,8 +8,6 @@ use Ice\Core\View;
 
 use Ice\Core\Action;
 use Ice\Core\Action_Context;
-use Ice\Core\Exception;
-use Ice\View\Render\Php;
 
 /**
  * Class <?=$actionName?>
@@ -27,7 +25,7 @@ use Ice\View\Render\Php;
 class <?=$actionName?> extends Action
 {
     /**  public static $config = [
-     *      'staticActions' => [],          // actions
+     *      'afterActions' => [],          // actions
      *      'layout' => null,               // Emmet style layout
      *      'template' => null,             // Template of view
      *      'output' => null,               // Output type: standart|file
