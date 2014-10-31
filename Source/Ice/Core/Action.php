@@ -287,7 +287,9 @@ abstract class Action extends Container
      *      'cacheDataProviderKey' => ''    // Cache data provider key
      *  ];
      *
-     * public static $config = [];
+     * public static $config = [
+     *      'viewRenderClass' => 'Ice:Php'
+     * ];
      *
      * /** Run action
      *

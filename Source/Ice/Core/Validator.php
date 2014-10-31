@@ -35,25 +35,25 @@ abstract class Validator extends Container
      * example usage:
      * ```php
      *      $validateScheme = [
-     *          'name' => 'PATTERN_NAME'
+     *          'FIELD_NAME' => 'VALIDATOR_NAME'
      *      ];
      * ```
      * or
      * ```php
      *      $validateScheme = [
-     *          'name' => [
-     *              'PATTERN_NAME' => 'PATTERN_PARAM'
+     *          FIELD_NAME' => [
+     *              'VALIDATOR_NAME' => 'VALIDATOR_PARAM'
      *          ]
      *      ];
      * ```
      * or
      * ```php
      *      $validateScheme = [
-     *          'name' => [
-     *              'PATTERN_NAME' => [
+     *          'FIELD_NAME' => [
+     *              'VALIDATOR_NAME' => [
      *                  'params' => [
-     *                      'PATTERN_PARAM_NAME1' => 'PATTERN_PARAM_VALUE1',
-     *                      'PATTERN_PARAM_NAME2 => 'PATTERN_PARAM_VALUE2'
+     *                      'VALIDATOR_PARAM_NAME1' => 'VALIDATOR_PARAM_VALUE1',
+     *                      'VALIDATOR_PARAM_NAME2 => 'VALIDATOR_PARAM_VALUE2'
      *                  ],
      *                  'message => 'validate failed for {$0}'
      *              ]
@@ -113,11 +113,7 @@ abstract class Validator extends Container
      *
      * example usage:
      * ```php
-     *      $params = 'PATTERN_NAME';
-     * ```
-     * or
-     * ```php
-     *      $params = [PATTERN_NAME' => 'PATTERN_PARAM'];
+     *      $params = 'VALIDATOR_PARAM';
      * ```
      * or
      * ```php
