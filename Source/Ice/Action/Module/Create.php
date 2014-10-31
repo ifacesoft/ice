@@ -269,8 +269,6 @@ class Module_Create extends Action
 
         File::createData($moduleDir . 'Config/Ice/Core/Module.php', $module);
 
-        Vcs::init($input['vcs'], $moduleDir);
-
         File::createData($moduleDir . 'branch.conf.php', Vcs::getDefaultBranch($input['vcs']));
 
         copy(ICE_DIR . 'cli', $moduleDir . 'cli');
@@ -287,6 +285,8 @@ class Module_Create extends Action
         unset($composer['license']);
 
         File::createData($moduleDir . 'composer.json', Json::encode($composer, true), false);
+
+        Vcs::init($input['vcs'], $moduleDir);
 
         Response::send(Module_Create::getLogger()->info(['Module {$0} created', $moduleName], Logger::SUCCESS, true, false));
 

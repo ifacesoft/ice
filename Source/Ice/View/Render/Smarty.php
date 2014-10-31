@@ -137,7 +137,8 @@ class Smarty extends View_Render
             return $smartyTemplate->fetch();
         } catch (\Exception $e) {
             if (Environment::isDevelopment()) {
-                View::getLogger()->info([Smarty::getClassName() . ': View {$0} not found. Trying generate template {$1}...', [$template, Smarty::getClassName()]], Logger::WARNING);
+                View::getLogger()->info(Smarty::getClassName() . ': ' . $e->getMessage(), Logger::WARNING);
+                View::getLogger()->info(['View {$0} not found. Trying generate template {$1}...', [$template, Smarty::getClassName()]], Logger::WARNING);
 
                 /** @var \Smarty_Internal_Template $smartyTemplate */
                 $smartyTemplate = $this->_smarty->createTemplate('string:' . Smarty::getCodeGenerator()->generate($template));

@@ -2,7 +2,7 @@
 
 return [
     'ice_404' => [
-        'route' => '404',
+        'route' => '/404',
         'GET' => [
             'actions' => [
                 'title' => ['Ice:Title' => ['title' => '404 Not Found']],
@@ -11,7 +11,7 @@ return [
         ]
     ],
     'ice_500' => [
-        'route' => '500',
+        'route' => '/500',
         'GET' => [
             'actions' => [
                 'title' => ['Ice:Title' => ['title' => '500 Internal Server Error']],

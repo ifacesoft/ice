@@ -20,19 +20,6 @@
     <![endif]-->
 
     <div>
-        <div style="font-size: 32px;">
-            <a href="http://iceframework.net">
-                <img src="/resource/img/logo/ice400.jpg" style="height: 100px;"/> Ice
-            </a>
-            PHP Framework
-        </div>
-        <div class="jumbotron">
-            <h1 style="text-align: center">
-                Congratulations!
-                You've done it <span class="glyphicon glyphicon-thumbs-up">
-                </span>
-            </h1>
-        </div>
         <nav class="navbar navbar-default" role="navigation">
             <div class="container-fluid">
                 <!-- Brand and toggle get grouped for better mobile display -->
