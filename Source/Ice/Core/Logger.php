@@ -86,9 +86,9 @@ class Logger
      * @var array
      */
     public static $consoleColors = [
-        self::INFO => Console::C_BLUE,
-        self::WARNING => Console::C_YELLOW_B,
-        self::DANGER => Console::C_RED_B,
+        self::INFO => Console::C_CYAN,
+        self::WARNING => Console::C_YELLOW,
+        self::DANGER => Console::C_RED,
         self::SUCCESS => Console::C_GREEN,
         self::DEBUG => Console::C_CYAN,
         self::MESSAGE => Console::C_MAGENTA,

@@ -31,7 +31,7 @@ use Ice\Core\Action_Context;
 class Http_Status_500 extends Action
 {
     /**  public static $config = [
-     *      'staticActions' => [],          // actions
+     *      'afterActions' => [],          // actions
      *      'layout' => null,               // Emmet style layout
      *      'template' => null,             // Template of view
      *      'output' => null,               // Output type: standart|file

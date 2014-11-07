@@ -1,3 +1,9 @@
-<h3>Default twig template</h3>
-{% if errors is defined %}{{ errors }}{% endif %}<br>
-{% if main is defined %}{{ main }}{% endif %}
+<div class="alert alert-success" role="alert">
+    Default twig template successfuly created! Rewrite it.
+</div>
+<div class="alert alert-info" role="alert">
+    {% if errors is defined %}{{ errors }}{% endif %}
+</div>
+<div>
+    {% if main is defined %}{{ main }}{% endif %}
+</div>

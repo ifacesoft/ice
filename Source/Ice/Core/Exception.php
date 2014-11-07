@@ -62,8 +62,8 @@ class Exception extends ErrorException
                         array_map(
                             function ($var) {
                                 return '{$' . $var . '}';
-                            }, array_keys($message[1])
-                        ), array_values($message[1]),
+                            }, array_keys((array)$message[1])
+                        ), array_values((array)$message[1]),
                         $message[0]);
                 }
 

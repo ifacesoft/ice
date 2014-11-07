@@ -30,7 +30,7 @@ use Ice\Core\Action;
 class Layout_Blank extends Layout
 {
     /**  public static $config = [
-     *      'staticActions' => [],          // actions
+     *      'afterActions' => [],          // actions
      *      'layout' => null,               // Emmet style layout
      *      'template' => null,             // Template of view
      *      'output' => null,               // Output type: standart|file

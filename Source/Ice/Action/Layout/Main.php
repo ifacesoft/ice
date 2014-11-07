@@ -10,6 +10,7 @@
 namespace Ice\Action;
 
 use Ice\Core\Action;
+use Ice\Core\Action_Context;
 
 /**
  * Class Layout_Main
@@ -30,7 +31,7 @@ use Ice\Core\Action;
 class Layout_Main extends Layout
 {
     /**  public static $config = [
-     *      'staticActions' => [],          // actions
+     *      'afterActions' => [],          // actions
      *      'layout' => null,               // Emmet style layout
      *      'template' => null,             // Template of view
      *      'output' => null,               // Output type: standart|file
@@ -43,7 +44,7 @@ class Layout_Main extends Layout
      *  ];
      */
     public static $config = [
-        'staticActions' => ['Ice:Resources'],
+        'afterActions' => ['Ice:Resources'],
         'viewRenderClassName' => 'Ice:Php',
         'layout' => ''
     ];

@@ -31,7 +31,7 @@ use Ice\Core\Action_Context;
 abstract class Layout extends Action
 {
     /**  public static $config = [
-     *      'staticActions' => [],          // actions
+     *      'afterActions' => [],          // actions
      *      'layout' => null,               // Emmet style layout
      *      'template' => null,             // Template of view
      *      'output' => null,               // Output type: standart|file
@@ -44,7 +44,7 @@ abstract class Layout extends Action
      *  ];
      */
     public static $config = [
-        'staticActions' => ['Ice:Resources'],
+        'afterActions' => ['Ice:Resources'],
         'viewRenderClassName' => 'Ice:Php',
         'layout' => ''
     ];
@@ -61,5 +61,7 @@ abstract class Layout extends Action
         foreach ($input['actions'] as $var => $action) {
             $actionContext->addAction($action, [], $var);
         }
+
+        return ['moduleName' => basename(MODULE_DIR)];
     }
 }

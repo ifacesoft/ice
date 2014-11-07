@@ -15,7 +15,4 @@ return [
     'Not_Null: param {$0} is not valid' => [
         'ru' => 'Not_Null: param {$0} is not valid',
     ],
-    'Action mast conteints only letters and sign ":"' => [
-        'en' => 'Action mast conteints only letters and sign ":"',
-    ],
 ];

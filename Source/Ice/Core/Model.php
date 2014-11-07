@@ -115,7 +115,7 @@ abstract class Model
                 throw new Exception('Ambiguous pk: ' . var_export($row[$this->_pkName], true) . ' or ' . var_export($this->_pk, true));
             }
 
-            $this->_pk = $row[$this->_pkName];
+            $this->set($this->_pkName, $row[$this->_pkName]);
             unset($row[$this->_pkName]);
         }
 
@@ -252,7 +252,7 @@ abstract class Model
         $fieldName = $this->getFieldName($fieldName);
 
         if ($this->getPkName() == $fieldName) {
-            if ($isAffected && $this->_pk != $fieldValue) {
+            if ($isAffected) {
                 $this->_affected[$fieldName] = $fieldValue;
             }
 
@@ -262,7 +262,7 @@ abstract class Model
         }
 
         if (array_key_exists($fieldName, $this->_row)) {
-            if ($isAffected && $this->_row[$fieldName] != $fieldValue) {
+            if ($isAffected) {
                 $this->_affected[$fieldName] = $fieldValue;
             }
 
@@ -576,10 +576,8 @@ abstract class Model
      */
     public static function getRows($fieldNames)
     {
-        return self::getQueryBuilder()
-            ->select($fieldNames)
-            ->getQuery()
-            ->getData()
+        return self::getCollection()
+            ->getData($fieldNames)
             ->getRows();
     }
 
@@ -800,17 +798,11 @@ abstract class Model
      */
     public function insert($sourceName = null)
     {
-        $values = $this->get();
-
-        if ($this->_pk) {
-            $values[$this->getPkName()] = $this->_pk;
-        }
-
         /** @var Model $modelClass */
         $modelClass = get_class($this);
 
         $this->_pk = $modelClass::getQueryBuilder()
-            ->insert($values)
+            ->insert($this->_affected)
             ->getQuery($sourceName)
             ->getData()
             ->getInsertId();

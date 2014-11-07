@@ -164,7 +164,7 @@ class Action_Context
             /** @var Config $config */
             $config = $actionClass::getConfig();
 
-//            $this->_actions = $config->gets('staticActions', false);
+//            $this->_actions = $config->gets('afterActions', false);
             $this->_actions = [];
 
             $this->_viewData[$inputHash] = [

@@ -2,14 +2,14 @@
 use Ice\Helper\Console;
 ?>
 
-<?= Console::getText('Please modify your hosts file (\'/etc/hosts\' or \'%SystemRoot%\system32\drivers\etc\host\')', Console::C_GRAY_B, Console::BG_GREEN) ?>
+<?= Console::getText(' Please modify your hosts file (\'/etc/hosts\' or \'%SystemRoot%\system32\drivers\etc\host\') ', Console::C_BLACK_B, Console::BG_GREEN) ?>
 
 
 127.0.0.1       <?= strtolower($moduleName) . '.global' ?> <?= strtolower($moduleName) . '.test' ?> <?= strtolower($moduleName) . '.local' ?>
 
 
 
-<?= Console::getText('For nginx web-server add new \'server\' section', Console::C_GRAY_B, Console::BG_GREEN) ?>
+<?= Console::getText(' For nginx web-server add new \'server\' section ', Console::C_BLACK_B, Console::BG_GREEN) ?>
 
 
 server {
@@ -23,8 +23,8 @@ server {
     access_log  <?= LOG_DIR ?>access.log  combined;
     error_log  <?= LOG_DIR ?>error.log;
 
-    root   <?= ROOT_DIR ?><?= $moduleName ?>/Web;
-    index  index.php;
+    root <?= ROOT_DIR ?><?= $moduleName ?>/Web;
+    index index.php;
 
     location ^~ /resource
     {
@@ -43,7 +43,7 @@ server {
     }
 
     location / {
-        try_files $uri $uri/ /index.php?$args;
+        try_files $uri /index.php?$is_args$args;
     }
 
     location ~ \.php$ {
@@ -56,14 +56,39 @@ server {
         fastcgi_buffers 4 256k;
         fastcgi_busy_buffers_size 512k;
     }
+
+    location ~ /\. {
+        deny  all;
+    }
 }
 
-<?= Console::getText('READ UPPER FOR VALID INSTALL!', Console::C_RED_B, Console::BG_YELLOW) ?>
+
+<?= Console::getText(' For apache web-server add new \'vhost\' directive ', Console::C_BLACK_B, Console::BG_GREEN) ?>
 
 
-<?= Console::getText('Congratulations! Open in browser: http://' . strtolower($moduleName) . '.local', Console::C_GREEN_B) ?>
+<VirtualHost *:80>
+    ServerName <?= strtolower($moduleName) . '.local' ?>
+    ServerAlias <?= strtolower($moduleName) . '.global' ?> <?= strtolower($moduleName) . '.test' ?>
+
+    DocumentRoot <?= ROOT_DIR ?><?= $moduleName ?>/Web
+    DirectoryIndex index.php
+
+    Alias /resource/ <?= RESOURCE_DIR ?>
+
+    CustomLog <?= LOG_DIR ?>access.log combined
+    ErrorLog <?= LOG_DIR ?>error.log
+
+    <Directory <?= ROOT_DIR ?>>
+        AllowOverride All
+        Order allow,deny
+        Allow from All
+    </Directory>
+</VirtualHost>
 
 
-<?= Console::getText('Don\'t worry! First time errors is norm ', Console::C_BLUE) ?>
+<?= Console::getText('ATTENTION!!! FIRST READ UPPER FOR VALID INSTALL! ', Console::C_RED_B, Console::BG_YELLOW) ?>
+
+
+<?= Console::getText('Congratulations!' . "\n" .  'After web-server setting open in browser: http://' . strtolower($moduleName) . '.local', Console::C_GREEN_B) ?>
 
 

@@ -138,10 +138,20 @@ class Route extends Container
      * @return array
      * @throws File_Not_Found
      */
-    private static function getRouteFileData($class = __CLASS__, $prefix = '/')
+    private static function getRouteFileData($class = __CLASS__, $prefix = '')
     {
         $routes = [];
-        foreach (Loader::getFilePath($class, '.php', 'Config/', true, false, false, true) as $configFilePath) {
+
+        $routeFilePathes = [];
+
+        try {
+            $routeFilePathes = Loader::getFilePath($class, '.php', 'Config/', true, false, false, true);
+        } catch (Exception $e) {
+            Route::getLogger()->info(['Route file path not found for {$0}', $class], Logger::WARNING);
+            return $routes;
+        }
+
+        foreach ($routeFilePathes as $configFilePath) {
             $configFromFile = File::loadData($configFilePath);
 
             if (!is_array($configFromFile)) {
@@ -151,7 +161,7 @@ class Route extends Container
 
             foreach ($configFromFile as $routeName => $route) {
                 if (is_string($route)) {
-                    $routes += self::getRouteFileData($class . '/' . $routeName, $prefix . $route);
+                    $routes += self::getRouteFileData($class . '' . $routeName, $prefix . $route);
                     continue;
                 }
 

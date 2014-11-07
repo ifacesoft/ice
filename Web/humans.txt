@@ -4,4 +4,4 @@
 
 /* SITE */
 
-PHP Framework: Ice (http://iceframework.net)
+Powered by Ice (http://iceframework.net)

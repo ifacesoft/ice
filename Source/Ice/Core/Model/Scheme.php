@@ -124,7 +124,10 @@ class Model_Scheme extends Container
             switch ($column['key']) {
                 case 'PRI':
                     if (substr($fieldName, -3, 3) != '_pk') {
-                        $fieldName = strtolower(Object::getName($schemeData['modelClass'])) . '_pk';
+                        $fieldName = strtolower(Object::getName($schemeData['modelClass']));
+                        do { // some primary fields
+                            $fieldName .= '_pk';
+                        } while (isset($modelMapping[$fieldName]));
                     }
                     break;
                 case 'MUL':
