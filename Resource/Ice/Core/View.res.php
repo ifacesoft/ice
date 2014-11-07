@@ -54,4 +54,7 @@ return [
     'Smarty: Unable to load template file \'Wi/Action/Tour.tpl\'' => [
         'ru' => 'Smarty: Unable to load template file \'Wi/Action/Tour.tpl\'',
     ],
+    'Smarty: Syntax error in template "/home/dp/PhpstormProjects/ifs/WwwIce/Resource/Wi/Action/Layout/Landing.tpl"  on line 131 "onclick="try{Ya.Metrika.informer({i:this,id:25280492,lang:\'ru\'}];return false}catch(e){}"/></a>"  - Unexpected ".", expected one of: "}"' => [
+        'ru' => 'Smarty: Syntax error in template "/home/dp/PhpstormProjects/ifs/WwwIce/Resource/Wi/Action/Layout/Landing.tpl"  on line 131 "onclick="try{Ya.Metrika.informer({i:this,id:25280492,lang:\'ru\'}];return false}catch(e){}"/></a>"  - Unexpected ".", expected one of: "}"',
+    ],
 ];
