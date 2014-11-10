@@ -11,7 +11,10 @@ namespace Ice\Data\Provider;
 
 use Ice\Core\Data_Provider;
 use Ice\Core\Exception;
+use Ice\Core\Loader;
 use Ice\Core\Logger;
+use Ice\Core\Module;
+use Ice\Exception\File_Not_Found;
 
 /**
  * Class Cli
@@ -145,6 +148,16 @@ class Cli extends Data_Provider
             }
 
             list($param, $value) = $param;
+
+            if ($param == 'action') {
+                if (!strpos($value, ':')) {
+                    try {
+                        Loader::getFilePath($value, '.php', 'Source/');
+                    } catch (File_Not_Found $e) {
+                        $value = Module::getInstance()->getAlias() . ':' . $value;
+                    }
+                }
+            }
 
             $connection[$param] = $value;
         }
