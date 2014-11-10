@@ -15,5 +15,14 @@ return [
             'sourceDir' => MODULE_DIR . 'Source',
             'umlDir' => MODULE_DIR . 'Resource/uml/' . basename(MODULE_DIR)
         ]
+    ],
+    'Ice\Action\Phpunit_Run' => [
+        'inputDefaults' => [
+            'vendor' => 'phpunit/phpunit',
+            'script' => 'phpunit',
+            'testClasses' => [
+                'IceTest'
+            ]
+        ]
     ]
 ];

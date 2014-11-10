@@ -49,7 +49,7 @@ class Environment extends Container
     /**
      * Protected constructor of environment object
      *
-     * @param $environment string Name of environment (production|test|devlepment)
+     * @param $environment string Name of environment (production|test|development)
      */
     protected function __construct($environment)
     {

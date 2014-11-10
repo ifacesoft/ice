@@ -275,6 +275,8 @@ class Module_Create extends Action
         chmod($moduleDir . 'cli', 0755);
         copy(ICE_DIR . 'app.php', $moduleDir . 'app.php');
         copy(ICE_DIR . 'composer.phar', $moduleDir . 'composer.phar');
+        copy(ICE_DIR . '.gitignore', $moduleDir . '.gitignore');
+        copy(ICE_DIR . '.hgignore', $moduleDir . '.hgignore');
 
         $composer = Json::decode(file_get_contents(ICE_DIR . 'composer.json'));
 
