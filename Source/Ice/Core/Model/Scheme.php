@@ -113,30 +113,34 @@ class Model_Scheme extends Container
         }
 
         $schemeData['columns'] = Data_Source::getInstance($schemeData['scheme'])->getColumns($tableName);
+        $schemeData['indexes'] = Data_Source::getInstance($schemeData['scheme'])->getIndexes($tableName);
 
         $modelMapping = [];
         $validators = [];
         $form = [];
 
+        $primaryKeys = $schemeData['indexes']['PRIMARY KEY']['PRIMARY'];
+        $foreignKeys = Arrays::column($schemeData['indexes']['FOREIGN KEY'], 0, '');
+
         foreach ($schemeData['columns'] as $columnName => &$column) {
             $fieldName = strtolower($columnName);
 
-            switch ($column['key']) {
-                case 'PRI':
-                    if (substr($fieldName, -3, 3) != '_pk') {
-                        $fieldName = strtolower(Object::getName($schemeData['modelClass']));
-                        do { // some primary fields
-                            $fieldName .= '_pk';
-                        } while (isset($modelMapping[$fieldName]));
-                    }
-                    break;
-                case 'MUL':
-                    if (substr($fieldName, -4, 4) != '__fk') {
-                        $fieldName = String::trim($fieldName, ['__id', '_id', 'id'], String::TRIM_TYPE_RIGHT) . '__fk';
-                    }
-                    break;
-                default:
-                    break;
+            $column['is_primary'] = false;
+            $column['is_foreign'] = false;
+
+            if (in_array($columnName, $foreignKeys)) {
+                $column['is_foreign'] = true;
+                if (substr($fieldName, -4, 4) != '__fk') {
+                    $fieldName = String::trim($fieldName, ['__id', '_id', 'id'], String::TRIM_TYPE_RIGHT) . '__fk';
+                }
+            } else if (in_array($columnName, $primaryKeys)) {
+                $column['is_primary'] = true;
+                if (substr($fieldName, -3, 3) != '_pk') {
+                    $fieldName = strtolower(Object::getName($schemeData['modelClass']));
+                    do { // some primary fields
+                        $fieldName .= '_pk';
+                    } while (isset($modelMapping[$fieldName]));
+                }
             }
 
             $modelMapping[$fieldName] = $columnName;

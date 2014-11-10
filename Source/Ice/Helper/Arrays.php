@@ -10,6 +10,7 @@
 namespace Ice\Helper;
 
 use Ice\Core\Exception;
+use Ice\Core\Logger;
 
 /**
  * Class Arrays
@@ -128,23 +129,16 @@ class Arrays
      *
      * @param array $input A multi-dimensional array (record set) from which to pull
      * a column of values.
-     * @param mixed $columnKey The column(s) of values to return. This value may be the
-     * integer key of the column you wish to retrieve, or it
+     * @param mixed $columnKey The column(s) of values to return. This value may be
+     * null, 0, array or any string
      * may be the string key name for an associative array.
      * @param mixed $indexKey (Optional.) The column to use as the index/keys for
-     * the returned array. This value may be the integer key
+     * the returned array. This value may be null, '', or any string
      * of the column, or it may be the string key name.
      * @return array
      */
     public static function column($input, $columnKey = null, $indexKey = null)
     {
-        $argc = func_num_args();
-
-        if ($argc < 2) {
-            trigger_error("array_column() expects at least 2 parameters, {$argc} given", E_USER_WARNING);
-            return null;
-        }
-
         if (!is_array($input)) {
             trigger_error('array_column() expects parameter 1 to be array, ' . gettype($input) . ' given', E_USER_WARNING);
             return null;
@@ -187,11 +181,16 @@ class Arrays
 
             if ($indexKey !== null && array_key_exists($indexKey, $row)) {
                 $key = (string)$row[$indexKey];
+            } else if ($indexKey === '') {
+                $key = '';
             }
 
             if ($columnKey === null) {
                 $valueSet = true;
                 $value = $row;
+            } else if ($columnKey === 0) {
+                $valueSet = true;
+                $value = reset($row);
             } else {
                 if (!is_array($row)) {
                     continue;
@@ -212,7 +211,12 @@ class Arrays
             }
 
             if ($valueSet) {
-                $resultArray[$key] = $value;
+                if ($key === '') {
+                    $resultArray[] = $value;
+                } else {
+                    $resultArray[$key] = $value;
+                }
+
             }
         }
 

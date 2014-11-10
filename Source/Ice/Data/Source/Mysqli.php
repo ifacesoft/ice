@@ -14,6 +14,7 @@ use Ice\Core\Data_Source;
 use Ice\Core\Exception;
 use Ice\Core\Model;
 use Ice\Core\Query;
+use Ice\Helper\Arrays;
 use mysqli_stmt;
 
 /**
@@ -261,6 +262,73 @@ class Mysqli extends Data_Source
     }
 
     /**
+     * Get indexes of table
+     *
+     * @param $tableName
+     * @return array
+     */
+    public function getIndexes($tableName)
+    {
+        $dataProvider = $this->getSourceDataProvider();
+        $dataProvider->setScheme('information_schema');
+
+        $constraints = [
+            'PRIMARY KEY' => [
+                'PRIMARY' => []
+            ],
+            'FOREIGN KEY' => [],
+            'UNIQUE' => []
+        ];
+
+        foreach ($dataProvider->get(['TABLE_CONSTRAINTS:TABLE_SCHEMA/' . $this->getScheme(), 'TABLE_CONSTRAINTS:TABLE_NAME/' . $tableName]) as $constraint) {
+            $constraints[$constraint['CONSTRAINT_TYPE']][$constraint['CONSTRAINT_NAME']] = [];
+        }
+
+        $indexes = $dataProvider->get(['STATISTICS:TABLE_SCHEMA/' . $this->getScheme(), 'STATISTICS:TABLE_NAME/' . $tableName]);
+
+        foreach ($constraints['PRIMARY KEY'] as $constraintName => &$constraint) {
+            foreach ($indexes as $index) {
+                if ($index['INDEX_NAME'] != $constraintName) {
+                    continue;
+                }
+
+                $constraint[$index['SEQ_IN_INDEX']] = $index['COLUMN_NAME'];
+                unset($index['COLUMN_NAME']);
+            }
+        }
+
+        foreach ($constraints['UNIQUE'] as $constraintName => &$constraint) {
+            foreach ($indexes as $index) {
+                if ($index['INDEX_NAME'] != $constraintName) {
+                    continue;
+                }
+
+                $constraint[$index['SEQ_IN_INDEX']] = $index['COLUMN_NAME'];
+                unset($index['COLUMN_NAME']);
+            }
+        }
+
+        $flippedIndexes = Arrays::column($indexes, 'INDEX_NAME', 'COLUMN_NAME');
+
+        $foreignKeys = [];
+
+        $referenceColumns = Arrays::column(
+            $dataProvider->get(['KEY_COLUMN_USAGE:TABLE_SCHEMA/' . $this->getScheme(), 'KEY_COLUMN_USAGE:TABLE_NAME/' . $tableName]),
+            'COLUMN_NAME',
+            'CONSTRAINT_NAME'
+        );
+
+        foreach (array_keys($constraints['FOREIGN KEY']) as $constraintName) {
+            $columnName = $referenceColumns[$constraintName];
+            $foreignKeys[$flippedIndexes[$columnName]][$constraintName] = $columnName;
+        }
+
+        $constraints['FOREIGN KEY'] = $foreignKeys;
+
+        return $constraints;
+    }
+
+    /**
      * Get data Scheme from data source
      *
      * @return array
@@ -311,7 +379,6 @@ class Mysqli extends Data_Source
                 : $column['CHARACTER_MAXIMUM_LENGTH'];
 
             $columns[$columnName] = [
-                'key' => $column['COLUMN_KEY'],
                 'extra' => $column['EXTRA'],
                 'type' => $column['COLUMN_TYPE'],
                 'dataType' => $column['DATA_TYPE'],

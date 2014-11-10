@@ -5,8 +5,8 @@ syntax: regexp
 \.rej$
 \.conflict\~$
 
-^/.git
-^/.hg
+.git
+.hg
 
 ^composer\.lock$
 
