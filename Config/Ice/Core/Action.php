@@ -5,7 +5,7 @@ return [
             'vendor' => 'phpdocumentor/phpdocumentor',
             'script' => 'bin/phpdoc',
             'sourceDir' => MODULE_DIR . 'Source',
-            'apiDir' => MODULE_DIR . 'Resource/api/' . basename(MODULE_DIR)
+            'apiDir' => MODULE_DIR . 'Resource/api/' . MODULE_BRANCH . '/' . basename(MODULE_DIR)
         ]
     ],
     'Ice\Action\Phpuml_Generate' => [
