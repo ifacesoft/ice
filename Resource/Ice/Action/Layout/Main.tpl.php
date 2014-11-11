@@ -34,12 +34,12 @@
                 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                     <ul class="nav navbar-nav nav-justified" style="width: 80%;">
                         <li class="first" style="float: none;"><a href="http://iceframework.net">Iceframework</a></li>
-                        <li style="float: none;"><a href="#">Ice on github</a></li>
+                        <li style="float: none;"><a href="https://github.com/ifacesoft/ice">On GitHub</a></li>
                         <li style="float: none;"><a href="http://iceframework.net/handbook">Handbook</a></li>
                         <li style="float: none;"><a href="http://iceframework.net/cookbook">Cookbook</a></li>
-                        <li style="float: none;"><a href="http://iceframework.net/api">Api</a></li>
+                        <li style="float: none;"><a href="http://iceframework.net/api/0.0">Api</a></li>
                         <li style="float: none;"><a href="http://iceframework.net/faq">Faq</a></li>
-                        <li class="last" style="float: none;"><a href="http://iceframework.net/demo">Demo</a></li>
+<!--                        <li class="last" style="float: none;"><a href="http://iceframework.net/demo">Live Demo</a></li>-->
                     </ul>
                 </div><!-- /.navbar-collapse -->
             </div><!-- /.container-fluid -->

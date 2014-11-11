@@ -57,4 +57,40 @@ return [
     'Smarty: Syntax error in template "/home/dp/PhpstormProjects/ifs/WwwIce/Resource/Wi/Action/Layout/Landing.tpl"  on line 131 "onclick="try{Ya.Metrika.informer({i:this,id:25280492,lang:\'ru\'}];return false}catch(e){}"/></a>"  - Unexpected ".", expected one of: "}"' => [
         'ru' => 'Smarty: Syntax error in template "/home/dp/PhpstormProjects/ifs/WwwIce/Resource/Wi/Action/Layout/Landing.tpl"  on line 131 "onclick="try{Ya.Metrika.informer({i:this,id:25280492,lang:\'ru\'}];return false}catch(e){}"/></a>"  - Unexpected ".", expected one of: "}"',
     ],
+    'Smarty: Unable to load template file \'Wi/Action/Cookbook/add/data/source.tpl\'' => [
+        'ru' => 'Smarty: Unable to load template file \'Wi/Action/Cookbook/add/data/source.tpl\'',
+    ],
+    'Smarty: Unable to load template file \'Wi/Action/Cookbook/favicon.ico.tpl\'' => [
+        'ru' => 'Smarty: Unable to load template file \'Wi/Action/Cookbook/favicon.ico.tpl\'',
+    ],
+    'Smarty: Unable to load template file \'Wi/Action/Comment.tpl\'' => [
+        'ru' => 'Smarty: Unable to load template file \'Wi/Action/Comment.tpl\'',
+    ],
+    'Smarty: Unable to load template file \'Wi/Action/Faq.tpl\'' => [
+        'ru' => 'Smarty: Unable to load template file \'Wi/Action/Faq.tpl\'',
+    ],
+    'Smarty: Unable to load template file \'Wi/Action/Handbook/getting started.tpl\'' => [
+        'ru' => 'Smarty: Unable to load template file \'Wi/Action/Handbook/getting started.tpl\'',
+    ],
+    'Smarty: Unable to load template file \'Wi/Action/Handbook/Menu.tpl\'' => [
+        'ru' => 'Smarty: Unable to load template file \'Wi/Action/Handbook/Menu.tpl\'',
+    ],
+    'Smarty: Unable to load template file \'Wi/Action/Handbook/getting/started.tpl\'' => [
+        'ru' => 'Smarty: Unable to load template file \'Wi/Action/Handbook/getting/started.tpl\'',
+    ],
+    'Smarty: Unable to load template file \'Wi/Action/Handbook/introduction.tpl\'' => [
+        'ru' => 'Smarty: Unable to load template file \'Wi/Action/Handbook/introduction.tpl\'',
+    ],
+    'Smarty: Unable to load template file \'Wi/Action/Handbook/favicon.ico.tpl\'' => [
+        'ru' => 'Smarty: Unable to load template file \'Wi/Action/Handbook/favicon.ico.tpl\'',
+    ],
+    'Smarty: Unable to load template file \'Wi/Action/Handbook/getting/favicon.ico.tpl\'' => [
+        'ru' => 'Smarty: Unable to load template file \'Wi/Action/Handbook/getting/favicon.ico.tpl\'',
+    ],
+    'Smarty: Unable to load template file \'Wi/Action/Handbook/structure.tpl\'' => [
+        'ru' => 'Smarty: Unable to load template file \'Wi/Action/Handbook/structure.tpl\'',
+    ],
+    'Smarty: Unable to load template file \'Wi/Action/Handbook/database.tpl\'' => [
+        'ru' => 'Smarty: Unable to load template file \'Wi/Action/Handbook/database.tpl\'',
+    ],
 ];
