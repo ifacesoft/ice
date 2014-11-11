@@ -311,20 +311,30 @@ class Query_Builder
     /**
      * Set in query part where expression '= ?' for primary key column
      *
-     * @param $value
+     * @param $pk
      * @param null $modelClass
      * @param null $tableAlias
      * @param string $sqlLogical
      * @throws Exception
      * @return Query_Builder
      */
-    public function pk($value, $modelClass = null, $tableAlias = null, $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
+    public function pk($pk, $modelClass = null, $tableAlias = null, $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
     {
-        if (empty($value)) {
+        if (empty($pk)) {
             throw new Exception('Primary key is empty');
         }
 
-        return $this->eq('/pk', $value, $modelClass, $tableAlias, $sqlLogical);
+        if (!is_array($pk)) {
+
+            if (!$modelClass) {
+                $modelClass = $this->getModelClass();
+            }
+
+            $pkFieldNames = $modelClass::getPkFieldNames();
+            $pk = [reset($pkFieldNames) => $pk];
+        }
+
+        return $this->eq($pk, null, $modelClass, $tableAlias, $sqlLogical);
     }
 
     /**
@@ -762,19 +772,17 @@ class Query_Builder
     {
         $this->_queryType = Query_Builder::TYPE_SELECT;
 
-        if (empty($fieldName)) { // Понятия не имею почему
-            $fieldName = '/pk';  // сюда приходит null((
+        if (empty($fieldName)) {
+            $fieldName = '/pk';
         }
 
         /** @var Model $class */
         $class = $this->getModelClass();
         if (!isset($this->_sqlParts[self::PART_SELECT][$class])) {
-            $pkName = $class::getFieldName('/pk');
+            $pkFieldNames = $class::getPkFieldNames();
 
             $this->_sqlParts[self::PART_SELECT][$class] = [
-                $this->getTableAlias(), [
-                    $pkName => $pkName
-                ]
+                $this->getTableAlias(), array_combine($pkFieldNames, $pkFieldNames)
             ];
         }
 

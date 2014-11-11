@@ -16,6 +16,7 @@ use Ice\Core\Data_Provider;
 use Ice\Core\Environment;
 use Ice\Core\Logger;
 use Ice\Core\Resource;
+use Ice\Data\Provider\Registry;
 use Ice\Helper\Object;
 
 /**
@@ -178,5 +179,14 @@ trait Core
     {
         Resource::getLogger()->fatal(['Implementation {$0} is required for {$1}', [__FUNCTION__, self::getClass()]], __FILE__, __LINE__);
         return null;
+    }
+
+    /**
+     * Return registry storage for  class
+     *
+     * @return Registry
+     */
+    public static function getRegistry() {
+        return Registry::getInstance(self::getClass());
     }
 }

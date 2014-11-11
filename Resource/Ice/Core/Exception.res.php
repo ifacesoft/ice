@@ -21,4 +21,9 @@ return [
     'Implement flushAll() method.' => [
         'ru' => 'Implement flushAll() method.',
     ],
+    'Could not set value:
+user_user_pkField "_pkName" not found in Model "User_User"' => [
+        'ru' => 'Could not set value:
+user_user_pkField "_pkName" not found in Model "User_User"',
+    ],
 ];

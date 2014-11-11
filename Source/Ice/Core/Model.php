@@ -37,16 +37,17 @@ abstract class Model
     /**
      * Primary key
      *
-     * @var mixed
+     * ```php
+     *  $_pk = [
+     *      PK_NAME => PK_VALUE // or null
+     *      // ...
+     *      // PK_NAME_2 => PK_VALUE_2 // Primary key with two columns
+     * ];
+     * ```
+     *
+     * @var array
      */
     private $_pk = null;
-
-    /**
-     * Primary key name
-     *
-     * @var string
-     */
-    private $_pkName = null;
 
     /**
      *  Model fields
@@ -99,25 +100,41 @@ abstract class Model
      */
     private function __construct(array $row, $pk = null)
     {
-        $this->_pk = $pk;
-
         /** @var Model $modelClass */
         $modelClass = self::getClass();
 
-        $columns = $modelClass::getScheme()->getColumnNames();
+        $modelScheme = $modelClass::getScheme();
         $fields = $modelClass::getMapping();
+        $flippedFields = array_flip($fields);
 
-        $this->_pkName = strtolower($modelClass::getClassName()) . '_pk';
-        unset($fields[$this->_pkName]);
+        $pkColumnNames = $modelScheme->getIndexes()['PRIMARY KEY']['PRIMARY'];
 
-        if (!empty($row[$this->_pkName])) {
-            if (!empty($this->_pk) && $row[$this->_pkName] != $this->_pk) {
-                throw new Exception('Ambiguous pk: ' . var_export($row[$this->_pkName], true) . ' or ' . var_export($this->_pk, true));
+        if ($pk !== null) {
+            $this->_pk = is_array($pk) ? $pk : [$flippedFields[reset($pkColumnNames)] => $pk];
+        }
+
+        $detectedPk = [];
+        foreach ($pkColumnNames as $pkColumnName) {
+            $pkFieldName = $flippedFields[$pkColumnName];
+
+            if (!empty($row[$pkFieldName])) {
+                $detectedPk[$pkFieldName] = is_array($row[$pkFieldName]) ? reset($row[$pkFieldName]) : $row[$pkFieldName];
+                unset($row[$pkFieldName]);
             }
 
-            $this->set($this->_pkName, $row[$this->_pkName]);
-            unset($row[$this->_pkName]);
+            unset($fields[$pkFieldName]);
         }
+
+        if (!empty($detectedPk)) {
+            if (!empty($this->_pk) && $this->_pk != $detectedPk) {
+                Model::getLogger()->fatal(['Ambiguous pk: {$0} or {$1}', [var_export($this->_pk, true), var_export($detectedPk, true)]], __FILE__, __LINE__);
+            }
+
+            $this->set($detectedPk);
+            unset($detectedPk);
+        }
+
+        $columns = $modelScheme->getColumnNames();
 
         foreach ($fields as $fieldName => $columnName) {
             $this->_row[$fieldName] = null;
@@ -128,7 +145,7 @@ abstract class Model
                 continue;
             }
 
-            foreach (array('__json', '__fk', '_geo') as $ext) {
+            foreach (['__json', '__fk', '_geo'] as $ext) {
                 $field = strstr($fieldName, $ext, true);
                 if ($field !== false && array_key_exists($field, $row)) {
                     $this->set($field, $row[$field], false);
@@ -251,12 +268,12 @@ abstract class Model
 
         $fieldName = $this->getFieldName($fieldName);
 
-        if ($this->getPkName() == $fieldName) {
+        if ($this->isPkName($fieldName)) {
             if ($isAffected) {
                 $this->_affected[$fieldName] = $fieldValue;
             }
 
-            $this->_pk = $fieldValue;
+            $this->_pk[$fieldName] = $fieldValue;
 
             return $this;
         }
@@ -369,16 +386,6 @@ abstract class Model
     }
 
     /**
-     * Get field name of primary key
-     *
-     * @return string
-     */
-    public function getPkName()
-    {
-        return $this->_pkName;
-    }
-
-    /**
      * Get value of model field
      *
      * @param null $fieldName
@@ -394,7 +401,7 @@ abstract class Model
 
         $fieldName = $this->getFieldName($fieldName);
 
-        if ($this->getPkName() == $fieldName) {
+        if ($this->isPkName($fieldName)) {
             return $this->getPk();
         }
 
@@ -640,6 +647,25 @@ abstract class Model
         return Form_Model::getInstance(self::getClass())->addFilterFields($filterFields);
     }
 
+    public static function getPkFieldNames()
+    {
+        $pkFieldNames = self::getRegistry()->get('pkFieldNames');
+
+        if ($pkFieldNames) {
+            return $pkFieldNames;
+        }
+
+        $fieldNames = array_flip(self::getMapping());
+
+        return self::getRegistry()->set('pkFieldNames', array_map(
+                function ($columnName) use ($fieldNames) {
+                    return $fieldNames[$columnName];
+                },
+                self::getScheme()->getIndexes()['PRIMARY KEY']['PRIMARY']
+            )
+        );
+    }
+
     /**
      * Magic get
      *
@@ -712,17 +738,17 @@ abstract class Model
      */
     public function insertOrUpdate($sourceName = null)
     {
-        $pk = $this->getPk(); // todo: may be (bool) $this->getPk()
+        $pk = $this->getPk();
 
-        if (empty($pk)) {
+        if ($pk === null) {
             return $this->insert($sourceName);
         }
 
         /** @var Model $class */
         $class = get_class($this);
 
-        return $class::getModel($this->getPk())
-            ? $this->update($sourceName)
+        return $class::getModel($pk, $class::getPkFieldNames())
+            ? $this->update(null, null, $sourceName)
             : $this->insert($sourceName);
     }
 
@@ -735,9 +761,15 @@ abstract class Model
      * @throws Exception
      * @return Model|null
      */
-    public static function getModel($pk, $fieldNames = '/pk', $sourceName = null)
+    public static function getModel($pk, $fieldNames, $sourceName = null)
     {
-        return self::getBy('pk', $pk, $fieldNames, $sourceName);
+        return self::getQueryBuilder()
+            ->select($fieldNames)
+            ->pk($pk)
+            ->limit(1)
+            ->getQuery($sourceName)
+            ->getData()
+            ->getModel();
     }
 
     /**
@@ -907,5 +939,23 @@ abstract class Model
             ->getData()
             ->getModel();
 
+    }
+
+    /**
+     * Check is primary key value
+     *
+     * @param $fieldName
+     * @return bool
+     */
+    private function isPkName($fieldName)
+    {
+        /** @var Model $modelClass */
+        $modelClass = get_class($this);
+
+        $columnName = $modelClass::getMapping()[$fieldName];
+
+        $primaryKeys = $modelClass::getScheme()->getIndexes()['PRIMARY KEY']['PRIMARY'];
+
+        return in_array($columnName, $primaryKeys);
     }
 }

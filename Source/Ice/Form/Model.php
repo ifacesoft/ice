@@ -66,7 +66,7 @@ class Model extends Form
      */
     public function bindModel(Core_Model $model)
     {
-        return $this->bind(array_merge($model->get(), [$model->getPkName() => $model->getPk()]));
+        return $this->bind(array_merge($model->get(), $model->getPk()));
     }
 
     /**

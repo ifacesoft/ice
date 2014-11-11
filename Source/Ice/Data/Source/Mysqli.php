@@ -63,16 +63,16 @@ class Mysqli extends Data_Source
 
         $data = [];
 
-        /** @var Model $modelclass */
-        $modelclass = $query->getModelClass();
+        /** @var Model $modelClass */
+        $modelClass = $query->getModelClass();
 
-        $data[Data::RESULT_MODEL_CLASS] = $modelclass;
-        $pkName = $modelclass::getFieldName('/pk');
+        $data[Data::RESULT_MODEL_CLASS] = $modelClass;
+        $pkFieldNames = $modelClass::getPkFieldNames();
 
         $data[DATA::NUM_ROWS] = $result->num_rows;
 
         while ($row = $result->fetch_assoc()) {
-            $data[Data::RESULT_ROWS][$row[$pkName]] = $row;
+            $data[Data::RESULT_ROWS][implode('_', array_intersect_key($row, array_flip($pkFieldNames)))] = $row;
         }
 
         $result->close();

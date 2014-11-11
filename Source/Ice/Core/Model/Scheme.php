@@ -227,4 +227,14 @@ class Model_Scheme extends Container
     {
         return $this->_modelScheme['scheme']['scheme'];
     }
+
+    /**
+     * Return indexes
+     *
+     * @return array
+     */
+    public function getIndexes()
+    {
+        return $this->_modelScheme['scheme']['indexes'];
+    }
 }
