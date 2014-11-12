@@ -27,8 +27,8 @@ use Iterator;
  * @package Ice
  * @subpackage Core
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 class Config implements Iterator
 {
@@ -60,6 +60,11 @@ class Config implements Iterator
      *
      * @param array $_config
      * @param $configName
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     protected function __construct(array $_config, $configName)
     {
@@ -114,6 +119,11 @@ class Config implements Iterator
      * @param bool $isUseCache
      * @throws Exception
      * @return Config
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function getInstance(
         $class,
@@ -188,6 +198,11 @@ class Config implements Iterator
      * Retuurn default data provider key
      *
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     protected static function getDefaultDataProviderKey()
     {
@@ -198,6 +213,11 @@ class Config implements Iterator
      * Return default key
      *
      * @return Core
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     protected static function getDefaultKey()
     {
@@ -211,6 +231,11 @@ class Config implements Iterator
      * @param bool $isRequired
      * @throws Exception
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function gets($key = null, $isRequired = true)
     {
@@ -236,6 +261,11 @@ class Config implements Iterator
      *
      * @param $key
      * @return array|bool
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function isSetKey($key)
     {
@@ -256,6 +286,11 @@ class Config implements Iterator
      * Return config name
      *
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getConfigName()
     {
@@ -269,6 +304,11 @@ class Config implements Iterator
      * @param bool $isRequired
      * @throws Exception
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function get($key = null, $isRequired = true)
     {
@@ -282,6 +322,11 @@ class Config implements Iterator
      * Return the current element
      * @link http://php.net/manual/en/iterator.current.php
      * @return mixed Can return any type.
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function current()
     {
@@ -293,6 +338,11 @@ class Config implements Iterator
      * Move forward to next element
      * @link http://php.net/manual/en/iterator.next.php
      * @return void Any returned value is ignored.
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function next()
     {
@@ -305,6 +355,11 @@ class Config implements Iterator
      * Return the key of the current element
      * @link http://php.net/manual/en/iterator.key.php
      * @return mixed scalar on success, or null on failure.
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function key()
     {
@@ -317,6 +372,11 @@ class Config implements Iterator
      * @link http://php.net/manual/en/iterator.valid.php
      * @return boolean The return value will be casted to boolean and then evaluated.
      * Returns true on success or false on failure.
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function valid()
     {
@@ -329,6 +389,11 @@ class Config implements Iterator
      * Rewind the Iterator to the first element
      * @link http://php.net/manual/en/iterator.rewind.php
      * @return void Any returned value is ignored.
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function rewind()
     {

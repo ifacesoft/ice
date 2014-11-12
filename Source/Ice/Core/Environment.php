@@ -23,8 +23,8 @@ use Ice\Core;
  * @package Ice
  * @subpackage Core
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 class Environment extends Container
 {
@@ -50,6 +50,11 @@ class Environment extends Container
      * Protected constructor of environment object
      *
      * @param $environment string Name of environment (production|test|development)
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     protected function __construct($environment)
     {
@@ -76,6 +81,11 @@ class Environment extends Container
      *
      * @param string|null $postfix Specific data provider key ($data_provider_key . '_prefix')
      * @return Data_Provider
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function getDataProvider($postfix = null)
     {
@@ -86,6 +96,11 @@ class Environment extends Container
      * Return default data provider key
      *
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function getDefaultDataProviderKey()
     {
@@ -97,6 +112,11 @@ class Environment extends Container
      * Check to current environment is development
      *
      * @return bool
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function isDevelopment()
     {
@@ -107,6 +127,11 @@ class Environment extends Container
      * Check to current environment is development
      *
      * @return bool
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function isProduction()
     {
@@ -117,6 +142,11 @@ class Environment extends Container
      * Return default key of data provider
      *
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     protected static function getDefaultKey()
     {
@@ -140,6 +170,11 @@ class Environment extends Container
      * @param string $environment Name of environment (production|test|devlepment)
      * @param string|null $hash Generated md5 hash
      * @return Environment
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     protected static function create($environment, $hash = null)
     {
@@ -152,6 +187,11 @@ class Environment extends Container
      * @param string $class Class (found data provider for this class)
      * @param string $index Index of data provider
      * @return Data_Provider
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getProvider($class, $index)
     {
@@ -165,6 +205,11 @@ class Environment extends Container
      * @param  $index
      * @throws Exception
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getDataProviderKey($class, $index)
     {
@@ -186,6 +231,11 @@ class Environment extends Container
      *
      * @param string $key
      * @return mixed|null
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function get($key = null)
     {
@@ -198,6 +248,11 @@ class Environment extends Container
      *
      * @param string|null $key
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function gets($key = null)
     {
@@ -222,6 +277,11 @@ class Environment extends Container
      * Return current environment name
      *
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getEnvironment()
     {

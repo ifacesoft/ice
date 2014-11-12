@@ -21,8 +21,8 @@ use Ice\Core\Exception;
  * @package Ice
  * @subpackage Helper
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 class Json
 {
@@ -32,6 +32,11 @@ class Json
      * @param $json
      * @return array
      * @throws Exception
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function decode($json)
     {
@@ -66,6 +71,11 @@ class Json
      * @param mixed $data
      * @param bool $isPretty
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function encode($data, $isPretty = false)
     {

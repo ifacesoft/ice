@@ -26,8 +26,8 @@ use Ice\Helper\Hash;
  * @package Ice
  * @subpackage Core
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 abstract class Action extends Container
 {
@@ -61,6 +61,11 @@ abstract class Action extends Container
 
     /**
      * Private constructor of action
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     private function __construct()
     {
@@ -72,6 +77,11 @@ abstract class Action extends Container
      * @param $actionClass
      * @param $hash
      * @return Action
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     protected static function create($actionClass, $hash = null)
     {
@@ -82,6 +92,11 @@ abstract class Action extends Container
      * Default action key
      *
      * @return Core
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     protected static function getDefaultKey()
     {
@@ -94,6 +109,11 @@ abstract class Action extends Container
      * @param Config $config
      * @param array $input
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getInput(Config $config, array $input)
     {
@@ -131,6 +151,11 @@ abstract class Action extends Container
      * Return default input registry data provider for this action
      *
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function getRegistryDataProviderKey()
     {
@@ -144,6 +169,11 @@ abstract class Action extends Container
      *
      * @param View $view
      * @return View
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function flush(View $view)
     {
@@ -157,6 +187,11 @@ abstract class Action extends Container
      * @param array $data
      * @param int $level
      * @return View|null|string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function call(Action_Context $actionContext, array $data = [], $level = 0)
     {
@@ -257,6 +292,11 @@ abstract class Action extends Container
      * @param $dataProviderKeys
      * @param array $output
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getParams($dataProviderKeys, array $output)
     {
@@ -296,6 +336,11 @@ abstract class Action extends Container
      * @param array $input
      * @param Action_Context $actionContext
      * @return array
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since 0
      */
     abstract protected function run(array $input, Action_Context $actionContext);
 }

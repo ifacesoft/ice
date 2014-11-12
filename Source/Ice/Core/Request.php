@@ -24,8 +24,8 @@ use Locale;
  * @package Ice
  * @subpackage Core
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 class Request
 {
@@ -36,6 +36,11 @@ class Request
      *
      * @param string $paramName Param name
      * @return mixed
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function getParam($paramName)
     {
@@ -47,6 +52,11 @@ class Request
      * Return all params from request
      *
      * @return mixed
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function getParams()
     {
@@ -57,6 +67,11 @@ class Request
      * Return current locale (en|us|?)
      *
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function locale()
     {
@@ -80,6 +95,11 @@ class Request
      *
      * @param bool $withoutQueryString
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function uri($withoutQueryString = false)
     {
@@ -92,6 +112,11 @@ class Request
      * Return query string from request
      *
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function queryString()
     {
@@ -102,6 +127,11 @@ class Request
      * Return current host name from request
      *
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function host()
     {
@@ -117,6 +147,11 @@ class Request
      * Return real ip of client from request
      *
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function ip()
     {
@@ -140,6 +175,11 @@ class Request
      * Return browser agent from request
      *
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function agent()
     {
@@ -154,6 +194,11 @@ class Request
      * Return referrer info if not empty
      *
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function referer()
     {
@@ -164,6 +209,11 @@ class Request
      * Check request type (is running via console)
      *
      * @return bool
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function isCli()
     {
@@ -174,6 +224,11 @@ class Request
      * Check request type (is ajax request)
      *
      * @return bool
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function isAjax()
     {
@@ -184,6 +239,11 @@ class Request
      * Return request method
      *
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function getMethod()
     {

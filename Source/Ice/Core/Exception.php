@@ -22,8 +22,8 @@ use Ice\Core;
  * @package Ice
  * @subpackage Core
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 class Exception extends ErrorException
 {
@@ -46,6 +46,11 @@ class Exception extends ErrorException
      * @param string $errfile filename where throw Exception
      * @param int $errline number of line where throws Exception
      * @param int $errno code of error exception
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function __construct($message, $errcontext = [], \Exception $previous = null, $errfile = null, $errline = null, $errno = 0)
     {
@@ -91,6 +96,11 @@ class Exception extends ErrorException
      * Data in moment throws exception
      *
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getErrContext()
     {

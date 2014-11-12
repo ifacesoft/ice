@@ -24,8 +24,8 @@ use Ice\Core\Exception;
  * @package Ice
  * @subpackage Data_Provider
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 class Redis extends Data_Provider
 {
@@ -34,6 +34,11 @@ class Redis extends Data_Provider
      *
      * @param string  $key
      * @return mixed
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function get($key = null)
     {
@@ -44,6 +49,11 @@ class Redis extends Data_Provider
      * Return data provider redis connection
      *
      * @return \Redis
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getConnection()
     {
@@ -57,6 +67,11 @@ class Redis extends Data_Provider
      * @param $value
      * @param null $ttl
      * @return mixed setted value
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function set($key, $value, $ttl = null)
     {
@@ -77,6 +92,11 @@ class Redis extends Data_Provider
      *
      * @param $class
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     protected function getOptions($class)
     {
@@ -90,6 +110,11 @@ class Redis extends Data_Provider
      * @param bool $force if true return boolean else deleted value
      * @throws Exception
      * @return mixed|boolean
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function delete($key, $force = true)
     {
@@ -112,6 +137,11 @@ class Redis extends Data_Provider
      * @param int $step
      * @throws Exception
      * @return mixed new value
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function inc($key, $step = 1)
     {
@@ -125,6 +155,11 @@ class Redis extends Data_Provider
      * @param int $step
      * @throws Exception
      * @return mixed new value
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function dec($key, $step = 1)
     {
@@ -133,6 +168,11 @@ class Redis extends Data_Provider
 
     /**
      * Flush all stored data
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function flushAll()
     {
@@ -145,6 +185,11 @@ class Redis extends Data_Provider
      *
      * @param $connection
      * @return boolean
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     protected function connect(&$connection)
     {
@@ -175,6 +220,11 @@ class Redis extends Data_Provider
      *
      * @param $connection
      * @return boolean
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     protected function close(&$connection)
     {
@@ -187,6 +237,11 @@ class Redis extends Data_Provider
      *
      * @param string $pattern
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getKeys($pattern = null)
     {

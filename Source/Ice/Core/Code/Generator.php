@@ -23,8 +23,8 @@ use Ice\Core;
  * @package Ice
  * @subpackage Core
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 abstract class Code_Generator extends Container
 {
@@ -34,6 +34,11 @@ abstract class Code_Generator extends Container
      * @param string $class Class of generated object
      * @param string $hash generated md5 hash
      * @return mixed
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     protected static function create($class, $hash = null)
     {
@@ -55,6 +60,11 @@ abstract class Code_Generator extends Container
      * @param array $data Sended data requered for generate
      * @param bool $force Force if already generate
      * @return string
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since 0
      */
     abstract public function generate($data, $force = false);
 } 

@@ -26,8 +26,8 @@ use Ice\Helper\Object;
  * @package Ice
  * @subpackage Core
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 abstract class Data_Source extends Container
 {
@@ -50,6 +50,11 @@ abstract class Data_Source extends Container
      *
      * @param $scheme
      * @param $sourceDataProviderKey
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     private function __construct($scheme, $sourceDataProviderKey)
     {
@@ -64,6 +69,11 @@ abstract class Data_Source extends Container
      * @param $scheme
      * @param $hash
      * @return Data_Source
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     protected static function create($scheme, $hash = null)
     {
@@ -76,6 +86,11 @@ abstract class Data_Source extends Container
      * Default key of data source
      *
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function getDefaultKey()
     {
@@ -89,6 +104,11 @@ abstract class Data_Source extends Container
      * @param Query $query
      * @throws Exception
      * @return array
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since 0
      */
     abstract public function select(Query $query);
 
@@ -98,6 +118,11 @@ abstract class Data_Source extends Container
      * @param Query $query
      * @throws Exception
      * @return array
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since 0
      */
     abstract public function insert(Query $query);
 
@@ -107,6 +132,11 @@ abstract class Data_Source extends Container
      * @param Query $query
      * @throws Exception
      * @return array
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since 0
      */
     abstract public function update(Query $query);
 
@@ -116,6 +146,11 @@ abstract class Data_Source extends Container
      * @param Query $query
      * @throws Exception
      * @return array
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since 0
      */
     abstract public function delete(Query $query);
 
@@ -123,6 +158,11 @@ abstract class Data_Source extends Container
      * Get connection instance
      *
      * @return Object
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getConnection()
     {
@@ -133,6 +173,11 @@ abstract class Data_Source extends Container
      * Return cache data provider
      *
      * @return Data_Provider
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getCacheDataProvider()
     {
@@ -143,6 +188,11 @@ abstract class Data_Source extends Container
      * Return source data provider
      *
      * @return Data_Provider
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getSourceDataProvider()
     {
@@ -160,6 +210,11 @@ abstract class Data_Source extends Container
      * Get data Scheme from data source
      *
      * @return array
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since 0
      */
     public abstract function getTables();
 
@@ -168,6 +223,11 @@ abstract class Data_Source extends Container
      *
      * @param $tableName
      * @return array
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since 0
      */
     public abstract function getColumns($tableName);
 
@@ -175,6 +235,11 @@ abstract class Data_Source extends Container
      * Get current connected data scheme
      *
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getScheme()
     {

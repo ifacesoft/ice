@@ -27,8 +27,8 @@ use Ice\Helper\Spatial;
  * @package Ice
  * @subpackage Core
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 abstract class Model
 {
@@ -97,6 +97,11 @@ abstract class Model
      * @param array $row
      * @param null $pk
      * @throws Exception
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     private function __construct(array $row, $pk = null)
     {
@@ -175,6 +180,11 @@ abstract class Model
      *  class of short class (for example: Ice:User -> /Ice/Model/Ice/User)
      *
      * @return Model
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function getClass($modelClass = null)
     {
@@ -198,6 +208,11 @@ abstract class Model
      * Return scheme of table in data source: 'columnNames => (types, defaults, comments)')
      *
      * @return Model_Scheme
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function getScheme()
     {
@@ -208,6 +223,11 @@ abstract class Model
      * Return model mapping
      *
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function getMapping()
     {
@@ -218,6 +238,11 @@ abstract class Model
      * Return model validate scheme
      *
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function getValidateScheme()
     {
@@ -228,6 +253,11 @@ abstract class Model
      * Return form field types
      *
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function getFormFieldTypes()
     {
@@ -249,6 +279,11 @@ abstract class Model
      * @param bool $isAffected Save for update
      * @return Model
      * @throws Exception
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function set($fieldName, $fieldValue = null, $isAffected = true)
     {
@@ -354,6 +389,11 @@ abstract class Model
      * Get primary key of model
      *
      * @return mixed
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getPk()
     {
@@ -365,6 +405,11 @@ abstract class Model
      *
      * @param $fieldName
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function getFieldName($fieldName)
     {
@@ -392,6 +437,11 @@ abstract class Model
      * @param bool $isNotNull
      * @throws Exception
      * @return mixed
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function get($fieldName = null, $isNotNull = true)
     {
@@ -489,6 +539,11 @@ abstract class Model
      * @param array $row
      * @param null $pk
      * @return Model
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function create(array $row = [], $pk = null)
     {
@@ -507,6 +562,11 @@ abstract class Model
      *
      * @param null $tableAlias
      * @return Query_Builder
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function  getQueryBuilder($tableAlias = null)
     {
@@ -517,6 +577,11 @@ abstract class Model
      * Get dataSource for current model class
      *
      * @return Data_Source
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function getDataSource()
     {
@@ -536,6 +601,11 @@ abstract class Model
      * @param array $fields
      * @throws Exception
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function getFieldNames($fields = [])
     {
@@ -569,6 +639,11 @@ abstract class Model
      * Return collection of current model class name
      *
      * @return Collection
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function getCollection()
     {
@@ -580,6 +655,11 @@ abstract class Model
      *
      * @param $fieldNames
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function getRows($fieldNames)
     {
@@ -593,6 +673,11 @@ abstract class Model
      *
      * @param null $tableName
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function getTitle($tableName = null)
     {
@@ -608,6 +693,11 @@ abstract class Model
      *
      * @param $fieldName
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function getFieldTitle($fieldName)
     {
@@ -619,6 +709,11 @@ abstract class Model
      *
      * @param $fieldName
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function getFieldPlaceholder($fieldName)
     {
@@ -629,6 +724,11 @@ abstract class Model
      * Return table name of self model class
      *
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function getTableName()
     {
@@ -641,12 +741,27 @@ abstract class Model
      *
      * @param array $filterFields
      * @return Form_Model
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function getForm(array $filterFields = [])
     {
         return Form_Model::getInstance(self::getClass())->addFilterFields($filterFields);
     }
 
+    /**
+     * Return all primary key names if them more then one
+     *
+     * @return mixed
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.1
+     * @since 0.1
+     */
     public static function getPkFieldNames()
     {
         $pkFieldNames = self::getRegistry()->get('pkFieldNames');
@@ -676,6 +791,11 @@ abstract class Model
      * @param $fieldName
      * @return mixed
      * @throws Exception
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function __get($fieldName)
     {
@@ -693,6 +813,11 @@ abstract class Model
      * @param $value
      * @return Model
      * @throws Exception
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function __set($fieldName, $value)
     {
@@ -704,6 +829,11 @@ abstract class Model
      *
      * @param null $key
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getData($key = null)
     {
@@ -719,6 +849,11 @@ abstract class Model
      *
      * @param $key
      * @param null $value
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function setData($key, $value = null)
     {
@@ -735,6 +870,11 @@ abstract class Model
      *
      * @param null $sourceName
      * @return Model|null
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function insertOrUpdate($sourceName = null)
     {
@@ -760,6 +900,11 @@ abstract class Model
      * @param string $sourceName
      * @throws Exception
      * @return Model|null
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function getModel($pk, $fieldNames, $sourceName = null)
     {
@@ -780,6 +925,11 @@ abstract class Model
      * @param $fieldNames
      * @param null $sourceName
      * @return Model|null
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function getBy($shortFieldName, $fieldValue, $fieldNames, $sourceName = null)
     {
@@ -800,6 +950,11 @@ abstract class Model
      * @param null $sourceName
      * @throws Exception
      * @return Model|null
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function update($fieldName = null, $value = null, $sourceName = null)
     {
@@ -827,6 +982,11 @@ abstract class Model
      * @param string $sourceName
      * @throws Exception
      * @return Model|null
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function insert($sourceName = null)
     {
@@ -849,6 +1009,11 @@ abstract class Model
      *
      * @param null $sourceName
      * @return Model|null
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function delete($sourceName = null)
     {
@@ -867,6 +1032,11 @@ abstract class Model
      * Return array of extended fields by foreign keys
      *
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getFk()
     {
@@ -877,6 +1047,11 @@ abstract class Model
      * Return array of extended fields by json fields
      *
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getJson()
     {
@@ -887,6 +1062,11 @@ abstract class Model
      * Get array of fields names end their values
      *
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getRow()
     {
@@ -897,6 +1077,11 @@ abstract class Model
      * Casts model to string
      *
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function __toString()
     {
@@ -910,6 +1095,11 @@ abstract class Model
      * @param mixed $modelPk
      * @param Model|null $linkModelClass
      * @return Model|null
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getLink($modelClass, $modelPk, $linkModelClass = null)
     {
@@ -946,6 +1136,11 @@ abstract class Model
      *
      * @param $fieldName
      * @return bool
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     private function isPkName($fieldName)
     {

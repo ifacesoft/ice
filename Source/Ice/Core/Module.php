@@ -25,8 +25,8 @@ use Ice\Helper\File;
  * @package Ice
  * @subpackage Core
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 class Module extends Container
 {
@@ -70,6 +70,11 @@ class Module extends Container
      *
      * @param $moduleAlias
      * @param $module
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     private function __construct($moduleAlias, $module)
     {
@@ -83,6 +88,11 @@ class Module extends Container
      * @param $moduleAlias
      * @param $hash
      * @return Module
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     protected static function create($moduleAlias, $hash = null)
     {
@@ -94,6 +104,11 @@ class Module extends Container
      *
      * @param string $moduleAlias
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function get($moduleAlias = null)
     {
@@ -111,6 +126,11 @@ class Module extends Container
      * @param $moduleDir
      * @param $moduleVersion
      * @param array $modules
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     private static function loadConfig($moduleDir, $moduleVersion, array &$modules = [])
     {
@@ -142,6 +162,11 @@ class Module extends Container
      * Return module aliases
      *
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function getAliases()
     {
@@ -154,6 +179,11 @@ class Module extends Container
      * Return module pathes
      *
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function getPathes()
     {
@@ -169,6 +199,11 @@ class Module extends Container
      * Return main module path
      *
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getPath()
     {
@@ -179,6 +214,11 @@ class Module extends Container
      * Return main module path
      *
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getAlias()
     {
@@ -189,6 +229,11 @@ class Module extends Container
      * Return default module alias key
      *
      * @return mixed
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     protected static function getDefaultKey()
     {

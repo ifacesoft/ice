@@ -31,8 +31,8 @@ use Ice\Core\Model_Defined;
  * @package Ice
  * @subpackage Action
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 class Model_Defined_Sync extends Action
 {
@@ -60,6 +60,11 @@ class Model_Defined_Sync extends Action
      * @param Action_Context $actionContext
      * @throws Exception
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     protected function run(array $input, Action_Context $actionContext)
     {

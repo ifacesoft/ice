@@ -25,8 +25,8 @@ use Ice\Helper\Memory;
  * Run and flush ice application
  * @author dp <denis.a.shestakov@gmail.com>
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 class Ice extends Container
 {
@@ -49,7 +49,12 @@ class Ice extends Container
     /**
      * Private constructor
      *
-     * @param $moduleName string main modulename
+     * @param $moduleName string main module name
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     private function __construct($moduleName)
     {
@@ -63,6 +68,11 @@ class Ice extends Container
      * @param $moduleName string main module name
      * @param $hash string hash md5
      * @return Ice
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     protected static function create($moduleName, $hash = null)
     {
@@ -75,6 +85,11 @@ class Ice extends Container
      * Hierarchical call of actions
      *
      * @return Ice
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function run()
     {
@@ -96,6 +111,11 @@ class Ice extends Container
 
     /**
      * Flush ice application
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function flush()
     {

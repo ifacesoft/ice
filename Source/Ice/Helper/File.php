@@ -21,8 +21,8 @@ use Ice\Core\Logger as Core_Logger;
  * @package Ice
  * @subpackage Helper
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 class File
 {
@@ -34,6 +34,11 @@ class File
      * @param bool $phpData
      * @param int $file_put_contents_flag
      * @return mixed
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function createData($path, $data, $phpData = true, $file_put_contents_flag = 0)
     {
@@ -59,6 +64,11 @@ class File
      *
      * @param $path
      * @return mixed
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function loadData($path)
     {
@@ -74,6 +84,11 @@ class File
      *
      * @param $from
      * @param $to
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function move($from, $to)
     {

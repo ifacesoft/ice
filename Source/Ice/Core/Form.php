@@ -21,8 +21,8 @@ namespace Ice\Core;
  * @package Ice
  * @subpackage Core
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 class Form extends Container
 {
@@ -86,6 +86,11 @@ class Form extends Container
      * @param $key
      * @param null $hash
      * @return Form
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     protected static function create($key, $hash = null)
     {
@@ -104,6 +109,11 @@ class Form extends Container
      * @param array $validators
      * @param null $value
      * @param string $template
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function hidden($fieldName, $title, $placeholder, array $validators, $value = null, $template = 'Ice:Field_Hidden')
     {
@@ -120,6 +130,11 @@ class Form extends Container
      * @param array $validators
      * @param $value
      * @param $template
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     private function addField($fieldName, $fieldType, $title, $placeholder, array $validators, $value, $template)
     {
@@ -141,6 +156,11 @@ class Form extends Container
      * @param $key
      * @param null $value
      * @return $this
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function bind($key, $value = null)
     {
@@ -166,6 +186,11 @@ class Form extends Container
      * @param array $validators
      * @param null $value
      * @param string $template
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function number($fieldName, $title, $placeholder, array $validators, $value = null, $template = 'Ice:Field_Number')
     {
@@ -181,6 +206,11 @@ class Form extends Container
      * @param array $validators
      * @param null $value
      * @param string $template
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function text($fieldName, $title, $placeholder, array $validators, $value = null, $template = 'Ice:Field_Text')
     {
@@ -196,6 +226,11 @@ class Form extends Container
      * @param array $validators
      * @param null $value
      * @param string $template
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function date($fieldName, $title, $placeholder, array $validators, $value = null, $template = 'Ice:Field_Date')
     {
@@ -211,6 +246,11 @@ class Form extends Container
      * @param array $validators
      * @param null $value
      * @param string $template
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function checkbox($fieldName, $title, $placeholder, array $validators, $value = null, $template = 'Ice:Field_Checkbox')
     {
@@ -226,6 +266,11 @@ class Form extends Container
      * @param array $validators
      * @param null $value
      * @param string $template
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function geo($fieldName, $title, $placeholder, array $validators, $value = null, $template = 'Ice:Field_Geo')
     {
@@ -241,6 +286,11 @@ class Form extends Container
      * @param array $validators
      * @param null $value
      * @param string $template
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function textarea($fieldName, $title, $placeholder, array $validators, $value = null, $template = 'Ice:Field_Textarea')
     {
@@ -251,6 +301,11 @@ class Form extends Container
      * Return fields - form parts
      *
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getFields()
     {
@@ -261,6 +316,11 @@ class Form extends Container
      * Validate form by validate scheme
      *
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function validate()
     {
@@ -276,6 +336,11 @@ class Form extends Container
      * Return not ignored form fields
      *
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getFilterFields()
     {
@@ -286,6 +351,11 @@ class Form extends Container
      * Return validate scheme
      *
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getValidateScheme()
     {
@@ -296,6 +366,11 @@ class Form extends Container
      * Return binded values
      *
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getValues()
     {
@@ -307,6 +382,11 @@ class Form extends Container
      *
      * @param array $filterFields
      * @return $this
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function addFilterFields(array $filterFields)
     {

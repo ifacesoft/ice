@@ -19,8 +19,8 @@ namespace Ice\Core;
  * @package Ice
  * @subpackage Core
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 interface Model_Factory_Delegate
 {

@@ -23,8 +23,8 @@ use RecursiveIteratorIterator;
  * @package Ice
  * @subpackage Helper
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 class Directory
 {
@@ -33,6 +33,11 @@ class Directory
      *
      * @param $source
      * @param $dest
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function copy($source, $dest)
     {
@@ -57,6 +62,11 @@ class Directory
      *
      * @param $path
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function get($path)
     {
@@ -80,6 +90,11 @@ class Directory
      * Recursively remove directory
      *
      * @param $dirPath
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function remove($dirPath)
     {

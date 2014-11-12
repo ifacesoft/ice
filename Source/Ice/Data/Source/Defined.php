@@ -29,8 +29,8 @@ use Ice\Helper\Query as Helper_Query;
  * @package Ice
  * @subpackage Data_Source
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 class Defined extends Data_Source
 {
@@ -40,6 +40,11 @@ class Defined extends Data_Source
      * @param Query $query
      * @throws Exception
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function select(Query $query)
     {
@@ -123,6 +128,11 @@ class Defined extends Data_Source
      * @param Query $query
      * @throws Exception
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function insert(Query $query)
     {
@@ -135,6 +145,11 @@ class Defined extends Data_Source
      * @param Query $query
      * @throws Exception
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function update(Query $query)
     {
@@ -147,6 +162,11 @@ class Defined extends Data_Source
      * @param Query $query
      * @throws Exception
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function delete(Query $query)
     {
@@ -157,6 +177,11 @@ class Defined extends Data_Source
      * Return data scheme
      *
      * @return mixed
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getDataScheme()
     {
@@ -167,6 +192,11 @@ class Defined extends Data_Source
      * Get data Scheme from data source
      *
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getTables()
     {
@@ -178,6 +208,11 @@ class Defined extends Data_Source
      *
      * @param $tableName
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getColumns($tableName)
     {

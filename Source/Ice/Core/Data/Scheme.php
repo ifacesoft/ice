@@ -29,8 +29,8 @@ use Ice\Helper\File;
  * @package Ice
  * @subpackage Core
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 class Data_Scheme extends Container
 {
@@ -52,6 +52,11 @@ class Data_Scheme extends Container
      * Private constructor of dat scheme
      *
      * @param $dataScheme
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     private function __construct($dataScheme)
     {
@@ -64,6 +69,11 @@ class Data_Scheme extends Container
      * @param $scheme
      * @param null $hash
      * @return Data_Scheme
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     protected static function create($scheme, $hash = null)
     {
@@ -76,6 +86,11 @@ class Data_Scheme extends Container
      * @param $scheme
      * @return mixed
      * @throws File_Not_Found
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function getFilePathData($scheme)
     {
@@ -103,6 +118,11 @@ class Data_Scheme extends Container
      * @param bool $force
      * @return mixed
      * @throws File_Not_Found
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function update($scheme, $force = false)
     {
@@ -175,6 +195,11 @@ class Data_Scheme extends Container
      * @param array $localTables
      * @param array $sourceTables
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function diff(array $localTables, array $sourceTables)
     {
@@ -185,6 +210,11 @@ class Data_Scheme extends Container
      * Return default scheme name
      *
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     protected static function getDefaultKey()
     {
@@ -196,6 +226,11 @@ class Data_Scheme extends Container
      * Return map tables short scheme
      *
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getTableNames()
     {
@@ -206,6 +241,11 @@ class Data_Scheme extends Container
      * Return map of model classes and their table names
      *
      * @return Model[]
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getModelClasses()
     {
@@ -220,6 +260,11 @@ class Data_Scheme extends Container
      * Return current scheme name
      *
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getName()
     {

@@ -24,8 +24,8 @@ use Ice\Helper\Object;
  * @package Ice
  * @subpackage Core
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 abstract class Validator extends Container
 {
@@ -64,6 +64,11 @@ abstract class Validator extends Container
      * @param $data
      * @param array $validateScheme
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function validateByScheme(array $data, array $validateScheme)
     {
@@ -101,6 +106,11 @@ abstract class Validator extends Container
      * @param $class
      * @param null $hash
      * @return Validator
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     protected static function create($class, $hash = null)
     {
@@ -132,6 +142,11 @@ abstract class Validator extends Container
      * @param $value
      * @param mixed $params
      * @return boolean
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since 0
      */
     public abstract function validate($value, $params = null);
 }

@@ -35,8 +35,8 @@ use JSMin;
  * @package Ice
  * @subpackage Action
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 class Resources extends Action
 {
@@ -64,6 +64,11 @@ class Resources extends Action
      * Runtime append js resource
      *
      * @param $resource
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function appendJs($resource)
     {
@@ -75,6 +80,11 @@ class Resources extends Action
      *
      * @param $resourceType
      * @param $resource
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     private static function append($resourceType, $resource)
     {
@@ -98,6 +108,11 @@ class Resources extends Action
      * Runtime append css resource
      *
      * @param $resource
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function appendCss($resource)
     {
@@ -110,6 +125,11 @@ class Resources extends Action
      * @param array $input
      * @param Action_Context $actionContext
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     protected function run(array $input, Action_Context $actionContext)
     {
@@ -281,6 +301,11 @@ class Resources extends Action
      * Pack all resources in groupped files
      *
      * @param $resources
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     private function pack($resources)
     {

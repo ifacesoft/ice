@@ -28,8 +28,8 @@ use Ice\Helper\Object;
  *
  * @package Ice
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 trait Core
 {
@@ -37,6 +37,11 @@ trait Core
      * Return short name of class (Ice:Class_Name)
      *
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function getShortName()
     {
@@ -48,6 +53,11 @@ trait Core
      *
      * @param null $className
      * @return Core
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function getClass($className = null)
     {
@@ -62,6 +72,11 @@ trait Core
      * 'Ice/Model/Ice/User' => 'Ice'
      *
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function getModuleAlias()
     {
@@ -72,6 +87,11 @@ trait Core
      * Return instance of resource for self class
      *
      * @return Ice\Core\Resource
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function getResource()
     {
@@ -85,6 +105,11 @@ trait Core
      * @param null $postfix
      * @return Config
      * @throws Core\Exception
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function getConfig(array $config = [], $postfix = null)
     {
@@ -96,6 +121,11 @@ trait Core
      *
      * @param null $postfix
      * @return Data_Provider
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function getDataProvider($postfix = null)
     {
@@ -110,6 +140,11 @@ trait Core
      * Return class name (without namespace)
      *
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function getClassName()
     {
@@ -120,6 +155,11 @@ trait Core
      * Return code generator for self class type
      *
      * @return Code_Generator
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function getCodeGenerator()
     {
@@ -130,6 +170,11 @@ trait Core
      * Return namespace by base class
      *
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function getNamespace()
     {
@@ -140,6 +185,11 @@ trait Core
      * Return base class for self class (class extends Container)
      *
      * @return Core
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function getBaseClass()
     {
@@ -153,6 +203,11 @@ trait Core
      * @param $hash
      * @return null
      * @throws Core\Exception
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     protected static function create($key, $hash = null)
     {
@@ -164,6 +219,11 @@ trait Core
      * Return logger for self class
      *
      * @return Logger
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function getLogger()
     {
@@ -174,6 +234,11 @@ trait Core
      * Return default data provider key
      *
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     protected static function getDefaultKey()
     {
@@ -185,6 +250,11 @@ trait Core
      * Return registry storage for  class
      *
      * @return Registry
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function getRegistry() {
         return Registry::getInstance(self::getClass());

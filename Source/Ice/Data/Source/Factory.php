@@ -23,8 +23,8 @@ use Ice\Core\Model;
  * @package Ice
  * @subpackage Data_Source
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 class Factory extends Defined
 {

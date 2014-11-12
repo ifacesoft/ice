@@ -22,8 +22,8 @@ use Ice\Core;
  * @package Ice
  * @subpackage Core
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 class Cache
 {
@@ -36,6 +36,11 @@ class Cache
      * @param array $cacheTags
      * @param $time
      * @return bool
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function validate($class, array $cacheTags, $time)
     {
@@ -69,6 +74,11 @@ class Cache
      *
      * @param $cacheTags
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     private static function getKeys($cacheTags)
     {
@@ -96,6 +106,11 @@ class Cache
      *
      * @param $class
      * @param $cacheTags
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function invalidate($class, $cacheTags)
     {

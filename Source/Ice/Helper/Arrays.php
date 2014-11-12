@@ -22,8 +22,8 @@ use Ice\Core\Logger;
  * @package Ice
  * @subpackage Helper
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 class Arrays
 {
@@ -39,6 +39,11 @@ class Arrays
      * @param array $rows
      * @param $filterScheme
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function filter(array $rows, $filterScheme)
     {
@@ -96,6 +101,11 @@ class Arrays
      * @param $array
      * @param $column
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function group($array, $column)
     {
@@ -231,6 +241,11 @@ class Arrays
      * @param $old
      * @param $new
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function diff($old, $new)
     {

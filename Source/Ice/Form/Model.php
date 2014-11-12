@@ -24,8 +24,8 @@ use Ice\Core\Model as Core_Model;
  * @package Ice
  * @subpackage Form
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 class Model extends Form
 {
@@ -40,6 +40,11 @@ class Model extends Form
      * Constructor for model forms
      *
      * @param Core_Model $modelClass
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     protected function __construct($modelClass)
     {
@@ -62,7 +67,11 @@ class Model extends Form
      *
      * @param Core_Model $model
      * @return $this
-     * @throws \Ice\Core\Exception
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function bindModel(Core_Model $model)
     {
@@ -73,6 +82,11 @@ class Model extends Form
      * Get tarret model class
      *
      * @return Core_Model
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getModelClass()
     {
@@ -82,7 +96,10 @@ class Model extends Form
     /**
      * Submit form
      *
-     * @throws \Ice\Core\Exception
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function submit()
     {

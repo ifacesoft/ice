@@ -19,8 +19,8 @@ namespace Ice\Helper;
  * @package Ice
  * @subpackage Helper
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 class Date
 {
@@ -34,6 +34,11 @@ class Date
      *
      * @param null $time
      * @return bool|string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function get($time = null)
     {

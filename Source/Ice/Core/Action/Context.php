@@ -19,8 +19,8 @@ namespace Ice\Core;
  * @package Ice
  * @subpackage Core
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 class Action_Context
 {
@@ -66,6 +66,11 @@ class Action_Context
      * @param array $params
      * @param null $key
      * @throws Exception
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function addAction($actionName, array $params = [], $key = null)
     {
@@ -110,6 +115,11 @@ class Action_Context
      * Assign data to view
      *
      * @param array $params
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function setParams(array $params)
     {
@@ -120,6 +130,11 @@ class Action_Context
      * Set runtime template
      *
      * @param string $template
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function setTemplate($template)
     {
@@ -130,6 +145,11 @@ class Action_Context
      * Return child actions
      *
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getActions()
     {
@@ -142,6 +162,11 @@ class Action_Context
      * @param string $actionClass
      * @param $hash
      * @throws Exception
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function initAction($actionClass, $hash)
     {
@@ -186,6 +211,11 @@ class Action_Context
      * Return resulted view data
      *
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getViewData()
     {
@@ -196,6 +226,11 @@ class Action_Context
      * Return action full stack
      *
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getFullStack()
     {
@@ -204,6 +239,11 @@ class Action_Context
 
     /**
      * Pop action name from call stack
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function commit()
     {

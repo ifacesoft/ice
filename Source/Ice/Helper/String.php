@@ -22,8 +22,8 @@ use Ice\Core\Exception;
  * @package Ice
  * @subpackage Helper
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 class String
 {
@@ -39,6 +39,11 @@ class String
      * @param string $type
      * @return string
      * @throws Exception
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function trim($string, $chars = null, $type = self::TRIM_TYPE_BOTH)
     {

@@ -21,8 +21,8 @@ use Ice\Core\Exception;
  * @package Ice
  * @subpackage Helper
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 class Spatial
 {
@@ -34,6 +34,11 @@ class Spatial
      * @param $geoData
      * @return array
      * @throws Exception
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function decode($geoData)
     {
@@ -80,6 +85,11 @@ class Spatial
      *
      * @param $geoData
      * @return mixed
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function encode($geoData)
     {

@@ -24,8 +24,8 @@ use Ice\Core;
  * @package Ice
  * @subpackage Core
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 abstract class View_Render extends Container
 {
@@ -45,6 +45,11 @@ abstract class View_Render extends Container
      * @param View_Render $viewRenderClass
      * @param $hash
      * @return View_Render
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     protected static function create($viewRenderClass, $hash = null)
     {
@@ -55,6 +60,11 @@ abstract class View_Render extends Container
      * Return current processing template
      *
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function getLastTemplate()
     {
@@ -69,6 +79,11 @@ abstract class View_Render extends Container
      * Return default view render key
      *
      * @return View_Render
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     protected static function getDefaultKey()
     {
@@ -81,6 +96,11 @@ abstract class View_Render extends Container
      * @param $template
      * @param array $data
      * @param string $templateType
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since 0
      */
     abstract public function display($template, array $data = [], $templateType = View_Render::TEMPLATE_TYPE_FILE);
 
@@ -91,6 +111,11 @@ abstract class View_Render extends Container
      * @param array $data
      * @param string $templateType
      * @return mixed
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since 0
      */
     abstract public function fetch($template, array $data = [], $templateType = View_Render::TEMPLATE_TYPE_FILE);
 }

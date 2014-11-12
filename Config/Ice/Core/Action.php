@@ -5,7 +5,7 @@ return [
             'vendor' => 'phpdocumentor/phpdocumentor',
             'script' => 'bin/phpdoc',
             'sourceDir' => MODULE_DIR . 'Source',
-            'apiDir' => MODULE_DIR . 'Resource/api/' . MODULE_BRANCH . '/' . basename(MODULE_DIR)
+            'apiDir' => MODULE_DIR . 'Resource/api/' . basename(MODULE_DIR) . '/' . MODULE_BRANCH
         ]
     ],
     'Ice\Action\Phpuml_Generate' => [
@@ -13,7 +13,7 @@ return [
             'vendor' => 'zerkalica/phpuml',
             'script' => 'bin/phpuml',
             'sourceDir' => MODULE_DIR . 'Source',
-            'umlDir' => MODULE_DIR . 'Resource/uml/' . basename(MODULE_DIR)
+            'umlDir' => MODULE_DIR . 'Resource/uml/' . basename(MODULE_DIR) . '/' . MODULE_BRANCH
         ]
     ],
     'Ice\Action\Phpunit_Run' => [

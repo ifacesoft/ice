@@ -23,8 +23,8 @@ use Ice\Exception\File_Not_Found;
  * @package Ice
  * @subpackage Core
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 abstract class Container
 {
@@ -37,6 +37,11 @@ abstract class Container
      * @param null $ttl
      * @throws Exception
      * @return mixed
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function getInstance($key = null, $ttl = null)
     {

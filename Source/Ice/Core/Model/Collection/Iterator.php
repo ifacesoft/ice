@@ -19,8 +19,8 @@ use Ice\Core\Model;
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 class Iterator extends Data
 {
@@ -29,6 +29,11 @@ class Iterator extends Data
      * Constructor of model collection iterator
      *
      * @param Data $data
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     function __construct(Data $data)
     {
@@ -39,6 +44,11 @@ class Iterator extends Data
      * Set iterator data result
      *
      * @param array $result
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function setResult($result)
     {
@@ -52,6 +62,11 @@ class Iterator extends Data
      * Return the current element
      * @link http://php.net/manual/en/iterator.current.php
      * @return mixed Can return any type.
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function current()
     {

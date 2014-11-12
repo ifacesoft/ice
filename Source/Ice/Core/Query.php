@@ -24,8 +24,8 @@ use Ice\Core;
  * @package Ice
  * @subpackage Core
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 class Query extends Container
 {
@@ -113,6 +113,11 @@ class Query extends Container
      *
      * @param $data
      * @param $hash
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     private function __construct($data, $hash = null)
     {
@@ -134,6 +139,11 @@ class Query extends Container
      * @param $data
      * @param null $hash
      * @return Query
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     protected static function create($data, $hash = null)
     {
@@ -144,6 +154,11 @@ class Query extends Container
      * Return query limits
      *
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getLimit()
     {
@@ -154,6 +169,11 @@ class Query extends Container
      * Return calc found rows flag
      *
      * @return boolean
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function isCalcFoundRows()
     {
@@ -164,6 +184,11 @@ class Query extends Container
      * Return data source name
      *
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getDataSource()
     {
@@ -176,6 +201,11 @@ class Query extends Container
      * @param array $bindParts
      * @param array $rows
      * @return Query
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function bind(array $bindParts, array $rows)
     {
@@ -206,6 +236,11 @@ class Query extends Container
      * Return query statement type
      *
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getQueryType()
     {
@@ -216,6 +251,11 @@ class Query extends Container
      * Return bind values
      *
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getBinds()
     {
@@ -226,6 +266,11 @@ class Query extends Container
      * Return translated query
      *
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getSql()
     {
@@ -236,6 +281,11 @@ class Query extends Container
      * Return model class
      *
      * @return Model
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getModelClass()
     {
@@ -246,6 +296,11 @@ class Query extends Container
      * Return insert rows
      *
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getInsertRows()
     {
@@ -256,6 +311,11 @@ class Query extends Container
      * Return validate tags
      *
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getValidateTags()
     {
@@ -266,6 +326,11 @@ class Query extends Container
      * Return invalidate tags
      *
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getInvalidateTags()
     {
@@ -278,6 +343,11 @@ class Query extends Container
      * @param int $ttl
      * @throws Exception
      * @return Data
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getData($ttl = 3600)
     {
@@ -288,6 +358,11 @@ class Query extends Container
      * Return full hash of query
      *
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getFullHash()
     {

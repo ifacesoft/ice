@@ -26,8 +26,8 @@ use Ice\View\Render\Replace;
  * @package Ice
  * @subpackage Core
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 class Resource extends Container
 {
@@ -50,6 +50,11 @@ class Resource extends Container
      *
      * @param $class
      * @param $resource
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     private function __construct($class, $resource)
     {
@@ -64,6 +69,11 @@ class Resource extends Container
      * @param null $hash
      * @return Resource
      * @throws File_Not_Found
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     protected static function create($class, $hash = null)
     {
@@ -79,6 +89,11 @@ class Resource extends Container
      *
      * @param $message
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function get($message)
     {
@@ -127,6 +142,11 @@ class Resource extends Container
      * @param $class
      * @return mixed
      * @throws File_Not_Found
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     private static function update($message, $class)
     {

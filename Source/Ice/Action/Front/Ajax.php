@@ -29,8 +29,8 @@ use Ice\Helper\Object;
  * @package Ice
  * @subpackage Action
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 class Front_Ajax extends Action
 {
@@ -62,6 +62,11 @@ class Front_Ajax extends Action
      * @param array $input
      * @param Action_Context $actionContext
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     protected function run(array $input, Action_Context $actionContext)
     {
@@ -87,6 +92,11 @@ class Front_Ajax extends Action
      *
      * @param View $view
      * @return View
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function flush(View $view)
     {

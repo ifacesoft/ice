@@ -22,8 +22,8 @@ use Ice\Core\Exception;
  * @package Ice
  * @subpackage Helper
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 class Hash
 {
@@ -40,6 +40,11 @@ class Hash
      * @param string $hash
      * @throws \Ice\Core\Exception
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function get($data, $hash = null, $serializer = null)
     {

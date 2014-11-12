@@ -29,8 +29,8 @@ use Ice\Helper\Php;
  * @package Ice
  * @subpackage Core
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 class Logger
 {
@@ -113,6 +113,11 @@ class Logger
      * Private constructor for logger object
      *
      * @param string $class Class (Logger for this class)
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     private function __construct($class)
     {
@@ -121,6 +126,11 @@ class Logger
 
     /**
      * Initialization logger
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function init()
     {
@@ -142,6 +152,11 @@ class Logger
 
     /**
      * Initialize firebug library
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function initFb()
     {
@@ -152,6 +167,11 @@ class Logger
 
     /**
      * Method of shutdown handler
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function shutdownHandler()
     {
@@ -177,6 +197,11 @@ class Logger
      * @param $errfile
      * @param $errline
      * @param $errcontext
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function errorHandler($errno, $errstr, $errfile, $errline, $errcontext)
     {
@@ -199,6 +224,11 @@ class Logger
      * @param bool $isResource
      * @param bool $logging
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function info($message, $type = null, $isResource = true, $logging = true)
     {
@@ -234,6 +264,11 @@ class Logger
      *
      * @param $message
      * @return mixed
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function addLog($message)
     {
@@ -251,6 +286,11 @@ class Logger
      * @param int $errno
      * @return null|string
      * @throws Exception
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function error($message, $file, $line, \Exception $e = null, $errcontext = null, $errno = E_USER_ERROR)
     {
@@ -292,6 +332,11 @@ class Logger
      * @param null $errcontext
      * @param int $errno
      * @return Exception
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     private function createException($message, $file, $line, \Exception $e = null, $errcontext = null, $errno = 1)
     {
@@ -309,6 +354,11 @@ class Logger
      *
      * @param string $class
      * @return Logger
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function getInstance($class = __CLASS__)
     {
@@ -317,6 +367,11 @@ class Logger
 
     /**
      * Output all stored logs into standard output
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function renderLog()
     {
@@ -327,6 +382,11 @@ class Logger
      * Debug variables with die application
      *
      * @param $arg
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function debugDie($arg)
     {
@@ -344,6 +404,11 @@ class Logger
      * Debug variables
      *
      * @param $arg
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function debug($arg)
     {
@@ -375,6 +440,11 @@ class Logger
 
     /**
      * Clear all stored logs
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function clearLog()
     {
@@ -385,6 +455,11 @@ class Logger
      * Return current float microtime
      *
      * @return float
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function microtime()
     {
@@ -396,6 +471,11 @@ class Logger
      *
      * @param float $start Start time point
      * @return float
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function microtimeResult($start)
     {
@@ -412,6 +492,11 @@ class Logger
      * @param null $errcontext
      * @param int $errno
      * @return null|string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function notice($message, $file, $line, \Exception $e = null, $errcontext = null, $errno = E_USER_NOTICE)
     {
@@ -428,6 +513,11 @@ class Logger
      * @param null $errcontext
      * @param int $errno
      * @return null|string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function warning($message, $file, $line, \Exception $e = null, $errcontext = null, $errno = E_USER_WARNING)
     {
@@ -444,6 +534,11 @@ class Logger
      * @param null $errcontext
      * @param int $errno
      * @throws Exception
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function fatal($message, $file, $line, \Exception $e = null, $errcontext = null, $errno = -1)
     {

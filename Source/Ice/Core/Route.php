@@ -46,8 +46,8 @@ use Ice\View\Render\Replace;
  * @package Ice
  * @subpackage Core
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 class Route extends Container
 {
@@ -70,6 +70,11 @@ class Route extends Container
      *
      * @param $routeName
      * @param $route
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     private function __construct($routeName, $route)
     {
@@ -83,6 +88,11 @@ class Route extends Container
      * @param $routeName
      * @param array $params
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function getUrl($routeName, array $params = [])
     {
@@ -102,6 +112,11 @@ class Route extends Container
      * @param string $name
      * @param null $hash
      * @return Route
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function create($name, $hash = null)
     {
@@ -118,6 +133,11 @@ class Route extends Container
      * Return all routes
      *
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function getRoutes()
     {
@@ -137,6 +157,11 @@ class Route extends Container
      * @param string $prefix
      * @return array
      * @throws File_Not_Found
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     private static function getRouteFileData($class = __CLASS__, $prefix = '')
     {
@@ -203,6 +228,11 @@ class Route extends Container
      * Return default route key by uri
      *
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     protected static function getDefaultKey()
     {
@@ -213,6 +243,11 @@ class Route extends Container
      * Return self route name
      *
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getRouteName()
     {
@@ -223,6 +258,11 @@ class Route extends Container
      * Return route string
      *
      * @return mixed
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getRoute()
     {
@@ -233,6 +273,11 @@ class Route extends Container
      * return route data
      *
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getData()
     {

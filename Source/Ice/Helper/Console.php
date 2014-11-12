@@ -24,8 +24,8 @@ use Ice\Core\Validator;
  * @package Ice
  * @subpackage Helper
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 class Console
 {
@@ -63,6 +63,11 @@ class Console
      * @param $string
      * @param Resource $resource
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function getHeader($string, Resource $resource)
     {
@@ -87,6 +92,11 @@ class Console
      * @param null $color
      * @param null $background
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function getText($string, $color = null, $background = null)
     {
@@ -110,6 +120,11 @@ class Console
      * @param $param
      * @param $data
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function getInteractive(Resource $resource, $param, $data)
     {

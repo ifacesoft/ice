@@ -31,8 +31,8 @@ use Ice\Helper\String;
  * @package Ice
  * @subpackage Core
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 class Model_Scheme extends Container
 {
@@ -47,6 +47,11 @@ class Model_Scheme extends Container
      * Private constructor for model scheme
      *
      * @param $dataScheme
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     private function __construct($dataScheme)
     {
@@ -61,6 +66,11 @@ class Model_Scheme extends Container
      * @param $modelClass
      * @param null $hash
      * @return Model_Scheme
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     protected static function create($modelClass, $hash = null)
     {
@@ -73,6 +83,11 @@ class Model_Scheme extends Container
      * @param $modelClass
      * @return mixed
      * @throws File_Not_Found
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function getFilePathData($modelClass)
     {
@@ -100,6 +115,11 @@ class Model_Scheme extends Container
      * @return mixed
      * @throws Exception
      * @throws File_Not_Found
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function update($tableName, $schemeData, $force = false)
     {
@@ -199,6 +219,11 @@ class Model_Scheme extends Container
      * @param $scheme
      * @param $tableName
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function diff($scheme, $tableName)
     {
@@ -212,6 +237,11 @@ class Model_Scheme extends Container
      * Return columns with their column schemes
      *
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getColumnNames()
     {
@@ -222,6 +252,11 @@ class Model_Scheme extends Container
      * Scheme name of this model scheme
      *
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getScheme()
     {
@@ -232,6 +267,11 @@ class Model_Scheme extends Container
      * Return indexes
      *
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getIndexes()
     {

@@ -29,8 +29,8 @@ use mysqli_stmt;
  * @package Ice
  * @subpackage Data_Source
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 class Mysqli extends Data_Source
 {
@@ -40,6 +40,11 @@ class Mysqli extends Data_Source
      * @param Query $query
      * @throws Exception
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function select(Query $query)
     {
@@ -107,6 +112,11 @@ class Mysqli extends Data_Source
      * @param Query $query
      * @throws Exception
      * @return mysqli_stmt
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     private function getStatement(Query $query)
     {
@@ -141,6 +151,11 @@ class Mysqli extends Data_Source
      *
      * @param string|null $scheme
      * @return \Mysqli
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getConnection($scheme = null)
     {
@@ -152,6 +167,11 @@ class Mysqli extends Data_Source
      *
      * @param $arr
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     private function makeValuesReferenced($arr)
     {
@@ -168,6 +188,11 @@ class Mysqli extends Data_Source
      * @param Query $query
      * @throws Exception
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function insert(Query $query)
     {
@@ -211,6 +236,11 @@ class Mysqli extends Data_Source
      * @param Query $query
      * @throws Exception
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function update(Query $query)
     {
@@ -239,6 +269,11 @@ class Mysqli extends Data_Source
      * @param Query $query
      * @throws Exception
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function delete(Query $query)
     {
@@ -266,6 +301,11 @@ class Mysqli extends Data_Source
      *
      * @param $tableName
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getIndexes($tableName)
     {
@@ -332,6 +372,11 @@ class Mysqli extends Data_Source
      * Get data Scheme from data source
      *
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getTables()
     {
@@ -356,6 +401,11 @@ class Mysqli extends Data_Source
      *
      * @param $tableName
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getColumns($tableName)
     {

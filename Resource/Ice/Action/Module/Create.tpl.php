@@ -29,6 +29,8 @@ server {
     location ^~ /resource
     {
         root <?= ROOT_DIR ?>_resource/<?= $moduleName ?>;
+        index index.html;
+
         add_header      Cache-Control "public,must-revalidate";
         #add_header      Expires "Thu, 15 Apr 2010 20:00:00 GMT";
 

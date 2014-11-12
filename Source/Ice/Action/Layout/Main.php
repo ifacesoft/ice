@@ -25,8 +25,8 @@ use Ice\Core\Action_Context;
  * @package Ice
  * @subpackage Action
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 class Layout_Main extends Layout
 {
