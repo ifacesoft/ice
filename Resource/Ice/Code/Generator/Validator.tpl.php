@@ -14,9 +14,10 @@ use Ice\Core\Validator;
 <?php if ($namespace) {?> * @package <?=$namespace?>;<?php
 }?>
 
- * @author <?=get_current_user()?>
+ * @author <?= get_current_user() ?> <email>
 
- * @version stable_0
+ * @version 0
+ * @since 0
  */
 class <?=$validatorName?> extends Validator
 {

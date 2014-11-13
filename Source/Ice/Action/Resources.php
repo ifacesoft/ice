@@ -19,6 +19,7 @@ use Ice\Core\Model;
 use Ice\Core\Module;
 use Ice\Data\Provider\Router;
 use Ice\Helper\Arrays;
+use Ice\Helper\Config;
 use Ice\Helper\Directory;
 use JSMin;
 
@@ -187,7 +188,7 @@ class Resources extends Action
                         ? $name . '/' . $resourceKey . '/'
                         : 'vendor/' . $resourceKey . '/';
 
-                    $source .= $resourceItem['path'];
+                    $source .= Config::get($resourceItem['path']);
 
                     if ($resourceItem['isCopy']) {
                         Directory::copy($source, Directory::get(RESOURCE_DIR . $res));
@@ -200,7 +201,7 @@ class Resources extends Action
                         $resources['js'][] = [
                             'source' => $source . ltrim($resource, '-'),
                             'resource' => $jsResource,
-                            'url' => $resourceItem['path']
+                            'url' => Config::get($resourceItem['path'])
                                 ? '/resource/' . $res . $resourceKey . '.pack.js'
                                 : '/resource/' . $name . '/javascript.pack.js',
                             'pack' => $resource[0] != '-'
@@ -213,7 +214,7 @@ class Resources extends Action
                         $resources['css'][] = [
                             'source' => $source . ltrim($resource, '-'),
                             'resource' => $cssResource,
-                            'url' => $resourceItem['path']
+                            'url' => Config::get($resourceItem['path'])
                                 ? '/resource/' . $res . $resourceKey . '.pack.css'
                                 : '/resource/' . $name . '/style.pack.css',
                             'pack' => $resource[0] != '-',

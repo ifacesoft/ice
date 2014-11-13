@@ -12,9 +12,13 @@ use Ice\Core\Menu as Core_Menu;
  *
  * @see Ice\Core\Action
  * @see Ice\Core\Action_Context;
+ *
  * @package Ice\Action;
- * @author dp
- * @version stable_0
+ *
+ * @author dp <denis.a.shestakov@gmail.com>
+ *
+ * @version 0.0
+ * @since 0.0
  */
 class Menu extends Action
 {

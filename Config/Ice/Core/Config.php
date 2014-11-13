@@ -5,7 +5,9 @@
  * Sets default config params for ice application components
  *
  * @author dp <denis.a.shestakov@gmail.com>
- * @version stable_0
+ *
+ * @version 0.0
+ * @since 0.0
  */
 
 return [
