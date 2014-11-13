@@ -100,4 +100,21 @@ class Replace extends View_Render
             $template
         );
     }
+
+    /**
+     * Return instanc of view render Replace
+     *
+     * @param null $key
+     * @param null $ttl
+     * @return Replace
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.1
+     * @since 0.1
+     */
+    public static function getInstance($key = null, $ttl = null)
+    {
+        return parent::getInstance($key, $ttl);
+    }
 }

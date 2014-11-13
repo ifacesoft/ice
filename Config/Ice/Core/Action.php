@@ -5,7 +5,8 @@ return [
             'vendor' => 'phpdocumentor/phpdocumentor',
             'script' => 'bin/phpdoc',
             'sourceDir' => MODULE_DIR . 'Source',
-            'apiDir' => MODULE_DIR . 'Resource/api/' . basename(MODULE_DIR) . '/' . MODULE_BRANCH
+            'apiDir' => MODULE_DIR . 'Resource/api/' . basename(MODULE_DIR) . '/' . MODULE_BRANCH,
+            'tpl' => 'responsive-twig'
         ]
     ],
     'Ice\Action\Phpuml_Generate' => [

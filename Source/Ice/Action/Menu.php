@@ -1,39 +1,24 @@
 <?php
-/**
- * Ice action phpdoc generate class
- *
- * @link http://www.iceframework.net
- * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
- * @license https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
- */
-
 namespace Ice\Action;
 
 use Ice\Core\Action;
 use Ice\Core\Action_Context;
-use Ice\Helper\Directory;
+use Ice\Core\Logger;
+use Ice\View\Render\Php;
+use Ice\Core\Menu as Core_Menu;
 
 /**
- * Class Phpdoc_Generate
- *
- * Generate php api documentation via phpdocumentor
+ * Class Menu
  *
  * @see Ice\Core\Action
- * @see Ice\Core\Action_Context
- *
- * @author dp <denis.a.shestakov@gmail.com>
- *
- * @package Ice
- * @subpackage Action
- *
- * @version 0.0
- * @since 0.0
+ * @see Ice\Core\Action_Context;
+ * @package Ice\Action;
+ * @author dp
+ * @version stable_0
  */
-class Phpdoc_Generate extends Action
+class Menu extends Action
 {
-
-    /**
-     *  public static $config = [
+    /**  public static $config = [
      *      'afterActions' => [],          // actions
      *      'layout' => null,               // Emmet style layout
      *      'template' => null,             // Template of view
@@ -47,25 +32,37 @@ class Phpdoc_Generate extends Action
      *  ];
      */
     public static $config = [
-        'template' => '',
-        'afterActions' => [
-            'Ice:Cache_Clear'
+        'viewRenderClassName' => 'Ice:Php',
+        'inputValidators' => [
+            'scheme' => 'Ice:Not_Empty'
         ]
+
     ];
 
-    /** Run action
+    /**
+     * Run action
      *
      * @param array $input
      * @param Action_Context $actionContext
      * @return array
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
      */
     protected function run(array $input, Action_Context $actionContext)
     {
-        system('cd ' . VENDOR_DIR . $input['vendor'] . ' && ' . $input['script'] . ' -d ' . $input['sourceDir'] . ' -t ' . Directory::get($input['apiDir']) . ' --template="checkstyle"');
+        $menu = '';
+
+        $viewRender = Php::getInstance();
+
+        foreach ($input['scheme'] as $title => $url) {
+            if (is_array($url)) {
+                $menu .= $viewRender->fetch(Core_Menu::getClass() . '_dropdown', ['title' => $title, 'dropdown' => $url]);
+                continue;
+            }
+
+            $menu .= $viewRender->fetch(Core_Menu::getClass() . '_link', ['title' => $title, 'url' => $url]);
+        }
+
+
+
+        return ['menu' => $menu];
     }
 }

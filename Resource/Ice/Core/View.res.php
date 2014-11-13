@@ -93,4 +93,7 @@ return [
     'Smarty: Unable to load template file \'Wi/Action/Handbook/database.tpl\'' => [
         'ru' => 'Smarty: Unable to load template file \'Wi/Action/Handbook/database.tpl\'',
     ],
+    'Smarty: Unable to load template file \'Ice/Action/Menu.tpl\'' => [
+        'ru' => 'Smarty: Unable to load template file \'Ice/Action/Menu.tpl\'',
+    ],
 ];
