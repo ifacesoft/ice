@@ -79,7 +79,7 @@ class Object
      * @version 0.0
      * @since 0.0
      */
-    private static function isShortName($shortName)
+    public static function isShortName($shortName)
     {
         return (bool)strpos($shortName, ':');
     }

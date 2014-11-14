@@ -381,7 +381,7 @@ class Form extends Container
      * Add accepted fields
      *
      * @param array $filterFields
-     * @return $this
+     * @return Form
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
@@ -390,7 +390,27 @@ class Form extends Container
      */
     public function addFilterFields(array $filterFields)
     {
+        if (empty($filterFields)) {
+            return $this;
+        }
+
         $this->_filterFields = array_merge($this->_filterFields, $filterFields);
         return $this;
+    }
+
+    /**
+     * Return instance of Form
+     *
+     * @param null $key
+     * @param null $ttl
+     * @return Form
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.1
+     * @since 0.1
+     */
+    public static function getInstance($key = null, $ttl = null)
+    {
+        return parent::getInstance($key, $ttl);
     }
 }

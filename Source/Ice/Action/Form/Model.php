@@ -53,7 +53,8 @@ class Form_Model extends Action
         ],
         'inputDefaults' => [
             'groupping' => true,
-            'reRenderClassNames' => []
+            'reRenderClassNames' => [],
+            'filterFields' => null
         ],
     ];
 
@@ -73,7 +74,7 @@ class Form_Model extends Action
     {
         $class = Model::getClass($input['modelName']);
 
-        $form = $class::getForm();
+        $form = $class::getForm($input['filterFields']);
 
         $model = $class::getModel($input['pk'], '*');
 

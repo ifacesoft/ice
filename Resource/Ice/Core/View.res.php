@@ -99,4 +99,13 @@ return [
     'Smarty: Unable to load template file \'Bi/Action/Index.tpl\'' => [
         'ru' => 'Smarty: Unable to load template file \'Bi/Action/Index.tpl\'',
     ],
+    'Smarty: Unable to load template file \'Bi/Action/Cabinet.tpl\'' => [
+        'ru' => 'Smarty: Unable to load template file \'Bi/Action/Cabinet.tpl\'',
+    ],
+    'Smarty: Unable to load template file \'Ice/Action/Roll/Model.tpl\'' => [
+        'ru' => 'Smarty: Unable to load template file \'Ice/Action/Roll/Model.tpl\'',
+    ],
+    'Smarty: Unable to load template file \'Bi/Action/Post/User.tpl\'' => [
+        'ru' => 'Smarty: Unable to load template file \'Bi/Action/Post/User.tpl\'',
+    ],
 ];
