@@ -57,7 +57,7 @@ class Model
         $namespace = $moduleName . '\Model\\';
 
         if ($prefix) {
-            $namespace .= ucfirst(preg_replace('/[^a-z]/i', '', $prefix)) . '\\';
+//            $namespace .= ucfirst(preg_replace('/[^a-z]/i', '', $prefix)) . '\\';
         }
 
         $modelName = '';

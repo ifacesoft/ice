@@ -26,8 +26,10 @@ use Ice\Core;
  * @version 0.0
  * @since 0.0
  */
-class Environment extends Container
+class Environment extends Factory
 {
+    use Core;
+
     const PRODUCTION = 'production';
     const TEST = 'test';
     const DEVELOPMENT = 'development';

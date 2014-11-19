@@ -29,8 +29,10 @@ use Ice\Helper\Object;
  * @version 0.0
  * @since 0.0
  */
-class View extends Container
+class View extends Factory
 {
+    use Core;
+
     /**
      * View data (template, view render class etc.
      *

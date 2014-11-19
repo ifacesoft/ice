@@ -68,6 +68,9 @@ return [
             'Ice\Core\Form' => [
                 'instance' => 'Ice:Object/form',
             ],
+            'Ice\Core\Container' => [
+                'instance' => 'Ice:Object/container',
+            ],
             'Ice\Core\View_Render' => [
                 'instance' => 'Ice:Object/view_render',
             ],
@@ -145,6 +148,9 @@ return [
             ],
             'Ice\Core\Form' => [
                 'instance' => 'Ice:Registry/form',
+            ],
+            'Ice\Core\Container' => [
+                'instance' => 'Ice:Registry/container',
             ],
             'Ice\Core\View_Render' => [
                 'instance' => 'Ice:Registry/config'

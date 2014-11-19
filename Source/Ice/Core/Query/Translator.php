@@ -10,6 +10,7 @@
 namespace Ice\Core;
 
 use Ice;
+use Ice\Core;
 use Ice\Helper\Object;
 
 /**
@@ -27,8 +28,10 @@ use Ice\Helper\Object;
  * @version 0.0
  * @since 0.0
  */
-abstract class Query_Translator extends Container
+abstract class Query_Translator extends Factory
 {
+    use Core;
+
     /**
      * Create new instance of query translator
      *

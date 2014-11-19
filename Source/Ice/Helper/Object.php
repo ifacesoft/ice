@@ -9,7 +9,7 @@
 
 namespace Ice\Helper;
 
-use Ice\Core\Container;
+use Ice\Core\Factory;
 use Ice\Core\Module;
 
 /**
@@ -186,7 +186,7 @@ class Object
     public static function getBaseClass($class)
     {
         foreach (class_parents($class) as $parentClass) {
-            if ($parentClass == Container::getClass()) {
+            if ($parentClass == Factory::getClass()) {
                 break;
             }
 

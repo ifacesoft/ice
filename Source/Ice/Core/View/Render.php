@@ -27,8 +27,10 @@ use Ice\Core;
  * @version 0.0
  * @since 0.0
  */
-abstract class View_Render extends Container
+abstract class View_Render extends Factory
 {
+    use Core;
+
     const TEMPLATE_TYPE_FILE = 'file';
     const TEMPLATE_TYPE_STRING = 'string';
 

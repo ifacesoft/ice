@@ -14,6 +14,7 @@ use Ice\Core\Code_Generator;
 use Ice\Core\Config;
 use Ice\Core\Data_Provider;
 use Ice\Core\Environment;
+use Ice\Core\Exception;
 use Ice\Core\Logger;
 use Ice\Core\Resource;
 use Ice\Data\Provider\Registry;
@@ -86,7 +87,7 @@ trait Core
     /**
      * Return instance of resource for self class
      *
-     * @return Ice\Core\Resource
+     * @return Resource
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
@@ -104,7 +105,7 @@ trait Core
      * @param array $config
      * @param null $postfix
      * @return Config
-     * @throws Core\Exception
+     * @throws Exception
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *

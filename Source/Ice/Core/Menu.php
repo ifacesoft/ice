@@ -9,7 +9,10 @@
 namespace Ice\Core;
 
 
-class Menu extends Container
+use Ice\Core;
+
+class Menu extends Factory
 {
+    use Core;
 
 }

@@ -8,6 +8,7 @@
  */
 
 namespace Ice\Core;
+use Ice\Core;
 
 /**
  * Class Form
@@ -24,8 +25,10 @@ namespace Ice\Core;
  * @version 0.1
  * @since 0.0
  */
-abstract class Form extends Container
+abstract class Form extends Factory
 {
+    use Core;
+
     const FIELD_HIDDEN = 'Hidden';
     const FIELD_TEXT = 'Text';
     const FIELD_DATE = 'Date';
@@ -60,29 +63,28 @@ abstract class Form extends Container
      *
      * @var array
      */
-    private $_fields = [];
+    protected $_fields = [];
 
     /**
      * Not ignored fields
      *
      * @var array
      */
-    private $_filterFields = [];
+    protected $_filterFields = [];
 
     /**
      * Validate scheme for validate fields
      *
      * @var array
      */
-    private $_validateScheme = [];
+    protected $_validateScheme = [];
 
     /**
      * Binds values
      *
      * @var array
      */
-    private $_values = [];
-
+    protected $_values = [];
 
     private $_key = null;
 
@@ -478,5 +480,13 @@ abstract class Form extends Container
         return $this->_key;
     }
 
-
+    /**
+     * Submit form
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
+     */
+    abstract public function submit();
 }

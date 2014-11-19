@@ -257,4 +257,34 @@ class Arrays
 
         return $diff;
     }
-} 
+
+    public static function defaults($data, array $defaults = array())
+    {
+        foreach ($defaults as $key => $value) {
+            if (!array_key_exists($key, $data)) {
+                $data[$key] = is_callable($value) ? $value($key) : $value;
+            }
+        }
+
+        return $data;
+    }
+
+    public static function validate($data, array $validators = array())
+    {
+
+        return false;
+    }
+
+    public static function convert($data, array $converters = array())
+    {
+        foreach ($converters as $key => $value) {
+            if (!array_key_exists($key, $data)) {
+                $data[$key] = null;
+            }
+
+            $data[$key] = $value($data[$key]);
+        }
+
+        return $data;
+    }
+}

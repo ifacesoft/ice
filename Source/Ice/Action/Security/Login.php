@@ -33,7 +33,7 @@ class Security_Login extends Action
     public static $config = [
         'viewRenderClassName' => 'Ice:Php',
         'inputDefaults' => [
-            'securityProviderName' => 'Login_Password'
+            'security' => 'Login_Password'
         ]
     ];
 
@@ -46,7 +46,6 @@ class Security_Login extends Action
      */
     protected function run(array $input, Action_Context $actionContext)
     {
-        $securityProvider = Security_Provider::getInstance($input['securityProviderName']);
         $actionContext->addAction('Ice:Form', ['form' => $securityProvider->getLoginForm()]);
     }
 }

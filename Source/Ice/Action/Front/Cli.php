@@ -49,17 +49,6 @@ class Front_Cli extends Action
         'layout' => '',
         'viewRenderClassName' => 'Ice:Cli',
         'inputDataProviderKeys' => [Data_Provider_Cli::DEFAULT_KEY],
-        'inputDefaults' => [
-            'action' => [
-                'default' => 'Ice:Module_Deploy',
-                'title' => 'Action [{$0}]: ',
-                'validators' => [
-                    'validator' => 'Ice:Pattern',
-                    'params' => '/^[:a-z]+$/i',
-                    'message' => 'Action mast conteints only letters and sign ":"'
-                ]
-            ],
-        ]
     ];
 
     /**

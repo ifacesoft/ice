@@ -44,7 +44,7 @@ class Pattern extends Validator
      *      $scheme = [
      *          'name' => [
      *              'Ice:Pattern' => [
-     *                  'params' => /^[a-z]+$/i'
+     *                  'params' => '/^[a-z]+$/i'
      *                  'message => 'not matched'
      *              ]
      *          ]

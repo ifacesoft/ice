@@ -8,6 +8,7 @@
  */
 
 namespace Ice\Core;
+use Ice\Core;
 
 /**
  * Class Data_Transformation
@@ -22,8 +23,9 @@ namespace Ice\Core;
  * @version 0.0
  * @since 0.0
  */
-abstract class Data_Transformation extends Container
+abstract class Data_Transformation extends Factory
 {
+    use Core;
 
     /**
      * Return inctance of Transform class

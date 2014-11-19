@@ -27,8 +27,10 @@ use Ice\Core;
  * @version 0.0
  * @since 0.0
  */
-class Query extends Container
+class Query extends Factory
 {
+    use Core;
+
     /**
      * Target model class
      *

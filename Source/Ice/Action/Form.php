@@ -55,6 +55,7 @@ class Form extends Action
         'inputDefaults' => [
             'groupping' => true,
             'submitActionName' => 'Ice:Form_Submit',
+            'submitTitle' => 'Submit',
             'reRenderActionNames' => []
         ],
         'layout' => 'div.Form>div.panel.panel-default>div.panel-body'
@@ -136,7 +137,8 @@ class Form extends Action
             'formKey' => $formKey,
             'submitActionName' => $input['submitActionName'],
             'reRenderActionNames' => $input['reRenderActionNames'],
-            'filterFields' => implode(',', $filterFields)
+            'filterFields' => implode(',', $filterFields),
+            'submitTitle' => $input['submitTitle']
         ];
     }
 }

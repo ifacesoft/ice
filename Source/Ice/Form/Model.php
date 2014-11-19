@@ -72,21 +72,6 @@ class Model extends Form
     }
 
     /**
-     * Get tarret model class
-     *
-     * @return Core_Model
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function getModelClass()
-    {
-        return $this->_modelClass;
-    }
-
-    /**
      * Submit form
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -101,7 +86,7 @@ class Model extends Form
         }
 
         /** @var Model $modelClass */
-        $modelClass = $this->getModelClass();
+        $modelClass = $this->getKey();
         $modelClass::create($this->getValues())->insertOrUpdate();
     }
 }

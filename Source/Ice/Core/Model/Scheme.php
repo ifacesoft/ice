@@ -34,8 +34,10 @@ use Ice\Helper\String;
  * @version 0.0
  * @since 0.0
  */
-class Model_Scheme extends Container
+class Model_Scheme extends Factory
 {
+    use Core;
+
     /**
      * Model schame
      *

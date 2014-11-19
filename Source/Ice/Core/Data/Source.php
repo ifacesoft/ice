@@ -29,8 +29,10 @@ use Ice\Helper\Object;
  * @version 0.0
  * @since 0.0
  */
-abstract class Data_Source extends Container
+abstract class Data_Source extends Factory
 {
+    use Core;
+
     /**
      * Data provider key for this data source
      *

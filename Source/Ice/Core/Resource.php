@@ -29,8 +29,10 @@ use Ice\View\Render\Replace;
  * @version 0.0
  * @since 0.0
  */
-class Resource extends Container
+class Resource extends Factory
 {
+    use Core;
+
     /**
      * Localized resources
      *

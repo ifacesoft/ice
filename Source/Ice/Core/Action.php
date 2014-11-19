@@ -11,6 +11,7 @@ namespace Ice\Core;
 
 use Ice;
 use Ice\Core;
+use Ice\Helper\Arrays;
 use Ice\Helper\Defaults;
 use Ice\Helper\Hash;
 
@@ -26,11 +27,13 @@ use Ice\Helper\Hash;
  * @package Ice
  * @subpackage Core
  *
- * @version 0.0
+ * @version 0.1
  * @since 0.0
  */
-abstract class Action extends Container
+abstract class Action extends Factory
 {
+    use Core;
+
     const REGISTRY_DATA_PROVIDER_KEY = 'Ice:Registry/action';
 
     /**
@@ -51,8 +54,10 @@ abstract class Action extends Container
         'cacheDataProviderKey' => ''
     ];
 
+    private $_container = null;
+
     /**
-     * Overrideble config
+     * Overridable config
      *
      * @var array
      */
@@ -63,7 +68,7 @@ abstract class Action extends Container
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.1
      * @since 0.0
      */
     private function __construct()
@@ -186,6 +191,8 @@ abstract class Action extends Container
                 }
             }
 
+//            $params['container'] = $this->getContainer();
+
             $actionContext->setParams($params);
 
             $viewData = $actionContext->getViewData();
@@ -236,7 +243,7 @@ abstract class Action extends Container
             $input += (array)$dataProvider->get();
         }
 
-        $input = Defaults::get($input, $config->gets('inputDefaults', false));
+        $input = Arrays::defaults($input, $config->gets('inputDefaults', false));
 
         return [$input, Validator::validateByScheme($input, $config->gets('inputValidators', false))];
     }
@@ -331,4 +338,22 @@ abstract class Action extends Container
      * @since 0
      */
     abstract protected function run(array $input, Action_Context $actionContext);
+
+    /**
+     * Return container of action
+     *
+     * @return Container
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.1
+     * @since 0.1
+     */
+    public function getContainer()
+    {
+        if ($this->_container !== null) {
+            return $this->_container;
+        }
+
+        return $this->_container = Container::getInstance(self::getClass());
+    }
 }

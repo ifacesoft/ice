@@ -1,5 +1,5 @@
 <?php
-namespace Ice\Model\Ice;
+namespace Ice\Model;
 
 use Ice\Core\Model;
 
@@ -13,7 +13,7 @@ use Ice\Core\Model;
  * @property mixed account_active
  *
  * @see Ice\Core\Model
- * @package Ice\Model\Ice;
+ * @package Ice\Model;
  * @author dp <email>
 
  * @version 0

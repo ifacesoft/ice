@@ -28,6 +28,23 @@ return [
             ]
         ]
     ],
+    'Ice\Action\Front_Cli' => [
+        'inputDefaults' => [
+            'action' => function ($param) {
+                return Console::getInteractive('Ice\Action\Module_Create', $param,
+                    [
+                        'default' => 'Ice:Module_Deploy',
+                        'title' => 'Action [{$0}]: ',
+                        'validators' => [
+                            'validator' => 'Ice:Pattern',
+                            'params' => '/^[:a-z]+$/i',
+                            'message' => 'Action mast conteints only letters and sign ":"'
+                        ]
+                    ]
+                );
+            }
+        ]
+    ],
     'Ice\Action\Module_Create' => [
         'inputDefaults' => [
             'name' => function ($param) {

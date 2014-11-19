@@ -26,4 +26,7 @@ user_user_pkField "_pkName" not found in Model "User_User"' => [
         'ru' => 'Could not set value:
 user_user_pkField "_pkName" not found in Model "User_User"',
     ],
+    'Implement validator {$0}' => [
+        'ru' => 'Implement validator {$0}',
+    ],
 ];

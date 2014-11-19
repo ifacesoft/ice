@@ -21,4 +21,13 @@ return [
     'Is_Form: param {$0} is not valid' => [
         'ru' => 'Is_Form: param {$0} is not valid',
     ],
+    'Length_Min: param {$0} is not valid' => [
+        'ru' => 'Length_Min: param {$0} is not valid',
+    ],
+    'LettersNumbers: param {$0} is not valid' => [
+        'ru' => 'LettersNumbers: param {$0} is not valid',
+    ],
+    'Equal: param {$0} is not valid' => [
+        'ru' => 'Equal: param {$0} is not valid',
+    ],
 ];

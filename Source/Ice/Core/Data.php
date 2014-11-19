@@ -11,6 +11,7 @@ namespace Ice\Core;
 
 use ArrayAccess;
 use Countable;
+use Ice\Core;
 use Ice\Core\Model\Collection;
 use Ice\Helper\Arrays;
 use Ice\Helper\Console;
@@ -33,8 +34,10 @@ use Serializable;
  * @version 0.0
  * @since 0.0
  */
-class Data extends Container implements Iterator, ArrayAccess, Countable, Serializable, Cacheable
+class Data extends Factory implements Iterator, ArrayAccess, Countable, Serializable, Cacheable
 {
+    use Core;
+
     const RESULT_MODEL_CLASS = 'modelName';
     const RESULT_ROWS = 'rows';
     const QUERY_FULL_HASH = 'query_hash';

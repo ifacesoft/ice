@@ -3,6 +3,7 @@ namespace Ice\Action;
 
 use Ice\Core\Action;
 use Ice\Core\Action_Context;
+use Ice\Core\Form_Security_Register;
 use Ice\Core\Security_Provider;
 
 /**
@@ -33,7 +34,7 @@ class Security_Register extends Action
     public static $config = [
         'viewRenderClassName' => 'Ice:Php',
         'inputDefaults' => [
-            'securityProviderName' => 'Login_Password'
+            'security' => 'Login_Password'
         ]
     ];
 
@@ -46,7 +47,12 @@ class Security_Register extends Action
      */
     protected function run(array $input, Action_Context $actionContext)
     {
-        $securityProvider = Security_Provider::getInstance($input['securityProviderName']);
-        $actionContext->addAction('Ice:Form', ['form' => $securityProvider->getRegisterForm()]);
+        $actionContext->addAction(
+            'Ice:Form', [
+                'form' => Form_Security_Register::getInstance($input['security']),
+                'submitTitle' => $this->getContainer()->getResource()->get('Register')
+            ]
+        );
+        return ['container' => $this->getContainer()];
     }
 }

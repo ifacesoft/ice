@@ -77,14 +77,17 @@ class Form_Submit extends Action
         $formKey = $input['formKey'];
         unset($input['formKey']);
 
+        $filterFields = empty($input['filterFields']) ? [] : explode(',', $input['filterFields']);
+        unset($input['filterFields']);
+
         try {
             $formClass::getInstance($formKey)
-                ->addFilterFields(explode(',', $input['filterFields']))
+                ->addFilterFields($filterFields)
                 ->bind($input)
                 ->submit();
 
             return [
-                'success' => Form_Submit::getLogger()->info('Row applied successfully', Logger::SUCCESS)
+                'success' => Form_Submit::getLogger()->info('submitted successfully', Logger::SUCCESS)
             ];
         } catch (\Exception $e) {
             $message = ['Row apply failed: {$0}', $e->getMessage()];
