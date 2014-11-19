@@ -50,12 +50,12 @@ class Form extends Action
     public static $config = [
         'viewRenderClassName' => 'Ice:Php',
         'inputValidators' => [
-            'form' => 'Ice:Is_Form',
-            'submitClassName' => 'Ice:Not_Empty'
+            'form' => 'Ice:Is_Form'
         ],
         'inputDefaults' => [
             'groupping' => true,
-            'reRenderClassNames' => []
+            'submitActionName' => 'Ice:Form_Submit',
+            'reRenderActionNames' => []
         ],
         'layout' => 'div.Form>div.panel.panel-default>div.panel-body'
     ];
@@ -69,7 +69,7 @@ class Form extends Action
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.1
      * @since 0.0
      */
     protected function run(array $input, Action_Context $actionContext)
@@ -77,9 +77,11 @@ class Form extends Action
         /** @var Core_Form $form */
         $form = $input['form'];
 
-        $modelClass = $form->getModelClass();
+        $formClass = get_class($form);
 
-        $formName = 'Form_' . Object::getName(get_class($input['form'])) . '_' . Object::getName($modelClass);
+        $formKey = $form->getKey();
+
+        $formName = 'Form_' . Object::getName($formClass) . '_' . Object::getName($formKey);
 
         $filterFields = $form->getFilterFields();
         $fields = $form->getFields();
@@ -130,10 +132,10 @@ class Form extends Action
             'groupping' => $input['groupping'],
             'fields' => $result,
             'formName' => $formName,
-            'formClass' => get_class($input['form']),
-            'formKey' => $modelClass,
-            'submitClassName' => $input['submitClassName'],
-            'reRenderClassNames' => $input['reRenderClassNames'],
+            'formClass' => $formClass,
+            'formKey' => $formKey,
+            'submitActionName' => $input['submitActionName'],
+            'reRenderActionNames' => $input['reRenderActionNames'],
             'filterFields' => implode(',', $filterFields)
         ];
     }

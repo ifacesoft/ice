@@ -11,7 +11,7 @@ namespace Ice\Core;
 
 use Ice;
 use Ice\Core;
-use Ice\Helper\Console;
+use Ice\Helper\Defaults;
 use Ice\Helper\Hash;
 
 /**
@@ -57,7 +57,6 @@ abstract class Action extends Container
      * @var array
      */
     public static $config = [];
-    /** @var array Стек вызовов экшинов */
 
     /**
      * Private constructor of action
@@ -101,83 +100,6 @@ abstract class Action extends Container
     protected static function getDefaultKey()
     {
         return self::getClass();
-    }
-
-    /**
-     * Gets input data from data providers
-     *
-     * @param Config $config
-     * @param array $input
-     * @return array
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function getInput(Config $config, array $input)
-    {
-        $dataProviderKeys = $config->gets('inputDataProviderKeys', false);
-
-        /** @var Action $actionClass */
-        $actionClass = get_class($this);
-        $dataProviderKeys[] = $actionClass::getRegistryDataProviderKey();
-
-        /** @var Data_Provider $dataProvider */
-        $dataProvider = null;
-
-        foreach ($dataProviderKeys as $dataProviderKey) {
-            $dataProvider = Data_Provider::getInstance($dataProviderKey);
-            $input += (array)$dataProvider->get();
-        }
-
-        $resource = $actionClass::getResource();
-
-        foreach ($config->gets('inputDefaults', false) as $param => $value) {
-            if (!isset($input[$param])) {
-                if (Request::isCli() && is_array($value)) {
-                    $input[$param] = Console::getInteractive($resource, $param, $value);
-                    continue;
-                }
-
-                $input[$param] = $value;
-            }
-        }
-
-        return [$input, Validator::validateByScheme($input, $config->gets('inputValidators', false))];
-    }
-
-    /**
-     * Return default input registry data provider for this action
-     *
-     * @return string
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public static function getRegistryDataProviderKey()
-    {
-        return self::REGISTRY_DATA_PROVIDER_KEY . get_called_class();
-    }
-
-    /**
-     * Flush action context.
-     *
-     * Modify view after flush
-     *
-     * @param View $view
-     * @return View
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function flush(View $view)
-    {
-        return $view;
     }
 
     /**
@@ -284,6 +206,72 @@ abstract class Action extends Container
         } catch (\Exception $e) {
             return Action::getLogger()->error(['Calling action "{$0}" failed', $actionClass], __FILE__, __LINE__, $e);
         }
+    }
+
+    /**
+     * Gets input data from data providers
+     *
+     * @param Config $config
+     * @param array $input
+     * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
+     */
+    public function getInput(Config $config, array $input)
+    {
+        $dataProviderKeys = $config->gets('inputDataProviderKeys', false);
+
+        /** @var Action $actionClass */
+        $actionClass = get_class($this);
+        $dataProviderKeys[] = $actionClass::getRegistryDataProviderKey();
+
+        /** @var Data_Provider $dataProvider */
+        $dataProvider = null;
+
+        foreach ($dataProviderKeys as $dataProviderKey) {
+            $dataProvider = Data_Provider::getInstance($dataProviderKey);
+            $input += (array)$dataProvider->get();
+        }
+
+        $input = Defaults::get($input, $config->gets('inputDefaults', false));
+
+        return [$input, Validator::validateByScheme($input, $config->gets('inputValidators', false))];
+    }
+
+    /**
+     * Return default input registry data provider for this action
+     *
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
+     */
+    public static function getRegistryDataProviderKey()
+    {
+        return self::REGISTRY_DATA_PROVIDER_KEY . get_called_class();
+    }
+
+    /**
+     * Flush action context.
+     *
+     * Modify view after flush
+     *
+     * @param View $view
+     * @return View
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
+     */
+    public function flush(View $view)
+    {
+        return $view;
     }
 
     /**

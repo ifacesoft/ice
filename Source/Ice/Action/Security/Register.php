@@ -3,24 +3,19 @@ namespace Ice\Action;
 
 use Ice\Core\Action;
 use Ice\Core\Action_Context;
-use Ice\Core\Logger;
-use Ice\View\Render\Php;
-use Ice\Core\Menu as Core_Menu;
+use Ice\Core\Security_Provider;
 
 /**
- * Class Menu
+ * Class Security_Register
  *
  * @see Ice\Core\Action
  * @see Ice\Core\Action_Context;
- *
  * @package Ice\Action;
- *
- * @author dp <denis.a.shestakov@gmail.com>
- *
- * @version 0.0
- * @since 0.0
+ * @author dp <email>
+ * @version 0
+ * @since 0
  */
-class Menu extends Action
+class Security_Register extends Action
 {
     /**  public static $config = [
      *      'afterActions' => [],          // actions
@@ -37,9 +32,9 @@ class Menu extends Action
      */
     public static $config = [
         'viewRenderClassName' => 'Ice:Php',
-        'inputValidators' => [
-            'scheme' => 'Ice:Not_Empty'
-        ],
+        'inputDefaults' => [
+            'securityProviderName' => 'Login_Password'
+        ]
     ];
 
     /**
@@ -51,21 +46,7 @@ class Menu extends Action
      */
     protected function run(array $input, Action_Context $actionContext)
     {
-        $menu = '';
-
-        $viewRender = Php::getInstance();
-
-        foreach ($input['scheme'] as $title => $url) {
-            if (is_array($url)) {
-                $menu .= $viewRender->fetch(Core_Menu::getClass() . '_dropdown', ['title' => $title, 'dropdown' => $url]);
-                continue;
-            }
-
-            $menu .= $viewRender->fetch(Core_Menu::getClass() . '_link', ['title' => $title, 'url' => $url]);
-        }
-
-
-
-        return ['menu' => $menu];
+        $securityProvider = Security_Provider::getInstance($input['securityProviderName']);
+        $actionContext->addAction('Ice:Form', ['form' => $securityProvider->getRegisterForm()]);
     }
 }

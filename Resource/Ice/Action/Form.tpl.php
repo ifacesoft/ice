@@ -34,6 +34,6 @@
     <div class="btn-group">
         <input type="hidden" name="filterFields" value="<?= $filterFields ?>"/>
         <input class="btn btn-primary" type="button" value="Submit"
-               onclick="Form.submit($(this), '<?= $submitClassName ?>', ['<?= implode(',', $reRenderClassNames) ?>'])"/>
+               onclick="Form.submit($(this), '<?= $submitActionName ?>', ['<?= implode(',', $reRenderActionNames) ?>'])"/>
     </div>
 </form>

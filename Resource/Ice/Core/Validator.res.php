@@ -15,4 +15,10 @@ return [
     'Not_Null: param {$0} is not valid' => [
         'ru' => 'Not_Null: param {$0} is not valid',
     ],
+    'param {$0} is not valid' => [
+        'en' => 'param {$0} is not valid',
+    ],
+    'Is_Form: param {$0} is not valid' => [
+        'ru' => 'Is_Form: param {$0} is not valid',
+    ],
 ];

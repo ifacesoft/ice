@@ -71,6 +71,9 @@ return [
             'Ice\Core\View_Render' => [
                 'instance' => 'Ice:Object/view_render',
             ],
+            'Ice\Core\Security_Provider' => [
+                'instance' => 'Ice:Object/security_provider',
+            ],
             'Ice\Core\Query_Translator' => [
                 'instance' => 'Ice:Object/query_translator',
             ],
@@ -145,6 +148,9 @@ return [
             ],
             'Ice\Core\View_Render' => [
                 'instance' => 'Ice:Registry/config'
+            ],
+            'Ice\Core\Security_Provider' => [
+                'instance' => 'Ice:Registry/security_provider',
             ],
             'Ice\Core\Query_Translator' => [
                 'instance' => 'Ice:Registry/query_translator',

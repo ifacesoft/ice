@@ -24,18 +24,11 @@ use Ice\Core\Model as Core_Model;
  * @package Ice
  * @subpackage Form
  *
- * @version 0.0
+ * @version 0.1
  * @since 0.0
  */
 class Model extends Form
 {
-    /**
-     * Target model class
-     *
-     * @var Core_Model
-     */
-    private $_modelClass = null;
-
     /**
      * Constructor for model forms
      *
@@ -43,12 +36,12 @@ class Model extends Form
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.1
      * @since 0.0
      */
     protected function __construct($modelClass)
     {
-        $this->_modelClass = $modelClass;
+        parent::__construct($modelClass);
 
         $validateScheme = $modelClass::getValidateScheme();
 

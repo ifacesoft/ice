@@ -9,6 +9,7 @@
 
 namespace Ice\Helper;
 
+use Ice\Core;
 use Ice\Core\Logger as Core_Logger;
 use Ice\Core\Resource;
 use Ice\Core\Response;
@@ -114,9 +115,9 @@ class Console
     }
 
     /**
-     * Return ineractive output for define variable from input
+     * Return interactive output for define variable from input
      *
-     * @param Resource $resource
+     * @param $class Core
      * @param $param
      * @param $data
      * @return string
@@ -126,8 +127,10 @@ class Console
      * @version 0.0
      * @since 0.0
      */
-    public static function getInteractive(Resource $resource, $param, $data)
+    public static function getInteractive($class, $param, $data)
     {
+        $resource = $class::getResource();
+
         $title = Console::C_YELLOW . $resource->get([$data['title'], $data['default']]) . Console::C_GRAY_B;
 
         Response::send($title);

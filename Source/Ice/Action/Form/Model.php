@@ -47,13 +47,13 @@ class Form_Model extends Action
     public static $config = [
         'viewRenderClassName' => 'Ice:Smarty',
         'inputValidators' => [
-            'submitClassName' => 'Ice:Not_Empty',
+            'submitActionName' => 'Ice:Not_Empty',
             'modelName' => 'Ice:Not_Empty',
             'pk' => 'Ice:Numeric_Positive'
         ],
         'inputDefaults' => [
             'groupping' => true,
-            'reRenderClassNames' => [],
+            'reRenderActionNames' => [],
             'filterFields' => null
         ],
     ];
@@ -84,8 +84,8 @@ class Form_Model extends Action
 
         $data = [
             'form' => $form,
-            'submitClassName' => $input['submitClassName'],
-            'reRenderClassNames' => $input['reRenderClassNames']
+            'submitActionName' => $input['submitActionName'],
+            'reRenderActionNames' => $input['reRenderActionNames']
         ];
 
         $actionContext->addAction('Ice:Form', $data);

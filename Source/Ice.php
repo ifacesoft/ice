@@ -10,6 +10,7 @@
 use Ice\Action\Front;
 use Ice\Action\Front_Ajax;
 use Ice\Action\Front_Cli;
+use Ice\Core;
 use Ice\Core\Action;
 use Ice\Core\Action_Context;
 use Ice\Core\Container;
@@ -18,6 +19,7 @@ use Ice\Core\Logger;
 use Ice\Core\Request;
 use Ice\Core\Response;
 use Ice\Helper\Memory;
+use Ice\Helper\Object;
 
 /**
  * Class Ice
@@ -130,5 +132,20 @@ class Ice extends Container
         if (!Request::isCli() && function_exists('fastcgi_finish_request')) {
             fastcgi_finish_request();
         }
+    }
+
+    /**
+     * Return instance of ice container class
+     *
+     * @param $class Container
+     * @return mixed
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.1
+     * @since 0.1
+     */
+    public static function get($class) {
+        return $class::getInstance();
     }
 }

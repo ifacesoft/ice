@@ -14,6 +14,7 @@ use Ice\Core\Action_Context;
 use Ice\Core\Loader;
 use Ice\Core\Logger;
 use Ice\Core\Response;
+use Ice\Helper\Console;
 use Ice\Helper\Directory;
 use Ice\Helper\File;
 use Ice\Helper\Json;
@@ -53,64 +54,6 @@ class Module_Create extends Action
     public static $config = [
 //        'afterActions' => 'Ice:Module_Update',
         'viewRenderClassName' => 'Ice:Php',
-        'inputDefaults' => [
-            'name' => [
-                'default' => 'MyProject',
-                'title' => 'Module name [{$0}]: ',
-                'validators' => [
-                    'Ice:Pattern' => '/^[a-z]+$/i'
-                ]
-            ],
-            'alias' => [
-                'default' => 'Mp',
-                'title' => 'Module alias (short module name, 2-5 letters) [{$0}]: ',
-                'validators' => [
-                    'Ice:Pattern' => '/^[a-z]+$/i'
-                ]
-            ],
-            'locale' => [
-                'default' => 'ru',
-                'title' => 'Default locale [{$0}]: ',
-                'validators' => [
-                    'Ice:Pattern' => '/^[a-z]+$/i'
-                ]
-            ],
-            'scheme' => [
-                'default' => 'test',
-                'title' => 'Scheme - database name(not empty and must be exists) [{$0}]: ',
-                'validators' => [
-                    'Ice:Pattern' => '/^[a-z]+$/i'
-                ]
-            ],
-            'username' => [
-                'default' => 'root',
-                'title' => 'Database username [{$0}]: ',
-                'validators' => [
-                    'Ice:Pattern' => '/^[a-z]+$/i'
-                ]
-            ],
-            'password' => [
-                'default' => '',
-                'title' => 'Database username password [{$0}]: ',
-                'validators' => [
-                    'Ice:Pattern' => '/^[a-z]+$/i'
-                ]
-            ],
-            'viewRender' => [
-                'default' => 'Smarty',
-                'title' => 'Default view render (Php|Smarty|Twig)  [{$0}]: ',
-                'validators' => [
-                    'Ice:Pattern' => '/^(Php|Smarty|Twig)$/i'
-                ]
-            ],
-            'vcs' => [
-                'default' => 'mercurial',
-                'title' => 'Default version control system (mercurial|git|subversion)  [{$0}]: ',
-                'validators' => [
-                    'Ice:Pattern' => '/^(mercurial|git|subversion)$/i'
-                ]
-            ]
-        ]
     ];
 
     /**

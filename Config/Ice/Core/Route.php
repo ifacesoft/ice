@@ -10,7 +10,7 @@ return [
             ]
         ]
     ],
-    '/Http_Status' => '/status',
+    '/Http_Status' => '',
     'ice_redirect_uri' => [
         'route' => 'redirect{$redirectUrl}',
         'GET' => [
@@ -26,4 +26,5 @@ return [
             'redirect' => 'ice_main'
         ]
     ],
+    '/Security' => '/security',
 ];

@@ -1,6 +1,6 @@
 <?php
 /**
- * Ice core form class
+ * Ice core form abstract class
  *
  * @link http://www.iceframework.net
  * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
@@ -21,10 +21,10 @@ namespace Ice\Core;
  * @package Ice
  * @subpackage Core
  *
- * @version 0.0
+ * @version 0.1
  * @since 0.0
  */
-class Form extends Container
+abstract class Form extends Container
 {
     const FIELD_HIDDEN = 'Hidden';
     const FIELD_TEXT = 'Text';
@@ -32,7 +32,10 @@ class Form extends Container
     const FIELD_CHECKBOX = 'Checkbox';
     const FIELD_GEO = 'Geo';
     const FIELD_NUMBER = 'Number';
+    const FIELD_PASSWORD = 'Password';
     const FIELD_TEXTAREA = 'Textarea';
+    const NAME_MODEL = 'Model';
+    const NAME_SIMPLE = 'Simple';
 
     /**
      * Field type map
@@ -80,6 +83,40 @@ class Form extends Container
      */
     private $_values = [];
 
+
+    private $_key = null;
+
+    /**
+     * Constructor for model forms
+     *
+     * @param string $key
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.1
+     * @since 0.1
+     */
+    protected function __construct($key)
+    {
+        $this->_key = $key;
+    }
+
+    /**
+     * Return instance of Form
+     *
+     * @param null $key
+     * @param null $ttl
+     * @return Form
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.1
+     * @since 0.1
+     */
+    public static function getInstance($key = null, $ttl = null)
+    {
+        return parent::getInstance($key, $ttl);
+    }
+
     /**
      * Create new instance of form
      *
@@ -97,6 +134,10 @@ class Form extends Container
         /** @var Form $class */
         $class = self::getClass();
 
+        if ($class == __CLASS__) {
+            $class = 'Ice\Form\\' . $key;
+        }
+
         return new $class($key);
     }
 
@@ -109,15 +150,16 @@ class Form extends Container
      * @param array $validators
      * @param null $value
      * @param string $template
+     * @return Form
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.1
      * @since 0.0
      */
     public function hidden($fieldName, $title, $placeholder, array $validators, $value = null, $template = 'Ice:Field_Hidden')
     {
-        $this->addField($fieldName, Form::FIELD_HIDDEN, $title, $placeholder, $validators, $value, $template);
+        return $this->addField($fieldName, Form::FIELD_HIDDEN, $title, $placeholder, $validators, $value, $template);
     }
 
     /**
@@ -130,10 +172,11 @@ class Form extends Container
      * @param array $validators
      * @param $value
      * @param $template
+     * @return Form
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.1
      * @since 0.0
      */
     private function addField($fieldName, $fieldType, $title, $placeholder, array $validators, $value, $template)
@@ -148,6 +191,8 @@ class Form extends Container
         $this->_validateScheme[$fieldName] = $validators;
 
         $this->bind($fieldName, $value);
+
+        return $this;
     }
 
     /**
@@ -178,6 +223,27 @@ class Form extends Container
     }
 
     /**
+     * Add password type field
+     *
+     * @param $fieldName
+     * @param $title
+     * @param $placeholder
+     * @param array $validators
+     * @param null $value
+     * @param string $template
+     * @return Form
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.1
+     * @since 0.1
+     */
+    public function password($fieldName, $title, $placeholder, array $validators, $value = null, $template = 'Ice:Field_Password')
+    {
+        return $this->addField($fieldName, Form::FIELD_PASSWORD, $title, $placeholder, $validators, $value, $template);
+    }
+
+    /**
      * Add number type field
      *
      * @param $fieldName
@@ -186,15 +252,16 @@ class Form extends Container
      * @param array $validators
      * @param null $value
      * @param string $template
+     * @return Form
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.1
      * @since 0.0
      */
     public function number($fieldName, $title, $placeholder, array $validators, $value = null, $template = 'Ice:Field_Number')
     {
-        $this->addField($fieldName, Form::FIELD_NUMBER, $title, $placeholder, $validators, $value, $template);
+        return $this->addField($fieldName, Form::FIELD_NUMBER, $title, $placeholder, $validators, $value, $template);
     }
 
     /**
@@ -206,15 +273,16 @@ class Form extends Container
      * @param array $validators
      * @param null $value
      * @param string $template
+     * @return Form
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.1
      * @since 0.0
      */
     public function text($fieldName, $title, $placeholder, array $validators, $value = null, $template = 'Ice:Field_Text')
     {
-        $this->addField($fieldName, Form::FIELD_TEXT, $title, $placeholder, $validators, $value, $template);
+        return $this->addField($fieldName, Form::FIELD_TEXT, $title, $placeholder, $validators, $value, $template);
     }
 
     /**
@@ -226,15 +294,16 @@ class Form extends Container
      * @param array $validators
      * @param null $value
      * @param string $template
+     * @return Form
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.1
      * @since 0.0
      */
     public function date($fieldName, $title, $placeholder, array $validators, $value = null, $template = 'Ice:Field_Date')
     {
-        $this->addField($fieldName, Form::FIELD_DATE, $title, $placeholder, $validators, $value, $template);
+        return $this->addField($fieldName, Form::FIELD_DATE, $title, $placeholder, $validators, $value, $template);
     }
 
     /**
@@ -246,15 +315,16 @@ class Form extends Container
      * @param array $validators
      * @param null $value
      * @param string $template
+     * @return Form
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.1
      * @since 0.0
      */
     public function checkbox($fieldName, $title, $placeholder, array $validators, $value = null, $template = 'Ice:Field_Checkbox')
     {
-        $this->addField($fieldName, Form::FIELD_CHECKBOX, $title, $placeholder, $validators, $value, $template);
+        return $this->addField($fieldName, Form::FIELD_CHECKBOX, $title, $placeholder, $validators, $value, $template);
     }
 
     /**
@@ -266,15 +336,16 @@ class Form extends Container
      * @param array $validators
      * @param null $value
      * @param string $template
+     * @return Form
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.1
      * @since 0.0
      */
     public function geo($fieldName, $title, $placeholder, array $validators, $value = null, $template = 'Ice:Field_Geo')
     {
-        $this->addField($fieldName, Form::FIELD_GEO, $title, $placeholder, $validators, $value, $template);
+        return $this->addField($fieldName, Form::FIELD_GEO, $title, $placeholder, $validators, $value, $template);
     }
 
     /**
@@ -286,15 +357,16 @@ class Form extends Container
      * @param array $validators
      * @param null $value
      * @param string $template
+     * @return Form
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.1
      * @since 0.0
      */
     public function textarea($fieldName, $title, $placeholder, array $validators, $value = null, $template = 'Ice:Field_Textarea')
     {
-        $this->addField($fieldName, Form::FIELD_TEXTAREA, $title, $placeholder, $validators, $value, $template);
+        return $this->addField($fieldName, Form::FIELD_TEXTAREA, $title, $placeholder, $validators, $value, $template);
     }
 
     /**
@@ -399,18 +471,12 @@ class Form extends Container
     }
 
     /**
-     * Return instance of Form
-     *
-     * @param null $key
-     * @param null $ttl
-     * @return Form
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.1
-     * @since 0.1
+     * @return null|string
      */
-    public static function getInstance($key = null, $ttl = null)
+    public function getKey()
     {
-        return parent::getInstance($key, $ttl);
+        return $this->_key;
     }
+
+
 }

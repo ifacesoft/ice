@@ -3,14 +3,14 @@
  */
 
 var Form = {
-    submit: function ($button, submitClassName, reRenderClassNames) {
+    submit: function ($button, submitActionName, reRenderActionNames) {
         Ice.call(
             'Ice:Form_Submit',
             $button.closest('form').serialize(),
             function (result) {
                 if (result.success) {
                     $button.closest('form')[0].reset();
-                    reRenderClassNames.forEach(function(className) {
+                    reRenderActionNames.forEach(function(className) {
                         Ice.reRender(className);
                     });
                 }
