@@ -52,7 +52,8 @@ class Form_Submit extends Action
             'formKey' => 'Ice:Not_Empty'
         ],
         'inputDefaults' => [
-            'filterFields' => ''
+            'filterFields' => '',
+            'redirect' => ''
         ]
     ];
 
@@ -80,6 +81,9 @@ class Form_Submit extends Action
         $filterFields = empty($input['filterFields']) ? [] : explode(',', $input['filterFields']);
         unset($input['filterFields']);
 
+        $redirect = $input['redirect'];
+        unset($input['redirect']);
+
         try {
             $formClass::getInstance($formKey)
                 ->addFilterFields($filterFields)
@@ -87,10 +91,11 @@ class Form_Submit extends Action
                 ->submit();
 
             return [
-                'success' => Form_Submit::getLogger()->info('submitted successfully', Logger::SUCCESS)
+                'success' => Form_Submit::getLogger()->info('Submitted successfully', Logger::SUCCESS),
+                'redirect' => $redirect
             ];
         } catch (\Exception $e) {
-            $message = ['Row apply failed: {$0}', $e->getMessage()];
+            $message = ['Submit failed: {$0}', $e->getMessage()];
 
             Form_Submit::getLogger()->error($message, __FILE__, __LINE__, $e);
 

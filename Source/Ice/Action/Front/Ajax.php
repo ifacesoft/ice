@@ -108,8 +108,9 @@ class Front_Ajax extends Action
             $params['result'] = [
                 'actionName' => Object::getName($params['result']->getActionClass()),
                 'data' => isset($params['result']->getParams()['data']) ? $params['result']->getParams()['data'] : [],
-                'error' => isset($params['result']->getParams()['error']) ? $params['result']->getParams()['error'] : [],
-                'success' => isset($params['result']->getParams()['success']) ? $params['result']->getParams()['success'] : [],
+                'error' => isset($params['result']->getParams()['error']) ? $params['result']->getParams()['error'] : '',
+                'success' => isset($params['result']->getParams()['success']) ? $params['result']->getParams()['success'] : '',
+                'redirect' => isset($params['result']->getParams()['redirect']) ? $params['result']->getParams()['redirect'] : '',
                 'html' => $params['result']->getContent()
             ];
         } else {
@@ -118,6 +119,7 @@ class Front_Ajax extends Action
                 'data' => [],
                 'error' => $params['result'],
                 'success' => '',
+                'redirect' => '',
                 'html' => ''
             ];
         }

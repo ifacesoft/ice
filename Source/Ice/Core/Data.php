@@ -135,6 +135,10 @@ class Data extends Factory implements Iterator, ArrayAccess, Countable, Serializ
                 }
 
                 if (Cache::validate(__CLASS__, $cache['tags'], $cache['time'])) {
+                    if (Environment::isDevelopment()) {
+                        Query::getLogger()->info('cache:' . str_replace("\t", '', str_replace("\n", ' ', $query->getSql())) . ' [' . implode(', ', $query->getBinds()) . '] ' . Console::C_GREEN_B . 'rows: ' . count($data) . Console::C_GREEN, Logger::GREY, false);
+                    }
+
                     return $cache;
                 }
 
@@ -157,8 +161,8 @@ class Data extends Factory implements Iterator, ArrayAccess, Countable, Serializ
 
         $data = new Data($cache['data']);
 
-        if (Environment::isDevelopment() && Request::isCli()) {
-            Query::getLogger()->info(str_replace("\t", '', str_replace("\n", ' ', $query->getSql())) . ' [' . implode(', ', $query->getBinds()) . '] ' . Console::C_GREEN_B . 'rows: ' . count($data) . Console::C_GREEN, Logger::GREY, false);
+        if (Environment::isDevelopment()) {
+            Query::getLogger()->info('ds:' . str_replace("\t", '', str_replace("\n", ' ', $query->getSql())) . ' [' . implode(', ', $query->getBinds()) . '] ' . Console::C_GREEN_B . 'rows: ' . count($data) . Console::C_GREEN, Logger::GREY, false);
         }
 
         return $data;

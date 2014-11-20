@@ -10,6 +10,7 @@
 namespace Ice\Query\Translator;
 
 use Ice\Core\Exception;
+use Ice\Core\Logger;
 use Ice\Core\Model;
 use Ice\Core\Query_Builder;
 use Ice\Core\Query_Translator;
@@ -92,19 +93,25 @@ class Mysqli extends Query_Translator
      */
     private function translateValues(array $data)
     {
-        $sql = '';
-
-        if (empty($data)) {
-            return $sql;
-        }
-
         /** @var Model $modelClass */
         list($modelClass, $fieldNames, $count) = $data;
 
+        $sql = "\n" . self::SQL_STATEMENT_INSERT . ' ' . self::SQL_CLAUSE_INTO .
+            "\n\t" . $modelClass::getTableName();
+
+        $fileNamesCount = count($fieldNames);
+
+        /** Insert empty row */
+        if (!$fileNamesCount) {
+            $sql .= "\n\t" . '()';
+            $sql .= "\n" . self::SQL_CLAUSE_VALUES;
+            $sql .= "\n\t" . '()';
+
+            return $sql;
+        }
+
         $modelMapping = $modelClass::getMapping();
 
-        $sql .= "\n" . self::SQL_STATEMENT_INSERT . ' ' . self::SQL_CLAUSE_INTO .
-            "\n\t" . $modelClass::getTableName();
         $sql .= "\n\t" . '(`' . implode('`,`', array_map(function ($fieldName) use ($modelMapping) {
                 return $modelMapping[$fieldName];
             }, $fieldNames)) . '`)';
@@ -114,9 +121,9 @@ class Mysqli extends Query_Translator
 
         $sql .= $values;
 
-        if ($count > 1) {
-            $sql .= str_repeat(',' . $values, $count - 1);
-        }
+//        if ($count > 1) {
+//            $sql .= str_repeat(',' . $values, $count - 1);
+//        }
 
         return $sql;
     }
@@ -135,10 +142,6 @@ class Mysqli extends Query_Translator
     private function translateSet(array $data)
     {
         $sql = '';
-
-        if (empty($data)) {
-            return $sql;
-        }
 
         list($modelClass, $fieldNames, $count) = $data;
 

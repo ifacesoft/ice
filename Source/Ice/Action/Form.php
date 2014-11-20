@@ -56,7 +56,8 @@ class Form extends Action
             'groupping' => true,
             'submitActionName' => 'Ice:Form_Submit',
             'submitTitle' => 'Submit',
-            'reRenderActionNames' => []
+            'reRenderActionNames' => [],
+            'redirect' => ''
         ],
         'layout' => 'div.Form>div.panel.panel-default>div.panel-body'
     ];
@@ -136,9 +137,10 @@ class Form extends Action
             'formClass' => $formClass,
             'formKey' => $formKey,
             'submitActionName' => $input['submitActionName'],
-            'reRenderActionNames' => $input['reRenderActionNames'],
+            'reRenderActionNames' => empty($input['reRenderActionNames']) ? '' : implode(',', $input['reRenderActionNames']),
             'filterFields' => implode(',', $filterFields),
-            'submitTitle' => $input['submitTitle']
+            'submitTitle' => $input['submitTitle'],
+            'redirect' => $input['redirect']
         ];
     }
 }

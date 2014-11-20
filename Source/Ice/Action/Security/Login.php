@@ -3,7 +3,7 @@ namespace Ice\Action;
 
 use Ice\Core\Action;
 use Ice\Core\Action_Context;
-use Ice\Core\Security_Provider;
+use Ice\Core\Form_Security_Login;
 
 /**
  * Class Security_Login
@@ -33,7 +33,8 @@ class Security_Login extends Action
     public static $config = [
         'viewRenderClassName' => 'Ice:Php',
         'inputDefaults' => [
-            'security' => 'Login_Password'
+            'security' => 'Login_Password',
+            'redirect' => '/'
         ]
     ];
 
@@ -46,6 +47,13 @@ class Security_Login extends Action
      */
     protected function run(array $input, Action_Context $actionContext)
     {
-        $actionContext->addAction('Ice:Form', ['form' => $securityProvider->getLoginForm()]);
+        $actionContext->addAction(
+            'Ice:Form', [
+                'form' => Form_Security_Login::getInstance($input['security']),
+                'submitTitle' => $this->getContainer()->getResource()->get('Login'),
+                'redirect' => $input['redirect']
+            ]
+        );
+        return ['container' => $this->getContainer()];
     }
 }

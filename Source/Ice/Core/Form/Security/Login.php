@@ -6,14 +6,14 @@ use Ice\Helper\Arrays;
 use Ice\Model\Account;
 use Ice\Model\User;
 
-abstract class Form_Security_Register extends Form
+abstract class Form_Security_Login extends Form
 {
     /**
-     * Create new instance of form security register
+     * Create new instance of form security login
      *
      * @param $key
      * @param null $hash
-     * @return Form_Security_Register
+     * @return Form_Security_Login
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
@@ -22,18 +22,18 @@ abstract class Form_Security_Register extends Form
      */
     protected static function create($key, $hash = null)
     {
-        /** @var Form_Security_Register $class */
+        /** @var Form_Security_Login $class */
         $class = self::getClass();
 
         if ($class == __CLASS__) {
-            $class = 'Ice\Form\Security\Register\\' . $key;
+            $class = 'Ice\Form\Security\Login\\' . $key;
         }
 
         return new $class($key);
     }
 
     /**
-     * Register
+     * Login
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
@@ -55,8 +55,8 @@ abstract class Form_Security_Register extends Form
             ]
         );
 
-        $accountRow['user'] = User::create()->insert();
-
-        Account::create($accountRow)->insert();
+//        $accountRow['user'] = User::create()->insert();
+//
+//        Account::create($accountRow)->insert();
     }
 }

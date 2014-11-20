@@ -15,8 +15,9 @@ use Ice\Core\Action_Context;
  *
  * @see Ice\Core\Action
  * @see Ice\Core\Action_Context;
-<?php if ($namespace) {?> * @package <?=$namespace?>;<?php
-}?>
+<?php if ($namespace) : ?>
+    * @package <?=$namespace?>;
+<?php endif; ?>
 
  * @author <?=get_current_user()?> <email>
 

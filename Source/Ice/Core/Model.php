@@ -12,7 +12,6 @@ namespace Ice\Core;
 use Ice\Core;
 use Ice\Core\Model\Collection;
 use Ice\Form\Model as Form_Model;
-use Ice\Helper\Date;
 use Ice\Helper\Json;
 use Ice\Helper\Object;
 use Ice\Helper\Spatial;
@@ -139,7 +138,7 @@ abstract class Model
             unset($detectedPk);
         }
 
-        $columns = $modelScheme->getColumnNames();
+//        $columns = $modelScheme->getColumnNames();
 
         foreach ($fields as $fieldName => $columnName) {
             $this->_row[$fieldName] = null;
@@ -153,21 +152,21 @@ abstract class Model
             foreach (['__json', '__fk', '_geo'] as $ext) {
                 $field = strstr($fieldName, $ext, true);
                 if ($field !== false && array_key_exists($field, $row)) {
-                    $this->set($field, $row[$field], false);
+                    $this->set($field, $row[$field]);
                     unset($row[$field]);
                     continue 2;
                 }
             }
 
-            $default = $columns[$columnName]['default'];
-
-            if ($default) {
-                if ($default == 'CURRENT_TIMESTAMP') {
-                    $default = Date::get();
-                }
-
-                $this->set($fieldName, $default, false);
-            }
+//            $default = $columns[$columnName]['default'];
+//
+//            if ($default) {
+//                if ($default == 'CURRENT_TIMESTAMP') {
+//                    $default = Date::get();
+//                }
+//
+//                $this->set($fieldName, $default, false);
+//            }
         }
 
         $this->_data = $row;
@@ -287,14 +286,12 @@ abstract class Model
 
             return $this;
         }
-
         if (array_key_exists($fieldName, $this->_row)) {
             if ($isAffected) {
                 $this->_affected[$fieldName] = $fieldValue;
             }
 
             $this->_row[$fieldName] = $fieldValue;
-
             return $this;
         }
 
@@ -335,11 +332,7 @@ abstract class Model
             }
 
             $this->_geo[$fieldName] = $fieldValue;
-            $this->set(
-                $geoFieldName,
-                Spatial::encode($this->_geo[$fieldName]),
-                $isAffected
-            );
+            $this->set($geoFieldName, Spatial::encode($this->_geo[$fieldName]), $isAffected);
         }
 
         $fkFieldName = $fieldName . '__fk';
@@ -351,7 +344,8 @@ abstract class Model
 
             $this->_fk[$fieldName] = $fieldValue;
             /** @var Model $fieldValue */
-            return $this->set($fkFieldName, $fieldValue->getPk(), $isAffected);
+            $pk = $fieldValue->getPk();
+            return $this->set($fkFieldName, reset($pk), $isAffected);
         }
 
         /** @var Model $modelClass */
@@ -421,7 +415,13 @@ abstract class Model
         /** @var Model $modelClass */
         $modelClass = get_class($this);
 
-        $columnName = $modelClass::getMapping()[$fieldName];
+        $modelMapping = $modelClass::getMapping();
+
+        if (!isset($modelMapping[$fieldName])) {
+            return false;
+        }
+
+        $columnName = $modelMapping[$fieldName];
 
         $primaryKeys = $modelClass::getScheme()->getIndexes()['PRIMARY KEY']['PRIMARY'];
 
@@ -925,7 +925,7 @@ abstract class Model
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.1
      * @since 0.0
      */
     public function insert($sourceName = null)
@@ -935,11 +935,19 @@ abstract class Model
 
         $this->beforeInsert();
 
-        $this->_pk = $modelClass::getQueryBuilder()
-            ->insert($this->_affected)
-            ->getQuery($sourceName)
-            ->getData()
-            ->getInsertId();
+        $fields = $modelClass::getMapping();
+        $flippedFields = array_flip($fields);
+
+        $modelScheme = $modelClass::getScheme();
+        $pkColumnNames = $modelScheme->getIndexes()['PRIMARY KEY']['PRIMARY'];
+
+        $this->_pk = [
+            $flippedFields[reset($pkColumnNames)] => $modelClass::getQueryBuilder()
+                ->insert($this->_affected)
+                ->getQuery($sourceName)
+                ->getData()
+                ->getInsertId()
+        ];
 
         $this->afterInsert();
 

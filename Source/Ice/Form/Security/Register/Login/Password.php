@@ -12,9 +12,9 @@ class Login_Password extends Form_Security_Register
 
         $resource = Login_Password::getResource();
 
-        $this->text('login', $resource->get('login'), $resource->get('login_placeholder'), ['Ice:Not_Empty', 'Ice:Length_Min' => 2, 'Ice:LettersNumbers'])
-            ->password('password', $resource->get('password'), $resource->get('password_placeholder'), ['Ice:Not_Empty', 'Ice:Length_Min' => 5])
-            ->password('password1', $resource->get('password1'), $resource->get('password1_placeholder'), ['Ice:Not_Empty', 'Ice:Length_Min' => 5]);
+        $this->text('login', $resource->get('login'), $resource->get('login_placeholder'), ['Ice:Length_Min' => 2, 'Ice:LettersNumbers'])
+            ->password('password', $resource->get('password'), $resource->get('password_placeholder'), ['Ice:Length_Min' => 5])
+            ->password('password1', $resource->get('password1'), $resource->get('password1_placeholder'));
     }
 
     public function bind($key, $value = null)

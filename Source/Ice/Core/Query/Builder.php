@@ -1032,6 +1032,15 @@ class Query_Builder
      */
     public function insert($key, $value = null)
     {
+        $this->_queryType = Query_Builder::TYPE_INSERT;
+
+        $modelClass = $this->getModelClass();
+
+        if (empty($key)) {
+            $this->_sqlParts[Query_Builder::PART_VALUES] = [$modelClass, [], 0];
+            return $this;
+        }
+
         if ($value !== null) {
             return $this->insert([[$key => $value]]);
         }
@@ -1040,9 +1049,6 @@ class Query_Builder
             return $this->insert([$key]);
         }
 
-        $this->_queryType = Query_Builder::TYPE_INSERT;
-
-        $modelClass = $this->getModelClass();
         $fieldNames = [];
 
         foreach (array_keys(reset($key)) as $fieldName) {
@@ -1125,6 +1131,15 @@ class Query_Builder
      */
     public function update($key, $value = null)
     {
+        $this->_queryType = Query_Builder::TYPE_UPDATE;
+
+        $modelClass = $this->getModelClass();
+
+        if (empty($key)) {
+            $this->_sqlParts[self::PART_SET] = [$modelClass, [], 0];
+            return $this;
+        }
+
         if ($value !== null) {
             return $this->update([[$key => $value]]);
         }
@@ -1133,9 +1148,6 @@ class Query_Builder
             return $this->update([$key]);
         }
 
-        $this->_queryType = Query_Builder::TYPE_UPDATE;
-
-        $modelClass = $this->getModelClass();
         $fieldNames = [];
 
         foreach (array_keys(reset($key)) as $fieldName) {
@@ -1381,7 +1393,7 @@ class Query_Builder
      */
     public function getQuery($sourceName = null)
     {
-        $insertRows = $this->_queryType == Query_Builder::TYPE_INSERT
+        $insertRows = $this->_queryType == Query_Builder::TYPE_INSERT && !empty($this->_sqlParts[Query_Builder::PART_VALUES][1])
             ? [array_combine($this->_sqlParts[Query_Builder::PART_VALUES][1], $this->_bindParts[Query_Builder::PART_VALUES][0])] // TODO: Здесь должны бить все вставляемые записи..
             : [];
 

@@ -8,4 +8,7 @@ return [
         'ru' => 'Зарегистрировать',
         'en' => 'Register',
     ],
+    'Login form' => [
+        'ru' => 'Login form',
+    ],
 ];

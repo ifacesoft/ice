@@ -34,7 +34,8 @@ class Security_Register extends Action
     public static $config = [
         'viewRenderClassName' => 'Ice:Php',
         'inputDefaults' => [
-            'security' => 'Login_Password'
+            'security' => 'Login_Password',
+            'redirect' => '/security/login'
         ]
     ];
 
@@ -50,7 +51,8 @@ class Security_Register extends Action
         $actionContext->addAction(
             'Ice:Form', [
                 'form' => Form_Security_Register::getInstance($input['security']),
-                'submitTitle' => $this->getContainer()->getResource()->get('Register')
+                'submitTitle' => $this->getContainer()->getResource()->get('Register'),
+                'redirect' => $input['redirect']
             ]
         );
         return ['container' => $this->getContainer()];
