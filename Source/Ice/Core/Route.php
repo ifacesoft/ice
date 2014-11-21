@@ -49,7 +49,7 @@ use Ice\View\Render\Replace;
  * @version 0.0
  * @since 0.0
  */
-class Route extends Factory
+class Route extends Container
 {
     use Core;
 

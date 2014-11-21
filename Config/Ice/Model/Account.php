@@ -1,7 +1,7 @@
 <?php
 return [
     'mapping' => [
-        'account_pk' => 'account_id',
+        'account_pk' => 'account_pk',
         'user__fk' => 'user__fk',
         'login' => 'login',
         'password' => 'password',

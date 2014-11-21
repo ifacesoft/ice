@@ -23,7 +23,7 @@ use Ice\Core;
  * @version 0.0
  * @since 0.0
  */
-abstract class Data_Transformation extends Factory
+abstract class Data_Transformation extends Container
 {
     use Core;
 

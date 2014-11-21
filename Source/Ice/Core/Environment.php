@@ -26,7 +26,7 @@ use Ice\Core;
  * @version 0.0
  * @since 0.0
  */
-class Environment extends Factory
+class Environment extends Container
 {
     use Core;
 

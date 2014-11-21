@@ -26,7 +26,7 @@ use Ice\Core;
  * @version 0.0
  * @since 0.0
  */
-abstract class Code_Generator extends Factory
+abstract class Code_Generator extends Container
 {
     use Core;
 

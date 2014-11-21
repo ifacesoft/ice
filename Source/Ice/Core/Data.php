@@ -34,7 +34,7 @@ use Serializable;
  * @version 0.0
  * @since 0.0
  */
-class Data extends Factory implements Iterator, ArrayAccess, Countable, Serializable, Cacheable
+class Data extends Container implements Iterator, ArrayAccess, Countable, Serializable, Cacheable
 {
     use Core;
 
@@ -125,6 +125,10 @@ class Data extends Factory implements Iterator, ArrayAccess, Countable, Serializ
             return Data::create($data);
         }
 
+        if (Environment::isDevelopment()) {
+            Query::getLogger()->info(str_replace("\t", '', str_replace("\n", ' ', $query->getSql())) . ' [' . implode(', ', $query->getBinds()) . '] ' . Console::C_GREEN_B . 'rows: ' . count($data) . Console::C_GREEN, Logger::GREY, false);
+        }
+
         switch ($queryType) {
             case Query_Builder::TYPE_SELECT:
                 $cacheDataProvider = Query::getDataProvider('query');
@@ -136,7 +140,7 @@ class Data extends Factory implements Iterator, ArrayAccess, Countable, Serializ
 
                 if (Cache::validate(__CLASS__, $cache['tags'], $cache['time'])) {
                     if (Environment::isDevelopment()) {
-                        Query::getLogger()->info('cache:' . str_replace("\t", '', str_replace("\n", ' ', $query->getSql())) . ' [' . implode(', ', $query->getBinds()) . '] ' . Console::C_GREEN_B . 'rows: ' . count($data) . Console::C_GREEN, Logger::GREY, false);
+                        Query::getLogger()->info('Data from cache!', Logger::MESSAGE, false);
                     }
 
                     return $cache;
@@ -161,10 +165,6 @@ class Data extends Factory implements Iterator, ArrayAccess, Countable, Serializ
 
         $data = new Data($cache['data']);
 
-        if (Environment::isDevelopment()) {
-            Query::getLogger()->info('ds:' . str_replace("\t", '', str_replace("\n", ' ', $query->getSql())) . ' [' . implode(', ', $query->getBinds()) . '] ' . Console::C_GREEN_B . 'rows: ' . count($data) . Console::C_GREEN, Logger::GREY, false);
-        }
-
         return $data;
     }
 
@@ -184,10 +184,12 @@ class Data extends Factory implements Iterator, ArrayAccess, Countable, Serializ
     {
         list($query, $ttl) = $data;
         $queryType = $query->getQueryType();
-        $data = new Data($query->getDataSource()->$queryType($query));
-        if (Environment::isDevelopment() && Request::isCli()) {
-            Query::getLogger()->info(str_replace("\t", '', str_replace("\n", ' ', $query->_sql)) . ' [' . implode(', ', $query->_binds) . '] ' . Console::C_GREEN_B . 'rows: ' . count($data) . Console::C_GREEN, Logger::SUCCESS, false);
+
+        if (Environment::isDevelopment()) {
+            Query::getLogger()->info(str_replace("\t", '', str_replace("\n", ' ', $query->getSql())) . ' [' . implode(', ', $query->getBinds()) . '] ' . Console::C_GREEN_B . 'rows: ' . count($data) . Console::C_GREEN, Logger::GREY, false);
         }
+
+        $data = new Data($query->getDataSource()->$queryType($query));
         return $data;
     }
 

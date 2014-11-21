@@ -4,7 +4,6 @@ namespace Ice\Action;
 use Ice\Core\Action;
 use Ice\Core\Action_Context;
 use Ice\Core\Form_Security_Register;
-use Ice\Core\Security_Provider;
 
 /**
  * Class Security_Register
@@ -48,13 +47,15 @@ class Security_Register extends Action
      */
     protected function run(array $input, Action_Context $actionContext)
     {
+        $resource = Security_Register::getResource();
+
         $actionContext->addAction(
             'Ice:Form', [
                 'form' => Form_Security_Register::getInstance($input['security']),
-                'submitTitle' => $this->getContainer()->getResource()->get('Register'),
+                'submitTitle' => $resource->get('Register'),
                 'redirect' => $input['redirect']
             ]
         );
-        return ['container' => $this->getContainer()];
+        return ['resource' => $resource];
     }
 }

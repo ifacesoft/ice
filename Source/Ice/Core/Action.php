@@ -12,7 +12,6 @@ namespace Ice\Core;
 use Ice;
 use Ice\Core;
 use Ice\Helper\Arrays;
-use Ice\Helper\Defaults;
 use Ice\Helper\Hash;
 
 /**
@@ -30,7 +29,7 @@ use Ice\Helper\Hash;
  * @version 0.1
  * @since 0.0
  */
-abstract class Action extends Factory
+abstract class Action extends Container
 {
     use Core;
 
@@ -53,8 +52,6 @@ abstract class Action extends Factory
         'outputDataProviderKeys' => [],
         'cacheDataProviderKey' => ''
     ];
-
-    private $_container = null;
 
     /**
      * Overridable config
@@ -338,22 +335,4 @@ abstract class Action extends Factory
      * @since 0
      */
     abstract protected function run(array $input, Action_Context $actionContext);
-
-    /**
-     * Return container of action
-     *
-     * @return Container
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.1
-     * @since 0.1
-     */
-    public function getContainer()
-    {
-        if ($this->_container !== null) {
-            return $this->_container;
-        }
-
-        return $this->_container = Container::getInstance(self::getClass());
-    }
 }

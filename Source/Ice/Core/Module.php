@@ -28,7 +28,7 @@ use Ice\Helper\File;
  * @version 0.0
  * @since 0.0
  */
-class Module extends Factory
+class Module extends Container
 {
     use Core;
 

@@ -898,13 +898,9 @@ class Query_Builder
      * @version 0.0
      * @since 0.0
      */
-    public function select($fieldName = '/pk', $fieldAlias = null, $modelClass = null, $tableAlias = null)
+    public function select($fieldName, $fieldAlias = null, $modelClass = null, $tableAlias = null)
     {
         $this->_queryType = Query_Builder::TYPE_SELECT;
-
-        if (empty($fieldName)) {
-            $fieldName = '/pk';
-        }
 
         /** @var Model $class */
         $class = $this->getModelClass();
@@ -959,12 +955,10 @@ class Query_Builder
         }
 
         if (!isset($this->_sqlParts[self::PART_SELECT][$modelClass])) {
-            $pkName = $modelClass::getFieldName('/pk');
+            $pkNames = $modelClass::getPkFieldNames();
 
             $this->_sqlParts[self::PART_SELECT][$modelClass] = [
-                $tableAlias, [
-                    $pkName => $pkName
-                ]
+                $tableAlias, array_combine($pkNames, $pkNames)
             ];
         }
 

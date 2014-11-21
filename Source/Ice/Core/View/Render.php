@@ -27,7 +27,7 @@ use Ice\Core;
  * @version 0.0
  * @since 0.0
  */
-abstract class View_Render extends Factory
+abstract class View_Render extends Container
 {
     use Core;
 

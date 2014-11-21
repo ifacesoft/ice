@@ -29,7 +29,7 @@ use Ice\View\Render\Replace;
  * @version 0.0
  * @since 0.0
  */
-class Resource extends Factory
+class Resource extends Container
 {
     use Core;
 
@@ -90,28 +90,19 @@ class Resource extends Factory
      * Return localized resource by key
      *
      * @param $message
+     * @param $params
+     * @param $class
      * @return string
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
      * @since 0.0
      */
-    public function get($message)
+    public function get($message, $params = null, $class = null)
     {
-        $params = [];
-
+        // TODO: Remove..
         if (is_array($message)) {
-            switch (count($message)) {
-                case 2:
-                    list($message, $params) = $message;
-                    break;
-                case 3:
-                    list($message, $params, $class) = $message;
-                    break;
-                default:
-                    break;
-            }
+            Resource::getLogger()->warning('Method get not be array', __FILE__, __LINE__);
         }
 
         /** @var string $message */

@@ -28,7 +28,7 @@ use Ice\Helper\Object;
  * @version 0.0
  * @since 0.0
  */
-abstract class Validator extends Factory
+abstract class Validator extends Container
 {
     use Core;
 

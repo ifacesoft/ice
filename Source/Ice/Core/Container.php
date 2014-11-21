@@ -1,6 +1,6 @@
 <?php
 /**
- * Ice core factory abstract class
+ * Ice core container abstract class
  *
  * @link http://www.iceframework.net
  * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
@@ -15,9 +15,9 @@ use Ice\Exception\File_Not_Found;
 use Ice\Helper\Object;
 
 /**
- * Class Factory
+ * Class Container
  *
- * Core factory abstract class
+ * Core container abstract class
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
@@ -27,7 +27,7 @@ use Ice\Helper\Object;
  * @version 0.0
  * @since 0.0
  */
-abstract class Factory
+abstract class Container
 {
     /**
      * Get instance from container
@@ -44,7 +44,7 @@ abstract class Factory
      */
     public static function getInstance($key = null, $ttl = null)
     {
-        /** @var Factory $class */
+        /** @var Container $class */
         $class = self::getClass();
 
         if (empty($key)) {
@@ -82,7 +82,7 @@ abstract class Factory
             }
         } catch (File_Not_Found $e) {
             if ($baseClass == Code_Generator::getClass()) {
-                Factory::getLogger()->fatal([Factory::getClassName() . ': Code generator for {$0} not found', $key], __FILE__, __LINE__, $e);
+                Container::getLogger()->fatal([Container::getClassName() . ': Code generator for {$0} not found', $key], __FILE__, __LINE__, $e);
             }
 
             if (Environment::isDevelopment()) {
@@ -90,7 +90,7 @@ abstract class Factory
                 $baseClass::getCodeGenerator()->generate($key);
                 $object = $class::create($key);
             } else {
-                Factory::getLogger()->error(['File {$0} not found', $key], __FILE__, __LINE__, $e);
+                Container::getLogger()->error(['File {$0} not found', $key], __FILE__, __LINE__, $e);
             }
         }
 

@@ -31,32 +31,4 @@ abstract class Form_Security_Login extends Form
 
         return new $class($key);
     }
-
-    /**
-     * Login
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.1
-     * @since 0.1
-     */
-    public function submit()
-    {
-        if ($error = $this->validate()) {
-            Form::getLogger()->fatal($error, __FILE__, __LINE__);
-        }
-
-        $accountRow = Arrays::convert(
-            $this->getValues(),
-            [
-                'password' => function ($password) {
-                    return password_hash($password, PASSWORD_DEFAULT);
-                }
-            ]
-        );
-
-//        $accountRow['user'] = User::create()->insert();
-//
-//        Account::create($accountRow)->insert();
-    }
 }

@@ -58,7 +58,7 @@ class Bootstrap
         define('VENDOR_DIR', ROOT_DIR . '_vendor/');
 
         include_once ICE_SOURCE_DIR . 'Ice/Core.php';
-        include_once ICE_SOURCE_DIR . 'Ice/Core/Factory.php';
+        include_once ICE_SOURCE_DIR . 'Ice/Core/Container.php';
         include_once ICE_SOURCE_DIR . 'Ice/Core/Loader.php';
         include_once ICE_SOURCE_DIR . 'Ice/Helper/Object.php';
         include_once ICE_SOURCE_DIR . 'Ice/Core/Environment.php';

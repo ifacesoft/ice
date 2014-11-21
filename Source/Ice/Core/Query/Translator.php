@@ -28,7 +28,7 @@ use Ice\Helper\Object;
  * @version 0.0
  * @since 0.0
  */
-abstract class Query_Translator extends Factory
+abstract class Query_Translator extends Container
 {
     use Core;
 

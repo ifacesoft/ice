@@ -32,7 +32,7 @@ use Ice\Helper\File;
  * @version 0.0
  * @since 0.0
  */
-class Data_Scheme extends Factory
+class Data_Scheme extends Container
 {
     use Core;
 

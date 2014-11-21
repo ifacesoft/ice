@@ -27,7 +27,7 @@ use Ice\Core;
  * @version 0.0
  * @since 0.0
  */
-class Query extends Factory
+class Query extends Container
 {
     use Core;
 

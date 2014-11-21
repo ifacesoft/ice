@@ -13,7 +13,7 @@ use Ice\Action\Front_Cli;
 use Ice\Core;
 use Ice\Core\Action;
 use Ice\Core\Action_Context;
-use Ice\Core\Factory;
+use Ice\Core\Container;
 use Ice\Core\Environment;
 use Ice\Core\Logger;
 use Ice\Core\Request;
@@ -30,7 +30,7 @@ use Ice\Helper\Object;
  * @version 0.0
  * @since 0.0
  */
-class Ice extends Factory
+class Ice extends Container
 {
     use Core;
 
@@ -139,7 +139,7 @@ class Ice extends Factory
     /**
      * Return instance of ice container class
      *
-     * @param $class Factory
+     * @param $class Container
      * @return mixed
      *
      * @author dp <denis.a.shestakov@gmail.com>

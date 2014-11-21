@@ -131,7 +131,7 @@ class Console
     {
         $resource = $class::getResource();
 
-        $title = Console::C_YELLOW . $resource->get([$data['title'], $data['default']]) . Console::C_GRAY_B;
+        $title = Console::C_YELLOW . $resource->get($data['title'], $data['default']) . Console::C_GRAY_B;
 
         Response::send($title);
 

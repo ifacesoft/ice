@@ -1,7 +1,7 @@
 <?php
 return [
     'mapping' => [
-        'user_pk' => 'user_id',
+        'user_pk' => 'user_pk',
         'user_phone' => 'user_phone',
         'user_email' => 'user_email',
         'user_name' => 'user_name',
@@ -19,7 +19,9 @@ return [
         'user_name' => [],
         'surname' => [],
         'patronymic' => [],
-        'user_active' => [],
+        'user_active' => [
+            0 => 'Ice:Not_Null',
+        ],
         'user_created' => [],
     ],
     'Ice\\Core\\Form' => [

@@ -239,7 +239,12 @@ class Logger
         if ($isResource) {
             /** @var Core $class */
             $class = $this->class;
-            $message = $class::getResource()->get($message);
+            $params = null;
+            if (is_array($message)) {
+                list($message, $params) = $message;
+            }
+
+            $message = $class::getResource()->get($message, $params);
         }
 
         $logFile = Directory::get(LOG_DIR) . date('Y-m-d') . '/INFO.log';

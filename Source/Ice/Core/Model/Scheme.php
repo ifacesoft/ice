@@ -12,6 +12,7 @@ namespace Ice\Core;
 use Ice;
 use Ice\Core;
 use Ice\Exception\File_Not_Found;
+use Ice\Form\Model as Form_Model;
 use Ice\Helper\Arrays;
 use Ice\Helper\Date;
 use Ice\Helper\File;
@@ -34,7 +35,7 @@ use Ice\Helper\String;
  * @version 0.0
  * @since 0.0
  */
-class Model_Scheme extends Factory
+class Model_Scheme extends Container
 {
     use Core;
 
@@ -60,52 +61,6 @@ class Model_Scheme extends Factory
         $this->_modelScheme = [
             'scheme' => $dataScheme
         ];
-    }
-
-    /**
-     * Create new instance of model scheme
-     *
-     * @param $modelClass
-     * @param null $hash
-     * @return Model_Scheme
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    protected static function create($modelClass, $hash = null)
-    {
-        return new Model_Scheme(self::getFilePathData($modelClass));
-    }
-
-    /**
-     * Return path of model scheme data
-     *
-     * @param $modelClass
-     * @return mixed
-     * @throws File_Not_Found
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public static function getFilePathData($modelClass)
-    {
-        $filePath = Loader::getFilePath($modelClass, '.php', 'Var/', false, true);
-
-        if (file_exists($filePath)) {
-            return File::loadData($filePath);
-        }
-
-        $data = [
-            'time' => Date::get(),
-            'revision' => date('00000000'),
-            'columns' => []
-        ];
-
-        return File::createData($filePath, $data);
     }
 
     /**
@@ -167,7 +122,7 @@ class Model_Scheme extends Factory
 
             $modelMapping[$fieldName] = $columnName;
 
-            $fieldType = isset(Form::$typeMap[$column['dataType']]) ? Form::$typeMap[$column['dataType']] : 'text';
+            $fieldType = isset(Form_Model::$typeMap[$column['dataType']]) ? Form_Model::$typeMap[$column['dataType']] : 'text';
 
             $form[$fieldName] = $fieldType;
 
@@ -233,6 +188,52 @@ class Model_Scheme extends Factory
             self::getFilePathData(Helper_Model::getModelClassByTableName($tableName))['columns'],
             Data_Source::getInstance($scheme)->getColumns($tableName)
         );
+    }
+
+    /**
+     * Create new instance of model scheme
+     *
+     * @param $modelClass
+     * @param null $hash
+     * @return Model_Scheme
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
+     */
+    protected static function create($modelClass, $hash = null)
+    {
+        return new Model_Scheme(self::getFilePathData($modelClass));
+    }
+
+    /**
+     * Return path of model scheme data
+     *
+     * @param $modelClass
+     * @return mixed
+     * @throws File_Not_Found
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
+     */
+    public static function getFilePathData($modelClass)
+    {
+        $filePath = Loader::getFilePath($modelClass, '.php', 'Var/', false, true);
+
+        if (file_exists($filePath)) {
+            return File::loadData($filePath);
+        }
+
+        $data = [
+            'time' => Date::get(),
+            'revision' => date('00000000'),
+            'columns' => []
+        ];
+
+        return File::createData($filePath, $data);
     }
 
     /**

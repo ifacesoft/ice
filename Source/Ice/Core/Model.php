@@ -781,7 +781,7 @@ abstract class Model
     }
 
     /**
-     * Return by custom field
+     * Return model by custom field
      *
      * @param $shortFieldName
      * @param $fieldValue
@@ -794,15 +794,32 @@ abstract class Model
      * @version 0.0
      * @since 0.0
      */
-    public static function getBy($shortFieldName, $fieldValue, $fieldNames, $sourceName = null)
+    public static function getModelBy($shortFieldName, $fieldValue, $fieldNames, $sourceName = null)
+    {
+        return self::getQueryBy($shortFieldName, $fieldValue, $fieldNames, $sourceName)->getData()->getModel();
+    }
+
+    /**
+     * Return Query by custom field
+     *
+     * @param $shortFieldName
+     * @param $fieldValue
+     * @param $fieldNames
+     * @param null $sourceName
+     * @return Query
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.1
+     * @since 0.1
+     */
+    public static function getQueryBy($shortFieldName, $fieldValue, $fieldNames, $sourceName = null)
     {
         return self::getQueryBuilder()
             ->select($fieldNames)
-            ->eq('/' . $shortFieldName, $fieldValue)
+            ->eq($shortFieldName, $fieldValue)
             ->limit(1)
-            ->getQuery($sourceName)
-            ->getData()
-            ->getModel();
+            ->getQuery($sourceName);
     }
 
     /**

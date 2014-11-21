@@ -35,7 +35,7 @@ class Security_Login extends Action
         'inputDefaults' => [
             'security' => 'Login_Password',
             'redirect' => '/'
-        ]
+        ],
     ];
 
     /**
@@ -47,13 +47,15 @@ class Security_Login extends Action
      */
     protected function run(array $input, Action_Context $actionContext)
     {
+        $resource = Security_Login::getResource();
+
         $actionContext->addAction(
             'Ice:Form', [
                 'form' => Form_Security_Login::getInstance($input['security']),
-                'submitTitle' => $this->getContainer()->getResource()->get('Login'),
+                'submitTitle' => $resource->get('Login'),
                 'redirect' => $input['redirect']
             ]
         );
-        return ['container' => $this->getContainer()];
+        return ['resource' => $resource];
     }
 }

@@ -29,7 +29,7 @@ use Ice\Helper\Object;
  * @version 0.0
  * @since 0.0
  */
-abstract class Data_Source extends Factory
+abstract class Data_Source extends Container
 {
     use Core;
 

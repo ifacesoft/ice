@@ -25,7 +25,7 @@ use Ice\Core;
  * @version 0.1
  * @since 0.0
  */
-abstract class Form extends Factory
+abstract class Form extends Container
 {
     use Core;
 
@@ -40,23 +40,7 @@ abstract class Form extends Factory
     const NAME_MODEL = 'Model';
     const NAME_SIMPLE = 'Simple';
 
-    /**
-     * Field type map
-     *
-     * @var array
-     */
-    public static $typeMap = [
-        'int' => Form::FIELD_NUMBER,
-        'varchar' => Form::FIELD_TEXT,
-        'datetime' => Form::FIELD_DATE,
-        'timestamp' => Form::FIELD_DATE,
-        'tinyint' => Form::FIELD_CHECKBOX,
-        'point' => Form::FIELD_GEO,
-        'bigint' => Form::FIELD_NUMBER,
-        'text' => Form::FIELD_TEXTAREA,
-        'double' => Form::FIELD_TEXT,
-        'longtext' => Form::FIELD_TEXT
-    ];
+
 
     /**
      * Fields - form parts
