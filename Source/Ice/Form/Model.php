@@ -30,6 +30,24 @@ use Ice\Core\Model as Core_Model;
 class Model extends Form
 {
     /**
+     * Field type map
+     *
+     * @var array
+     */
+    public static $typeMap = [
+        'int' => Form::FIELD_NUMBER,
+        'varchar' => Form::FIELD_TEXT,
+        'datetime' => Form::FIELD_DATE,
+        'timestamp' => Form::FIELD_DATE,
+        'tinyint' => Form::FIELD_CHECKBOX,
+        'point' => Form::FIELD_GEO,
+        'bigint' => Form::FIELD_NUMBER,
+        'text' => Form::FIELD_TEXTAREA,
+        'double' => Form::FIELD_TEXT,
+        'longtext' => Form::FIELD_TEXT
+    ];
+
+    /**
      * Constructor for model forms
      *
      * @param Core_Model $modelClass

@@ -129,4 +129,7 @@ return [
     'Smarty: Unable to load template file \'Ice/Action/Security/Register.tpl\'' => [
         'ru' => 'Smarty: Unable to load template file \'Ice/Action/Security/Register.tpl\'',
     ],
+    'Smarty: Unable to load template file \'Ice/Action/Security/Logout.tpl\'' => [
+        'ru' => 'Smarty: Unable to load template file \'Ice/Action/Security/Logout.tpl\'',
+    ],
 ];

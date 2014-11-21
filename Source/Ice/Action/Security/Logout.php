@@ -3,24 +3,22 @@ namespace Ice\Action;
 
 use Ice\Core\Action;
 use Ice\Core\Action_Context;
-use Ice\Core\Logger;
-use Ice\View\Render\Php;
-use Ice\Core\Menu as Core_Menu;
+use Ice\Core\Request;
+use Ice\Exception\Redirect;
 
 /**
- * Class Menu
+ * Class Security_Logout
  *
  * @see Ice\Core\Action
  * @see Ice\Core\Action_Context;
- *
  * @package Ice\Action;
  *
- * @author dp <denis.a.shestakov@gmail.com>
+ * @author dp <email>
  *
- * @version 0.0
- * @since 0.0
+ * @version 0
+ * @since 0
  */
-class Menu extends Action
+class Security_Logout extends Action
 {
     /**  public static $config = [
      *      'afterActions' => [],          // actions
@@ -37,9 +35,8 @@ class Menu extends Action
      */
     public static $config = [
         'viewRenderClassName' => 'Ice:Php',
-        'inputValidators' => [
-            'scheme' => 'Ice:Not_Empty'
-        ],
+        'template' => ''
+
     ];
 
     /**
@@ -48,24 +45,11 @@ class Menu extends Action
      * @param array $input
      * @param Action_Context $actionContext
      * @return array
+     * @throws Redirect
      */
     protected function run(array $input, Action_Context $actionContext)
     {
-        $menu = '';
-
-        $viewRender = Php::getInstance();
-
-        foreach ($input['scheme'] as $title => $url) {
-            if (is_array($url)) {
-                $menu .= $viewRender->fetch(Core_Menu::getClass() . '_dropdown', ['title' => $title, 'dropdown' => $url]);
-                continue;
-            }
-
-            $menu .= $viewRender->fetch(Core_Menu::getClass() . '_link', ['title' => $title, 'url' => $url]);
-        }
-
-
-
-        return ['menu' => $menu];
+        session_destroy();
+        throw new Redirect(Request::referer());
     }
 }

@@ -11,6 +11,7 @@ namespace Ice\Core;
 
 use Ice;
 use Ice\Core;
+use Ice\Exception\Redirect;
 use Ice\Helper\Arrays;
 use Ice\Helper\Hash;
 
@@ -111,7 +112,8 @@ abstract class Action extends Container
      * @param array $data
      * @param int $level
      * @return View|null|string
-     *
+     * @throws Redirect
+     * @throws \Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
@@ -174,6 +176,8 @@ abstract class Action extends Container
 
                     try {
                         $subView = $subAction->call($actionContext, $subActionParams, $newLevel);
+                    } catch (Redirect $e) {
+                        throw $e;
                     } catch (\Exception $e) {
                         $subView = self::getLogger()->error(['Calling subAction "{$0}" in action "{$1}" failed', [$subActionName, $actionClass]], __FILE__, __LINE__, $e);
                     }
@@ -207,6 +211,8 @@ abstract class Action extends Container
             }
 
             return $this->flush(View::getInstance($viewData));
+        } catch (Redirect $e) {
+            throw $e;
         } catch (\Exception $e) {
             return Action::getLogger()->error(['Calling action "{$0}" failed', $actionClass], __FILE__, __LINE__, $e);
         }

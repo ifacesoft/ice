@@ -16,6 +16,7 @@ use Ice\Core\Model;
 use Ice\Core\Response;
 use Ice\Core\Route;
 use Ice\Data\Provider\Router;
+use Ice\Exception\Redirect;
 
 /**
  * Class Front
@@ -60,10 +61,10 @@ class Front extends Action
      * @param array $input
      * @param Action_Context $actionContext
      * @return array
-     *
+     * @throws Redirect
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.1
      * @since 0.0
      */
     protected function run(array $input, Action_Context $actionContext)
@@ -75,11 +76,7 @@ class Front extends Action
         $methodData = $data[$input['method']];
 
         if (isset($methodData['redirect'])) {
-            if (isset($input['redirectUrl'])) {
-                Response::redirect($input['redirectUrl']);
-            } else {
-                Response::redirect(Route::getUrl($data[$input['method']]['redirect']));
-            }
+            throw new Redirect(isset($input['redirectUrl']) ? $input['redirectUrl'] : Route::getUrl($data[$input['method']]['redirect']));
         }
 
         if (!isset($methodData['layout'])) {

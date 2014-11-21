@@ -126,7 +126,13 @@ class Data extends Container implements Iterator, ArrayAccess, Countable, Serial
         }
 
         if (Environment::isDevelopment()) {
-            Query::getLogger()->info(str_replace("\t", '', str_replace("\n", ' ', $query->getSql())) . ' [' . implode(', ', $query->getBinds()) . '] ' . Console::C_GREEN_B . 'rows: ' . count($data) . Console::C_GREEN, Logger::GREY, false);
+            $message = str_replace("\t", '', str_replace("\n", ' ', $query->getSql())) . ' [' . implode(', ', $query->getBinds()) . '] ' . Console::C_GREEN_B . 'rows: ' . count($data) . Console::C_GREEN;
+
+            if (Request::isCli()) {
+                Query::getLogger()->info($message, Logger::GREY, false);
+            } else {
+                fb($message);
+            }
         }
 
         switch ($queryType) {
@@ -186,7 +192,13 @@ class Data extends Container implements Iterator, ArrayAccess, Countable, Serial
         $queryType = $query->getQueryType();
 
         if (Environment::isDevelopment()) {
-            Query::getLogger()->info(str_replace("\t", '', str_replace("\n", ' ', $query->getSql())) . ' [' . implode(', ', $query->getBinds()) . '] ' . Console::C_GREEN_B . 'rows: ' . count($data) . Console::C_GREEN, Logger::GREY, false);
+            $message = str_replace("\t", '', str_replace("\n", ' ', $query->getSql())) . ' [' . implode(', ', $query->getBinds()) . '] ' . Console::C_GREEN_B . 'rows: ' . count($data) . Console::C_GREEN;
+
+            if (Request::isCli()) {
+                Query::getLogger()->info($message, Logger::GREY, false);
+            } else {
+                fb($message);
+            }
         }
 
         $data = new Data($query->getDataSource()->$queryType($query));
@@ -207,24 +219,6 @@ class Data extends Container implements Iterator, ArrayAccess, Countable, Serial
     {
         $rows = $this->getResult()[self::RESULT_ROWS];
         return empty($rows) ? [] : $rows;
-    }
-
-    /**
-     * Get collection from data
-     *
-     * @return Collection
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function getCollection()
-    {
-        $modelClass = $this->getModelClass();
-        $collection = $modelClass::getCollection();
-        $collection->setData($this);
-        return $collection;
     }
 
     /**
@@ -281,6 +275,39 @@ class Data extends Container implements Iterator, ArrayAccess, Countable, Serial
 
         $this->_transformations = null;
         return $rows;
+    }
+
+    /**
+     * Return target model class of data
+     *
+     * @return Model
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
+     */
+    public function getModelClass()
+    {
+        return $this->getResult()[self::RESULT_MODEL_CLASS];
+    }
+
+    /**
+     * Get collection from data
+     *
+     * @return Collection
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
+     */
+    public function getCollection()
+    {
+        $modelClass = $this->getModelClass();
+        $collection = $modelClass::getCollection();
+        $collection->setData($this);
+        return $collection;
     }
 
     /**
@@ -805,20 +832,5 @@ class Data extends Container implements Iterator, ArrayAccess, Countable, Serial
     public function getPage()
     {
         return $this->_result[DATA::PAGE];
-    }
-
-    /**
-     * Return target model class of data
-     *
-     * @return Model
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function getModelClass()
-    {
-        return $this->getResult()[self::RESULT_MODEL_CLASS];
     }
 }

@@ -18,8 +18,8 @@ use Ice\Core\Environment;
 use Ice\Core\Logger;
 use Ice\Core\Request;
 use Ice\Core\Response;
+use Ice\Exception\Redirect;
 use Ice\Helper\Memory;
-use Ice\Helper\Object;
 
 /**
  * Class Ice
@@ -67,6 +67,22 @@ class Ice extends Container
     }
 
     /**
+     * Return instance of ice container class
+     *
+     * @param $class Container
+     * @return mixed
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.1
+     * @since 0.1
+     */
+    public static function get($class)
+    {
+        return $class::getInstance();
+    }
+
+    /**
      * Create new instance of Ice application
      *
      * @param $moduleName string main module name
@@ -106,6 +122,8 @@ class Ice extends Container
                     : Front::getInstance());
 
             Response::send($action->call(new Action_Context()));
+        } catch (Redirect $e) {
+            Response::redirect($e->getMessage());
         } catch (\Exception $e) {
             Ice::getLogger()->error('Application failure', __FILE__, __LINE__, $e);
         }
@@ -134,20 +152,5 @@ class Ice extends Container
         if (!Request::isCli() && function_exists('fastcgi_finish_request')) {
             fastcgi_finish_request();
         }
-    }
-
-    /**
-     * Return instance of ice container class
-     *
-     * @param $class Container
-     * @return mixed
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.1
-     * @since 0.1
-     */
-    public static function get($class) {
-        return $class::getInstance();
     }
 }

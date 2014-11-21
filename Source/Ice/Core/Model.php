@@ -666,34 +666,62 @@ abstract class Model
     /**
      * Return all rows for self model class
      *
-     * @param $fieldNames
+     * @param array $pk
+     * @param string $fieldNames
+     * @param null $sourceName
      * @return array
-     *
+     * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.1
      * @since 0.0
      */
-    public static function getRows($fieldNames)
+    public static function getRows($pk = [], $fieldNames = '*', $sourceName = null)
     {
-        return self::getCollection()
-            ->getData($fieldNames)
+        return self::getQueryBuilder()
+            ->select($fieldNames)
+            ->pk($pk)
+            ->getQuery($sourceName)
+            ->getData()
             ->getRows();
     }
 
     /**
      * Return collection of current model class name
      *
+     * @param array $pk
+     * @param string $fieldNames
+     * @param null $sourceName
      * @return Collection
-     *
+     * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.1
      * @since 0.0
      */
-    public static function getCollection()
+    public static function getCollection($pk = [], $fieldNames = '*', $sourceName = null)
     {
-        return Collection::create(self::getClass());
+        return self::getQueryBuilder()
+            ->select($fieldNames)
+            ->pk($pk)
+            ->getQuery($sourceName)
+            ->getData()
+            ->getCollection();
+    }
+
+    /**
+     * Return empty collection
+     *
+     * @return Collection
+     * @throws Exception
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.1
+     * @since 0.1
+     */
+    public static function getEmptyCollection()
+    {
+        return Collection::create(new Data([Data::RESULT_MODEL_CLASS => self::getClass()]));
     }
 
     /**

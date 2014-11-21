@@ -28,7 +28,7 @@ use Traversable;
  * @package Ice
  * @subpackage Core
  *
- * @version 0.0
+ * @version 0.1
  * @since 0.0
  */
 class Collection implements IteratorAggregate
@@ -41,49 +41,33 @@ class Collection implements IteratorAggregate
     private $_data = null;
 
     /**
-     * Query builder for current model collection
-     *
-     * @var Query_Builder
-     */
-    private $_queryBuilder = null;
-
-    /**
-     * Target model class
-     *
-     * @var Model
-     */
-    private $_modelClass = null;
-
-    /**
      * Private constructor for model collection
      *
-     * @param $modelClass
+     * @param Data $data
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.1
      * @since 0.0
      */
-    private function __construct($modelClass)
+    private function __construct(Data $data)
     {
-        $this->_modelClass = $modelClass;
+        $this->_data = $data;
     }
 
     /**
      * Create new instance of model collection
      *
-     * @param $modelClass
-     * @param null $hash
+     * @param Data $data
      * @return Collection
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.1
      * @since 0.0
      */
-    public static function create($modelClass, $hash = null)
+    public static function create(Data $data)
     {
-        return new Collection($modelClass);
+        return new Collection($data);
     }
 
     /**
@@ -93,12 +77,12 @@ class Collection implements IteratorAggregate
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.1
      * @since 0.0
      */
     public function getCount()
     {
-        return count($this->getData());
+        return $this->getData()->count();
     }
 
     /**
