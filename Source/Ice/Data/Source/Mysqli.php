@@ -261,6 +261,30 @@ class Mysqli extends Data_Source
     }
 
     /**
+     * Get indexes of table
+     *
+     * @param $tableName
+     * @return array
+     */
+    public function getIndexes($tableName) {
+        $indexes = [];
+
+        $dataProvider = $this->getSourceDataProvider();
+        $dataProvider->setScheme('information_schema');
+
+        foreach ($dataProvider->get(['STATISTICS:TABLE_SCHEMA/' . $this->getScheme(), 'STATISTICS:TABLE_NAME/' . $tableName]) as $index) {
+            $indexes[$index['INDEX_NAME']][$index['SEQ_IN_INDEX']] = $index['COLUMN_NAME'];
+        }
+
+        foreach ($dataProvider->get(['TABLE_CONSTRAINTS:TABLE_SCHEMA/' . $this->getScheme(), 'TABLE_CONSTRAINTS:TABLE_NAME/' . $tableName]) as $constraint) {
+            $indexes[$constraint['CONSTRAINT_TYPE']][$constraint['CONSTRAINT_NAME']] = $indexes[$constraint['CONSTRAINT_NAME']];
+            unset($indexes[$constraint['CONSTRAINT_NAME']]);
+        }
+
+        return $indexes;
+    }
+
+    /**
      * Get data Scheme from data source
      *
      * @return array

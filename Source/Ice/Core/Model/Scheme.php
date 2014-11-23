@@ -113,6 +113,7 @@ class Model_Scheme extends Container
         }
 
         $schemeData['columns'] = Data_Source::getInstance($schemeData['scheme'])->getColumns($tableName);
+        $schemeData['indexes'] = Data_Source::getInstance($schemeData['scheme'])->getIndexes($tableName);
 
         $modelMapping = [];
         $validators = [];

@@ -37,7 +37,7 @@ abstract class Model
     /**
      * Primary key
      *
-     * @var mixed
+     * @var array
      */
     private $_pk = null;
 
