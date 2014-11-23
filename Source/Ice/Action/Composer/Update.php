@@ -25,8 +25,8 @@ use Ice\Core\Action_Context;
  * @package Ice
  * @subpackage Action
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 class Composer_Update extends Action
 {
@@ -53,6 +53,11 @@ class Composer_Update extends Action
      * @param array $input
      * @param Action_Context $actionContext
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     protected function run(array $input, Action_Context $actionContext)
     {

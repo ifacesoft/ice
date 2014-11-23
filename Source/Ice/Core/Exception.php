@@ -22,8 +22,8 @@ use Ice\Core;
  * @package Ice
  * @subpackage Core
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 class Exception extends ErrorException
 {
@@ -46,6 +46,11 @@ class Exception extends ErrorException
      * @param string $errfile filename where throw Exception
      * @param int $errline number of line where throws Exception
      * @param int $errno code of error exception
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function __construct($message, $errcontext = [], \Exception $previous = null, $errfile = null, $errline = null, $errno = 0)
     {
@@ -54,7 +59,22 @@ class Exception extends ErrorException
         $isExistsResourceClass = class_exists('Ice\Core\Resource', false);
 
         if (($errno == 0 || substr(Logger::$errorCodes[$errno], 0, 7) == 'E_USER_' || Logger::$errorCodes[$errno] == 'FATAL') && $isExistsResourceClass) {
-            $message = self::getResource()->get($message);
+            $params = null;
+            $class = null;
+            if (is_array($message)) {
+                switch (count($message)) {
+                    case 2:
+                        list($message, $params) = $message;
+                        break;
+                    case 3:
+                        list($message, $params, $class) = $message;
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            $message = self::getResource()->get($message, $params, $class);
         } else {
             if (is_array($message)) {
                 if (!$isExistsResourceClass && !empty($message[1])) {
@@ -91,6 +111,11 @@ class Exception extends ErrorException
      * Data in moment throws exception
      *
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getErrContext()
     {

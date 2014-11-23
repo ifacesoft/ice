@@ -23,8 +23,8 @@ use Ice\Core\Validator;
  * @package Ice
  * @subpackage Validator
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 class Url extends Validator
 {
@@ -43,6 +43,11 @@ class Url extends Validator
      * @param $data
      * @param null $scheme
      * @return boolean
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function validate($data, $scheme = null)
     {

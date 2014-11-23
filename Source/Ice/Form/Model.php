@@ -24,26 +24,42 @@ use Ice\Core\Model as Core_Model;
  * @package Ice
  * @subpackage Form
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.1
+ * @since 0.0
  */
 class Model extends Form
 {
     /**
-     * Target model class
+     * Field type map
      *
-     * @var Core_Model
+     * @var array
      */
-    private $_modelClass = null;
+    public static $typeMap = [
+        'int' => Form::FIELD_NUMBER,
+        'varchar' => Form::FIELD_TEXT,
+        'datetime' => Form::FIELD_DATE,
+        'timestamp' => Form::FIELD_DATE,
+        'tinyint' => Form::FIELD_CHECKBOX,
+        'point' => Form::FIELD_GEO,
+        'bigint' => Form::FIELD_NUMBER,
+        'text' => Form::FIELD_TEXTAREA,
+        'double' => Form::FIELD_TEXT,
+        'longtext' => Form::FIELD_TEXT
+    ];
 
     /**
      * Constructor for model forms
      *
      * @param Core_Model $modelClass
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.1
+     * @since 0.0
      */
     protected function __construct($modelClass)
     {
-        $this->_modelClass = $modelClass;
+        parent::__construct($modelClass);
 
         $validateScheme = $modelClass::getValidateScheme();
 
@@ -62,27 +78,24 @@ class Model extends Form
      *
      * @param Core_Model $model
      * @return $this
-     * @throws \Ice\Core\Exception
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function bindModel(Core_Model $model)
     {
-        return $this->bind(array_merge($model->get(), [$model->getPkName() => $model->getPk()]));
-    }
-
-    /**
-     * Get tarret model class
-     *
-     * @return Core_Model
-     */
-    public function getModelClass()
-    {
-        return $this->_modelClass;
+        return $this->bind(array_merge($model->get(), $model->getPk()));
     }
 
     /**
      * Submit form
      *
-     * @throws \Ice\Core\Exception
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function submit()
     {
@@ -91,7 +104,7 @@ class Model extends Form
         }
 
         /** @var Model $modelClass */
-        $modelClass = $this->getModelClass();
+        $modelClass = $this->getKey();
         $modelClass::create($this->getValues())->insertOrUpdate();
     }
 }

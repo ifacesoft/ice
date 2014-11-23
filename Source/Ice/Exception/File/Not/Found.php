@@ -14,7 +14,7 @@ use Ice\Core\Exception;
 /**
  * Class File_Not_Found
  *
- * Implemets file not found exception
+ * Implements file not found exception
  *
  * @see Ice\Core\Exception
  *
@@ -23,8 +23,8 @@ use Ice\Core\Exception;
  * @package Ice
  * @subpackage Exception
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 class File_Not_Found extends Exception
 {
@@ -37,6 +37,11 @@ class File_Not_Found extends Exception
      * @param null $errfile
      * @param null $errline
      * @param int $errno
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function __construct($errstr, $errcontext = [], $previous = null, $errfile = null, $errline = null, $errno = 0)
     {

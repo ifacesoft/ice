@@ -9,6 +9,7 @@
 
 namespace Ice\Validator;
 
+use Ice\Core\Logger;
 use Ice\Core\Validator;
 
 /**
@@ -23,31 +24,32 @@ use Ice\Core\Validator;
  * @package Ice
  * @subpackage Validator
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 class Not_Empty extends Validator
 {
     /**
-     * Validate data by scheme
+     * Validate data for not empty
      *
-     * @example:
-     *  'user_name' => [
-     *      [
-     *          'validator' => 'Ice:Not_Empty',
-     *          'message' => 'Введите имя пользователя.'
-     *      ],
-     *  ],
-     *  'name' => 'Ice:Not_Null'
+     * example usage:
+     * ```php
+     *      $scheme = [
+     *          'name' => 'Ice:Not_Empty'
+     *      ];
+     * ```
      *
      * @param $data
-     * @param null $scheme
+     * @param mixed|null $scheme
      * @return boolean
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.1
+     * @since 0.0
      */
     public function validate($data, $scheme = null)
     {
-        $var = trim($data); // todo: may be (bool) trim($data)
-        return !empty($var);
+        return !empty($data);
     }
-
 }

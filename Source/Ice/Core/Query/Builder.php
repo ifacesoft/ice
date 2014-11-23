@@ -22,8 +22,8 @@ use Ice\Helper\Object;
  * @package Ice
  * @subpackage Core
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 class Query_Builder
 {
@@ -137,6 +137,11 @@ class Query_Builder
      *
      * @param string $modelClass Class of model
      * @param string|null $tableAlias Alias of table in query (default: class name of model)
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     private function __construct($modelClass, $tableAlias = null)
     {
@@ -155,6 +160,11 @@ class Query_Builder
      * @param string $modelClass Class of model
      * @param string|null $tableAlias Alias of table in query (default: class name of model)
      * @return Query_Builder
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function getInstance($modelClass, $tableAlias = null)
     {
@@ -169,6 +179,11 @@ class Query_Builder
      * @param null $tableAlias
      * @param string $sqlLogical
      * @return Query_Builder
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function notNull($fieldName, $modelClass = null, $tableAlias = null, $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
     {
@@ -207,6 +222,11 @@ class Query_Builder
      * @param $tableAlias
      * @throws Exception
      * @return Query_Builder
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     private function where($sqlLogical, $fieldName, $sqlComparsion, $value = null, $modelClass = null, $tableAlias = null)
     {
@@ -247,6 +267,11 @@ class Query_Builder
      * Return model class for query
      *
      * @return Model
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getModelClass()
     {
@@ -257,6 +282,11 @@ class Query_Builder
      * Return table alias for model class for query
      *
      * @return Model
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getTableAlias()
     {
@@ -270,6 +300,11 @@ class Query_Builder
      * @param $fieldNames
      * @param $isValidate
      * @param $isInvalidate boolean
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     private function appendCacheTag($modelClass, $fieldNames, $isValidate, $isInvalidate)
     {
@@ -295,6 +330,11 @@ class Query_Builder
      * @param null $tableAlias
      * @param string $sqlLogical
      * @return Query_Builder
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function isNull($fieldName, $modelClass = null, $tableAlias = null, $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
     {
@@ -311,20 +351,35 @@ class Query_Builder
     /**
      * Set in query part where expression '= ?' for primary key column
      *
-     * @param $value
+     * @param $pk
      * @param null $modelClass
      * @param null $tableAlias
      * @param string $sqlLogical
      * @throws Exception
      * @return Query_Builder
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
-    public function pk($value, $modelClass = null, $tableAlias = null, $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
+    public function pk($pk, $modelClass = null, $tableAlias = null, $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
     {
-        if (empty($value)) {
+        if (empty($pk)) {
             throw new Exception('Primary key is empty');
         }
 
-        return $this->eq('/pk', $value, $modelClass, $tableAlias, $sqlLogical);
+        if (!is_array($pk)) {
+
+            if (!$modelClass) {
+                $modelClass = $this->getModelClass();
+            }
+
+            $pkFieldNames = $modelClass::getPkFieldNames();
+            $pk = [reset($pkFieldNames) => $pk];
+        }
+
+        return $this->eq($pk, null, $modelClass, $tableAlias, $sqlLogical);
     }
 
     /**
@@ -336,6 +391,11 @@ class Query_Builder
      * @param null $tableAlias
      * @param string $sqlLogical
      * @return Query_Builder
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function eq($fieldName, $value = null, $modelClass = null, $tableAlias = null, $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
     {
@@ -375,6 +435,11 @@ class Query_Builder
      * @param null $tableAlias
      * @param string $sqlLogical
      * @return Query_Builder
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function in($fieldName, array $value, $modelClass = null, $tableAlias = null, $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
     {
@@ -405,6 +470,11 @@ class Query_Builder
      * @param null $tableAlias
      * @param string $sqlLogical
      * @return Query_Builder
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function ge($fieldName, $value, $modelClass = null, $tableAlias = null, $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
     {
@@ -427,6 +497,11 @@ class Query_Builder
      * @param null $tableAlias
      * @param string $sqlLogical
      * @return Query_Builder
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function le($fieldName, $value, $modelClass = null, $tableAlias = null, $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
     {
@@ -449,6 +524,11 @@ class Query_Builder
      * @param null $tableAlias
      * @param string $sqlLogical
      * @return Query_Builder
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function gt($fieldName, $value, $modelClass = null, $tableAlias = null, $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
     {
@@ -471,6 +551,11 @@ class Query_Builder
      * @param null $tableAlias
      * @param string $sqlLogical
      * @return Query_Builder
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function lt($fieldName, $value, $modelClass = null, $tableAlias = null, $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
     {
@@ -492,6 +577,11 @@ class Query_Builder
      * @param null $tableAlias
      * @param string $sqlLogical
      * @return Query_Builder
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function isEmpty($fieldName, $modelClass = null, $tableAlias = null, $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
     {
@@ -506,6 +596,11 @@ class Query_Builder
      * @param null $tableAlias
      * @param string $sqlLogical
      * @return Query_Builder
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function notEmpty($fieldName, $modelClass = null, $tableAlias = null, $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
     {
@@ -521,6 +616,11 @@ class Query_Builder
      * @param null $tableAlias
      * @param string $sqlLogical
      * @return Query_Builder
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function ne($fieldName, $value, $modelClass = null, $tableAlias = null, $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
     {
@@ -543,6 +643,11 @@ class Query_Builder
      * @param null $tableAlias
      * @param string $sqlLogical
      * @return Query_Builder
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function notIn($fieldName, array $value, $modelClass = null, $tableAlias = null, $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
     {
@@ -572,6 +677,11 @@ class Query_Builder
      * @param null $tableAlias
      * @param string $sqlLogical
      * @return Query_Builder
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function is($fieldName, $modelClass = null, $tableAlias = null, $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
     {
@@ -586,6 +696,11 @@ class Query_Builder
      * @param null $tableAlias
      * @param string $sqlLogical
      * @return Query_Builder
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function not($fieldName, $modelClass = null, $tableAlias = null, $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
     {
@@ -601,6 +716,11 @@ class Query_Builder
      * @param null $tableAlias
      * @param string $sqlLogical
      * @return Query_Builder
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function like($fieldName, $value, $modelClass = null, $tableAlias = null, $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
     {
@@ -623,6 +743,11 @@ class Query_Builder
      * @param null $tableAlias
      * @param string $sqlLogical
      * @return Query_Builder
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function rlike($fieldName, $value, $modelClass = null, $tableAlias = null, $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
     {
@@ -647,6 +772,11 @@ class Query_Builder
      * @param null $tableAlias
      * @param null $condition
      * @return Query_Builder
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function inner($modelClass, $fieldNames = null, $tableAlias = null, $condition = null)
     {
@@ -663,6 +793,11 @@ class Query_Builder
      * @param null $condition
      * @return Query_Builder
      * @throws Exception
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     private function join($joinType, $modelClass, $tableAlias = null, $condition = null)
     {
@@ -757,24 +892,23 @@ class Query_Builder
      * @param null $tableAlias
      * @throws Exception
      * @return Query_Builder
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
-    public function select($fieldName = '/pk', $fieldAlias = null, $modelClass = null, $tableAlias = null)
+    public function select($fieldName, $fieldAlias = null, $modelClass = null, $tableAlias = null)
     {
         $this->_queryType = Query_Builder::TYPE_SELECT;
-
-        if (empty($fieldName)) { // Понятия не имею почему
-            $fieldName = '/pk';  // сюда приходит null((
-        }
 
         /** @var Model $class */
         $class = $this->getModelClass();
         if (!isset($this->_sqlParts[self::PART_SELECT][$class])) {
-            $pkName = $class::getFieldName('/pk');
+            $pkFieldNames = $class::getPkFieldNames();
 
             $this->_sqlParts[self::PART_SELECT][$class] = [
-                $this->getTableAlias(), [
-                    $pkName => $pkName
-                ]
+                $this->getTableAlias(), array_combine($pkFieldNames, $pkFieldNames)
             ];
         }
 
@@ -821,12 +955,10 @@ class Query_Builder
         }
 
         if (!isset($this->_sqlParts[self::PART_SELECT][$modelClass])) {
-            $pkName = $modelClass::getFieldName('/pk');
+            $pkNames = $modelClass::getPkFieldNames();
 
             $this->_sqlParts[self::PART_SELECT][$modelClass] = [
-                $tableAlias, [
-                    $pkName => $pkName
-                ]
+                $tableAlias, array_combine($pkNames, $pkNames)
             ];
         }
 
@@ -845,6 +977,11 @@ class Query_Builder
      * @param null $tableAlias
      * @param null $condition
      * @return Query_Builder
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function left($modelClass, $fieldNames = null, $tableAlias = null, $condition = null)
     {
@@ -881,9 +1018,23 @@ class Query_Builder
      * @param $key
      * @param null $value
      * @return Query_Builder
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function insert($key, $value = null)
     {
+        $this->_queryType = Query_Builder::TYPE_INSERT;
+
+        $modelClass = $this->getModelClass();
+
+        if (empty($key)) {
+            $this->_sqlParts[Query_Builder::PART_VALUES] = [$modelClass, [], 0];
+            return $this;
+        }
+
         if ($value !== null) {
             return $this->insert([[$key => $value]]);
         }
@@ -892,9 +1043,6 @@ class Query_Builder
             return $this->insert([$key]);
         }
 
-        $this->_queryType = Query_Builder::TYPE_INSERT;
-
-        $modelClass = $this->getModelClass();
         $fieldNames = [];
 
         foreach (array_keys(reset($key)) as $fieldName) {
@@ -916,6 +1064,11 @@ class Query_Builder
      * @param array $pkValues
      * @return Query_Builder
      * @throws Exception
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function delete($pkValues = [])
     {
@@ -943,6 +1096,11 @@ class Query_Builder
      * @param string $sqlLogical
      * @return Query_Builder
      * @throws Exception
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function inPk(array $value, $modelClass = null, $tableAlias = null, $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
     {
@@ -959,9 +1117,23 @@ class Query_Builder
      * @param $key
      * @param null $value
      * @return Query_Builder
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function update($key, $value = null)
     {
+        $this->_queryType = Query_Builder::TYPE_UPDATE;
+
+        $modelClass = $this->getModelClass();
+
+        if (empty($key)) {
+            $this->_sqlParts[self::PART_SET] = [$modelClass, [], 0];
+            return $this;
+        }
+
         if ($value !== null) {
             return $this->update([[$key => $value]]);
         }
@@ -970,9 +1142,6 @@ class Query_Builder
             return $this->update([$key]);
         }
 
-        $this->_queryType = Query_Builder::TYPE_UPDATE;
-
-        $modelClass = $this->getModelClass();
         $fieldNames = [];
 
         foreach (array_keys(reset($key)) as $fieldName) {
@@ -998,6 +1167,11 @@ class Query_Builder
      * @param null $modelClass
      * @param null $tableAlias
      * @return Query_Builder
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function count($fieldName = '/pk', $fieldAlias = null, $modelClass = null, $tableAlias = null)
     {
@@ -1023,6 +1197,11 @@ class Query_Builder
      * @param null $modelClass
      * @param null $tableAlias
      * @return Query_Builder
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function asc($fieldName, $modelClass = null, $tableAlias = null)
     {
@@ -1037,6 +1216,11 @@ class Query_Builder
      * @param $modelClass
      * @param $tableAlias
      * @return Query_Builder
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     private function order($fieldName, $isAscending, $modelClass = null, $tableAlias = null)
     {
@@ -1080,6 +1264,11 @@ class Query_Builder
      * @param null $modelClass
      * @param null $tableAlias
      * @return $this
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function group($fieldName, $modelClass = null, $tableAlias = null)
     {
@@ -1121,6 +1310,11 @@ class Query_Builder
      * @param null $modelClass
      * @param null $tableAlias
      * @return Query_Builder
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function desc($fieldName, $modelClass = null, $tableAlias = null)
     {
@@ -1133,6 +1327,11 @@ class Query_Builder
      * @param int $page
      * @param int $limit
      * @return Query_Builder
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function setPaginator($page = 1, $limit = 1000)
     {
@@ -1146,6 +1345,11 @@ class Query_Builder
      * @param $limit
      * @param int|null $offset
      * @return Query_Builder
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function limit($limit, $offset = 0)
     {
@@ -1158,6 +1362,11 @@ class Query_Builder
      * Set flag for total found rows query
      *
      * @return Query_Builder
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function calcFoundRows()
     {
@@ -1170,10 +1379,15 @@ class Query_Builder
      *
      * @param null $sourceName
      * @return Query
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getQuery($sourceName = null)
     {
-        $insertRows = $this->_queryType == Query_Builder::TYPE_INSERT
+        $insertRows = $this->_queryType == Query_Builder::TYPE_INSERT && !empty($this->_sqlParts[Query_Builder::PART_VALUES][1])
             ? [array_combine($this->_sqlParts[Query_Builder::PART_VALUES][1], $this->_bindParts[Query_Builder::PART_VALUES][0])] // TODO: Здесь должны бить все вставляемые записи..
             : [];
 

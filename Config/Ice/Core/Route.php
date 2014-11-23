@@ -2,7 +2,7 @@
 
 return [
     'ice_main' => [
-        'route' => '',
+        'route' => '/',
         'GET' => [
             'actions' => [
                 'title' => ['Ice:Title' => ['title' => 'Hello world']],
@@ -10,9 +10,9 @@ return [
             ]
         ]
     ],
-    '/Http_Status' => '/status',
+    '/Http_Status' => '',
     'ice_redirect_uri' => [
-        'route' => 'redirect{$redirectUrl}',
+        'route' => '/redirect{$redirectUrl}',
         'GET' => [
             'redirect' => true
         ],
@@ -21,9 +21,10 @@ return [
         ]
     ],
     'ice_redirect' => [
-        'route' => 'redirect',
+        'route' => '/redirect',
         'GET' => [
             'redirect' => 'ice_main'
         ]
     ],
+    '/Security' => '/security',
 ];

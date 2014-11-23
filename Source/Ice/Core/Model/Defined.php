@@ -23,8 +23,8 @@ use Ice\Core\Model;
  * @package Ice
  * @subpackage Core
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 abstract class Model_Defined extends Model
 {
@@ -33,6 +33,10 @@ abstract class Model_Defined extends Model
      *
      * @return Config
      * @throws Exception
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function getDefinedConfig()
     {

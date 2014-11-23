@@ -19,8 +19,8 @@ namespace Ice\Helper;
  * @package Ice
  * @subpackage Helper
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 class Vcs
 {
@@ -33,6 +33,11 @@ class Vcs
      *
      * @param $vcs
      * @param $dir
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function init($vcs, $dir)
     {
@@ -57,6 +62,11 @@ class Vcs
      * @param $vcs
      * @param $dir
      * @param $branch
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function checkout($vcs, $dir, $branch)
     {
@@ -79,6 +89,11 @@ class Vcs
      *
      * @param $vcs
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function getDefaultBranch($vcs)
     {

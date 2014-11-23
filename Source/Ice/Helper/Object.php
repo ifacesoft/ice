@@ -22,8 +22,8 @@ use Ice\Core\Module;
  * @package Ice
  * @subpackage Helper
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 class Object
 {
@@ -33,6 +33,11 @@ class Object
      * @param $baseClass
      * @param $name
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function getNamespace($baseClass, $name)
     {
@@ -46,6 +51,11 @@ class Object
      * @param $baseClass
      * @param $name
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function getClass($baseClass, $name)
     {
@@ -63,8 +73,13 @@ class Object
      *
      * @param $shortName
      * @return bool
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
-    private static function isShortName($shortName)
+    public static function isShortName($shortName)
     {
         return (bool)strpos($shortName, ':');
     }
@@ -74,6 +89,11 @@ class Object
      *
      * @param $class
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function getName($class)
     {
@@ -89,6 +109,11 @@ class Object
      *
      * @param $class
      * @return bool
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     private static function isClass($class)
     {
@@ -101,6 +126,11 @@ class Object
      * @param $class
      * @param $shortName
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function getPrefixByClassShortName($class, $shortName)
     {
@@ -114,6 +144,11 @@ class Object
      *
      * @param $class
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function getModuleAlias($class)
     {
@@ -126,6 +161,11 @@ class Object
      *
      * @param $class
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function getShortName($class)
     {
@@ -137,6 +177,11 @@ class Object
      *
      * @param $class
      * @return mixed
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function getBaseClass($class)
     {

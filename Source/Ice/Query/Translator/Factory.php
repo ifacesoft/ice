@@ -21,8 +21,8 @@ namespace Ice\Query\Translator;
  * @package Ice
  * @subpackage Query_Translator
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 class Factory extends Defined
 {

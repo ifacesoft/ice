@@ -10,6 +10,7 @@
 namespace Ice\Query\Translator;
 
 use Ice\Core\Exception;
+use Ice\Core\Logger;
 use Ice\Core\Model;
 use Ice\Core\Query_Builder;
 use Ice\Core\Query_Translator;
@@ -26,8 +27,8 @@ use Ice\Core\Query_Translator;
  * @package Ice
  * @subpackage Query_Translator
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 class Mysqli extends Query_Translator
 {
@@ -51,6 +52,11 @@ class Mysqli extends Query_Translator
      * @param array $sqlParts
      * @return string
      * @throws Exception
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function translate(array $sqlParts)
     {
@@ -79,22 +85,33 @@ class Mysqli extends Query_Translator
      *
      * @param array $data
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     private function translateValues(array $data)
     {
-        $sql = '';
-
-        if (empty($data)) {
-            return $sql;
-        }
-
         /** @var Model $modelClass */
         list($modelClass, $fieldNames, $count) = $data;
 
+        $sql = "\n" . self::SQL_STATEMENT_INSERT . ' ' . self::SQL_CLAUSE_INTO .
+            "\n\t" . $modelClass::getTableName();
+
+        $fileNamesCount = count($fieldNames);
+
+        /** Insert empty row */
+        if (!$fileNamesCount) {
+            $sql .= "\n\t" . '()';
+            $sql .= "\n" . self::SQL_CLAUSE_VALUES;
+            $sql .= "\n\t" . '()';
+
+            return $sql;
+        }
+
         $modelMapping = $modelClass::getMapping();
 
-        $sql .= "\n" . self::SQL_STATEMENT_INSERT . ' ' . self::SQL_CLAUSE_INTO .
-            "\n\t" . $modelClass::getTableName();
         $sql .= "\n\t" . '(`' . implode('`,`', array_map(function ($fieldName) use ($modelMapping) {
                 return $modelMapping[$fieldName];
             }, $fieldNames)) . '`)';
@@ -104,9 +121,9 @@ class Mysqli extends Query_Translator
 
         $sql .= $values;
 
-        if ($count > 1) {
-            $sql .= str_repeat(',' . $values, $count - 1);
-        }
+//        if ($count > 1) {
+//            $sql .= str_repeat(',' . $values, $count - 1);
+//        }
 
         return $sql;
     }
@@ -116,14 +133,15 @@ class Mysqli extends Query_Translator
      *
      * @param array $data
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     private function translateSet(array $data)
     {
         $sql = '';
-
-        if (empty($data)) {
-            return $sql;
-        }
 
         list($modelClass, $fieldNames, $count) = $data;
 
@@ -145,6 +163,11 @@ class Mysqli extends Query_Translator
      * @param array $data
      * @throws Exception
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     private function translateWhere(array $data)
     {
@@ -235,6 +258,11 @@ class Mysqli extends Query_Translator
      *
      * @param array $data
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     private function translateSelect(array $data)
     {
@@ -296,6 +324,11 @@ class Mysqli extends Query_Translator
      *
      * @param array $data
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     private function translateJoin(array $data)
     {
@@ -323,6 +356,11 @@ class Mysqli extends Query_Translator
      *
      * @param array $data
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     private function translateOrder(array $data)
     {
@@ -355,6 +393,11 @@ class Mysqli extends Query_Translator
      *
      * @param array $data
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     private function translateGroup(array $data)
     {
@@ -387,6 +430,11 @@ class Mysqli extends Query_Translator
      *
      * @param array $data
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     private function translateLimit($data)
     {

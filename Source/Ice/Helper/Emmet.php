@@ -14,13 +14,13 @@ namespace Ice\Helper;
  *
  * Zen code translator
  *
- * @author sergb
+ * @author sergb <email>
  *
  * @package Ice
  * @subpackage Helper
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 class Emmet
 {
@@ -32,6 +32,11 @@ class Emmet
      * @param string $emmetAbbreviation
      * @param array $vars
      * @return string
+     *
+     * @author sergb <email>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function translate($emmetAbbreviation, $vars = array())
     {
@@ -132,6 +137,11 @@ class Emmet
      * @param string $innerHtml
      * @param array $vars
      * @return string
+     *
+     * @author sergb <email>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     private static function translateElement($matches, $innerHtml = '', $vars = array())
     {
@@ -188,6 +198,11 @@ class Emmet
      * @param string $emmetText
      * @param array $vars
      * @return string
+     *
+     * @author sergb <email>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     private static function translateText($emmetText, $vars = array())
     {
@@ -208,6 +223,11 @@ class Emmet
      * @param int $multiplierValue Общее число циклов.
      * @param int $counterValue Номер итерации в цикле.
      * @return string
+     *
+     * @author sergb <email>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     private static function translateBucks($emmet, $multiplierValue, $counterValue = 1)
     {

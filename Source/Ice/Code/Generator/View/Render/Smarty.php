@@ -30,8 +30,8 @@ use Ice\View\Render\Smarty;
  * @package Ice
  * @subpackage Code_Generator
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 class View_Render_Smarty extends Code_Generator
 {
@@ -41,6 +41,11 @@ class View_Render_Smarty extends Code_Generator
      * @param array $data Sended data requered for generate
      * @param bool $force Force if already generate
      * @return mixed
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function generate($data, $force = false)
     {

@@ -18,8 +18,8 @@ namespace Ice\Core;
  * @package Ice
  * @subpackage Core
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 class Response
 {
@@ -28,6 +28,11 @@ class Response
      *
      * @param $uri
      * @param int $code
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function redirect($uri, $code = 301)
     {
@@ -45,6 +50,11 @@ class Response
      *
      * @param $output
      * @param bool $isError
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function send($output, $isError = false)
     {

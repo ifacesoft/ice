@@ -99,4 +99,7 @@ return [
     'Implementation {$0} is required for {$1}' => [
         'ru' => 'Implementation {$0} is required for {$1}',
     ],
+    'Method get not be array' => [
+        'ru' => 'Method get not be array',
+    ],
 ];

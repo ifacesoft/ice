@@ -29,8 +29,8 @@ use Ice\View\Render\Php;
  * @package Ice
  * @subpackage Action
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 class Form extends Action
 {
@@ -50,12 +50,14 @@ class Form extends Action
     public static $config = [
         'viewRenderClassName' => 'Ice:Php',
         'inputValidators' => [
-            'form' => 'Ice:Is_Form',
-            'submitClassName' => 'Ice:Not_Empty'
+            'form' => 'Ice:Is_Form'
         ],
         'inputDefaults' => [
             'groupping' => true,
-            'reRenderClassNames' => []
+            'submitActionName' => 'Ice:Form_Submit',
+            'submitTitle' => 'Submit',
+            'reRenderActionNames' => [],
+            'redirect' => ''
         ],
         'layout' => 'div.Form>div.panel.panel-default>div.panel-body'
     ];
@@ -66,15 +68,22 @@ class Form extends Action
      * @param array $input
      * @param Action_Context $actionContext
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.1
+     * @since 0.0
      */
     protected function run(array $input, Action_Context $actionContext)
     {
         /** @var Core_Form $form */
         $form = $input['form'];
 
-        $modelClass = $form->getModelClass();
+        $formClass = get_class($form);
 
-        $formName = 'Form_' . Object::getName(get_class($input['form'])) . '_' . Object::getName($modelClass);
+        $formKey = $form->getKey();
+
+        $formName = 'Form_' . Object::getName($formClass) . '_' . Object::getName($formKey);
 
         $filterFields = $form->getFilterFields();
         $fields = $form->getFields();
@@ -125,11 +134,13 @@ class Form extends Action
             'groupping' => $input['groupping'],
             'fields' => $result,
             'formName' => $formName,
-            'formClass' => get_class($input['form']),
-            'formKey' => $modelClass,
-            'submitClassName' => $input['submitClassName'],
-            'reRenderClassNames' => $input['reRenderClassNames'],
-            'filterFields' => implode(',', $filterFields)
+            'formClass' => $formClass,
+            'formKey' => $formKey,
+            'submitActionName' => $input['submitActionName'],
+            'reRenderActionNames' => empty($input['reRenderActionNames']) ? '' : implode(',', $input['reRenderActionNames']),
+            'filterFields' => implode(',', $filterFields),
+            'submitTitle' => $input['submitTitle'],
+            'redirect' => $input['redirect']
         ];
     }
 }

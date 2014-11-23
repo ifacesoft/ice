@@ -24,8 +24,8 @@ use Ice\Core\Exception;
  * @package Ice
  * @subpackage Data_Provider
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 class String extends Data_Provider
 {
@@ -34,6 +34,11 @@ class String extends Data_Provider
      *
      * @param string  $key
      * @return mixed
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function get($key = null)
     {
@@ -44,6 +49,11 @@ class String extends Data_Provider
      * Get instance connection of data provider
      *
      * @return Data_Provider
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getConnection()
     {
@@ -57,6 +67,11 @@ class String extends Data_Provider
      * @param $value
      * @param null $ttl
      * @return mixed setted value
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function set($key, $value, $ttl = null)
     {
@@ -74,6 +89,11 @@ class String extends Data_Provider
      * @param bool $force if true return boolean else deleted value
      * @throws Exception
      * @return mixed|boolean
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function delete($key, $force = true)
     {
@@ -86,6 +106,11 @@ class String extends Data_Provider
      * @param $key
      * @param int $step
      * @return mixed new value
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function inc($key, $step = 1)
     {
@@ -98,6 +123,11 @@ class String extends Data_Provider
      * @param $key
      * @param int $step
      * @return mixed new value
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function dec($key, $step = 1)
     {
@@ -106,6 +136,11 @@ class String extends Data_Provider
 
     /**
      * Flush all stored data
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function flushAll()
     {
@@ -117,6 +152,11 @@ class String extends Data_Provider
      *
      * @param string $pattern
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getKeys($pattern = null)
     {
@@ -128,6 +168,11 @@ class String extends Data_Provider
      *
      * @param $connection
      * @return boolean
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     protected function connect(&$connection)
     {
@@ -143,6 +188,11 @@ class String extends Data_Provider
      *
      * @param $connection
      * @return boolean
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     protected function close(&$connection)
     {

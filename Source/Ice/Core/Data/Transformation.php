@@ -8,6 +8,7 @@
  */
 
 namespace Ice\Core;
+use Ice\Core;
 
 /**
  * Class Data_Transformation
@@ -19,11 +20,12 @@ namespace Ice\Core;
  * @package Ice
  * @subpackage Core
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 abstract class Data_Transformation extends Container
 {
+    use Core;
 
     /**
      * Return inctance of Transform class
@@ -31,6 +33,11 @@ abstract class Data_Transformation extends Container
      * @param $transformationName
      * @throws Exception
      * @return Data_Transformation
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function getInstance($transformationName)
     {
@@ -45,6 +52,11 @@ abstract class Data_Transformation extends Container
      * @param array $rows
      * @param $params
      * @return array
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since 0
      */
     abstract function transform($modelClass, array $rows, $params);
 } 

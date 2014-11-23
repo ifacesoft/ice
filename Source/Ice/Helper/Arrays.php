@@ -10,6 +10,7 @@
 namespace Ice\Helper;
 
 use Ice\Core\Exception;
+use Ice\Core\Logger as Core_Logger;
 
 /**
  * Class Arrays
@@ -21,8 +22,8 @@ use Ice\Core\Exception;
  * @package Ice
  * @subpackage Helper
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 class Arrays
 {
@@ -38,6 +39,11 @@ class Arrays
      * @param array $rows
      * @param $filterScheme
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function filter(array $rows, $filterScheme)
     {
@@ -95,6 +101,11 @@ class Arrays
      * @param $array
      * @param $column
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function group($array, $column)
     {
@@ -128,23 +139,16 @@ class Arrays
      *
      * @param array $input A multi-dimensional array (record set) from which to pull
      * a column of values.
-     * @param mixed $columnKey The column(s) of values to return. This value may be the
-     * integer key of the column you wish to retrieve, or it
+     * @param mixed $columnKey The column(s) of values to return. This value may be
+     * null, 0, array or any string
      * may be the string key name for an associative array.
      * @param mixed $indexKey (Optional.) The column to use as the index/keys for
-     * the returned array. This value may be the integer key
+     * the returned array. This value may be null, '', or any string
      * of the column, or it may be the string key name.
      * @return array
      */
     public static function column($input, $columnKey = null, $indexKey = null)
     {
-        $argc = func_num_args();
-
-        if ($argc < 2) {
-            trigger_error("array_column() expects at least 2 parameters, {$argc} given", E_USER_WARNING);
-            return null;
-        }
-
         if (!is_array($input)) {
             trigger_error('array_column() expects parameter 1 to be array, ' . gettype($input) . ' given', E_USER_WARNING);
             return null;
@@ -187,11 +191,16 @@ class Arrays
 
             if ($indexKey !== null && array_key_exists($indexKey, $row)) {
                 $key = (string)$row[$indexKey];
+            } else if ($indexKey === '') {
+                $key = '';
             }
 
             if ($columnKey === null) {
                 $valueSet = true;
                 $value = $row;
+            } else if ($columnKey === 0) {
+                $valueSet = true;
+                $value = reset($row);
             } else {
                 if (!is_array($row)) {
                     continue;
@@ -212,7 +221,12 @@ class Arrays
             }
 
             if ($valueSet) {
-                $resultArray[$key] = $value;
+                if ($key === '') {
+                    $resultArray[] = $value;
+                } else {
+                    $resultArray[$key] = $value;
+                }
+
             }
         }
 
@@ -227,6 +241,11 @@ class Arrays
      * @param $old
      * @param $new
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function diff($old, $new)
     {
@@ -239,4 +258,34 @@ class Arrays
 
         return $diff;
     }
-} 
+
+    public static function defaults($data, array $defaults = array())
+    {
+        foreach ($defaults as $key => $value) {
+            if (!array_key_exists($key, $data)) {
+                $data[$key] = is_callable($value) ? $value($key) : $value;
+            }
+        }
+
+        return $data;
+    }
+
+    public static function validate($data, array $validators = array())
+    {
+
+        return false;
+    }
+
+    public static function convert($data, array $converters = array())
+    {
+        foreach ($converters as $key => $value) {
+            if (!array_key_exists($key, $data)) {
+                $data[$key] = null;
+            }
+
+            $data[$key] = $value($data[$key]);
+        }
+
+        return $data;
+    }
+}

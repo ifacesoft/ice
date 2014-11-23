@@ -12,6 +12,7 @@ namespace Ice\Core;
 use Ice;
 use Ice\Core;
 use Ice\Exception\File_Not_Found;
+use Ice\Form\Model as Form_Model;
 use Ice\Helper\Arrays;
 use Ice\Helper\Date;
 use Ice\Helper\File;
@@ -31,11 +32,13 @@ use Ice\Helper\String;
  * @package Ice
  * @subpackage Core
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 class Model_Scheme extends Container
 {
+    use Core;
+
     /**
      * Model schame
      *
@@ -47,48 +50,17 @@ class Model_Scheme extends Container
      * Private constructor for model scheme
      *
      * @param $dataScheme
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     private function __construct($dataScheme)
     {
         $this->_modelScheme = [
             'scheme' => $dataScheme
         ];
-    }
-
-    /**
-     * Create new instance of model scheme
-     *
-     * @param $modelClass
-     * @param null $hash
-     * @return Model_Scheme
-     */
-    protected static function create($modelClass, $hash = null)
-    {
-        return new Model_Scheme(self::getFilePathData($modelClass));
-    }
-
-    /**
-     * Return path of model scheme data
-     *
-     * @param $modelClass
-     * @return mixed
-     * @throws File_Not_Found
-     */
-    public static function getFilePathData($modelClass)
-    {
-        $filePath = Loader::getFilePath($modelClass, '.php', 'Var/', false, true);
-
-        if (file_exists($filePath)) {
-            return File::loadData($filePath);
-        }
-
-        $data = [
-            'time' => Date::get(),
-            'revision' => date('00000000'),
-            'columns' => []
-        ];
-
-        return File::createData($filePath, $data);
     }
 
     /**
@@ -100,6 +72,11 @@ class Model_Scheme extends Container
      * @return mixed
      * @throws Exception
      * @throws File_Not_Found
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function update($tableName, $schemeData, $force = false)
     {
@@ -119,30 +96,33 @@ class Model_Scheme extends Container
         $validators = [];
         $form = [];
 
+        $primaryKeys = $schemeData['indexes']['PRIMARY KEY']['PRIMARY'];
+        $foreignKeys = Arrays::column($schemeData['indexes']['FOREIGN KEY'], 0, '');
+
         foreach ($schemeData['columns'] as $columnName => &$column) {
             $fieldName = strtolower($columnName);
 
-            switch ($column['key']) {
-                case 'PRI':
-                    if (substr($fieldName, -3, 3) != '_pk') {
-                        $fieldName = strtolower(Object::getName($schemeData['modelClass']));
-                        do { // some primary fields
-                            $fieldName .= '_pk';
-                        } while (isset($modelMapping[$fieldName]));
-                    }
-                    break;
-                case 'MUL':
-                    if (substr($fieldName, -4, 4) != '__fk') {
-                        $fieldName = String::trim($fieldName, ['__id', '_id', 'id'], String::TRIM_TYPE_RIGHT) . '__fk';
-                    }
-                    break;
-                default:
-                    break;
+            $column['is_primary'] = false;
+            $column['is_foreign'] = false;
+
+            if (in_array($columnName, $foreignKeys)) {
+                $column['is_foreign'] = true;
+                if (substr($fieldName, -4, 4) != '__fk') {
+                    $fieldName = String::trim($fieldName, ['__id', '_id', 'id'], String::TRIM_TYPE_RIGHT) . '__fk';
+                }
+            } else if (in_array($columnName, $primaryKeys)) {
+                $column['is_primary'] = true;
+                if (substr($fieldName, -3, 3) != '_pk') {
+                    $fieldName = strtolower(Object::getName($schemeData['modelClass']));
+                    do { // some primary fields
+                        $fieldName .= '_pk';
+                    } while (isset($modelMapping[$fieldName]));
+                }
             }
 
             $modelMapping[$fieldName] = $columnName;
 
-            $fieldType = isset(Form::$typeMap[$column['dataType']]) ? Form::$typeMap[$column['dataType']] : 'text';
+            $fieldType = isset(Form_Model::$typeMap[$column['dataType']]) ? Form_Model::$typeMap[$column['dataType']] : 'text';
 
             $form[$fieldName] = $fieldType;
 
@@ -196,6 +176,11 @@ class Model_Scheme extends Container
      * @param $scheme
      * @param $tableName
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function diff($scheme, $tableName)
     {
@@ -206,9 +191,60 @@ class Model_Scheme extends Container
     }
 
     /**
+     * Create new instance of model scheme
+     *
+     * @param $modelClass
+     * @param null $hash
+     * @return Model_Scheme
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
+     */
+    protected static function create($modelClass, $hash = null)
+    {
+        return new Model_Scheme(self::getFilePathData($modelClass));
+    }
+
+    /**
+     * Return path of model scheme data
+     *
+     * @param $modelClass
+     * @return mixed
+     * @throws File_Not_Found
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
+     */
+    public static function getFilePathData($modelClass)
+    {
+        $filePath = Loader::getFilePath($modelClass, '.php', 'Var/', false, true);
+
+        if (file_exists($filePath)) {
+            return File::loadData($filePath);
+        }
+
+        $data = [
+            'time' => Date::get(),
+            'revision' => date('00000000'),
+            'columns' => []
+        ];
+
+        return File::createData($filePath, $data);
+    }
+
+    /**
      * Return columns with their column schemes
      *
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getColumnNames()
     {
@@ -219,9 +255,29 @@ class Model_Scheme extends Container
      * Scheme name of this model scheme
      *
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getScheme()
     {
         return $this->_modelScheme['scheme']['scheme'];
+    }
+
+    /**
+     * Return indexes
+     *
+     * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
+     */
+    public function getIndexes()
+    {
+        return $this->_modelScheme['scheme']['indexes'];
     }
 }

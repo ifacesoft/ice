@@ -24,8 +24,8 @@ use Ice\Core\Module;
  * @package Ice
  * @subpackage Helper
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 class Model
 {
@@ -35,6 +35,11 @@ class Model
      * @param $tableName
      * @return Core_Model
      * @throws Exception
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function getModelClassByTableName($tableName)
     {
@@ -52,7 +57,7 @@ class Model
         $namespace = $moduleName . '\Model\\';
 
         if ($prefix) {
-            $namespace .= ucfirst(preg_replace('/[^a-z]/i', '', $prefix)) . '\\';
+//            $namespace .= ucfirst(preg_replace('/[^a-z]/i', '', $prefix)) . '\\';
         }
 
         $modelName = '';
@@ -69,6 +74,11 @@ class Model
      * @param $tableName
      * @return string
      * @throws Exception
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function getTablePrefix($tableName)
     {

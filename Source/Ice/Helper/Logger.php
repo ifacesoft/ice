@@ -25,8 +25,8 @@ use Ice\View\Render\Php as View_Render_Php;
  * @package Ice
  * @subpackage Helper
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 class Logger
 {
@@ -35,6 +35,11 @@ class Logger
      *
      * @param \Exception $exception
      * @param $output
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function outputFb(\Exception $exception, $output)
     {
@@ -71,6 +76,11 @@ class Logger
      * @param null $previousMessage
      * @param int $level
      * @return mixed
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function getMessage(\Exception $exception, $previousMessage = null, $level = 1)
     {
@@ -117,6 +127,11 @@ class Logger
      *
      * @param \Exception $exception
      * @param $output
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function outputFile(\Exception $exception, $output)
     {

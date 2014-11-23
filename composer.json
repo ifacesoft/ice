@@ -28,6 +28,8 @@
         "twbs/bootstrap": "3.2.0",
         "jquery/jquery-ui": "1.11.1",
         "mrclay/minify": "dev-master",
-        "firephp/firephp-core": "dev-master"
+        "firephp/firephp-core": "dev-master",
+        "phpdocumentor/phpdocumentor": "dev-master",
+        "dompdf/dompdf": "0.6.1"
     }
 }

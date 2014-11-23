@@ -11,7 +11,8 @@ namespace Ice\Core;
 
 use Ice;
 use Ice\Core;
-use Ice\Helper\Console;
+use Ice\Exception\Redirect;
+use Ice\Helper\Arrays;
 use Ice\Helper\Hash;
 
 /**
@@ -26,11 +27,13 @@ use Ice\Helper\Hash;
  * @package Ice
  * @subpackage Core
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.1
+ * @since 0.0
  */
 abstract class Action extends Container
 {
+    use Core;
+
     const REGISTRY_DATA_PROVIDER_KEY = 'Ice:Registry/action';
 
     /**
@@ -52,15 +55,19 @@ abstract class Action extends Container
     ];
 
     /**
-     * Overrideble config
+     * Overridable config
      *
      * @var array
      */
     public static $config = [];
-    /** @var array Стек вызовов экшинов */
 
     /**
      * Private constructor of action
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.1
+     * @since 0.0
      */
     private function __construct()
     {
@@ -72,6 +79,11 @@ abstract class Action extends Container
      * @param $actionClass
      * @param $hash
      * @return Action
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     protected static function create($actionClass, $hash = null)
     {
@@ -82,72 +94,15 @@ abstract class Action extends Container
      * Default action key
      *
      * @return Core
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     protected static function getDefaultKey()
     {
         return self::getClass();
-    }
-
-    /**
-     * Gets input data from data providers
-     *
-     * @param Config $config
-     * @param array $input
-     * @return array
-     */
-    public function getInput(Config $config, array $input)
-    {
-        $dataProviderKeys = $config->gets('inputDataProviderKeys', false);
-
-        /** @var Action $actionClass */
-        $actionClass = get_class($this);
-        $dataProviderKeys[] = $actionClass::getRegistryDataProviderKey();
-
-        /** @var Data_Provider $dataProvider */
-        $dataProvider = null;
-
-        foreach ($dataProviderKeys as $dataProviderKey) {
-            $dataProvider = Data_Provider::getInstance($dataProviderKey);
-            $input += (array)$dataProvider->get();
-        }
-
-        $resource = $actionClass::getResource();
-
-        foreach ($config->gets('inputDefaults', false) as $param => $value) {
-            if (!isset($input[$param])) {
-                if (Request::isCli() && is_array($value)) {
-                    $input[$param] = Console::getInteractive($resource, $param, $value);
-                    continue;
-                }
-
-                $input[$param] = $value;
-            }
-        }
-
-        return [$input, Validator::validateByScheme($input, $config->gets('inputValidators', false))];
-    }
-
-    /**
-     * Return default input registry data provider for this action
-     *
-     * @return string
-     */
-    public static function getRegistryDataProviderKey()
-    {
-        return self::REGISTRY_DATA_PROVIDER_KEY . get_called_class();
-    }
-
-    /**
-     * Flush action context.
-     *
-     * Modify view after flush
-     *
-     * @param View $view
-     * @return View
-     */
-    public function flush(View $view)
-    {
-        return $view;
     }
 
     /**
@@ -157,6 +112,12 @@ abstract class Action extends Container
      * @param array $data
      * @param int $level
      * @return View|null|string
+     * @throws Redirect
+     * @throws \Exception
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function call(Action_Context $actionContext, array $data = [], $level = 0)
     {
@@ -215,6 +176,8 @@ abstract class Action extends Container
 
                     try {
                         $subView = $subAction->call($actionContext, $subActionParams, $newLevel);
+                    } catch (Redirect $e) {
+                        throw $e;
                     } catch (\Exception $e) {
                         $subView = self::getLogger()->error(['Calling subAction "{$0}" in action "{$1}" failed', [$subActionName, $actionClass]], __FILE__, __LINE__, $e);
                     }
@@ -228,6 +191,8 @@ abstract class Action extends Container
                     $actionContext->commit();
                 }
             }
+
+//            $params['container'] = $this->getContainer();
 
             $actionContext->setParams($params);
 
@@ -246,9 +211,77 @@ abstract class Action extends Container
             }
 
             return $this->flush(View::getInstance($viewData));
+        } catch (Redirect $e) {
+            throw $e;
         } catch (\Exception $e) {
             return Action::getLogger()->error(['Calling action "{$0}" failed', $actionClass], __FILE__, __LINE__, $e);
         }
+    }
+
+    /**
+     * Gets input data from data providers
+     *
+     * @param Config $config
+     * @param array $input
+     * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
+     */
+    public function getInput(Config $config, array $input)
+    {
+        $dataProviderKeys = $config->gets('inputDataProviderKeys', false);
+
+        /** @var Action $actionClass */
+        $actionClass = get_class($this);
+        $dataProviderKeys[] = $actionClass::getRegistryDataProviderKey();
+
+        /** @var Data_Provider $dataProvider */
+        $dataProvider = null;
+
+        foreach ($dataProviderKeys as $dataProviderKey) {
+            $dataProvider = Data_Provider::getInstance($dataProviderKey);
+            $input += (array)$dataProvider->get();
+        }
+
+        $input = Arrays::defaults($input, $config->gets('inputDefaults', false));
+
+        return [$input, Validator::validateByScheme($input, $config->gets('inputValidators', false))];
+    }
+
+    /**
+     * Return default input registry data provider for this action
+     *
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
+     */
+    public static function getRegistryDataProviderKey()
+    {
+        return self::REGISTRY_DATA_PROVIDER_KEY . get_called_class();
+    }
+
+    /**
+     * Flush action context.
+     *
+     * Modify view after flush
+     *
+     * @param View $view
+     * @return View
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
+     */
+    public function flush(View $view)
+    {
+        return $view;
     }
 
     /**
@@ -257,6 +290,11 @@ abstract class Action extends Container
      * @param $dataProviderKeys
      * @param array $output
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getParams($dataProviderKeys, array $output)
     {
@@ -296,6 +334,11 @@ abstract class Action extends Container
      * @param array $input
      * @param Action_Context $actionContext
      * @return array
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since 0
      */
     abstract protected function run(array $input, Action_Context $actionContext);
 }

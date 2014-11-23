@@ -26,11 +26,13 @@ use Ice\Helper\Object;
  * @package Ice
  * @subpackage Core
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 class View extends Container
 {
+    use Core;
+
     /**
      * View data (template, view render class etc.
      *
@@ -49,6 +51,11 @@ class View extends Container
      * Private constructor for core view
      *
      * @param array $viewData
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     private function __construct(array $viewData)
     {
@@ -61,6 +68,11 @@ class View extends Container
      * @param $viewData
      * @param null $hash
      * @return View
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     protected static function create($viewData, $hash = null)
     {
@@ -71,6 +83,11 @@ class View extends Container
      * Render view
      *
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getContent()
     {
@@ -128,6 +145,11 @@ class View extends Container
      * Return view template name
      *
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getTemplate()
     {
@@ -152,6 +174,11 @@ class View extends Container
      * Return view render class
      *
      * @return View_Render
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getViewRenderClass()
     {
@@ -166,6 +193,11 @@ class View extends Container
      * Return emmet style layout
      *
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getLayout()
     {
@@ -199,6 +231,11 @@ class View extends Container
      * Assign params
      *
      * @param $params
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function setParams($params)
     {
@@ -209,6 +246,11 @@ class View extends Container
      * Return assigned params
      *
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getParams()
     {
@@ -221,6 +263,11 @@ class View extends Container
      * @see View::getContent()
      *
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     function __toString()
     {
@@ -231,6 +278,11 @@ class View extends Container
      * Return action class of view
      *
      * @return Action
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getActionClass()
     {

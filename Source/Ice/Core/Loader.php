@@ -24,8 +24,8 @@ use Ice\Helper\Object;
  * @package Ice
  * @subpackage Core
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 class Loader
 {
@@ -40,6 +40,11 @@ class Loader
      * @param $class
      * @return bool
      * @throws Exception
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function load($class)
     {
@@ -84,6 +89,11 @@ class Loader
      * @param bool $allMatchedPathes
      * @throws File_Not_Found
      * @return null|string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function getFilePath(
         $class,
@@ -150,6 +160,11 @@ class Loader
      * ```
      *
      * @param $autoLoader string autoload method
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function register($autoLoader)
     {
@@ -175,6 +190,11 @@ class Loader
      * ```
      *
      * @param $autholoader string string autoload method
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function unregister($autholoader)
     {

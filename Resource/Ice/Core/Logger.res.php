@@ -33,4 +33,10 @@ return [
     'filemtime(): stat failed for /home/dp/PhpstormProjects/ifs/_cache/GuestBook/smarty/templates_c/0751e7fcfbe8a6b5336c70f5db5c98d44d132e5d.file.Edit.tpl.php' => [
         'en' => 'filemtime(): stat failed for /home/dp/PhpstormProjects/ifs/_cache/GuestBook/smarty/templates_c/0751e7fcfbe8a6b5336c70f5db5c98d44d132e5d.file.Edit.tpl.php',
     ],
+    'array_column() expects at least 2 parameters, 1 given' => [
+        'ru' => 'array_column() expects at least 2 parameters, 1 given',
+    ],
+    'array_column() expects parameter 1 to be array, string given' => [
+        'ru' => 'array_column() expects parameter 1 to be array, string given',
+    ],
 ];

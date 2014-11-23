@@ -11,6 +11,7 @@ namespace Ice\Core;
 
 use ArrayAccess;
 use Countable;
+use Ice\Core;
 use Ice\Core\Model\Collection;
 use Ice\Helper\Arrays;
 use Ice\Helper\Console;
@@ -30,11 +31,13 @@ use Serializable;
  * @package Ice
  * @subpackage Core
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 class Data extends Container implements Iterator, ArrayAccess, Countable, Serializable, Cacheable
 {
+    use Core;
+
     const RESULT_MODEL_CLASS = 'modelName';
     const RESULT_ROWS = 'rows';
     const QUERY_FULL_HASH = 'query_hash';
@@ -87,6 +90,11 @@ class Data extends Container implements Iterator, ArrayAccess, Countable, Serial
      * Constructor of data object
      *
      * @param array $result
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function __construct(array $result)
     {
@@ -101,6 +109,11 @@ class Data extends Container implements Iterator, ArrayAccess, Countable, Serial
      * @param $hash
      * @return Data
      * @throws Exception
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function getCache($data, $hash)
     {
@@ -110,6 +123,16 @@ class Data extends Container implements Iterator, ArrayAccess, Countable, Serial
         $queryType = $query->getQueryType();
         if ($queryType == Query_Builder::TYPE_SELECT && !$ttl) {
             return Data::create($data);
+        }
+
+        if (Environment::isDevelopment()) {
+            $message = str_replace("\t", '', str_replace("\n", ' ', $query->getSql())) . ' [' . implode(', ', $query->getBinds()) . '] ' . Console::C_GREEN_B . 'rows: ' . count($data) . Console::C_GREEN;
+
+            if (Request::isCli()) {
+                Query::getLogger()->info($message, Logger::GREY, false);
+            } else {
+                fb($message);
+            }
         }
 
         switch ($queryType) {
@@ -122,6 +145,10 @@ class Data extends Container implements Iterator, ArrayAccess, Countable, Serial
                 }
 
                 if (Cache::validate(__CLASS__, $cache['tags'], $cache['time'])) {
+                    if (Environment::isDevelopment()) {
+                        Query::getLogger()->info('Data from cache!', Logger::MESSAGE, false);
+                    }
+
                     return $cache;
                 }
 
@@ -144,10 +171,6 @@ class Data extends Container implements Iterator, ArrayAccess, Countable, Serial
 
         $data = new Data($cache['data']);
 
-        if (Environment::isDevelopment() && Request::isCli()) {
-            Query::getLogger()->info(str_replace("\t", '', str_replace("\n", ' ', $query->getSql())) . ' [' . implode(', ', $query->getBinds()) . '] ' . Console::C_GREEN_B . 'rows: ' . count($data) . Console::C_GREEN, Logger::GREY, false);
-        }
-
         return $data;
     }
 
@@ -157,15 +180,28 @@ class Data extends Container implements Iterator, ArrayAccess, Countable, Serial
      * @param $data
      * @param null $hash
      * @return Data
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     protected static function create($data, $hash = null)
     {
         list($query, $ttl) = $data;
         $queryType = $query->getQueryType();
-        $data = new Data($query->getDataSource()->$queryType($query));
-        if (Environment::isDevelopment() && Request::isCli()) {
-            Query::getLogger()->info(str_replace("\t", '', str_replace("\n", ' ', $query->_sql)) . ' [' . implode(', ', $query->_binds) . '] ' . Console::C_GREEN_B . 'rows: ' . count($data) . Console::C_GREEN, Logger::SUCCESS, false);
+
+        if (Environment::isDevelopment()) {
+            $message = str_replace("\t", '', str_replace("\n", ' ', $query->getSql())) . ' [' . implode(', ', $query->getBinds()) . '] ' . Console::C_GREEN_B . 'rows: ' . count($data) . Console::C_GREEN;
+
+            if (Request::isCli()) {
+                Query::getLogger()->info($message, Logger::GREY, false);
+            } else {
+                fb($message);
+            }
         }
+
+        $data = new Data($query->getDataSource()->$queryType($query));
         return $data;
     }
 
@@ -173,6 +209,11 @@ class Data extends Container implements Iterator, ArrayAccess, Countable, Serial
      * Return all rows from data as array
      *
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getRows()
     {
@@ -181,22 +222,14 @@ class Data extends Container implements Iterator, ArrayAccess, Countable, Serial
     }
 
     /**
-     * Get collection from data
-     *
-     * @return Collection
-     */
-    public function getCollection()
-    {
-        $modelClass = $this->getModelClass();
-        $collection = $modelClass::getCollection();
-        $collection->setData($this);
-        return $collection;
-    }
-
-    /**
      * Result data
      *
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     protected function getResult()
     {
@@ -214,6 +247,11 @@ class Data extends Container implements Iterator, ArrayAccess, Countable, Serial
      *
      * @param $rows
      * @return mixed
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     private function applyTransformations($rows)
     {
@@ -240,12 +278,50 @@ class Data extends Container implements Iterator, ArrayAccess, Countable, Serial
     }
 
     /**
+     * Return target model class of data
+     *
+     * @return Model
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
+     */
+    public function getModelClass()
+    {
+        return $this->getResult()[self::RESULT_MODEL_CLASS];
+    }
+
+    /**
+     * Get collection from data
+     *
+     * @return Collection
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
+     */
+    public function getCollection()
+    {
+        $modelClass = $this->getModelClass();
+        $collection = $modelClass::getCollection();
+        $collection->setData($this);
+        return $collection;
+    }
+
+    /**
      * Get value from data
      *
      * @desc Результат запроса - единственное значение.
      *
      * @param null $columnName
      * @return mixed
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getValue($columnName = null)
     {
@@ -260,6 +336,11 @@ class Data extends Container implements Iterator, ArrayAccess, Countable, Serial
      *
      * @param null $pk
      * @return array|null
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getRow($pk = null)
     {
@@ -281,6 +362,11 @@ class Data extends Container implements Iterator, ArrayAccess, Countable, Serial
      *
      * @param null $pk
      * @return Model|null
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getModel($pk = null)
     {
@@ -301,6 +387,11 @@ class Data extends Container implements Iterator, ArrayAccess, Countable, Serial
      * @param $pk
      * @param $fieldName
      * @param null $value
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function setRow($pk, $fieldName, $value = null)
     {
@@ -321,6 +412,11 @@ class Data extends Container implements Iterator, ArrayAccess, Countable, Serial
      * Return count of rows returned by query
      *
      * @return mixed
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getNumRows()
     {
@@ -334,6 +430,11 @@ class Data extends Container implements Iterator, ArrayAccess, Countable, Serial
      * Return the current element
      * @link http://php.net/manual/en/iterator.current.php
      * @return mixed Can return any type.
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function current()
     {
@@ -347,6 +448,11 @@ class Data extends Container implements Iterator, ArrayAccess, Countable, Serial
      * Move forward to next element
      * @link http://php.net/manual/en/iterator.next.php
      * @return void Any returned value is ignored.
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function next()
     {
@@ -362,6 +468,11 @@ class Data extends Container implements Iterator, ArrayAccess, Countable, Serial
      * @link http://php.net/manual/en/iterator.key.php
      * @throws Exception
      * @return mixed scalar on success, or null on failure.
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function key()
     {
@@ -376,6 +487,11 @@ class Data extends Container implements Iterator, ArrayAccess, Countable, Serial
      * @link http://php.net/manual/en/iterator.valid.php
      * @return boolean The return value will be casted to boolean and then evaluated.
      * Returns true on success or false on failure.
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function valid()
     {
@@ -390,6 +506,11 @@ class Data extends Container implements Iterator, ArrayAccess, Countable, Serial
      * Rewind the Iterator to the first element
      * @link http://php.net/manual/en/iterator.rewind.php
      * @return void Any returned value is ignored.
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function rewind()
     {
@@ -405,6 +526,11 @@ class Data extends Container implements Iterator, ArrayAccess, Countable, Serial
      *
      * @param $pk
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function delete($pk = null)
     {
@@ -425,6 +551,11 @@ class Data extends Container implements Iterator, ArrayAccess, Countable, Serial
      * @param $transformation
      * @param $params
      * @return $this
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function addTransformation($transformation, $params)
     {
@@ -441,6 +572,11 @@ class Data extends Container implements Iterator, ArrayAccess, Countable, Serial
      *
      * @param $filterScheme
      * @return Data
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function filter($filterScheme)
     {
@@ -453,6 +589,11 @@ class Data extends Container implements Iterator, ArrayAccess, Countable, Serial
      * Return count all found rows
      *
      * @return int
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getFoundRows()
     {
@@ -465,6 +606,11 @@ class Data extends Container implements Iterator, ArrayAccess, Countable, Serial
      * @param null $fieldName
      * @param null $indexKey
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getColumn($fieldName = null, $indexKey = null)
     {
@@ -477,6 +623,11 @@ class Data extends Container implements Iterator, ArrayAccess, Countable, Serial
      * Return keys of data
      *
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getKeys()
     {
@@ -491,6 +642,11 @@ class Data extends Container implements Iterator, ArrayAccess, Countable, Serial
      * The offset to retrieve.
      * </p>
      * @return mixed Can return all value types.
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function offsetGet($offset)
     {
@@ -508,6 +664,11 @@ class Data extends Container implements Iterator, ArrayAccess, Countable, Serial
      * </p>
      * <p>
      * The return value will be casted to boolean if non-boolean was returned.
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function offsetExists($offset)
     {
@@ -525,6 +686,11 @@ class Data extends Container implements Iterator, ArrayAccess, Countable, Serial
      * The value to set.
      * </p>
      * @return void
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function offsetSet($offset, $value)
     {
@@ -543,6 +709,11 @@ class Data extends Container implements Iterator, ArrayAccess, Countable, Serial
      * The offset to unset.
      * </p>
      * @return void
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function offsetUnset($offset)
     {
@@ -557,6 +728,11 @@ class Data extends Container implements Iterator, ArrayAccess, Countable, Serial
      * </p>
      * <p>
      * The return value is cast to an integer.
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function count()
     {
@@ -568,6 +744,11 @@ class Data extends Container implements Iterator, ArrayAccess, Countable, Serial
      * String representation of object
      * @link http://php.net/manual/en/serializable.serialize.php
      * @return string the string representation of the object or null
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function serialize()
     {
@@ -582,6 +763,11 @@ class Data extends Container implements Iterator, ArrayAccess, Countable, Serial
      * The string representation of the object.
      * </p>
      * @return void
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function unserialize($serialized)
     {
@@ -592,6 +778,11 @@ class Data extends Container implements Iterator, ArrayAccess, Countable, Serial
      * Return inserted id
      *
      * @return int
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getInsertId()
     {
@@ -602,6 +793,11 @@ class Data extends Container implements Iterator, ArrayAccess, Countable, Serial
      * Return random key
      *
      * @return mixed
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getRandKey()
     {
@@ -612,6 +808,11 @@ class Data extends Container implements Iterator, ArrayAccess, Countable, Serial
      * Return data limit
      *
      * @return mixed
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getLimit()
     {
@@ -622,19 +823,14 @@ class Data extends Container implements Iterator, ArrayAccess, Countable, Serial
      * Return data page
      *
      * @return int
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getPage()
     {
         return $this->_result[DATA::PAGE];
-    }
-
-    /**
-     * Return target model class of data
-     *
-     * @return Model
-     */
-    public function getModelClass()
-    {
-        return $this->getResult()[self::RESULT_MODEL_CLASS];
     }
 }

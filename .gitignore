@@ -1,5 +1,9 @@
 *.orig
 
+.git
 .hg
 
 composer.lock
+
+Resource/api
+Resource/uml

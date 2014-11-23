@@ -24,8 +24,8 @@ use Ice\Core\Query_Translator;
  * @package Ice
  * @subpackage Query_Translator
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 class Defined extends Query_Translator
 {
@@ -35,6 +35,11 @@ class Defined extends Query_Translator
      * @param array $sqlParts
      * @return string
      * @throws Exception
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function translate(array $sqlParts)
     {

@@ -22,8 +22,8 @@ use Ice\Helper\Object;
  * @package Ice
  * @subpackage Core
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 abstract class Data_Provider
 {
@@ -71,6 +71,11 @@ abstract class Data_Provider
      *
      * @param $key
      * @param $index
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     protected function __construct($key, $index)
     {
@@ -84,6 +89,11 @@ abstract class Data_Provider
      * @param $dataProviderKey
      * @param string $index
      * @return Data_Provider
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function getInstance($dataProviderKey = null, $index = 'default')
     {
@@ -117,6 +127,11 @@ abstract class Data_Provider
      *
      * @return null
      * @throws Exception
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     protected static function getDefaultDataProviderKey()
     {
@@ -128,6 +143,11 @@ abstract class Data_Provider
      * Return current scheme
      *
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getScheme()
     {
@@ -138,6 +158,11 @@ abstract class Data_Provider
      * Set new data provider scheme
      *
      * @param string $scheme
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function setScheme($scheme)
     {
@@ -149,6 +174,11 @@ abstract class Data_Provider
      *
      * @throws Exception
      * @return Object
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getConnection()
     {
@@ -170,6 +200,11 @@ abstract class Data_Provider
      *
      * @param $connection
      * @return boolean
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since 0
      */
     abstract protected function connect(&$connection);
 
@@ -177,6 +212,11 @@ abstract class Data_Provider
      * Get current data provider key
      *
      * @return string
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since 0
      */
     public function getKey()
     {
@@ -187,6 +227,11 @@ abstract class Data_Provider
      * Get current data provider index
      *
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getIndex()
     {
@@ -197,6 +242,11 @@ abstract class Data_Provider
      * Close self connection
      *
      * @throws Exception
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function closeConnection()
     {
@@ -213,7 +263,11 @@ abstract class Data_Provider
      * Close connection with data provider
      *
      * @param $connection
-     * @return boolean
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since 0
      */
     abstract protected function close(&$connection);
 
@@ -222,6 +276,11 @@ abstract class Data_Provider
      *
      * @param string  $key
      * @return mixed
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since 0
      */
     abstract public function get($key = null);
 
@@ -232,6 +291,11 @@ abstract class Data_Provider
      * @param $value
      * @param null $ttl
      * @return mixed setted value
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since 0
      */
     abstract public function set($key, $value, $ttl = null);
 
@@ -242,6 +306,11 @@ abstract class Data_Provider
      * @param bool $force if true return boolean else deleted value
      * @throws Exception
      * @return mixed|boolean
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since 0
      */
     abstract public function delete($key, $force = true);
 
@@ -251,6 +320,11 @@ abstract class Data_Provider
      * @param $key
      * @param int $step
      * @return mixed new value
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since 0
      */
     abstract public function inc($key, $step = 1);
 
@@ -260,11 +334,21 @@ abstract class Data_Provider
      * @param $key
      * @param int $step
      * @return mixed new value
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since 0
      */
     abstract public function dec($key, $step = 1);
 
     /**
      * Flush all stored data
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since 0
      */
     abstract public function flushAll();
 
@@ -273,6 +357,11 @@ abstract class Data_Provider
      *
      * @param string $pattern
      * @return array
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since 0
      */
     abstract public function getKeys($pattern = null);
 
@@ -281,6 +370,11 @@ abstract class Data_Provider
      *
      * @param $key
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     protected function getFullKey($key)
     {
@@ -291,6 +385,11 @@ abstract class Data_Provider
      * Return prefix of key
      *
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     protected function getKeyPrefix()
     {
@@ -304,6 +403,11 @@ abstract class Data_Provider
      *
      * @param $class
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     protected function getOptions($class)
     {

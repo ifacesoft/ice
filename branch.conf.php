@@ -1,2 +1,2 @@
 <?php
-return 'default';
+return '0.0';

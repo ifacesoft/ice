@@ -26,8 +26,8 @@ use Ice\Helper\Json as Helper_Json;
  * @package Ice
  * @subpackage View_Render
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 class Json extends View_Render
 {
@@ -35,6 +35,11 @@ class Json extends View_Render
      * Constructor of json view render
      *
      * @param Config $config
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     protected function __construct(Config $config)
     {
@@ -46,6 +51,11 @@ class Json extends View_Render
      * @param $template
      * @param array $data
      * @param string $templateType
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function display($template, array $data = [], $templateType = View_Render::TEMPLATE_TYPE_FILE)
     {
@@ -59,6 +69,11 @@ class Json extends View_Render
      * @param array $data
      * @param string $templateType
      * @return mixed
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function fetch($template, array $data = [], $templateType = View_Render::TEMPLATE_TYPE_FILE)
     {

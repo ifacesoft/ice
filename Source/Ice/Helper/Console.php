@@ -9,6 +9,7 @@
 
 namespace Ice\Helper;
 
+use Ice\Core;
 use Ice\Core\Logger as Core_Logger;
 use Ice\Core\Resource;
 use Ice\Core\Response;
@@ -24,34 +25,36 @@ use Ice\Core\Validator;
  * @package Ice
  * @subpackage Helper
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 class Console
 {
-    const C_BLACK = "\033[0;30m"; // чёрный цвет знаков
-    const C_BLACK_B = "\033[1;30m"; // чёрный цвет знаков
-    const C_RED = "\033[0;31m"; // красный цвет знаков
-    const C_RED_B = "\033[1;31m"; // красный цвет знаков
-    const C_GREEN = "\033[0;32m"; // зелёный цвет знаков
-    const C_GREEN_B = "\033[1;32m"; // зелёный цвет знаков
-    const C_YELLOW = "\033[0;33m"; // желтый цвет знаков
-    const C_BLUE = "\033[0;34m"; // синий цвет знаков
-    const C_MAGENTA = "\033[0;35m"; // фиолетовый цвет знаков
-    const C_CYAN = "\033[0;36m"; // морской волны знаков
-    const C_GRAY = "\033[0;37m"; // серый цвет знаков
-    const C_GRAY_B = "\033[1;37m"; // серый цвет знаков
-    const C_DEF = "\033[0;39m"; // дефолтный знаков
+    const C_BLACK = "\033[0;30m";
+    const C_BLACK_B = "\033[1;30m";
+    const C_RED = "\033[0;31m";
+    const C_RED_B = "\033[1;31m";
+    const C_GREEN = "\033[0;32m";
+    const C_GREEN_B = "\033[1;32m";
+    const C_YELLOW = "\033[0;33m";
+    const C_YELLOW_B = "\033[1;33m";
+    const C_BLUE = "\033[0;34m";
+    const C_BLUE_B = "\033[1;34m";
+    const C_MAGENTA = "\033[0;35m";
+    const C_CYAN = "\033[0;36m";
+    const C_GRAY = "\033[0;37m";
+    const C_GRAY_B = "\033[1;37m";
+    const C_DEF = "\033[0;39m";
 
-    const BG_BLACK = "\033[40m"; // чёрный цвет
-    const BG_RED = "\033[41m"; // красный цвет
-    const BG_GREEN = "\033[42m"; // зелёный цвет
-    const BG_YELLOW = "\033[43m"; // коричневый цвет
-    const BG_BLUE = "\033[44m"; // синий цвет
-    const BG_MAGENTA = "\033[45m"; // фиолетовый цвет
-    const BG_CYAN = "\033[46m"; // морской волны
-    const BG_GRAY = "\033[47m"; // серый цвет
-    const BG_DEF = "\033[49m"; // дефолтный
+    const BG_BLACK = "\033[40m";
+    const BG_RED = "\033[41m";
+    const BG_GREEN = "\033[42m";
+    const BG_YELLOW = "\033[43m";
+    const BG_BLUE = "\033[44m";
+    const BG_MAGENTA = "\033[45m";
+    const BG_CYAN = "\033[46m";
+    const BG_GRAY = "\033[47m";
+    const BG_DEF = "\033[49m";
 
     const RESET = "\033[0m";
 
@@ -61,6 +64,11 @@ class Console
      * @param $string
      * @param Resource $resource
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function getHeader($string, Resource $resource)
     {
@@ -85,6 +93,11 @@ class Console
      * @param null $color
      * @param null $background
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function getText($string, $color = null, $background = null)
     {
@@ -102,16 +115,23 @@ class Console
     }
 
     /**
-     * Return ineractive output for define variable from input
+     * Return interactive output for define variable from input
      *
-     * @param Resource $resource
+     * @param $class Core
      * @param $param
      * @param $data
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
-    public static function getInteractive(Resource $resource, $param, $data)
+    public static function getInteractive($class, $param, $data)
     {
-        $title = Console::C_YELLOW . $resource->get([$data['title'], $data['default']]) . Console::C_GRAY_B;
+        $resource = $class::getResource();
+
+        $title = Console::C_YELLOW . $resource->get($data['title'], $data['default']) . Console::C_GRAY_B;
 
         Response::send($title);
 

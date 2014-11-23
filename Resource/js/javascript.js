@@ -42,7 +42,7 @@ var Ice = {
             actionParams,
             function (result) {
                 if (result.actionName) {
-                    $('#' + result.actionName).replaceWith(result.html);
+                    $('.' + result.actionName).replaceWith(result.html);
                 }
                 if (callback) {
                     callback();

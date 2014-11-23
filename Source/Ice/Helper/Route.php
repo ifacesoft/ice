@@ -19,8 +19,8 @@ namespace Ice\Helper;
  * @package Ice
  * @subpackage Helper
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 class Route
 {
@@ -29,6 +29,11 @@ class Route
      *
      * @param array $route
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function setDefaults(array $route)
     {
@@ -39,6 +44,11 @@ class Route
      * Return default route data
      *
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function getDefaults()
     {

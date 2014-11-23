@@ -10,6 +10,7 @@
 namespace Ice\Core;
 
 use Ice;
+use Ice\Core;
 use Ice\Helper\Object;
 
 /**
@@ -24,11 +25,13 @@ use Ice\Helper\Object;
  * @package Ice
  * @subpackage Core
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 abstract class Validator extends Container
 {
+    use Core;
+
     /**
      * Validate data by validate scheme
      *
@@ -64,6 +67,13 @@ abstract class Validator extends Container
      * @param $data
      * @param array $validateScheme
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @todo Заменить на Helper_Array::validate()
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function validateByScheme(array $data, array $validateScheme)
     {
@@ -101,6 +111,11 @@ abstract class Validator extends Container
      * @param $class
      * @param null $hash
      * @return Validator
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     protected static function create($class, $hash = null)
     {
@@ -132,6 +147,28 @@ abstract class Validator extends Container
      * @param $value
      * @param mixed $params
      * @return boolean
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since 0
      */
     public abstract function validate($value, $params = null);
+
+    /**
+     * Return validator instance
+     *
+     * @param null $key
+     * @param null $ttl
+     * @return Validator
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.1
+     * @since 0.1
+     */
+    public static function getInstance($key = null, $ttl = null)
+    {
+        return parent::getInstance($key, $ttl);
+    }
 }

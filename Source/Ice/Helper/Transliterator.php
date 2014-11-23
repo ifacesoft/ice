@@ -19,8 +19,8 @@ namespace Ice\Helper;
  * @package Ice
  * @subpackage Helper
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 class Transliterator
 {
@@ -29,6 +29,11 @@ class Transliterator
      *
      * @param $string
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function transliterate($string)
     {
@@ -50,6 +55,11 @@ class Transliterator
      *         Если "en" - из русского на транслит,
      *         если "ru" - из транслита на русский
      * @return mixed|string Результат транслитации.
+     *
+     * @author anonymous <email>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     private static function translit($value, $fromRussianToTranslit = true)
     {
@@ -105,6 +115,11 @@ class Transliterator
      * @param $string
      * @param string $value Исходна стока
      * @return mixed Результат очистки.
+     *
+     * @author anonymous <email>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     private static function replaceSpecialChars($string, $value = ' ')
     {
@@ -132,6 +147,11 @@ class Transliterator
      * Если этот аргумент не передан, в $to ожидается ассоциативный
      * массив вида "заменяемый символ" => "символ для замены".
      * @return string Результат замены
+     *
+     * @author anonymous <email>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     private static function u_strtr($value, $to, $from = null)
     {

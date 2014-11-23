@@ -23,8 +23,8 @@ use Ice\Core\Validator;
  * @package Ice
  * @subpackage Validator
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 class Pattern extends Validator
 {
@@ -44,7 +44,7 @@ class Pattern extends Validator
      *      $scheme = [
      *          'name' => [
      *              'Ice:Pattern' => [
-     *                  'params' => /^[a-z]+$/i'
+     *                  'params' => '/^[a-z]+$/i'
      *                  'message => 'not matched'
      *              ]
      *          ]
@@ -54,6 +54,11 @@ class Pattern extends Validator
      * @param $data
      * @param mixed|null $scheme
      * @return boolean
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function validate($data, $scheme = null)
     {

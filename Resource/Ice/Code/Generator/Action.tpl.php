@@ -15,12 +15,14 @@ use Ice\Core\Action_Context;
  *
  * @see Ice\Core\Action
  * @see Ice\Core\Action_Context;
-<?php if ($namespace) {?> * @package <?=$namespace?>;<?php
-}?>
+<?php if ($namespace) : ?>
+    * @package <?=$namespace?>;
+<?php endif; ?>
 
- * @author <?=get_current_user()?>
+ * @author <?=get_current_user()?> <email>
 
- * @version stable_0
+ * @version 0
+ * @since 0
  */
 class <?=$actionName?> extends Action
 {

@@ -28,8 +28,8 @@ use Ice\Helper\Logger;
  * @package Ice
  * @subpackage Data_Provider
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 class Router extends Data_Provider
 {
@@ -39,6 +39,11 @@ class Router extends Data_Provider
      * Return default data provider key
      *
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     protected static function getDefaultKey()
     {
@@ -49,6 +54,11 @@ class Router extends Data_Provider
      * Return default data provider key
      *
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     protected static function getDefaultDataProviderKey()
     {
@@ -60,6 +70,11 @@ class Router extends Data_Provider
      *
      * @param string  $key
      * @return mixed
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function get($key = null)
     {
@@ -70,6 +85,11 @@ class Router extends Data_Provider
      * Get instance connection of data provider
      * @throws Exception
      * @return Config[]
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getConnection()
     {
@@ -84,6 +104,11 @@ class Router extends Data_Provider
      * @param null $ttl
      * @throws Exception
      * @return mixed setted value
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function set($key, $value, $ttl = null)
     {
@@ -97,6 +122,11 @@ class Router extends Data_Provider
      * @param bool $force if true return boolean else deleted value
      * @throws Exception
      * @return mixed|boolean
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function delete($key, $force = true)
     {
@@ -110,6 +140,11 @@ class Router extends Data_Provider
      * @param int $step
      * @throws Exception
      * @return mixed new value
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function inc($key, $step = 1)
     {
@@ -123,6 +158,11 @@ class Router extends Data_Provider
      * @param int $step
      * @throws Exception
      * @return mixed new value
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function dec($key, $step = 1)
     {
@@ -131,6 +171,11 @@ class Router extends Data_Provider
 
     /**
      * Flush all stored data
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function flushAll()
     {
@@ -142,6 +187,11 @@ class Router extends Data_Provider
      *
      * @param $connection
      * @return boolean
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     protected function connect(&$connection)
     {
@@ -220,6 +270,11 @@ class Router extends Data_Provider
      *
      * @param $connection
      * @return boolean
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     protected function close(&$connection)
     {
@@ -232,6 +287,11 @@ class Router extends Data_Provider
      *
      * @param string $pattern
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getKeys($pattern = null)
     {

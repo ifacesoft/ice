@@ -19,8 +19,8 @@ namespace Ice\Helper;
  * @package Ice
  * @subpackage Helper
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 class Memory
 {
@@ -29,6 +29,11 @@ class Memory
      *
      * @param mixed $var Variable
      * @return int
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function getVarSize($var)
     {
@@ -41,6 +46,11 @@ class Memory
      * Return info about current memory usage and peak memory usage
      *
      * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function memoryGetUsagePeak()
     {

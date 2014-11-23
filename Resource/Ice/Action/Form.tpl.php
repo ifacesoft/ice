@@ -1,6 +1,8 @@
 <form class="form-inline" role="form" action="#" method="post">
     <input type="hidden" name="formClass" value="<?= $formClass ?>"/>
     <input type="hidden" name="formKey" value="<?= $formKey ?>"/>
+    <input type="hidden" name="filterFields" value="<?= $filterFields ?>"/>
+    <input type="hidden" name="redirect" value="<?= $redirect ?>"/>
     <?php if ($groupping) { ?>
         <?php foreach ($fields as $type => $group) {
             switch ($type) {
@@ -32,8 +34,8 @@
         </ul>
     <?php } ?>
     <div class="btn-group">
-        <input type="hidden" name="filterFields" value="<?= $filterFields ?>"/>
-        <input class="btn btn-primary" type="button" value="Apply"
-               onclick="Form.submit($(this), '<?= $submitClassName ?>', ['<?= implode(',', $reRenderClassNames) ?>'])"/>
+
+        <input class="btn btn-primary" type="button" value="<?= $submitTitle ?>"
+               onclick="Ice_Form.submit($(this), '<?= $submitActionName ?>', [<?= $reRenderActionNames ?>])"/>
     </div>
 </form>

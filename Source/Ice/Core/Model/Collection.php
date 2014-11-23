@@ -28,8 +28,8 @@ use Traversable;
  * @package Ice
  * @subpackage Core
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.1
+ * @since 0.0
  */
 class Collection implements IteratorAggregate
 {
@@ -41,49 +41,48 @@ class Collection implements IteratorAggregate
     private $_data = null;
 
     /**
-     * Query builder for current model collection
-     *
-     * @var Query_Builder
-     */
-    private $_queryBuilder = null;
-
-    /**
-     * Target model class
-     *
-     * @var Model
-     */
-    private $_modelClass = null;
-
-    /**
      * Private constructor for model collection
      *
-     * @param $modelClass
+     * @param Data $data
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.1
+     * @since 0.0
      */
-    private function __construct($modelClass)
+    private function __construct(Data $data)
     {
-        $this->_modelClass = $modelClass;
+        $this->_data = $data;
     }
 
     /**
      * Create new instance of model collection
      *
-     * @param $modelClass
-     * @param null $hash
+     * @param Data $data
      * @return Collection
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.1
+     * @since 0.0
      */
-    public static function create($modelClass, $hash = null)
+    public static function create(Data $data)
     {
-        return new Collection($modelClass);
+        return new Collection($data);
     }
 
     /**
      * Return size (count potential models) of model collection
      *
      * @return int
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.1
+     * @since 0.0
      */
     public function getCount()
     {
-        return count($this->getData());
+        return $this->getData()->count();
     }
 
     /**
@@ -91,6 +90,11 @@ class Collection implements IteratorAggregate
      *
      * @param string $fieldNames
      * @return Data
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getData($fieldNames = '*')
     {
@@ -109,6 +113,11 @@ class Collection implements IteratorAggregate
      * @deprecated
      * @param Data $data
      * @throws Exception
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function setData(Data $data)
     {
@@ -119,6 +128,11 @@ class Collection implements IteratorAggregate
      * Return query builder of model collection
      *
      * @return Query_Builder
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getQueryBuilder()
     {
@@ -141,6 +155,11 @@ class Collection implements IteratorAggregate
      * Return first model of model collection if not empty
      *
      * @return Model|null
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function first()
     {
@@ -161,6 +180,11 @@ class Collection implements IteratorAggregate
      *
      * @param null $pk
      * @return array|null
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getRow($pk = null)
     {
@@ -173,6 +197,11 @@ class Collection implements IteratorAggregate
      * @param Model $model
      * @return Collection
      * @throws Exception
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function add(Model $model)
     {
@@ -194,6 +223,11 @@ class Collection implements IteratorAggregate
      *
      * @param string|null $sourceName
      * @return Collection
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function insert($sourceName = null)
     {
@@ -215,6 +249,11 @@ class Collection implements IteratorAggregate
      * @param $updates
      * @param null $sourceName
      * @return $this
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function update($updates, $sourceName = null)
     {
@@ -243,6 +282,11 @@ class Collection implements IteratorAggregate
      * Return primary keys of all models in model collection
      *
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getKeys()
     {
@@ -255,6 +299,11 @@ class Collection implements IteratorAggregate
      * @link http://php.net/manual/en/iteratoraggregate.getiterator.php
      * @return Traversable An instance of an object implementing <b>Iterator</b> or
      * <b>Traversable</b>
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function getIterator()
     {
@@ -266,6 +315,11 @@ class Collection implements IteratorAggregate
      *
      * @param $pk
      * @return Model|null
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function get($pk)
     {
@@ -284,10 +338,14 @@ class Collection implements IteratorAggregate
     /**
      * Remove model from collection
      *
-     * @deprecated Not work. ERROR: Sql query is empty ;)
-     *
      * @param null $pk
      * @return Model
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
+     * @deprecated 0.0 Not work. ERROR: Sql query is empty ;)
      */
     public function remove($pk = null)
     {
@@ -322,6 +380,10 @@ class Collection implements IteratorAggregate
      * @param null $value
      * @param string $comparsion
      * @return Collection
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function filter($fieldScheme, $value = null, $comparsion = '=')
     {

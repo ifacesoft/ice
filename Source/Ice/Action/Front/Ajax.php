@@ -29,8 +29,8 @@ use Ice\Helper\Object;
  * @package Ice
  * @subpackage Action
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 class Front_Ajax extends Action
 {
@@ -62,6 +62,11 @@ class Front_Ajax extends Action
      * @param array $input
      * @param Action_Context $actionContext
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     protected function run(array $input, Action_Context $actionContext)
     {
@@ -87,6 +92,11 @@ class Front_Ajax extends Action
      *
      * @param View $view
      * @return View
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public function flush(View $view)
     {
@@ -98,8 +108,9 @@ class Front_Ajax extends Action
             $params['result'] = [
                 'actionName' => Object::getName($params['result']->getActionClass()),
                 'data' => isset($params['result']->getParams()['data']) ? $params['result']->getParams()['data'] : [],
-                'error' => isset($params['result']->getParams()['error']) ? $params['result']->getParams()['error'] : [],
-                'success' => isset($params['result']->getParams()['success']) ? $params['result']->getParams()['success'] : [],
+                'error' => isset($params['result']->getParams()['error']) ? $params['result']->getParams()['error'] : '',
+                'success' => isset($params['result']->getParams()['success']) ? $params['result']->getParams()['success'] : '',
+                'redirect' => isset($params['result']->getParams()['redirect']) ? $params['result']->getParams()['redirect'] : '',
                 'html' => $params['result']->getContent()
             ];
         } else {
@@ -108,6 +119,7 @@ class Front_Ajax extends Action
                 'data' => [],
                 'error' => $params['result'],
                 'success' => '',
+                'redirect' => '',
                 'html' => ''
             ];
         }

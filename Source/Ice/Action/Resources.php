@@ -19,6 +19,7 @@ use Ice\Core\Model;
 use Ice\Core\Module;
 use Ice\Data\Provider\Router;
 use Ice\Helper\Arrays;
+use Ice\Helper\Config;
 use Ice\Helper\Directory;
 use JSMin;
 
@@ -35,8 +36,8 @@ use JSMin;
  * @package Ice
  * @subpackage Action
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 class Resources extends Action
 {
@@ -64,6 +65,11 @@ class Resources extends Action
      * Runtime append js resource
      *
      * @param $resource
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function appendJs($resource)
     {
@@ -75,6 +81,11 @@ class Resources extends Action
      *
      * @param $resourceType
      * @param $resource
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     private static function append($resourceType, $resource)
     {
@@ -98,6 +109,11 @@ class Resources extends Action
      * Runtime append css resource
      *
      * @param $resource
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public static function appendCss($resource)
     {
@@ -110,6 +126,11 @@ class Resources extends Action
      * @param array $input
      * @param Action_Context $actionContext
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     protected function run(array $input, Action_Context $actionContext)
     {
@@ -167,7 +188,7 @@ class Resources extends Action
                         ? $name . '/' . $resourceKey . '/'
                         : 'vendor/' . $resourceKey . '/';
 
-                    $source .= $resourceItem['path'];
+                    $source .= Config::get($resourceItem['path']);
 
                     if ($resourceItem['isCopy']) {
                         Directory::copy($source, Directory::get(RESOURCE_DIR . $res));
@@ -180,7 +201,7 @@ class Resources extends Action
                         $resources['js'][] = [
                             'source' => $source . ltrim($resource, '-'),
                             'resource' => $jsResource,
-                            'url' => $resourceItem['path']
+                            'url' => Config::get($resourceItem['path'])
                                 ? '/resource/' . $res . $resourceKey . '.pack.js'
                                 : '/resource/' . $name . '/javascript.pack.js',
                             'pack' => $resource[0] != '-'
@@ -193,7 +214,7 @@ class Resources extends Action
                         $resources['css'][] = [
                             'source' => $source . ltrim($resource, '-'),
                             'resource' => $cssResource,
-                            'url' => $resourceItem['path']
+                            'url' => Config::get($resourceItem['path'])
                                 ? '/resource/' . $res . $resourceKey . '.pack.css'
                                 : '/resource/' . $name . '/style.pack.css',
                             'pack' => $resource[0] != '-',
@@ -281,6 +302,11 @@ class Resources extends Action
      * Pack all resources in groupped files
      *
      * @param $resources
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     private function pack($resources)
     {

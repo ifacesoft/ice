@@ -26,8 +26,8 @@ use Ice\Core\Model;
  * @package Ice
  * @subpackage Action
  *
- * @version stable_0
- * @since stable_0
+ * @version 0.0
+ * @since 0.0
  */
 class Form_Model extends Action
 {
@@ -47,13 +47,14 @@ class Form_Model extends Action
     public static $config = [
         'viewRenderClassName' => 'Ice:Smarty',
         'inputValidators' => [
-            'submitClassName' => 'Ice:Not_Empty',
+            'submitActionName' => 'Ice:Not_Empty',
             'modelName' => 'Ice:Not_Empty',
             'pk' => 'Ice:Numeric_Positive'
         ],
         'inputDefaults' => [
             'groupping' => true,
-            'reRenderClassNames' => []
+            'reRenderActionNames' => [],
+            'filterFields' => null
         ],
     ];
 
@@ -63,12 +64,17 @@ class Form_Model extends Action
      * @param array $input
      * @param Action_Context $actionContext
      * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     protected function run(array $input, Action_Context $actionContext)
     {
         $class = Model::getClass($input['modelName']);
 
-        $form = $class::getForm();
+        $form = $class::getForm($input['filterFields']);
 
         $model = $class::getModel($input['pk'], '*');
 
@@ -78,8 +84,8 @@ class Form_Model extends Action
 
         $data = [
             'form' => $form,
-            'submitClassName' => $input['submitClassName'],
-            'reRenderClassNames' => $input['reRenderClassNames']
+            'submitActionName' => $input['submitActionName'],
+            'reRenderActionNames' => $input['reRenderActionNames']
         ];
 
         $actionContext->addAction('Ice:Form', $data);
