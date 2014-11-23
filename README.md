@@ -138,6 +138,6 @@ More info on [iceframework.net](http://iceframework.net) such as:
 * [Handbook](http://iceframework.net/handbook)
 * [Cookbook](http://iceframework.net/cookbook)
 * [FAQ](http://iceframework.net/faq)
-* [Api](http://iceframework.net/api)
+* [Api](http://iceframework.net/resource/api/Ice/0.0/)
 
 Good luck! 

@@ -67,16 +67,24 @@ class File
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.1
      * @since 0.0
      */
-    public static function loadData($path)
+    public static function loadData($path, $isRequere = true)
     {
         if (empty($path)) {
             Core_Logger::getInstance()->error('File path is empty', __FILE__, __LINE__);
         }
 
-        return include $path;
+        if (file_exists($path)) {
+            return include $path;
+        }
+
+        if ($isRequere) {
+            Core_Logger::getInstance()->fatal(['File {$0} with data not found', $path], __FILE__, __LINE__);
+        }
+
+        return null;
     }
 
     /**
