@@ -48,11 +48,11 @@ class Query extends Container
     private $_queryType = null;
 
     /**
-     * Inserted rows
+     * Bind parts
      *
      * @var array
      */
-    private $_insertRows = null;
+    private $_bindParts = [];
 
     /**
      * Translated query
@@ -60,13 +60,6 @@ class Query extends Container
      * @var string
      */
     private $_sql = null;
-
-    /**
-     * Bind values
-     *
-     * @var array
-     */
-    private $_binds = null;
 
     /**
      * Cache tags  (validate|invalidate)
@@ -201,37 +194,50 @@ class Query extends Container
      * Bind values
      *
      * @param array $bindParts
-     * @param array $rows
      * @return Query
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.1
      * @since 0.0
      */
-    public function bind(array $bindParts, array $rows)
+    public function bind(array $bindParts)
     {
-        $this->_binds = [];
+        $this->_bindParts = $bindParts;
 
-        foreach ($bindParts as $bindPart) {
+        if ($this->getQueryType() == Query_Builder::TYPE_SELECT) {
+            $this->_bindHash = serialize($bindParts);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Get bind params
+     *
+     * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.1
+     * @since 0.1
+     */
+    public function getBinds() {
+        $binds = [];
+
+        foreach ($this->getBindParts() as $bindPart) {
             if (!is_array(reset($bindPart))) {
-                $this->_binds = array_merge($this->_binds, $bindPart);
+                $binds = array_merge($binds, array_values($bindPart));
                 continue;
             }
 
             foreach ($bindPart as $values) {
-                $this->_binds = array_merge($this->_binds, $values);
+                $binds = array_merge($binds, array_values($values));
                 continue;
             }
         }
 
-        if ($this->getQueryType() == Query_Builder::TYPE_SELECT) {
-            $this->_bindHash = serialize($this->_binds);
-        }
-
-        $this->_insertRows = $rows;
-
-        return $this;
+        return $binds;
     }
 
     /**
@@ -247,21 +253,6 @@ class Query extends Container
     public function getQueryType()
     {
         return $this->_queryType;
-    }
-
-    /**
-     * Return bind values
-     *
-     * @return array
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function getBinds()
-    {
-        return $this->_binds;
     }
 
     /**
@@ -295,7 +286,7 @@ class Query extends Container
     }
 
     /**
-     * Return insert rows
+     * Return rows
      *
      * @return array
      *
@@ -304,9 +295,9 @@ class Query extends Container
      * @version 0.0
      * @since 0.0
      */
-    public function getInsertRows()
+    public function getBindParts()
     {
-        return $this->_insertRows;
+        return $this->_bindParts;
     }
 
     /**

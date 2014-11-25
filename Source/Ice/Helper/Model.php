@@ -38,34 +38,31 @@ class Model
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.1
      * @since 0.0
      */
     public static function getModelClassByTableName($tableName)
     {
-        $tableNameParts = explode('_', $tableName);
-        $prefix = current($tableNameParts);
-
-        $moduleName = Config::getInstance(Core_Model::getClass())->get('prefixes/' . $prefix, false);
-
-        if (!$moduleName) {
-            $moduleName = Module::getInstance()->getAlias();
-            array_unshift($tableNameParts, $prefix);
-            $prefix = null;
+        $moduleAlias = null;
+        $tableNamePart = $tableName;
+        foreach (Config::getInstance(Core_Model::getClass())->gets('prefixes') as $prefix => $value) {
+            if (strrpos($tableName, $prefix, -strlen($tableName)) !== FALSE) {
+                $moduleAlias = $value;
+                $tableNamePart = ltrim(substr($tableName, strlen($prefix)), '_');
+            }
         }
 
-        $namespace = $moduleName . '\Model\\';
-
-        if ($prefix) {
-//            $namespace .= ucfirst(preg_replace('/[^a-z]/i', '', $prefix)) . '\\';
+        if (!$moduleAlias) {
+            $moduleAlias = Module::getInstance()->getAlias();
         }
 
-        $modelName = '';
-        while ($part = next($tableNameParts)) {
-            $modelName .= '_' . ucfirst($part);
-        };
+        $modelName = $moduleAlias . '\Model\\';
 
-        return $namespace . ltrim($modelName, '_');
+        foreach (explode('_', preg_replace('/_{2,}/', '_', $tableNamePart)) as $modelNamePart) {
+            $modelName .= ucfirst($modelNamePart) . '_';
+        }
+
+        return rtrim($modelName, '_');
     }
 
     /**

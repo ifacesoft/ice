@@ -97,7 +97,9 @@ class Query_Builder
             '_calcFoundRows' => null,
         ],
         self::PART_VALUES => [],
-        self::PART_SET => [],
+        self::PART_SET => [
+            '_insert' => null,
+        ],
         self::PART_JOIN => [],
         self::PART_WHERE => [
             '_delete' => null,
@@ -1021,26 +1023,48 @@ class Query_Builder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.1
      * @since 0.0
      */
     public function insert($key, $value = null)
     {
         $this->_queryType = Query_Builder::TYPE_INSERT;
+        return $this->affect($key, $value, Query_Builder::PART_VALUES);
+    }
 
+    /**
+     * Affect query
+     *
+     * @param $key
+     * @param null $value
+     * @param $part
+     * @return Query_Builder
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.1
+     * @since 0.1
+     */
+    private function affect($key, $value, $part)
+    {
         $modelClass = $this->getModelClass();
 
         if (empty($key)) {
-            $this->_sqlParts[Query_Builder::PART_VALUES] = [$modelClass, [], 0];
+            $this->_sqlParts[$part] = array_merge(
+                $this->_sqlParts[$part], [
+                    'modelClass' => $modelClass,
+                    'fieldNames' => [],
+                    'rowCount' => 0
+                ]
+            );
             return $this;
         }
 
         if ($value !== null) {
-            return $this->insert([[$key => $value]]);
+            return $this->affect([[$key => $value]], $value, $part);
         }
 
         if (!is_array(reset($key))) {
-            return $this->insert([$key]);
+            return $this->affect([$key], $value, $part);
         }
 
         $fieldNames = [];
@@ -1049,13 +1073,38 @@ class Query_Builder
             $fieldNames[] = $modelClass::getFieldName($fieldName);
         }
 
-        $this->_sqlParts[Query_Builder::PART_VALUES] = [$modelClass, $fieldNames, count($key)];
+        $this->_sqlParts[$part] = array_merge(
+            $this->_sqlParts[$part], [
+                'modelClass' => $modelClass,
+                'fieldNames' => $fieldNames,
+                'rowCount' => count($key)
+            ]
+        );
 
         $this->appendCacheTag($modelClass, $fieldNames, false, true);
 
-        $this->_bindParts[Query_Builder::PART_VALUES] = array_merge($this->_bindParts[Query_Builder::PART_VALUES], $key);
+        $this->_bindParts[$part] = array_merge($this->_bindParts[$part], $key);
 
         return $this;
+    }
+
+    /**
+     * Set data for set query part of update
+     *
+     * @param $key
+     * @param null $value
+     * @param bool $insert
+     * @return Query_Builder
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.1
+     * @since 0.0
+     */
+    public function update($key, $value = null, $insert = false)
+    {
+        $this->_queryType = Query_Builder::TYPE_UPDATE;
+        $this->_sqlParts[Query_Builder::PART_SET]['_insert'] = $insert;
+        return $this->affect($key, $value, Query_Builder::PART_SET);
     }
 
     /**
@@ -1109,54 +1158,6 @@ class Query_Builder
         }
 
         return $this->in('/pk', $value, $modelClass, $tableAlias, $sqlLogical);
-    }
-
-    /**
-     * Set data for set query part of update
-     *
-     * @param $key
-     * @param null $value
-     * @return Query_Builder
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function update($key, $value = null)
-    {
-        $this->_queryType = Query_Builder::TYPE_UPDATE;
-
-        $modelClass = $this->getModelClass();
-
-        if (empty($key)) {
-            $this->_sqlParts[self::PART_SET] = [$modelClass, [], 0];
-            return $this;
-        }
-
-        if ($value !== null) {
-            return $this->update([[$key => $value]]);
-        }
-
-        if (!is_array(reset($key))) {
-            return $this->update([$key]);
-        }
-
-        $fieldNames = [];
-
-        foreach (array_keys(reset($key)) as $fieldName) {
-            $fieldNames[] = $modelClass::getFieldName($fieldName);
-        }
-
-        $this->_sqlParts[self::PART_SET] = [$modelClass, $fieldNames, count($key)];
-
-        $this->appendCacheTag($modelClass, $fieldNames, false, true);
-
-        foreach ($key as $value) {
-            $this->_bindParts[self::PART_SET] = array_merge($this->_bindParts[self::PART_SET], array_values($value));
-        }
-
-        return $this;
     }
 
     /**
@@ -1387,10 +1388,7 @@ class Query_Builder
      */
     public function getQuery($sourceName = null)
     {
-        $insertRows = $this->_queryType == Query_Builder::TYPE_INSERT && !empty($this->_sqlParts[Query_Builder::PART_VALUES][1])
-            ? [array_combine($this->_sqlParts[Query_Builder::PART_VALUES][1], $this->_bindParts[Query_Builder::PART_VALUES][0])] // TODO: Здесь должны бить все вставляемые записи..
-            : [];
-
-        return Query::getInstance([$sourceName, $this->_queryType, $this->_sqlParts, $this->_modelClass, $this->_cacheTags])->bind($this->_bindParts, $insertRows);
+        return Query::getInstance([$sourceName, $this->_queryType, $this->_sqlParts, $this->_modelClass, $this->_cacheTags])
+            ->bind($this->_bindParts);
     }
 } 

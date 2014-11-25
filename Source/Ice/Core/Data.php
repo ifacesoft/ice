@@ -126,7 +126,7 @@ class Data extends Container implements Iterator, ArrayAccess, Countable, Serial
         }
 
         if (Environment::isDevelopment()) {
-            $message = str_replace("\t", '', str_replace("\n", ' ', $query->getSql())) . ' [' . implode(', ', $query->getBinds()) . '] ' . Console::C_GREEN_B . 'rows: ' . count($data) . Console::C_GREEN;
+            $message = str_replace("\t", '', str_replace("\n", ' ', $query->getSql())) . ' [' . implode(', ', $query->getBinds()) . ']';
 
             if (Request::isCli()) {
                 Query::getLogger()->info($message, Logger::GREY, false);
@@ -192,7 +192,7 @@ class Data extends Container implements Iterator, ArrayAccess, Countable, Serial
         $queryType = $query->getQueryType();
 
         if (Environment::isDevelopment()) {
-            $message = str_replace("\t", '', str_replace("\n", ' ', $query->getSql())) . ' [' . implode(', ', $query->getBinds()) . '] ' . Console::C_GREEN_B . 'rows: ' . count($data) . Console::C_GREEN;
+            $message = str_replace("\t", '', str_replace("\n", ' ', $query->getSql())) . ' [' . implode(', ', $query->getBinds()) . ']';
 
             if (Request::isCli()) {
                 Query::getLogger()->info($message, Logger::GREY, false);

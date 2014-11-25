@@ -10,7 +10,6 @@
 namespace Ice\Query\Translator;
 
 use Ice\Core\Exception;
-use Ice\Core\Logger;
 use Ice\Core\Model;
 use Ice\Core\Query_Builder;
 use Ice\Core\Query_Translator;
@@ -45,6 +44,7 @@ class Mysqli extends Query_Translator
     const SQL_CLAUSE_GROUP = 'GROUP';
     const SQL_CLAUSE_ORDER = 'ORDER';
     const SQL_CLAUSE_LIMIT = 'LIMIT';
+    const ON_DUPLICATE_KEY_UPDATE = 'ON DUPLICATE KEY UPDATE';
 
     /**
      * Translate query parts to sql string
@@ -81,6 +81,51 @@ class Mysqli extends Query_Translator
     }
 
     /**
+     * Translate set part
+     *
+     * @param array $data
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.1
+     * @since 0.0
+     */
+    private function translateSet(array $data)
+    {
+        $insert = array_shift($data);
+
+        if (empty($data)) {
+            return '';
+        }
+
+        /** @var Model $modelClass */
+        $modelClass = $data['modelClass'];
+
+        $modelMapping = $modelClass::getMapping();
+
+        if ($insert || $data['rowCount'] > 1) {
+            $sql = $this->translateValues($data);
+            $sql .= "\n" . self::ON_DUPLICATE_KEY_UPDATE;
+            $sql .= implode(',', array_map(function ($fieldName) use ($modelMapping) {
+                $columnName = $modelMapping[$fieldName];
+                return "\n\t" . '`' . $columnName . '`=' . self::SQL_CLAUSE_VALUES . '(`' . $columnName . '`)';
+            }, $data['fieldNames']));
+
+            return $sql;
+        }
+
+        $sql = "\n" . self::SQL_STATEMENT_UPDATE .
+            "\n\t" . $modelClass::getTableName();
+        $sql .= "\n" . self::SQL_CLAUSE_SET;
+        $sql .= "\n\t" . '`' . implode('`=?,`', array_map(function ($fieldName) use ($modelMapping) {
+                return $modelMapping[$fieldName];
+            }, $data['fieldNames'])) . '`=?';
+
+        return $sql;
+    }
+
+    /**
      * Translate values part
      *
      * @param array $data
@@ -88,21 +133,21 @@ class Mysqli extends Query_Translator
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.1
      * @since 0.0
      */
     private function translateValues(array $data)
     {
         /** @var Model $modelClass */
-        list($modelClass, $fieldNames, $count) = $data;
+        $modelClass = $data['modelClass'];
 
         $sql = "\n" . self::SQL_STATEMENT_INSERT . ' ' . self::SQL_CLAUSE_INTO .
             "\n\t" . $modelClass::getTableName();
 
-        $fileNamesCount = count($fieldNames);
+        $fieldNamesCount = count($data['fieldNames']);
 
         /** Insert empty row */
-        if (!$fileNamesCount) {
+        if (!$fieldNamesCount) {
             $sql .= "\n\t" . '()';
             $sql .= "\n" . self::SQL_CLAUSE_VALUES;
             $sql .= "\n\t" . '()';
@@ -114,45 +159,16 @@ class Mysqli extends Query_Translator
 
         $sql .= "\n\t" . '(`' . implode('`,`', array_map(function ($fieldName) use ($modelMapping) {
                 return $modelMapping[$fieldName];
-            }, $fieldNames)) . '`)';
+            }, $data['fieldNames'])) . '`)';
         $sql .= "\n" . self::SQL_CLAUSE_VALUES;
 
-        $values = "\n\t" . '(?' . str_repeat(',?', count($fieldNames) - 1) . ')';
+        $values = "\n\t" . '(?' . str_repeat(',?', $fieldNamesCount - 1) . ')';
 
         $sql .= $values;
 
-//        if ($count > 1) {
-//            $sql .= str_repeat(',' . $values, $count - 1);
-//        }
-
-        return $sql;
-    }
-
-    /**
-     * Translate set part
-     *
-     * @param array $data
-     * @return string
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    private function translateSet(array $data)
-    {
-        $sql = '';
-
-        list($modelClass, $fieldNames, $count) = $data;
-
-        $modelMapping = $modelClass::getMapping();
-
-        $sql .= "\n" . self::SQL_STATEMENT_UPDATE .
-            "\n\t" . $modelClass::getTableName();
-        $sql .= "\n" . self::SQL_CLAUSE_SET;
-        $sql .= "\n\t" . '`' . implode('` = ?, `', array_map(function ($fieldName) use ($modelMapping) {
-                return $modelMapping[$fieldName];
-            }, $fieldNames)) . '` = ?';
+        if ($data['rowCount'] > 1) {
+            $sql .= str_repeat(',' . $values, $data['rowCount'] - 1);
+        }
 
         return $sql;
     }

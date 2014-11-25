@@ -29,4 +29,1318 @@ user_user_pkField "_pkName" not found in Model "User_User"',
     'Implement validator {$0}' => [
         'ru' => 'Implement validator {$0}',
     ],
+    'Could not set value:
+Ebs\\Model\\Library Object
+(
+                                                                                                                                                                                                                                                                                                                                            [_pk:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                                                                                                                                (
+                                                                                                                                                                                                                                                                                                                                                                            [library_pk] => 1
+                                                                                                                                                                                                                                                                                                                                                                )
+
+                                                                                                                                                                                                                                                                                                                                            [_row:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                                                                                                                                (
+                                                                                                                                                                                                                                                                                                                                                                            [library_name] => не определено
+                                                                                                                                                                                                                                                                                                                                                                            [university__fk] => 
+                                                                                                                                                                                                                                                                                                                                                                )
+
+                                                                                                                                                                                                                                                                                                                                            [_json:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                                                                                                                                (
+                                                                                                                                                                                                                                                                                                                                                                )
+
+                                                                                                                                                                                                                                                                                                                                            [_geo:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                                                                                                                                (
+                                                                                                                                                                                                                                                                                                                                                                )
+
+                                                                                                                                                                                                                                                                                                                                            [_fk:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                                                                                                                                (
+                                                                                                                                                                                                                                                                                                                                                                )
+
+                                                                                                                                                                                                                                                                                                                                            [_data:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                                                                                                                                (
+                                                                                                                                                                                                                                                                                                                                                                )
+
+                                                                                                                                                                                                                                                                                                                                            [_affected:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                                                                                                                                (
+                                                                                                                                                                                                                                                                                                                                                                )
+
+)
+Field "library" not found in Model "Library_User_Link"' => [
+        'ru' => 'Could not set value:
+Ebs\\Model\\Library Object
+(
+                                                                                                                                                                                                                                                                                                                                            [_pk:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                                                                                                                                (
+                                                                                                                                                                                                                                                                                                                                                                            [library_pk] => 1
+                                                                                                                                                                                                                                                                                                                                                                )
+
+                                                                                                                                                                                                                                                                                                                                            [_row:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                                                                                                                                (
+                                                                                                                                                                                                                                                                                                                                                                            [library_name] => не определено
+                                                                                                                                                                                                                                                                                                                                                                            [university__fk] => 
+                                                                                                                                                                                                                                                                                                                                                                )
+
+                                                                                                                                                                                                                                                                                                                                            [_json:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                                                                                                                                (
+                                                                                                                                                                                                                                                                                                                                                                )
+
+                                                                                                                                                                                                                                                                                                                                            [_geo:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                                                                                                                                (
+                                                                                                                                                                                                                                                                                                                                                                )
+
+                                                                                                                                                                                                                                                                                                                                            [_fk:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                                                                                                                                (
+                                                                                                                                                                                                                                                                                                                                                                )
+
+                                                                                                                                                                                                                                                                                                                                            [_data:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                                                                                                                                (
+                                                                                                                                                                                                                                                                                                                                                                )
+
+                                                                                                                                                                                                                                                                                                                                            [_affected:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                                                                                                                                (
+                                                                                                                                                                                                                                                                                                                                                                )
+
+)
+Field "library" not found in Model "Library_User_Link"',
+    ],
+    'Could not set value:
+Ebs\\Model\\Library Object
+(
+                                                                                                                                                                                                                                                                                                                        [_pk:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                                                                                                            (
+                                                                                                                                                                                                                                                                                                                                                        [library_pk] => 1
+                                                                                                                                                                                                                                                                                                                                            )
+
+                                                                                                                                                                                                                                                                                                                        [_row:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                                                                                                            (
+                                                                                                                                                                                                                                                                                                                                                        [library_name] => не определено
+                                                                                                                                                                                                                                                                                                                                                        [university__fk] => 
+                                                                                                                                                                                                                                                                                                                                            )
+
+                                                                                                                                                                                                                                                                                                                        [_json:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                                                                                                            (
+                                                                                                                                                                                                                                                                                                                                            )
+
+                                                                                                                                                                                                                                                                                                                        [_geo:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                                                                                                            (
+                                                                                                                                                                                                                                                                                                                                            )
+
+                                                                                                                                                                                                                                                                                                                        [_fk:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                                                                                                            (
+                                                                                                                                                                                                                                                                                                                                            )
+
+                                                                                                                                                                                                                                                                                                                        [_data:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                                                                                                            (
+                                                                                                                                                                                                                                                                                                                                            )
+
+                                                                                                                                                                                                                                                                                                                        [_affected:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                                                                                                            (
+                                                                                                                                                                                                                                                                                                                                            )
+
+)
+Field "library" not found in Model "Library_User_Link"' => [
+        'ru' => 'Could not set value:
+Ebs\\Model\\Library Object
+(
+                                                                                                                                                                                                                                                                                                                        [_pk:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                                                                                                            (
+                                                                                                                                                                                                                                                                                                                                                        [library_pk] => 1
+                                                                                                                                                                                                                                                                                                                                            )
+
+                                                                                                                                                                                                                                                                                                                        [_row:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                                                                                                            (
+                                                                                                                                                                                                                                                                                                                                                        [library_name] => не определено
+                                                                                                                                                                                                                                                                                                                                                        [university__fk] => 
+                                                                                                                                                                                                                                                                                                                                            )
+
+                                                                                                                                                                                                                                                                                                                        [_json:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                                                                                                            (
+                                                                                                                                                                                                                                                                                                                                            )
+
+                                                                                                                                                                                                                                                                                                                        [_geo:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                                                                                                            (
+                                                                                                                                                                                                                                                                                                                                            )
+
+                                                                                                                                                                                                                                                                                                                        [_fk:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                                                                                                            (
+                                                                                                                                                                                                                                                                                                                                            )
+
+                                                                                                                                                                                                                                                                                                                        [_data:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                                                                                                            (
+                                                                                                                                                                                                                                                                                                                                            )
+
+                                                                                                                                                                                                                                                                                                                        [_affected:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                                                                                                            (
+                                                                                                                                                                                                                                                                                                                                            )
+
+)
+Field "library" not found in Model "Library_User_Link"',
+    ],
+    'Could not set value:
+Ebs\\Model\\Library Object
+(
+                                                                                                                                                                                                                                                                                                    [_pk:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                                                                                        (
+                                                                                                                                                                                                                                                                                                                                    [library_pk] => 1
+                                                                                                                                                                                                                                                                                                                        )
+
+                                                                                                                                                                                                                                                                                                    [_row:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                                                                                        (
+                                                                                                                                                                                                                                                                                                                                    [library_name] => не определено
+                                                                                                                                                                                                                                                                                                                                    [university__fk] => 
+                                                                                                                                                                                                                                                                                                                        )
+
+                                                                                                                                                                                                                                                                                                    [_json:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                                                                                        (
+                                                                                                                                                                                                                                                                                                                        )
+
+                                                                                                                                                                                                                                                                                                    [_geo:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                                                                                        (
+                                                                                                                                                                                                                                                                                                                        )
+
+                                                                                                                                                                                                                                                                                                    [_fk:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                                                                                        (
+                                                                                                                                                                                                                                                                                                                        )
+
+                                                                                                                                                                                                                                                                                                    [_data:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                                                                                        (
+                                                                                                                                                                                                                                                                                                                        )
+
+                                                                                                                                                                                                                                                                                                    [_affected:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                                                                                        (
+                                                                                                                                                                                                                                                                                                                        )
+
+)
+Field "library" not found in Model "Library_User_Link"' => [
+        'ru' => 'Could not set value:
+Ebs\\Model\\Library Object
+(
+                                                                                                                                                                                                                                                                                                    [_pk:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                                                                                        (
+                                                                                                                                                                                                                                                                                                                                    [library_pk] => 1
+                                                                                                                                                                                                                                                                                                                        )
+
+                                                                                                                                                                                                                                                                                                    [_row:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                                                                                        (
+                                                                                                                                                                                                                                                                                                                                    [library_name] => не определено
+                                                                                                                                                                                                                                                                                                                                    [university__fk] => 
+                                                                                                                                                                                                                                                                                                                        )
+
+                                                                                                                                                                                                                                                                                                    [_json:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                                                                                        (
+                                                                                                                                                                                                                                                                                                                        )
+
+                                                                                                                                                                                                                                                                                                    [_geo:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                                                                                        (
+                                                                                                                                                                                                                                                                                                                        )
+
+                                                                                                                                                                                                                                                                                                    [_fk:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                                                                                        (
+                                                                                                                                                                                                                                                                                                                        )
+
+                                                                                                                                                                                                                                                                                                    [_data:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                                                                                        (
+                                                                                                                                                                                                                                                                                                                        )
+
+                                                                                                                                                                                                                                                                                                    [_affected:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                                                                                        (
+                                                                                                                                                                                                                                                                                                                        )
+
+)
+Field "library" not found in Model "Library_User_Link"',
+    ],
+    'Could not set value:
+Ebs\\Model\\Library Object
+(
+                                                                                                                                                                                                                                                                                [_pk:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                                                                    (
+                                                                                                                                                                                                                                                                                                                [library_pk] => 1
+                                                                                                                                                                                                                                                                                                    )
+
+                                                                                                                                                                                                                                                                                [_row:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                                                                    (
+                                                                                                                                                                                                                                                                                                                [library_name] => не определено
+                                                                                                                                                                                                                                                                                                                [university__fk] => 
+                                                                                                                                                                                                                                                                                                    )
+
+                                                                                                                                                                                                                                                                                [_json:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                                                                    (
+                                                                                                                                                                                                                                                                                                    )
+
+                                                                                                                                                                                                                                                                                [_geo:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                                                                    (
+                                                                                                                                                                                                                                                                                                    )
+
+                                                                                                                                                                                                                                                                                [_fk:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                                                                    (
+                                                                                                                                                                                                                                                                                                    )
+
+                                                                                                                                                                                                                                                                                [_data:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                                                                    (
+                                                                                                                                                                                                                                                                                                    )
+
+                                                                                                                                                                                                                                                                                [_affected:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                                                                    (
+                                                                                                                                                                                                                                                                                                    )
+
+)
+Field "library" not found in Model "Library_User_Link"' => [
+        'ru' => 'Could not set value:
+Ebs\\Model\\Library Object
+(
+                                                                                                                                                                                                                                                                                [_pk:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                                                                    (
+                                                                                                                                                                                                                                                                                                                [library_pk] => 1
+                                                                                                                                                                                                                                                                                                    )
+
+                                                                                                                                                                                                                                                                                [_row:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                                                                    (
+                                                                                                                                                                                                                                                                                                                [library_name] => не определено
+                                                                                                                                                                                                                                                                                                                [university__fk] => 
+                                                                                                                                                                                                                                                                                                    )
+
+                                                                                                                                                                                                                                                                                [_json:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                                                                    (
+                                                                                                                                                                                                                                                                                                    )
+
+                                                                                                                                                                                                                                                                                [_geo:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                                                                    (
+                                                                                                                                                                                                                                                                                                    )
+
+                                                                                                                                                                                                                                                                                [_fk:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                                                                    (
+                                                                                                                                                                                                                                                                                                    )
+
+                                                                                                                                                                                                                                                                                [_data:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                                                                    (
+                                                                                                                                                                                                                                                                                                    )
+
+                                                                                                                                                                                                                                                                                [_affected:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                                                                    (
+                                                                                                                                                                                                                                                                                                    )
+
+)
+Field "library" not found in Model "Library_User_Link"',
+    ],
+    'Could not set value:
+Ebs\\Model\\Library Object
+(
+                                                                                                                                                                                                                                                            [_pk:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                                                (
+                                                                                                                                                                                                                                                                                            [library_pk] => 1
+                                                                                                                                                                                                                                                                                )
+
+                                                                                                                                                                                                                                                            [_row:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                                                (
+                                                                                                                                                                                                                                                                                            [library_name] => не определено
+                                                                                                                                                                                                                                                                                            [university__fk] => 
+                                                                                                                                                                                                                                                                                )
+
+                                                                                                                                                                                                                                                            [_json:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                                                (
+                                                                                                                                                                                                                                                                                )
+
+                                                                                                                                                                                                                                                            [_geo:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                                                (
+                                                                                                                                                                                                                                                                                )
+
+                                                                                                                                                                                                                                                            [_fk:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                                                (
+                                                                                                                                                                                                                                                                                )
+
+                                                                                                                                                                                                                                                            [_data:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                                                (
+                                                                                                                                                                                                                                                                                )
+
+                                                                                                                                                                                                                                                            [_affected:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                                                (
+                                                                                                                                                                                                                                                                                )
+
+)
+Field "library" not found in Model "Library_User_Link"' => [
+        'ru' => 'Could not set value:
+Ebs\\Model\\Library Object
+(
+                                                                                                                                                                                                                                                            [_pk:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                                                (
+                                                                                                                                                                                                                                                                                            [library_pk] => 1
+                                                                                                                                                                                                                                                                                )
+
+                                                                                                                                                                                                                                                            [_row:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                                                (
+                                                                                                                                                                                                                                                                                            [library_name] => не определено
+                                                                                                                                                                                                                                                                                            [university__fk] => 
+                                                                                                                                                                                                                                                                                )
+
+                                                                                                                                                                                                                                                            [_json:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                                                (
+                                                                                                                                                                                                                                                                                )
+
+                                                                                                                                                                                                                                                            [_geo:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                                                (
+                                                                                                                                                                                                                                                                                )
+
+                                                                                                                                                                                                                                                            [_fk:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                                                (
+                                                                                                                                                                                                                                                                                )
+
+                                                                                                                                                                                                                                                            [_data:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                                                (
+                                                                                                                                                                                                                                                                                )
+
+                                                                                                                                                                                                                                                            [_affected:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                                                (
+                                                                                                                                                                                                                                                                                )
+
+)
+Field "library" not found in Model "Library_User_Link"',
+    ],
+    'Could not set value:
+Ebs\\Model\\Library Object
+(
+                                                                                                                                                                                                                                        [_pk:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                            (
+                                                                                                                                                                                                                                                                        [library_pk] => 1
+                                                                                                                                                                                                                                                            )
+
+                                                                                                                                                                                                                                        [_row:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                            (
+                                                                                                                                                                                                                                                                        [library_name] => не определено
+                                                                                                                                                                                                                                                                        [university__fk] => 
+                                                                                                                                                                                                                                                            )
+
+                                                                                                                                                                                                                                        [_json:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                            (
+                                                                                                                                                                                                                                                            )
+
+                                                                                                                                                                                                                                        [_geo:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                            (
+                                                                                                                                                                                                                                                            )
+
+                                                                                                                                                                                                                                        [_fk:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                            (
+                                                                                                                                                                                                                                                            )
+
+                                                                                                                                                                                                                                        [_data:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                            (
+                                                                                                                                                                                                                                                            )
+
+                                                                                                                                                                                                                                        [_affected:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                            (
+                                                                                                                                                                                                                                                            )
+
+)
+Field "library" not found in Model "Library_User_Link"' => [
+        'ru' => 'Could not set value:
+Ebs\\Model\\Library Object
+(
+                                                                                                                                                                                                                                        [_pk:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                            (
+                                                                                                                                                                                                                                                                        [library_pk] => 1
+                                                                                                                                                                                                                                                            )
+
+                                                                                                                                                                                                                                        [_row:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                            (
+                                                                                                                                                                                                                                                                        [library_name] => не определено
+                                                                                                                                                                                                                                                                        [university__fk] => 
+                                                                                                                                                                                                                                                            )
+
+                                                                                                                                                                                                                                        [_json:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                            (
+                                                                                                                                                                                                                                                            )
+
+                                                                                                                                                                                                                                        [_geo:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                            (
+                                                                                                                                                                                                                                                            )
+
+                                                                                                                                                                                                                                        [_fk:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                            (
+                                                                                                                                                                                                                                                            )
+
+                                                                                                                                                                                                                                        [_data:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                            (
+                                                                                                                                                                                                                                                            )
+
+                                                                                                                                                                                                                                        [_affected:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                                            (
+                                                                                                                                                                                                                                                            )
+
+)
+Field "library" not found in Model "Library_User_Link"',
+    ],
+    'Could not set value:
+Ebs\\Model\\Library Object
+(
+                                                                                                                                                                                                                    [_pk:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                        (
+                                                                                                                                                                                                                                                    [library_pk] => 1
+                                                                                                                                                                                                                                        )
+
+                                                                                                                                                                                                                    [_row:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                        (
+                                                                                                                                                                                                                                                    [library_name] => не определено
+                                                                                                                                                                                                                                                    [university__fk] => 
+                                                                                                                                                                                                                                        )
+
+                                                                                                                                                                                                                    [_json:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                        (
+                                                                                                                                                                                                                                        )
+
+                                                                                                                                                                                                                    [_geo:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                        (
+                                                                                                                                                                                                                                        )
+
+                                                                                                                                                                                                                    [_fk:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                        (
+                                                                                                                                                                                                                                        )
+
+                                                                                                                                                                                                                    [_data:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                        (
+                                                                                                                                                                                                                                        )
+
+                                                                                                                                                                                                                    [_affected:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                        (
+                                                                                                                                                                                                                                        )
+
+)
+Field "library" not found in Model "Library_User_Link"' => [
+        'ru' => 'Could not set value:
+Ebs\\Model\\Library Object
+(
+                                                                                                                                                                                                                    [_pk:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                        (
+                                                                                                                                                                                                                                                    [library_pk] => 1
+                                                                                                                                                                                                                                        )
+
+                                                                                                                                                                                                                    [_row:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                        (
+                                                                                                                                                                                                                                                    [library_name] => не определено
+                                                                                                                                                                                                                                                    [university__fk] => 
+                                                                                                                                                                                                                                        )
+
+                                                                                                                                                                                                                    [_json:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                        (
+                                                                                                                                                                                                                                        )
+
+                                                                                                                                                                                                                    [_geo:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                        (
+                                                                                                                                                                                                                                        )
+
+                                                                                                                                                                                                                    [_fk:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                        (
+                                                                                                                                                                                                                                        )
+
+                                                                                                                                                                                                                    [_data:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                        (
+                                                                                                                                                                                                                                        )
+
+                                                                                                                                                                                                                    [_affected:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                                        (
+                                                                                                                                                                                                                                        )
+
+)
+Field "library" not found in Model "Library_User_Link"',
+    ],
+    'Could not set value:
+Ebs\\Model\\Library Object
+(
+                                                                                                                                                                                                [_pk:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                    (
+                                                                                                                                                                                                                                [library_pk] => 1
+                                                                                                                                                                                                                    )
+
+                                                                                                                                                                                                [_row:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                    (
+                                                                                                                                                                                                                                [library_name] => не определено
+                                                                                                                                                                                                                                [university__fk] => 
+                                                                                                                                                                                                                    )
+
+                                                                                                                                                                                                [_json:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                    (
+                                                                                                                                                                                                                    )
+
+                                                                                                                                                                                                [_geo:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                    (
+                                                                                                                                                                                                                    )
+
+                                                                                                                                                                                                [_fk:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                    (
+                                                                                                                                                                                                                    )
+
+                                                                                                                                                                                                [_data:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                    (
+                                                                                                                                                                                                                    )
+
+                                                                                                                                                                                                [_affected:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                    (
+                                                                                                                                                                                                                    )
+
+)
+Field "library" not found in Model "Library_User_Link"' => [
+        'ru' => 'Could not set value:
+Ebs\\Model\\Library Object
+(
+                                                                                                                                                                                                [_pk:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                    (
+                                                                                                                                                                                                                                [library_pk] => 1
+                                                                                                                                                                                                                    )
+
+                                                                                                                                                                                                [_row:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                    (
+                                                                                                                                                                                                                                [library_name] => не определено
+                                                                                                                                                                                                                                [university__fk] => 
+                                                                                                                                                                                                                    )
+
+                                                                                                                                                                                                [_json:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                    (
+                                                                                                                                                                                                                    )
+
+                                                                                                                                                                                                [_geo:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                    (
+                                                                                                                                                                                                                    )
+
+                                                                                                                                                                                                [_fk:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                    (
+                                                                                                                                                                                                                    )
+
+                                                                                                                                                                                                [_data:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                    (
+                                                                                                                                                                                                                    )
+
+                                                                                                                                                                                                [_affected:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                                    (
+                                                                                                                                                                                                                    )
+
+)
+Field "library" not found in Model "Library_User_Link"',
+    ],
+    'Could not set value:
+Ebs\\Model\\Library Object
+(
+                                                                                                                                                                            [_pk:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                (
+                                                                                                                                                                                                            [library_pk] => 1
+                                                                                                                                                                                                )
+
+                                                                                                                                                                            [_row:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                (
+                                                                                                                                                                                                            [library_name] => не определено
+                                                                                                                                                                                                            [university__fk] => 
+                                                                                                                                                                                                )
+
+                                                                                                                                                                            [_json:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                (
+                                                                                                                                                                                                )
+
+                                                                                                                                                                            [_geo:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                (
+                                                                                                                                                                                                )
+
+                                                                                                                                                                            [_fk:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                (
+                                                                                                                                                                                                )
+
+                                                                                                                                                                            [_data:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                (
+                                                                                                                                                                                                )
+
+                                                                                                                                                                            [_affected:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                (
+                                                                                                                                                                                                )
+
+)
+Field "library" not found in Model "Library_User_Link"' => [
+        'ru' => 'Could not set value:
+Ebs\\Model\\Library Object
+(
+                                                                                                                                                                            [_pk:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                (
+                                                                                                                                                                                                            [library_pk] => 1
+                                                                                                                                                                                                )
+
+                                                                                                                                                                            [_row:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                (
+                                                                                                                                                                                                            [library_name] => не определено
+                                                                                                                                                                                                            [university__fk] => 
+                                                                                                                                                                                                )
+
+                                                                                                                                                                            [_json:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                (
+                                                                                                                                                                                                )
+
+                                                                                                                                                                            [_geo:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                (
+                                                                                                                                                                                                )
+
+                                                                                                                                                                            [_fk:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                (
+                                                                                                                                                                                                )
+
+                                                                                                                                                                            [_data:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                (
+                                                                                                                                                                                                )
+
+                                                                                                                                                                            [_affected:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                                                (
+                                                                                                                                                                                                )
+
+)
+Field "library" not found in Model "Library_User_Link"',
+    ],
+    'Could not set value:
+Ebs\\Model\\Library Object
+(
+                                                                                                                                                        [_pk:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                            (
+                                                                                                                                                                                        [library_pk] => 1
+                                                                                                                                                                            )
+
+                                                                                                                                                        [_row:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                            (
+                                                                                                                                                                                        [library_name] => не определено
+                                                                                                                                                                                        [university__fk] => 
+                                                                                                                                                                            )
+
+                                                                                                                                                        [_json:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                            (
+                                                                                                                                                                            )
+
+                                                                                                                                                        [_geo:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                            (
+                                                                                                                                                                            )
+
+                                                                                                                                                        [_fk:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                            (
+                                                                                                                                                                            )
+
+                                                                                                                                                        [_data:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                            (
+                                                                                                                                                                            )
+
+                                                                                                                                                        [_affected:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                            (
+                                                                                                                                                                            )
+
+)
+Field "library" not found in Model "Library_User_Link"' => [
+        'ru' => 'Could not set value:
+Ebs\\Model\\Library Object
+(
+                                                                                                                                                        [_pk:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                            (
+                                                                                                                                                                                        [library_pk] => 1
+                                                                                                                                                                            )
+
+                                                                                                                                                        [_row:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                            (
+                                                                                                                                                                                        [library_name] => не определено
+                                                                                                                                                                                        [university__fk] => 
+                                                                                                                                                                            )
+
+                                                                                                                                                        [_json:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                            (
+                                                                                                                                                                            )
+
+                                                                                                                                                        [_geo:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                            (
+                                                                                                                                                                            )
+
+                                                                                                                                                        [_fk:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                            (
+                                                                                                                                                                            )
+
+                                                                                                                                                        [_data:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                            (
+                                                                                                                                                                            )
+
+                                                                                                                                                        [_affected:Ice\\Core\\Model:private] => Array
+                                                                                                                                                                            (
+                                                                                                                                                                            )
+
+)
+Field "library" not found in Model "Library_User_Link"',
+    ],
+    'Could not set value:
+Ebs\\Model\\Library Object
+(
+                                                                                                                                    [_pk:Ice\\Core\\Model:private] => Array
+                                                                                                                                                        (
+                                                                                                                                                                    [library_pk] => 1
+                                                                                                                                                        )
+
+                                                                                                                                    [_row:Ice\\Core\\Model:private] => Array
+                                                                                                                                                        (
+                                                                                                                                                                    [library_name] => не определено
+                                                                                                                                                                    [university__fk] => 
+                                                                                                                                                        )
+
+                                                                                                                                    [_json:Ice\\Core\\Model:private] => Array
+                                                                                                                                                        (
+                                                                                                                                                        )
+
+                                                                                                                                    [_geo:Ice\\Core\\Model:private] => Array
+                                                                                                                                                        (
+                                                                                                                                                        )
+
+                                                                                                                                    [_fk:Ice\\Core\\Model:private] => Array
+                                                                                                                                                        (
+                                                                                                                                                        )
+
+                                                                                                                                    [_data:Ice\\Core\\Model:private] => Array
+                                                                                                                                                        (
+                                                                                                                                                        )
+
+                                                                                                                                    [_affected:Ice\\Core\\Model:private] => Array
+                                                                                                                                                        (
+                                                                                                                                                        )
+
+)
+Field "library" not found in Model "Library_User_Link"' => [
+        'ru' => 'Could not set value:
+Ebs\\Model\\Library Object
+(
+                                                                                                                                    [_pk:Ice\\Core\\Model:private] => Array
+                                                                                                                                                        (
+                                                                                                                                                                    [library_pk] => 1
+                                                                                                                                                        )
+
+                                                                                                                                    [_row:Ice\\Core\\Model:private] => Array
+                                                                                                                                                        (
+                                                                                                                                                                    [library_name] => не определено
+                                                                                                                                                                    [university__fk] => 
+                                                                                                                                                        )
+
+                                                                                                                                    [_json:Ice\\Core\\Model:private] => Array
+                                                                                                                                                        (
+                                                                                                                                                        )
+
+                                                                                                                                    [_geo:Ice\\Core\\Model:private] => Array
+                                                                                                                                                        (
+                                                                                                                                                        )
+
+                                                                                                                                    [_fk:Ice\\Core\\Model:private] => Array
+                                                                                                                                                        (
+                                                                                                                                                        )
+
+                                                                                                                                    [_data:Ice\\Core\\Model:private] => Array
+                                                                                                                                                        (
+                                                                                                                                                        )
+
+                                                                                                                                    [_affected:Ice\\Core\\Model:private] => Array
+                                                                                                                                                        (
+                                                                                                                                                        )
+
+)
+Field "library" not found in Model "Library_User_Link"',
+    ],
+    'Could not set value:
+Ebs\\Model\\Library Object
+(
+                                                                                                                [_pk:Ice\\Core\\Model:private] => Array
+                                                                                                                                    (
+                                                                                                                                                [library_pk] => 1
+                                                                                                                                    )
+
+                                                                                                                [_row:Ice\\Core\\Model:private] => Array
+                                                                                                                                    (
+                                                                                                                                                [library_name] => не определено
+                                                                                                                                                [university__fk] => 
+                                                                                                                                    )
+
+                                                                                                                [_json:Ice\\Core\\Model:private] => Array
+                                                                                                                                    (
+                                                                                                                                    )
+
+                                                                                                                [_geo:Ice\\Core\\Model:private] => Array
+                                                                                                                                    (
+                                                                                                                                    )
+
+                                                                                                                [_fk:Ice\\Core\\Model:private] => Array
+                                                                                                                                    (
+                                                                                                                                    )
+
+                                                                                                                [_data:Ice\\Core\\Model:private] => Array
+                                                                                                                                    (
+                                                                                                                                    )
+
+                                                                                                                [_affected:Ice\\Core\\Model:private] => Array
+                                                                                                                                    (
+                                                                                                                                    )
+
+)
+Field "library" not found in Model "Library_User_Link"' => [
+        'ru' => 'Could not set value:
+Ebs\\Model\\Library Object
+(
+                                                                                                                [_pk:Ice\\Core\\Model:private] => Array
+                                                                                                                                    (
+                                                                                                                                                [library_pk] => 1
+                                                                                                                                    )
+
+                                                                                                                [_row:Ice\\Core\\Model:private] => Array
+                                                                                                                                    (
+                                                                                                                                                [library_name] => не определено
+                                                                                                                                                [university__fk] => 
+                                                                                                                                    )
+
+                                                                                                                [_json:Ice\\Core\\Model:private] => Array
+                                                                                                                                    (
+                                                                                                                                    )
+
+                                                                                                                [_geo:Ice\\Core\\Model:private] => Array
+                                                                                                                                    (
+                                                                                                                                    )
+
+                                                                                                                [_fk:Ice\\Core\\Model:private] => Array
+                                                                                                                                    (
+                                                                                                                                    )
+
+                                                                                                                [_data:Ice\\Core\\Model:private] => Array
+                                                                                                                                    (
+                                                                                                                                    )
+
+                                                                                                                [_affected:Ice\\Core\\Model:private] => Array
+                                                                                                                                    (
+                                                                                                                                    )
+
+)
+Field "library" not found in Model "Library_User_Link"',
+    ],
+    'Could not set value:
+Ebs\\Model\\Library Object
+(
+                                                                                            [_pk:Ice\\Core\\Model:private] => Array
+                                                                                                                (
+                                                                                                                            [library_pk] => 1
+                                                                                                                )
+
+                                                                                            [_row:Ice\\Core\\Model:private] => Array
+                                                                                                                (
+                                                                                                                            [library_name] => не определено
+                                                                                                                            [university__fk] => 
+                                                                                                                )
+
+                                                                                            [_json:Ice\\Core\\Model:private] => Array
+                                                                                                                (
+                                                                                                                )
+
+                                                                                            [_geo:Ice\\Core\\Model:private] => Array
+                                                                                                                (
+                                                                                                                )
+
+                                                                                            [_fk:Ice\\Core\\Model:private] => Array
+                                                                                                                (
+                                                                                                                )
+
+                                                                                            [_data:Ice\\Core\\Model:private] => Array
+                                                                                                                (
+                                                                                                                )
+
+                                                                                            [_affected:Ice\\Core\\Model:private] => Array
+                                                                                                                (
+                                                                                                                )
+
+)
+Field "library" not found in Model "Library_User_Link"' => [
+        'ru' => 'Could not set value:
+Ebs\\Model\\Library Object
+(
+                                                                                            [_pk:Ice\\Core\\Model:private] => Array
+                                                                                                                (
+                                                                                                                            [library_pk] => 1
+                                                                                                                )
+
+                                                                                            [_row:Ice\\Core\\Model:private] => Array
+                                                                                                                (
+                                                                                                                            [library_name] => не определено
+                                                                                                                            [university__fk] => 
+                                                                                                                )
+
+                                                                                            [_json:Ice\\Core\\Model:private] => Array
+                                                                                                                (
+                                                                                                                )
+
+                                                                                            [_geo:Ice\\Core\\Model:private] => Array
+                                                                                                                (
+                                                                                                                )
+
+                                                                                            [_fk:Ice\\Core\\Model:private] => Array
+                                                                                                                (
+                                                                                                                )
+
+                                                                                            [_data:Ice\\Core\\Model:private] => Array
+                                                                                                                (
+                                                                                                                )
+
+                                                                                            [_affected:Ice\\Core\\Model:private] => Array
+                                                                                                                (
+                                                                                                                )
+
+)
+Field "library" not found in Model "Library_User_Link"',
+    ],
+    'Could not set value:
+Ebs\\Model\\Library Object
+(
+                                                                        [_pk:Ice\\Core\\Model:private] => Array
+                                                                                            (
+                                                                                                        [library_pk] => 1
+                                                                                            )
+
+                                                                        [_row:Ice\\Core\\Model:private] => Array
+                                                                                            (
+                                                                                                        [library_name] => не определено
+                                                                                                        [university__fk] => 
+                                                                                            )
+
+                                                                        [_json:Ice\\Core\\Model:private] => Array
+                                                                                            (
+                                                                                            )
+
+                                                                        [_geo:Ice\\Core\\Model:private] => Array
+                                                                                            (
+                                                                                            )
+
+                                                                        [_fk:Ice\\Core\\Model:private] => Array
+                                                                                            (
+                                                                                            )
+
+                                                                        [_data:Ice\\Core\\Model:private] => Array
+                                                                                            (
+                                                                                            )
+
+                                                                        [_affected:Ice\\Core\\Model:private] => Array
+                                                                                            (
+                                                                                            )
+
+)
+Field "library" not found in Model "Library_User_Link"' => [
+        'ru' => 'Could not set value:
+Ebs\\Model\\Library Object
+(
+                                                                        [_pk:Ice\\Core\\Model:private] => Array
+                                                                                            (
+                                                                                                        [library_pk] => 1
+                                                                                            )
+
+                                                                        [_row:Ice\\Core\\Model:private] => Array
+                                                                                            (
+                                                                                                        [library_name] => не определено
+                                                                                                        [university__fk] => 
+                                                                                            )
+
+                                                                        [_json:Ice\\Core\\Model:private] => Array
+                                                                                            (
+                                                                                            )
+
+                                                                        [_geo:Ice\\Core\\Model:private] => Array
+                                                                                            (
+                                                                                            )
+
+                                                                        [_fk:Ice\\Core\\Model:private] => Array
+                                                                                            (
+                                                                                            )
+
+                                                                        [_data:Ice\\Core\\Model:private] => Array
+                                                                                            (
+                                                                                            )
+
+                                                                        [_affected:Ice\\Core\\Model:private] => Array
+                                                                                            (
+                                                                                            )
+
+)
+Field "library" not found in Model "Library_User_Link"',
+    ],
+    'Could not set value:
+Ebs\\Model\\Library Object
+(
+                                                    [_pk:Ice\\Core\\Model:private] => Array
+                                                                        (
+                                                                                    [library_pk] => 1
+                                                                        )
+
+                                                    [_row:Ice\\Core\\Model:private] => Array
+                                                                        (
+                                                                                    [library_name] => не определено
+                                                                                    [university__fk] => 
+                                                                        )
+
+                                                    [_json:Ice\\Core\\Model:private] => Array
+                                                                        (
+                                                                        )
+
+                                                    [_geo:Ice\\Core\\Model:private] => Array
+                                                                        (
+                                                                        )
+
+                                                    [_fk:Ice\\Core\\Model:private] => Array
+                                                                        (
+                                                                        )
+
+                                                    [_data:Ice\\Core\\Model:private] => Array
+                                                                        (
+                                                                        )
+
+                                                    [_affected:Ice\\Core\\Model:private] => Array
+                                                                        (
+                                                                        )
+
+)
+Field "library" not found in Model "Library_User_Link"' => [
+        'ru' => 'Could not set value:
+Ebs\\Model\\Library Object
+(
+                                                    [_pk:Ice\\Core\\Model:private] => Array
+                                                                        (
+                                                                                    [library_pk] => 1
+                                                                        )
+
+                                                    [_row:Ice\\Core\\Model:private] => Array
+                                                                        (
+                                                                                    [library_name] => не определено
+                                                                                    [university__fk] => 
+                                                                        )
+
+                                                    [_json:Ice\\Core\\Model:private] => Array
+                                                                        (
+                                                                        )
+
+                                                    [_geo:Ice\\Core\\Model:private] => Array
+                                                                        (
+                                                                        )
+
+                                                    [_fk:Ice\\Core\\Model:private] => Array
+                                                                        (
+                                                                        )
+
+                                                    [_data:Ice\\Core\\Model:private] => Array
+                                                                        (
+                                                                        )
+
+                                                    [_affected:Ice\\Core\\Model:private] => Array
+                                                                        (
+                                                                        )
+
+)
+Field "library" not found in Model "Library_User_Link"',
+    ],
+    'Could not set value:
+Ebs\\Model\\Library Object
+(
+                                [_pk:Ice\\Core\\Model:private] => Array
+                                                    (
+                                                                [library_pk] => 1
+                                                    )
+
+                                [_row:Ice\\Core\\Model:private] => Array
+                                                    (
+                                                                [library_name] => не определено
+                                                                [university__fk] => 
+                                                    )
+
+                                [_json:Ice\\Core\\Model:private] => Array
+                                                    (
+                                                    )
+
+                                [_geo:Ice\\Core\\Model:private] => Array
+                                                    (
+                                                    )
+
+                                [_fk:Ice\\Core\\Model:private] => Array
+                                                    (
+                                                    )
+
+                                [_data:Ice\\Core\\Model:private] => Array
+                                                    (
+                                                    )
+
+                                [_affected:Ice\\Core\\Model:private] => Array
+                                                    (
+                                                    )
+
+)
+Field "library" not found in Model "Library_User_Link"' => [
+        'ru' => 'Could not set value:
+Ebs\\Model\\Library Object
+(
+                                [_pk:Ice\\Core\\Model:private] => Array
+                                                    (
+                                                                [library_pk] => 1
+                                                    )
+
+                                [_row:Ice\\Core\\Model:private] => Array
+                                                    (
+                                                                [library_name] => не определено
+                                                                [university__fk] => 
+                                                    )
+
+                                [_json:Ice\\Core\\Model:private] => Array
+                                                    (
+                                                    )
+
+                                [_geo:Ice\\Core\\Model:private] => Array
+                                                    (
+                                                    )
+
+                                [_fk:Ice\\Core\\Model:private] => Array
+                                                    (
+                                                    )
+
+                                [_data:Ice\\Core\\Model:private] => Array
+                                                    (
+                                                    )
+
+                                [_affected:Ice\\Core\\Model:private] => Array
+                                                    (
+                                                    )
+
+)
+Field "library" not found in Model "Library_User_Link"',
+    ],
+    'Could not set value:
+Ebs\\Model\\Library Object
+(
+                [_pk:Ice\\Core\\Model:private] => Array
+                                (
+                                            [library_pk] => 1
+                                )
+
+                [_row:Ice\\Core\\Model:private] => Array
+                                (
+                                            [library_name] => не определено
+                                            [university__fk] => 
+                                )
+
+                [_json:Ice\\Core\\Model:private] => Array
+                                (
+                                )
+
+                [_geo:Ice\\Core\\Model:private] => Array
+                                (
+                                )
+
+                [_fk:Ice\\Core\\Model:private] => Array
+                                (
+                                )
+
+                [_data:Ice\\Core\\Model:private] => Array
+                                (
+                                )
+
+                [_affected:Ice\\Core\\Model:private] => Array
+                                (
+                                )
+
+)
+Field "library" not found in Model "Library_User_Link"' => [
+        'ru' => 'Could not set value:
+Ebs\\Model\\Library Object
+(
+                [_pk:Ice\\Core\\Model:private] => Array
+                                (
+                                            [library_pk] => 1
+                                )
+
+                [_row:Ice\\Core\\Model:private] => Array
+                                (
+                                            [library_name] => не определено
+                                            [university__fk] => 
+                                )
+
+                [_json:Ice\\Core\\Model:private] => Array
+                                (
+                                )
+
+                [_geo:Ice\\Core\\Model:private] => Array
+                                (
+                                )
+
+                [_fk:Ice\\Core\\Model:private] => Array
+                                (
+                                )
+
+                [_data:Ice\\Core\\Model:private] => Array
+                                (
+                                )
+
+                [_affected:Ice\\Core\\Model:private] => Array
+                                (
+                                )
+
+)
+Field "library" not found in Model "Library_User_Link"',
+    ],
+    'Could not set value:
+Ebs\\Model\\Library Object
+(
+        [_pk:Ice\\Core\\Model:private] => Array
+                (
+                        [library_pk] => 1
+                )
+
+        [_row:Ice\\Core\\Model:private] => Array
+                (
+                        [library_name] => не определено
+                        [university__fk] => 
+                )
+
+        [_json:Ice\\Core\\Model:private] => Array
+                (
+                )
+
+        [_geo:Ice\\Core\\Model:private] => Array
+                (
+                )
+
+        [_fk:Ice\\Core\\Model:private] => Array
+                (
+                )
+
+        [_data:Ice\\Core\\Model:private] => Array
+                (
+                )
+
+        [_affected:Ice\\Core\\Model:private] => Array
+                (
+                )
+
+)
+Field "library" not found in Model "Library_User_Link"' => [
+        'ru' => 'Could not set value:
+Ebs\\Model\\Library Object
+(
+        [_pk:Ice\\Core\\Model:private] => Array
+                (
+                        [library_pk] => 1
+                )
+
+        [_row:Ice\\Core\\Model:private] => Array
+                (
+                        [library_name] => не определено
+                        [university__fk] => 
+                )
+
+        [_json:Ice\\Core\\Model:private] => Array
+                (
+                )
+
+        [_geo:Ice\\Core\\Model:private] => Array
+                (
+                )
+
+        [_fk:Ice\\Core\\Model:private] => Array
+                (
+                )
+
+        [_data:Ice\\Core\\Model:private] => Array
+                (
+                )
+
+        [_affected:Ice\\Core\\Model:private] => Array
+                (
+                )
+
+)
+Field "library" not found in Model "Library_User_Link"',
+    ],
 ];

@@ -14,6 +14,7 @@ use Ice\Core\Data_Source;
 use Ice\Core\Exception;
 use Ice\Core\Model;
 use Ice\Core\Query;
+use Ice\Core\Query_Builder;
 use Ice\Helper\Arrays;
 use mysqli_stmt;
 
@@ -29,7 +30,7 @@ use mysqli_stmt;
  * @package Ice
  * @subpackage Data_Source
  *
- * @version 0.0
+ * @version 0.1
  * @since 0.0
  */
 class Mysqli extends Data_Source
@@ -209,21 +210,35 @@ class Mysqli extends Data_Source
 
         /** @var Model $modelclass */
         $modelclass = $query->getModelClass();
+        $pkFieldNames = $modelclass::getPkFieldNames();
 
-        $rows = $query->getInsertRows(); // TODO: Пока такой костыль.. Не умеет пока проставлять идентификаторы к записяв в момент вставки
+        $pkFieldName = count($pkFieldNames) == 1 ? reset($pkFieldNames) : null;
 
         $data[Data::RESULT_MODEL_CLASS] = $modelclass;
-        $data[DATA::RESULT_ROWS] = [$statement->insert_id => reset($rows)]; // TODO: Пока только одна запись (см. выше)
-        $data[DATA::AFFECTED_ROWS] = $statement->affected_rows;
-        $data[DATA::INSERT_ID] = $statement->insert_id;
 
-        if ($data[DATA::AFFECTED_ROWS] == 1) {
-            $row = reset($data[DATA::RESULT_ROWS]);
-            $row[$modelclass::getFieldName('/pk')] = $data[DATA::INSERT_ID];
-            $data[DATA::RESULT_ROWS] = [$row];
-        } else {
-            throw new Exception('need testing multiinsert in one query');
+        $insertId = $statement->insert_id;
+
+        foreach ($query->getBindParts()[Query_Builder::PART_VALUES] as $row) {
+            if ($pkFieldName) {
+                if (!$insertId) {
+                    Mysqli::getLogger()->warning('Insert id invalid', __FILE__, __LINE__);
+                }
+
+                if (!isset($row[$pkFieldName])) {
+                    $row[$pkFieldName] = $insertId;
+                    $insertId++;
+                } else {
+                    $insertId = null;
+                }
+            }
+
+            $insertKeys = array_intersect_key($row, array_flip($pkFieldNames));
+
+            $data[DATA::INSERT_ID][] = $insertKeys;
+            $data[DATA::RESULT_ROWS][implode('_', $insertKeys)] = $row;
         }
+
+        $data[DATA::AFFECTED_ROWS] = $statement->affected_rows;
 
         $statement->close();
 
@@ -254,9 +269,19 @@ class Mysqli extends Data_Source
         }
 
         $data = [];
-//
-//        $data[DATA::AFFECTED_ROWS] = $statement->affected_rows;
-//        $data[DATA::INSERT_ID] = $statement->insert_id;
+
+        /** @var Model $modelclass */
+        $modelclass = $query->getModelClass();
+        $pkFieldNames = $modelclass::getPkFieldNames();
+
+        $data[Data::RESULT_MODEL_CLASS] = $modelclass;
+
+        foreach ($query->getBindParts()[Query_Builder::PART_SET] as $row) {
+            $insertKey = implode('_', array_intersect_key($row, array_flip($pkFieldNames)));
+            $data[DATA::RESULT_ROWS][$insertKey] = $row;
+        }
+
+        $data[DATA::AFFECTED_ROWS] = $statement->affected_rows;
 
         $statement->close();
 

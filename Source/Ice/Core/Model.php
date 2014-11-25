@@ -942,23 +942,12 @@ abstract class Model
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.1
      * @since 0.0
      */
     public function insertOrUpdate($sourceName = null)
     {
-        $pk = $this->getPk();
-
-        if ($pk === null) {
-            return $this->insert($sourceName);
-        }
-
-        /** @var Model $class */
-        $class = get_class($this);
-
-        return $class::getModel($pk, $class::getPkFieldNames())
-            ? $this->update(null, null, $sourceName)
-            : $this->insert($sourceName);
+        return $this->update(null, null, $sourceName, true);
     }
 
     /**
@@ -980,19 +969,13 @@ abstract class Model
 
         $this->beforeInsert();
 
-        $fields = $modelClass::getMapping();
-        $flippedFields = array_flip($fields);
+        $insertId =  $modelClass::getQueryBuilder()
+            ->insert($this->_affected)
+            ->getQuery($sourceName)
+            ->getData()
+            ->getInsertId();
 
-        $modelScheme = $modelClass::getScheme();
-        $pkColumnNames = $modelScheme->getIndexes()['PRIMARY KEY']['PRIMARY'];
-
-        $this->_pk = [
-            $flippedFields[reset($pkColumnNames)] => $modelClass::getQueryBuilder()
-                ->insert($this->_affected)
-                ->getQuery($sourceName)
-                ->getData()
-                ->getInsertId()
-        ];
+        $this->_pk = reset($insertId);
 
         $this->afterInsert();
 
@@ -1085,15 +1068,15 @@ abstract class Model
      * @param $fieldName
      * @param null $value
      * @param null $sourceName
-     * @throws Exception
+     * @param bool $insert
      * @return Model|null
-     *
+     * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
      * @since 0.0
      */
-    public function update($fieldName = null, $value = null, $sourceName = null)
+    public function update($fieldName = null, $value = null, $sourceName = null, $insert = false)
     {
         if ($fieldName) {
             $this->set($fieldName, $value);
@@ -1104,11 +1087,14 @@ abstract class Model
 
         $this->beforeUpdate();
 
-        $modelClass::getQueryBuilder()
-            ->update($this->_affected)
-            ->pk($this->getPk())
-            ->getQuery($sourceName)
-            ->getData();
+        $queryBuilder = $modelClass::getQueryBuilder()
+            ->update($this->_affected, null, $insert);
+
+        if (!$insert) {
+            $queryBuilder->pk($this->getPk());
+        }
+
+        $queryBuilder->getQuery($sourceName)->getData();
 
         $this->afterUpdate();
 
