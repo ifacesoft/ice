@@ -11,6 +11,7 @@ namespace Ice\Action;
 
 use Ice\Core\Action;
 use Ice\Core\Action_Context;
+use Ice\Core\Logger;
 use Ice\Core\Model;
 
 /**
@@ -54,7 +55,7 @@ class Form_Model extends Action
         'inputDefaults' => [
             'groupping' => true,
             'reRenderActionNames' => [],
-            'filterFields' => null
+            'filterFields' => []
         ],
     ];
 

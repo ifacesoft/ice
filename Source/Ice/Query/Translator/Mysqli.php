@@ -93,18 +93,12 @@ class Mysqli extends Query_Translator
      */
     private function translateSet(array $data)
     {
-        $insert = array_shift($data);
-
-        if (empty($data)) {
-            return '';
-        }
-
         /** @var Model $modelClass */
         $modelClass = $data['modelClass'];
 
         $modelMapping = $modelClass::getMapping();
 
-        if ($insert || $data['rowCount'] > 1) {
+        if ($data['rowCount'] > 1) {
             $sql = $this->translateValues($data);
             $sql .= "\n" . self::ON_DUPLICATE_KEY_UPDATE;
             $sql .= implode(',', array_map(function ($fieldName) use ($modelMapping) {
@@ -138,6 +132,12 @@ class Mysqli extends Query_Translator
      */
     private function translateValues(array $data)
     {
+        $insert = array_shift($data);
+
+        if (empty($data)) {
+            return '';
+        }
+
         /** @var Model $modelClass */
         $modelClass = $data['modelClass'];
 
