@@ -450,7 +450,6 @@ class Mysqli extends Data_Source
                 : $column['CHARACTER_MAXIMUM_LENGTH'];
 
             $columns[$columnName] = [
-                'key' => $column['COLUMN_KEY'],
                 'extra' => $column['EXTRA'],
                 'type' => $column['COLUMN_TYPE'],
                 'dataType' => $column['DATA_TYPE'],

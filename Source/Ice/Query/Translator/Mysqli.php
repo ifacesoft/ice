@@ -99,14 +99,8 @@ class Mysqli extends Query_Translator
         $modelMapping = $modelClass::getMapping();
 
         if ($data['rowCount'] > 1) {
-            $sql = $this->translateValues($data);
-            $sql .= "\n" . self::ON_DUPLICATE_KEY_UPDATE;
-            $sql .= implode(',', array_map(function ($fieldName) use ($modelMapping) {
-                $columnName = $modelMapping[$fieldName];
-                return "\n\t" . '`' . $columnName . '`=' . self::SQL_CLAUSE_VALUES . '(`' . $columnName . '`)';
-            }, $data['fieldNames']));
-
-            return $sql;
+            $data['_update'] = true;
+            return $this->translateValues($data);
         }
 
         $sql = "\n" . self::SQL_STATEMENT_UPDATE .
@@ -132,7 +126,8 @@ class Mysqli extends Query_Translator
      */
     private function translateValues(array $data)
     {
-        $insert = array_shift($data);
+        $update = $data['_update'];
+        unset($data['_update']);
 
         if (empty($data)) {
             return '';
@@ -168,6 +163,14 @@ class Mysqli extends Query_Translator
 
         if ($data['rowCount'] > 1) {
             $sql .= str_repeat(',' . $values, $data['rowCount'] - 1);
+        }
+
+        if ($update) {
+            $sql .= "\n" . self::ON_DUPLICATE_KEY_UPDATE;
+            $sql .= implode(',', array_map(function ($fieldName) use ($modelMapping) {
+                $columnName = $modelMapping[$fieldName];
+                return "\n\t" . '`' . $columnName . '`=' . self::SQL_CLAUSE_VALUES . '(`' . $columnName . '`)';
+            }, $data['fieldNames']));
         }
 
         return $sql;

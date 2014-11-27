@@ -201,10 +201,9 @@ abstract class Model
     public static function getClass($modelClass = null)
     {
         if (!$modelClass) {
+            /** @var Model $modelClass */
             $modelClass = get_called_class();
         }
-
-        /** @var Model $modelClass */
 
         $modelClass = Object::getClass(__CLASS__, $modelClass);
 
