@@ -10,6 +10,7 @@
 namespace Ice\Query\Translator;
 
 use Ice\Core\Exception;
+use Ice\Core\Logger;
 use Ice\Core\Model;
 use Ice\Core\Query_Builder;
 use Ice\Core\Query_Translator;
@@ -93,26 +94,14 @@ class Mysqli extends Query_Translator
      */
     private function translateSet(array $data)
     {
-        $insert = array_shift($data);
-
-        if (empty($data)) {
-            return '';
-        }
-
         /** @var Model $modelClass */
         $modelClass = $data['modelClass'];
 
         $modelMapping = $modelClass::getMapping();
 
-        if ($insert || $data['rowCount'] > 1) {
-            $sql = $this->translateValues($data);
-            $sql .= "\n" . self::ON_DUPLICATE_KEY_UPDATE;
-            $sql .= implode(',', array_map(function ($fieldName) use ($modelMapping) {
-                $columnName = $modelMapping[$fieldName];
-                return "\n\t" . '`' . $columnName . '`=' . self::SQL_CLAUSE_VALUES . '(`' . $columnName . '`)';
-            }, $data['fieldNames']));
-
-            return $sql;
+        if ($data['rowCount'] > 1) {
+            $data['_update'] = true;
+            return $this->translateValues($data);
         }
 
         $sql = "\n" . self::SQL_STATEMENT_UPDATE .
@@ -138,6 +127,13 @@ class Mysqli extends Query_Translator
      */
     private function translateValues(array $data)
     {
+        $update = $data['_update'];
+        unset($data['_update']);
+
+        if (empty($data)) {
+            return '';
+        }
+
         /** @var Model $modelClass */
         $modelClass = $data['modelClass'];
 
@@ -168,6 +164,14 @@ class Mysqli extends Query_Translator
 
         if ($data['rowCount'] > 1) {
             $sql .= str_repeat(',' . $values, $data['rowCount'] - 1);
+        }
+
+        if ($update) {
+            $sql .= "\n" . self::ON_DUPLICATE_KEY_UPDATE;
+            $sql .= implode(',', array_map(function ($fieldName) use ($modelMapping) {
+                $columnName = $modelMapping[$fieldName];
+                return "\n\t" . '`' . $columnName . '`=' . self::SQL_CLAUSE_VALUES . '(`' . $columnName . '`)';
+            }, $data['fieldNames']));
         }
 
         return $sql;

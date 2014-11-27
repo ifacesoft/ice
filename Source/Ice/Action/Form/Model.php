@@ -54,7 +54,7 @@ class Form_Model extends Action
         'inputDefaults' => [
             'groupping' => true,
             'reRenderActionNames' => [],
-            'filterFields' => null
+            'filterFields' => []
         ],
     ];
 

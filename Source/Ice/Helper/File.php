@@ -63,14 +63,15 @@ class File
      * Load data from file
      *
      * @param $path
+     * @param bool $isRequire
      * @return mixed
-     *
+     * @throws \Ice\Core\Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.1
      * @since 0.0
      */
-    public static function loadData($path, $isRequere = true)
+    public static function loadData($path, $isRequire = true)
     {
         if (empty($path)) {
             Core_Logger::getInstance()->error('File path is empty', __FILE__, __LINE__);
@@ -80,7 +81,7 @@ class File
             return include $path;
         }
 
-        if ($isRequere) {
+        if ($isRequire) {
             Core_Logger::getInstance()->fatal(['File {$0} with data not found', $path], __FILE__, __LINE__);
         }
 

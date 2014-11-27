@@ -201,16 +201,17 @@ abstract class Model
     public static function getClass($modelClass = null)
     {
         if (!$modelClass) {
+            /** @var Model $modelClass */
             $modelClass = get_called_class();
         }
 
-        /** @var Model $modelClass */
+        $modelClass = Object::getClass(__CLASS__, $modelClass);
 
-        if (Object::isShortName($modelClass)) {
-            list($moduleAlias, $objectName) = explode(':', $modelClass);
-
-            $modelClass = $moduleAlias . '\\' . str_replace('_', '\\', Object::getName(__CLASS__)) . '\\' . $moduleAlias . '\\' . $objectName;
-        }
+//        if (Object::isShortName($modelClass)) {
+//            list($moduleAlias, $objectName) = explode(':', $modelClass);
+//
+//            $modelClass = $moduleAlias . '\\' . str_replace('_', '\\', Object::getName(__CLASS__)) . '\\' . $moduleAlias . '\\' . $objectName;
+//        }
 
         if (in_array('Ice\Core\Model\Factory_Delegate', class_implements($modelClass))) {
             $modelClass = get_parent_class($modelClass);
