@@ -2,23 +2,23 @@
 use Ice\Helper\Console;
 
 return [
-    'Ice\Action\Phpdoc_Generate' => [
-        'inputDefaults' => [
-            'vendor' => 'phpdocumentor/phpdocumentor',
-            'script' => 'bin/phpdoc',
-            'sourceDir' => MODULE_DIR . 'Source',
-            'apiDir' => MODULE_DIR . 'Resource/api/' . basename(MODULE_DIR) . '/' . MODULE_BRANCH,
-            'tpl' => 'responsive-twig'
-        ]
-    ],
-    'Ice\Action\Phpuml_Generate' => [
-        'inputDefaults' => [
-            'vendor' => 'zerkalica/phpuml',
-            'script' => 'bin/phpuml',
-            'sourceDir' => MODULE_DIR . 'Source',
-            'umlDir' => MODULE_DIR . 'Resource/uml/' . basename(MODULE_DIR) . '/' . MODULE_BRANCH
-        ]
-    ],
+//    'Ice\Action\Phpdoc_Generate' => [
+//        'inputDefaults' => [
+//            'vendor' => 'phpdocumentor/phpdocumentor',
+//            'script' => 'bin/phpdoc',
+//            'sourceDir' => MODULE_DIR . 'Source',
+//            'apiDir' => MODULE_DIR . 'Resource/api/' . basename(MODULE_DIR) . '/' . MODULE_BRANCH,
+//            'tpl' => 'responsive-twig'
+//        ]
+//    ],
+//    'Ice\Action\Phpuml_Generate' => [
+//        'inputDefaults' => [
+//            'vendor' => 'zerkalica/phpuml',
+//            'script' => 'bin/phpuml',
+//            'sourceDir' => MODULE_DIR . 'Source',
+//            'umlDir' => MODULE_DIR . 'Resource/uml/' . basename(MODULE_DIR) . '/' . MODULE_BRANCH
+//        ]
+//    ],
     'Ice\Action\Phpunit_Run' => [
         'inputDefaults' => [
             'vendor' => 'phpunit/phpunit',
@@ -36,9 +36,10 @@ return [
                         'default' => 'Ice:Module_Deploy',
                         'title' => 'Action [{$0}]: ',
                         'validators' => [
-                            'validator' => 'Ice:Pattern',
-                            'params' => '/^[:a-z]+$/i',
-                            'message' => 'Action mast conteints only letters and sign ":"'
+                            'Ice:Pattern' => [
+                                'params' => '/^[:a-z]+$/i',
+                                'message' => 'Action mast conteints only letters and sign ":"'
+                            ]
                         ]
                     ]
                 );
@@ -63,17 +64,6 @@ return [
                     [
                         'default' => 'Mp',
                         'title' => 'Module alias (short module name, 2-5 letters) [{$0}]: ',
-                        'validators' => [
-                            'Ice:Pattern' => '/^[a-z]+$/i'
-                        ]
-                    ]
-                );
-            },
-            'locale' => function ($param) {
-                return Console::getInteractive('Ice\Action\Module_Create', $param,
-                    [
-                        'default' => 'ru',
-                        'title' => 'Default locale [{$0}]: ',
                         'validators' => [
                             'Ice:Pattern' => '/^[a-z]+$/i'
                         ]

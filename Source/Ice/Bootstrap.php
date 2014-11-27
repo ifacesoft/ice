@@ -48,6 +48,7 @@ class Bootstrap
         define('ROOT_DIR', dirname(ICE_DIR) . '/');
 
         define('ICE_SOURCE_DIR', ICE_DIR . 'Source/');
+        define('ICE_RESOURCE_DIR', ICE_DIR . 'Resource/');
 
         $moduleName = basename(MODULE_DIR);
 

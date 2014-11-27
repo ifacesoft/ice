@@ -3,7 +3,7 @@
 .git
 .hg
 
-composer.lock
+../../composer.lock
 
 Resource/api
 Resource/uml

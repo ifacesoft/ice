@@ -30,4 +30,7 @@ return [
     'Equal: param {$0} is not valid' => [
         'ru' => 'Equal: param {$0} is not valid',
     ],
+    'Web or Module?' => [
+        'en' => 'Web or Module?',
+    ],
 ];

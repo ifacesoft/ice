@@ -84,4 +84,16 @@ return [
     'Action [{$0}]: ' => [
         'ru' => 'Action [{$0}]: ',
     ],
+    'Web project or ice module [{$0}]: ' => [
+        'en' => 'Web project or ice module [{$0}]: ',
+    ],
+    'Web project or ice module (web|module) [{$0}]: ' => [
+        'en' => 'Web project or ice module (web|module) [{$0}]: ',
+    ],
+    'Multilocale project (true|false) [{$0}]: ' => [
+        'en' => 'Multilocale project (true|false) [{$0}]: ',
+    ],
+    'Set default locale (en|ru) [{$0}]: ' => [
+        'en' => 'Set default locale (en|ru) [{$0}]: ',
+    ],
 ];

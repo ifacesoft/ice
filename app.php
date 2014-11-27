@@ -16,10 +16,6 @@ if (!defined('MODULE_DIR')) {
     define('MODULE_DIR', __DIR__ . '/');
 }
 
-if (!defined('MODULE_BRANCH')) {
-    define('MODULE_BRANCH', include 'branch.conf.php');
-}
-
 $bootstrapPath = MODULE_DIR . '../Ice/Source/Ice/Bootstrap.php';
 
 if (!file_exists($bootstrapPath)) {

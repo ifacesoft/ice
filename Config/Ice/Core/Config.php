@@ -44,7 +44,7 @@ return [
         'layoutActionName' => 'Ice:Layout_Main',
     ],
     'Ice\Core\Request' => [
+        'multilocale' => true,
         'locale' => 'en',
-        'multilocale' => true
     ],
 ];

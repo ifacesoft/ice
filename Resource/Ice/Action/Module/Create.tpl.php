@@ -20,8 +20,8 @@ server {
     proxy_buffers   4 256k;
     proxy_busy_buffers_size   512k;
 
-    access_log  <?= LOG_DIR ?>access.log  combined;
-    error_log  <?= LOG_DIR ?>error.log;
+    access_log  <?= ROOT_DIR ?>_log/<?= $moduleName ?>/access.log  combined;
+    error_log  <?= ROOT_DIR ?>_log/<?= $moduleName ?>/error.log;
 
     root <?= ROOT_DIR ?><?= $moduleName ?>/Web;
     index index.php;
@@ -77,6 +77,7 @@ server {
 
     Alias /resource/ <?= RESOURCE_DIR ?>
 
+
     CustomLog <?= LOG_DIR ?>access.log combined
     ErrorLog <?= LOG_DIR ?>error.log
 
@@ -88,7 +89,7 @@ server {
 </VirtualHost>
 
 
-<?= Console::getText('ATTENTION!!! FIRST READ UPPER FOR VALID INSTALL! ', Console::C_RED_B, Console::BG_YELLOW) ?>
+<?= Console::getText('ATTENTION!!! FIRST READ UPPER FOR VALID INSTALL! ', Console::C_RED_B) ?>
 
 
 <?= Console::getText('Congratulations!' . "\n" .  'After web-server setting open in browser: http://' . strtolower($moduleName) . '.local', Console::C_GREEN_B) ?>

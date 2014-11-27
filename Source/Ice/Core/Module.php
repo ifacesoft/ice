@@ -116,7 +116,12 @@ class Module extends Container
     {
         if (self::$_modules === null) {
             self::$_modules = [];
-            Module::loadConfig(MODULE_DIR, MODULE_BRANCH, self::$_modules);
+            Module::loadConfig(MODULE_DIR, 'master', self::$_modules);
+
+            $iceModule = File::loadData(ICE_DIR . 'Config/Ice/Core/Module.php')['module'];
+            $iceModule['path'] = ICE_DIR;
+
+            self::$_modules['Ice'] = $iceModule;
         }
 
         return empty($moduleAlias) ? self::$_modules : self::$_modules[$moduleAlias];
