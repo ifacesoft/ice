@@ -104,6 +104,8 @@ abstract class Model
      */
     private function __construct(array $row, $pk = null)
     {
+        $this->_pk = $pk;
+
         /** @var Model $modelClass */
         $modelClass = self::getClass();
         $lowercaseModelName = strtolower(self::getClassName());
