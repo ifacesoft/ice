@@ -278,6 +278,7 @@ class Model_Scheme extends Container
      */
     public function getIndexes()
     {
+        Logger::debugDie($this->_modelScheme);
         return $this->_modelScheme['scheme']['indexes'];
     }
 }

@@ -16,8 +16,8 @@ return [
         'name' => 'Ice Php Framework',
         'url' => 'http://iceframework.net',
         'authors' => 'dp <denis.a.shestakov@gmail.com>',
-        'vcs' => 'mercurial',
-        'source' => 'http://ifacesoft.ru/hg/Ice/',
+        'vcs' => 'git',
+        'source' => 'https://github.com/ifacesoft/Ice.git',
     ],
     'modules' => []
 ];

@@ -106,6 +106,7 @@ abstract class Model
     {
         /** @var Model $modelClass */
         $modelClass = self::getClass();
+        $lowercaseModelName = strtolower(self::getClassName());
 
         $modelScheme = $modelClass::getScheme();
         $fields = $modelClass::getMapping();
@@ -147,6 +148,16 @@ abstract class Model
                 $this->set($fieldName, $row[$fieldName]);
                 unset($row[$fieldName]);
                 continue;
+            }
+
+            $length = strlen($lowercaseModelName);
+            if (substr($fieldName, 0, $length) === $lowercaseModelName && strlen($fieldName) > $length + 1) {
+                $field = '/' . substr($fieldName, $length + 1);
+                if (array_key_exists($field, $row)) {
+                    $this->set($field, $row[$field]);
+                    unset($row[$field]);
+                    continue;
+                }
             }
 
             foreach (['__json', '__fk', '_geo'] as $ext) {
@@ -947,22 +958,21 @@ abstract class Model
      */
     public function insertOrUpdate($sourceName = null)
     {
-        return $this->update(null, null, $sourceName, true);
+        return $this->insert($sourceName, true);
     }
 
     /**
      * Execute insert into data source
      *
      * @param string $sourceName
-     * @throws Exception
+     * @param bool $update
      * @return Model|null
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.1
      * @since 0.0
      */
-    public function insert($sourceName = null)
+    public function insert($sourceName = null, $update = false)
     {
         /** @var Model $modelClass */
         $modelClass = get_class($this);
@@ -970,7 +980,7 @@ abstract class Model
         $this->beforeInsert();
 
         $insertId =  $modelClass::getQueryBuilder()
-            ->insert($this->_affected)
+            ->insert($this->_affected, $update)
             ->getQuery($sourceName)
             ->getData()
             ->getInsertId();
@@ -1068,7 +1078,6 @@ abstract class Model
      * @param $fieldName
      * @param null $value
      * @param null $sourceName
-     * @param bool $insert
      * @return Model|null
      * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
@@ -1076,7 +1085,7 @@ abstract class Model
      * @version 0.0
      * @since 0.0
      */
-    public function update($fieldName = null, $value = null, $sourceName = null, $insert = false)
+    public function update($fieldName = null, $value = null, $sourceName = null)
     {
         if ($fieldName) {
             $this->set($fieldName, $value);
@@ -1087,14 +1096,10 @@ abstract class Model
 
         $this->beforeUpdate();
 
-        $queryBuilder = $modelClass::getQueryBuilder()
-            ->update($this->_affected, null, $insert);
-
-        if (!$insert) {
-            $queryBuilder->pk($this->getPk());
-        }
-
-        $queryBuilder->getQuery($sourceName)->getData();
+        $modelClass::getQueryBuilder()
+            ->update($this->_affected)
+            ->pk($this->getPk())
+            ->getQuery($sourceName)->getData();
 
         $this->afterUpdate();
 

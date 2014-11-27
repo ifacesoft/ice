@@ -96,10 +96,10 @@ class Query_Builder
         self::PART_SELECT => [
             '_calcFoundRows' => null,
         ],
-        self::PART_VALUES => [],
-        self::PART_SET => [
-            '_insert' => null,
+        self::PART_VALUES => [
+            '_update' => null,
         ],
+        self::PART_SET => [],
         self::PART_JOIN => [],
         self::PART_WHERE => [
             '_delete' => null,
@@ -108,7 +108,6 @@ class Query_Builder
         self::PART_ORDER => [],
         self::PART_LIMIT => []
     ];
-
 
     /**
      * Query binds
@@ -368,7 +367,7 @@ class Query_Builder
     public function pk($pk, $modelClass = null, $tableAlias = null, $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
     {
         if (empty($pk)) {
-            throw new Exception('Primary key is empty');
+            return $this;
         }
 
         if (!is_array($pk)) {
@@ -1017,26 +1016,25 @@ class Query_Builder
      *      ])
      * ```
      *
-     * @param $key
-     * @param null $value
+     * @param array $data Key-value array
+     * @param bool $update
      * @return Query_Builder
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.1
      * @since 0.0
      */
-    public function insert($key, $value = null)
+    public function insert(array $data, $update = false)
     {
         $this->_queryType = Query_Builder::TYPE_INSERT;
-        return $this->affect($key, $value, Query_Builder::PART_VALUES);
+        $this->_sqlParts[Query_Builder::PART_VALUES]['_update'] = $update;
+        return $this->affect($data, Query_Builder::PART_VALUES);
     }
 
     /**
      * Affect query
      *
-     * @param $key
-     * @param null $value
+     * @param array $data Key-value array
      * @param $part
      * @return Query_Builder
      * @author dp <denis.a.shestakov@gmail.com>
@@ -1044,11 +1042,11 @@ class Query_Builder
      * @version 0.1
      * @since 0.1
      */
-    private function affect($key, $value, $part)
+    private function affect(array $data, $part)
     {
         $modelClass = $this->getModelClass();
 
-        if (empty($key)) {
+        if (empty($data)) {
             $this->_sqlParts[$part] = array_merge(
                 $this->_sqlParts[$part], [
                     'modelClass' => $modelClass,
@@ -1059,17 +1057,13 @@ class Query_Builder
             return $this;
         }
 
-        if ($value !== null) {
-            return $this->affect([[$key => $value]], $value, $part);
-        }
-
-        if (!is_array(reset($key))) {
-            return $this->affect([$key], $value, $part);
+        if (!is_array(reset($data))) {
+            return $this->affect([$data], $part);
         }
 
         $fieldNames = [];
 
-        foreach (array_keys(reset($key)) as $fieldName) {
+        foreach (array_keys(reset($data)) as $fieldName) {
             $fieldNames[] = $modelClass::getFieldName($fieldName);
         }
 
@@ -1077,13 +1071,13 @@ class Query_Builder
             $this->_sqlParts[$part], [
                 'modelClass' => $modelClass,
                 'fieldNames' => $fieldNames,
-                'rowCount' => count($key)
+                'rowCount' => count($data)
             ]
         );
 
         $this->appendCacheTag($modelClass, $fieldNames, false, true);
 
-        $this->_bindParts[$part] = array_merge($this->_bindParts[$part], $key);
+        $this->_bindParts[$part] = array_merge($this->_bindParts[$part], $data);
 
         return $this;
     }
@@ -1091,20 +1085,17 @@ class Query_Builder
     /**
      * Set data for set query part of update
      *
-     * @param $key
-     * @param null $value
-     * @param bool $insert
+     * @param array $data Key-value array
      * @return Query_Builder
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.1
      * @since 0.0
      */
-    public function update($key, $value = null, $insert = false)
+    public function update(array $data)
     {
         $this->_queryType = Query_Builder::TYPE_UPDATE;
-        $this->_sqlParts[Query_Builder::PART_SET]['_insert'] = $insert;
-        return $this->affect($key, $value, Query_Builder::PART_SET);
+        return $this->affect($data, Query_Builder::PART_SET);
     }
 
     /**

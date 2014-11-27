@@ -220,10 +220,6 @@ class Mysqli extends Data_Source
 
         foreach ($query->getBindParts()[Query_Builder::PART_VALUES] as $row) {
             if ($pkFieldName) {
-                if (!$insertId) {
-                    Mysqli::getLogger()->warning('Insert id invalid', __FILE__, __LINE__);
-                }
-
                 if (!isset($row[$pkFieldName])) {
                     $row[$pkFieldName] = $insertId;
                     $insertId++;

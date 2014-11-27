@@ -15,6 +15,7 @@ use Ice\Core;
 use Ice\Core\Model\Collection;
 use Ice\Helper\Arrays;
 use Ice\Helper\Console;
+use Ice\Helper\Memory;
 use Ice\Helper\Serializer;
 use Iterator;
 use Serializable;
@@ -129,7 +130,7 @@ class Data extends Container implements Iterator, ArrayAccess, Countable, Serial
             $message = str_replace("\t", '', str_replace("\n", ' ', $query->getSql())) . ' [' . implode(', ', $query->getBinds()) . ']';
 
             if (Request::isCli()) {
-                Query::getLogger()->info($message, Logger::GREY, false);
+                Query::getLogger()->info($message . ' ' . Memory::memoryGetUsagePeak(), Logger::GREY, false);
             } else {
                 fb($message);
             }
@@ -195,7 +196,7 @@ class Data extends Container implements Iterator, ArrayAccess, Countable, Serial
             $message = str_replace("\t", '', str_replace("\n", ' ', $query->getSql())) . ' [' . implode(', ', $query->getBinds()) . ']';
 
             if (Request::isCli()) {
-                Query::getLogger()->info($message, Logger::GREY, false);
+                Query::getLogger()->info($message . ' ' . Memory::memoryGetUsagePeak(), Logger::GREY, false);
             } else {
                 fb($message);
             }
