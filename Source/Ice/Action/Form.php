@@ -130,6 +130,12 @@ class Form extends Action
             }
         }
 
+        $reRenderActionNames = '';
+
+        foreach ($input['reRenderActionNames'] as $reRenderAction) {
+            $reRenderActionNames .= ',\'' . $reRenderAction . '\'';
+        }
+
         return [
             'groupping' => $input['groupping'],
             'fields' => $result,
@@ -137,7 +143,7 @@ class Form extends Action
             'formClass' => $formClass,
             'formKey' => $formKey,
             'submitActionName' => $input['submitActionName'],
-            'reRenderActionNames' => empty($input['reRenderActionNames']) ? '' : implode(',', $input['reRenderActionNames']),
+            'reRenderActionNames' => ltrim($reRenderActionNames, ','),
             'filterFields' => implode(',', $filterFields),
             'submitTitle' => $input['submitTitle'],
             'redirect' => $input['redirect']

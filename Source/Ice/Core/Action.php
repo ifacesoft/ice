@@ -14,6 +14,7 @@ use Ice\Core;
 use Ice\Exception\Redirect;
 use Ice\Helper\Arrays;
 use Ice\Helper\Hash;
+use Ice\Helper\Json;
 
 /**
  * Class Action
@@ -132,6 +133,12 @@ abstract class Action extends Container
             $config = $actionClass::getConfig();
 
             list($input, $errors) = $this->getInput($config, $data);
+
+            if (Environment::isDevelopment()) {
+                if (!Request::isCli()) {
+                    fb('action: ' . $actionClass . ' ' . Json::encode($input));
+                }
+            }
 
             $hash = Hash::get($input, Hash::HASH_CRC32);
             $inputHash = $actionClass . '/' . $hash;

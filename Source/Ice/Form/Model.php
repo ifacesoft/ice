@@ -10,6 +10,7 @@
 namespace Ice\Form;
 
 use Ice\Core\Form;
+use Ice\Core\Logger;
 use Ice\Core\Model as Core_Model;
 
 /**

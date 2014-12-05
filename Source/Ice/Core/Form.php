@@ -382,10 +382,11 @@ abstract class Form extends Container
      */
     public function validate()
     {
-        $var = $this->getFilterFields(); // todo: may be !((bool) $this->getFilterFields())
+        $var = $this->getFilterFields();
+
         $validateScheme = empty($var)
             ? $this->getValidateScheme()
-            : array_intersect_key($this->getValidateScheme(), array_flip($this->getFilterFields()));
+            : array_intersect_key($this->getValidateScheme(), array_flip($var));
 
         return Validator::validateByScheme($this->getValues(), $validateScheme);
     }
@@ -432,7 +433,11 @@ abstract class Form extends Container
      */
     public function getValues()
     {
-        return $this->_values;
+        $var = $this->getFilterFields();
+
+        return empty($var)
+            ? $this->_values
+            : array_intersect_key($this->_values, array_flip($var));
     }
 
     /**

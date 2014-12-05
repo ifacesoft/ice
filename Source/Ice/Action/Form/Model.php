@@ -11,7 +11,6 @@ namespace Ice\Action;
 
 use Ice\Core\Action;
 use Ice\Core\Action_Context;
-use Ice\Core\Logger;
 use Ice\Core\Model;
 
 /**
@@ -55,7 +54,10 @@ class Form_Model extends Action
         'inputDefaults' => [
             'groupping' => true,
             'reRenderActionNames' => [],
-            'filterFields' => []
+            'filterFields' => [],
+            'submitActionName' => 'Ice:Submit',
+            'submitTitle' => 'Submit',
+            'redirect' => ''
         ],
     ];
 
@@ -86,7 +88,10 @@ class Form_Model extends Action
         $data = [
             'form' => $form,
             'submitActionName' => $input['submitActionName'],
-            'reRenderActionNames' => $input['reRenderActionNames']
+            'reRenderActionNames' => $input['reRenderActionNames'],
+            'groupping' => $input['groupping'],
+            'submitTitle' => $input['submitTitle'],
+            'redirect' => $input['redirect'],
         ];
 
         $actionContext->addAction('Ice:Form', $data);
