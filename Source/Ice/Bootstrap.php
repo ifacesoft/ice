@@ -76,6 +76,8 @@ class Bootstrap
         include_once ICE_SOURCE_DIR . 'Ice/Core/Response.php';
         include_once ICE_SOURCE_DIR . 'Ice/Helper/Php.php';
         include_once ICE_SOURCE_DIR . 'Ice/Helper/Directory.php';
+        include_once ICE_SOURCE_DIR . 'Ice/Data/Provider/Apc.php';
+        include_once ICE_SOURCE_DIR . 'Ice/Data/Provider/Redis.php';
 
         try {
             setlocale(LC_ALL, 'en_US.UTF-8');

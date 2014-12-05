@@ -1054,6 +1054,9 @@ class Query_Builder
                     'rowCount' => 0
                 ]
             );
+
+            $this->_bindParts[$part] = [[]];
+
             return $this;
         }
 

@@ -278,6 +278,10 @@ class Model_Scheme extends Container
      */
     public function getIndexes()
     {
+        if (!isset($this->_modelScheme['scheme']['indexes'])) {
+            Model_Scheme::getLogger()->fatal('Scheme indexes not found. Run Ice:Module_Deploy', __FILE__, __LINE__, null, $this->_modelScheme);
+        }
+
         return $this->_modelScheme['scheme']['indexes'];
     }
 }

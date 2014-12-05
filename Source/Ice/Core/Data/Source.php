@@ -66,22 +66,25 @@ abstract class Data_Source extends Container
     }
 
     /**
-     * Create new instance of data source
+     * Return source data provider
      *
-     * @param $scheme
-     * @param $hash
-     * @return Data_Source
+     * @return Data_Provider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
      * @since 0.0
      */
-    protected static function create($scheme, $hash = null)
+    public function getSourceDataProvider()
     {
-        $sourceDataProviderKey = Data_Source::getConfig()->get($scheme);
-        $dataSourceClass = Object::getClass(Data_Source::getClass(), strstr($sourceDataProviderKey, '/', true));
-        return new $dataSourceClass($scheme, $sourceDataProviderKey);
+        /** @var Data_Provider_Mysqli $sourceDataProvider */
+        $sourceDataProvider = Data_Provider::getInstance($this->_sourceDataProviderKey);
+
+        if ($sourceDataProvider->getScheme() != $this->_scheme) {
+            $sourceDataProvider->setScheme($this->_scheme);
+        }
+
+        return $sourceDataProvider;
     }
 
     /**
@@ -96,8 +99,41 @@ abstract class Data_Source extends Container
      */
     public static function getDefaultKey()
     {
-        $schemes = array_keys(Data_Source::getConfig()->gets());
-        return reset($schemes);
+        $schemes = Data_Source::getConfig()->get();
+        return is_array($schemes) ? reset($schemes) : $schemes;
+    }
+
+    /**
+     * Create new instance of data source
+     *
+     * @param $scheme
+     * @param $hash
+     * @return Data_Source
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
+     */
+    protected static function create($scheme, $hash = null)
+    {
+        $sourceDataProviderKey = null;
+
+        foreach (Data_Source::getConfig()->gets() as $dataSourceKey => $configSchemes) {
+            foreach ((array) $configSchemes as $configScheme) {
+                if ($configScheme == $scheme) {
+                    $sourceDataProviderKey = $dataSourceKey;
+                    break;
+                }
+            }
+        }
+
+        if (empty($sourceDataProviderKey)) {
+            Data_Source::getLogger()->fatal(['Data source not found for scheme {$0}', $scheme], __FILE__, __LINE__);
+        }
+
+        $dataSourceClass = Object::getClass(Data_Source::getClass(), strstr($sourceDataProviderKey, '/', true));
+        return new $dataSourceClass($scheme, $sourceDataProviderKey);
     }
 
     /**
@@ -184,28 +220,6 @@ abstract class Data_Source extends Container
     public function getCacheDataProvider()
     {
         return Data_Source::getInstance('cache');
-    }
-
-    /**
-     * Return source data provider
-     *
-     * @return Data_Provider
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function getSourceDataProvider()
-    {
-        /** @var Data_Provider_Mysqli $sourceDataProvider */
-        $sourceDataProvider = Data_Provider::getInstance($this->_sourceDataProviderKey);
-
-        if ($sourceDataProvider->getScheme() != $this->_scheme) {
-            $sourceDataProvider->setScheme($this->_scheme);
-        }
-
-        return $sourceDataProvider;
     }
 
     /**

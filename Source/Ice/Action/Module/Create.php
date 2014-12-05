@@ -143,6 +143,9 @@ class Module_Create extends Action
                         strtolower($moduleAlias) => $moduleAlias,
                     ]
                 ],
+                'Ice\Core\Data_Source' => [
+                    'Ice:Mysqli/default' => $input['scheme'],
+                ],
                 'Ice\Core\Request' => [
                     'multilocale' => $isMultilocale,
                     'locale' => $defaultLocale,

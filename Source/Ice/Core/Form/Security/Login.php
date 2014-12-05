@@ -2,10 +2,6 @@
 
 namespace Ice\Core;
 
-use Ice\Helper\Arrays;
-use Ice\Model\Account;
-use Ice\Model\User;
-
 abstract class Form_Security_Login extends Form
 {
     /**

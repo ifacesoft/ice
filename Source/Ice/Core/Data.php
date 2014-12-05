@@ -778,7 +778,7 @@ class Data extends Container implements Iterator, ArrayAccess, Countable, Serial
     /**
      * Return inserted id
      *
-     * @return int
+     * @return array
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *

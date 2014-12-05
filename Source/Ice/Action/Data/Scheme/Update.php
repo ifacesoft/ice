@@ -64,8 +64,10 @@ class Data_Scheme_Update extends Action
      */
     protected function run(array $input, Action_Context $actionContext)
     {
-        foreach (array_keys(Data_Source::getConfig()->gets()) as $scheme) {
-            Data_Scheme::update($scheme, $input['force']);
+        foreach (Data_Source::getConfig()->gets() as $schemes) {
+            foreach ((array)$schemes as $scheme) {
+                Data_Scheme::update($scheme, $input['force']);
+            }
         }
     }
 }

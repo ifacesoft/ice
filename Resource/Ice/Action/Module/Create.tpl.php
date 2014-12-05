@@ -92,6 +92,6 @@ server {
 <?= Console::getText('ATTENTION!!! FIRST READ UPPER FOR VALID INSTALL! ', Console::C_RED_B) ?>
 
 
-<?= Console::getText('Congratulations!' . "\n" .  'After web-server setting open in browser: http://' . strtolower($moduleName) . '.local', Console::C_GREEN_B) ?>
+<?= Console::getText('Congratulations!' . "\n" .  'After web-server setting and restart open in browser: http://' . strtolower($moduleName) . '.local', Console::C_GREEN_B) ?>
 
 

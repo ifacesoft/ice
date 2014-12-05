@@ -65,4 +65,16 @@ class Navbar extends Menu
     {
         return $this->addItem('button', $title, $onclick, $position, $isActive, $template);
     }
+
+    /**
+     * Return instance of navbar menu
+     *
+     * @param null $key
+     * @param null $ttl
+     * @return Navbar
+     */
+    public static function getInstance($key = null, $ttl = null)
+    {
+        return parent::getInstance($key, $ttl);
+    }
 }

@@ -27,4 +27,7 @@ return [
     '#1146: {$0}' => [
         'ru' => '#1146: {$0}',
     ],
+    'Data source not found for scheme {$0}' => [
+        'ru' => 'Data source not found for scheme {$0}',
+    ],
 ];
