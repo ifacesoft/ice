@@ -259,7 +259,7 @@ class Logger
             Response::send($message);
             return $logging ? $message : '';
         } else {
-            $message = '<div id="' . microtime(true) . '" class="alert alert-' . $type . '">' . $message . '</div>';
+            $message = '<div class="alert alert-' . $type . '">' . $message . '</div>';
             return $logging ? self::addLog($message) : $message;
         }
     }
@@ -430,7 +430,7 @@ class Logger
                 Response::send(
                     Request::isCli()
                         ? Console::getText($var, Console::C_CYAN) . "\n"
-                        : '<div id="' . microtime(true) . '" class="alert alert-' . self::INFO . '">' . highlight_string('<?php // Debug value:' . "\n" . $var, true) . '</div>'
+                        : '<div class="alert alert-' . self::INFO . '">' . highlight_string('<?php // Debug value:' . "\n" . $var, true) . '</div>'
                 );
 
                 $logFile = Directory::get(LOG_DIR) . date('Y-m-d') . '/DEBUG.log';

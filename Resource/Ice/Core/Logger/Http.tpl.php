@@ -3,7 +3,7 @@ use Ice\Helper\Php;
 
 ?><meta charset="UTF-8"/>
 <div style="font-size: 12px;font-family: Tahoma, Geneva, sans-serif; background-color: #ffffff; color: #000000;">
-    <div id="<?= microtime(true); ?>" class="alert alert-<?= $type ?>">
+    <div class="alert alert-<?= $type ?>">
         <?php if (isset($previous)) { ?>
             <hr>
             <div style="color: #000000;">
