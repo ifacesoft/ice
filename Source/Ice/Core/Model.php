@@ -153,10 +153,10 @@ abstract class Model
             }
 
             $length = strlen($lowercaseModelName);
-            if (substr($fieldName, 0, $length) === $lowercaseModelName && strlen($fieldName) > $length + 1) {
+            if (strpos($fieldName, $lowercaseModelName) === 0) {
                 $field = '/' . substr($fieldName, $length + 1);
                 if (array_key_exists($field, $row)) {
-                    $this->set($field, $row[$field]);
+                    $this->set($fieldName, $row[$field]);
                     unset($row[$field]);
                     continue;
                 }

@@ -168,7 +168,7 @@ class Module_Create extends Action
 
             $environment = [
                 'production' => [
-                    'Ice/Core/Data_Provider' => [
+                    'Ice\Core\Data_Provider' => [
                         'Ice\Data\Provider\Mysqli' => [
                             'default' => [
                                 'username' => $input['username'],

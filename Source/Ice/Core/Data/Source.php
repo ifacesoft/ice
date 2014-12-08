@@ -120,7 +120,7 @@ abstract class Data_Source extends Container
         $sourceDataProviderKey = null;
 
         foreach (Data_Source::getConfig()->gets() as $dataSourceKey => $configSchemes) {
-            foreach ((array) $configSchemes as $configScheme) {
+            foreach ((array)$configSchemes as $configScheme) {
                 if ($configScheme == $scheme) {
                     $sourceDataProviderKey = $dataSourceKey;
                     break;
@@ -220,6 +220,23 @@ abstract class Data_Source extends Container
     public function getCacheDataProvider()
     {
         return Data_Source::getInstance('cache');
+    }
+
+    /**
+     * Return instance of data source
+     *
+     * @param null $key
+     * @param null $ttl
+     * @return Data_Source
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.2
+     * @since 0.2
+     */
+    public static function getInstance($key = null, $ttl = null)
+    {
+        return parent::getInstance($key, $ttl);
     }
 
     /**
