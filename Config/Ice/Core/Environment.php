@@ -88,7 +88,7 @@ return [
             'Ice\Core\Query_Builder' => [
                 'instance' => 'Ice:Object/query_builder',
             ],
-            'Ice\Core\Data' => [
+            'Ice\Core\Query_Result' => [
                 'instance' => 'Ice:Object/data',
             ],
             'Ice\Core\Code_Generator' => [
@@ -169,7 +169,7 @@ return [
             'Ice\Core\Query_Builder' => [
                 'instance' => 'Ice:Registry/query_builder',
             ],
-            'Ice\Core\Data' => [
+            'Ice\Core\Query_Result' => [
                 'instance' => 'Ice:Registry/data',
             ],
             'Ice\Core\Code_Generator' => [

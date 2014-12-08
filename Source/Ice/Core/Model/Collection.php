@@ -9,7 +9,7 @@
 
 namespace Ice\Core\Model;
 
-use Ice\Core\Data;
+use Ice\Core\Query_Result;
 use Ice\Core\Exception;
 use Ice\Core\Model;
 use Ice\Core\Model\Collection\Iterator;
@@ -36,21 +36,21 @@ class Collection implements IteratorAggregate
     /**
      * Data of model collection
      *
-     * @var Data
+     * @var Query_Result
      */
     private $_data = null;
 
     /**
      * Private constructor for model collection
      *
-     * @param Data $data
+     * @param Query_Result $data
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.1
      * @since 0.0
      */
-    private function __construct(Data $data)
+    private function __construct(Query_Result $data)
     {
         $this->_data = $data;
     }
@@ -58,14 +58,14 @@ class Collection implements IteratorAggregate
     /**
      * Create new instance of model collection
      *
-     * @param Data $data
+     * @param Query_Result $data
      * @return Collection
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.1
      * @since 0.0
      */
-    public static function create(Data $data)
+    public static function create(Query_Result $data)
     {
         return new Collection($data);
     }
@@ -89,7 +89,7 @@ class Collection implements IteratorAggregate
      * Return raw data
      *
      * @param string $fieldNames
-     * @return Data
+     * @return Query_Result
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
@@ -111,7 +111,7 @@ class Collection implements IteratorAggregate
      * Set raw data
      *
      * @deprecated
-     * @param Data $data
+     * @param Query_Result $data
      * @throws Exception
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -119,7 +119,7 @@ class Collection implements IteratorAggregate
      * @version 0.0
      * @since 0.0
      */
-    public function setData(Data $data)
+    public function setData(Query_Result $data)
     {
         $this->_data = $data;
     }
@@ -210,7 +210,7 @@ class Collection implements IteratorAggregate
         }
 
         if ($this->_data === null) {
-            $this->setData(new Data([DATA::RESULT_MODEL_CLASS => $this->_modelClass]));
+            $this->setData(new Query_Result([Query_Result::RESULT_MODEL_CLASS => $this->_modelClass]));
         }
 
         $this->getData()->setRow($model->getPk(), $model->get());

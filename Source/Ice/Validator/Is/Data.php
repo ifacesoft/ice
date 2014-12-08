@@ -9,7 +9,7 @@
 
 namespace Ice\Validator;
 
-use Ice\Core\Data;
+use Ice\Core\Query_Result;
 use Ice\Core\Validator;
 
 /**
@@ -52,6 +52,6 @@ class Is_Data extends Validator
      */
     public function validate($data, $scheme = null)
     {
-        return $data instanceof Data;
+        return $data instanceof Query_Result;
     }
 }

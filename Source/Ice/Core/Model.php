@@ -735,7 +735,7 @@ abstract class Model
      */
     public static function getEmptyCollection()
     {
-        return Collection::create(new Data([Data::RESULT_MODEL_CLASS => self::getClass()]));
+        return Collection::create(new Query_Result([Query_Result::RESULT_MODEL_CLASS => self::getClass()]));
     }
 
     /**

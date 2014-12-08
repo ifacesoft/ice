@@ -39,23 +39,11 @@ return [
     'Smarty: Unable to load template file \'Wi/Action/Cookbook/Menu.tpl\'' => [
         'ru' => 'Smarty: Unable to load template file \'Wi/Action/Cookbook/Menu.tpl\'',
     ],
-    'Smarty: Syntax error in template "/home/dp/PhpstormProjects/ifs/WwwIce/Resource/Wi/Action/Cookbook/own/layout.tpl"  on line 100 "/**  public static " . \'$config\' . " = ["  - Unexpected " ", expected one of: "","" , ")"' => [
-        'ru' => 'Smarty: Syntax error in template "/home/dp/PhpstormProjects/ifs/WwwIce/Resource/Wi/Action/Cookbook/own/layout.tpl"  on line 100 "/**  public static " . \'$config\' . " = ["  - Unexpected " ", expected one of: "","" , ")"',
-    ],
-    'Smarty: Syntax error in template "/home/dp/PhpstormProjects/ifs/WwwIce/Resource/Wi/Action/Cookbook/own/layout.tpl"  on line 135 "<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">"  - Unexpected "X", expected one of: "","" , ")"' => [
-        'ru' => 'Smarty: Syntax error in template "/home/dp/PhpstormProjects/ifs/WwwIce/Resource/Wi/Action/Cookbook/own/layout.tpl"  on line 135 "<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">"  - Unexpected "X", expected one of: "","" , ")"',
-    ],
-    'Smarty: Syntax error in template "/home/dp/PhpstormProjects/ifs/WwwIce/Resource/Wi/Action/Cookbook/own/layout.tpl"  on line 130 "{echo \'<!DOCTYPE html>" unknown tag "echo"' => [
-        'ru' => 'Smarty: Syntax error in template "/home/dp/PhpstormProjects/ifs/WwwIce/Resource/Wi/Action/Cookbook/own/layout.tpl"  on line 130 "{echo \'<!DOCTYPE html>" unknown tag "echo"',
-    ],
     'Smarty: Unable to load template file \'Wi/Action/Index.tpl\'' => [
         'ru' => 'Smarty: Unable to load template file \'Wi/Action/Index.tpl\'',
     ],
     'Smarty: Unable to load template file \'Wi/Action/Tour.tpl\'' => [
         'ru' => 'Smarty: Unable to load template file \'Wi/Action/Tour.tpl\'',
-    ],
-    'Smarty: Syntax error in template "/home/dp/PhpstormProjects/ifs/WwwIce/Resource/Wi/Action/Layout/Landing.tpl"  on line 131 "onclick="try{Ya.Metrika.informer({i:this,id:25280492,lang:\'ru\'}];return false}catch(e){}"/></a>"  - Unexpected ".", expected one of: "}"' => [
-        'ru' => 'Smarty: Syntax error in template "/home/dp/PhpstormProjects/ifs/WwwIce/Resource/Wi/Action/Layout/Landing.tpl"  on line 131 "onclick="try{Ya.Metrika.informer({i:this,id:25280492,lang:\'ru\'}];return false}catch(e){}"/></a>"  - Unexpected ".", expected one of: "}"',
     ],
     'Smarty: Unable to load template file \'Wi/Action/Cookbook/add/data/source.tpl\'' => [
         'ru' => 'Smarty: Unable to load template file \'Wi/Action/Cookbook/add/data/source.tpl\'',
@@ -108,17 +96,8 @@ return [
     'Smarty: Unable to load template file \'Bi/Action/Post/User.tpl\'' => [
         'ru' => 'Smarty: Unable to load template file \'Bi/Action/Post/User.tpl\'',
     ],
-    'Smarty: Syntax error in template "/home/dp/PhpstormProjects/ifs/WwwIce/Resource/Wi/Action/Layout/Main.tpl"  on line 166 "<a rel="nofollow" target="_blank" href="https://metrika.yandex.ru/stat/?id=25280492&amp;from=informer"><img onclick="try{Ya.Metrika.informer({i:this,id:25280492,lang:\'ru\'}];return false}catch(e){}" title="Яндекс.Метрика: данные за сегодня (просмотры, визиты и уникальные посетители)" alt="Яндекс.Метрика" style="width:88px; height:31px; border:0;" src="//bs.yandex.ru/informer/25280492/3_1_FFFFFFFF_EFEFEFFF_0_pageviews"></a>"  - Unexpected ".", expected one of: "}"' => [
-        'ru' => 'Smarty: Syntax error in template "/home/dp/PhpstormProjects/ifs/WwwIce/Resource/Wi/Action/Layout/Main.tpl"  on line 166 "<a rel="nofollow" target="_blank" href="https://metrika.yandex.ru/stat/?id=25280492&amp;from=informer"><img onclick="try{Ya.Metrika.informer({i:this,id:25280492,lang:\'ru\'}];return false}catch(e){}" title="Яндекс.Метрика: данные за сегодня (просмотры, визиты и уникальные посетители)" alt="Яндекс.Метрика" style="width:88px; height:31px; border:0;" src="//bs.yandex.ru/informer/25280492/3_1_FFFFFFFF_EFEFEFFF_0_pageviews"></a>"  - Unexpected ".", expected one of: "}"',
-    ],
     'Smarty: FileNotFoundException: Environment' => [
         'ru' => 'Smarty: FileNotFoundException: Environment',
-    ],
-    'Smarty: Syntax error in template "/home/dp/PhpstormProjects/ifs/WwwIce/Resource/Wi/Action/Layout/Main.tpl"  on line 65 "{if !Ice\\Core\\Environment::getInstance()->isDevelopment()}"  - Unexpected "\\", expected one of: "}"' => [
-        'ru' => 'Smarty: Syntax error in template "/home/dp/PhpstormProjects/ifs/WwwIce/Resource/Wi/Action/Layout/Main.tpl"  on line 65 "{if !Ice\\Core\\Environment::getInstance()->isDevelopment()}"  - Unexpected "\\", expected one of: "}"',
-    ],
-    'Smarty: Unable to load template file \'Ice/Action/Security/Login.tpl\'' => [
-        'ru' => 'Smarty: Unable to load template file \'Ice/Action/Security/Login.tpl\'',
     ],
     'Smarty: FileNotFoundException: Route' => [
         'ru' => 'Smarty: FileNotFoundException: Route',

@@ -11,7 +11,7 @@ namespace Ice\Action;
 
 use Ice\Core\Action;
 use Ice\Core\Action_Context;
-use Ice\Core\Data;
+use Ice\Core\Query_Result;
 
 /**
  * Class Paginator
@@ -70,7 +70,7 @@ class Paginator extends Action
      */
     protected function run(array $input, Action_Context $actionContext)
     {
-        /** @var Data $data */
+        /** @var Query_Result $data */
         $data = $input['data'];
 
         $page = $data->getPage();

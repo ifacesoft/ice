@@ -9,7 +9,7 @@
 
 namespace Ice\Data\Source;
 
-use Ice\Core\Data;
+use Ice\Core\Query_Result;
 use Ice\Core\Data_Source;
 use Ice\Core\Exception;
 use Ice\Core\Logger;
@@ -73,13 +73,13 @@ class Mysqli extends Data_Source
         /** @var Model $modelClass */
         $modelClass = $query->getModelClass();
 
-        $data[Data::RESULT_MODEL_CLASS] = $modelClass;
+        $data[Query_Result::RESULT_MODEL_CLASS] = $modelClass;
         $pkFieldNames = $modelClass::getPkFieldNames();
 
-        $data[DATA::NUM_ROWS] = $result->num_rows;
+        $data[Query_Result::NUM_ROWS] = $result->num_rows;
 
         while ($row = $result->fetch_assoc()) {
-            $data[Data::RESULT_ROWS][implode('_', array_intersect_key($row, array_flip($pkFieldNames)))] = $row;
+            $data[Query_Result::RESULT_ROWS][implode('_', array_intersect_key($row, array_flip($pkFieldNames)))] = $row;
         }
 
         $result->close();
@@ -90,20 +90,20 @@ class Mysqli extends Data_Source
             $result = $this->getConnection()->query('SELECT FOUND_ROWS()');
             $foundRows = $result->fetch_row();
             $result->close();
-            $data[Data::FOUND_ROWS] = reset($foundRows);
+            $data[Query_Result::FOUND_ROWS] = reset($foundRows);
         } else {
-            $data[Data::FOUND_ROWS] = $data[DATA::NUM_ROWS];
+            $data[Query_Result::FOUND_ROWS] = $data[Query_Result::NUM_ROWS];
         }
 
         $limit = $query->getLimit();
 
         if (!empty($limit)) {
             list($limit, $offset) = $limit;
-            $data[Data::LIMIT] = $limit;
-            $data[Data::PAGE] = $offset / $limit + 1;
+            $data[Query_Result::LIMIT] = $limit;
+            $data[Query_Result::PAGE] = $offset / $limit + 1;
         }
 
-        $data[Data::QUERY_FULL_HASH] = $query->getFullHash();
+        $data[Query_Result::QUERY_FULL_HASH] = $query->getFullHash();
 
         return $data;
     }
@@ -215,7 +215,7 @@ class Mysqli extends Data_Source
 
         $pkFieldName = count($pkFieldNames) == 1 ? reset($pkFieldNames) : null;
 
-        $data[Data::RESULT_MODEL_CLASS] = $modelclass;
+        $data[Query_Result::RESULT_MODEL_CLASS] = $modelclass;
 
         $insertId = $statement->insert_id;
 
@@ -231,11 +231,11 @@ class Mysqli extends Data_Source
 
             $insertKeys = array_intersect_key($row, array_flip($pkFieldNames));
 
-            $data[DATA::INSERT_ID][] = $insertKeys;
-            $data[DATA::RESULT_ROWS][implode('_', $insertKeys)] = $row;
+            $data[Query_Result::INSERT_ID][] = $insertKeys;
+            $data[Query_Result::RESULT_ROWS][implode('_', $insertKeys)] = $row;
         }
 
-        $data[DATA::AFFECTED_ROWS] = $statement->affected_rows;
+        $data[Query_Result::AFFECTED_ROWS] = $statement->affected_rows;
 
         $statement->close();
 
@@ -271,14 +271,14 @@ class Mysqli extends Data_Source
         $modelclass = $query->getModelClass();
         $pkFieldNames = $modelclass::getPkFieldNames();
 
-        $data[Data::RESULT_MODEL_CLASS] = $modelclass;
+        $data[Query_Result::RESULT_MODEL_CLASS] = $modelclass;
 
         foreach ($query->getBindParts()[Query_Builder::PART_SET] as $row) {
             $insertKey = implode('_', array_intersect_key($row, array_flip($pkFieldNames)));
-            $data[DATA::RESULT_ROWS][$insertKey] = $row;
+            $data[Query_Result::RESULT_ROWS][$insertKey] = $row;
         }
 
-        $data[DATA::AFFECTED_ROWS] = $statement->affected_rows;
+        $data[Query_Result::AFFECTED_ROWS] = $statement->affected_rows;
 
         $statement->close();
 

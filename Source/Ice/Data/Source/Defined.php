@@ -9,7 +9,7 @@
 
 namespace Ice\Data\Source;
 
-use Ice\Core\Data;
+use Ice\Core\Query_Result;
 use Ice\Core\Data_Source;
 use Ice\Core\Exception;
 use Ice\Core\Model;
@@ -115,10 +115,10 @@ class Defined extends Data_Source
         $rows = array_filter($rows, $filterFunction(Helper_Query::convertWhereForFilter($query)));
 
         return [
-            Data::RESULT_MODEL_CLASS => $modelClass,
-            Data::RESULT_ROWS => $rows,
-            Data::QUERY_FULL_HASH => 'definedHash:' . $query->getSqlPartsHash(),
-            Data::NUM_ROWS => count($rows)
+            Query_Result::RESULT_MODEL_CLASS => $modelClass,
+            Query_Result::RESULT_ROWS => $rows,
+            Query_Result::QUERY_FULL_HASH => 'definedHash:' . $query->getSqlPartsHash(),
+            Query_Result::NUM_ROWS => count($rows)
         ];
     }
 

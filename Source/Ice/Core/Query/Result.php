@@ -32,10 +32,10 @@ use Serializable;
  * @package Ice
  * @subpackage Core
  *
- * @version 0.0
- * @since 0.0
+ * @version 0.2
+ * @since 0.2
  */
-class Data extends Container implements Iterator, ArrayAccess, Countable, Serializable, Cacheable
+class Query_Result extends Container implements Iterator, ArrayAccess, Countable, Serializable, Cacheable
 {
     use Core;
 
@@ -108,7 +108,7 @@ class Data extends Container implements Iterator, ArrayAccess, Countable, Serial
      *
      * @param $data
      * @param $hash
-     * @return Data
+     * @return Query_Result
      * @throws Exception
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -123,7 +123,7 @@ class Data extends Container implements Iterator, ArrayAccess, Countable, Serial
 
         $queryType = $query->getQueryType();
         if ($queryType == Query_Builder::TYPE_SELECT && !$ttl) {
-            return Data::create($data);
+            return Query_Result::create($data);
         }
 
         if (Environment::isDevelopment()) {
@@ -170,7 +170,7 @@ class Data extends Container implements Iterator, ArrayAccess, Countable, Serial
                 throw new Exception('Unknown data source query statment type "' . $queryType . '"');
         }
 
-        $data = new Data($cache['data']);
+        $data = new Query_Result($cache['data']);
 
         return $data;
     }
@@ -180,7 +180,7 @@ class Data extends Container implements Iterator, ArrayAccess, Countable, Serial
      *
      * @param $data
      * @param null $hash
-     * @return Data
+     * @return Query_Result
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
@@ -202,7 +202,7 @@ class Data extends Container implements Iterator, ArrayAccess, Countable, Serial
             }
         }
 
-        $data = new Data($query->getDataSource()->$queryType($query));
+        $data = new Query_Result($query->getDataSource()->$queryType($query));
         return $data;
     }
 
@@ -396,8 +396,8 @@ class Data extends Container implements Iterator, ArrayAccess, Countable, Serial
      */
     public function setRow($pk, $fieldName, $value = null)
     {
-        $row = isset($this->_result[DATA::RESULT_ROWS][$pk])
-            ? $this->_result[DATA::RESULT_ROWS][$pk] : [];
+        $row = isset($this->_result[Query_Result::RESULT_ROWS][$pk])
+            ? $this->_result[Query_Result::RESULT_ROWS][$pk] : [];
 
         if (is_array($fieldName)) {
             $row = array_merge($row, $fieldName);
@@ -405,7 +405,7 @@ class Data extends Container implements Iterator, ArrayAccess, Countable, Serial
             $row[$fieldName] = $value;
         }
 
-        $this->_result[DATA::RESULT_ROWS][$pk] = $row;
+        $this->_result[Query_Result::RESULT_ROWS][$pk] = $row;
         $this->isValid = false;
     }
 
@@ -421,7 +421,7 @@ class Data extends Container implements Iterator, ArrayAccess, Countable, Serial
      */
     public function getNumRows()
     {
-        return $this->_result[DATA::NUM_ROWS];
+        return $this->_result[Query_Result::NUM_ROWS];
     }
 
     /**
@@ -439,7 +439,7 @@ class Data extends Container implements Iterator, ArrayAccess, Countable, Serial
      */
     public function current()
     {
-        return current($this->_result[DATA::RESULT_ROWS]);
+        return current($this->_result[Query_Result::RESULT_ROWS]);
     }
 
     /**
@@ -457,7 +457,7 @@ class Data extends Container implements Iterator, ArrayAccess, Countable, Serial
      */
     public function next()
     {
-        next($this->_result[DATA::RESULT_ROWS]);
+        next($this->_result[Query_Result::RESULT_ROWS]);
         ++$this->position;
     }
 
@@ -496,7 +496,7 @@ class Data extends Container implements Iterator, ArrayAccess, Countable, Serial
      */
     public function valid()
     {
-        $var = current($this->_result[DATA::RESULT_ROWS]); // todo: may be (bool) current($this->_result[DATA::RESULT_ROWS])
+        $var = current($this->_result[Query_Result::RESULT_ROWS]); // todo: may be (bool) current($this->_result[DATA::RESULT_ROWS])
         return !empty($var);
     }
 
@@ -515,8 +515,8 @@ class Data extends Container implements Iterator, ArrayAccess, Countable, Serial
      */
     public function rewind()
     {
-        if (!empty($this->getResult()[DATA::RESULT_ROWS])) {
-            reset($this->_result[DATA::RESULT_ROWS]);
+        if (!empty($this->getResult()[Query_Result::RESULT_ROWS])) {
+            reset($this->_result[Query_Result::RESULT_ROWS]);
         }
 
         $this->position = 0;
@@ -536,12 +536,12 @@ class Data extends Container implements Iterator, ArrayAccess, Countable, Serial
     public function delete($pk = null)
     {
         if (empty($pk)) {
-            $this->_result[DATA::RESULT_ROWS] = [];
+            $this->_result[Query_Result::RESULT_ROWS] = [];
             return [];
         }
 
-        $row = $this->_result[DATA::RESULT_ROWS][$pk];
-        unset($this->_result[DATA::RESULT_ROWS][$pk]);
+        $row = $this->_result[Query_Result::RESULT_ROWS][$pk];
+        unset($this->_result[Query_Result::RESULT_ROWS][$pk]);
 
         return $row;
     }
@@ -572,7 +572,7 @@ class Data extends Container implements Iterator, ArrayAccess, Countable, Serial
      * Filter data
      *
      * @param $filterScheme
-     * @return Data
+     * @return Query_Result
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
@@ -582,7 +582,7 @@ class Data extends Container implements Iterator, ArrayAccess, Countable, Serial
     public function filter($filterScheme)
     {
         $data = clone $this;
-        $data->_result[DATA::RESULT_ROWS] = Arrays::filter($data->_result[DATA::RESULT_ROWS], $filterScheme);
+        $data->_result[Query_Result::RESULT_ROWS] = Arrays::filter($data->_result[Query_Result::RESULT_ROWS], $filterScheme);
         return $data;
     }
 
@@ -598,7 +598,7 @@ class Data extends Container implements Iterator, ArrayAccess, Countable, Serial
      */
     public function getFoundRows()
     {
-        return $this->_result[DATA::FOUND_ROWS];
+        return $this->_result[Query_Result::FOUND_ROWS];
     }
 
     /**
@@ -617,7 +617,7 @@ class Data extends Container implements Iterator, ArrayAccess, Countable, Serial
     {
         return empty($fieldName)
             ? $this->getKeys()
-            : Arrays::column($this->_result[DATA::RESULT_ROWS], $fieldName, $indexKey);
+            : Arrays::column($this->_result[Query_Result::RESULT_ROWS], $fieldName, $indexKey);
     }
 
     /**
@@ -632,7 +632,7 @@ class Data extends Container implements Iterator, ArrayAccess, Countable, Serial
      */
     public function getKeys()
     {
-        return array_keys($this->_result[DATA::RESULT_ROWS]);
+        return array_keys($this->_result[Query_Result::RESULT_ROWS]);
     }
 
     /**
@@ -651,7 +651,7 @@ class Data extends Container implements Iterator, ArrayAccess, Countable, Serial
      */
     public function offsetGet($offset)
     {
-        return $this->offsetExists($offset) ? $this->_result[DATA::RESULT_ROWS][$offset] : null;
+        return $this->offsetExists($offset) ? $this->_result[Query_Result::RESULT_ROWS][$offset] : null;
     }
 
     /**
@@ -673,7 +673,7 @@ class Data extends Container implements Iterator, ArrayAccess, Countable, Serial
      */
     public function offsetExists($offset)
     {
-        return isset($this->_result[DATA::RESULT_ROWS][$offset]);
+        return isset($this->_result[Query_Result::RESULT_ROWS][$offset]);
     }
 
     /**
@@ -696,9 +696,9 @@ class Data extends Container implements Iterator, ArrayAccess, Countable, Serial
     public function offsetSet($offset, $value)
     {
         if (is_null($offset)) {
-            $this->_result[DATA::RESULT_ROWS][] = $value;
+            $this->_result[Query_Result::RESULT_ROWS][] = $value;
         } else {
-            $this->_result[DATA::RESULT_ROWS][$offset] = $value;
+            $this->_result[Query_Result::RESULT_ROWS][$offset] = $value;
         }
     }
 
@@ -718,7 +718,7 @@ class Data extends Container implements Iterator, ArrayAccess, Countable, Serial
      */
     public function offsetUnset($offset)
     {
-        unset($this->_result[DATA::RESULT_ROWS][$offset]);
+        unset($this->_result[Query_Result::RESULT_ROWS][$offset]);
     }
 
     /**
@@ -737,7 +737,7 @@ class Data extends Container implements Iterator, ArrayAccess, Countable, Serial
      */
     public function count()
     {
-        return count($this->_result[DATA::RESULT_ROWS]);
+        return count($this->_result[Query_Result::RESULT_ROWS]);
     }
 
     /**
@@ -787,7 +787,7 @@ class Data extends Container implements Iterator, ArrayAccess, Countable, Serial
      */
     public function getInsertId()
     {
-        return $this->_result[DATA::INSERT_ID];
+        return $this->_result[Query_Result::INSERT_ID];
     }
 
     /**
@@ -802,7 +802,7 @@ class Data extends Container implements Iterator, ArrayAccess, Countable, Serial
      */
     public function getRandKey()
     {
-        return array_rand($this->getResult()[DATA::RESULT_ROWS]);
+        return array_rand($this->getResult()[Query_Result::RESULT_ROWS]);
     }
 
     /**
@@ -817,7 +817,7 @@ class Data extends Container implements Iterator, ArrayAccess, Countable, Serial
      */
     public function getLimit()
     {
-        return $this->_result[DATA::LIMIT];
+        return $this->_result[Query_Result::LIMIT];
     }
 
     /**
@@ -832,6 +832,6 @@ class Data extends Container implements Iterator, ArrayAccess, Countable, Serial
      */
     public function getPage()
     {
-        return $this->_result[DATA::PAGE];
+        return $this->_result[Query_Result::PAGE];
     }
 }

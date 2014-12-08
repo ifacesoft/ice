@@ -335,7 +335,7 @@ class Query extends Container
      *
      * @param int $ttl
      * @throws Exception
-     * @return Data
+     * @return Query_Result
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
@@ -344,7 +344,7 @@ class Query extends Container
      */
     public function getData($ttl = 3600)
     {
-        return Data::getInstance([$this, $ttl]);
+        return Query_Result::getInstance([$this, $ttl]);
     }
 
     /**
