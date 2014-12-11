@@ -124,7 +124,7 @@ class Model_Collection implements IteratorAggregate
 //        /** @var Model $modelClass */
 //        $modelClass = $this->_modelClass;
 //
-//        $this->_queryBuilder = $modelClass::getQueryBuilder();
+//        $this->_queryBuilder = $modelClass::query();
 //        return $this->_queryBuilder;
 //    }
 
@@ -219,7 +219,7 @@ class Model_Collection implements IteratorAggregate
         $modelClass = $this->_modelClass;
 
         $this->setQueryResult(
-            $modelClass::getQueryBuilder()
+            $modelClass::query()
                 ->insert($this->getQueryResult()->getRows(), false, $sourceName)
                 ->getQuery($sourceName)
         );
@@ -251,7 +251,7 @@ class Model_Collection implements IteratorAggregate
         $modelClass = $this->_modelClass;
         $keys = $this->getKeys();
 
-        $queryBuilder = $modelClass::getQueryBuilder();
+        $queryBuilder = $modelClass::query();
 
         if (count($keys) == 1) {
             $queryBuilder->eq('/pk', reset($keys));

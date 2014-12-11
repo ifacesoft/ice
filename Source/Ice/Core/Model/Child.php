@@ -40,7 +40,7 @@ abstract class Model_Child extends Model
      */
     public static function getRoots()
     {
-        return self::getQueryBuilder()
+        return self::query()
             ->isNull('/_fk')
             ->select('*');
     }

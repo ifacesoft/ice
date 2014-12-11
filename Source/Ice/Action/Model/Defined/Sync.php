@@ -77,7 +77,7 @@ class Model_Defined_Sync extends Action
             $modelClass = Model::getClass($modelClass);
             if (isset(class_parents($modelClass)[Model_Defined::getClass()])) {
                 /** @var Model_Collection $rowCollection */
-                $rowCollection = $modelClass::getQueryBuilder()
+                $rowCollection = $modelClass::query()
                     ->select('*')
                     ->getCollection($dataSource);
 
@@ -98,7 +98,7 @@ class Model_Defined_Sync extends Action
                 }
 
                 if ($rowCollection->getCount()) {
-                    $modelClass::getQueryBuilder('delete')
+                    $modelClass::query('delete')
                         ->in('/pk', $rowCollection->getKeys())
                         ->getQuery($dataSource);
                 }

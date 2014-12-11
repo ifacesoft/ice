@@ -44,7 +44,7 @@ abstract class Model_Factory extends Model_Defined
         /** @var Model $modelclass */
         $modelclass = get_called_class();
 
-        return $modelclass::getQueryBuilder()
+        return $modelclass::query()
             ->eq('/delegate_name', $delegateName)
             ->eq('/is_active', 1)
             ->select('/delegate_name')

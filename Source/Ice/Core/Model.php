@@ -531,7 +531,7 @@ abstract class Model
         // many-to-one
         $foreignKeyName = strtolower($modelName) . '__fk';
         if (array_key_exists($foreignKeyName, $fieldName::getMapping())) {
-            $this->_fk[$fieldName] = $fieldName::getQueryBuilder()
+            $this->_fk[$fieldName] = $fieldName::query()
                 ->eq($foreignKeyName, $this->getPk())
                 ->select('*')
                 ->getCollection();
@@ -577,7 +577,7 @@ abstract class Model
      * @version 0.0
      * @since 0.0
      */
-    public static function  getQueryBuilder($tableAlias = null)
+    public static function  query($tableAlias = null)
     {
         return Query_Builder::getInstance(self::getClass(), $tableAlias);
     }
@@ -690,7 +690,7 @@ abstract class Model
      */
     public static function getRows($pk = [], $fieldNames = '*', $sourceName = null, $ttl = 3600)
     {
-        return self::getQueryBuilder()
+        return self::query()
             ->pk($pk)
             ->select($fieldNames)
             ->getRows($sourceName, $ttl);
@@ -711,7 +711,7 @@ abstract class Model
      */
     public static function getCollection($pk = [], $fieldNames = '*', $sourceName = null, $ttl = 3600)
     {
-        return self::getQueryBuilder()
+        return self::query()
             ->pk($pk)
             ->select($fieldNames)
             ->getCollection($sourceName, $ttl);
@@ -825,14 +825,17 @@ abstract class Model
      * @param null $sourceName
      * @param int $ttl
      * @return Model|null
+     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.2
      * @since 0.0
      */
     public static function getModelBy($shortFieldName, $fieldValue, $fieldNames, $sourceName = null, $ttl = 3600)
     {
-        return self::getQueryBuilderBy($shortFieldName, $fieldValue, $fieldNames)->getModel($sourceName, $ttl);
+        return self::getQueryBuilderBy($shortFieldName, $fieldValue, $fieldNames)
+            ->select($fieldNames, null, null, null, $sourceName, $ttl)
+            ->getModel();
     }
 
     /**
@@ -840,20 +843,18 @@ abstract class Model
      *
      * @param $shortFieldName
      * @param $fieldValue
-     * @param $fieldNames
-     * @return Query_Result
+     * @return Query_Builder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.2
      * @since 0.1
      */
-    public static function getQueryBuilderBy($shortFieldName, $fieldValue, $fieldNames)
+    public static function getQueryBuilderBy($shortFieldName, $fieldValue)
     {
-        return self::getQueryBuilder()
+        return self::query()
             ->eq($shortFieldName, $fieldValue)
-            ->limit(1)
-            ->select($fieldNames);
+            ->limit(1);
     }
 
     /**
@@ -871,7 +872,7 @@ abstract class Model
      */
     public static function getModel($pk, $fieldNames, $sourceName = null, $ttl = 3600)
     {
-        return self::getQueryBuilder()
+        return self::query()
             ->pk($pk)
             ->limit(1)
             ->select($fieldNames, null, null, null, $sourceName, $ttl)
@@ -1026,7 +1027,7 @@ abstract class Model
 
         $this->beforeInsert();
 
-        $insertId = $modelClass::getQueryBuilder()
+        $insertId = $modelClass::query()
             ->insert($this->_affected, $update, $sourceName)
             ->getInsertId();
 
@@ -1088,7 +1089,7 @@ abstract class Model
 
         $this->beforeUpdate();
 
-        $modelClass::getQueryBuilder()->pk($this->getPk())->update($this->_affected, $sourceName);
+        $modelClass::query()->pk($this->getPk())->update($this->_affected, $sourceName);
 
         $this->afterUpdate();
 
@@ -1139,7 +1140,7 @@ abstract class Model
 
         $this->beforeDelete();
 
-        $modelClass::getQueryBuilder()->delete($this->getPk(), $sourceName);
+        $modelClass::query()->delete($this->getPk(), $sourceName);
 
         $this->afterDelete();
 
@@ -1262,7 +1263,7 @@ abstract class Model
                 : $namespace . $className . '_' . $selfClassName . '_Link';
         }
 
-        return $linkModelClass::getQueryBuilder()
+        return $linkModelClass::query()
             ->eq(strtolower($selfClassName) . '__fk', $this->getPk())
             ->eq(strtolower($className) . '__fk', $modelPk)
             ->select('*')

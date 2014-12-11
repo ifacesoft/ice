@@ -72,7 +72,7 @@ class Model_Delete extends Action
     {
         $class = Model::getClass($input['modelName']);
 
-        $class::getQueryBuilder()->delete($input['pk']);
+        $class::query()->delete($input['pk']);
 
         return [
             'data' => [
