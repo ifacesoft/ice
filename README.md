@@ -1,6 +1,8 @@
 Ice &rarr; [iceframework.net](http://iceframework.net)
 ===
 
+[![Build Status](https://travis-ci.org/ifacesoft/Ice.svg)](https://travis-ci.org/ifacesoft/Ice)
+
 Ice is a general purpose PHP-framework.
 You may fully rely on Ice while developing complex web-applications.
 Ice key features are the built-in cache support of the main components,
