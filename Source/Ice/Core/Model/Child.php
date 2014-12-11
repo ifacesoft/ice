@@ -31,7 +31,7 @@ abstract class Model_Child extends Model
     /**
      * Return query for get root Model
      *
-     * @return Query
+     * @return Query_Result
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
@@ -41,8 +41,7 @@ abstract class Model_Child extends Model
     public static function getRoots()
     {
         return self::getQueryBuilder()
-            ->select('*')
             ->isNull('/_fk')
-            ->getQuery();
+            ->select('*');
     }
 } 

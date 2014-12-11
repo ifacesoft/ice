@@ -776,12 +776,12 @@ class Query_Builder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.2
      * @since 0.0
      */
     public function inner($modelClass, $fieldNames = null, $tableAlias = null, $condition = null)
     {
-        return $this->select($fieldNames, null, $modelClass, $tableAlias)
+        return $this->_select($fieldNames, null, $modelClass, $tableAlias)
             ->join(Query_Builder::SQL_CLAUSE_INNER_JOIN, $modelClass, $tableAlias, $condition);
     }
 
@@ -873,7 +873,7 @@ class Query_Builder
     }
 
     /**
-     * Set data of query part select
+     * Return query result for select query
      *
      *  part structure:
      * ```php
@@ -891,17 +891,25 @@ class Query_Builder
      * @param null $fieldAlias
      * @param null $modelClass
      * @param null $tableAlias
-     * @throws Exception
-     * @return Query_Builder
+     * @param null $sourceName
+     * @param int $ttl
+     * @return Query_Result
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.2
      * @since 0.0
      */
-    public function select($fieldName, $fieldAlias = null, $modelClass = null, $tableAlias = null)
+    public function select($fieldName, $fieldAlias = null, $modelClass = null, $tableAlias = null, $sourceName = null, $ttl = 3600)
     {
         $this->_queryType = Query_Builder::TYPE_SELECT;
+
+        $this->_select($fieldName, $fieldAlias, $modelClass, $tableAlias);
+
+        return Query_Result::getInstance([$this->getQuery($sourceName), $ttl]);
+    }
+
+    private function _select($fieldName, $fieldAlias, $modelClass, $tableAlias) {
 
         /** @var Model $class */
         $class = $this->getModelClass();
@@ -930,9 +938,9 @@ class Query_Builder
         if (is_array($fieldName)) {
             foreach ($fieldName as $field => $fieldAlias) {
                 if (is_numeric($field)) {
-                    $this->select($fieldAlias, null, $modelClass, $tableAlias);
+                    $this->_select($fieldAlias, null, $modelClass, $tableAlias);
                 } else {
-                    $this->select($field, $fieldAlias, $modelClass, $tableAlias);
+                    $this->_select($field, $fieldAlias, $modelClass, $tableAlias);
                 }
             }
 
@@ -941,7 +949,7 @@ class Query_Builder
             $fieldName = explode(',', $fieldName);
 
             if (count($fieldName) > 1) {
-                $this->select($fieldName, null, $modelClass, $tableAlias);
+                $this->_select($fieldName, null, $modelClass, $tableAlias);
 
                 return $this;
             } else {
@@ -981,17 +989,17 @@ class Query_Builder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.2
      * @since 0.0
      */
     public function left($modelClass, $fieldNames = null, $tableAlias = null, $condition = null)
     {
-        return $this->select($fieldNames, null, $modelClass, $tableAlias)
+        return $this->_select($fieldNames, null, $modelClass, $tableAlias)
             ->join(Query_Builder::SQL_CLAUSE_LEFT_JOIN, $modelClass, $tableAlias, $condition);
     }
 
     /**
-     * Set data for values query part of insert
+     * Return query result for insert query
      *
      *  part structure:
      * ```php
@@ -1018,17 +1026,20 @@ class Query_Builder
      *
      * @param array $data Key-value array
      * @param bool $update
-     * @return Query_Builder
+     * @param null $dataSource
+     * @param int $ttl
+     * @return Query_Result
+     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.1
+     * @version 0.2
      * @since 0.0
      */
-    public function insert(array $data, $update = false)
+    public function insert(array $data, $update = false, $dataSource = null, $ttl = 3600)
     {
         $this->_queryType = Query_Builder::TYPE_INSERT;
         $this->_sqlParts[Query_Builder::PART_VALUES]['_update'] = $update;
-        return $this->affect($data, Query_Builder::PART_VALUES);
+        return $this->affect($data, Query_Builder::PART_VALUES, $dataSource, $ttl);
     }
 
     /**
@@ -1036,13 +1047,16 @@ class Query_Builder
      *
      * @param array $data Key-value array
      * @param $part
+     * @param $sourceName
+     * @param $ttl
      * @return Query_Builder
+     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.1
+     * @version 0.2
      * @since 0.1
      */
-    private function affect(array $data, $part)
+    private function affect(array $data, $part, $sourceName, $ttl)
     {
         $modelClass = $this->getModelClass();
 
@@ -1061,7 +1075,7 @@ class Query_Builder
         }
 
         if (!is_array(reset($data))) {
-            return $this->affect([$data], $part);
+            return $this->affect([$data], $part, $sourceName, $ttl);
         }
 
         $fieldNames = [];
@@ -1082,45 +1096,49 @@ class Query_Builder
 
         $this->_bindParts[$part] = array_merge($this->_bindParts[$part], $data);
 
-        return $this;
+        return Query_Result::getInstance([$this->getQuery($sourceName), $ttl]);
     }
 
     /**
-     * Set data for set query part of update
+     * Return query result for update query
      *
      * @param array $data Key-value array
-     * @return Query_Builder
+     * @param null $dataSource
+     * @param int $ttl
+     * @return Query_Result
+     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.1
+     * @version 0.2
      * @since 0.0
      */
-    public function update(array $data)
+    public function update(array $data, $dataSource = null, $ttl = 3600)
     {
         $this->_queryType = Query_Builder::TYPE_UPDATE;
-        return $this->affect($data, Query_Builder::PART_SET);
+        return $this->affect($data, Query_Builder::PART_SET, $dataSource, $ttl);
     }
 
     /**
-     * Build query part delete with defined primary keys
+     * Return query result for delete query
      *
      * @param array $pkValues
-     * @return Query_Builder
-     * @throws Exception
+     * @param null $sourceName
+     * @param int $ttl
+     * @return Query_Result
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.2
      * @since 0.0
      */
-    public function delete($pkValues = [])
+    public function delete($pkValues = [], $sourceName = null, $ttl = 3600)
     {
         $this->_queryType = Query_Builder::TYPE_DELETE;
         $this->_sqlParts[Query_Builder::PART_WHERE]['_delete'] = $this->_modelClass;
 
         $this->inPk((array)$pkValues);
 
-        return $this;
+        return Query_Result::getInstance([$this->getQuery($sourceName), $ttl]);
     }
 
     /**
@@ -1157,18 +1175,19 @@ class Query_Builder
     /**
      * Set flag of get count rows
      *
-     * @param $fieldName
+     * @param string $fieldName
      * @param null $fieldAlias
      * @param null $modelClass
      * @param null $tableAlias
-     * @return Query_Builder
-     *
+     * @param null $sourceName
+     * @param int $ttl
+     * @return Query_Result
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.2
      * @since 0.0
      */
-    public function count($fieldName = '/pk', $fieldAlias = null, $modelClass = null, $tableAlias = null)
+    public function count($fieldName = '/pk', $fieldAlias = null, $modelClass = null, $tableAlias = null, $sourceName = null, $ttl = 3600)
     {
         if (!$modelClass) {
             $modelClass = $this->getModelClass();
@@ -1182,7 +1201,7 @@ class Query_Builder
 
         $this->appendCacheTag($modelClass, $fieldName, true, false);
 
-        return $this->select('count(' . $fieldName . ')', $fieldAlias, $modelClass, $tableAlias);
+        return $this->select('count(' . $fieldName . ')', $fieldAlias, $modelClass, $tableAlias, $sourceName, $ttl);
     }
 
     /**
@@ -1384,45 +1403,5 @@ class Query_Builder
     {
         return Query::getInstance([$sourceName, $this->_queryType, $this->_sqlParts, $this->_modelClass, $this->_cacheTags])
             ->bind($this->_bindParts);
-    }
-
-    /**
-     * @param null $sourceName
-     * @param int $ttl
-     * @return Model_Collection
-     */
-    public function getCollection($sourceName = null, $ttl = 3600)
-    {
-        return $this->getQueryResult($sourceName, $ttl)->getCollection();
-    }
-
-    /**
-     * Return query result array
-     *
-     * @param null $sourceName
-     * @param int $ttl
-     * @return array
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.2
-     * @since 0.2
-     */
-    public function getRows($sourceName = null, $ttl = 3600)
-    {
-        return $this->getQueryResult($sourceName, $ttl)->getRows();
-    }
-
-    public function getModel($sourceName = null, $ttl = 3600)
-    {
-        return $this->getQueryResult($sourceName, $ttl)->getModel();
-    }
-
-    public function getQueryResult($sourceName = null, $ttl = 3600) {
-        return Query_Result::getInstance([$this->getQuery($sourceName), $ttl]);
-    }
-
-    public function getColumn($fieldName = null, $sourceName = null, $ttl = 3600)
-    {
-        return $this->getQueryResult($sourceName, $ttl)->getColumn($fieldName);
     }
 }

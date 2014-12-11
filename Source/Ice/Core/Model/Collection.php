@@ -215,13 +215,13 @@ class Model_Collection implements IteratorAggregate
      */
     public function insert($sourceName = null)
     {
+        /** @var Model $modelClass */
         $modelClass = $this->_modelClass;
 
         $this->setQueryResult(
             $modelClass::getQueryBuilder()
-                ->insert($this->getQueryResult()->getRows())
+                ->insert($this->getQueryResult()->getRows(), false, $sourceName)
                 ->getQuery($sourceName)
-                ->getData()
         );
 
         return $this;
@@ -232,6 +232,7 @@ class Model_Collection implements IteratorAggregate
      *
      * @param $updates
      * @param null $sourceName
+     * @param int $ttl
      * @return $this
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -240,7 +241,7 @@ class Model_Collection implements IteratorAggregate
      * @version 0.0
      * @since 0.0
      */
-    public function update($updates, $sourceName = null)
+    public function update($updates, $sourceName = null, $ttl = 3600)
     {
         if (empty($updates)) {
             return $this;
@@ -250,7 +251,7 @@ class Model_Collection implements IteratorAggregate
         $modelClass = $this->_modelClass;
         $keys = $this->getKeys();
 
-        $queryBuilder = $modelClass::getQueryBuilder()->update($updates);
+        $queryBuilder = $modelClass::getQueryBuilder();
 
         if (count($keys) == 1) {
             $queryBuilder->eq('/pk', reset($keys));
@@ -258,7 +259,7 @@ class Model_Collection implements IteratorAggregate
             $queryBuilder->in('/pk', $keys);
         }
 
-        $this->setQueryResult($queryBuilder->getQuery($sourceName)->getQueryResult());
+        $this->setQueryResult($queryBuilder->update($updates, $sourceName, $ttl));
 
         return $this;
     }

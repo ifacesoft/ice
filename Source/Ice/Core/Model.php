@@ -10,7 +10,6 @@
 namespace Ice\Core;
 
 use Ice\Core;
-use Ice\Core\Model_Collection;
 use Ice\Form\Model as Form_Model;
 use Ice\Helper\Json;
 use Ice\Helper\Object;
@@ -533,8 +532,8 @@ abstract class Model
         $foreignKeyName = strtolower($modelName) . '__fk';
         if (array_key_exists($foreignKeyName, $fieldName::getMapping())) {
             $this->_fk[$fieldName] = $fieldName::getQueryBuilder()
-                ->select('*')
                 ->eq($foreignKeyName, $this->getPk())
+                ->select('*')
                 ->getCollection();
 
             return $this->_fk[$fieldName];
@@ -692,8 +691,8 @@ abstract class Model
     public static function getRows($pk = [], $fieldNames = '*', $sourceName = null, $ttl = 3600)
     {
         return self::getQueryBuilder()
-            ->select($fieldNames)
             ->pk($pk)
+            ->select($fieldNames)
             ->getRows($sourceName, $ttl);
     }
 
@@ -713,8 +712,8 @@ abstract class Model
     public static function getCollection($pk = [], $fieldNames = '*', $sourceName = null, $ttl = 3600)
     {
         return self::getQueryBuilder()
-            ->select($fieldNames)
             ->pk($pk)
+            ->select($fieldNames)
             ->getCollection($sourceName, $ttl);
     }
 
@@ -842,7 +841,7 @@ abstract class Model
      * @param $shortFieldName
      * @param $fieldValue
      * @param $fieldNames
-     * @return Query_Builder
+     * @return Query_Result
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
@@ -852,9 +851,60 @@ abstract class Model
     public static function getQueryBuilderBy($shortFieldName, $fieldValue, $fieldNames)
     {
         return self::getQueryBuilder()
-            ->select($fieldNames)
             ->eq($shortFieldName, $fieldValue)
-            ->limit(1);
+            ->limit(1)
+            ->select($fieldNames);
+    }
+
+    /**
+     * Return model by primary key
+     *
+     * @param $pk
+     * @param array|string $fieldNames
+     * @param string $sourceName
+     * @param int $ttl
+     * @return Model|null
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.2
+     * @since 0.0
+     */
+    public static function getModel($pk, $fieldNames, $sourceName = null, $ttl = 3600)
+    {
+        return self::getQueryBuilder()
+            ->pk($pk)
+            ->limit(1)
+            ->select($fieldNames, null, null, null, $sourceName, $ttl)
+            ->getModel();
+    }
+
+    /**
+     * Return all primary key names if them more then one
+     *
+     * @return mixed
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.1
+     * @since 0.1
+     */
+    public static function getPkFieldNames()
+    {
+        $pkFieldNames = self::getRegistry()->get('pkFieldNames');
+
+        if ($pkFieldNames) {
+            return $pkFieldNames;
+        }
+
+        $fieldNames = array_flip(self::getMapping());
+
+        return self::getRegistry()->set('pkFieldNames', array_map(
+                function ($columnName) use ($fieldNames) {
+                    return $fieldNames[$columnName];
+                },
+                self::getScheme()->getIndexes()['PRIMARY KEY']['PRIMARY']
+            )
+        );
     }
 
     /**
@@ -963,9 +1013,10 @@ abstract class Model
      * @param string $sourceName
      * @param bool $update
      * @return Model|null
+     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.1
+     * @version 0.2
      * @since 0.0
      */
     public function insert($sourceName = null, $update = false)
@@ -975,9 +1026,8 @@ abstract class Model
 
         $this->beforeInsert();
 
-        $insertId =  $modelClass::getQueryBuilder()
-            ->insert($this->_affected, $update)
-            ->getQueryResult($sourceName)
+        $insertId = $modelClass::getQueryBuilder()
+            ->insert($this->_affected, $update, $sourceName)
             ->getInsertId();
 
         $this->_pk = reset($insertId);
@@ -1014,58 +1064,6 @@ abstract class Model
     }
 
     /**
-     * Return model by primary key
-     *
-     * @param $pk
-     * @param array|string $fieldNames
-     * @param string $sourceName
-     * @throws Exception
-     * @return Model|null
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public static function getModel($pk, $fieldNames, $sourceName = null, $ttl = 3600)
-    {
-        return self::getQueryBuilder()
-            ->select($fieldNames)
-            ->pk($pk)
-            ->limit(1)
-            ->getModel($sourceName, $ttl);
-    }
-
-    /**
-     * Return all primary key names if them more then one
-     *
-     * @return mixed
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.1
-     * @since 0.1
-     */
-    public static function getPkFieldNames()
-    {
-        $pkFieldNames = self::getRegistry()->get('pkFieldNames');
-
-        if ($pkFieldNames) {
-            return $pkFieldNames;
-        }
-
-        $fieldNames = array_flip(self::getMapping());
-
-        return self::getRegistry()->set('pkFieldNames', array_map(
-                function ($columnName) use ($fieldNames) {
-                    return $fieldNames[$columnName];
-                },
-                self::getScheme()->getIndexes()['PRIMARY KEY']['PRIMARY']
-            )
-        );
-    }
-
-    /**
      * Execute update for model
      *
      * @param $fieldName
@@ -1073,6 +1071,7 @@ abstract class Model
      * @param null $sourceName
      * @return Model|null
      * @throws Exception
+     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
@@ -1089,10 +1088,7 @@ abstract class Model
 
         $this->beforeUpdate();
 
-        $modelClass::getQueryBuilder()
-            ->update($this->_affected)
-            ->pk($this->getPk())
-            ->getQueryResult($sourceName);
+        $modelClass::getQueryBuilder()->pk($this->getPk())->update($this->_affected, $sourceName);
 
         $this->afterUpdate();
 
@@ -1133,7 +1129,7 @@ abstract class Model
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.2
      * @since 0.0
      */
     public function delete($sourceName = null)
@@ -1143,9 +1139,7 @@ abstract class Model
 
         $this->beforeDelete();
 
-        $modelClass::getQueryBuilder()
-            ->delete($this->getPk())
-            ->getQueryResult($sourceName);
+        $modelClass::getQueryBuilder()->delete($this->getPk(), $sourceName);
 
         $this->afterDelete();
 
@@ -1269,9 +1263,9 @@ abstract class Model
         }
 
         return $linkModelClass::getQueryBuilder()
-            ->select('*')
             ->eq(strtolower($selfClassName) . '__fk', $this->getPk())
             ->eq(strtolower($className) . '__fk', $modelPk)
+            ->select('*')
             ->getModel($sourceName, $ttl);
     }
 }
