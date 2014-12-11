@@ -10,7 +10,7 @@
 namespace Ice\Core;
 
 use Ice\Core;
-use Ice\Core\Model\Collection;
+use Ice\Core\Model_Collection;
 use Ice\Form\Model as Form_Model;
 use Ice\Helper\Json;
 use Ice\Helper\Object;
@@ -535,8 +535,6 @@ abstract class Model
             $this->_fk[$fieldName] = $fieldName::getQueryBuilder()
                 ->select('*')
                 ->eq($foreignKeyName, $this->getPk())
-                ->getQuery()
-                ->getData()
                 ->getCollection();
 
             return $this->_fk[$fieldName];
@@ -683,21 +681,20 @@ abstract class Model
      * @param array $pk
      * @param string $fieldNames
      * @param null $sourceName
+     * @param int $ttl
      * @return array
-     * @throws Exception
+     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.1
+     * @version 0.2
      * @since 0.0
      */
-    public static function getRows($pk = [], $fieldNames = '*', $sourceName = null)
+    public static function getRows($pk = [], $fieldNames = '*', $sourceName = null, $ttl = 3600)
     {
         return self::getQueryBuilder()
             ->select($fieldNames)
             ->pk($pk)
-            ->getQuery($sourceName)
-            ->getData()
-            ->getRows();
+            ->getRows($sourceName, $ttl);
     }
 
     /**
@@ -706,21 +703,19 @@ abstract class Model
      * @param array $pk
      * @param string $fieldNames
      * @param null $sourceName
+     * @param int $ttl
      * @return Collection
-     * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.1
+     * @version 0.2
      * @since 0.0
      */
-    public static function getCollection($pk = [], $fieldNames = '*', $sourceName = null)
+    public static function getCollection($pk = [], $fieldNames = '*', $sourceName = null, $ttl = 3600)
     {
         return self::getQueryBuilder()
             ->select($fieldNames)
             ->pk($pk)
-            ->getQuery($sourceName)
-            ->getData()
-            ->getCollection();
+            ->getCollection($sourceName, $ttl);
     }
 
     /**
@@ -829,39 +824,37 @@ abstract class Model
      * @param $fieldValue
      * @param $fieldNames
      * @param null $sourceName
+     * @param int $ttl
      * @return Model|null
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
      * @since 0.0
      */
-    public static function getModelBy($shortFieldName, $fieldValue, $fieldNames, $sourceName = null)
+    public static function getModelBy($shortFieldName, $fieldValue, $fieldNames, $sourceName = null, $ttl = 3600)
     {
-        return self::getQueryBy($shortFieldName, $fieldValue, $fieldNames, $sourceName)->getData()->getModel();
+        return self::getQueryBuilderBy($shortFieldName, $fieldValue, $fieldNames)->getModel($sourceName, $ttl);
     }
 
     /**
-     * Return Query by custom field
+     * Return Query builder by custom field
      *
      * @param $shortFieldName
      * @param $fieldValue
      * @param $fieldNames
-     * @param null $sourceName
-     * @return Query
+     * @return Query_Builder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.1
+     * @version 0.2
      * @since 0.1
      */
-    public static function getQueryBy($shortFieldName, $fieldValue, $fieldNames, $sourceName = null)
+    public static function getQueryBuilderBy($shortFieldName, $fieldValue, $fieldNames)
     {
         return self::getQueryBuilder()
             ->select($fieldNames)
             ->eq($shortFieldName, $fieldValue)
-            ->limit(1)
-            ->getQuery($sourceName);
+            ->limit(1);
     }
 
     /**
@@ -984,8 +977,7 @@ abstract class Model
 
         $insertId =  $modelClass::getQueryBuilder()
             ->insert($this->_affected, $update)
-            ->getQuery($sourceName)
-            ->getData()
+            ->getQueryResult($sourceName)
             ->getInsertId();
 
         $this->_pk = reset($insertId);
@@ -1035,15 +1027,13 @@ abstract class Model
      * @version 0.0
      * @since 0.0
      */
-    public static function getModel($pk, $fieldNames, $sourceName = null)
+    public static function getModel($pk, $fieldNames, $sourceName = null, $ttl = 3600)
     {
         return self::getQueryBuilder()
             ->select($fieldNames)
             ->pk($pk)
             ->limit(1)
-            ->getQuery($sourceName)
-            ->getData()
-            ->getModel();
+            ->getModel($sourceName, $ttl);
     }
 
     /**
@@ -1102,7 +1092,7 @@ abstract class Model
         $modelClass::getQueryBuilder()
             ->update($this->_affected)
             ->pk($this->getPk())
-            ->getQuery($sourceName)->getData();
+            ->getQueryResult($sourceName);
 
         $this->afterUpdate();
 
@@ -1155,8 +1145,7 @@ abstract class Model
 
         $modelClass::getQueryBuilder()
             ->delete($this->getPk())
-            ->getQuery($sourceName)
-            ->getData();
+            ->getQueryResult($sourceName);
 
         $this->afterDelete();
 
@@ -1257,10 +1246,10 @@ abstract class Model
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.2
      * @since 0.0
      */
-    public function getLink($modelClass, $modelPk, $linkModelClass = null)
+    public function getLink($modelClass, $modelPk, $linkModelClass = null, $sourceName = null, $ttl = 3600)
     {
         /** @var Model $selfClass */
         $selfClass = get_class($this);
@@ -1277,16 +1266,12 @@ abstract class Model
             $linkModelClass = isset($modelClasses[$namespace . $selfClassName . '_' . $className . '_Link'])
                 ? $namespace . $selfClassName . '_' . $className . '_Link'
                 : $namespace . $className . '_' . $selfClassName . '_Link';
-
         }
 
         return $linkModelClass::getQueryBuilder()
             ->select('*')
             ->eq(strtolower($selfClassName) . '__fk', $this->getPk())
             ->eq(strtolower($className) . '__fk', $modelPk)
-            ->getQuery()
-            ->getData()
-            ->getModel();
-
+            ->getModel($sourceName, $ttl);
     }
 }

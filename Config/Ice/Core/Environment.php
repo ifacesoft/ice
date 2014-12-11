@@ -71,6 +71,9 @@ return [
             'Ice\Core\Menu' => [
                 'instance' => 'Ice:Object/menu',
             ],
+            'Ice\Core\Data' => [
+                'instance' => 'Ice:Object/data',
+            ],
             'Ice\Core\Container' => [
                 'instance' => 'Ice:Object/container',
             ],
@@ -89,7 +92,7 @@ return [
                 'instance' => 'Ice:Object/query_builder',
             ],
             'Ice\Core\Query_Result' => [
-                'instance' => 'Ice:Object/data',
+                'instance' => 'Ice:Object/query_result',
             ],
             'Ice\Core\Code_Generator' => [
                 'instance' => 'Ice:Object/code_generator',
@@ -151,6 +154,9 @@ return [
             ],
             'Ice\Core\Menu' => [
                 'instance' => 'Ice:Registry/menu',
+            ],
+            'Ice\Core\Data' => [
+                'instance' => 'Ice:Registry/data',
             ],
             'Ice\Core\Container' => [
                 'instance' => 'Ice:Registry/container',

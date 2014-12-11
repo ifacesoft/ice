@@ -38,7 +38,7 @@ class Model_Delete extends Action
      *      'afterActions' => [],          // actions
      *      'layout' => null,               // Emmet style layout
      *      'template' => null,             // Template of view
-     *      'output' => null,               // Output type: standart|file
+     *      'output' => null,               // Output type: standard|file
      *      'viewRenderClassName' => null,  // Render class for view (example: Ice:Php)
      *      'inputDefaults' => [],          // Default input data
      *      'inputValidators' => [],        // Input data validators
@@ -65,14 +65,14 @@ class Model_Delete extends Action
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.2
      * @since 0.0
      */
     protected function run(array $input, Action_Context $actionContext)
     {
         $class = Model::getClass($input['modelName']);
 
-        $class::getQueryBuilder()->delete($input['pk'])->getQuery()->getData();
+        $class::getQueryBuilder()->delete($input['pk'])->getQueryResult();
 
         return [
             'data' => [

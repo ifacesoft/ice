@@ -7,19 +7,14 @@
  * @license https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
-namespace Ice\Core\Model;
+namespace Ice\Core;
 
-use Ice\Core\Query_Result;
-use Ice\Core\Exception;
-use Ice\Core\Model;
-use Ice\Core\Model\Collection\Iterator;
-use Ice\Core\Query;
-use Ice\Core\Query_Builder;
+use Ice\Core;
 use IteratorAggregate;
 use Traversable;
 
 /**
- * Class Collection
+ * Class Model_Collection
  *
  * Core model collection class
  *
@@ -28,46 +23,49 @@ use Traversable;
  * @package Ice
  * @subpackage Core
  *
- * @version 0.1
+ * @version 0.2
  * @since 0.0
  */
-class Collection implements IteratorAggregate
+class Model_Collection implements IteratorAggregate
 {
+    use Core;
+
     /**
      * Data of model collection
      *
      * @var Query_Result
      */
-    private $_data = null;
+    private $_queryResult = null;
 
     /**
      * Private constructor for model collection
      *
-     * @param Query_Result $data
+     * @param Query_Result $queryResult
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.1
+     * @version 0.2
      * @since 0.0
      */
-    private function __construct(Query_Result $data)
+    private function __construct(Query_Result $queryResult)
     {
-        $this->_data = $data;
+        $this->_queryResult = $queryResult;
     }
 
     /**
      * Create new instance of model collection
      *
-     * @param Query_Result $data
-     * @return Collection
+     * @param Query_Result $queryResult
+     * @return Model_Collection
+     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.1
      * @since 0.0
      */
-    public static function create(Query_Result $data)
+    public static function create(Query_Result $queryResult = null)
     {
-        return new Collection($data);
+        return new Model_Collection($queryResult);
     }
 
     /**
@@ -77,79 +75,58 @@ class Collection implements IteratorAggregate
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.1
+     * @version 0.2
      * @since 0.0
      */
     public function getCount()
     {
-        return $this->getData()->count();
+        if ($this->_queryResult === null) {
+            return 0;
+        }
+
+        return $this->_queryResult->count();
     }
 
     /**
      * Return raw data
      *
-     * @param string $fieldNames
      * @return Query_Result
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.2
      * @since 0.0
      */
-    public function getData($fieldNames = '*')
+    public function getQueryResult()
     {
-        if ($this->_data !== null) {
-            return $this->_data;
-        }
-
-        $this->_data = $this->getQueryBuilder()->select($fieldNames)->getQuery()->getData();
-
-        return $this->_data;
+        return $this->_queryResult;
     }
 
-    /**
-     * Set raw data
-     *
-     * @deprecated
-     * @param Query_Result $data
-     * @throws Exception
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function setData(Query_Result $data)
-    {
-        $this->_data = $data;
-    }
-
-    /**
-     * Return query builder of model collection
-     *
-     * @return Query_Builder
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function getQueryBuilder()
-    {
-        if ($this->_queryBuilder !== null) {
-            return $this->_queryBuilder;
-        }
-
-        if ($this->_data !== null) {
-            return null;
-        }
-
-        /** @var Model $modelClass */
-        $modelClass = $this->_modelClass;
-
-        $this->_queryBuilder = $modelClass::getQueryBuilder();
-        return $this->_queryBuilder;
-    }
+//    /**
+//     * Return query builder of model collection
+//     *
+//     * @return Query_Builder
+//     *
+//     * @author dp <denis.a.shestakov@gmail.com>
+//     *
+//     * @version 0.0
+//     * @since 0.0
+//     */
+//    public function getQueryBuilder()
+//    {
+//        if ($this->_queryBuilder !== null) {
+//            return $this->_queryBuilder;
+//        }
+//
+//        if ($this->_queryResult !== null) {
+//            return null;
+//        }
+//
+//        /** @var Model $modelClass */
+//        $modelClass = $this->_modelClass;
+//
+//        $this->_queryBuilder = $modelClass::getQueryBuilder();
+//        return $this->_queryBuilder;
+//    }
 
     /**
      * Return first model of model collection if not empty
@@ -158,19 +135,22 @@ class Collection implements IteratorAggregate
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.2
      * @since 0.0
      */
     public function first()
     {
-        $row = $this->getRow();
+        if ($this->_queryResult === null) {
+            return null;
+        }
+
+        $row = $this->_queryResult->getRow();
 
         if (!$row) {
             return null;
         }
 
-        /** @var Model $modelClass */
-        $modelClass = $this->_modelClass;
+        $modelClass = $this->_queryResult->getModelClass();
 
         return $modelClass::create($row);
     }
@@ -178,42 +158,45 @@ class Collection implements IteratorAggregate
     /**
      * Return row from data in model collection
      *
-     * @param null $pk
+     * @param mixed $pk
      * @return array|null
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @deprecated 0.2
+     * @version 0.2
      * @since 0.0
      */
     public function getRow($pk = null)
     {
-        return $this->getData()->getRow($pk);
+        if ($this->_queryResult === null) {
+            return null;
+        }
+
+        return $this->_queryResult->getRow($pk);
     }
 
     /**
      * Add model to model collection
      *
      * @param Model $model
-     * @return Collection
+     * @return Model_Collection
      * @throws Exception
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.2
      * @since 0.0
      */
     public function add(Model $model)
     {
-        if ($this->_queryBuilder !== null) {
-            throw new Exception('В коллекцию, созданную запросом нельзя добавить свой элемент');
+        if ($this->_queryResult !== null) {
+            Model_Collection::getLogger()->fatal('Could not add item in collection created by query', __FILE__, __LINE__);
         }
 
-        if ($this->_data === null) {
-            $this->setData(new Query_Result([Query_Result::RESULT_MODEL_CLASS => $this->_modelClass]));
-        }
+        $this->_queryResult = new Query_Result([Query_Result::RESULT_MODEL_CLASS => get_class($model)]);
 
-        $this->getData()->setRow($model->getPk(), $model->get());
+        $this->_queryResult->setRow($model->getPk(), $model->get());
 
         return $this;
     }
@@ -222,20 +205,21 @@ class Collection implements IteratorAggregate
      * Insert rows-models to data source
      *
      * @param string|null $sourceName
-     * @return Collection
+     * @return Model_Collection
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @todo need refactoring. Not work. ERROR: Sql query is empty ;)
+     * @version 0.2
      * @since 0.0
      */
     public function insert($sourceName = null)
     {
         $modelClass = $this->_modelClass;
 
-        $this->setData(
+        $this->setQueryResult(
             $modelClass::getQueryBuilder()
-                ->insert($this->getData()->getRows())
+                ->insert($this->getQueryResult()->getRows())
                 ->getQuery($sourceName)
                 ->getData()
         );
@@ -252,6 +236,7 @@ class Collection implements IteratorAggregate
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
+     * @todo need refactoring. Not work. ERROR: Sql query is empty ;)
      * @version 0.0
      * @since 0.0
      */
@@ -273,7 +258,7 @@ class Collection implements IteratorAggregate
             $queryBuilder->in('/pk', $keys);
         }
 
-        $this->setData($queryBuilder->getQuery($sourceName)->getData());
+        $this->setQueryResult($queryBuilder->getQuery($sourceName)->getQueryResult());
 
         return $this;
     }
@@ -285,12 +270,16 @@ class Collection implements IteratorAggregate
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.2
      * @since 0.0
      */
     public function getKeys()
     {
-        return $this->getData()->getKeys();
+        if ($this->_queryResult === null) {
+            return [];
+        }
+
+        return $this->_queryResult->getKeys();
     }
 
     /**
@@ -307,7 +296,7 @@ class Collection implements IteratorAggregate
      */
     public function getIterator()
     {
-        return new Iterator($this->getData());
+        return new Model_Collection_Iterator($this->getQueryResult());
     }
 
     /**
@@ -318,19 +307,18 @@ class Collection implements IteratorAggregate
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.2
      * @since 0.0
      */
     public function get($pk)
     {
-        $row = $this->getRow($pk);
+        $row = $this->_queryResult->getRow($pk);
 
         if (!$row) {
             return null;
         }
 
-        /** @var Model $modelClass */
-        $modelClass = $this->_modelClass;
+        $modelClass = $this->_queryResult->getModelClass();
 
         return $modelClass::create($row);
     }
@@ -343,16 +331,16 @@ class Collection implements IteratorAggregate
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
+     * @todo need refactoring. Not work. ERROR: Sql query is empty ;)
      * @version 0.0
      * @since 0.0
-     * @deprecated 0.0 Not work. ERROR: Sql query is empty ;)
      */
     public function remove($pk = null)
     {
         /** @var Model $modelClass */
         $modelClass = $this->_modelClass;
 
-        return $modelClass::create($this->getData()->delete($pk));
+        return $modelClass::create($this->getQueryResult()->delete($pk));
     }
 
     /**
@@ -378,27 +366,28 @@ class Collection implements IteratorAggregate
      *
      * @param $fieldScheme
      * @param null $value
-     * @param string $comparsion
-     * @return Collection
+     * @param string $comparison
+     * @return Model_Collection
+     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
+     * @todo need refactoring. Not work.
      * @version 0.0
      * @since 0.0
      */
-    public function filter($fieldScheme, $value = null, $comparsion = '=')
+    public function filter($fieldScheme, $value = null, $comparison = '=')
     {
         if (!is_array($fieldScheme)) {
-            return $this->filter([[$fieldScheme, $value, $comparsion]]);
+            return $this->filter([[$fieldScheme, $value, $comparison]]);
         }
 
         if (!is_array(reset($fieldScheme))) {
             return $this->filter([$fieldScheme]);
         }
 
-        /** @var Model $modelClass */
-        $modelClass = $this->_modelClass;
+        $modelClass = $this->_queryResult->getModelClass();
         $collection = $modelClass::getCollection();
-        $collection->setData($this->getData()->filter($fieldScheme));
+        $collection->setData($this->getQueryResult()->filter($fieldScheme));
         return $collection;
     }
 }

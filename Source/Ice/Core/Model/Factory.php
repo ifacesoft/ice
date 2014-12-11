@@ -39,7 +39,7 @@ abstract class Model_Factory extends Model_Defined
      * @version 0.0
      * @since 0.0
      */
-    public static function getDelegate($delegateName)
+    public static function getDelegate($delegateName, $sourceName = null, $ttl = 3600)
     {
         /** @var Model $modelclass */
         $modelclass = get_called_class();
@@ -48,8 +48,6 @@ abstract class Model_Factory extends Model_Defined
             ->select('/delegate_name')
             ->eq('/delegate_name', $delegateName)
             ->eq('/is_active', 1)
-            ->getQuery()
-            ->getData()
-            ->getModel();
+            ->getModel($sourceName, $ttl);
     }
 }

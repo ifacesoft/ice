@@ -117,4 +117,7 @@ return [
     'Smarty: Unable to load template file \'Bi/Action/Layout/Main.tpl\'' => [
         'ru' => 'Smarty: Unable to load template file \'Bi/Action/Layout/Main.tpl\'',
     ],
+    'Smarty: Unable to load template file \'Ice/Action/Form.tpl\'' => [
+        'ru' => 'Smarty: Unable to load template file \'Ice/Action/Form.tpl\'',
+    ],
 ];

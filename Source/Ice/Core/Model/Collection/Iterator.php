@@ -7,7 +7,7 @@
  * @license https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
-namespace Ice\Core\Model\Collection;
+namespace Ice\Core;
 
 use Ice\Core\Query_Result;
 use Ice\Core\Model;
@@ -15,14 +15,14 @@ use Ice\Core\Model;
 /**
  * Iterator for model collection
  *
- * @package Ice\Core\Model\Collection
+ * @package Ice\Core\Model_Collection
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
  * @version 0.0
  * @since 0.0
  */
-class Iterator extends Query_Result
+class Model_Collection_Iterator extends Query_Result
 {
 
     /**

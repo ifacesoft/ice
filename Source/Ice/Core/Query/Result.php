@@ -12,9 +12,8 @@ namespace Ice\Core;
 use ArrayAccess;
 use Countable;
 use Ice\Core;
-use Ice\Core\Model\Collection;
+use Ice\Core\Model_Collection;
 use Ice\Helper\Arrays;
-use Ice\Helper\Console;
 use Ice\Helper\Memory;
 use Ice\Helper\Serializer;
 use Iterator;
@@ -296,7 +295,7 @@ class Query_Result extends Container implements Iterator, ArrayAccess, Countable
     /**
      * Get collection from data
      *
-     * @return Collection
+     * @return Model_Collection
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
@@ -833,5 +832,22 @@ class Query_Result extends Container implements Iterator, ArrayAccess, Countable
     public function getPage()
     {
         return $this->_result[Query_Result::PAGE];
+    }
+
+    /**
+     * Return instance of query result
+     *
+     * @param null $key
+     * @param null $ttl
+     * @return Query_Result
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.2
+     * @since 0.2
+     */
+    public static function getInstance($key = null, $ttl = null)
+    {
+        return parent::getInstance($key, $ttl);
     }
 }

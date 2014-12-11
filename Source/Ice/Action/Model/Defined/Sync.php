@@ -15,7 +15,7 @@ use Ice\Core\Data_Scheme;
 use Ice\Core\Data_Source;
 use Ice\Core\Exception;
 use Ice\Core\Model;
-use Ice\Core\Model\Collection;
+use Ice\Core\Model_Collection;
 use Ice\Core\Model_Defined;
 
 /**
@@ -40,7 +40,7 @@ class Model_Defined_Sync extends Action
      *      'afterActions' => [],          // actions
      *      'layout' => null,               // Emmet style layout
      *      'template' => null,             // Template of view
-     *      'output' => null,               // Output type: standart|file
+     *      'output' => null,               // Output type: standard|file
      *      'viewRenderClassName' => null,  // Render class for view (example: Ice:Php)
      *      'inputDefaults' => [],          // Default input data
      *      'inputValidators' => [],        // Input data validators
@@ -76,11 +76,10 @@ class Model_Defined_Sync extends Action
         foreach ($modelClasses as $modelClass) {
             $modelClass = Model::getClass($modelClass);
             if (isset(class_parents($modelClass)[Model_Defined::getClass()])) {
-                /** @var Collection $rowCollection */
+                /** @var Model_Collection $rowCollection */
                 $rowCollection = $modelClass::getQueryBuilder()
                     ->select('*')
-                    ->getQuery($dataSource)
-                    ->getCollection();
+                    ->getCollection($dataSource);
 
                 $dataRows = $modelClass::getCollection()->getRows();
 

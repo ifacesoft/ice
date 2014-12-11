@@ -33,10 +33,10 @@ class Login_Password extends Form_Security_Login
             Form_Security_Login::getLogger()->fatal($error, __FILE__, __LINE__);
         }
 
-        foreach (Account::getQueryBy('login', $this->getValues()['login'], ['password', 'user__fk'])->getData()->getRows() as $accountRow) {
+        foreach (Account::getQueryBuilderBy('login', $this->getValues()['login'], ['password', 'user__fk'])->getRows() as $accountRow) {
             if (password_verify($this->getValues()['password'], $accountRow['password'])) {
                 $_SESSION['userPk'] = $accountRow['user__fk'];
-                $_SESSION['roleKeys'] = User_Role_Link::getQueryBy('user__fk', $accountRow['user__fk'], 'role__fk')->getData()->getColumn();
+                $_SESSION['roleKeys'] = User_Role_Link::getQueryBuilderBy('user__fk', $accountRow['user__fk'], 'role__fk')->getColumn();
                 return;
             }
         }

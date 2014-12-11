@@ -323,7 +323,7 @@ abstract class Action extends Container
      *      'afterActions' => [],          // actions
      *      'layout' => null,               // Emmet style layout
      *      'template' => null,             // Template of view
-     *      'output' => null,               // Output type: standart|file
+     *      'output' => null,               // Output type: standard|file
      *      'viewRenderClassName' => null,  // Render class for view (example: Ice:Php)
      *      'inputDefaults' => [],          // Default input data
      *      'inputValidators' => [],        // Input data validators

@@ -1385,4 +1385,44 @@ class Query_Builder
         return Query::getInstance([$sourceName, $this->_queryType, $this->_sqlParts, $this->_modelClass, $this->_cacheTags])
             ->bind($this->_bindParts);
     }
-} 
+
+    /**
+     * @param null $sourceName
+     * @param int $ttl
+     * @return Model_Collection
+     */
+    public function getCollection($sourceName = null, $ttl = 3600)
+    {
+        return $this->getQueryResult($sourceName, $ttl)->getCollection();
+    }
+
+    /**
+     * Return query result array
+     *
+     * @param null $sourceName
+     * @param int $ttl
+     * @return array
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.2
+     * @since 0.2
+     */
+    public function getRows($sourceName = null, $ttl = 3600)
+    {
+        return $this->getQueryResult($sourceName, $ttl)->getRows();
+    }
+
+    public function getModel($sourceName = null, $ttl = 3600)
+    {
+        return $this->getQueryResult($sourceName, $ttl)->getModel();
+    }
+
+    public function getQueryResult($sourceName = null, $ttl = 3600) {
+        return Query_Result::getInstance([$this->getQuery($sourceName), $ttl]);
+    }
+
+    public function getColumn($fieldName = null, $sourceName = null, $ttl = 3600)
+    {
+        return $this->getQueryResult($sourceName, $ttl)->getColumn($fieldName);
+    }
+}

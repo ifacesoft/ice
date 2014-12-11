@@ -213,6 +213,21 @@ class Query extends Container
     }
 
     /**
+     * Return query statement type
+     *
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
+     */
+    public function getQueryType()
+    {
+        return $this->_queryType;
+    }
+
+    /**
      * Get bind params
      *
      * @return array
@@ -222,7 +237,8 @@ class Query extends Container
      * @version 0.1
      * @since 0.1
      */
-    public function getBinds() {
+    public function getBinds()
+    {
         $binds = [];
 
         foreach ($this->getBindParts() as $bindPart) {
@@ -241,18 +257,18 @@ class Query extends Container
     }
 
     /**
-     * Return query statement type
+     * Return rows
      *
-     * @return string
+     * @return array
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
      * @since 0.0
      */
-    public function getQueryType()
+    public function getBindParts()
     {
-        return $this->_queryType;
+        return $this->_bindParts;
     }
 
     /**
@@ -286,21 +302,6 @@ class Query extends Container
     }
 
     /**
-     * Return rows
-     *
-     * @return array
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function getBindParts()
-    {
-        return $this->_bindParts;
-    }
-
-    /**
      * Return validate tags
      *
      * @return array
@@ -328,23 +329,6 @@ class Query extends Container
     public function getInvalidateTags()
     {
         return $this->_cacheTags['invalidate'];
-    }
-
-    /**
-     * Return data of query
-     *
-     * @param int $ttl
-     * @throws Exception
-     * @return Query_Result
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function getData($ttl = 3600)
-    {
-        return Query_Result::getInstance([$this, $ttl]);
     }
 
     /**
