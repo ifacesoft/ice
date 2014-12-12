@@ -53,7 +53,7 @@ class Form extends Action
             'form' => 'Ice:Is_Form'
         ],
         'inputDefaults' => [
-            'groupping' => true,
+            'groupping' => 1,
             'submitActionName' => 'Ice:Form_Submit',
             'submitTitle' => 'Submit',
             'reRenderActionNames' => [],

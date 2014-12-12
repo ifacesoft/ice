@@ -21,5 +21,23 @@ var Ice_Form = {
                 }
             }
         );
+    },
+    modal: function (modelName, pk, submitActionName, reRenderActionNames, filterFields, groupping, submitTitle) {
+        Ice.reRender(
+            'Ice:Form_Model',
+            {
+                'modelName': modelName,
+                'pk': pk,
+                'submitActionName': submitActionName,
+                'reRenderActionNames': reRenderActionNames,
+                'filterFields': filterFields,
+                'groupping': groupping,
+                'submitTitle': submitTitle,
+                'template': '_Modal'
+            },
+            function () {
+                $('.Form_Model .modal').modal();
+            }
+        );
     }
 };

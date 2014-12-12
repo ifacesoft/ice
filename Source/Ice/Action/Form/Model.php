@@ -12,6 +12,7 @@ namespace Ice\Action;
 use Ice\Core\Action;
 use Ice\Core\Action_Context;
 use Ice\Core\Model;
+use Ice\Helper\Emmet;
 
 /**
  * Class Form_Model
@@ -52,13 +53,14 @@ class Form_Model extends Action
             'pk' => 'Ice:Numeric_Positive'
         ],
         'inputDefaults' => [
-            'groupping' => true,
+            'groupping' => 1,
             'reRenderActionNames' => [],
             'filterFields' => [],
             'submitActionName' => 'Ice:Submit',
             'submitTitle' => 'Submit',
             'redirect' => ''
         ],
+        'layout' => Emmet::PANEL_BODY
     ];
 
     /**
@@ -70,7 +72,7 @@ class Form_Model extends Action
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.2
      * @since 0.0
      */
     protected function run(array $input, Action_Context $actionContext)
@@ -95,5 +97,22 @@ class Form_Model extends Action
         ];
 
         $actionContext->addAction('Ice:Form', $data);
+
+        $reRenderActionNames = '';
+
+        foreach ($input['reRenderActionNames'] as $reRenderAction) {
+            $reRenderActionNames .= ',\'' . $reRenderAction . '\'';
+        }
+
+        $filterFields = '';
+
+        foreach ($input['filterFields'] as $filterField) {
+            $filterFields .= ',\'' . $filterField . '\'';
+        }
+
+        $input['reRenderActionNames'] = ltrim($reRenderActionNames, ',');
+        $input['filterFields'] = ltrim($filterFields, ',');
+
+        return $input;
     }
 }

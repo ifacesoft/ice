@@ -88,12 +88,13 @@ abstract class Data extends Container
         return $this->key;
     }
 
-    protected function addColumn($columnName, $columnType, $columnTitle, $template)
+    protected function addColumn($columnName, $columnType, $columnTitle, $option, $template)
     {
         $this->columns[] = [
             'name' => $columnName,
             'type' => $columnType,
             'title' => $columnTitle,
+            'option' => $option,
             'template' => $template
         ];
 
