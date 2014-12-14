@@ -779,7 +779,7 @@ class Query_Builder
      * @version 0.2
      * @since 0.0
      */
-    public function inner($modelClass, $fieldNames = null, $tableAlias = null, $condition = null)
+    public function inner($modelClass, $fieldNames = '/pk', $tableAlias = null, $condition = null)
     {
         return $this->_select($fieldNames, null, $modelClass, $tableAlias)
             ->join(Query_Builder::SQL_CLAUSE_INNER_JOIN, $modelClass, $tableAlias, $condition);
@@ -1179,15 +1179,13 @@ class Query_Builder
      * @param null $fieldAlias
      * @param null $modelClass
      * @param null $tableAlias
-     * @param null $sourceName
-     * @param int $ttl
-     * @return Query_Result
+     * @return Query_Builder
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.2
      * @since 0.0
      */
-    public function count($fieldName = '/pk', $fieldAlias = null, $modelClass = null, $tableAlias = null, $sourceName = null, $ttl = 3600)
+    public function count($fieldName = '/pk', $fieldAlias = null, $modelClass = null, $tableAlias = null)
     {
         if (!$modelClass) {
             $modelClass = $this->getModelClass();
@@ -1201,7 +1199,9 @@ class Query_Builder
 
         $this->appendCacheTag($modelClass, $fieldName, true, false);
 
-        return $this->select('count(' . $fieldName . ')', $fieldAlias, $modelClass, $tableAlias, $sourceName, $ttl);
+        $this->_select('count(' . $fieldName . ')', $fieldAlias, $modelClass, $tableAlias);
+
+        return $this;
     }
 
     /**

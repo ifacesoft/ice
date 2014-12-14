@@ -169,7 +169,7 @@ class Route extends Container
     {
         $routes = [];
 
-        $routeFilePathes = [];
+        $routeFilePathes = null;
 
         try {
             $routeFilePathes = Loader::getFilePath($class, '.php', 'Config/', true, false, false, true);

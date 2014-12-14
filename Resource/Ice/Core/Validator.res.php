@@ -33,4 +33,7 @@ return [
     'Web or Module?' => [
         'en' => 'Web or Module?',
     ],
+    'Is_Data: param {$0} is not valid' => [
+        'ru' => 'Is_Data: param {$0} is not valid',
+    ],
 ];

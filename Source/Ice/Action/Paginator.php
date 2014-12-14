@@ -51,8 +51,8 @@ class Paginator extends Action
             'params' => []
         ],
         'inputValidators' => [
-            'data' => 'Ice:Is_Data',
-            'actionName' => 'Ice:Not_Null'
+            'data' => 'Ice:Is_Query_Result',
+            'actionClassName' => 'Ice:Not_Null'
         ],
     ];
 
@@ -122,7 +122,7 @@ class Paginator extends Action
             $output['last'] = $pageCount;
         }
 
-        $output['actionName'] = $input['actionName'];
+        $output['actionClassName'] = $input['actionClassName'];
 
         array_walk(
             $input['params'], function (&$item, $key) {

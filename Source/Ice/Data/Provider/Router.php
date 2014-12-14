@@ -215,7 +215,7 @@ class Router extends Data_Provider
 
 
         foreach (Route::getRoutes() as $routeName => $route) {
-//            \Ice\Core\Logger::debug($routeName . ': ' . $url . ' || ' . $route['pattern'] . ' || ' . (int) preg_match($route['pattern'], $url));
+//            Ice\Core\Logger::debug($routeName . ': ' . $url . ' || ' . $route['pattern'] . ' || ' . (int) preg_match($route['pattern'], $url));
 
             if (!preg_match($route['pattern'], $url)) {
                 continue;

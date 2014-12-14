@@ -77,9 +77,7 @@ class Model_Defined_Sync extends Action
             $modelClass = Model::getClass($modelClass);
             if (isset(class_parents($modelClass)[Model_Defined::getClass()])) {
                 /** @var Model_Collection $rowCollection */
-                $rowCollection = $modelClass::query()
-                    ->select('*')
-                    ->getCollection($dataSource);
+                $rowCollection = $modelClass::getCollection($dataSource);
 
                 $dataRows = $modelClass::getCollection()->getRows();
 

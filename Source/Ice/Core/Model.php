@@ -703,7 +703,7 @@ abstract class Model
      * @param string $fieldNames
      * @param null $sourceName
      * @param int $ttl
-     * @return Collection
+     * @return Model_Collection
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.2
@@ -720,7 +720,7 @@ abstract class Model
     /**
      * Return empty collection
      *
-     * @return Collection
+     * @return Model_Collection
      * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
@@ -833,7 +833,7 @@ abstract class Model
      */
     public static function getModelBy($shortFieldName, $fieldValue, $fieldNames, $sourceName = null, $ttl = 3600)
     {
-        return self::getQueryBuilderBy($shortFieldName, $fieldValue, $fieldNames)
+        return self::queryBy($shortFieldName, $fieldValue, $fieldNames)
             ->select($fieldNames, null, null, null, $sourceName, $ttl)
             ->getModel();
     }

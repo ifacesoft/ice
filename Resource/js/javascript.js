@@ -36,9 +36,9 @@ var Ice = {
         });
     },
 
-    reRender: function (actionName, actionParams, callback) {
+    reRender: function (actionClassName, actionParams, callback) {
         Ice.call(
-            actionName,
+            actionClassName,
             actionParams,
             function (result) {
                 if (result.actionName) {
