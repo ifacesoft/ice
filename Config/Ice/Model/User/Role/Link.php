@@ -16,4 +16,8 @@ return [
         'user__fk' => 'Number',
         'role__fk' => 'Number',
     ],
+    'Ice\\Core\\Data' => [
+        'user__fk' => 'text',
+        'role__fk' => 'text',
+    ],
 ];

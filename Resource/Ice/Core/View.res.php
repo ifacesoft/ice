@@ -123,4 +123,7 @@ return [
     'Smarty: Unable to load template file \'Ice/Action/Form/Model/Model.tpl\'' => [
         'ru' => 'Smarty: Unable to load template file \'Ice/Action/Form/Model/Model.tpl\'',
     ],
+    'Smarty: Unable to load template file \'Ice/Action/Data/Model.tpl\'' => [
+        'ru' => 'Smarty: Unable to load template file \'Ice/Action/Data/Model.tpl\'',
+    ],
 ];

@@ -10,7 +10,6 @@
 namespace Ice\Form;
 
 use Ice\Core\Form;
-use Ice\Core\Logger;
 use Ice\Core\Model as Core_Model;
 
 /**
@@ -30,6 +29,11 @@ use Ice\Core\Model as Core_Model;
  */
 class Model extends Form
 {
+    /**
+     * @var Core_Model
+     */
+    private $_modelClass = null;
+
     /**
      * Field type map
      *
@@ -55,12 +59,14 @@ class Model extends Form
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.1
+     * @version 0.2
      * @since 0.0
      */
     protected function __construct($modelClass)
     {
         parent::__construct($modelClass);
+
+        $this->_modelClass = Model::getClass($modelClass);
 
         $validateScheme = $modelClass::getValidateScheme();
 
@@ -75,19 +81,38 @@ class Model extends Form
     }
 
     /**
-     * Binds all model field values
-     *
-     * @param Core_Model $model
-     * @return $this
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
+     * @return Core_Model
      */
-    public function bindModel(Core_Model $model)
+    public function getModelClass()
     {
-        return $this->bind(array_merge($model->get(), $model->getPk()));
+        return $this->_modelClass;
+    }
+
+//    /**
+//     * Binds all model field values
+//     *
+//     * @param Core_Model $model
+//     * @return $this
+//     *
+//     * @author dp <denis.a.shestakov@gmail.com>
+//     *
+//     * @version 0.0
+//     * @since 0.0
+//     */
+//    public function bindModel(Core_Model $model)
+//    {
+//        return $this->bind(array_merge($model->get(), $model->getPk()));
+//    }
+
+    public function addFilterFields(array $filterFields)
+    {
+        $modelClass = $this->getModelClass();
+
+        foreach ($filterFields as &$filterField) {
+            $filterField = $modelClass::getFieldName($filterField);
+        }
+
+        return parent::addFilterFields($filterFields);
     }
 
     /**

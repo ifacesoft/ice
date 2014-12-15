@@ -8,12 +8,19 @@ abstract class Data extends Container
 {
     use Core;
 
+    /**
+     * Not ignored fields
+     *
+     * @var array
+     */
+    protected $_filterFields = [];
+
     private $columns = [];
     private $rows = [];
 
     private $key = null;
 
-    private function __construct($key)
+    protected function __construct($key)
     {
         $this->key = $key;
     }
@@ -88,6 +95,20 @@ abstract class Data extends Container
         return $this->key;
     }
 
+    /**
+     * Build column part
+     *
+     * @param $columnName
+     * @param $columnTitle
+     * @param null $option
+     * @param string $template
+     * @return Data
+     */
+    public function text($columnName, $columnTitle, $option = null, $template = 'Ice:Table_Column_Column')
+    {
+        return $this->addColumn($columnName, 'column', $columnTitle, $option, $template);
+    }
+
     protected function addColumn($columnName, $columnType, $columnTitle, $option, $template)
     {
         $this->columns[] = [
@@ -100,5 +121,63 @@ abstract class Data extends Container
 
         return $this;
     }
+
+    /**
+     * Add accepted fields
+     *
+     * @param array $filterFields
+     * @return Form
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.2
+     * @since 0.2
+     */
+    public function addFilterFields(array $filterFields)
+    {
+        if (empty($filterFields)) {
+            return $this;
+        }
+
+        $this->_filterFields = array_merge($this->_filterFields, $filterFields);
+        return $this;
+    }
+
+    /**
+     * Build link part
+     *
+     * @param $columnName
+     * @param $columnTitle
+     * @param null $option
+     * @param string $template
+     * @return Data
+     */
+    public function link($columnName, $columnTitle, $option = null, $template = 'Ice:Table_Column_Link')
+    {
+        return $this->addColumn($columnName, 'link', $columnTitle, $option, $template);
+    }
+
+    /**
+     * Build button part
+     *
+     * @param $columnName
+     * @param $columnTitle
+     * @param null $option
+     * @param string $template
+     * @return Data
+     */
+    public function button($columnName, $columnTitle, $option = null, $template = 'Ice:Table_Column_Button')
+    {
+        return $this->addColumn($columnName, 'button', $columnTitle, $option, $template);
+    }
+
+    /**
+     * @return array
+     */
+    public function getFilterFields()
+    {
+        return $this->_filterFields;
+    }
+
 
 }

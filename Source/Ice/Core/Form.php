@@ -40,8 +40,6 @@ abstract class Form extends Container
     const NAME_MODEL = 'Model';
     const NAME_SIMPLE = 'Simple';
 
-
-
     /**
      * Fields - form parts
      *

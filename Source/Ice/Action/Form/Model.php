@@ -77,14 +77,13 @@ class Form_Model extends Action
      */
     protected function run(array $input, Action_Context $actionContext)
     {
-        $class = Model::getClass($input['modelName']);
+        /** @var Model $modelClass */
+        $modelClass = Model::getClass($input['modelName']);
 
-        $form = $class::getForm($input['filterFields']);
+        $form = $modelClass::getForm($input['filterFields']);
 
-        $model = $class::getModel($input['pk'], '*');
-
-        if ($model) {
-            $form->bindModel($model);
+        if ($input['pk']) {
+            $form->bind($modelClass::getRow($input['pk'], '*'));
         }
 
         $data = [

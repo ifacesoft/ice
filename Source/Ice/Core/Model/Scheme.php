@@ -95,6 +95,7 @@ class Model_Scheme extends Container
         $modelMapping = [];
         $validators = [];
         $form = [];
+        $data = [];
 
         $primaryKeys = $schemeData['indexes']['PRIMARY KEY']['PRIMARY'];
         $foreignKeys = Arrays::column($schemeData['indexes']['FOREIGN KEY'], 0, '');
@@ -123,6 +124,8 @@ class Model_Scheme extends Container
             $modelMapping[$fieldName] = $columnName;
 
             $fieldType = isset(Form_Model::$typeMap[$column['dataType']]) ? Form_Model::$typeMap[$column['dataType']] : 'text';
+
+            $data[$fieldName] = 'text';
 
             $form[$fieldName] = $fieldType;
 
@@ -154,6 +157,7 @@ class Model_Scheme extends Container
         $modelConfigData['mapping'] = $modelMapping;
         $modelConfigData[Validator::getClass()] = $validators;
         $modelConfigData[Form::getClass()] = $form;
+        $modelConfigData[Data::getClass()] = $data;
 
         $modelMappingFile = Loader::getFilePath($modelClass, '.php', 'Config/', false, true);
         File::createData($modelMappingFile, $modelConfigData);

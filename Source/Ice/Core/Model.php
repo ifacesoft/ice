@@ -11,6 +11,7 @@ namespace Ice\Core;
 
 use Ice\Core;
 use Ice\Form\Model as Form_Model;
+use Ice\Data\Model as Data_Model;
 use Ice\Helper\Json;
 use Ice\Helper\Object;
 use Ice\Helper\Spatial;
@@ -613,6 +614,21 @@ abstract class Model
     }
 
     /**
+     * Return data field types
+     *
+     * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.2
+     * @since 0.2
+     */
+    public static function getDataFieldTypes()
+    {
+        return self::getConfig()->gets(Data::getClass());
+    }
+
+    /**
      * Get dataSource for current model class
      *
      * @return Data_Source
@@ -677,29 +693,28 @@ abstract class Model
     /**
      * Return all rows for self model class
      *
-     * @param array $pk
+     * @param array $paginator
      * @param string $fieldNames
      * @param null $sourceName
      * @param int $ttl
      * @return array
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.2
      * @since 0.0
      */
-    public static function getRows($pk = [], $fieldNames = '*', $sourceName = null, $ttl = 3600)
+    public static function getRows(array $paginator, $fieldNames = '*', $sourceName = null, $ttl = 3600)
     {
         return self::query()
-            ->pk($pk)
-            ->select($fieldNames)
-            ->getRows($sourceName, $ttl);
+            ->setPaginator($paginator)
+            ->select($fieldNames, null, null, null, $sourceName, $ttl)
+            ->getRows();
     }
 
     /**
      * Return collection of current model class name
      *
-     * @param array $pk
+     * @param array $paginator
      * @param string $fieldNames
      * @param null $sourceName
      * @param int $ttl
@@ -709,10 +724,10 @@ abstract class Model
      * @version 0.2
      * @since 0.0
      */
-    public static function getCollection($pk = [], $fieldNames = '*', $sourceName = null, $ttl = 3600)
+    public static function getCollection(array $paginator, $fieldNames = '*', $sourceName = null, $ttl = 3600)
     {
         return self::query()
-            ->pk($pk)
+            ->setPaginator($paginator)
             ->select($fieldNames)
             ->getCollection($sourceName, $ttl);
     }
@@ -729,7 +744,7 @@ abstract class Model
      */
     public static function getEmptyCollection()
     {
-        return Collection::create(new Query_Result([Query_Result::RESULT_MODEL_CLASS => self::getClass()]));
+        return Model_Collection::create(new Query_Result([Query_Result::RESULT_MODEL_CLASS => self::getClass()]));
     }
 
     /**
@@ -814,6 +829,22 @@ abstract class Model
     public static function getForm(array $filterFields = [])
     {
         return Form_Model::getInstance(self::getClass())->addFilterFields($filterFields);
+    }
+
+    /**
+     * Return data of self model class
+     *
+     * @param array $filterFields
+     * @return Data_Model
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.2
+     * @since 0.0
+     */
+    public static function getData(array $filterFields = [])
+    {
+        return Data_Model::getInstance(self::getClass())->addFilterFields($filterFields);
     }
 
     /**
@@ -951,46 +982,26 @@ abstract class Model
         return $this->set($fieldName, $value);
     }
 
-    /**
-     * Get value from data of model
-     *
-     * @param null $key
-     * @return array
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function getData($key = null)
-    {
-        if ($key === null) {
-            return $this->_data;
-        }
-
-        return isset($this->_data[$key]) ? $this->_data[$key] : null;
-    }
-
-    /**
-     * Set data in model data
-     *
-     * @param $key
-     * @param null $value
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function setData($key, $value = null)
-    {
-        if (is_array($key) && !$value) {
-            $this->_data = array_merge($this->_data, $key);
-            return;
-        }
-
-        $this->_data[$key] = $value;
-    }
+//    /**
+//     * Set data in model data
+//     *
+//     * @param $key
+//     * @param null $value
+//     *
+//     * @author dp <denis.a.shestakov@gmail.com>
+//     *
+//     * @version 0.0
+//     * @since 0.0
+//     */
+//    public function setData($key, $value = null)
+//    {
+//        if (is_array($key) && !$value) {
+//            $this->_data = array_merge($this->_data, $key);
+//            return;
+//        }
+//
+//        $this->_data[$key] = $value;
+//    }
 
     /**
      * Execute insert or update model data
@@ -1202,18 +1213,25 @@ abstract class Model
     }
 
     /**
-     * Get array of fields names end their values
+     * Return all rows for self model class
      *
+     * @param array $pk
+     * @param string $fieldNames
+     * @param null $sourceName
+     * @param int $ttl
      * @return array
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
-     * @since 0.0
+     * @version 0.2
+     * @since 0.2
      */
-    public function getRow()
+    public static function getRow($pk = [], $fieldNames = '*', $sourceName = null, $ttl = 3600)
     {
-        return $this->_row;
+        return self::query()
+            ->pk($pk)
+            ->select($fieldNames, null, null, null, $sourceName, $ttl)
+            ->getRow($pk);
     }
 
     /**

@@ -14,4 +14,8 @@ return [
         'role_pk' => 'Number',
         'role_name' => 'Text',
     ],
+    'Ice\\Core\\Data' => [
+        'role_pk' => 'text',
+        'role_name' => 'text',
+    ],
 ];

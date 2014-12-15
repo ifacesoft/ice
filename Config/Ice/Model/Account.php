@@ -25,4 +25,11 @@ return [
         'password' => 'Text',
         'account_active' => 'Checkbox',
     ],
+    'Ice\\Core\\Data' => [
+        'account_pk' => 'text',
+        'user__fk' => 'text',
+        'login' => 'text',
+        'password' => 'text',
+        'account_active' => 'text',
+    ],
 ];

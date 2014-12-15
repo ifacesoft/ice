@@ -1338,17 +1338,22 @@ class Query_Builder
     /**
      * Set Limits and offset by page and limit
      *
-     * @param int $page
-     * @param int $limit
+     * @param array $paginator
      * @return Query_Builder
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.2
      * @since 0.0
      */
-    public function setPaginator($page = 1, $limit = 1000)
+    public function setPaginator(array $paginator)
     {
+        if (empty($paginator)) {
+            $page = 1;
+            $limit = 1000;
+        } else {
+            list($page, $limit) = $paginator;
+        }
+
         return $this->calcFoundRows()
             ->limit($limit, ($page - 1) * $limit);
     }

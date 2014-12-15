@@ -4,10 +4,10 @@ namespace Ice\Action;
 use Ice\Core;
 use Ice\Core\Action;
 use Ice\Core\Action_Context;
-use Ice\Core\Data;
-use Ice\Data\Table;
+use Ice\Core\Logger;
 use Ice\Helper\Emmet;
 use Ice\View\Render\Php;
+use Ice\Core\Data as Core_Data;
 
 /**
  * Class Data_Table
@@ -21,7 +21,7 @@ use Ice\View\Render\Php;
  * @version 0.2
  * @since 0.1
  */
-class Data_Table extends Action
+class Data extends Action
 {
     /**  public static $config = [
      *      'afterActions' => [],          // actions
@@ -58,13 +58,19 @@ class Data_Table extends Action
      */
     protected function run(array $input, Action_Context $actionContext)
     {
+        /** @var Core_Data $form */
+        $data = $input['data'];
+
         $rows = [];
 
-        $columns = $input['data']->getColumns();
+        $columns = $data->getColumns();
+
+        $filterFields = $data->getFilterFields();
+
 
         $rows[] = Php::getInstance()->fetch(Data::getClass('Ice:Table_Row_Header'), ['columns' => $columns]);
 
-        foreach ($input['data']->getRows() as $row) {
+        foreach ($data->getRows() as $row) {
             $rowResult = [];
 
             foreach ($columns as $column) {

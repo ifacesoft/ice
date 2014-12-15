@@ -34,4 +34,14 @@ return [
         'user_active' => 'Checkbox',
         'user_created' => 'Date',
     ],
+    'Ice\\Core\\Data' => [
+        'user_pk' => 'text',
+        'user_phone' => 'text',
+        'user_email' => 'text',
+        'user_name' => 'text',
+        'surname' => 'text',
+        'patronymic' => 'text',
+        'user_active' => 'text',
+        'user_created' => 'text',
+    ],
 ];
