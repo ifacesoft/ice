@@ -5,6 +5,7 @@ use Ice\Core;
 use Ice\Core\Action;
 use Ice\Core\Action_Context;
 use Ice\Core\Logger;
+use Ice\Helper\Arrays;
 use Ice\Helper\Emmet;
 use Ice\View\Render\Php;
 use Ice\Core\Data as Core_Data;
@@ -67,13 +68,16 @@ class Data extends Action
 
         $filterFields = $data->getFilterFields();
 
-
-        $rows[] = Php::getInstance()->fetch(Data::getClass('Ice:Table_Row_Header'), ['columns' => $columns]);
+        $rows[] = Php::getInstance()->fetch(Data::getClass('Ice:Table_Row_Header'), ['columns' => array_intersect_key($columns, array_intersect(Arrays::column($columns, 'name'), $filterFields))]);
 
         foreach ($data->getRows() as $row) {
             $rowResult = [];
 
             foreach ($columns as $column) {
+                if (!in_array($column['name'], $filterFields)) {
+                    continue;
+                }
+
                 $rowResult[] = Php::getInstance()->fetch(Data::getClass($column['template']), ['value' => $row[$column['name']]]);
             }
 

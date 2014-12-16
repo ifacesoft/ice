@@ -60,7 +60,7 @@ class Form_Model extends Action
             'submitTitle' => 'Submit',
             'redirect' => ''
         ],
-        'layout' => Emmet::PANEL_BODY
+//        'layout' => Emmet::PANEL_BODY
     ];
 
     /**

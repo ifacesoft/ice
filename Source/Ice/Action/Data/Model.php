@@ -84,8 +84,16 @@ class Data_Model extends Action
         );
 
         $data = $modelClass::getData($input['dataFilterFields'])
-            ->link('blog_pk', 'Изменить')
-            ->button('blog_pk', 'Удалить')
+            ->button('blog_pk', 'Изменить', [
+                'onclick' => 'Ice_Form.modal(\'Bi:Blog\', 1, \'Ice:Form_Submit\', [\'Bi:Cabinet\'], [\'blog_name\'], 0, \'Add blog\', \'_Modal\'); return false;',
+                'type' => 'primary',
+                'icon' => 'edit'
+            ])
+            ->button('blog_pk', 'Удалить', [
+            'onclick' => 'Ice_Form.modal(\'Bi:Blog\', 1, \'Ice:Form_Submit\', [\'Bi:Cabinet\'], [\'blog_name\'], 0, \'Add blog\', \'_Modal\'); return false;',
+                'type' => 'primary',
+                'icon' => 'edit'
+            ])
             ->bind($queryResult->getRows());
 
         $actionContext->addAction('Ice:Data', ['data' => $data]);
