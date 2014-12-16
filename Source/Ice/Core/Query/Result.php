@@ -149,7 +149,7 @@ class Query_Result extends Container implements Iterator, ArrayAccess, Countable
                         Query::getLogger()->info('Data from cache!', Logger::MESSAGE, false);
                     }
 
-                    return $cache;
+                    return new Query_Result($cache['data']);
                 }
 
                 $cache['data'] = $query->getDataSource()->$queryType($query);

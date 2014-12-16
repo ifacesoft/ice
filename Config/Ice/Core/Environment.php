@@ -35,6 +35,9 @@ return [
                 'tags' => [
                     'path' => CACHE_DIR
                 ],
+                'query' => [
+                    'path' => CACHE_DIR
+                ],
             ],
             'Ice\Data\Provider\Mysqli' => [
                 'default' => [

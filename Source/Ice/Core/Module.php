@@ -116,12 +116,13 @@ class Module extends Container
     {
         if (self::$_modules === null) {
             self::$_modules = [];
-            Module::loadConfig(MODULE_DIR, 'master', self::$_modules);
+            Module::loadConfig(MODULE_DIR, '', self::$_modules);
 
-            $iceModule = File::loadData(ICE_DIR . 'Config/Ice/Core/Module.php')['module'];
-            $iceModule['path'] = ICE_DIR;
+            $iceModuleConfig = File::loadData(ICE_DIR . 'Config/Ice/Core/Module.php')['module'];
+            $iceModuleConfig['path'] = ICE_DIR;
+            $iceModuleConfig['context'] = '/ice';
 
-            self::$_modules['Ice'] = $iceModule;
+            self::$_modules['Ice'] = $iceModuleConfig;
         }
 
         return empty($moduleAlias) ? self::$_modules : self::$_modules[$moduleAlias];
@@ -131,37 +132,37 @@ class Module extends Container
      * Load module configs
      *
      * @param $moduleDir
-     * @param $moduleVersion
+     * @param $context
      * @param array $modules
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.2
      * @since 0.0
      */
-    private static function loadConfig($moduleDir, $moduleVersion, array &$modules = [])
+    private static function loadConfig($moduleDir, $context = '/', array &$modules = [])
     {
         $configPath = $moduleDir . 'Config/Ice/Core/Module.php';
 
-        $config = File::loadData($configPath);
+        $moduleConfig = File::loadData($configPath);
 
-        if (!$config) {
+        if (!$moduleConfig) {
             return;
         }
 
-        $config['module']['path'] = $moduleDir;
-        $config['module']['branch'] = $moduleVersion;
+        $moduleConfig['module']['path'] = $moduleDir;
+        $moduleConfig['module']['context'] = $context;
 
-        if (isset($modules[$config['alias']])) {
-            unset($modules[$config['alias']]);
-            $modules[$config['alias']] = $config['module'];
+        if (isset($modules[$moduleConfig['alias']])) {
+            unset($modules[$moduleConfig['alias']]);
+            $modules[$moduleConfig['alias']] = $moduleConfig['module'];
             return;
         }
 
-        $modules[$config['alias']] = $config['module'];
+        $modules[$moduleConfig['alias']] = $moduleConfig['module'];
 
-        foreach ($config['modules'] as $moduleDir => $moduleVersion) {
-            Module::loadConfig($moduleDir, $moduleVersion, $modules);
+        foreach ($moduleConfig['modules'] as $moduleDir => $context) {
+            Module::loadConfig($moduleDir, $context, $modules);
         }
     }
 

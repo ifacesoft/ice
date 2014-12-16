@@ -164,8 +164,8 @@ class Transliterator
             $len = min(strlen($to), strlen($from));
             for ($i = 0; $i < $len; ++$i) {
                 $value = str_replace(
-                    mb_substr($to, $i, 1, 'UTF-8'),
-                    mb_substr($from, $i, 1, 'UTF-8'),
+                    substr($to, $i, 1),
+                    substr($from, $i, 1),
                     $value
                 );
             }

@@ -149,51 +149,54 @@ class Route extends Container
             return $routes;
         }
 
-        return $dataProvider->set('routes', self::getRouteFileData());
+        $routeFilePathes = [];
+
+        foreach (Module::get() as $moduleConfig) {
+            $routeFilePathes[$moduleConfig['context']] = $moduleConfig['path'] . 'Config/Ice/Core/Route.php';
+        }
+
+        return $dataProvider->set('routes', self::getRouteFileData($routeFilePathes));
     }
 
     /**
      * Return route data from file
      *
-     * @param string $class
-     * @param string $prefix
+     * @param array $routeFilePathes
      * @return array
      * @throws File_Not_Found
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.2
      * @since 0.0
      */
-    private static function getRouteFileData($class = __CLASS__, $prefix = '')
+    private static function getRouteFileData(array $routeFilePathes)
     {
         $routes = [];
 
-        $routeFilePathes = null;
-
-        try {
-            $routeFilePathes = Loader::getFilePath($class, '.php', 'Config/', true, false, false, true);
-        } catch (Exception $e) {
-            Route::getLogger()->info(['Route file path not found for {$0}', $class], Logger::WARNING);
-            return $routes;
-        }
-
-        foreach ($routeFilePathes as $configFilePath) {
-            $configFromFile = File::loadData($configFilePath);
+        foreach ($routeFilePathes as $context => $routeFilePath) {
+            $configFromFile = File::loadData($routeFilePath);
 
             if (!is_array($configFromFile)) {
-                self::getLogger()->warning(['Не валидный файл конфиг: {$0}', $configFilePath], __FILE__, __LINE__);
+                self::getLogger()->warning(['Не валидный файл конфиг: {$0}', $routeFilePath], __FILE__, __LINE__);
                 continue;
             }
 
             foreach ($configFromFile as $routeName => $route) {
-                if (is_string($route)) {
-                    $routes += self::getRouteFileData($class . '' . $routeName, $prefix . $route);
+                if ($routeName[0] == '_') {
+                    $configFilePathes = [];
+
+                    $class = 'Ice\Core\\' . substr(strstr($routeFilePath, '.php', true), strrpos($routeFilePath, '/') + 1);
+
+                    foreach (Loader::getFilePath($class . '' . $routeName, '.php', 'Config/', true, false, false, true) as $configFilePath) {
+                        $configFilePathes[$context . $route] = $configFilePath;
+                    }
+
+                    $routes += self::getRouteFileData($configFilePathes);
                     continue;
                 }
 
                 $route = Helper_Route::setDefaults($route);
-                $route['route'] = $prefix . $route['route'];
+                $route['route'] = $context . $route['route'];
 
                 if (isset($routes[$routeName])) {
                     self::getLogger()->info(['Route name "{$0}" already defined in other route config', $routeName], null, true);

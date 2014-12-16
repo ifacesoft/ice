@@ -2,6 +2,10 @@ Ice &rarr; [iceframework.net](http://iceframework.net)
 ===
 
 [![Build Status](https://travis-ci.org/ifacesoft/Ice.svg)](https://travis-ci.org/ifacesoft/Ice)
+[![Latest Stable Version](https://poser.pugx.org/ifacesoft/ice/v/stable.svg)](https://packagist.org/packages/ifacesoft/ice)
+[![Total Downloads](https://poser.pugx.org/ifacesoft/ice/downloads.svg)](https://packagist.org/packages/ifacesoft/ice)
+[![Latest Unstable Version](https://poser.pugx.org/ifacesoft/ice/v/unstable.svg)](https://packagist.org/packages/ifacesoft/ice)
+[![License](https://poser.pugx.org/ifacesoft/ice/license.svg)](https://packagist.org/packages/ifacesoft/ice)
 
 Ice is a general purpose PHP-framework.
 You may fully rely on Ice while developing complex web-applications.
@@ -10,13 +14,13 @@ flexible configuration and the ability to easily extend existing functionality.
 
 
 History
--------------------
+=======
 
 Development of the project since at December 2013.
 
 
 Features
--------------------
+========
 
 * Easy to learn and use
 * Incredibly fast even at default settings
@@ -30,7 +34,7 @@ Features
 
 
 Architecture
--------------------
+============
 
 Ice is originally written in the programming language PHP 5.4. Basic functionality is written using namespaces.
 All classes, with rare exceptions, are loaded using the integrated automatic class loading mechanism.
@@ -44,7 +48,7 @@ This ensures adherence to a naming model fields.
 
 
 Abilities
--------------------
+=========
 
 * Receiving data from data providers Redis, Apcu etc.
 * Data retrieval data from data sources: MariaDB (Mysqli), etc.
@@ -57,46 +61,14 @@ Abilities
 
 
 Project structure
--------------------
+=================
 
       _cache/                 Cache files for separate projects
       _log/                   Log files for separate projects
       _resource/              Resource files (javascript, css, images etc.) for separate projects
       _storage/               File storage
       _vendor/                Vendors (loaded via composer)
-      
-      Ice/              Ice module (Main required module)
-            Config/           Configuration files (php format)
-                  Ice/              Configuration files for Ice module
-            Resources/        Resource files
-                  css/              Css resources
-                  Ice/              Resource for Ice module (views, localization files etc.)
-                  img/              Image resources 
-                  js/               Javascript resources
-            Source/           Source files
-                  Ice/              Source files for Ice module
-                        Action/           Ice actions (Ice:Model_Create, Ice:Resource, Ice:Composer_Update, Ice:Phpdoc_Generate etc.)
-                        Core/             Core classes and interfaces
-                        Data/
-                              Provider/   Implementations of data providers (Ice:Apc, Ice:Redis, Ice:File etc.)
-                              Source/     Implementations of data sources (now only Ice:Mysqli)
-                        Exception/        Exceptions
-                        Form/             Forms
-                        Helper            Helpers
-                        Query/Translator/ Implementations of query translators (now only Ice:Mysqli)
-                        Validator/        Implementations of validators (Ice:Not_Null, Ice:Pattern etc.)
-                        View/Render/      Implementations of view renders
-                        Bootstrap.php     Bootstrapping class file
-                        Core.php          Core trait file
-                  Ice.php           Main application class file
-            Web/              Web root directory
-                  index.php         Directory index file
-            app.php           Application run script file
-            branch.conf.php   module branch in vcs
-            cli               Command line interface
-            composer.json     Composer settings
-            composer.phar     Composer run script
-            
+
       MyProject/        Your module
             Config /          Configuration files (php format)
                   Ice/              Overridden configuration files for Ice module
@@ -115,15 +87,26 @@ Project structure
 
 
 Quick Start Guide
--------------------
+=================
 
-bash:
+For Linux:
+----------
+
+Composer install via shell:
 
       $ curl -s http://getcomposer.org/installer | php
       $ php composer.phar create-project ifacesoft/ice Ice dev-master
       $ ./Ice/cli Ice:Module_Create
 
-cmd (require php extensions: openssl):
+Zip archive istall:
+
+ 1. Download and unpack .zip
+ 2. $ ./Ice/cli Ice:Composer_Update
+ 3. $ ./Ice/cli Ice:Module_Create
+
+For Windows:
+------------
+Composer install via command line (require php extensions: openssl):
 
       >set PATH=%PATH%;C:\php;C:\Program Files\Mercurial;C:\Program Files (x86)\Git\bin;C:\Program Files (x86)\Subversion\bin
       >php -r "readfile('https://getcomposer.org/installer');" | php
@@ -133,7 +116,7 @@ cmd (require php extensions: openssl):
 
 
 Documentation
--------------------
+=============
 
 More info on [iceframework.net](http://iceframework.net) such as:
 
