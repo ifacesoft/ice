@@ -10,6 +10,7 @@
 namespace Ice\Query\Translator;
 
 use Ice\Core\Exception;
+use Ice\Core\Logger;
 use Ice\Core\Model;
 use Ice\Core\Query_Builder;
 use Ice\Core\Query_Translator;
@@ -328,6 +329,7 @@ class Mysqli extends Query_Translator
         reset($data);
         $from = each($data);
 
+        /** @var Model $fromModelClass */
         $fromModelClass = $from['key'];
 
         $sql .= "\n" . self::SQL_STATEMENT_SELECT . ($calcFoundRows ? ' ' . self::SQL_CALC_FOUND_ROWS . ' ' : '') .

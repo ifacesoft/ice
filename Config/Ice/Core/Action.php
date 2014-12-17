@@ -23,9 +23,7 @@ return [
         'inputDefaults' => [
             'vendor' => 'phpunit/phpunit',
             'script' => 'phpunit',
-            'testClasses' => [
-                'IceTest'
-            ]
+            'bootstrap' => VENDOR_DIR . 'autoload.php'
         ]
     ],
     'Ice\Action\Front_Cli' => [

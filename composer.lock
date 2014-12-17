@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "d37e8d3c496c5be1a57e2887f564783c",
+    "hash": "91990b2659d8e629b79f1c51cc668c8e",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -648,6 +648,17 @@
             "dist": {
                 "type": "zip",
                 "url": "http://jqueryui.com/resources/download/jquery-ui-1.11.1.zip",
+                "reference": null,
+                "shasum": null
+            },
+            "type": "library"
+        },
+        {
+            "name": "mailru/fileapi",
+            "version": "2.0.10",
+            "dist": {
+                "type": "zip",
+                "url": "https://github.com/mailru/FileAPI/archive/master.zip",
                 "reference": null,
                 "shasum": null
             },

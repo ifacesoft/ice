@@ -58,26 +58,9 @@ class Bootstrap
         define('STORAGE_DIR', ROOT_DIR . '_storage/' . $moduleName . '/');
         define('VENDOR_DIR', ROOT_DIR . '_vendor/');
 
-        include_once ICE_SOURCE_DIR . 'Ice/Core.php';
-        include_once ICE_SOURCE_DIR . 'Ice/Core/Container.php';
-        include_once ICE_SOURCE_DIR . 'Ice/Core/Loader.php';
-        include_once ICE_SOURCE_DIR . 'Ice/Helper/Object.php';
-        include_once ICE_SOURCE_DIR . 'Ice/Core/Environment.php';
-        include_once ICE_SOURCE_DIR . 'Ice/Core/Request.php';
-        include_once ICE_SOURCE_DIR . 'Ice/Core/Config.php';
+        require_once VENDOR_DIR . 'autoload.php';
+
         include_once ICE_SOURCE_DIR . 'Ice/Core/Data/Provider.php';
-        include_once ICE_SOURCE_DIR . 'Ice/Data/Provider/Object.php';
-        include_once ICE_SOURCE_DIR . 'Ice/Data/Provider/Registry.php';
-        include_once ICE_SOURCE_DIR . 'Ice/Core/Module.php';
-        include_once ICE_SOURCE_DIR . 'Ice/Helper/File.php';
-        include_once ICE_SOURCE_DIR . 'Ice/Core/Logger.php';
-        include_once ICE_SOURCE_DIR . 'Ice/Helper/Console.php';
-        include_once ICE_SOURCE_DIR . 'Ice/Core/Exception.php';
-        include_once ICE_SOURCE_DIR . 'Ice/Core/Response.php';
-        include_once ICE_SOURCE_DIR . 'Ice/Helper/Php.php';
-        include_once ICE_SOURCE_DIR . 'Ice/Helper/Directory.php';
-        include_once ICE_SOURCE_DIR . 'Ice/Data/Provider/Apc.php';
-        include_once ICE_SOURCE_DIR . 'Ice/Data/Provider/Redis.php';
 
         try {
             setlocale(LC_ALL, 'en_US.UTF-8');
@@ -88,9 +71,6 @@ class Bootstrap
             Logger::init();
 
             Loader::register('Ice\Core\Loader::load');
-
-
-//            include_once VENDOR_DIR . 'autoload.php';
 
             if (!Request::isCli()) {
                 Session::init();

@@ -1,34 +1,50 @@
 {
-    "name": "ifacesoft/ice",
-    "type": "library",
-    "description": "Ice PHP framework",
-    "keywords": ["framework"],
-    "homepage": "http://iceframework.net",
-    "license": "BSD ICE",
-    "config": {
-        "vendor-dir": "../_vendor"
-    },
-    "repositories": [
-        {
-            "type": "package",
-            "package": {
-                "name": "jquery/jquery-ui",
-                "version": "1.11.1",
-                "dist": {
-                    "url": "http://jqueryui.com/resources/download/jquery-ui-1.11.1.zip",
-                    "type": "zip"
-                }
-            }
+  "name": "ifacesoft/ice",
+  "type": "library",
+  "description": "Ice PHP framework",
+  "keywords": ["framework"],
+  "homepage": "http://iceframework.net",
+  "license": "BSD ICE",
+  "config": {
+    "vendor-dir": "../_vendor"
+  },
+  "autoload": {
+    "psr-4": {"Ice\\": "Source/Ice/"}
+  },
+  "repositories": [
+    {
+      "type": "package",
+      "package": {
+        "name": "jquery/jquery-ui",
+        "version": "1.11.1",
+        "dist": {
+          "url": "http://jqueryui.com/resources/download/jquery-ui-1.11.1.zip",
+          "type": "zip"
         }
-    ],
-    "require": {
-        "php": ">=5.4",
-        "doctrine/orm": "2.4.6",
-        "smarty/smarty": "3.1.19",
-        "twig/twig": "1.16.1",
-        "twbs/bootstrap": "3.3.1",
-        "jquery/jquery-ui": "1.11.1",
-        "mrclay/minify": "dev-master",
-        "firephp/firephp-core": "dev-master"
+      }
+    },
+    {
+      "type": "package",
+      "package": {
+        "name": "mailru/fileapi",
+        "version": "2.0.10",
+        "dist": {
+          "url": "https://github.com/mailru/FileAPI/archive/master.zip",
+          "type": "zip"
+        }
+      }
     }
+  ],
+  "require": {
+    "php": ">=5.4",
+    "doctrine/orm": "2.4.6",
+    "smarty/smarty": "3.1.19",
+    "twig/twig": "1.16.1",
+    "twbs/bootstrap": "3.3.1",
+    "jquery/jquery-ui": "1.11.1",
+    "mrclay/minify": "dev-master",
+    "firephp/firephp-core": "dev-master",
+    "mailru/fileapi": "2.0.10",
+    "phpunit/phpunit": "4.4.0"
+  }
 }
