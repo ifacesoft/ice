@@ -27,4 +27,7 @@ return [
     'Action {$0} already created' => [
         'ru' => 'Action {$0} already created',
     ],
+    'Container: File {$0} not found. Trying generate them...' => [
+        'ru' => 'Container: File {$0} not found. Trying generate them...',
+    ],
 ];

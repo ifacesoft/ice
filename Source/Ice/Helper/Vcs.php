@@ -36,20 +36,20 @@ class Vcs
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.2
      * @since 0.0
      */
     public static function init($vcs, $dir)
     {
         switch ($vcs) {
             case VCS::MERCURIAL:
-                system('cd ' . $dir . ' && hg init && hg add && hg commit -m \'init\'');
+                Console::run('cd ' . $dir . ' && hg init && hg add && hg commit -m \'init\'');
                 break;
             case VCS::GIT:
-                system('cd ' . $dir . ' && git init && git add . && git commit -m \'init\'');
+                Console::run('cd ' . $dir . ' && git init && git add . && git commit -m \'init\'');
                 break;
             case VCS::SUBVERSION:
-                system('cd ' . $dir . ' && svn create && svn add && svn commit -m \'init\'');
+                Console::run('cd ' . $dir . ' && svn create && svn add && svn commit -m \'init\'');
                 break;
             default:
 
@@ -65,20 +65,20 @@ class Vcs
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.2
      * @since 0.0
      */
     public static function checkout($vcs, $dir, $branch)
     {
         switch ($vcs) {
             case VCS::MERCURIAL:
-                system('cd ' . $dir . ' && hg checkout ' . $branch);
+                Console::run('cd ' . $dir . ' && hg checkout ' . $branch);
                 break;
             case VCS::GIT:
-                system('cd ' . $dir . ' && git checkout ' . $branch);
+                Console::run('cd ' . $dir . ' && git checkout ' . $branch);
                 break;
             case VCS::SUBVERSION:
-                system('cd ' . $dir . ' && git checkout ' . $branch);
+                Console::run('cd ' . $dir . ' && git checkout ' . $branch);
                 break;
             default:
         }

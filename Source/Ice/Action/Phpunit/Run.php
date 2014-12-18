@@ -8,8 +8,10 @@
  */
 
 namespace Ice\Action;
+
 use Ice\Core\Action;
 use Ice\Core\Action_Context;
+use Ice\Helper\Console;
 
 /**
  * Class Phpunit_Run
@@ -63,6 +65,6 @@ class Phpunit_Run extends Action
      */
     protected function run(array $input, Action_Context $actionContext)
     {
-        system('cd ' . VENDOR_DIR . $input['vendor'] . ' && ' . $input['script'] . ' --verbose --coverage-text Test');
+        Console::run(VENDOR_DIR . $input['vendor'] . '/' . $input['script'] . ' --verbose --coverage-text ' . MODULE_DIR . 'Test');
     }
 }

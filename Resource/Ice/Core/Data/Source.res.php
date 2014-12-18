@@ -30,4 +30,19 @@ return [
     'Data source not found for scheme {$0}' => [
         'ru' => 'Data source not found for scheme {$0}',
     ],
+    '#1264: {$0}' => [
+        'ru' => '#1264: {$0}',
+    ],
+    '#1452: {$0}' => [
+        'ru' => '#1452: {$0}',
+    ],
+    '#2006: {$0}' => [
+        'ru' => '#2006: {$0}',
+    ],
+    '#1364: {$0}' => [
+        'ru' => '#1364: {$0}',
+    ],
+    'Bind params failure' => [
+        'ru' => 'Bind params failure',
+    ],
 ];

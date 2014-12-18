@@ -43,7 +43,7 @@ class Logger
      */
     public static function outputFb(\Exception $exception, $output)
     {
-        if (!function_exists('fb')) {
+        if (!Request::isCli() || headers_sent()) {
             return;
         }
 
@@ -62,11 +62,13 @@ class Logger
         $output['errcontext'] = $errcontext;
         $output['stackTrace'] = $exception->getTraceAsString();
 
-        fb($output['message'] . ' ' . $output['errPoint'], 'ERROR');
-        if (!empty($errcontext) && Memory::getVarSize($errcontext) < 3500) {
-            fb($errcontext, 'INFO');
+        if (!Request::isCli() && !headers_sent()) {
+            fb($output['message'] . ' ' . $output['errPoint'], 'ERROR');
+            if (!empty($errcontext) && Memory::getVarSize($errcontext) < 3500) {
+                fb($errcontext, 'INFO');
+            }
+            fb(explode("\n", $output['stackTrace']), 'WARN');
         }
-        fb(explode("\n", $output['stackTrace']), 'WARN');
     }
 
     /**

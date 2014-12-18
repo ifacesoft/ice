@@ -144,7 +144,7 @@ class Ice extends Container
         if (!Environment::isProduction()) {
             Logger::renderLog();
 
-            if (function_exists('fb')) {
+            if (!Request::isCli()) {
                 fb('running time: ' . Logger::microtimeResult($this->_startTime) * 1000 . ' ms | ' . Memory::memoryGetUsagePeak(), 'INFO');
             }
         }

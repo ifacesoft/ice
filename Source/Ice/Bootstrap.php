@@ -36,7 +36,7 @@ class Bootstrap
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.2
      * @since 0.0
      */
     public static function init()
@@ -58,19 +58,20 @@ class Bootstrap
         define('STORAGE_DIR', ROOT_DIR . '_storage/' . $moduleName . '/');
         define('VENDOR_DIR', ROOT_DIR . '_vendor/');
 
-        require_once VENDOR_DIR . 'autoload.php';
+        setlocale(LC_ALL, 'en_US.UTF-8');
+        setlocale(LC_NUMERIC, 'C');
 
-        include_once ICE_SOURCE_DIR . 'Ice/Core/Data/Provider.php';
+        date_default_timezone_set('UTC');
 
         try {
-            setlocale(LC_ALL, 'en_US.UTF-8');
-            setlocale(LC_NUMERIC, 'C');
+            $loader = require VENDOR_DIR . 'autoload.php';
 
-            date_default_timezone_set('UTC');
+            require_once ICE_SOURCE_DIR . 'Ice/Core/Data/Provider.php';
 
+            Loader::load('Ice\Core\Logger');
+
+            Loader::init($loader);
             Logger::init();
-
-            Loader::register('Ice\Core\Loader::load');
 
             if (!Request::isCli()) {
                 Session::init();
@@ -80,7 +81,7 @@ class Bootstrap
         }
 
         if (!Environment::isProduction()) {
-            if (function_exists('fb') && !headers_sent()) {
+            if (!Request::isCli() && !headers_sent()) {
                 fb('bootstrapping time: ' . Logger::microtimeResult($startTime) * 1000 . ' ms | ' . Memory::memoryGetUsagePeak(), 'INFO');
             }
         }

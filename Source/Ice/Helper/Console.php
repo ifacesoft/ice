@@ -176,4 +176,12 @@ class Console
 
         return $data['default'];
     }
+
+    public static function run($commands)
+    {
+        foreach ((array)$commands as $command) {
+            Response::send(Console::getText($command, Console::C_GREEN_B) . "\n");
+            system($command);
+        }
+    }
 }

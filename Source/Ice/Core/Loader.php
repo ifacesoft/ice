@@ -9,6 +9,7 @@
 
 namespace Ice\Core;
 
+use Composer\Autoload\ClassLoader;
 use Ice;
 use Ice\Core;
 use Ice\Exception\File_Not_Found;
@@ -31,8 +32,15 @@ class Loader
 {
     use Core;
 
-    /** @var array Registrered autoloaders */
+    /** @var array Registred autoloaders */
     private static $_autoLoaders = [];
+
+    /**
+     * Composer loader
+     *
+     * @var ClassLoader
+     */
+    private static $_loader = null;
 
     /**
      * Load class
@@ -71,10 +79,10 @@ class Loader
                 return;
             }
 
-            throw new Exception(['File {$0} exists, but class {$1} not found', [$fileName, $class]]);
+            Loader::getLogger()->fatal(['File {$0} exists, but class {$1} not found', [$fileName, $class]], __FILE__, __LINE__);
         }
 
-        throw new Exception('Class "' . $class . '" not found');
+        Loader::getLogger()->fatal(['Class {$0} not found', $class], __FILE__, __LINE__, null);
     }
 
     /**
@@ -140,13 +148,24 @@ class Loader
 
         if ($isRequired) {
             if (!$allMatchedPathes || empty($matchedPathes)) {
-                throw new File_Not_Found(['FileNotFoundException: {$0}', $class], $fullStackPathes);
+                if ($fileName = self::$_loader->findFile($class)) {
+                    if (!$allMatchedPathes) {
+                        return $fileName;
+                    }
+
+                    $fullStackPathes[] = $fileName;
+                    $matchedPathes[] = $fileName;
+                } else {
+                    Loader::getLogger()->fatal(['Files for {$0} not found', $class], __FILE__, __LINE__, null, $fullStackPathes);
+                }
             }
         }
 
         if ($allMatchedPathes) {
             return $matchedPathes;
         }
+
+        Logger::debug($fullStackPathes);
 
         return $isNotEmpty && !empty($fullStackPathes) ? reset($fullStackPathes) : '';
     }
@@ -159,26 +178,24 @@ class Loader
      *      Loader::register('Ice\Core\Loader::load')
      * ```
      *
-     * @param $autoLoader string autoload method
+     * @param $autoLoader array autoloaders method
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.2
      * @since 0.0
      */
     public static function register($autoLoader)
     {
-        foreach (self::$_autoLoaders as $loader) {
-            spl_autoload_unregister($loader);
-        }
+            foreach (self::$_autoLoaders as $loader) {
+                spl_autoload_unregister($loader);
+            }
 
-        $autoLoaders = self::$_autoLoaders;
-        array_unshift($autoLoaders, $autoLoader);
-        self::$_autoLoaders = $autoLoaders;
+            array_unshift(self::$_autoLoaders, $autoLoader);
 
-        foreach (self::$_autoLoaders as $loader) {
-            spl_autoload_register($loader);
-        }
+            foreach (self::$_autoLoaders as $loader) {
+                spl_autoload_register($loader);
+            }
     }
 
     /**
@@ -206,4 +223,14 @@ class Loader
             }
         }
     }
-} 
+
+    public static function init($loader)
+    {
+        self::$_loader = $loader;
+
+        spl_autoload_unregister([$loader, 'loadClass']);
+
+        Loader::register([$loader, 'loadClass']);
+        Loader::register('Ice\Core\Loader::load');
+    }
+}

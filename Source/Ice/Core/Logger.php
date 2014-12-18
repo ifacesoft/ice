@@ -144,25 +144,6 @@ class Logger
         ini_set('xdebug.var_display_max_depth', -1);
         ini_set('xdebug.profiler_enable', 1);
         ini_set('xdebug.profiler_output_dir', ROOT_DIR . 'xdebug');
-
-        if (!Request::isCli()) {
-            Logger::initFb();
-        }
-    }
-
-    /**
-     * Initialize firebug library
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public static function initFb()
-    {
-        require_once(VENDOR_DIR . 'firephp/firephp-core/lib/FirePHPCore/FirePHP.class.php');
-        require_once(VENDOR_DIR . 'firephp/firephp-core/lib/FirePHPCore/fb.php');
-        ob_start();
     }
 
     /**
@@ -250,7 +231,7 @@ class Logger
         $logFile = Directory::get(LOG_DIR) . date('Y-m-d') . '/INFO.log';
         File::createData($logFile, $message, false, FILE_APPEND);
 
-        if (function_exists('fb')) {
+        if (!Request::isCli() && !headers_sent()) {
             fb($message, 'INFO');
         }
 
@@ -437,7 +418,7 @@ class Logger
                 File::createData($logFile, $var, false, FILE_APPEND);
             }
 
-            if (function_exists('fb') && !headers_sent()) {
+            if (!Request::isCli() && !headers_sent()) {
                 fb($arg, 'DEBUG');
             }
         }
