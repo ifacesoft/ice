@@ -66,9 +66,7 @@ class Bootstrap
         date_default_timezone_set('UTC');
 
         try {
-
-            $autoloadFile = VENDOR_DIR . 'autoload.php';
-            $loader = file_exists($autoloadFile) ? include $autoloadFile : null;
+            $loader = VENDOR_DIR . 'autoload.php';
 
             require_once ICE_SOURCE_DIR . 'Ice/Core/Data/Provider.php';
 

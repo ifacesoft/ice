@@ -69,7 +69,7 @@ class Action_Context
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.2
      * @since 0.0
      */
     public function addAction($actionName, array $params = [], $key = null)

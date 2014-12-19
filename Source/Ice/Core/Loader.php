@@ -148,7 +148,7 @@ class Loader
 
         if ($isRequired) {
             if (!$allMatchedPathes || empty($matchedPathes)) {
-                if (self::$_loader && $fileName = self::$_loader->findFile($class)) {
+                if ($fileName = self::$_loader->findFile($class)) {
                     if (!$allMatchedPathes) {
                         return $fileName;
                     }
@@ -198,14 +198,11 @@ class Loader
 
     public static function init($loader)
     {
-        if ($loader) {
-            self::$_loader = $loader;
+        self::$_loader = $loader;
 
-            spl_autoload_unregister([$loader, 'loadClass']);
+        spl_autoload_unregister([$loader, 'loadClass']);
 
-            Loader::register([$loader, 'loadClass']);
-        }
-
+        Loader::register([$loader, 'loadClass']);
         Loader::register('Ice\Core\Loader::load');
     }
 
