@@ -1,2 +1,5 @@
 imports:
 - php
+
+tools:
+    php_code_coverage: true
