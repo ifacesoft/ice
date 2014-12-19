@@ -126,7 +126,19 @@ class Paginator extends Action
 
         array_walk(
             $input['params'], function (&$item, $key) {
-            $item = $key . ': \'' . $item . '\'';
+
+            if (is_array($item)) {
+                array_walk(
+                    $item, function (&$item) {
+                    $item = '\'' . $item . '\'';
+                }
+                );
+                $item = $key . ': [' . implode(', ', $item) . ']';
+            } else {
+                $item = $key . ': \'' . $item . '\'';
+            }
+
+
         }
         );
 

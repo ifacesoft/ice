@@ -3,6 +3,8 @@ namespace Ice\Action;
 
 use Ice\Core\Action;
 use Ice\Core\Action_Context;
+use Ice\Core\Loader;
+use Ice\Core\Logger;
 use Ice\Core\Model;
 
 /**
@@ -40,6 +42,9 @@ class Data_Model extends Action
             'limit' => 5,
             'formFilterFields' => [],
             'dataFilterFields' => [],
+            'submitActionName' => 'Ice:Form_Submit',
+            'reRenderActionNames' => ['Bi:Cabinet'],
+            'groupping' => 0,
         ]
     ];
 
@@ -59,18 +64,19 @@ class Data_Model extends Action
             'Ice:Form_Model',
             [
                 'modelName' => $input['modelName'],
-                'pk' => 1,
-                'submitActionName' => 'Ice:Form_Submit',
-                'reRenderActionNames' => ['Bi:Cabinet'],
+                'pk' => 0,
+                'submitActionName' => $input['submitActionName'],
+                'reRenderActionNames' => $input['reRenderActionNames'],
                 'filterFields' => $input['formFilterFields'],
                 'groupping' => 0,
-                'submitTitle' => 'Add blog',
+                'submitTitle' => Data_Model::getResource()->get('Add') . ' ' . $modelClass::getTitle(),
                 'template' => '_Modal'
             ]
         );
 
         $queryResult = $modelClass::query()
             ->setPaginator([$input['page'], $input['limit']])
+            ->desc('/pk')
             ->select('*');
 
         $actionContext->addAction(
@@ -78,7 +84,11 @@ class Data_Model extends Action
                 'data' => $queryResult,
                 'actionClassName' => 'Ice:Data_Model',
                 'params' => [
-                    'modelName' => $input['modelName']
+                    'modelName' => $input['modelName'],
+                    'formFilterFields' => $input['formFilterFields'],
+                    'dataFilterFields' => $input['dataFilterFields'],
+                    'submitActionName' => $input['submitActionName'],
+                    'reRenderActionNames' => $input['reRenderActionNames'],
                 ]
             ]
         );
@@ -86,13 +96,13 @@ class Data_Model extends Action
         $data = $modelClass::getData($input['dataFilterFields'])
             ->button('blog_pk', 'Изменить', [
                 'onclick' => 'Ice_Form.modal(\'Bi:Blog\', 1, \'Ice:Form_Submit\', [\'Bi:Cabinet\'], [\'blog_name\'], 0, \'Add blog\', \'_Modal\'); return false;',
-                'type' => 'primary',
+                'type' => 'info',
                 'icon' => 'edit'
             ])
             ->button('blog_pk', 'Удалить', [
                 'onclick' => 'Ice_Form.modal(\'Bi:Blog\', 1, \'Ice:Form_Submit\', [\'Bi:Cabinet\'], [\'blog_name\'], 0, \'Add blog\', \'_Modal\'); return false;',
-                'type' => 'primary',
-                'icon' => 'edit'
+                'type' => 'danger',
+                'icon' => 'remove'
             ])
             ->bind($queryResult->getRows());
 

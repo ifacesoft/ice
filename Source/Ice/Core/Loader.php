@@ -165,8 +165,6 @@ class Loader
             return $matchedPathes;
         }
 
-        Logger::debug($fullStackPathes);
-
         return $isNotEmpty && !empty($fullStackPathes) ? reset($fullStackPathes) : '';
     }
 

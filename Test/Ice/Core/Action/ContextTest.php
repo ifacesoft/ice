@@ -74,56 +74,37 @@ class Action_ContextTest extends PHPUnit_Framework_TestCase
                 ]
             ]
         );
-//
-////        $data = [
-////            'Ice:Action4' => [
-////                [],
-////                ['param1' => 'value1'],
-////                'action4-2' => ['param2' => 'value2'],
-////                ['param3' => 'value3'],
-////            ]
-////        ];
-////        try {
-////            $actionContext->addAction($data);
-////            $this->assertNotEquals(
-////                $actionContext->getActions(),
-////                [
-////                    'Ice:Action1' => [
-////                        0 => [],
-////                        1 => [],
-////                    ],
-////                    'Ice:Action2' => [
-////                        'action2' => []
-////                    ],
-////                    'Ice:Action3' => [
-////                        0 => ['param1' => 'value1']
-////                    ]
-////                ]
-////            );
-////        } catch (Exception $e) {
-////            $this->assertEquals(
-////                $actionContext->getActions(),
-////                [
-////                    'Ice:Action1' => [
-////                        0 => [],
-////                        1 => [],
-////                    ],
-////                    'Ice:Action2' => [
-////                        'action2' => []
-////                    ],
-////                    'Ice:Action3' => [
-////                        0 => ['param1' => 'value1']
-////                    ]
-////                ]
-////            );
-////        }
-//
+
+        $data = [
+            'Ice:Action5' => [
+                ['param1' => 'value1'],
+                ['param2' => 'value2'],
+            ]
+        ];
+        $actionContext->addAction($data);
+
+        $this->assertEquals(
+            $actionContext->getActions(),
+            [
+                'Ice:Action1' => [
+                    0 => [],
+                    1 => [],
+                ],
+                'Ice:Action2' => [
+                    'action2' => []
+                ],
+                'Ice:Action3' => [
+                    0 => ['param1' => 'value1']
+                ],
+                'Ice:Action5' => [
+                    0 => ['param1' => 'value1'],
+                    1 => ['param2' => 'value2'],
+                ]
+            ]
+        );
+
 //        $data = [
-//            'Ice:Action5' => [
-//                [],
-//                ['param1' => 'value1'],
-//                ['param2' => 'value2'],
-//            ]
+//            'title' => ['Ice:Title' => ['title' => 'Hello world']]
 //        ];
 //        $actionContext->addAction($data);
 //
@@ -141,9 +122,11 @@ class Action_ContextTest extends PHPUnit_Framework_TestCase
 //                    0 => ['param1' => 'value1']
 //                ],
 //                'Ice:Action5' => [
-//                    0 => [],
-//                    1 => ['param1' => 'value1'],
-//                    2 => ['param2' => 'value2'],
+//                    0 => ['param1' => 'value1'],
+//                    1 => ['param2' => 'value2'],
+//                ],
+//                'Ice:Title' => [
+//                    'title' => ['title' => 'Hello world']
 //                ]
 //            ]
 //        );

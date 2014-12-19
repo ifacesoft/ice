@@ -143,6 +143,8 @@ class Logger
         ini_set('xdebug.var_display_max_depth', -1);
         ini_set('xdebug.profiler_enable', 1);
         ini_set('xdebug.profiler_output_dir', ROOT_DIR . 'xdebug');
+
+        ob_start();
     }
 
     /**

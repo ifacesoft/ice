@@ -77,7 +77,7 @@ class Data extends Action
                     continue;
                 }
 
-                $rowResult[] = Php::getInstance()->fetch(Data::getClass($column['template']), ['value' => $row[$column['name']]]);
+                $rowResult[] = Php::getInstance()->fetch(Data::getClass($column['template']), ['value' => $row[$column['name']], 'scheme' => $column]);
             }
 
             $rows[] = Php::getInstance()->fetch(Data::getClass('Ice:Table_Row_Data'), ['columns' => $rowResult]);

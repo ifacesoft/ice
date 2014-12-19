@@ -47,16 +47,16 @@ class Form_Model extends Action
     public static $config = [
         'viewRenderClassName' => 'Ice:Smarty',
         'inputValidators' => [
+            'submitTitle' => 'Ice:Not_Empty',
             'submitActionName' => 'Ice:Not_Empty',
             'modelName' => 'Ice:Not_Empty',
-            'pk' => 'Ice:Numeric_Positive'
+            'pk' => 'Ice:Not_Null'
         ],
         'inputDefaults' => [
             'groupping' => 1,
             'reRenderActionNames' => [],
             'filterFields' => [],
             'submitActionName' => 'Ice:Submit',
-            'submitTitle' => 'Submit',
             'redirect' => ''
         ],
 //        'layout' => Emmet::PANEL_BODY
