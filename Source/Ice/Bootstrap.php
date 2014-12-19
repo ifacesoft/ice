@@ -54,6 +54,8 @@ class Bootstrap
 
         define('CACHE_DIR', ROOT_DIR . '_cache/' . $moduleName . '/');
         define('LOG_DIR', ROOT_DIR . '_log/' . $moduleName . '/');
+        define('UPLOAD_DIR', ROOT_DIR . '_upload/' . $moduleName . '/');
+        define('DOWNLOAD_DIR', ROOT_DIR . '_download/' . $moduleName . '/');
         define('RESOURCE_DIR', ROOT_DIR . '_resource/' . $moduleName . '/resource/');
         define('STORAGE_DIR', ROOT_DIR . '_storage/' . $moduleName . '/');
         define('VENDOR_DIR', ROOT_DIR . '_vendor/');
@@ -64,7 +66,7 @@ class Bootstrap
         date_default_timezone_set('UTC');
 
         try {
-            $loader = require VENDOR_DIR . 'autoload.php';
+            $loader = include VENDOR_DIR . 'autoload.php';
 
             require_once ICE_SOURCE_DIR . 'Ice/Core/Data/Provider.php';
 

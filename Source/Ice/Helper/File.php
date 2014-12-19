@@ -21,7 +21,7 @@ use Ice\Core\Logger as Core_Logger;
  * @package Ice
  * @subpackage Helper
  *
- * @version 0.0
+ * @version 0.2
  * @since 0.0
  */
 class File
@@ -103,5 +103,24 @@ class File
     {
         Directory::get(dirname($to));
         rename($from, $to);
+        return $to;
+    }
+
+    /**
+     * Copy file
+     *
+     * @param $from
+     * @param $to
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.2
+     * @since 0.2
+     */
+    public static function copy($from, $to)
+    {
+        Directory::get(dirname($to));
+        copy($from, $to);
+        return $to;
     }
 } 

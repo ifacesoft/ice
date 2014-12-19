@@ -6,7 +6,6 @@ Ice &rarr; [iceframework.net](http://iceframework.net)
 [![Total Downloads](https://poser.pugx.org/ifacesoft/ice/downloads.svg)](https://packagist.org/packages/ifacesoft/ice)
 [![Latest Unstable Version](https://poser.pugx.org/ifacesoft/ice/v/unstable.svg)](https://packagist.org/packages/ifacesoft/ice)
 [![License](https://poser.pugx.org/ifacesoft/ice/license.svg)](https://packagist.org/packages/ifacesoft/ice)
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/ifacesoft/ice/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
 
 Ice is a general purpose PHP-framework.
 You may fully rely on Ice while developing complex web-applications.
