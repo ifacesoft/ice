@@ -909,7 +909,8 @@ class Query_Builder
         return Query_Result::getInstance([$this->getQuery($sourceName), $ttl]);
     }
 
-    private function _select($fieldName, $fieldAlias, $modelClass, $tableAlias) {
+    private function _select($fieldName, $fieldAlias, $modelClass, $tableAlias)
+    {
 
         /** @var Model $class */
         $class = $this->getModelClass();

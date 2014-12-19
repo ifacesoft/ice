@@ -38,11 +38,13 @@
                         <li style="float: none;"><a href="http://iceframework.net/handbook">Handbook</a></li>
                         <li style="float: none;"><a href="http://iceframework.net/cookbook">Cookbook</a></li>
                         <li style="float: none;"><a href="http://iceframework.net/resource/api/Ice/0.0/">Api</a></li>
-<!--                        <li style="float: none;"><a href="http://iceframework.net/faq">Faq</a></li>-->
-<!--                        <li class="last" style="float: none;"><a href="http://iceframework.net/demo">Live Demo</a></li>-->
+                        <!--                        <li style="float: none;"><a href="http://iceframework.net/faq">Faq</a></li>-->
+                        <!--                        <li class="last" style="float: none;"><a href="http://iceframework.net/demo">Live Demo</a></li>-->
                     </ul>
-                </div><!-- /.navbar-collapse -->
-            </div><!-- /.container-fluid -->
+                </div>
+                <!-- /.navbar-collapse -->
+            </div>
+            <!-- /.container-fluid -->
         </nav>
         <?= $main ?>
     </div>

@@ -12,7 +12,6 @@ namespace Ice\Code\Generator;
 use Ice\Core\Code_Generator;
 use Ice\Core\Loader;
 use Ice\Core\Logger;
-use Ice\Core\Model as Core_Model;
 use Ice\Helper\File;
 use Ice\Helper\Object;
 use Ice\View\Render\Php;

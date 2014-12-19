@@ -9,8 +9,6 @@
 
 namespace Ice\Core;
 
-use Ice\Core\Model;
-
 /**
  * Class Model_Defined
  *

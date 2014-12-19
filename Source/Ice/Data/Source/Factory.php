@@ -9,8 +9,6 @@
 
 namespace Ice\Data\Source;
 
-use Ice\Core\Model;
-
 /**
  * Class Factory
  *

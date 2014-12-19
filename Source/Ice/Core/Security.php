@@ -5,9 +5,11 @@ namespace Ice\Core;
 use Ice\Model\Role;
 use Ice\Model\User;
 
-class Security {
+class Security
+{
 
-    public static function getUser() {
+    public static function getUser()
+    {
         if (isset($_SESSION['userPk'])) {
             return User::getModel($_SESSION['userPk'], '*');
         }
@@ -15,7 +17,8 @@ class Security {
         return null;
     }
 
-    public static function getRoles() {
+    public static function getRoles()
+    {
         if (isset($_SESSION['roleKeys'])) {
             return Role::getCollection($_SESSION['roleKeys']);
         }

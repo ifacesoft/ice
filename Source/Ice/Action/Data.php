@@ -4,11 +4,10 @@ namespace Ice\Action;
 use Ice\Core;
 use Ice\Core\Action;
 use Ice\Core\Action_Context;
-use Ice\Core\Logger;
+use Ice\Core\Data as Core_Data;
 use Ice\Helper\Arrays;
 use Ice\Helper\Emmet;
 use Ice\View\Render\Php;
-use Ice\Core\Data as Core_Data;
 
 /**
  * Class Data_Table

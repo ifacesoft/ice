@@ -15,7 +15,6 @@ use Ice\Core\Action;
 use Ice\Core\Action_Context;
 use Ice\Core\Data_Provider;
 use Ice\Core\Loader;
-use Ice\Core\Model;
 use Ice\Core\Module;
 use Ice\Data\Provider\Router;
 use Ice\Helper\Arrays;

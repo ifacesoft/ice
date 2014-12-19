@@ -113,7 +113,7 @@ class File extends Data_Provider
     /**
      * Get data from data provider by key
      *
-     * @param string  $key
+     * @param string $key
      * @return mixed
      *
      * @author dp <denis.a.shestakov@gmail.com>

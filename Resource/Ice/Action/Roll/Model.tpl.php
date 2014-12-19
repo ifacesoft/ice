@@ -14,7 +14,8 @@
                 </button>
             </td>
             <td>
-                <button type="button" class="btn btn-xs btn-danger" onclick="Tp_Action_Roll.delete('{$message.messages_pk}');">
+                <button type="button" class="btn btn-xs btn-danger"
+                        onclick="Tp_Action_Roll.delete('{$message.messages_pk}');">
                     <span class="glyphicon glyphicon-remove-circle"></span>
                 </button>
             </td>

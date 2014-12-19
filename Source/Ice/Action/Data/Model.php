@@ -3,7 +3,6 @@ namespace Ice\Action;
 
 use Ice\Core\Action;
 use Ice\Core\Action_Context;
-use Ice\Core\Logger;
 use Ice\Core\Model;
 
 /**
@@ -91,7 +90,7 @@ class Data_Model extends Action
                 'icon' => 'edit'
             ])
             ->button('blog_pk', 'Удалить', [
-            'onclick' => 'Ice_Form.modal(\'Bi:Blog\', 1, \'Ice:Form_Submit\', [\'Bi:Cabinet\'], [\'blog_name\'], 0, \'Add blog\', \'_Modal\'); return false;',
+                'onclick' => 'Ice_Form.modal(\'Bi:Blog\', 1, \'Ice:Form_Submit\', [\'Bi:Cabinet\'], [\'blog_name\'], 0, \'Add blog\', \'_Modal\'); return false;',
                 'type' => 'primary',
                 'icon' => 'edit'
             ])

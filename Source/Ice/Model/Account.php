@@ -15,10 +15,10 @@ use Ice\Core\Model;
  * @see Ice\Core\Model
  * @package Ice\Model;
  * @author dp <email>
-
  * @version 0
  * @since 0
  */
-class Account extends Model {
+class Account extends Model
+{
 
 }

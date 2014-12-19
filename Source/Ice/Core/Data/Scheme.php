@@ -11,7 +11,6 @@ namespace Ice\Core;
 
 use Ice;
 use Ice\Core;
-use Ice\Core\Model;
 use Ice\Exception\File_Not_Found;
 use Ice\Helper\Arrays;
 use Ice\Helper\Date;

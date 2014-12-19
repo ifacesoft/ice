@@ -9,9 +9,6 @@
 
 namespace Ice\Core;
 
-use Ice\Core\Query_Result;
-use Ice\Core\Model;
-
 /**
  * Iterator for model collection
  *

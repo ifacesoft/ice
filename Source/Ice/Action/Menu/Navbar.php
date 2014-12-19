@@ -3,7 +3,6 @@ namespace Ice\Action;
 
 use Ice\Core\Action;
 use Ice\Core\Action_Context;
-use Ice\Core\Logger;
 use Ice\Core\Menu;
 use Ice\View\Render\Php;
 

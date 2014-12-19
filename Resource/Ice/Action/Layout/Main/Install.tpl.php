@@ -45,13 +45,15 @@
             <!-- Wrapper for slides -->
             <div class="carousel-inner">
                 <div class="item active">
-                    <div style="height: 300px; font-size: 8px;"><?= highlight_file(\Ice\Core\Loader::getFilePath('Ice\Action\Hello\World\Cli', '.php', 'Source/')) ?></div>
+                    <div
+                        style="height: 300px; font-size: 8px;"><?= highlight_file(\Ice\Core\Loader::getFilePath('Ice\Action\Hello\World\Cli', '.php', 'Source/')) ?></div>
                     <div class="carousel-caption">
                         Экшин
                     </div>
                 </div>
                 <div class="item">
-                    <div style="height: 300px; font-size: 8px;"><?= highlight_file(\Ice\Core\Loader::getFilePath('Ice\Action\Hello\World\Cli', '.php', 'Source/')) ?></div>
+                    <div
+                        style="height: 300px; font-size: 8px;"><?= highlight_file(\Ice\Core\Loader::getFilePath('Ice\Action\Hello\World\Cli', '.php', 'Source/')) ?></div>
                     <div class="carousel-caption">
                         Экшин
                     </div>

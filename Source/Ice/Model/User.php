@@ -18,10 +18,10 @@ use Ice\Core\Model;
  * @see Ice\Core\Model
  * @package Ice\Model;
  * @author dp <email>
-
  * @version 0
  * @since 0
  */
-class User extends Model {
+class User extends Model
+{
 
 }

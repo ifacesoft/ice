@@ -71,7 +71,6 @@ class Logger
 
     /**
      * Codes of error types
-
      * @var array
      */
     public static $errorTypes = [

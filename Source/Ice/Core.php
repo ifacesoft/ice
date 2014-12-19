@@ -257,7 +257,8 @@ trait Core
      * @version 0.0
      * @since 0.0
      */
-    public static function getRegistry() {
+    public static function getRegistry()
+    {
         return Registry::getInstance(self::getClass());
     }
 }

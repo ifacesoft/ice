@@ -8,6 +8,7 @@
  */
 
 namespace Ice\Core;
+
 use Ice\Core;
 
 /**

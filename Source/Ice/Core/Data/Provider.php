@@ -274,7 +274,7 @@ abstract class Data_Provider
     /**
      * Get data from data provider by key
      *
-     * @param string  $key
+     * @param string $key
      * @return mixed
      *
      * @author anonymous <email>

@@ -8,6 +8,7 @@
  */
 
 namespace Ice\Exception;
+
 use Ice\Core\Exception;
 
 /**

@@ -12,7 +12,6 @@ namespace Ice\Core;
 use ArrayAccess;
 use Countable;
 use Ice\Core;
-use Ice\Core\Model_Collection;
 use Ice\Helper\Arrays;
 use Ice\Helper\Memory;
 use Ice\Helper\Serializer;

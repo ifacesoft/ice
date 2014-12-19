@@ -11,7 +11,6 @@ namespace Ice\Data\Provider;
 
 use Ice\Core\Data_Provider;
 use Ice\Core\Exception;
-use Ice\Core\Logger;
 
 /**
  * Class Mysqli
@@ -50,7 +49,7 @@ class Mysqli extends Data_Provider
      *
      * table:field/value or table
      *
-     * @param string  $key
+     * @param string $key
      * @return mixed
      *
      * @author dp <denis.a.shestakov@gmail.com>

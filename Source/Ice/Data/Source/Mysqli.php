@@ -9,13 +9,12 @@
 
 namespace Ice\Data\Source;
 
-use Ice\Core\Query_Result;
 use Ice\Core\Data_Source;
 use Ice\Core\Exception;
-use Ice\Core\Logger;
 use Ice\Core\Model;
 use Ice\Core\Query;
 use Ice\Core\Query_Builder;
+use Ice\Core\Query_Result;
 use Ice\Helper\Arrays;
 use mysqli_stmt;
 

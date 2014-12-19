@@ -10,7 +10,6 @@
 namespace Ice\Helper;
 
 use Ice\Core\Exception;
-use Ice\Core\Logger as Core_Logger;
 
 /**
  * Class Arrays

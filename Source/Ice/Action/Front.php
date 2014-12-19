@@ -12,8 +12,6 @@ namespace Ice\Action;
 use Ice;
 use Ice\Core\Action;
 use Ice\Core\Action_Context;
-use Ice\Core\Model;
-use Ice\Core\Response;
 use Ice\Core\Route;
 use Ice\Data\Provider\Router;
 use Ice\Exception\Redirect;

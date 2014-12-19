@@ -14,7 +14,6 @@ use Ice\Core\Data_Provider;
 use Ice\Core\Exception;
 use Ice\Core\Request as Core_Request;
 use Ice\Core\Route;
-use Ice\Helper\Logger;
 
 /**
  * Class Router
@@ -68,7 +67,7 @@ class Router extends Data_Provider
     /**
      * Get data from data provider by key
      *
-     * @param string  $key
+     * @param string $key
      * @return mixed
      *
      * @author dp <denis.a.shestakov@gmail.com>
