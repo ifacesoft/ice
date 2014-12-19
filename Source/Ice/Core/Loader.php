@@ -148,7 +148,7 @@ class Loader
 
         if ($isRequired) {
             if (!$allMatchedPathes || empty($matchedPathes)) {
-                if ($fileName = self::$_loader->findFile($class)) {
+                if (self::$_loader && $fileName = self::$_loader->findFile($class)) {
                     if (!$allMatchedPathes) {
                         return $fileName;
                     }
@@ -168,34 +168,6 @@ class Loader
         Logger::debug($fullStackPathes);
 
         return $isNotEmpty && !empty($fullStackPathes) ? reset($fullStackPathes) : '';
-    }
-
-    /**
-     * Register class autoloader
-     *
-     * example:
-     * ```php
-     *      Loader::register('Ice\Core\Loader::load')
-     * ```
-     *
-     * @param $autoLoader array autoloaders method
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.2
-     * @since 0.0
-     */
-    public static function register($autoLoader)
-    {
-            foreach (self::$_autoLoaders as $loader) {
-                spl_autoload_unregister($loader);
-            }
-
-            array_unshift(self::$_autoLoaders, $autoLoader);
-
-            foreach (self::$_autoLoaders as $loader) {
-                spl_autoload_register($loader);
-            }
     }
 
     /**
@@ -226,11 +198,42 @@ class Loader
 
     public static function init($loader)
     {
-        self::$_loader = $loader;
+        if ($loader) {
+            self::$_loader = $loader;
 
-        spl_autoload_unregister([$loader, 'loadClass']);
+            spl_autoload_unregister([$loader, 'loadClass']);
 
-        Loader::register([$loader, 'loadClass']);
+            Loader::register([$loader, 'loadClass']);
+        }
+
         Loader::register('Ice\Core\Loader::load');
+    }
+
+    /**
+     * Register class autoloader
+     *
+     * example:
+     * ```php
+     *      Loader::register('Ice\Core\Loader::load')
+     * ```
+     *
+     * @param $autoLoader array autoloaders method
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.2
+     * @since 0.0
+     */
+    public static function register($autoLoader)
+    {
+        foreach (self::$_autoLoaders as $loader) {
+            spl_autoload_unregister($loader);
+        }
+
+        array_unshift(self::$_autoLoaders, $autoLoader);
+
+        foreach (self::$_autoLoaders as $loader) {
+            spl_autoload_register($loader);
+        }
     }
 }
