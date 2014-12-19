@@ -8,6 +8,7 @@
  */
 
 namespace Ice\Core;
+use Ice\Core;
 
 /**
  * Class Action_Context
@@ -19,11 +20,13 @@ namespace Ice\Core;
  * @package Ice
  * @subpackage Core
  *
- * @version 0.0
+ * @version 0.2
  * @since 0.0
  */
 class Action_Context
 {
+    use Core;
+
     /**
      * Child Actions
      *
@@ -65,6 +68,7 @@ class Action_Context
      * @param $actionName
      * @param array $params
      * @param null $key
+     * @return Action_Context
      * @throws Exception
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -110,6 +114,57 @@ class Action_Context
             $this->_actions[$actionName][] = $params;
         }
     }
+
+//    public function addAction($actionName, array $params = [], $key = null)
+//    {
+//        if (empty($actionName)) {
+//            return $this;
+//        }
+//
+//        if (is_string($actionName)) {
+//            if (is_string($key)) {
+//                $this->_actions[$actionName][$key] = $params;
+//            } else {
+//                $this->_actions[$actionName][] = $params;
+//            }
+//
+//            return $this;
+//        }
+//
+//        foreach ($actionName as $actionKey => $actionData) {
+//            if (empty($actionData)) {
+//                $this->addAction($actionKey, []);
+//                continue;
+//            }
+//
+//            if (is_string($actionData)) {
+//                $this->addAction($actionData, [], $actionKey);
+//                continue;
+//            }
+//
+//            $isMany = false;
+//            foreach ($actionData as $key => $values) {
+//                if ($isMany && !is_numeric($key)) {
+//                    Action_Context::getLogger()->fatal('Invalid action params', __FILE__, __LINE__, null, $actionName);
+//                }
+//                if (!$isMany && is_numeric($key)) {
+//                    $isMany = true;
+//                } else {
+//                    break;
+//                }
+//            }
+//
+//            if ($isMany) {
+//                foreach ($actionData as $key => $values) {
+//                    $this->addAction($actionKey, $values);
+//                }
+//            } else {
+//                $this->addAction($actionKey, $actionData);
+//            }
+//        }
+//
+//        return $this;
+//    }
 
     /**
      * Assign data to view
