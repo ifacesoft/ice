@@ -1,2 +1,2 @@
 <a href="#"
-   onclick="Ice_Form.modal('Bi:Blog', <?= $value ?>, 'Ice:Form_Submit', ['Bi:Cabinet'], ['blog_name'], 0, 'Add blog', '_Modal'); return false;">Изменить</a>
+   onclick="Ice_Form.modal($(this), 'Bi:Blog', <?= $value ?>, 'Ice:Form_Submit', 0, 'Add blog', '_Modal', {reRenderClosest: 'Ice:Data_Model', reRenderActionClassName: [], formFilterFields: ['blog_name'], dataFilterFields: ['blog_pk', 'blog_name']}); return false;">Изменить</a>

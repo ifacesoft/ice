@@ -7,16 +7,20 @@ var Ice = {
     _callbacks: {},
     _lastback: 0,
 
-    call: function (action, params, callback) {
+    call: function (action, params, callback, url) {
         var back = this._lastback++;
         Ice._callbacks [back] = callback;
         $.ajax({
-            type: "POST",
-            url: location.href,
+            type: 'POST',
+            url: url ? url : location.href,
             data: {
                 call: action,
                 params: params,
                 back: back
+            },
+            //crossDomain: true,
+            beforeSend: function (jqXHR, settings) {
+                jqXHR.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
             },
             success: function (data) {
                 if (data.result.error) {
@@ -34,6 +38,24 @@ var Ice = {
             },
             dataType: 'json'
         });
+    },
+
+    reRenderClosest: function ($element, actionClassName, actionParams, callback) {
+        Ice.call(
+            actionClassName,
+            actionParams,
+            function (result) {
+                if (result.actionName) {
+                    var $block = $(result.html);
+
+                    $element.closest('.' + result.actionName).replaceWith($block);
+
+                    if (callback) {
+                        callback($block);
+                    }
+                }
+            }
+        );
     },
 
     reRender: function (actionClassName, actionParams, callback) {

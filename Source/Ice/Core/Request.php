@@ -227,7 +227,7 @@ class Request
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.2
      * @since 0.0
      */
     public static function isAjax()
@@ -248,6 +248,25 @@ class Request
     public static function getMethod()
     {
         return isset($_SERVER['REQUEST_METHOD']) ? $_SERVER['REQUEST_METHOD'] : '';
+    }
+
+    public static function init()
+    {
+        $config = Request::getConfig();
+
+//        Logger::debugDie($config);
+
+        if ($config->get('cors/enable') && !empty($_SERVER['HTTP_ORIGIN'])) {
+            header('Access-Control-Allow-Origin: ' . implode(' ', $config->gets('cors/hosts')));
+            header('Access-Control-Allow-Credentials: ' . $config->get('cors/cookie'));
+            header('Access-Control-Allow-Methods: ' . implode(', ', $config->gets('cors/methods')));
+            header('Access-Control-Allow-Headers: ' . implode(', ', $config->gets('cors/headers')));
+        }
+    }
+
+    public static function isOptions()
+    {
+        return $_SERVER['REQUEST_METHOD'] == 'OPTIONS';
     }
 
     //   public function isNoCache()

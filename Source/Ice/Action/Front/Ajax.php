@@ -11,6 +11,7 @@ namespace Ice\Action;
 
 use Ice\Core\Action;
 use Ice\Core\Action_Context;
+use Ice\Core\Loader;
 use Ice\Core\Logger;
 use Ice\Core\View;
 use Ice\Data\Provider\Request;

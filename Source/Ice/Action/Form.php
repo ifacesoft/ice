@@ -49,14 +49,14 @@ class Form extends Action
     public static $config = [
         'viewRenderClassName' => 'Ice:Php',
         'inputValidators' => [
-            'form' => 'Ice:Is_Form'
+            'form' => 'Ice:Is_Form',
+            'submitTitle' => 'Ice:Not_Empty'
         ],
         'inputDefaults' => [
             'groupping' => 1,
             'submitActionName' => 'Ice:Form_Submit',
-            'submitTitle' => 'Submit',
-            'reRenderActionNames' => [],
-            'redirect' => ''
+            'redirect' => '',
+            'params' => []
         ],
         'layout' => 'div.Form>div.panel.panel-default>div.panel-body'
     ];
@@ -142,8 +142,6 @@ class Form extends Action
             'formClass' => $formClass,
             'formKey' => $formKey,
             'submitActionName' => $input['submitActionName'],
-            'reRenderActionNames' => ltrim($reRenderActionNames, ','),
-            'filterFields' => implode(',', $filterFields),
             'submitTitle' => $input['submitTitle'],
             'redirect' => $input['redirect']
         ];

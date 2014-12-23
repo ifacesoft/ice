@@ -75,6 +75,12 @@ class Bootstrap
             Loader::init($loader);
             Logger::init();
 
+            Request::init();
+
+            if (Request::isOptions()) {
+                exit;
+            }
+
             if (!Request::isCli()) {
                 Session::init();
             }

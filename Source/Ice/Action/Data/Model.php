@@ -35,15 +35,16 @@ class Data_Model extends Action
     public static $config = [
         'viewRenderClassName' => 'Ice:Smarty',
         'inputValidators' => [
-            'modelName' => 'Ice:Not_Empty',
+            'modelClassName' => 'Ice:Not_Empty',
+            'formFilterFields' => 'Ice:Not_Empty',
+            'dataFilterFields' => 'Ice:Not_Empty',
         ],
         'inputDefaults' => [
             'page' => 1,
-            'limit' => 5,
-            'formFilterFields' => [],
-            'dataFilterFields' => [],
+            'limit' => 10,
             'submitActionName' => 'Ice:Form_Submit',
-            'reRenderActionNames' => ['Bi:Cabinet'],
+            'reRenderClosest' => 'Ice:Data_Model',
+            'reRenderActionNames' => [],
             'groupping' => 0,
         ]
     ];
@@ -58,19 +59,25 @@ class Data_Model extends Action
     protected function run(array $input, Action_Context $actionContext)
     {
         /** @var Model $modelClass */
-        $modelClass = Model::getClass($input['modelName']);
+        $modelClass = Model::getClass($input['modelClassName']);
 
         $actionContext->addAction(
             'Ice:Form_Model',
             [
-                'modelName' => $input['modelName'],
+                'modelClassName' => $input['modelClassName'],
                 'pk' => 0,
-                'submitActionName' => $input['submitActionName'],
-                'reRenderActionNames' => $input['reRenderActionNames'],
                 'filterFields' => $input['formFilterFields'],
                 'groupping' => 0,
                 'submitTitle' => Data_Model::getResource()->get('Add') . ' ' . $modelClass::getTitle(),
-                'template' => '_Modal'
+                'template' => '_Modal',
+                'params' => [
+                    'modelClassName' => $input['modelClassName'],
+                    'formFilterFields' => $input['formFilterFields'],
+                    'dataFilterFields' => $input['dataFilterFields'],
+                    'submitActionName' => $input['submitActionName'],
+                    'reRenderClosest' => $input['reRenderClosest'],
+                    'reRenderActionNames' => $input['reRenderActionNames'],
+                ]
             ]
         );
 
@@ -84,10 +91,11 @@ class Data_Model extends Action
                 'data' => $queryResult,
                 'actionClassName' => 'Ice:Data_Model',
                 'params' => [
-                    'modelName' => $input['modelName'],
+                    'modelClassName' => $input['modelClassName'],
                     'formFilterFields' => $input['formFilterFields'],
                     'dataFilterFields' => $input['dataFilterFields'],
                     'submitActionName' => $input['submitActionName'],
+                    'reRenderClosest' => $input['reRenderClosest'],
                     'reRenderActionNames' => $input['reRenderActionNames'],
                 ]
             ]
@@ -95,12 +103,12 @@ class Data_Model extends Action
 
         $data = $modelClass::getData($input['dataFilterFields'])
             ->button('blog_pk', 'Изменить', [
-                'onclick' => 'Ice_Form.modal(\'Bi:Blog\', 1, \'Ice:Form_Submit\', [\'Bi:Cabinet\'], [\'blog_name\'], 0, \'Add blog\', \'_Modal\'); return false;',
+                'onclick' => 'Ice_Form.modal($(this), \'Bi:Blog\', 1, \'Ice:Form_Submit\', 0, \'Add blog\', \'_Modal\', {reRenderClosest: \'Ice:Data_Model\', reRenderActionClassName: [], formFilterFields: [\'blog_name\'], dataFilterFields: [\'blog_pk\', \'blog_name\']}); return false;',
                 'type' => 'info',
                 'icon' => 'edit'
             ])
             ->button('blog_pk', 'Удалить', [
-                'onclick' => 'Ice_Form.modal(\'Bi:Blog\', 1, \'Ice:Form_Submit\', [\'Bi:Cabinet\'], [\'blog_name\'], 0, \'Add blog\', \'_Modal\'); return false;',
+                'onclick' => 'Ice_Form.modal($(this), \'Bi:Blog\', 1, \'Ice:Form_Submit\', 0, \'Add blog\', \'_Modal\', {reRenderClosest: \'Ice:Data_Model\', reRenderActionClassName: [], formFilterFields: [\'blog_name\'], dataFilterFields: [\'blog_pk\', \'blog_name\']}); return false;',
                 'type' => 'danger',
                 'icon' => 'remove'
             ])

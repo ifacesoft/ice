@@ -1,8 +1,8 @@
-var Paginator = {
-    page: function (page, action, params) {
+var Ice_Paginator = {
+    page: function ($element, page, action, params) {
         params.page = page;
 
-        Ice.reRender(action, params);
+        Ice.reRenderClosest($element, action, params);
     }
 };
 

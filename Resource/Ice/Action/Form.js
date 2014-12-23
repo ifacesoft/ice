@@ -3,7 +3,7 @@
  */
 
 var Ice_Form = {
-    submit: function ($button, submitActionName, reRenderActionNames) {
+    submit: function ($button, submitActionName, reRenderClosest, $params) {
         Ice.call(
             submitActionName,
             $button.closest('form').serialize(),
@@ -15,6 +15,11 @@ var Ice_Form = {
                     }
 
                     $button.closest('form')[0].reset();
+
+                    if (reRenderClosest) {
+                        Ice.reRenderClosest($button, reRenderClosest, $params);
+                    }
+
                     reRenderActionNames.forEach(function (className) {
                         Ice.reRender(className);
                     });
@@ -22,21 +27,19 @@ var Ice_Form = {
             }
         );
     },
-    modal: function (modelName, pk, submitActionName, reRenderActionNames, filterFields, groupping, submitTitle) {
-        Ice.reRender(
+    modal: function ($button, modelClassName, pk, submitActionName, groupping, submitTitle, params) {
+        params.modelClassName = modelClassName;
+        params.pk = pk;
+        params.submitActionName = submitActionName;
+        params.groupping = groupping;
+        params.submitTitle = submitTitle;
+        params.template = '_Modal';
+        Ice.reRenderClosest(
+            $button,
             'Ice:Form_Model',
-            {
-                'modelName': modelName,
-                'pk': pk,
-                'submitActionName': submitActionName,
-                'reRenderActionNames': reRenderActionNames,
-                'filterFields': filterFields,
-                'groupping': groupping,
-                'submitTitle': submitTitle,
-                'template': '_Modal'
-            },
-            function () {
-                $('.Form_Model .modal').modal();
+            params,
+            function ($block) {
+                $block.find('.modal').modal();
             }
         );
     }

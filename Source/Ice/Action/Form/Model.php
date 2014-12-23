@@ -49,15 +49,17 @@ class Form_Model extends Action
         'inputValidators' => [
             'submitTitle' => 'Ice:Not_Empty',
             'submitActionName' => 'Ice:Not_Empty',
-            'modelName' => 'Ice:Not_Empty',
+            'modelClassName' => 'Ice:Not_Empty',
             'pk' => 'Ice:Not_Null'
         ],
         'inputDefaults' => [
             'groupping' => 1,
+            'submitActionName' => 'Ice:Form_Submit',
+            'reRenderClosest' => 'Ice:Form_Model',
             'reRenderActionNames' => [],
             'filterFields' => [],
-            'submitActionName' => 'Ice:Submit',
-            'redirect' => ''
+            'redirect' => '',
+            'params' => []
         ],
 //        'layout' => Emmet::PANEL_BODY
     ];
@@ -77,7 +79,7 @@ class Form_Model extends Action
     protected function run(array $input, Action_Context $actionContext)
     {
         /** @var Model $modelClass */
-        $modelClass = Model::getClass($input['modelName']);
+        $modelClass = Model::getClass($input['modelClassName']);
 
         $form = $modelClass::getForm($input['filterFields']);
 
@@ -88,10 +90,12 @@ class Form_Model extends Action
         $data = [
             'form' => $form,
             'submitActionName' => $input['submitActionName'],
+            'reRenderClosest' => $input['reRenderClosest'],
             'reRenderActionNames' => $input['reRenderActionNames'],
             'groupping' => $input['groupping'],
             'submitTitle' => $input['submitTitle'],
             'redirect' => $input['redirect'],
+            'params' => $input['params']
         ];
 
         $actionContext->addAction('Ice:Form', $data);
@@ -110,6 +114,26 @@ class Form_Model extends Action
 
         $input['reRenderActionNames'] = ltrim($reRenderActionNames, ',');
         $input['filterFields'] = ltrim($filterFields, ',');
+
+        array_walk(
+            $input['params'], function (&$item, $key) {
+
+            if (is_array($item)) {
+                array_walk(
+                    $item, function (&$item) {
+                    $item = '\'' . $item . '\'';
+                }
+                );
+                $item = $key . ': [' . implode(', ', $item) . ']';
+            } else {
+                $item = $key . ': \'' . $item . '\'';
+            }
+
+
+        }
+        );
+
+        $input['params'] = '{' . implode(', ', $input['params']) . '}';
 
         return $input;
     }

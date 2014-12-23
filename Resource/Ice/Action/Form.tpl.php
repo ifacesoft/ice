@@ -36,6 +36,6 @@
     <div class="btn-group">
 
         <input class="btn btn-primary" type="button" value="<?= $submitTitle ?>"
-               onclick="Ice_Form.submit($(this), '<?= $submitActionName ?>', [<?= $reRenderActionNames ?>])"/>
+               onclick="Ice_Form.submit($(this), '<?= $submitActionName ?>', '<?= $reRenderClosest ?>', <?= $params ?>)"/>
     </div>
 </form>
