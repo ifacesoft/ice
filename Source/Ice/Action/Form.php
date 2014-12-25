@@ -53,10 +53,12 @@ class Form extends Action
             'submitTitle' => 'Ice:Not_Empty'
         ],
         'inputDefaults' => [
-            'groupping' => 1,
+            'grouping' => 1,
             'submitActionName' => 'Ice:Form_Submit',
             'redirect' => '',
-            'params' => []
+            'params' => [],
+            'reRenderClosest' => '',
+            'reRenderActionNames' => []
         ],
         'layout' => 'div.Form>div.panel.panel-default>div.panel-body'
     ];
@@ -122,7 +124,7 @@ class Form extends Action
 
             $field = Php::getInstance()->fetch(Core_Form::getClass($scheme['template']), array_merge($scheme, $data));
 
-            if ($input['groupping']) {
+            if ($input['grouping']) {
                 $result[$scheme['type']][] = $field;
             } else {
                 $result[] = $field;
@@ -135,15 +137,38 @@ class Form extends Action
             $reRenderActionNames .= ',\'' . $reRenderAction . '\'';
         }
 
+        $reRenderActionNames = '[' . $reRenderActionNames . ']';
+
+        array_walk(
+            $input['params'], function (&$item, $key) {
+
+            if (is_array($item)) {
+                array_walk(
+                    $item, function (&$item) {
+                    $item = '\'' . $item . '\'';
+                }
+                );
+                $item = $key . ': [' . implode(', ', $item) . ']';
+            } else {
+                $item = $key . ': \'' . $item . '\'';
+            }
+        }
+        );
+
+        $params = '{' . implode(', ', $input['params']) . '}';
+
         return [
-            'groupping' => $input['groupping'],
+            'grouping' => $input['grouping'],
             'fields' => $result,
             'formName' => $formName,
             'formClass' => $formClass,
             'formKey' => $formKey,
             'submitActionName' => $input['submitActionName'],
             'submitTitle' => $input['submitTitle'],
-            'redirect' => $input['redirect']
+            'redirect' => $input['redirect'],
+            'params' => $params,
+            'reRenderActionNames' => $reRenderActionNames,
+            'reRenderClosest' => $input['reRenderClosest']
         ];
     }
 }

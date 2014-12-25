@@ -3,7 +3,7 @@
  */
 
 var Ice_Form = {
-    submit: function ($button, submitActionName, reRenderClosest, $params) {
+    submit: function ($button, submitActionName, $params, reRenderClosest, reRenderActionNames) {
         Ice.call(
             submitActionName,
             $button.closest('form').serialize(),
@@ -27,17 +27,22 @@ var Ice_Form = {
             }
         );
     },
-    modal: function ($button, modelClassName, pk, submitActionName, groupping, submitTitle, params) {
-        params.modelClassName = modelClassName;
-        params.pk = pk;
-        params.submitActionName = submitActionName;
-        params.groupping = groupping;
-        params.submitTitle = submitTitle;
-        params.template = '_Modal';
+    modal: function ($button, modelClassName, pk, submitActionName, formFilterFields, grouping, submitTitle, template, params, reRenderClosest, reRenderActionNames) {
         Ice.reRenderClosest(
             $button,
             'Ice:Form_Model',
-            params,
+            {
+                modelClassName: modelClassName,
+                pk: pk,
+                submitActionName: submitActionName,
+                formFilterFields: formFilterFields,
+                grouping: grouping,
+                submitTitle: submitTitle,
+                template: '_Modal',
+                params: params,
+                reRenderClosest: reRenderClosest,
+                reRenderActionNames: reRenderActionNames
+            },
             function ($block) {
                 $block.find('.modal').modal();
             }

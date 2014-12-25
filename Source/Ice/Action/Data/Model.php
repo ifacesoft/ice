@@ -45,7 +45,7 @@ class Data_Model extends Action
             'submitActionName' => 'Ice:Form_Submit',
             'reRenderClosest' => 'Ice:Data_Model',
             'reRenderActionNames' => [],
-            'groupping' => 0,
+            'grouping' => 0,
         ]
     ];
 
@@ -66,8 +66,10 @@ class Data_Model extends Action
             [
                 'modelClassName' => $input['modelClassName'],
                 'pk' => 0,
-                'filterFields' => $input['formFilterFields'],
-                'groupping' => 0,
+                'formFilterFields' => $input['formFilterFields'],
+                'reRenderClosest' => $input['reRenderClosest'],
+                'reRenderActionNames' => $input['reRenderActionNames'],
+                'grouping' => 0,
                 'submitTitle' => Data_Model::getResource()->get('Add') . ' ' . $modelClass::getTitle(),
                 'template' => '_Modal',
                 'params' => [
@@ -103,12 +105,12 @@ class Data_Model extends Action
 
         $data = $modelClass::getData($input['dataFilterFields'])
             ->button('blog_pk', 'Изменить', [
-                'onclick' => 'Ice_Form.modal($(this), \'Bi:Blog\', 1, \'Ice:Form_Submit\', 0, \'Add blog\', \'_Modal\', {reRenderClosest: \'Ice:Data_Model\', reRenderActionClassName: [], formFilterFields: [\'blog_name\'], dataFilterFields: [\'blog_pk\', \'blog_name\']}); return false;',
+                'onclick' => 'Ice_Form.modal($(this), \'Bi:Blog\', 1, \'Ice:Form_Submit\', [\'blog_name\'],  0, \'Add blog\', \'_Modal\', {reRenderClosest: \'Ice:Data_Model\', reRenderActionClassName: [], formFilterFields: [\'blog_name\'], dataFilterFields: [\'blog_pk\', \'blog_name\']}, \'Ice:Data_Model\', []); return false;',
                 'type' => 'info',
                 'icon' => 'edit'
             ])
             ->button('blog_pk', 'Удалить', [
-                'onclick' => 'Ice_Form.modal($(this), \'Bi:Blog\', 1, \'Ice:Form_Submit\', 0, \'Add blog\', \'_Modal\', {reRenderClosest: \'Ice:Data_Model\', reRenderActionClassName: [], formFilterFields: [\'blog_name\'], dataFilterFields: [\'blog_pk\', \'blog_name\']}); return false;',
+                'onclick' => 'Ice_Form.modal($(this), \'Bi:Blog\', 1, \'Ice:Form_Submit\', [\'blog_name\'], 0, \'Add blog\', \'_Modal\', {reRenderClosest: \'Ice:Data_Model\', reRenderActionClassName: [], formFilterFields: [\'blog_name\'], dataFilterFields: [\'blog_pk\', \'blog_name\']}, \'Ice:Data_Model\', []); return false;',
                 'type' => 'danger',
                 'icon' => 'remove'
             ])

@@ -1298,7 +1298,7 @@ class Query_Builder
     }
 
     /**
-     * Groupping by
+     * grouping by
      *
      * @param $fieldName
      * @param null $modelClass

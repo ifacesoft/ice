@@ -48,16 +48,15 @@ class Form_Model extends Action
         'viewRenderClassName' => 'Ice:Smarty',
         'inputValidators' => [
             'submitTitle' => 'Ice:Not_Empty',
-            'submitActionName' => 'Ice:Not_Empty',
             'modelClassName' => 'Ice:Not_Empty',
-            'pk' => 'Ice:Not_Null'
+            'pk' => 'Ice:Not_Null',
+            'formFilterFields' => 'Ice:Not_Empty'
         ],
         'inputDefaults' => [
-            'groupping' => 1,
+            'grouping' => 1,
             'submitActionName' => 'Ice:Form_Submit',
             'reRenderClosest' => 'Ice:Form_Model',
             'reRenderActionNames' => [],
-            'filterFields' => [],
             'redirect' => '',
             'params' => []
         ],
@@ -81,7 +80,7 @@ class Form_Model extends Action
         /** @var Model $modelClass */
         $modelClass = Model::getClass($input['modelClassName']);
 
-        $form = $modelClass::getForm($input['filterFields']);
+        $form = $modelClass::getForm($input['formFilterFields']);
 
         if ($input['pk']) {
             $form->bind($modelClass::getRow($input['pk'], '*'));
@@ -92,7 +91,7 @@ class Form_Model extends Action
             'submitActionName' => $input['submitActionName'],
             'reRenderClosest' => $input['reRenderClosest'],
             'reRenderActionNames' => $input['reRenderActionNames'],
-            'groupping' => $input['groupping'],
+            'grouping' => $input['grouping'],
             'submitTitle' => $input['submitTitle'],
             'redirect' => $input['redirect'],
             'params' => $input['params']
@@ -106,14 +105,15 @@ class Form_Model extends Action
             $reRenderActionNames .= ',\'' . $reRenderAction . '\'';
         }
 
+        $input['reRenderActionNames'] = '[' . ltrim($reRenderActionNames, ',') . ']';
+
         $filterFields = '';
 
-        foreach ($input['filterFields'] as $filterField) {
+        foreach ($input['formFilterFields'] as $filterField) {
             $filterFields .= ',\'' . $filterField . '\'';
         }
 
-        $input['reRenderActionNames'] = ltrim($reRenderActionNames, ',');
-        $input['filterFields'] = ltrim($filterFields, ',');
+        $input['formFilterFields'] = '[' . ltrim($filterFields, ',') . ']';
 
         array_walk(
             $input['params'], function (&$item, $key) {
@@ -128,8 +128,6 @@ class Form_Model extends Action
             } else {
                 $item = $key . ': \'' . $item . '\'';
             }
-
-
         }
         );
 
