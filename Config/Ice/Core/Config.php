@@ -47,7 +47,6 @@ return [
         'multilocale' => 1,
         'locale' => 'en',
         'cors' => [
-            'enable' => 0, // Enable CORS
             'methods' => [], // Permitted types of request ('POST', 'OPTIONS')
             'headers' => [], // Describe custom headers ('Origin', 'X-Requested-With', 'Content-Range', 'Content-Disposition', 'Content-Type')
             'hosts' => [], // A list of domains

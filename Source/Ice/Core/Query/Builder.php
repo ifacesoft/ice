@@ -361,7 +361,7 @@ class Query_Builder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.2
      * @since 0.0
      */
     public function pk($pk, $modelClass = null, $tableAlias = null, $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
@@ -371,7 +371,6 @@ class Query_Builder
         }
 
         if (!is_array($pk)) {
-
             if (!$modelClass) {
                 $modelClass = $this->getModelClass();
             }
@@ -380,51 +379,45 @@ class Query_Builder
             $pk = [reset($pkFieldNames) => $pk];
         }
 
-        return $this->eq($pk, null, $modelClass, $tableAlias, $sqlLogical);
+        return $this->eq($pk, $modelClass, $tableAlias, $sqlLogical);
     }
 
     /**
      * Set in query part where expression '= ?'
      *
-     * @param $fieldName
-     * @param $value
+     * @param array $fieldNameValues
      * @param null $modelClass
      * @param null $tableAlias
      * @param string $sqlLogical
      * @return Query_Builder
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.2
      * @since 0.0
      */
-    public function eq($fieldName, $value = null, $modelClass = null, $tableAlias = null, $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
+    public function eq(array $fieldNameValues, $modelClass = null, $tableAlias = null, $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
     {
-        if (is_array($fieldName)) {
-            foreach ($fieldName as $key => $value) {
-                $this->eq($key, $value, $modelClass, $tableAlias, $sqlLogical);
+        foreach ($fieldNameValues as $fieldName => $value) {
+            if (is_array($value)) {
+                return $this->in($fieldName, $value, $modelClass, $tableAlias, $sqlLogical);
             }
 
-            return $this;
+            if ($value instanceof Model) {
+                $value = $value->getPk();
+                $fieldName .= '__fk';
+            }
+
+            $this->where(
+                $sqlLogical,
+                $fieldName,
+                Query_Builder::SQL_COMPARSION_OPERATOR_EQUAL,
+                $value,
+                $modelClass,
+                $tableAlias
+            );
         }
 
-        if (is_array($value)) {
-            return $this->in($fieldName, $value, $modelClass, $tableAlias, $sqlLogical);
-        }
-
-        if ($value instanceof Model) {
-            $value = $value->getPk();
-            $fieldName .= '__fk';
-        }
-
-        return $this->where(
-            $sqlLogical,
-            $fieldName,
-            Query_Builder::SQL_COMPARSION_OPERATOR_EQUAL,
-            $value,
-            $modelClass,
-            $tableAlias
-        );
+        return $this;
     }
 
     /**
@@ -439,7 +432,7 @@ class Query_Builder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.2
      * @since 0.0
      */
     public function in($fieldName, array $value, $modelClass = null, $tableAlias = null, $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
@@ -449,7 +442,7 @@ class Query_Builder
         }
 
         if (count($value) == 1) {
-            return $this->eq($fieldName, reset($value), $modelClass, $tableAlias, $sqlLogical);
+            return $this->eq([$fieldName => reset($value)], $modelClass, $tableAlias, $sqlLogical);
         }
 
         return $this->where(
@@ -581,12 +574,12 @@ class Query_Builder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.2
      * @since 0.0
      */
     public function isEmpty($fieldName, $modelClass = null, $tableAlias = null, $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
     {
-        return $this->eq($fieldName, '', $modelClass, $tableAlias, $sqlLogical);
+        return $this->eq([$fieldName => ''], $modelClass, $tableAlias, $sqlLogical);
     }
 
     /**
@@ -647,7 +640,7 @@ class Query_Builder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.2
      * @since 0.0
      */
     public function notIn($fieldName, array $value, $modelClass = null, $tableAlias = null, $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
@@ -657,7 +650,7 @@ class Query_Builder
         }
 
         if (count($value) == 1) {
-            return $this->eq($fieldName, reset($value), $modelClass, $tableAlias, $sqlLogical);
+            return $this->eq([$fieldName => reset($value)], $modelClass, $tableAlias, $sqlLogical);
         }
 
         return $this->where(
@@ -681,12 +674,12 @@ class Query_Builder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.2
      * @since 0.0
      */
     public function is($fieldName, $modelClass = null, $tableAlias = null, $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
     {
-        return $this->eq($fieldName, 1, $modelClass, $tableAlias, $sqlLogical);
+        return $this->eq([$fieldName => 1], $modelClass, $tableAlias, $sqlLogical);
     }
 
     /**
@@ -700,12 +693,12 @@ class Query_Builder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.2
      * @since 0.0
      */
     public function not($fieldName, $modelClass = null, $tableAlias = null, $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
     {
-        return $this->eq($fieldName, 0, $modelClass, $tableAlias, $sqlLogical);
+        return $this->eq([$fieldName => 0], $modelClass, $tableAlias, $sqlLogical);
     }
 
     /**
@@ -873,42 +866,20 @@ class Query_Builder
     }
 
     /**
-     * Return query result for select query
+     * Prepare select query part
      *
-     *  part structure:
-     * ```php
-     *      $_sqlPart[self::PART_SELECT] = [
-     *          $modelClass => [
-     *              $tableAlias, [
-     *                  $fieldName => $fieldAlias,
-     *               $fieldName2 => $fieldAlias2,
-     *             ]
-     *         ]
-     *      ];
-     * ```
-     *
-     * @param mixed $fieldName
-     * @param null $fieldAlias
-     * @param null $modelClass
-     * @param null $tableAlias
-     * @param null $sourceName
-     * @param int $ttl
-     * @return Query_Result
+     * @param $fieldName
+     * @param $fieldAlias
+     * @param $modelClass
+     * @param $tableAlias
+     * @return $this
+     * @throws Exception
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.2
-     * @since 0.0
+     * @since 0.2
      */
-    public function select($fieldName, $fieldAlias = null, $modelClass = null, $tableAlias = null, $sourceName = null, $ttl = 3600)
-    {
-        $this->_queryType = Query_Builder::TYPE_SELECT;
-
-        $this->_select($fieldName, $fieldAlias, $modelClass, $tableAlias);
-
-        return Query_Result::getInstance([$this->getQuery($sourceName), $ttl]);
-    }
-
     private function _select($fieldName, $fieldAlias, $modelClass, $tableAlias)
     {
 
@@ -977,6 +948,60 @@ class Query_Builder
         $this->appendCacheTag($modelClass, $fieldName, true, false);
 
         return $this;
+    }
+
+    /**
+     * Return query result for select query
+     *
+     *  part structure:
+     * ```php
+     *      $_sqlPart[self::PART_SELECT] = [
+     *          $modelClass => [
+     *              $tableAlias, [
+     *                  $fieldName => $fieldAlias,
+     *               $fieldName2 => $fieldAlias2,
+     *             ]
+     *         ]
+     *      ];
+     * ```
+     *
+     * @param mixed $fieldName
+     * @param null $fieldAlias
+     * @param null $modelClass
+     * @param null $tableAlias
+     * @param null $sourceName
+     * @param int $ttl
+     * @return Query_Result
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.2
+     * @since 0.0
+     */
+    public function select($fieldName, $fieldAlias = null, $modelClass = null, $tableAlias = null, $sourceName = null, $ttl = 3600)
+    {
+        $this->_queryType = Query_Builder::TYPE_SELECT;
+
+        $this->_select($fieldName, $fieldAlias, $modelClass, $tableAlias);
+
+        return Query_Result::getInstance([$this->getQuery($sourceName), $ttl]);
+    }
+
+    /**
+     * Return instance of query by current query builder
+     *
+     * @param null $sourceName
+     * @return Query
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.2
+     * @since 0.0
+     */
+    public function getQuery($sourceName = null)
+    {
+        return Query::getInstance([$sourceName, $this->_queryType, $this->_sqlParts, $this->_modelClass, $this->_cacheTags])
+            ->bind($this->_bindParts);
     }
 
     /**
@@ -1161,7 +1186,7 @@ class Query_Builder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.2
      * @since 0.0
      */
     public function inPk(array $value, $modelClass = null, $tableAlias = null, $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
@@ -1215,7 +1240,7 @@ class Query_Builder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.2
      * @since 0.0
      */
     public function asc($fieldName, $modelClass = null, $tableAlias = null)
@@ -1392,22 +1417,5 @@ class Query_Builder
     {
         $this->_sqlParts[self::PART_SELECT]['_calcFoundRows'] = true;
         return $this;
-    }
-
-    /**
-     * Return instance of query by current query builder
-     *
-     * @param null $sourceName
-     * @return Query
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function getQuery($sourceName = null)
-    {
-        return Query::getInstance([$sourceName, $this->_queryType, $this->_sqlParts, $this->_modelClass, $this->_cacheTags])
-            ->bind($this->_bindParts);
     }
 }

@@ -254,7 +254,7 @@ class Model_Collection implements IteratorAggregate
         $queryBuilder = $modelClass::query();
 
         if (count($keys) == 1) {
-            $queryBuilder->eq('/pk', reset($keys));
+            $queryBuilder->eq(['/pk' => reset($keys)]);
         } else {
             $queryBuilder->in('/pk', $keys);
         }

@@ -256,7 +256,7 @@ class Request
 
 //        Logger::debugDie($config);
 
-        if ($config->get('cors/enable') && !empty($_SERVER['HTTP_ORIGIN'])) {
+        if (!empty($_SERVER['HTTP_ORIGIN'])) {
             header('Access-Control-Allow-Origin: ' . implode(' ', $config->gets('cors/hosts')));
             header('Access-Control-Allow-Credentials: ' . $config->get('cors/cookie'));
             header('Access-Control-Allow-Methods: ' . implode(', ', $config->gets('cors/methods')));
@@ -266,7 +266,7 @@ class Request
 
     public static function isOptions()
     {
-        return $_SERVER['REQUEST_METHOD'] == 'OPTIONS';
+        return isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] == 'OPTIONS';
     }
 
     //   public function isNoCache()

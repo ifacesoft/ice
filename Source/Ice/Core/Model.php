@@ -437,9 +437,9 @@ abstract class Model
 
         $columnName = $modelMapping[$fieldName];
 
-        $primaryKeys = $modelClass::getScheme()->getIndexes()['PRIMARY KEY']['PRIMARY'];
+        $pkColumnNames = $modelClass::getScheme()->getIndexes()['PRIMARY KEY']['PRIMARY'];
 
-        return in_array($columnName, $primaryKeys);
+        return in_array($columnName, $pkColumnNames);
     }
 
     /**
@@ -533,7 +533,7 @@ abstract class Model
         $foreignKeyName = strtolower($modelName) . '__fk';
         if (array_key_exists($foreignKeyName, $fieldName::getMapping())) {
             $this->_fk[$fieldName] = $fieldName::query()
-                ->eq($foreignKeyName, $this->getPk())
+                ->eq([$foreignKeyName => $this->getPk()])
                 ->select('*')
                 ->getCollection();
 
@@ -870,25 +870,6 @@ abstract class Model
     }
 
     /**
-     * Return Query builder by custom field
-     *
-     * @param $shortFieldName
-     * @param $fieldValue
-     * @return Query_Builder
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.2
-     * @since 0.1
-     */
-    public static function getQueryBuilderBy($shortFieldName, $fieldValue)
-    {
-        return self::query()
-            ->eq($shortFieldName, $fieldValue)
-            ->limit(1);
-    }
-
-    /**
      * Return model by primary key
      *
      * @param $pk
@@ -937,6 +918,28 @@ abstract class Model
                 self::getScheme()->getIndexes()['PRIMARY KEY']['PRIMARY']
             )
         );
+    }
+
+    /**
+     * Return all rows for self model class
+     *
+     * @param array $pk
+     * @param string $fieldNames
+     * @param null $sourceName
+     * @param int $ttl
+     * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.2
+     * @since 0.2
+     */
+    public static function getRow($pk = [], $fieldNames = '*', $sourceName = null, $ttl = 3600)
+    {
+        return self::query()
+            ->pk($pk)
+            ->select($fieldNames, null, null, null, $sourceName, $ttl)
+            ->getRow($pk);
     }
 
     /**
@@ -1076,25 +1079,70 @@ abstract class Model
     }
 
     /**
+     * Execute select from data source
+     *
+     * @param string $sourceName
+     * @param int $ttl
+     * @return Model|null
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.2
+     * @since 0.2
+     */
+    public function select($sourceName = null, $ttl = 3600)
+    {
+        /** @var Model $modelClass */
+        $modelClass = get_class($this);
+
+        $keys = $modelClass::getQueryBuilderBy($this->_affected)
+            ->select(array_keys($this->_affected), null, null, null, $sourceName, $ttl)
+            ->getKeys();
+
+        if (empty($keys)) {
+            return null;
+        }
+
+        $pkFieldNames = $modelClass::getPkFieldNames();
+
+        $this->_pk = [reset($pkFieldNames) => reset($keys)];
+
+        $this->_affected = [];
+
+        return $this;
+    }
+
+    /**
+     * Return Query builder by custom field
+     *
+     * @param $fieldNameValues
+     * @return Query_Builder
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.2
+     * @since 0.1
+     */
+    public static function getQueryBuilderBy(array $fieldNameValues)
+    {
+        return self::query()
+            ->eq($fieldNameValues)
+            ->limit(1);
+    }
+
+    /**
      * Execute update for model
      *
-     * @param $fieldName
-     * @param null $value
      * @param null $sourceName
      * @return Model|null
      * @throws Exception
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.2
      * @since 0.0
      */
-    public function update($fieldName = null, $value = null, $sourceName = null)
+    public function update($sourceName = null)
     {
-        if ($fieldName) {
-            $this->set($fieldName, $value);
-        }
-
         /** @var Model $modelClass */
         $modelClass = get_class($this);
 
@@ -1213,28 +1261,6 @@ abstract class Model
     }
 
     /**
-     * Return all rows for self model class
-     *
-     * @param array $pk
-     * @param string $fieldNames
-     * @param null $sourceName
-     * @param int $ttl
-     * @return array
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.2
-     * @since 0.2
-     */
-    public static function getRow($pk = [], $fieldNames = '*', $sourceName = null, $ttl = 3600)
-    {
-        return self::query()
-            ->pk($pk)
-            ->select($fieldNames, null, null, null, $sourceName, $ttl)
-            ->getRow($pk);
-    }
-
-    /**
      * Casts model to string
      *
      * @return string
@@ -1255,8 +1281,9 @@ abstract class Model
      * @param Model $modelClass
      * @param mixed $modelPk
      * @param Model|null $linkModelClass
+     * @param null $sourceName
+     * @param int $ttl
      * @return Model|null
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.2
@@ -1282,8 +1309,10 @@ abstract class Model
         }
 
         return $linkModelClass::query()
-            ->eq(strtolower($selfClassName) . '__fk', $this->getPk())
-            ->eq(strtolower($className) . '__fk', $modelPk)
+            ->eq([
+                strtolower($selfClassName) . '__fk' => $this->getPk(),
+                strtolower($className) . '__fk' => $modelPk
+            ])
             ->select('*')
             ->getModel($sourceName, $ttl);
     }
