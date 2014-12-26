@@ -4,10 +4,6 @@ php:
   - 5.4
 #  - hhvm
 
-install:
-- travis_retry composer self-update && composer --version
-- export PATH="$HOME/.composer/vendor/bin:$PATH"
-
 before_script:
   - wget http://getcomposer.org/composer.phar
   - php composer.phar install
