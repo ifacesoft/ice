@@ -330,12 +330,15 @@ abstract class Model
                 }
             }
 
-            $this->_json[$fieldName] = $values;
-            return $this->set(
+            $sets = $this->set(
                 $jsonFieldName,
-                Json::encode(array_merge($this->get($fieldName), $this->_json[$fieldName])),
+                Json::encode(array_merge($this->get($fieldName), $values)),
                 $isAffected
             );
+
+            $this->_json[$fieldName] = $values;
+
+            return $sets;
         }
 
         $geoFieldName = $fieldName . '__geo';
@@ -1081,6 +1084,7 @@ abstract class Model
     /**
      * Execute select from data source
      *
+     * @param $fieldNames
      * @param string $sourceName
      * @param int $ttl
      * @return Model|null
@@ -1089,22 +1093,20 @@ abstract class Model
      * @version 0.2
      * @since 0.2
      */
-    public function select($sourceName = null, $ttl = 3600)
+    public function select(array $fieldNames = [], $sourceName = null, $ttl = 3600)
     {
         /** @var Model $modelClass */
         $modelClass = get_class($this);
 
-        $keys = $modelClass::getQueryBuilderBy($this->_affected)
-            ->select(array_keys($this->_affected), null, null, null, $sourceName, $ttl)
-            ->getKeys();
+        $row = $modelClass::getQueryBuilderBy($this->_affected)
+            ->select(array_merge($fieldNames, array_keys($this->_affected)), null, null, null, $sourceName, $ttl)
+            ->getRow();
 
-        if (empty($keys)) {
+        if (!$row) {
             return null;
         }
 
-        $pkFieldNames = $modelClass::getPkFieldNames();
-
-        $this->_pk = [reset($pkFieldNames) => reset($keys)];
+        $this->set($row);
 
         $this->_affected = [];
 

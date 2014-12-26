@@ -137,7 +137,7 @@ class Form extends Action
             $reRenderActionNames .= ',\'' . $reRenderAction . '\'';
         }
 
-        $reRenderActionNames = '[' . $reRenderActionNames . ']';
+        $reRenderActionNames = '[' . ltrim($reRenderActionNames, ',') . ']';
 
         array_walk(
             $input['params'], function (&$item, $key) {
@@ -166,6 +166,7 @@ class Form extends Action
             'submitActionName' => $input['submitActionName'],
             'submitTitle' => $input['submitTitle'],
             'redirect' => $input['redirect'],
+            'filterFields' => implode(',', $filterFields),
             'params' => $params,
             'reRenderActionNames' => $reRenderActionNames,
             'reRenderClosest' => $input['reRenderClosest']

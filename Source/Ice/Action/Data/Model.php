@@ -104,15 +104,17 @@ class Data_Model extends Action
         );
 
         $data = $modelClass::getData($input['dataFilterFields'])
-            ->button('blog_pk', 'Изменить', [
+            ->button('blog_pk', '<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>', [
                 'onclick' => 'Ice_Form.modal($(this), \'Bi:Blog\', 1, \'Ice:Form_Submit\', [\'blog_name\'],  0, \'Add blog\', \'_Modal\', {reRenderClosest: \'Ice:Data_Model\', reRenderActionClassName: [], formFilterFields: [\'blog_name\'], dataFilterFields: [\'blog_pk\', \'blog_name\']}, \'Ice:Data_Model\', []); return false;',
                 'type' => 'info',
-                'icon' => 'edit'
+                'icon' => 'edit',
+                'align' => 'center'
             ])
-            ->button('blog_pk', 'Удалить', [
+            ->button('blog_pk', '<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>', [
                 'onclick' => 'Ice_Form.modal($(this), \'Bi:Blog\', 1, \'Ice:Form_Submit\', [\'blog_name\'], 0, \'Add blog\', \'_Modal\', {reRenderClosest: \'Ice:Data_Model\', reRenderActionClassName: [], formFilterFields: [\'blog_name\'], dataFilterFields: [\'blog_pk\', \'blog_name\']}, \'Ice:Data_Model\', []); return false;',
                 'type' => 'danger',
-                'icon' => 'remove'
+                'icon' => 'remove',
+                'align' => 'center'
             ])
             ->bind($queryResult->getRows());
 

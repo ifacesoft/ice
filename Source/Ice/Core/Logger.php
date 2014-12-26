@@ -168,7 +168,12 @@ class Logger
 
         session_write_close();
 
-        die('Terminated. Bye-bye...' . "\n");
+        if (Request::isAjax()) {
+            die('Terminated. Bye-bye...' . "\n");
+        } else {
+            Logger::fb('Terminated. Bye-bye...');
+            exit;
+        }
     }
 
     /**
@@ -232,9 +237,7 @@ class Logger
         $logFile = Directory::get(LOG_DIR) . date('Y-m-d') . '/INFO.log';
         File::createData($logFile, $message, false, FILE_APPEND);
 
-        if (!Request::isCli() && !headers_sent()) {
-            fb($message, 'INFO');
-        }
+        Logger::fb($message, 'INFO');
 
         if (Request::isCli()) {
             $message = Console::getText(' ' . $message . ' ', Console::C_BLACK, self::$consoleColors[$type]) . "\n";
@@ -243,6 +246,15 @@ class Logger
         } else {
             $message = '<div class="alert alert-' . $type . '">' . $message . '</div>';
             return $logging ? self::addLog($message) : $message;
+        }
+    }
+
+    public static function fb($data, $type = 'DEBUG')
+    {
+        if (!Request::isCli() && !headers_sent()) {
+            foreach ((array)$data as $value) {
+                fb($value, $type);
+            }
         }
     }
 
@@ -381,9 +393,12 @@ class Logger
             self::debug($arg);
         }
 
-        echo '<pre>';
-        debug_print_backtrace();
-        echo '</pre>';
+        if (!Request::isAjax()) {
+            echo '<pre>';
+            debug_print_backtrace();
+            echo '</pre>';
+        }
+
         die();
     }
 
@@ -419,9 +434,7 @@ class Logger
                 File::createData($logFile, $var, false, FILE_APPEND);
             }
 
-            if (!Request::isCli() && !headers_sent()) {
-                fb($arg, 'DEBUG');
-            }
+            Logger::fb($arg, 'DEBUG');
         }
     }
 

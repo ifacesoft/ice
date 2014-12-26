@@ -130,7 +130,7 @@ class Query_Result extends Container implements Iterator, ArrayAccess, Countable
             if (Request::isCli()) {
                 Query::getLogger()->info($message . ' ' . Memory::memoryGetUsagePeak(), Logger::GREY, false);
             } else {
-                fb($message);
+//                Logger::fb($message);
             }
         }
 
@@ -196,7 +196,7 @@ class Query_Result extends Container implements Iterator, ArrayAccess, Countable
             if (Request::isCli()) {
                 Query::getLogger()->info($message . ' ' . Memory::memoryGetUsagePeak(), Logger::GREY, false);
             } else {
-                fb($message);
+//                Logger::fb($message);
             }
         }
 

@@ -143,10 +143,7 @@ class Ice extends Container
     {
         if (!Environment::isProduction()) {
             Logger::renderLog();
-
-            if (!Request::isCli()) {
-                fb('running time: ' . Logger::microtimeResult($this->_startTime) * 1000 . ' ms | ' . Memory::memoryGetUsagePeak(), 'INFO');
-            }
+            Logger::fb('running time: ' . Logger::microtimeResult($this->_startTime) * 1000 . ' ms | ' . Memory::memoryGetUsagePeak(), 'INFO');
         }
 
         if (!Request::isCli() && function_exists('fastcgi_finish_request')) {

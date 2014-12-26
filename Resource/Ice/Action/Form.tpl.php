@@ -1,6 +1,7 @@
 <form class="form-inline" role="form" action="#" method="post">
     <input type="hidden" name="formClass" value="<?= $formClass ?>"/>
     <input type="hidden" name="formKey" value="<?= $formKey ?>"/>
+    <input type="hidden" name="filterFields" value="<?= $filterFields ?>"/>
     <input type="hidden" name="redirect" value="<?= $redirect ?>"/>
     <?php if ($grouping) { ?>
         <?php foreach ($fields as $type => $group) {

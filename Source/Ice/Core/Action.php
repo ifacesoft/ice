@@ -135,9 +135,7 @@ abstract class Action extends Container
             list($input, $errors) = $this->getInput($config, $data);
 
             if (Environment::isDevelopment()) {
-                if (!Request::isCli()) {
-                    fb('action: ' . $actionClass . ' ' . Json::encode($input));
-                }
+                Logger::fb('action: ' . $actionClass . ' ' . Json::encode($input));
             }
 
             $hash = Hash::get($input, Hash::HASH_CRC32);

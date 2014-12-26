@@ -62,13 +62,11 @@ class Logger
         $output['errcontext'] = $errcontext;
         $output['stackTrace'] = $exception->getTraceAsString();
 
-        if (!Request::isCli() && !headers_sent()) {
-            fb($output['message'] . ' ' . $output['errPoint'], 'ERROR');
-            if (!empty($errcontext) && Memory::getVarSize($errcontext) < 3500) {
-                fb($errcontext, 'INFO');
-            }
-            fb(explode("\n", $output['stackTrace']), 'WARN');
+        Core_Logger::fb($output['message'] . ' ' . $output['errPoint'], 'ERROR');
+        if (!empty($errcontext) && Memory::getVarSize($errcontext) < 3500) {
+            Core_Logger::fb($errcontext, 'INFO');
         }
+        Core_Logger::fb(explode("\n", $output['stackTrace']), 'WARN');
     }
 
     /**
