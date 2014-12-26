@@ -102,9 +102,9 @@ Composer install via shell:
 
 Zip archive istall:
 
- 1. Download and unpack .zip
- 2. $ ./Ice/cli Ice:Composer_Update
- 3. $ ./Ice/cli Ice:Module_Create
+      1. Download and unpack .zip
+      2. $ ./Ice/cli Ice:Composer_Update
+      3. $ ./Ice/cli Ice:Module_Create
 
 For Windows:
 ------------
