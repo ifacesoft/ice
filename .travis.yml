@@ -8,6 +8,10 @@ install:
 - travis_retry composer self-update && composer --version
 - export PATH="$HOME/.composer/vendor/bin:$PATH"
 
+before_script:
+  - wget http://getcomposer.org/composer.phar
+  - php composer.phar install
+
 script: phpunit --verbose --bootstrap bootstrap.php --coverage-clover=coverage.clover Test
 
 after_script:
