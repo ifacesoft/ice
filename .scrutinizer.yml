@@ -1,5 +1,9 @@
 imports:
-- php
+    - php
 
 tools:
-    php_code_coverage: true
+    external_code_coverage:
+        timeout: 2100 # Timeout in seconds.
+
+    php_sim: false
+    php_cpd: false

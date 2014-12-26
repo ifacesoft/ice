@@ -4,8 +4,13 @@ php:
   - 5.4
 #  - hhvm
 
-before_script:
-  - wget http://getcomposer.org/composer.phar
-  - php composer.phar install
+install:
+- travis_retry composer self-update && composer --version
+- export PATH="$HOME/.composer/vendor/bin:$PATH"
 
-script: phpunit --bootstrap bootstrap.php --coverage-text Test
+script: phpunit --verbose --bootstrap bootstrap.php --coverage-clover=coverage.clover Test
+
+after_script:
+- cd ../../..
+- travis_retry wget https://scrutinizer-ci.com/ocular.phar
+- php ocular.phar code-coverage:upload --format=php-clover coverage.clover
