@@ -1,7 +1,6 @@
 <?php
-namespace Ice\Core\Action;
+namespace Ice\Core;
 
-use Ice\Core\Action_Context;
 use PHPUnit_Framework_TestCase;
 
 class Action_ContextTest extends PHPUnit_Framework_TestCase

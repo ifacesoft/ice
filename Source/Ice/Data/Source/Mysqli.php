@@ -44,10 +44,10 @@ class Mysqli extends Data_Source
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.2
      * @since 0.0
      */
-    public function select(Query $query)
+    public function executeSelect(Query $query)
     {
         $statement = $this->getStatement($query);
 
@@ -192,10 +192,10 @@ class Mysqli extends Data_Source
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.2
      * @since 0.0
      */
-    public function insert(Query $query)
+    public function executeInsert(Query $query)
     {
         $statement = $this->getStatement($query);
 
@@ -250,10 +250,10 @@ class Mysqli extends Data_Source
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.2
      * @since 0.0
      */
-    public function update(Query $query)
+    public function executeUpdate(Query $query)
     {
         $statement = $this->getStatement($query);
 
@@ -293,10 +293,10 @@ class Mysqli extends Data_Source
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.2
      * @since 0.0
      */
-    public function delete(Query $query)
+    public function executeDelete(Query $query)
     {
         $statement = $this->getStatement($query);
 
@@ -462,5 +462,38 @@ class Mysqli extends Data_Source
         }
 
         return $columns;
+    }
+
+    /**
+     * Execute query create table to data source
+     *
+     * @param Query $query
+     * @throws Exception
+     * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.2
+     * @since 0.2
+     */
+    public function executeCreate(Query $query)
+    {
+        $statement = $this->getStatement($query);
+
+        if ($statement->execute() === false) {
+            $errno = $statement->errno;
+            $error = $statement->error;
+            $statement->close();
+            Data_Source::getLogger()->fatal(['#' . $errno . ': {$0}', $error], __FILE__, __LINE__, null, $query);
+        }
+
+        $data = [];
+
+        $data[Query_Result::RESULT_MODEL_CLASS] = $query->getModelClass();
+        $data[Query_Result::AFFECTED_ROWS] = $statement->affected_rows;
+
+        $statement->close();
+
+        return $data;
     }
 }

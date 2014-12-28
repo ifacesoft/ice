@@ -29,10 +29,12 @@ class Query_Builder
 {
     use Core;
 
+    const TYPE_CREATE = 'create';
     const TYPE_SELECT = 'select';
     const TYPE_INSERT = 'insert';
     const TYPE_UPDATE = 'update';
     const TYPE_DELETE = 'delete';
+    const PART_CREATE = 'create';
     const PART_SELECT = 'select';
     const PART_VALUES = 'values';
     const PART_SET = 'set';
@@ -61,6 +63,7 @@ class Query_Builder
     const SQL_COMPARSION_KEYWORD_BETWEEN = 'BETWEEN';
     const SQL_COMPARSION_KEYWORD_IS_NULL = 'IS NULL';
     const SQL_COMPARSION_KEYWORD_IS_NOT_NULL = 'IS NOT NULL';
+
 
     /**
      * Main model class for builded query
@@ -93,6 +96,7 @@ class Query_Builder
      * @var array
      */
     private $_sqlParts = [
+        self::PART_CREATE => [],
         self::PART_SELECT => [
             '_calcFoundRows' => null,
         ],
@@ -1417,5 +1421,24 @@ class Query_Builder
     {
         $this->_sqlParts[self::PART_SELECT]['_calcFoundRows'] = true;
         return $this;
+    }
+
+    public function column($name, array $scheme, $modelClass = null)
+    {
+        if (!$modelClass) {
+            $modelClass = $this->getModelClass();
+        }
+
+        if (isset($this->_sqlParts[Query_Builder::PART_CREATE][$modelClass])) {
+            $this->_sqlParts[Query_Builder::PART_CREATE][$modelClass][$name] = $scheme;
+        } else {
+            $this->_sqlParts[Query_Builder::PART_CREATE][$modelClass] = [$name => $scheme];
+        }
+        return $this;
+    }
+
+    public function create($sourceName = null, $ttl = 3600) {
+        $this->_queryType = Query_Builder::TYPE_CREATE;
+        return Query_Result::getInstance([$this->getQuery($sourceName), $ttl]);
     }
 }

@@ -111,7 +111,7 @@ class Query_Result extends Container implements Iterator, ArrayAccess, Countable
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.2
      * @since 0.0
      */
     public static function getCache($data, $hash)
@@ -134,6 +134,8 @@ class Query_Result extends Container implements Iterator, ArrayAccess, Countable
             }
         }
 
+        $queryCommand = 'execute' . ucfirst($queryType);
+
         switch ($queryType) {
             case Query_Builder::TYPE_SELECT:
                 $cacheDataProvider = Query::getDataProvider('query');
@@ -151,7 +153,7 @@ class Query_Result extends Container implements Iterator, ArrayAccess, Countable
                     return new Query_Result($cache['data']);
                 }
 
-                $cache['data'] = $query->getDataSource()->$queryType($query);
+                $cache['data'] = $query->getDataSource()->$queryCommand($query);
                 $cache['time'] = time();
 
                 $cacheDataProvider->set($hash, $cache);
@@ -160,8 +162,12 @@ class Query_Result extends Container implements Iterator, ArrayAccess, Countable
             case Query_Builder::TYPE_INSERT:
             case Query_Builder::TYPE_UPDATE:
             case Query_Builder::TYPE_DELETE:
-                $cache['data'] = $query->getDataSource()->$queryType($query);
+                $cache['data'] = $query->getDataSource()->$queryCommand($query);
                 Cache::invalidate(__CLASS__, $query->getInvalidateTags());
+                break;
+
+            case Query_Builder::TYPE_CREATE:
+                $cache['data'] = $query->getDataSource()->$queryCommand($query);
                 break;
 
             default:

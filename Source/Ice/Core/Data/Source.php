@@ -148,7 +148,7 @@ abstract class Data_Source extends Container
      * @version 0
      * @since 0
      */
-    abstract public function select(Query $query);
+    abstract public function executeSelect(Query $query);
 
     /**
      * Execute query insert to data source
@@ -162,7 +162,7 @@ abstract class Data_Source extends Container
      * @version 0
      * @since 0
      */
-    abstract public function insert(Query $query);
+    abstract public function executeInsert(Query $query);
 
     /**
      * Execute query update to data source
@@ -176,7 +176,7 @@ abstract class Data_Source extends Container
      * @version 0
      * @since 0
      */
-    abstract public function update(Query $query);
+    abstract public function executeUpdate(Query $query);
 
     /**
      * Execute query update to data source
@@ -190,7 +190,7 @@ abstract class Data_Source extends Container
      * @version 0
      * @since 0
      */
-    abstract public function delete(Query $query);
+    abstract public function executeDelete(Query $query);
 
     /**
      * Get connection instance

@@ -10,6 +10,7 @@
 namespace Ice\Query\Translator;
 
 use Ice\Core\Exception;
+use Ice\Core\Logger;
 use Ice\Core\Model;
 use Ice\Core\Query_Builder;
 use Ice\Core\Query_Translator;
@@ -32,6 +33,7 @@ use Ice\Core\Query_Translator;
 class Mysqli extends Query_Translator
 {
     const SQL_CALC_FOUND_ROWS = 'SQL_CALC_FOUND_ROWS';
+    const SQL_STATEMENT_CREATE = 'CREATE TABLE IF NOT EXISTS';
     const SQL_STATEMENT_SELECT = 'SELECT';
     const SQL_STATEMENT_INSERT = 'INSERT';
     const SQL_STATEMENT_UPDATE = 'UPDATE';
@@ -466,5 +468,49 @@ class Mysqli extends Query_Translator
 
         return "\n" . 'LIMIT ' .
         "\n\t" . $offset . ', ' . $data;
+    }
+
+    /**
+     * Translate create part
+     *
+     * @param array $data
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.2
+     * @since 0.2
+     */
+    private function translateCreate(array $data)
+    {
+        $sql = '';
+
+        if (empty($data)) {
+            return $sql;
+        }
+
+        $scheme = each($data);
+
+        /** @var Model $modelClass */
+        $modelClass = $scheme['key'];
+
+        array_walk(
+            $scheme['value'],
+            function(&$scheme, $columnName) {
+                $scheme = $columnName . ' ' .
+                    strtoupper($scheme['type']) . ' ' .
+                    (empty($scheme['extra']) ? '' : strtoupper($scheme['extra']) . ' ') .
+                    ($scheme['extra'] ? 'PRIMARY KEY ' : '') .
+                    (empty($scheme['default']) ? '' : 'DEFAULT ' . $scheme['default'] . ' ') .
+                    (empty($scheme['nullable']) ? 'NULL' : 'NOT NULL');
+            }
+        );
+
+        $sql .= "\n" . self::SQL_STATEMENT_CREATE . ' `' . $modelClass::getTableName() . '`' .
+            "\n" . '(' .
+            "\n\t" . implode(',' . "\n\t", $scheme['value']) .
+            "\n" . ') ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;';
+
+        return $sql;
     }
 }

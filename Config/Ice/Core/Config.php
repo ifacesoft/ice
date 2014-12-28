@@ -16,6 +16,9 @@ return [
             'ice' => 'Ice',
         ]
     ],
+    'Ice\\Core\\Data_Source' => [
+        'Ice:Mysqli/default' => 'test',
+    ],
     'Ice\Core\Environment' => [
         'environments' => [
             '/localhost/' => 'development',

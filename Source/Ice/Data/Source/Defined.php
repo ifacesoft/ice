@@ -46,7 +46,7 @@ class Defined extends Data_Source
      * @version 0.0
      * @since 0.0
      */
-    public function select(Query $query)
+    public function executeSelect(Query $query)
     {
         /** @var Model $modelClass */
         $modelClass = $query->getModelClass();
@@ -134,7 +134,7 @@ class Defined extends Data_Source
      * @version 0.0
      * @since 0.0
      */
-    public function insert(Query $query)
+    public function executeInsert(Query $query)
     {
         throw new Exception('Implement insert() method.');
     }
@@ -151,7 +151,7 @@ class Defined extends Data_Source
      * @version 0.0
      * @since 0.0
      */
-    public function update(Query $query)
+    public function executeUpdate(Query $query)
     {
         throw new Exception('Implement update() method.');
     }
@@ -168,7 +168,7 @@ class Defined extends Data_Source
      * @version 0.0
      * @since 0.0
      */
-    public function delete(Query $query)
+    public function executeDelete(Query $query)
     {
         throw new Exception('Implement delete() method.');
     }

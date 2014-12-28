@@ -1318,4 +1318,15 @@ abstract class Model
             ->select('*')
             ->getModel($sourceName, $ttl);
     }
+
+    public static function createTable()
+    {
+        $queryBuilder = self::query();
+
+        foreach (self::getScheme()->getColumnNames() as $name => $scheme) {
+            $queryBuilder->column($name, $scheme);
+        }
+
+        $queryBuilder->create();
+    }
 }
