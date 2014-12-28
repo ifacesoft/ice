@@ -97,7 +97,7 @@ return [
             'length' => '0',
             'characterSet' => null,
             'nullable' => true,
-            'default' => null,
+            'default' => 'CURRENT_TIMESTAMP',
             'comment' => '',
             'is_primary' => false,
             'is_foreign' => false,

@@ -10,6 +10,7 @@ before_script:
   - php composer.phar install
   - mysql -e "create database IF NOT EXISTS test;" -uroot
 
+
 script: phpunit --configuration phpunit.xml
 
 after_script:
