@@ -65,6 +65,6 @@ class Phpunit_Run extends Action
      */
     protected function run(array $input, Action_Context $actionContext)
     {
-        Console::run(VENDOR_DIR . $input['vendor'] . '/' . $input['script'] . ' --verbose --coverage-text ' . MODULE_DIR . 'Test');
+        Console::run(VENDOR_DIR . $input['vendor'] . '/' . $input['script'] . ' --configuration phpunit.xml');
     }
 }

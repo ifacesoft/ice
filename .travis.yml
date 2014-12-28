@@ -2,14 +2,14 @@ language: php
 php:
   - 5.5
   - 5.4
-#  - hhvm
+  - hhvm
 
 before_script:
   - wget http://getcomposer.org/composer.phar
   - php composer.phar install
 
-script: phpunit --verbose --bootstrap bootstrap.php --coverage-clover=coverage.clover --coverage-text Test
+script: phpunit --configuration phpunit.xml
 
 after_script:
 - travis_retry wget https://scrutinizer-ci.com/ocular.phar
-- php ocular.phar code-coverage:upload --access-token="e94d23c2fde554972a6c0e1ca4fee4db3b97663e82b35267c3f85c9f0726d0cc" --format=php-clover coverage.clover
+- php ocular.phar code-coverage:upload --access-token="e94d23c2fde554972a6c0e1ca4fee4db3b97663e82b35267c3f85c9f0726d0cc" --format=php-clover coverage.xml

@@ -6,4 +6,7 @@ return [
     'Class {$0} not found' => [
         'en' => 'Class {$0} not found',
     ],
+    'Files for {$0} not found' => [
+        'en' => 'Files for {$0} not found',
+    ],
 ];

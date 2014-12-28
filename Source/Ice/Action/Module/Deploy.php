@@ -47,6 +47,7 @@ class Module_Deploy extends Action
         'afterActions' => [
             'Ice:Cache_Clear',
             'Ice:Scheme_Update',
+            'Ice:Phpunit_Run'
         ],
         'template' => ''
     ];
