@@ -37,7 +37,7 @@ class Scheme_Update extends Action
      *      'layout' => null,               // Emmet style layout
      *      'template' => null,             // Template of view
      *      'output' => null,               // Output type: standard|file
-     *      'viewRenderClassName' => null,  // Render class for view (example: Ice:Php)
+     *      'defaultViewRenderClassName' => null,  // Render class for view (example: Ice:Php)
      *      'inputDefaults' => [],          // Default input data
      *      'inputValidators' => [],        // Input data validators
      *      'inputDataProviderKeys' => [],  // InputDataProviders keys

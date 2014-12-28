@@ -1,35 +1,21 @@
 <?php
 /**
- * Ice action layout main class
- *
- * @link http://www.iceframework.net
- * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
- * @license https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
+ * Created by PhpStorm.
+ * User: dp
+ * Date: 28.12.14
+ * Time: 20:32
  */
 
 namespace Ice\Action;
 
 use Ice\Core\Action;
+use Ice\Core\Action_Context;
 
-/**
- * Class Layout_Main
- *
- * Default ice action layout
- *
- * @see Ice\Core\Action
- * @see Ice\Core\Action_Context
- *
- * @author dp <denis.a.shestakov@gmail.com>
- *
- * @package Ice
- * @subpackage Action
- *
- * @version 0.0
- * @since 0.0
- */
-class Layout_Main extends Layout
+class Test extends Action
 {
-    /**  public static $config = [
+
+    /**
+     *  public static $config = [
      *      'afterActions' => [],          // actions
      *      'layout' => null,               // Emmet style layout
      *      'template' => null,             // Template of view
@@ -43,8 +29,31 @@ class Layout_Main extends Layout
      *  ];
      */
     public static $config = [
-        'afterActions' => ['Ice:Resources'],
         'defaultViewRenderClassName' => 'Ice:Php',
-        'layout' => ''
+        'afterActions' => [
+            '_NoView',
+            '_Smarty' => ['inputTestSmarty' => 'inputTestSmarty'],
+            '_Twig' => ['inputTestTwig' => 'inputTestTwig'],
+            '_Php' => [
+                ['inputTestPhp' => 'inputTestPhp1'],
+                ['inputTestPhp' => 'inputTestPhp2']
+            ]
+        ]
     ];
+
+    /** Run action
+     *
+     * @param array $input
+     * @param Action_Context $actionContext
+     * @return array
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since 0
+     */
+    protected function run(array $input, Action_Context $actionContext)
+    {
+        return ['test' => $input['test']];
+    }
 }

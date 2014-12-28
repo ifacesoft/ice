@@ -47,7 +47,7 @@ abstract class Action extends Container
         'layout' => null,
         'template' => null,
         'output' => null,
-        'viewRenderClass' => null,
+        'defaultViewRenderClassName' => null,
         'inputDefaults' => [],
         'inputValidators' => [],
         'inputDataProviderKeys' => [],
@@ -203,6 +203,16 @@ abstract class Action extends Container
 
             $viewData = $actionContext->getViewData();
 
+            $template = $config->get('template', false);
+            if (!empty($template)) {
+                $viewData['template'] = $template;
+            }
+
+            $defaultViewRenderClassName = $config->get('defaultViewRenderClassName', false);
+            if (!empty($defaultViewRenderClassName)) {
+                $viewData['defaultViewRenderClassName'] = $defaultViewRenderClassName;
+            }
+
             if (isset($input['template'])) {
                 $viewData['template'] = $input['template'];
             }
@@ -322,7 +332,7 @@ abstract class Action extends Container
      *      'layout' => null,               // Emmet style layout
      *      'template' => null,             // Template of view
      *      'output' => null,               // Output type: standard|file
-     *      'viewRenderClassName' => null,  // Render class for view (example: Ice:Php)
+     *      'defaultViewRenderClassName' => null,  // Render class for view (example: Ice:Php)
      *      'inputDefaults' => [],          // Default input data
      *      'inputValidators' => [],        // Input data validators
      *      'inputDataProviderKeys' => [],  // InputDataProviders keys
@@ -331,7 +341,7 @@ abstract class Action extends Container
      *  ];
      *
      * public static $config = [
-     *      'viewRenderClass' => 'Ice:Php'
+     *      'defaultViewRenderClassName' => 'Ice:Php'
      * ];
      *
      * /** Run action
@@ -346,4 +356,21 @@ abstract class Action extends Container
      * @since 0
      */
     abstract protected function run(array $input, Action_Context $actionContext);
+
+    /**
+     * Return instance of Action
+     *
+     * @param null $key
+     * @param null $ttl
+     * @return Action
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.2
+     * @since 0.2
+     */
+    public static function getInstance($key = null, $ttl = null)
+    {
+        return parent::getInstance($key, $ttl);
+    }
 }

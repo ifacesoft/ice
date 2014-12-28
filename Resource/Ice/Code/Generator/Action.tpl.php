@@ -33,7 +33,7 @@ use Ice\Core\Action_Context;
     * 'layout' => null, // Emmet style layout
     * 'template' => null, // Template of view
     * 'output' => null, // Output type: standard|file
-    * 'viewRenderClassName' => null, // Render class for view (example: Ice:Php)
+    * 'defaultViewRenderClassName' => null, // Render class for view (example: Ice:Php)
     * 'inputDefaults' => [], // Default input data
     * 'inputValidators' => [], // Input data validators
     * 'inputDataProviderKeys' => [], // InputDataProviders keys
@@ -42,7 +42,7 @@ use Ice\Core\Action_Context;
     * ];
     */
     public static $config = [
-    'viewRenderClassName' => '<?= View::getConfig()->get('defaultViewRenderClassName') ?>',
+    'defaultViewRenderClassName' => '<?= View::getConfig()->get('defaultViewRenderClassName') ?>',
     <?php if (php_sapi_name() == 'cli') { ?>'template' => ''<?php
     } ?>
 

@@ -39,7 +39,7 @@ class Model_Delete extends Action
      *      'layout' => null,               // Emmet style layout
      *      'template' => null,             // Template of view
      *      'output' => null,               // Output type: standard|file
-     *      'viewRenderClassName' => null,  // Render class for view (example: Ice:Php)
+     *      'defaultViewRenderClassName' => null,  // Render class for view (example: Ice:Php)
      *      'inputDefaults' => [],          // Default input data
      *      'inputValidators' => [],        // Input data validators
      *      'inputDataProviderKeys' => [],  // InputDataProviders keys
@@ -48,7 +48,7 @@ class Model_Delete extends Action
      *  ];
      */
     public static $config = [
-        'viewRenderClassName' => 'Ice:Php',
+        'defaultViewRenderClassName' => 'Ice:Php',
         'template' => '',
         'inputValidators' => [
             'modelName' => 'Ice:Not_Empty',

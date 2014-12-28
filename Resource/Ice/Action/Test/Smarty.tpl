@@ -1,0 +1,3 @@
+{$inputTestSmarty}
+
+{$testSmarty}

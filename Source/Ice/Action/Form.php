@@ -38,7 +38,7 @@ class Form extends Action
      *      'layout' => null,               // Emmet style layout
      *      'template' => null,             // Template of view
      *      'output' => null,               // Output type: standard|file
-     *      'viewRenderClassName' => null,  // Render class for view (example: Ice:Php)
+     *      'defaultViewRenderClassName' => null,  // Render class for view (example: Ice:Php)
      *      'inputDefaults' => [],          // Default input data
      *      'inputValidators' => [],        // Input data validators
      *      'inputDataProviderKeys' => [],  // InputDataProviders keys
@@ -47,7 +47,7 @@ class Form extends Action
      *  ];
      */
     public static $config = [
-        'viewRenderClassName' => 'Ice:Php',
+        'defaultViewRenderClassName' => 'Ice:Php',
         'inputValidators' => [
             'form' => 'Ice:Is_Form',
             'submitTitle' => 'Ice:Not_Empty'

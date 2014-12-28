@@ -5,7 +5,7 @@ namespace Ice\Core;
 use Ice\Model\User;
 use PHPUnit_Framework_TestCase;
 
-class ModelTest extends  PHPUnit_Framework_TestCase {
+class BuildTest extends  PHPUnit_Framework_TestCase {
     public function testActiveRecordCrud()
     {
         User::createTable();
@@ -24,8 +24,6 @@ class ModelTest extends  PHPUnit_Framework_TestCase {
 
         $user2 = User::create(['surname' => 'test surname'])
             ->select(['/name', '/phone', '/email']);
-
-        $this->assertEquals($user2->get('surname'), 'test surname');
 
         $this->assertNotNull($user2);
         $this->assertTrue($user2 instanceof User);

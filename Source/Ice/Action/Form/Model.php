@@ -36,7 +36,7 @@ class Form_Model extends Action
      *      'layout' => null,               // Emmet style layout
      *      'template' => null,             // Template of view
      *      'output' => null,               // Output type: standard|file
-     *      'viewRenderClassName' => null,  // Render class for view (example: Ice:Php)
+     *      'defaultViewRenderClassName' => null,  // Render class for view (example: Ice:Php)
      *      'inputDefaults' => [],          // Default input data
      *      'inputValidators' => [],        // Input data validators
      *      'inputDataProviderKeys' => [],  // InputDataProviders keys
@@ -45,7 +45,7 @@ class Form_Model extends Action
      *  ];
      */
     public static $config = [
-        'viewRenderClassName' => 'Ice:Smarty',
+        'defaultViewRenderClassName' => 'Ice:Smarty',
         'inputValidators' => [
             'submitTitle' => 'Ice:Not_Empty',
             'modelClassName' => 'Ice:Not_Empty',

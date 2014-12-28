@@ -205,7 +205,7 @@ class Action_Context
                 'layout' => $config->get('layout', false),
                 'template' => $config->get('template', false),
                 'output' => $config->get('output', false),
-                'viewRenderClassName' => $config->get('viewRenderClassName', false),
+                'defaultViewRenderClassName' => $config->get('viewRenderClassName', false),
                 'params' => []
             ];
 
