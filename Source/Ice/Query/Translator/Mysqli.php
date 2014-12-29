@@ -10,7 +10,6 @@
 namespace Ice\Query\Translator;
 
 use Ice\Core\Exception;
-use Ice\Core\Logger;
 use Ice\Core\Model;
 use Ice\Core\Query_Builder;
 use Ice\Core\Query_Translator;
@@ -496,7 +495,7 @@ class Mysqli extends Query_Translator
 
         array_walk(
             $scheme['value'],
-            function(&$scheme, $columnName) {
+            function (&$scheme, $columnName) {
                 $scheme = $columnName . ' ' .
                     strtoupper($scheme['type']) . ' ' .
                     (empty($scheme['extra']) ? '' : strtoupper($scheme['extra']) . ' ') .

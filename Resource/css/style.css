@@ -11,6 +11,7 @@ li {
     position: fixed;
     z-index: 9999;
 }
+
 /* Positioning */
 .notifications.top-right {
     right: 10px;

@@ -5,7 +5,8 @@ namespace Ice\Core;
 use Ice\Model\User;
 use PHPUnit_Framework_TestCase;
 
-class BuildTest extends  PHPUnit_Framework_TestCase {
+class BuildTest extends PHPUnit_Framework_TestCase
+{
     public function testActiveRecordCrud()
     {
         User::createTable();

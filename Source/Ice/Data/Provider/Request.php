@@ -11,8 +11,6 @@ namespace Ice\Data\Provider;
 
 use Ice\Core\Data_Provider;
 use Ice\Core\Exception;
-use Ice\Core\Loader;
-use Ice\Core\Logger;
 
 /**
  * Class Request

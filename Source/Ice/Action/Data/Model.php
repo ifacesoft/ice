@@ -3,8 +3,6 @@ namespace Ice\Action;
 
 use Ice\Core\Action;
 use Ice\Core\Action_Context;
-use Ice\Core\Loader;
-use Ice\Core\Logger;
 use Ice\Core\Model;
 use Ice\Helper\Arrays;
 
@@ -113,7 +111,7 @@ class Data_Model extends Action
                     'grouping' => $input['grouping'],
                     'submitTitle' => $submitTitle,
                     'template' => '_Modal',
-                    'params' =>  Arrays::toJsObjectString($params),
+                    'params' => Arrays::toJsObjectString($params),
                     'reRenderClosest' => $input['reRenderClosest'],
                     'reRenderActionNames' => Arrays::toJsArrayString($input['reRenderActionNames']),
                 ],
@@ -124,7 +122,7 @@ class Data_Model extends Action
                 '<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>',
                 [
                     'modelClassName' => $input['modelClassName'],
-                    'params' =>  Arrays::toJsObjectString($params),
+                    'params' => Arrays::toJsObjectString($params),
                     'reRenderClosest' => $input['reRenderClosest'],
                     'reRenderActionNames' => Arrays::toJsArrayString($input['reRenderActionNames']),
                 ],

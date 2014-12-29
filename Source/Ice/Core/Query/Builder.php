@@ -1437,7 +1437,8 @@ class Query_Builder
         return $this;
     }
 
-    public function create($sourceName = null, $ttl = 3600) {
+    public function create($sourceName = null, $ttl = 3600)
+    {
         $this->_queryType = Query_Builder::TYPE_CREATE;
         return Query_Result::getInstance([$this->getQuery($sourceName), $ttl]);
     }
