@@ -40,7 +40,7 @@ var Ice = {
         });
     },
 
-    reRenderClosest: function ($element, actionClassName, actionParams, callback) {
+    reRenderClosest: function ($element, actionClassName, actionParams, callback, container) {
         Ice.call(
             actionClassName,
             actionParams,
@@ -48,7 +48,21 @@ var Ice = {
                 if (result.actionName) {
                     var $block = $(result.html);
 
-                    $element.closest('.' + result.actionName).replaceWith($block);
+                    if (container) {
+                        var parentActionName = ''
+
+                        if (parentActionName = Ice_Helper_String.strstr(container, ':')) {
+                            parentActionName = parentActionName.substr(1);
+                        } else if (container = Ice_Helper_String.strstr(container, '\\')) {
+                            parentActionName = parentActionName.substr(1);
+                        } else {
+                            parentActionName = container;
+                        }
+
+                        $element.closest('.' + parentActionName).find('.' + result.actionName).replaceWith($block);
+                    } else {
+                        $element.closest('.' + result.actionName).replaceWith($block);
+                    }
 
                     if (callback) {
                         callback($block);

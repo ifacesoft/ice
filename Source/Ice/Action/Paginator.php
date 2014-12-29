@@ -12,6 +12,7 @@ namespace Ice\Action;
 use Ice\Core\Action;
 use Ice\Core\Action_Context;
 use Ice\Core\Query_Result;
+use Ice\Helper\Arrays;
 
 /**
  * Class Paginator
@@ -123,26 +124,7 @@ class Paginator extends Action
         }
 
         $output['actionClassName'] = $input['actionClassName'];
-
-        array_walk(
-            $input['params'], function (&$item, $key) {
-
-            if (is_array($item)) {
-                array_walk(
-                    $item, function (&$item) {
-                    $item = '\'' . $item . '\'';
-                }
-                );
-                $item = $key . ': [' . implode(', ', $item) . ']';
-            } else {
-                $item = $key . ': \'' . $item . '\'';
-            }
-
-
-        }
-        );
-
-        $output['params'] = '{' . implode(', ', $input['params']) . '}';
+        $output['params'] = Arrays::toJsObjectString($input['params']);
 
         return $output;
     }

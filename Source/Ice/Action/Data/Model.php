@@ -6,6 +6,7 @@ use Ice\Core\Action_Context;
 use Ice\Core\Loader;
 use Ice\Core\Logger;
 use Ice\Core\Model;
+use Ice\Helper\Arrays;
 
 /**
  * Class Data_Model
@@ -61,25 +62,30 @@ class Data_Model extends Action
         /** @var Model $modelClass */
         $modelClass = Model::getClass($input['modelClassName']);
 
+        $params = [
+            'modelClassName' => $input['modelClassName'],
+            'formFilterFields' => $input['formFilterFields'],
+            'dataFilterFields' => $input['dataFilterFields'],
+            'submitActionName' => $input['submitActionName'],
+            'reRenderClosest' => $input['reRenderClosest'],
+            'reRenderActionNames' => $input['reRenderActionNames'],
+        ];
+
+        $submitTitle = Data_Model::getResource()->get('Save') . ' ' . $modelClass::getTitle();
+
         $actionContext->addAction(
             'Ice:Form_Model',
             [
                 'modelClassName' => $input['modelClassName'],
                 'pk' => 0,
+                'submitActionName' => $input['submitActionName'],
                 'formFilterFields' => $input['formFilterFields'],
                 'reRenderClosest' => $input['reRenderClosest'],
                 'reRenderActionNames' => $input['reRenderActionNames'],
-                'grouping' => 0,
-                'submitTitle' => Data_Model::getResource()->get('Add') . ' ' . $modelClass::getTitle(),
+                'grouping' => $input['grouping'],
+                'submitTitle' => $submitTitle,
                 'template' => '_Modal',
-                'params' => [
-                    'modelClassName' => $input['modelClassName'],
-                    'formFilterFields' => $input['formFilterFields'],
-                    'dataFilterFields' => $input['dataFilterFields'],
-                    'submitActionName' => $input['submitActionName'],
-                    'reRenderClosest' => $input['reRenderClosest'],
-                    'reRenderActionNames' => $input['reRenderActionNames'],
-                ]
+                'params' => $params
             ]
         );
 
@@ -92,30 +98,39 @@ class Data_Model extends Action
             'Ice:Paginator', [
                 'data' => $queryResult,
                 'actionClassName' => 'Ice:Data_Model',
-                'params' => [
-                    'modelClassName' => $input['modelClassName'],
-                    'formFilterFields' => $input['formFilterFields'],
-                    'dataFilterFields' => $input['dataFilterFields'],
-                    'submitActionName' => $input['submitActionName'],
-                    'reRenderClosest' => $input['reRenderClosest'],
-                    'reRenderActionNames' => $input['reRenderActionNames'],
-                ]
+                'params' => $params
             ]
         );
 
         $data = $modelClass::getData($input['dataFilterFields'])
-            ->button('blog_pk', '<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>', [
-                'onclick' => 'Ice_Form.modal($(this), \'Bi:Blog\', 1, \'Ice:Form_Submit\', [\'blog_name\'],  0, \'Add blog\', \'_Modal\', {reRenderClosest: \'Ice:Data_Model\', reRenderActionClassName: [], formFilterFields: [\'blog_name\'], dataFilterFields: [\'blog_pk\', \'blog_name\']}, \'Ice:Data_Model\', []); return false;',
-                'type' => 'info',
-                'icon' => 'edit',
-                'align' => 'center'
-            ])
-            ->button('blog_pk', '<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>', [
-                'onclick' => 'Ice_Form.modal($(this), \'Bi:Blog\', 1, \'Ice:Form_Submit\', [\'blog_name\'], 0, \'Add blog\', \'_Modal\', {reRenderClosest: \'Ice:Data_Model\', reRenderActionClassName: [], formFilterFields: [\'blog_name\'], dataFilterFields: [\'blog_pk\', \'blog_name\']}, \'Ice:Data_Model\', []); return false;',
-                'type' => 'danger',
-                'icon' => 'remove',
-                'align' => 'center'
-            ])
+            ->button(
+                'blog_pk',
+                '<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>',
+                [
+                    'modelClassName' => $input['modelClassName'],
+                    'submitActionName' => $input['submitActionName'],
+                    'formFilterFields' => Arrays::toJsArrayString($input['formFilterFields']),
+                    'grouping' => $input['grouping'],
+                    'submitTitle' => $submitTitle,
+                    'template' => '_Modal',
+                    'params' =>  Arrays::toJsObjectString($params),
+                    'reRenderClosest' => $input['reRenderClosest'],
+                    'reRenderActionNames' => Arrays::toJsArrayString($input['reRenderActionNames']),
+                ],
+                'Ice:Table_Column_Button_Edit'
+            )
+            ->button(
+                'blog_pk',
+                '<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>',
+                [
+                    'modelClassName' => $input['modelClassName'],
+                    'params' =>  Arrays::toJsObjectString($params),
+                    'reRenderClosest' => $input['reRenderClosest'],
+                    'reRenderActionNames' => Arrays::toJsArrayString($input['reRenderActionNames']),
+                ],
+                'Ice:Table_Column_Button_Remove'
+
+            )
             ->bind($queryResult->getRows());
 
         $actionContext->addAction('Ice:Data', ['data' => $data]);

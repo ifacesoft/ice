@@ -287,4 +287,32 @@ class Arrays
 
         return $data;
     }
+
+    public static function toJsObjectString(array $array)
+    {
+        array_walk($array, function (&$item, $key) {
+            if (is_array($item)) {
+                array_walk(
+                    $item, function (&$item) {
+                    $item = '\'' . $item . '\'';
+                });
+                $item = $key . ': [' . implode(', ', $item) . ']';
+            } else {
+                $item = $key . ': \'' . $item . '\'';
+            }
+        });
+
+        return '{' . implode(', ', $array) . '}';
+    }
+
+    public static function toJsArrayString(array $array)
+    {
+        $string = '';
+
+        foreach ($array as $element) {
+            $string .= ',\'' . $element . '\'';
+        }
+
+        return '[' . ltrim($string, ',') . ']';
+    }
 }

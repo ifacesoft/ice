@@ -51,7 +51,7 @@ class Model_Delete extends Action
         'defaultViewRenderClassName' => 'Ice:Php',
         'template' => '',
         'inputValidators' => [
-            'modelName' => 'Ice:Not_Empty',
+            'modelClassName' => 'Ice:Not_Empty',
             'pk' => 'Ice:Numeric_Positive'
         ]
     ];
@@ -70,15 +70,10 @@ class Model_Delete extends Action
      */
     protected function run(array $input, Action_Context $actionContext)
     {
-        $class = Model::getClass($input['modelName']);
+        $class = Model::getClass($input['modelClassName']);
 
-        $class::query()->delete($input['pk']);
-
-        return [
-            'data' => [
-                'rollActionName' => 'Tp:Roll'
-            ],
-            'success' => Model_Delete::getLogger()->info(['Row {$0} of {$1} deleted successfully', [$input['pk'], $class::getClassName()]], Logger::SUCCESS)
-        ];
+        return $class::query()->delete($input['pk'])->getAffectedRows()
+            ? ['success' => Model_Delete::getLogger()->info('Delete successfully', Logger::SUCCESS)]
+            : ['error' => Model_Delete::getLogger()->info('Delete failed', Logger::DANGER)];
     }
 }

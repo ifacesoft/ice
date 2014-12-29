@@ -308,9 +308,8 @@ class Mysqli extends Data_Source
         }
 
         $data = [];
-//
-//        $data[DATA::AFFECTED_ROWS] = $statement->affected_rows;
-//        $data[DATA::INSERT_ID] = $statement->insert_id;
+
+        $data[Query_Result::AFFECTED_ROWS] = $statement->affected_rows;
 
         $statement->close();
 

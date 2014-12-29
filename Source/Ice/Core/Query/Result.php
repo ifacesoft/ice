@@ -130,7 +130,7 @@ class Query_Result extends Container implements Iterator, ArrayAccess, Countable
             if (Request::isCli()) {
                 Query::getLogger()->info($message . ' ' . Memory::memoryGetUsagePeak(), Logger::GREY, false);
             } else {
-//                Logger::fb($message);
+                Logger::fb($message);
             }
         }
 
@@ -202,7 +202,7 @@ class Query_Result extends Container implements Iterator, ArrayAccess, Countable
             if (Request::isCli()) {
                 Query::getLogger()->info($message . ' ' . Memory::memoryGetUsagePeak(), Logger::GREY, false);
             } else {
-//                Logger::fb($message);
+                Logger::fb($message);
             }
         }
 
@@ -854,5 +854,20 @@ class Query_Result extends Container implements Iterator, ArrayAccess, Countable
     public static function getInstance($key = null, $ttl = null)
     {
         return parent::getInstance($key, $ttl);
+    }
+
+    /**
+     * Return count of affectd rows
+     *
+     * @return int
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.2
+     * @since 0.2
+     */
+    public function getAffectedRows()
+    {
+        return $this->_result[Query_Result::AFFECTED_ROWS];
     }
 }
