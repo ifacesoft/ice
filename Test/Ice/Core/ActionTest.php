@@ -18,9 +18,13 @@ class ActionTest extends PHPUnit_Framework_TestCase
 inputTestPhp1
 testPhpOk
 inputTestSmarty
+
 testSmartyOk
+
 inputTestTwig
+
 testTwigOk
+
 inputTestPhp2
 testPhpOk');
     }
