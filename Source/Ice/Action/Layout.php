@@ -44,7 +44,6 @@ abstract class Layout extends Action
      *  ];
      */
     public static $config = [
-        'afterActions' => ['Ice:Resources'],
         'defaultViewRenderClassName' => 'Ice:Php',
         'layout' => ''
     ];
