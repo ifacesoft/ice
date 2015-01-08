@@ -189,15 +189,15 @@ class Cli extends Data_Provider
 
             list($param, $value) = $param;
 
-            if ($param == 'action') {
-                if (!strpos($value, ':')) {
-                    try {
-                        Loader::getFilePath($value, '.php', 'Source/');
-                    } catch (File_Not_Found $e) {
-                        $value = Module::getInstance()->getAlias() . ':' . $value;
-                    }
-                }
-            }
+//            if ($param == 'action') {
+//                if (!strpos($value, ':')) {
+//                    try {
+//                        Loader::getFilePath($value, '.php', 'Source/');
+//                    } catch (File_Not_Found $e) {
+//                        $value = Module::getInstance()->getAlias() . ':' . $value;
+//                    }
+//                }
+//            }
 
             $connection[$param] = $value;
         }
