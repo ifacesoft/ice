@@ -249,7 +249,7 @@ class Logger
         }
     }
 
-    public static function fb($data, $type = 'DEBUG')
+    public static function fb($data, $type = 'LOG')
     {
         if (!Request::isCli() && !headers_sent()) {
             foreach ((array)$data as $value) {

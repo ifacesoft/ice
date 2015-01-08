@@ -12,6 +12,7 @@ namespace Ice\Action;
 use Ice\Core\Action;
 use Ice\Core\Action_Context;
 use Ice\Core\Form as Core_Form;
+use Ice\Helper\Arrays;
 use Ice\Helper\Object;
 use Ice\View\Render\Php;
 
@@ -131,32 +132,6 @@ class Form extends Action
             }
         }
 
-        $reRenderActionNames = '';
-
-        foreach ($input['reRenderActionNames'] as $reRenderAction) {
-            $reRenderActionNames .= ',\'' . $reRenderAction . '\'';
-        }
-
-        $reRenderActionNames = '[' . ltrim($reRenderActionNames, ',') . ']';
-
-        array_walk(
-            $input['params'], function (&$item, $key) {
-
-            if (is_array($item)) {
-                array_walk(
-                    $item, function (&$item) {
-                    $item = '\'' . $item . '\'';
-                }
-                );
-                $item = $key . ': [' . implode(', ', $item) . ']';
-            } else {
-                $item = $key . ': \'' . $item . '\'';
-            }
-        }
-        );
-
-        $params = '{' . implode(', ', $input['params']) . '}';
-
         return [
             'grouping' => $input['grouping'],
             'fields' => $result,
@@ -167,8 +142,8 @@ class Form extends Action
             'submitTitle' => $input['submitTitle'],
             'redirect' => $input['redirect'],
             'filterFields' => implode(',', $filterFields),
-            'params' => $params,
-            'reRenderActionNames' => $reRenderActionNames,
+            'params' => Arrays::toJsObjectString($input['params']),
+            'reRenderActionNames' => Arrays::toJsArrayString($input['reRenderActionNames']),
             'reRenderClosest' => $input['reRenderClosest']
         ];
     }

@@ -8,8 +8,8 @@ var Ice_Form = {
             submitActionName,
             $button.closest('form').serialize(),
             function (result) {
-                if (result.success.length) {
-                    if (result.redirect.length) {
+                if (result.success && result.success.length) {
+                    if (result.redirect && result.redirect.length) {
                         setTimeout(location.href = result.redirect, 3000);
                         return;
                     }
@@ -38,13 +38,39 @@ var Ice_Form = {
                 formFilterFields: formFilterFields,
                 grouping: grouping,
                 submitTitle: submitTitle,
-                template: '_Modal',
+                template: template,
                 params: params,
                 reRenderClosest: reRenderClosest,
                 reRenderActionNames: reRenderActionNames
             },
             function ($block) {
                 $block.find('.modal').modal();
+            },
+            reRenderClosest
+        );
+    },
+    remove: function ($button, modelClassName, pk, $params, reRenderClosest, reRenderActionNames) {
+        Ice.call(
+            'Ice:Model_Delete',
+            {
+                modelClassName: modelClassName,
+                pk: pk
+            },
+            function (result) {
+                if (result.success && result.success.length) {
+                    if (result.redirect && result.redirect.length) {
+                        setTimeout(location.href = result.redirect, 3000);
+                        return;
+                    }
+
+                    if (reRenderClosest) {
+                        Ice.reRenderClosest($button, reRenderClosest, $params);
+                    }
+
+                    reRenderActionNames.forEach(function (className) {
+                        Ice.reRender(className);
+                    });
+                }
             }
         );
     }

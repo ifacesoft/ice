@@ -22,7 +22,9 @@ inputTestSmarty
 testSmartyOk
 
 inputTestTwig
+
 testTwigOk
+
 inputTestPhp2
 testPhpOk');
     }

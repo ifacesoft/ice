@@ -1,14 +1,17 @@
 <ul class="pagination">
     <?php if (isset($first)) { ?>
-        <li><a onclick="Ice_Paginator.page($(this), '<?= $first ?>', '<?= $actionClassName ?>', <?= $params ?>); return false;">1
+        <li>
+            <a onclick="Ice_Paginator.page($(this), '<?= $first ?>', '<?= $actionClassName ?>', <?= $params ?>); return false;">1
                 <<<</a></li>
     <?php }
     if (isset($fastPrev)) { ?>
-        <li><a onclick="Ice_Paginator.page($(this), '<?= $fastPrev ?>', '<?= $actionClassName ?>', <?= $params ?>); return false;">-5
+        <li>
+            <a onclick="Ice_Paginator.page($(this), '<?= $fastPrev ?>', '<?= $actionClassName ?>', <?= $params ?>); return false;">-5
                 <<</a></li>
     <?php }
     if (isset($prev)) { ?>
-        <li><a onclick="Ice_Paginator.page($(this), '<?= $prev ?>', '<?= $actionClassName ?>', <?= $params ?>); return false;">-1
+        <li>
+            <a onclick="Ice_Paginator.page($(this), '<?= $prev ?>', '<?= $actionClassName ?>', <?= $params ?>); return false;">-1
                 <</a></li>
     <?php }
     if (isset($before2) && $before2 > 1) { ?>
@@ -42,11 +45,13 @@
         <li class="disabled"><a>...</a></li>
     <?php }
     if (isset($next)) { ?>
-        <li><a onclick="Ice_Paginator.page($(this), '<?= $next ?>', '<?= $actionClassName ?>', <?= $params ?>); return false;">>
+        <li>
+            <a onclick="Ice_Paginator.page($(this), '<?= $next ?>', '<?= $actionClassName ?>', <?= $params ?>); return false;">>
                 +1</a></li>
     <?php }
     if (isset($fastNext)) { ?>
-        <li><a onclick="Ice_Paginator.page($(this), '<?= $fastNext ?>', '<?= $actionClassName ?>', <?= $params ?>); return false;">>>
+        <li>
+            <a onclick="Ice_Paginator.page($(this), '<?= $fastNext ?>', '<?= $actionClassName ?>', <?= $params ?>); return false;">>>
                 +5</a></li>
     <?php }
     if (isset($last)) { ?>

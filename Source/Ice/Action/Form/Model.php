@@ -12,6 +12,7 @@ namespace Ice\Action;
 use Ice\Core\Action;
 use Ice\Core\Action_Context;
 use Ice\Core\Model;
+use Ice\Helper\Arrays;
 
 /**
  * Class Form_Model
@@ -99,39 +100,9 @@ class Form_Model extends Action
 
         $actionContext->addAction('Ice:Form', $data);
 
-        $reRenderActionNames = '';
-
-        foreach ($input['reRenderActionNames'] as $reRenderAction) {
-            $reRenderActionNames .= ',\'' . $reRenderAction . '\'';
-        }
-
-        $input['reRenderActionNames'] = '[' . ltrim($reRenderActionNames, ',') . ']';
-
-        $filterFields = '';
-
-        foreach ($input['formFilterFields'] as $filterField) {
-            $filterFields .= ',\'' . $filterField . '\'';
-        }
-
-        $input['formFilterFields'] = '[' . ltrim($filterFields, ',') . ']';
-
-        array_walk(
-            $input['params'], function (&$item, $key) {
-
-            if (is_array($item)) {
-                array_walk(
-                    $item, function (&$item) {
-                    $item = '\'' . $item . '\'';
-                }
-                );
-                $item = $key . ': [' . implode(', ', $item) . ']';
-            } else {
-                $item = $key . ': \'' . $item . '\'';
-            }
-        }
-        );
-
-        $input['params'] = '{' . implode(', ', $input['params']) . '}';
+        $input['formFilterFields'] = Arrays::toJsArrayString($input['formFilterFields']);
+        $input['params'] = Arrays::toJsObjectString($input['params']);
+        $input['reRenderActionNames'] = Arrays::toJsArrayString($input['reRenderActionNames']);
 
         return $input;
     }

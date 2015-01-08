@@ -65,7 +65,6 @@ class Query_Builder
     const SQL_COMPARSION_KEYWORD_IS_NOT_NULL = 'IS NOT NULL';
 
 
-
     /**
      * Main model class for builded query
      *
@@ -1125,6 +1124,8 @@ class Query_Builder
                 'rowCount' => count($data)
             ]
         );
+
+        $this->appendCacheTag($modelClass, $fieldNames, false, true);
 
         $this->_bindParts[$part] = array_merge($this->_bindParts[$part], $data);
 
