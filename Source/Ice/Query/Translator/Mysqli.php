@@ -34,6 +34,7 @@ class Mysqli extends Query_Translator
 {
     const SQL_CALC_FOUND_ROWS = 'SQL_CALC_FOUND_ROWS';
     const SQL_STATEMENT_CREATE = 'CREATE TABLE IF NOT EXISTS';
+    const SQL_STATEMENT_DROP = 'DROP TABLE IF EXISTS';
     const SQL_STATEMENT_SELECT = 'SELECT';
     const SQL_STATEMENT_INSERT = 'INSERT';
     const SQL_STATEMENT_UPDATE = 'UPDATE';
@@ -64,13 +65,13 @@ class Mysqli extends Query_Translator
     {
         $sql = '';
 
-        foreach ($sqlParts as $sqlPart => $data) {
-            if (empty($data)) {
+        foreach ($sqlParts as $sqlPart => $part) {
+            if (empty($part)) {
                 continue;
             }
 
             $translate = 'translate' . ucfirst($sqlPart);
-            $sql .= $this->$translate($data);
+            $sql .= $this->$translate($part);
         }
 
         $sql = trim($sql);
@@ -85,7 +86,7 @@ class Mysqli extends Query_Translator
     /**
      * Translate set part
      *
-     * @param array $data
+     * @param array $part
      * @return string
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -93,16 +94,16 @@ class Mysqli extends Query_Translator
      * @version 0.1
      * @since 0.0
      */
-    private function translateSet(array $data)
+    private function translateSet(array $part)
     {
         /** @var Model $modelClass */
-        $modelClass = $data['modelClass'];
+        $modelClass = $part['modelClass'];
 
         $modelMapping = $modelClass::getMapping();
 
-        if ($data['rowCount'] > 1) {
-            $data['_update'] = true;
-            return $this->translateValues($data);
+        if ($part['rowCount'] > 1) {
+            $part['_update'] = true;
+            return $this->translateValues($part);
         }
 
         $sql = "\n" . self::SQL_STATEMENT_UPDATE .
@@ -110,7 +111,7 @@ class Mysqli extends Query_Translator
         $sql .= "\n" . self::SQL_CLAUSE_SET;
         $sql .= "\n\t" . '`' . implode('`=?,`', array_map(function ($fieldName) use ($modelMapping) {
                 return $modelMapping[$fieldName];
-            }, $data['fieldNames'])) . '`=?';
+            }, $part['fieldNames'])) . '`=?';
 
         return $sql;
     }
@@ -118,7 +119,7 @@ class Mysqli extends Query_Translator
     /**
      * Translate values part
      *
-     * @param array $data
+     * @param array $part
      * @return string
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -126,22 +127,22 @@ class Mysqli extends Query_Translator
      * @version 0.1
      * @since 0.0
      */
-    private function translateValues(array $data)
+    private function translateValues(array $part)
     {
-        $update = $data['_update'];
-        unset($data['_update']);
+        $update = $part['_update'];
+        unset($part['_update']);
 
-        if (empty($data)) {
+        if (empty($part)) {
             return '';
         }
 
         /** @var Model $modelClass */
-        $modelClass = $data['modelClass'];
+        $modelClass = $part['modelClass'];
 
         $sql = "\n" . self::SQL_STATEMENT_INSERT . ' ' . self::SQL_CLAUSE_INTO .
             "\n\t" . $modelClass::getTableName();
 
-        $fieldNamesCount = count($data['fieldNames']);
+        $fieldNamesCount = count($part['fieldNames']);
 
         /** Insert empty row */
         if (!$fieldNamesCount) {
@@ -156,15 +157,15 @@ class Mysqli extends Query_Translator
 
         $sql .= "\n\t" . '(`' . implode('`,`', array_map(function ($fieldName) use ($modelMapping) {
                 return $modelMapping[$fieldName];
-            }, $data['fieldNames'])) . '`)';
+            }, $part['fieldNames'])) . '`)';
         $sql .= "\n" . self::SQL_CLAUSE_VALUES;
 
         $values = "\n\t" . '(?' . str_repeat(',?', $fieldNamesCount - 1) . ')';
 
         $sql .= $values;
 
-        if ($data['rowCount'] > 1) {
-            $sql .= str_repeat(',' . $values, $data['rowCount'] - 1);
+        if ($part['rowCount'] > 1) {
+            $sql .= str_repeat(',' . $values, $part['rowCount'] - 1);
         }
 
         if ($update) {
@@ -172,7 +173,7 @@ class Mysqli extends Query_Translator
             $sql .= implode(',', array_map(function ($fieldName) use ($modelMapping) {
                 $columnName = $modelMapping[$fieldName];
                 return "\n\t" . '`' . $columnName . '`=' . self::SQL_CLAUSE_VALUES . '(`' . $columnName . '`)';
-            }, $data['fieldNames']));
+            }, $part['fieldNames']));
         }
 
         return $sql;
@@ -181,7 +182,7 @@ class Mysqli extends Query_Translator
     /**
      * Translate where part
      *
-     * @param array $data
+     * @param array $part
      * @throws Exception
      * @return string
      *
@@ -190,12 +191,12 @@ class Mysqli extends Query_Translator
      * @version 0.0
      * @since 0.0
      */
-    private function translateWhere(array $data)
+    private function translateWhere(array $part)
     {
         $sql = '';
         $delete = '';
 
-        $deleteClass = array_shift($data);
+        $deleteClass = array_shift($part);
 
         if ($deleteClass) {
             $delete = "\n" . self::SQL_STATEMENT_DELETE . ' ' . self::SQL_CLAUSE_FROM .
@@ -203,13 +204,13 @@ class Mysqli extends Query_Translator
             $sql .= $delete;
         }
 
-        if (empty($data)) {
+        if (empty($part)) {
             return $sql;
         }
 
         $sql = '';
 
-        foreach ($data as $modelClass => $items) {
+        foreach ($part as $modelClass => $items) {
             list($tableAlias, $fieldNames) = $items;
 
             $fields = $modelClass::getMapping();
@@ -277,7 +278,7 @@ class Mysqli extends Query_Translator
     /**
      * Translate select part
      *
-     * @param array $data
+     * @param array $part
      * @return string
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -285,19 +286,19 @@ class Mysqli extends Query_Translator
      * @version 0.0
      * @since 0.0
      */
-    private function translateSelect(array $data)
+    private function translateSelect(array $part)
     {
         $sql = '';
 
-        $calcFoundRows = array_shift($data);
+        $calcFoundRows = array_shift($part);
 
-        if (empty($data)) {
+        if (empty($part)) {
             return $sql;
         }
 
         $fields = [];
 
-        foreach ($data as $modelClass => $items) {
+        foreach ($part as $modelClass => $items) {
             list($tableAlias, $fieldNames) = $items;
 
             $modelMapping = $modelClass::getMapping();
@@ -327,8 +328,8 @@ class Mysqli extends Query_Translator
             return $sql;
         }
 
-        reset($data);
-        $from = each($data);
+        reset($part);
+        $from = each($part);
 
         /** @var Model $fromModelClass */
         $fromModelClass = $from['key'];
@@ -344,7 +345,7 @@ class Mysqli extends Query_Translator
     /**
      * Translate join part
      *
-     * @param array $data
+     * @param array $part
      * @return string
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -352,16 +353,16 @@ class Mysqli extends Query_Translator
      * @version 0.0
      * @since 0.0
      */
-    private function translateJoin(array $data)
+    private function translateJoin(array $part)
     {
         $sql = '';
 
-        if (empty($data)) {
+        if (empty($part)) {
             return $sql;
         }
 
 
-        foreach ($data as $joinTable) {
+        foreach ($part as $joinTable) {
             /** @var Model $joinModelClass */
             $joinModelClass = $joinTable['class'];
 
@@ -376,7 +377,7 @@ class Mysqli extends Query_Translator
     /**
      * Translate order part
      *
-     * @param array $data
+     * @param array $part
      * @return string
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -384,17 +385,17 @@ class Mysqli extends Query_Translator
      * @version 0.0
      * @since 0.0
      */
-    private function translateOrder(array $data)
+    private function translateOrder(array $part)
     {
         $sql = '';
 
-        if (empty($data)) {
+        if (empty($part)) {
             return $sql;
         }
 
         $orders = [];
 
-        foreach ($data as $modelClass => $item) {
+        foreach ($part as $modelClass => $item) {
             list($tableAlias, $fieldNames) = $item;
 
             $fields = $modelClass::getMapping();
@@ -413,7 +414,7 @@ class Mysqli extends Query_Translator
     /**
      * Translate group part
      *
-     * @param array $data
+     * @param array $part
      * @return string
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -421,17 +422,17 @@ class Mysqli extends Query_Translator
      * @version 0.0
      * @since 0.0
      */
-    private function translateGroup(array $data)
+    private function translateGroup(array $part)
     {
         $sql = '';
 
-        if (empty($data)) {
+        if (empty($part)) {
             return $sql;
         }
 
         $groups = [];
 
-        foreach ($data as $modelClass => $items) {
+        foreach ($part as $modelClass => $items) {
             list(, $fieldNames) = $items;
 
             $fields = $modelClass::getMapping();
@@ -450,7 +451,7 @@ class Mysqli extends Query_Translator
     /**
      * Translate limit part
      *
-     * @param array $data
+     * @param array $part
      * @return string
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -458,22 +459,22 @@ class Mysqli extends Query_Translator
      * @version 0.0
      * @since 0.0
      */
-    private function translateLimit($data)
+    private function translateLimit($part)
     {
-        if (empty($data)) {
+        if (empty($part)) {
             return '';
         }
 
-        list($data, $offset) = $data;
+        list($part, $offset) = $part;
 
         return "\n" . 'LIMIT ' .
-        "\n\t" . $offset . ', ' . $data;
+        "\n\t" . $offset . ', ' . $part;
     }
 
     /**
      * Translate create part
      *
-     * @param array $data
+     * @param array $part
      * @return string
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -481,22 +482,22 @@ class Mysqli extends Query_Translator
      * @version 0.2
      * @since 0.2
      */
-    private function translateCreate(array $data)
+    private function translateCreate(array $part)
     {
         $sql = '';
 
-        if (empty($data)) {
+        if (empty($part)) {
             return $sql;
         }
 
-        $scheme = each($data);
+        $scheme = each($part);
 
         /** @var Model $modelClass */
         $modelClass = $scheme['key'];
 
         array_walk(
             $scheme['value'],
-            function(&$scheme, $columnName) {
+            function (&$scheme, $columnName) {
                 $scheme = $columnName . ' ' .
                     strtoupper($scheme['type']) . ' ' .
                     (empty($scheme['extra']) ? '' : strtoupper($scheme['extra']) . ' ') .
@@ -512,5 +513,16 @@ class Mysqli extends Query_Translator
             "\n" . ') ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;';
 
         return $sql;
+    }
+
+    public function translateDrop(array $part)
+    {
+        $modelClass = array_shift($part);
+
+        if (empty($modelClass)) {
+            return '';
+        }
+
+        return "\n" . self::SQL_STATEMENT_DROP . ' `' . $modelClass::getTableName() . '`';
     }
 }

@@ -399,7 +399,7 @@ class Logger
             echo '</pre>';
         }
 
-        die();
+        exit;
     }
 
     /**

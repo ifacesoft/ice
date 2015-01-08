@@ -2,38 +2,41 @@
 
 namespace Ice\Core;
 
-use Ice\Model\User;
+use Ice\Model\Test;
 use PHPUnit_Framework_TestCase;
 
-class ModelTest extends  PHPUnit_Framework_TestCase {
+class ModelTest extends PHPUnit_Framework_TestCase
+{
+    public function setUp()
+    {
+        Test::dropTable();
+        Test::createTable();
+    }
+
     public function testActiveRecordCrud()
     {
-        User::createTable();
-
-        $user1 = User::create([
-            'user_name' => 'test name',
-            '/phone' => '00000000000',
-            '/email' => 'qw@er.ty',
-            'surname' => 'test'
+        $user1 = Test::create([
+            '/name' => 'name',
+            'name2' => 'test'
         ])->insert();
 
-        $user1->set(['surname' => 'test surname'])->update();
+        $user1->set(['/name' => 'test name'])->update();
 
         $this->assertNotNull($user1);
-        $this->assertTrue($user1 instanceof User);
+        $this->assertTrue($user1 instanceof Test);
 
-        $user2 = User::create(['surname' => 'test surname'])
-            ->select(['/name', '/phone', '/email']);
+        $user2 = Test::create(['/name' => 'test name'])
+            ->select(['/name', 'name2']);
 
-        $this->assertEquals($user2->get('surname'), 'test surname');
+        $this->assertEquals($user2->get('/name'), 'test name');
 
         $this->assertNotNull($user2);
-        $this->assertTrue($user2 instanceof User);
+        $this->assertTrue($user2 instanceof Test);
         $this->assertEquals($user1, $user2);
 
         $user2->delete();
 
-        $user3 = User::getModel(1, '/pk');
+        $user3 = Test::getModel(1, '/pk');
 
         $this->assertNull($user3);
     }

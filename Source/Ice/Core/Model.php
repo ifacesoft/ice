@@ -1286,6 +1286,7 @@ abstract class Model
      * @param null $sourceName
      * @param int $ttl
      * @return Model|null
+     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.2
@@ -1319,6 +1320,16 @@ abstract class Model
             ->getModel($sourceName, $ttl);
     }
 
+    /**
+     * Create table by model
+     *
+     * @return Query_Result
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.2
+     * @since 0.2
+     */
     public static function createTable()
     {
         $queryBuilder = self::query();
@@ -1327,6 +1338,21 @@ abstract class Model
             $queryBuilder->column($name, $scheme);
         }
 
-        $queryBuilder->create();
+        return $queryBuilder->create();
+    }
+
+    /**
+     * Drop table by model
+     *
+     * @return Query_Result
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.2
+     * @since 0.2
+     */
+    public static function dropTable()
+    {
+        return self::query()->drop();
     }
 }

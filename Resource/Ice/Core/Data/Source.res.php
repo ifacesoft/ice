@@ -45,4 +45,7 @@ return [
     'Bind params failure' => [
         'ru' => 'Bind params failure',
     ],
+    '#1217: {$0}' => [
+        'en' => '#1217: {$0}',
+    ],
 ];

@@ -1,7 +1,7 @@
 <?php
 return [
-    'time' => '2014-12-28 14:37:33',
-    'revision' => '12281437',
+    'time' => '2015-01-08 12:16:16',
+    'revision' => '01081216',
     'scheme' => 'test',
     'tables' => [
         'ice_account' => [
@@ -17,6 +17,13 @@ return [
             'comment' => '',
             'modelClass' => 'Ice\\Model\\Role',
             'revision' => '12281437',
+        ],
+        'ice_test' => [
+            'engine' => 'InnoDB',
+            'charset' => 'utf8_general_ci',
+            'comment' => '',
+            'modelClass' => 'Ice\\Model\\Test',
+            'revision' => '01081216',
         ],
         'ice_user' => [
             'engine' => 'InnoDB',

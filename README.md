@@ -1,4 +1,4 @@
-Ice &rarr; [iceframework.net](http://iceframework.net) [![Build Status](https://travis-ci.org/ifacesoft/Ice.svg)](https://travis-ci.org/ifacesoft/Ice)
+[Ice](http://iceframework.net) [![Build Status](https://travis-ci.org/ifacesoft/Ice.svg)](https://travis-ci.org/ifacesoft/Ice)
 ===
 
 [![Latest Stable Version](https://poser.pugx.org/ifacesoft/ice/v/stable.svg)](https://packagist.org/packages/ifacesoft/ice)
