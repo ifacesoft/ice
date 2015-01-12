@@ -120,7 +120,12 @@ class Query_Result extends Container implements Iterator, ArrayAccess, Countable
         list($query, $ttl) = $data;
 
         $queryType = $query->getQueryType();
-        if ($queryType == Query_Builder::TYPE_SELECT && !$ttl) {
+        if (
+
+            ($queryType == Query_Builder::TYPE_SELECT && !$ttl) ||
+            $queryType == Query_Builder::TYPE_CREATE ||
+            $queryType == Query_Builder::TYPE_DROP
+        ) {
             return Query_Result::create($data);
         }
 
@@ -133,8 +138,6 @@ class Query_Result extends Container implements Iterator, ArrayAccess, Countable
                 Logger::fb($message);
             }
         }
-
-        $queryCommand = 'execute' . ucfirst($queryType);
 
         switch ($queryType) {
             case Query_Builder::TYPE_SELECT:
@@ -153,7 +156,7 @@ class Query_Result extends Container implements Iterator, ArrayAccess, Countable
                     return new Query_Result($cache['data']);
                 }
 
-                $cache['data'] = $query->getDataSource()->$queryCommand($query);
+                $cache['data'] = $query->execute();
                 $cache['time'] = time();
 
                 $cacheDataProvider->set($hash, $cache);
@@ -162,12 +165,8 @@ class Query_Result extends Container implements Iterator, ArrayAccess, Countable
             case Query_Builder::TYPE_INSERT:
             case Query_Builder::TYPE_UPDATE:
             case Query_Builder::TYPE_DELETE:
-                $cache['data'] = $query->getDataSource()->$queryCommand($query);
+                $cache['data'] = $query->execute();
                 Cache::invalidate(__CLASS__, $query->getInvalidateTags());
-                break;
-
-            case Query_Builder::TYPE_CREATE:
-                $cache['data'] = $query->getDataSource()->$queryCommand($query);
                 break;
 
             default:
@@ -193,8 +192,8 @@ class Query_Result extends Container implements Iterator, ArrayAccess, Countable
      */
     protected static function create($data, $hash = null)
     {
+        /** @var Query $query */
         list($query, $ttl) = $data;
-        $queryType = $query->getQueryType();
 
         if (Environment::isDevelopment()) {
             $message = 'sql: ' . str_replace("\t", '', str_replace("\n", ' ', $query->getSql())) . ' [' . implode(', ', $query->getBinds()) . ']';
@@ -206,7 +205,7 @@ class Query_Result extends Container implements Iterator, ArrayAccess, Countable
             }
         }
 
-        $data = new Query_Result($query->getDataSource()->$queryType($query));
+        $data = new Query_Result($query->execute());
         return $data;
     }
 

@@ -11,6 +11,7 @@ namespace Ice\Data\Source;
 
 use Ice\Core\Data_Source;
 use Ice\Core\Exception;
+use Ice\Core\Logger;
 use Ice\Core\Model;
 use Ice\Core\Query;
 use Ice\Core\Query_Builder;
@@ -38,24 +39,22 @@ class Mysqli extends Data_Source
     /**
      * Execute query select to data source
      *
+     * @param mixed $statement
      * @param Query $query
-     * @throws Exception
      * @return array
-     *
+     * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.2
      * @since 0.0
      */
-    public function executeSelect(Query $query)
+    public function executeSelect($statement, Query $query)
     {
-        $statement = $this->getStatement($query);
-
         if ($statement->execute() === false) {
             $errno = $statement->errno;
             $error = $statement->error;
             $statement->close();
-            Data_Source::getLogger()->fatal(['#' . $errno . ': {$0}', $error], __FILE__, __LINE__, null, $query);
+            Data_Source::getLogger()->fatal(['#' . $errno . ': {$0}', $error], __FILE__, __LINE__);
         }
 //            $statement->store_result(); // Так почемуто не работает
         $result = $statement->get_result();
@@ -64,7 +63,7 @@ class Mysqli extends Data_Source
             $errno = $statement->errno;
             $error = $statement->error;
             $statement->close();
-            Data_Source::getLogger()->fatal(['#' . $errno . ': {$0}', $error], __FILE__, __LINE__, null, $query);
+            Data_Source::getLogger()->fatal(['#' . $errno . ': {$0}', $error], __FILE__, __LINE__);
         }
 
         $data = [];
@@ -116,15 +115,15 @@ class Mysqli extends Data_Source
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.2
      * @since 0.0
      */
-    private function getStatement(Query $query)
+    public function getStatement(Query $query)
     {
         $statement = $this->getConnection()->prepare($query->getSql());
 
         if (!$statement) {
-            Data_Source::getLogger()->fatal(['#' . $this->getConnection()->errno . ': {$0}', $this->getConnection()->error], __FILE__, __LINE__, null, $query);
+            Data_Source::getLogger()->fatal(['#' . $this->getConnection()->errno . ': {$0}', $this->getConnection()->error], __FILE__, __LINE__);
         }
 
         $binds = $query->getBinds();
@@ -140,7 +139,7 @@ class Mysqli extends Data_Source
             $values = array_merge($values, $binds);
 
             if (call_user_func_array(array($statement, 'bind_param'), $this->makeValuesReferenced($values)) === false) {
-                Data_Source::getLogger()->fatal('Bind params failure', __FILE__, __LINE__, null, $query);
+                Data_Source::getLogger()->fatal('Bind params failure', __FILE__, __LINE__);
             }
         }
 
@@ -186,24 +185,22 @@ class Mysqli extends Data_Source
     /**
      * Execute query insert to data source
      *
+     * @param mixed $statement
      * @param Query $query
-     * @throws Exception
      * @return array
-     *
+     * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.2
      * @since 0.0
      */
-    public function executeInsert(Query $query)
+    public function executeInsert($statement, Query $query)
     {
-        $statement = $this->getStatement($query);
-
         if ($statement->execute() === false) {
             $errno = $statement->errno;
             $error = $statement->error;
             $statement->close();
-            Data_Source::getLogger()->fatal(['#' . $errno . ': {$0}', $error], __FILE__, __LINE__, null, $query);
+            Data_Source::getLogger()->fatal(['#' . $errno . ': {$0}', $error], __FILE__, __LINE__);
         }
 
         $data = [];
@@ -244,24 +241,22 @@ class Mysqli extends Data_Source
     /**
      * Execute query update to data source
      *
+     * @param mixed $statement
      * @param Query $query
-     * @throws Exception
      * @return array
-     *
+     * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.2
      * @since 0.0
      */
-    public function executeUpdate(Query $query)
+    public function executeUpdate($statement, Query $query)
     {
-        $statement = $this->getStatement($query);
-
         if ($statement->execute() === false) {
             $errno = $statement->errno;
             $error = $statement->error;
             $statement->close();
-            Data_Source::getLogger()->fatal(['#' . $errno . ': {$0}', $error], __FILE__, __LINE__, null, $query);
+            Data_Source::getLogger()->fatal(['#' . $errno . ': {$0}', $error], __FILE__, __LINE__);
         }
 
         $data = [];
@@ -287,24 +282,22 @@ class Mysqli extends Data_Source
     /**
      * Execute query update to data source
      *
+     * @param mixed $statement
      * @param Query $query
-     * @throws Exception
      * @return array
-     *
+     * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.2
      * @since 0.0
      */
-    public function executeDelete(Query $query)
+    public function executeDelete($statement, Query $query)
     {
-        $statement = $this->getStatement($query);
-
         if ($statement->execute() === false) {
             $errno = $statement->errno;
             $error = $statement->error;
             $statement->close();
-            Data_Source::getLogger()->fatal(['#' . $errno . ': {$0}', $error], __FILE__, __LINE__, null, $query);
+            Data_Source::getLogger()->fatal(['#' . $errno . ': {$0}', $error], __FILE__, __LINE__);
         }
 
         $data = [];
@@ -466,24 +459,52 @@ class Mysqli extends Data_Source
     /**
      * Execute query create table to data source
      *
+     * @param $statement
      * @param Query $query
-     * @throws Exception
      * @return array
-     *
+     * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.2
      * @since 0.2
      */
-    public function executeCreate(Query $query)
+    public function executeCreate($statement, Query $query)
     {
-        $statement = $this->getStatement($query);
-
         if ($statement->execute() === false) {
             $errno = $statement->errno;
             $error = $statement->error;
             $statement->close();
-            Data_Source::getLogger()->fatal(['#' . $errno . ': {$0}', $error], __FILE__, __LINE__, null, $query);
+            Data_Source::getLogger()->fatal(['#' . $errno . ': {$0}', $error], __FILE__, __LINE__);
+        }
+
+        $data = [];
+
+        $data[Query_Result::RESULT_MODEL_CLASS] = $query->getModelClass();
+        $data[Query_Result::AFFECTED_ROWS] = $statement->affected_rows;
+
+        $statement->close();
+
+        return $data;
+    }
+
+    /**
+     * Execute query drop table to data source
+     *
+     * @param $statement
+     * @param Query $query
+     * @return array
+     * @throws Exception
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.2
+     * @since 0.2
+     */
+    public function executeDrop($statement, Query $query) {
+        if ($statement->execute() === false) {
+            $errno = $statement->errno;
+            $error = $statement->error;
+            $statement->close();
+            Data_Source::getLogger()->fatal(['#' . $errno . ': {$0}', $error], __FILE__, __LINE__);
         }
 
         $data = [];

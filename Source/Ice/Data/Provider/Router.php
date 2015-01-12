@@ -12,6 +12,7 @@ namespace Ice\Data\Provider;
 use Ice\Core\Config;
 use Ice\Core\Data_Provider;
 use Ice\Core\Exception;
+use Ice\Core\Logger;
 use Ice\Core\Request as Core_Request;
 use Ice\Core\Route;
 
@@ -207,6 +208,11 @@ class Router extends Data_Provider
         }
 
         $method = strstr($key, '/', true);
+
+        if (empty($method)) {
+            $method = 'GET';
+        }
+
         $url = strstr($key, '/');
 
         $matchedRoutes = [];
@@ -214,7 +220,7 @@ class Router extends Data_Provider
 
 
         foreach (Route::getRoutes() as $routeName => $route) {
-//            Ice\Core\Logger::debug($routeName . ': ' . $url . ' || ' . $route['pattern'] . ' || ' . (int) preg_match($route['pattern'], $url));
+//            Router::getLogger()->debug($routeName . ': ' . $url . ' || ' . $route['pattern'] . ' || ' . (int) preg_match($route['pattern'], $url));
 
             if (!preg_match($route['pattern'], $url)) {
                 continue;
@@ -229,6 +235,7 @@ class Router extends Data_Provider
             if (!isset($foundRoutes[$route['weight']])) {
                 $foundRoutes[$route['weight']] = [$routeName, $route['pattern'], $route['params']];
             }
+
         }
 
         if (empty($foundRoutes)) {

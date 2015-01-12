@@ -65,24 +65,27 @@ abstract class Container
             $key = md5(serialize($key));
         }
 
-        $dataProvider = $class::getDataProvider('instance');
-
-        if ($ttl != -1 && $object = $dataProvider->get($key)) {
-            return $object;
-        }
-
         $object = null;
         try {
-
             if (in_array('Ice\Core\Cacheable', class_implements($baseClass))) {
                 /** @var Cacheable $class */
                 $object = $class::getCache($data, $key);
             } else {
+                $dataProvider = $class::getDataProvider('instance');
+
+                if ($ttl != -1 && $object = $dataProvider->get($key)) {
+                    return $object;
+                }
+
                 $object = $class::create($data, $key);
+
+                if ($object) {
+                    $dataProvider->set($key, $object, $ttl);
+                }
             }
         } catch (File_Not_Found $e) {
             if ($baseClass == Code_Generator::getClass()) {
-                Container::getLogger()->fatal([Container::getClassName() . ': Code generator for {$0} not found', $key], __FILE__, __LINE__, $e);
+                Container::getLogger()->fatal(['Code generator for {$0} not found', $key], __FILE__, __LINE__, $e);
             }
 
             if (Environment::isDevelopment()) {
@@ -96,10 +99,9 @@ abstract class Container
 
         if (!$object) {
             self::getLogger()->fatal('Could not create object', __FILE__, __LINE__);
-            return null;
         }
 
-        return $dataProvider->set($key, $object, $ttl);
+        return $object;
     }
 
     public static function getClass($className = null)
@@ -143,5 +145,20 @@ abstract class Container
         }
 
         return Environment::getInstance()->getProvider(self::getBaseClass(), $postfix);
+    }
+
+    /**
+     * Return logger for self class
+     *
+     * @return Logger
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.2
+     * @since 0.2
+     */
+    public static function getLogger()
+    {
+        return Logger::getInstance(self::getClass());
     }
 }

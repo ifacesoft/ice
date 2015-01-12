@@ -1,32 +1,32 @@
 <?= '<?php' ?>
 
 <?php if ($namespace) { ?>namespace <?= $namespace ?>;<?php
-} ?>
+}?>
 
 
 use Ice\Core\Model;
 
 /**
-* Class <?= $modelName ?>
+ * Class <?= $modelName ?>
 
-*
+ *
 <?php foreach ($fields as $field) { ?>
-    * @property mixed <?= $field ?>
+ * @property mixed <?= $field ?>
 
 <?php
-} ?>
-*
-* @see Ice\Core\Model
+}?>
+ *
+ * @see Ice\Core\Model
+ *
 <?php if ($namespace) { ?>
-    * @package <?= $namespace ?>;
+ * @package <?= $namespace ?>
 <?php
-} ?>
-* @author <?= get_current_user() ?>
-<email>
+}?>
+ * @author <?= get_current_user() ?> <email>
+ *
+ * @version 0
+ * @since 0
+ */
+class <?= $modelName ?> extends Model {
 
-    * @version 0
-    * @since 0
-    */
-    class <?= $modelName ?> extends Model {
-
-    }
+}

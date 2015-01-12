@@ -7,3 +7,5 @@
 <?= $Test_Twig[0] ?>
 
 <?= $Test_Php[1] ?>
+
+<?= $test ?>

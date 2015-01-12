@@ -178,7 +178,7 @@ class Query extends Container
     /**
      * Return data source name
      *
-     * @return string
+     * @return Data_Source
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
@@ -348,5 +348,10 @@ class Query extends Container
         }
 
         return $this->_hash . '/' . $this->_bindHash;
+    }
+
+    public function execute()
+    {
+        return $this->getDataSource()->execute($this);
     }
 }

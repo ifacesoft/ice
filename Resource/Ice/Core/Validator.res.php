@@ -52,4 +52,7 @@ return [
     'Action mast conteints only letters and sign ":"' => [
         'ru' => 'Action mast conteints only letters and sign ":"',
     ],
+    'True or false?' => [
+        'en' => 'True or false?',
+    ],
 ];

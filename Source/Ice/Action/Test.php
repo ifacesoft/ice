@@ -10,6 +10,7 @@ namespace Ice\Action;
 
 use Ice\Core\Action;
 use Ice\Core\Action_Context;
+use Ice\Data\Provider\Request;
 
 class Test extends Action
 {
@@ -30,6 +31,7 @@ class Test extends Action
      */
     public static $config = [
         'defaultViewRenderClassName' => 'Ice:Php',
+        'inputDataProviderKeys' => [Request::DEFAULT_KEY],
         'afterActions' => [
             '_NoView',
             '_Smarty' => ['inputTestSmarty' => 'inputTestSmarty'],
@@ -38,6 +40,9 @@ class Test extends Action
                 ['inputTestPhp' => 'inputTestPhp1'],
                 ['inputTestPhp' => 'inputTestPhp2']
             ]
+        ],
+        'inputDefaults' => [
+            'test' => 'test'
         ]
     ];
 
@@ -54,6 +59,8 @@ class Test extends Action
      */
     protected function run(array $input, Action_Context $actionContext)
     {
-        return ['test' => $input['test']];
+        return [
+            'test' => $input['test'],
+        ];
     }
 }

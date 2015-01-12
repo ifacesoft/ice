@@ -139,58 +139,80 @@ abstract class Data_Source extends Container
     /**
      * Execute query select to data source
      *
+     * @param mixed $statement
      * @param Query $query
-     * @throws Exception
      * @return array
+     * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @author anonymous <email>
-     *
-     * @version 0
-     * @since 0
+     * @version 0.0
+     * @since 0.0
      */
-    abstract public function executeSelect(Query $query);
+    abstract public function executeSelect($statement, Query $query);
 
     /**
      * Execute query insert to data source
      *
+     * @param mixed $statement
      * @param Query $query
-     * @throws Exception
      * @return array
+     * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @author anonymous <email>
-     *
-     * @version 0
-     * @since 0
+     * @version 0.0
+     * @since 0.0
      */
-    abstract public function executeInsert(Query $query);
+    abstract public function executeInsert($statement, Query $query);
 
     /**
      * Execute query update to data source
      *
+     * @param mixed $statement
      * @param Query $query
-     * @throws Exception
      * @return array
+     * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @author anonymous <email>
-     *
-     * @version 0
-     * @since 0
+     * @version 0.0
+     * @since 0.0
      */
-    abstract public function executeUpdate(Query $query);
+    abstract public function executeUpdate($statement, Query $query);
 
     /**
      * Execute query update to data source
      *
+     * @param mixed $statement
      * @param Query $query
-     * @throws Exception
+     * @return array
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
+     */
+    abstract public function executeDelete($statement, Query $query);
+
+    /**
+     * Execute query create table to data source
+     *
+     * @param Query $query
      * @return array
      *
-     * @author anonymous <email>
+     * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0
-     * @since 0
+     * @version 0.0
+     * @since 0.0
      */
-    abstract public function executeDelete(Query $query);
+    abstract public function executeCreate($statement, Query $query);
+
+    /**
+     * Execute query drop table to data source
+     *
+     * @param mixed $statement
+     * @param Query $query
+     * @return array
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
+     */
+    abstract public function executeDrop($statement, Query $query);
 
     /**
      * Get connection instance
@@ -259,10 +281,49 @@ abstract class Data_Source extends Container
      *
      * @author anonymous <email>
      *
-     * @version 0
-     * @since 0
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
      */
     public abstract function getColumns($tableName);
+
+    /**
+     * @param Query $query
+     * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.2
+     * @since 0.2
+     */
+    public function execute(Query $query)
+    {
+        $queryCommand = 'execute' . ucfirst($query->getQueryType());
+
+        $queryResultData = [];
+
+        try {
+            $queryResultData = $this->$queryCommand($this->getStatement($query), $query);
+        } catch (Exception $e) {
+            Data_Source::getLogger()->fatal('Data source execute query failed', __FILE__, __LINE__, $e, $query);
+        }
+
+        return $queryResultData;
+    }
+
+    /**
+     * Prepare query statement for query
+     *
+     * @param Query $query
+     * @return mixed
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.2
+     * @since 0.2
+     */
+    public abstract function getStatement(Query $query);
 
     /**
      * Get current connected data scheme

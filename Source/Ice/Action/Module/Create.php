@@ -81,21 +81,22 @@ class Module_Create extends Action
 
         // create module dir
 
-
-        $isWeb = Console::getInteractive(
-            __CLASS__,
-            'isWeb',
-            [
-                'default' => 'web',
-                'title' => 'Web project or ice module (web|module) [{$0}]: ',
-                'validators' => [
-                    'Ice:Pattern' => [
-                        'params' => '/^(web|module)$/i',
-                        'message' => 'Web or Module?'
+        $isWeb = empty($input['isWeb'])
+            ? Console::getInteractive(
+                __CLASS__,
+                'isWeb',
+                [
+                    'default' => 'web',
+                    'title' => 'Web project or ice module (web|module) [{$0}]: ',
+                    'validators' => [
+                        'Ice:Pattern' => [
+                            'params' => '/^(web|module)$/i',
+                            'message' => 'Web or Module?'
+                        ]
                     ]
                 ]
-            ]
-        );
+            )
+            : $input['isWeb'];
 
         $config = [];
         $environment = [];

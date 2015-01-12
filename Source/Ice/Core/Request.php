@@ -104,7 +104,7 @@ class Request
     public static function uri($withoutQueryString = false)
     {
         return isset($_SERVER['REQUEST_URI'])
-            ? ($withoutQueryString ? strtok($_SERVER["REQUEST_URI"], '?') : $_SERVER['REQUEST_URI'])
+            ? ($withoutQueryString ? strtok($_SERVER['REQUEST_URI'], '?') : $_SERVER['REQUEST_URI'])
             : '';
     }
 

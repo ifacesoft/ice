@@ -27,14 +27,14 @@ use Ice\Helper\Object;
  */
 class Query_Builder
 {
-    use Core;
-
     const TYPE_CREATE = 'create';
+    const TYPE_DROP = 'drop';
     const TYPE_SELECT = 'select';
     const TYPE_INSERT = 'insert';
     const TYPE_UPDATE = 'update';
     const TYPE_DELETE = 'delete';
     const PART_CREATE = 'create';
+    const PART_DROP = 'drop';
     const PART_SELECT = 'select';
     const PART_VALUES = 'values';
     const PART_SET = 'set';
@@ -97,6 +97,9 @@ class Query_Builder
      */
     private $_sqlParts = [
         self::PART_CREATE => [],
+        self::PART_DROP => [
+            '_drop' => null
+        ],
         self::PART_SELECT => [
             '_calcFoundRows' => null,
         ],
@@ -1423,6 +1426,19 @@ class Query_Builder
         return $this;
     }
 
+    /**
+     * Set column part for create or alter table
+     *
+     * @param $name
+     * @param array $scheme
+     * @param null $modelClass
+     * @return Query_Builder
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.2
+     * @since 0.2
+     */
     public function column($name, array $scheme, $modelClass = null)
     {
         if (!$modelClass) {
@@ -1437,9 +1453,55 @@ class Query_Builder
         return $this;
     }
 
+    /**
+     * Execute query create table
+     *
+     * @param null $sourceName
+     * @param int $ttl
+     * @return Query_Result
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.2
+     * @since 0.2
+     */
     public function create($sourceName = null, $ttl = 3600)
     {
         $this->_queryType = Query_Builder::TYPE_CREATE;
         return Query_Result::getInstance([$this->getQuery($sourceName), $ttl]);
+    }
+
+    /**
+     * Execute query drop table
+     *
+     * @param null $sourceName
+     * @param int $ttl
+     * @return Query_Result
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.2
+     * @since 0.2
+     */
+    public function drop($sourceName = null, $ttl = 3600)
+    {
+        $this->_queryType = Query_Builder::TYPE_DROP;
+        $this->_sqlParts[self::PART_DROP]['_drop'] = $this->_modelClass;
+        return Query_Result::getInstance([$this->getQuery($sourceName), $ttl]);
+    }
+
+    /**
+     * Clone current query builder
+     *
+     * @return Query_Builder
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.2
+     * @since 0.2
+     */
+    public function cloneBuilder()
+    {
+        return clone $this;
     }
 }

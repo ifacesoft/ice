@@ -10,6 +10,15 @@ return [
             ]
         ]
     ],
+    'ice_test' => [
+        'route' => '/test',
+        'GET' => [
+            'actions' => [
+                'testAction' => 'Ice:Test'
+            ],
+            'layout' => 'Ice:Layout_Test',
+        ]
+    ],
     '_Http_Status' => '',
     'ice_redirect_uri' => [
         'route' => '/redirect{$redirectUrl}',
