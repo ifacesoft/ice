@@ -91,9 +91,6 @@ return [
                 'sql' => 'Ice:String/query',
                 'query' => 'Ice:String/query',
             ],
-            'Ice\Core\Query_Builder' => [
-                'instance' => 'Ice:Object/query_builder',
-            ],
             'Ice\Core\Query_Result' => [
                 'instance' => 'Ice:Object/query_result',
             ],
@@ -174,9 +171,6 @@ return [
                 'instance' => 'Ice:Registry/query',
                 'sql' => 'Ice:Registry/query',
                 'query' => 'Ice:Registry/query',
-            ],
-            'Ice\Core\Query_Builder' => [
-                'instance' => 'Ice:Registry/query_builder',
             ],
             'Ice\Core\Query_Result' => [
                 'instance' => 'Ice:Registry/data',

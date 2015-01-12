@@ -200,11 +200,13 @@ class Module_Create extends Action
                                         'isCopy' => false
                                     ],
                                     'module' => [
-                                        'path' => '',
-                                        'js' => ['js/javascript.js'],
-                                        'css' => ['css/style.css'],
-                                        'isCopy' => false
-                                    ]
+                                        'path' => 'Ice/',
+                                        'js' => [
+                                            1 => 'Helper/String.js'
+                                        ],
+                                        'css' => [],
+                                        'isCopy' => false,
+                                    ],
                                 ]
                             ],
                             'vendors' => [
