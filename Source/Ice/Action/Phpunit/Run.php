@@ -11,6 +11,7 @@ namespace Ice\Action;
 
 use Ice\Core\Action;
 use Ice\Core\Action_Context;
+use Ice\Core\Module;
 use Ice\Helper\Console;
 
 /**
@@ -65,6 +66,18 @@ class Phpunit_Run extends Action
      */
     protected function run(array $input, Action_Context $actionContext)
     {
-        Console::run(VENDOR_DIR . $input['vendor'] . '/' . $input['script'] . ' --configuration phpunit.xml');
+        $modulePath = Module::getInstance()->getPath();
+
+        foreach (Module::getPathes() as $path) {
+            $command = VENDOR_DIR . $input['vendor'] . '/' . $input['script'] .
+                ' --configuration ' . $path . 'Config/vendor/phpunit.xml' .
+                ' --bootstrap ' . $path . 'bootstrap.php';
+
+            if ($path == $modulePath) {
+                $command .= ' --coverage-clover=' . $path . 'Var/vendor/phpunit/coverage.xml';
+            }
+
+            Console::run($command . ' ' . $path . 'Test');
+        }
     }
 }

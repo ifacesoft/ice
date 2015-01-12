@@ -37,16 +37,15 @@ class Defined extends Data_Source
     /**
      * Execute query select to data source
      *
+     * @param mixed $statement
      * @param Query $query
-     * @throws Exception
      * @return array
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
      * @since 0.0
      */
-    public function executeSelect(Query $query)
+    public function executeSelect($statement, Query $query)
     {
         /** @var Model $modelClass */
         $modelClass = $query->getModelClass();
@@ -125,16 +124,16 @@ class Defined extends Data_Source
     /**
      * Execute query insert to data source
      *
+     * @param mixed $statement
      * @param Query $query
-     * @throws Exception
      * @return array
-     *
+     * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
      * @since 0.0
      */
-    public function executeInsert(Query $query)
+    public function executeInsert($statement, Query $query)
     {
         throw new Exception('Implement insert() method.');
     }
@@ -142,16 +141,16 @@ class Defined extends Data_Source
     /**
      * Execute query update to data source
      *
+     * @param mixed $statement
      * @param Query $query
-     * @throws Exception
      * @return array
-     *
+     * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
      * @since 0.0
      */
-    public function executeUpdate(Query $query)
+    public function executeUpdate($statement, Query $query)
     {
         throw new Exception('Implement update() method.');
     }
@@ -159,16 +158,16 @@ class Defined extends Data_Source
     /**
      * Execute query update to data source
      *
+     * @param mixed $statement
      * @param Query $query
-     * @throws Exception
      * @return array
-     *
+     * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
      * @since 0.0
      */
-    public function executeDelete(Query $query)
+    public function executeDelete($statement, Query $query)
     {
         throw new Exception('Implement delete() method.');
     }
@@ -217,5 +216,71 @@ class Defined extends Data_Source
     public function getColumns($tableName)
     {
         // TODO: Implement getColumns() method.
+    }
+
+    /**
+     * Execute query create table to data source
+     *
+     * @param $statement
+     * @param Query $query
+     * @return array
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
+     */
+    public function executeCreate($statement, Query $query)
+    {
+        // TODO: Implement executeCreate() method.
+    }
+
+    /**
+     * Execute query drop table to data source
+     *
+     * @param mixed $statement
+     * @param Query $query
+     * @return array
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
+     */
+    public function executeDrop($statement, Query $query)
+    {
+        // TODO: Implement executeDrop() method.
+    }
+
+    /**
+     * Get table indexes from source
+     *
+     * @param $tableName
+     * @return array
+     *
+     * @author anonymous <email>
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.3
+     * @since 0.3
+     */
+    public function getIndexes($tableName)
+    {
+        // TODO: Implement getIndexes() method.
+    }
+
+    /**
+     * Prepare query statement for query
+     *
+     * @param Query $query
+     * @return mixed
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.2
+     * @since 0.2
+     */
+    public function getStatement(Query $query)
+    {
+        // TODO: Implement getStatement() method.
     }
 }

@@ -249,7 +249,7 @@ abstract class Model
      */
     public static function getMapping()
     {
-        return self::getConfig()->gets('mapping');
+        return self::getConfig()->gets(__CLASS__);
     }
 
     /**

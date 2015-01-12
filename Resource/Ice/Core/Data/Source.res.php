@@ -48,4 +48,10 @@ return [
     '#1217: {$0}' => [
         'en' => '#1217: {$0}',
     ],
+    '#1103: {$0}' => [
+        'en' => '#1103: {$0}',
+    ],
+    'Data source execute query failed' => [
+        'en' => 'Data source execute query failed',
+    ],
 ];

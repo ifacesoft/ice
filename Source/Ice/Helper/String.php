@@ -42,39 +42,28 @@ class String
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.3
      * @since 0.0
      */
-    public static function trim($string, $chars = null, $type = self::TRIM_TYPE_BOTH)
+    public static function trim($string, $chars, $type = self::TRIM_TYPE_BOTH)
     {
-        $chars = (array)$chars;
-
         if (empty($chars)) {
+            return trim($string);
+        }
+
+        foreach ((array)$chars as $signs) {
             switch ($type) {
                 case self::TRIM_TYPE_BOTH:
-                    return trim($string);
+                    return trim($string, $signs);
                 case self::TRIM_TYPE_LEFT:
-                    return ltrim($string);
+                    return ltrim($string, $signs);
                 case self::TRIM_TYPE_RIGHT:
-                    return rtrim($string);
+                    return rtrim($string, $signs);
                 default:
-                    return trim($string);
-            }
-        } else {
-            foreach ($chars as $signs) {
-                switch ($type) {
-                    case self::TRIM_TYPE_BOTH:
-                        return trim($string, $signs);
-                    case self::TRIM_TYPE_LEFT:
-                        return ltrim($string, $signs);
-                    case self::TRIM_TYPE_RIGHT:
-                        return rtrim($string, $signs);
-                    default:
-                        return trim($string, $signs);
-                }
+                    return trim($string, $signs);
             }
         }
 
-        throw new Exception('wtf!');
+        return $string;
     }
 } 

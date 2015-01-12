@@ -248,4 +248,16 @@ class Module extends Container
         $aliases = self::getAliases();
         return reset($aliases);
     }
+
+    /**
+     * Return instance of module
+     *
+     * @param null $key
+     * @param null $ttl
+     * @return Module
+     */
+    public static function getInstance($key = null, $ttl = null)
+    {
+        return parent::getInstance($key, $ttl);
+    }
 }

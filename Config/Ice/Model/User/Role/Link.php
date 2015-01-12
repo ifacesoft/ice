@@ -1,6 +1,6 @@
 <?php
 return [
-    'mapping' => [
+    'Ice\\Core\\Model' => [
         'user__fk' => 'user__fk',
         'role__fk' => 'role__fk',
     ],
