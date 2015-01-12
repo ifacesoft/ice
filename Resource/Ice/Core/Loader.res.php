@@ -9,4 +9,7 @@ return [
     'Files for {$0} not found' => [
         'en' => 'Files for {$0} not found',
     ],
+    'File {$0} exists, but class {$1} not found' => [
+        'ru' => 'File {$0} exists, but class {$1} not found',
+    ],
 ];
