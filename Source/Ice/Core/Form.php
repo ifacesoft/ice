@@ -10,6 +10,7 @@
 namespace Ice\Core;
 
 use Ice\Core;
+use Ice\Helper\Arrays;
 
 /**
  * Class Form
@@ -40,6 +41,15 @@ abstract class Form extends Container
     const FIELD_TEXTAREA = 'Textarea';
     const NAME_MODEL = 'Model';
     const NAME_SIMPLE = 'Simple';
+
+    /**
+     * Default field options
+     */
+    private $_defaultOptions = [
+        'placeholder' => 'Enter value...',
+        'disabled' => false,
+        'readonly' => false
+    ];
 
     /**
      * Fields - form parts
@@ -131,7 +141,7 @@ abstract class Form extends Container
      *
      * @param $fieldName
      * @param $title
-     * @param $placeholder
+     * @param array $options
      * @param array $validators
      * @param null $value
      * @param string $template
@@ -139,42 +149,41 @@ abstract class Form extends Container
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.1
+     * @version 0.3
      * @since 0.0
      */
-    public function hidden($fieldName, $title, $placeholder, array $validators = [], $value = null, $template = 'Ice:Field_Hidden')
+    public function hidden($fieldName, $title, array $options = [], array $validators = [], $value = null, $template = 'Ice:Field_Hidden')
     {
-        return $this->addField($fieldName, Form::FIELD_HIDDEN, $title, $placeholder, $validators, $value, $template);
+        $options['type'] = Form::FIELD_HIDDEN;
+        $options['title'] = $title;
+        $options['template'] = $template;
+
+        return $this->addField(
+            $fieldName,
+            Arrays::defaults($options, $this->_defaultOptions),
+            $validators,
+            $value
+        );
     }
 
     /**
      * Add field as form part
      *
      * @param $fieldName
-     * @param $fieldType
-     * @param $title
-     * @param $placeholder
+     * @param array $options
      * @param array $validators
      * @param $value
-     * @param $template
      * @return Form
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.1
+     * @version 0.3
      * @since 0.0
      */
-    private function addField($fieldName, $fieldType, $title, $placeholder, array $validators = [], $value, $template)
+    private function addField($fieldName, array $options, array $validators, $value)
     {
-        $this->_fields[$fieldName] = [
-            'type' => $fieldType,
-            'title' => $title,
-            'placeholder' => $placeholder,
-            'template' => $template
-        ];
-
+        $this->_fields[$fieldName] = $options;
         $this->_validateScheme[$fieldName] = $validators;
-
         $this->bind($fieldName, $value);
 
         return $this;
@@ -212,20 +221,28 @@ abstract class Form extends Container
      *
      * @param $fieldName
      * @param $title
-     * @param $placeholder
+     * @param array $options
      * @param array $validators
      * @param null $value
      * @param string $template
      * @return Form
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.1
+     * @version 0.3
      * @since 0.1
      */
-    public function password($fieldName, $title, $placeholder, array $validators = [], $value = null, $template = 'Ice:Field_Password')
+    public function password($fieldName, $title, array $options = [], array $validators = [], $value = null, $template = 'Ice:Field_Password')
     {
-        return $this->addField($fieldName, Form::FIELD_PASSWORD, $title, $placeholder, $validators, $value, $template);
+        $options['type'] = Form::FIELD_PASSWORD;
+        $options['title'] = $title;
+        $options['template'] = $template;
+
+        return $this->addField(
+            $fieldName,
+            Arrays::defaults($options, $this->_defaultOptions),
+            $validators,
+            $value
+        );
     }
 
     /**
@@ -233,7 +250,7 @@ abstract class Form extends Container
      *
      * @param $fieldName
      * @param $title
-     * @param $placeholder
+     * @param array $options
      * @param array $validators
      * @param null $value
      * @param string $template
@@ -241,12 +258,21 @@ abstract class Form extends Container
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.1
+     * @version 0.3
      * @since 0.0
      */
-    public function number($fieldName, $title, $placeholder, array $validators = [], $value = null, $template = 'Ice:Field_Number')
+    public function number($fieldName, $title, array $options = [], array $validators = [], $value = null, $template = 'Ice:Field_Number')
     {
-        return $this->addField($fieldName, Form::FIELD_NUMBER, $title, $placeholder, $validators, $value, $template);
+        $options['type'] = Form::FIELD_NUMBER;
+        $options['title'] = $title;
+        $options['template'] = $template;
+
+        return $this->addField(
+            $fieldName,
+            Arrays::defaults($options, $this->_defaultOptions),
+            $validators,
+            $value
+        );
     }
 
     /**
@@ -254,7 +280,7 @@ abstract class Form extends Container
      *
      * @param $fieldName
      * @param $title
-     * @param $placeholder
+     * @param array $options
      * @param array $validators
      * @param null $value
      * @param string $template
@@ -262,12 +288,21 @@ abstract class Form extends Container
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.1
+     * @version 0.3
      * @since 0.0
      */
-    public function text($fieldName, $title, $placeholder, array $validators = [], $value = null, $template = 'Ice:Field_Text')
+    public function text($fieldName, $title, array $options = [], array $validators = [], $value = null, $template = 'Ice:Field_Text')
     {
-        return $this->addField($fieldName, Form::FIELD_TEXT, $title, $placeholder, $validators, $value, $template);
+        $options['type'] = Form::FIELD_TEXT;
+        $options['title'] = $title;
+        $options['template'] = $template;
+
+        return $this->addField(
+            $fieldName,
+            Arrays::defaults($options, $this->_defaultOptions),
+            $validators,
+            $value
+        );
     }
 
     /**
@@ -275,7 +310,7 @@ abstract class Form extends Container
      *
      * @param $fieldName
      * @param $title
-     * @param $placeholder
+     * @param array $options
      * @param array $validators
      * @param null $value
      * @param string $template
@@ -283,12 +318,21 @@ abstract class Form extends Container
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.1
+     * @version 0.3
      * @since 0.0
      */
-    public function date($fieldName, $title, $placeholder, array $validators = [], $value = null, $template = 'Ice:Field_Date')
+    public function date($fieldName, $title, array $options = [], array $validators = [], $value = null, $template = 'Ice:Field_Date')
     {
-        return $this->addField($fieldName, Form::FIELD_DATE, $title, $placeholder, $validators, $value, $template);
+        $options['type'] = Form::FIELD_DATE;
+        $options['title'] = $title;
+        $options['template'] = $template;
+
+        return $this->addField(
+            $fieldName,
+            Arrays::defaults($options, $this->_defaultOptions),
+            $validators,
+            $value
+        );
     }
 
     /**
@@ -296,7 +340,7 @@ abstract class Form extends Container
      *
      * @param $fieldName
      * @param $title
-     * @param $placeholder
+     * @param array $options
      * @param array $validators
      * @param null $value
      * @param string $template
@@ -304,12 +348,21 @@ abstract class Form extends Container
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.1
+     * @version 0.3
      * @since 0.0
      */
-    public function checkbox($fieldName, $title, $placeholder, array $validators = [], $value = null, $template = 'Ice:Field_Checkbox')
+    public function checkbox($fieldName, $title, array $options = [], array $validators = [], $value = null, $template = 'Ice:Field_Checkbox')
     {
-        return $this->addField($fieldName, Form::FIELD_CHECKBOX, $title, $placeholder, $validators, $value, $template);
+        $options['type'] = Form::FIELD_CHECKBOX;
+        $options['title'] = $title;
+        $options['template'] = $template;
+
+        return $this->addField(
+            $fieldName,
+            Arrays::defaults($options, $this->_defaultOptions),
+            $validators,
+            $value
+        );
     }
 
     /**
@@ -317,7 +370,7 @@ abstract class Form extends Container
      *
      * @param $fieldName
      * @param $title
-     * @param $placeholder
+     * @param array $options
      * @param array $validators
      * @param null $value
      * @param string $template
@@ -325,12 +378,21 @@ abstract class Form extends Container
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.1
+     * @version 0.3
      * @since 0.0
      */
-    public function geo($fieldName, $title, $placeholder, array $validators = [], $value = null, $template = 'Ice:Field_Geo')
+    public function geo($fieldName, $title, array $options = [], array $validators = [], $value = null, $template = 'Ice:Field_Geo')
     {
-        return $this->addField($fieldName, Form::FIELD_GEO, $title, $placeholder, $validators, $value, $template);
+        $options['type'] = Form::FIELD_GEO;
+        $options['title'] = $title;
+        $options['template'] = $template;
+
+        return $this->addField(
+            $fieldName,
+            Arrays::defaults($options, $this->_defaultOptions),
+            $validators,
+            $value
+        );
     }
 
     /**
@@ -338,7 +400,7 @@ abstract class Form extends Container
      *
      * @param $fieldName
      * @param $title
-     * @param $placeholder
+     * @param array $options
      * @param array $validators
      * @param null $value
      * @param string $template
@@ -346,12 +408,21 @@ abstract class Form extends Container
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.1
+     * @version 0.3
      * @since 0.0
      */
-    public function textarea($fieldName, $title, $placeholder, array $validators = [], $value = null, $template = 'Ice:Field_Textarea')
+    public function textarea($fieldName, $title, array $options = [], array $validators = [], $value = null, $template = 'Ice:Field_Textarea')
     {
-        return $this->addField($fieldName, Form::FIELD_TEXTAREA, $title, $placeholder, $validators, $value, $template);
+        $options['type'] = Form::FIELD_TEXTAREA;
+        $options['title'] = $title;
+        $options['template'] = $template;
+
+        return $this->addField(
+            $fieldName,
+            Arrays::defaults($options, $this->_defaultOptions),
+            $validators,
+            $value
+        );
     }
 
     /**

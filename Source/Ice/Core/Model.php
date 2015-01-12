@@ -946,6 +946,25 @@ abstract class Model
     }
 
     /**
+     * Return primary key field value
+     *
+     * If have a some primary keys - return key1__key2__key3__etc
+     *
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.3
+     * @since 0.3
+     */
+    public static function getPkFieldName()
+    {
+        $modelClass = self::getClass();
+
+        return implode('__', $modelClass::getPkFieldNames());
+    }
+
+    /**
      * Magic get
      *
      * @deprecated use ->get($fieldName)

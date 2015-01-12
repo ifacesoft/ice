@@ -70,11 +70,16 @@ class Model extends Form
 
         $validateScheme = $modelClass::getValidateScheme();
 
+        $pkFieldNames = $modelClass::getPkFieldNames();
+
         foreach ($modelClass::getFormFieldTypes() as $fieldName => $fieldType) {
             $this->$fieldType(
                 $fieldName,
                 $modelClass::getFieldTitle($fieldName),
-                $modelClass::getFieldPlaceholder($fieldName),
+                [
+                    'placeholder' => $modelClass::getFieldPlaceholder($fieldName),
+                    'readonly' => in_array($fieldName, $pkFieldNames)
+                ],
                 $validateScheme[$fieldName]
             );
         }
