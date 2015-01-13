@@ -35,7 +35,6 @@ Features
 * Distributed under the copyleft license
 
 
-
 Architecture
 ============
 
