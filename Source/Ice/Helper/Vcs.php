@@ -46,8 +46,8 @@ class Vcs
                 Console::run('cd ' . $dir . ' && hg init && hg add && hg commit -m \'init\'');
                 break;
             case VCS::GIT:
-                Console::run('git config user.email ""');
-                Console::run('git config user.name "' . get_current_user() . '"');
+                Console::run('git config --global user.email ""');
+                Console::run('git config --global user.name "' . get_current_user() . '"');
                 Console::run('cd ' . $dir . ' && git init && git add . && git commit -m \'init\'');
                 break;
             case VCS::SUBVERSION:
