@@ -87,18 +87,19 @@ class Form_Model extends Action
             $form->bind($modelClass::getRow($input['pk'], '*'));
         }
 
-        $data = [
-            'form' => $form,
-            'submitActionName' => $input['submitActionName'],
-            'reRenderClosest' => $input['reRenderClosest'],
-            'reRenderActionNames' => $input['reRenderActionNames'],
-            'grouping' => $input['grouping'],
-            'submitTitle' => $input['submitTitle'],
-            'redirect' => $input['redirect'],
-            'params' => $input['params']
-        ];
-
-        $actionContext->addAction('Ice:Form', $data);
+        $actionContext->addAction(
+            'Ice:Form',
+            [
+                'form' => $form,
+                'submitActionName' => $input['submitActionName'],
+                'reRenderClosest' => $input['reRenderClosest'],
+                'reRenderActionNames' => $input['reRenderActionNames'],
+                'grouping' => $input['grouping'],
+                'submitTitle' => $input['submitTitle'],
+                'redirect' => $input['redirect'],
+                'params' => $input['params']
+            ]
+        );
 
         $input['formFilterFields'] = Arrays::toJsArrayString($input['formFilterFields']);
         $input['params'] = Arrays::toJsObjectString($input['params']);

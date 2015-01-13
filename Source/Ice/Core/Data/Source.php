@@ -289,6 +289,21 @@ abstract class Data_Source extends Container
     public abstract function getColumns($tableName);
 
     /**
+     * Get table indexes from source
+     *
+     * @param $tableName
+     * @return array
+     *
+     * @author anonymous <email>
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.3
+     * @since 0.3
+     */
+    public abstract function getIndexes($tableName);
+
+    /**
      * @param Query $query
      * @return array
      *

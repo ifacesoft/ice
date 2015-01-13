@@ -1,6 +1,6 @@
 <?php
 return [
-    'mapping' => [
+    'Ice\\Core\\Model' => [
         'test_pk' => 'id',
         'test_name' => 'test_name',
         'name2' => 'name2',

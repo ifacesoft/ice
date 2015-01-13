@@ -249,7 +249,7 @@ abstract class Model
      */
     public static function getMapping()
     {
-        return self::getConfig()->gets('mapping');
+        return self::getConfig()->gets(__CLASS__);
     }
 
     /**
@@ -943,6 +943,25 @@ abstract class Model
             ->pk($pk)
             ->select($fieldNames, null, null, null, $sourceName, $ttl)
             ->getRow($pk);
+    }
+
+    /**
+     * Return primary key field value
+     *
+     * If have a some primary keys - return key1__key2__key3__etc
+     *
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.3
+     * @since 0.3
+     */
+    public static function getPkFieldName()
+    {
+        $modelClass = self::getClass();
+
+        return implode('__', $modelClass::getPkFieldNames());
     }
 
     /**

@@ -154,7 +154,7 @@ class Model_Scheme extends Container
             $modelConfigData = [];
         }
 
-        $modelConfigData['mapping'] = $modelMapping;
+        $modelConfigData[Model::getClass()] = $modelMapping;
         $modelConfigData[Validator::getClass()] = $validators;
         $modelConfigData[Form::getClass()] = $form;
         $modelConfigData[Data::getClass()] = $data;

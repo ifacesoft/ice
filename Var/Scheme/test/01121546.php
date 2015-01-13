@@ -1,7 +1,7 @@
 <?php
 return [
-    'time' => '2015-01-12 16:08:12',
-    'revision' => '01121608',
+    'time' => '2015-01-12 15:46:35',
+    'revision' => '01121546',
     'scheme' => 'test',
     'tables' => [
         'bi_blog' => [
@@ -46,19 +46,6 @@ return [
             'modelClass' => 'Ice\\Model\\Test',
             'revision' => '01081216',
         ],
-        'ice_user' => [
-            'engine' => 'InnoDB',
-            'charset' => 'utf8_general_ci',
-            'comment' => '',
-            'modelClass' => 'Ice\\Model\\User',
-            'revision' => '12281437',
-        ],
-        'ice_user_role_link' => [
-            'engine' => 'InnoDB',
-            'charset' => 'utf8_general_ci',
-            'comment' => '',
-            'modelClass' => 'Ice\\Model\\User_Role_Link',
-            'revision' => '12281437',
-        ],
+
     ],
 ];

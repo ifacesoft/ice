@@ -3,6 +3,7 @@ namespace Ice\Action;
 
 use Ice\Core\Action;
 use Ice\Core\Action_Context;
+use Ice\Core\Logger;
 use Ice\Core\Model;
 use Ice\Helper\Arrays;
 
@@ -100,9 +101,11 @@ class Data_Model extends Action
             ]
         );
 
+        $pkName = $modelClass::getPkFieldName();
+
         $data = $modelClass::getData($input['dataFilterFields'])
             ->button(
-                'blog_pk',
+                $pkName,
                 '<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>',
                 [
                     'modelClassName' => $input['modelClassName'],
@@ -118,7 +121,7 @@ class Data_Model extends Action
                 'Ice:Table_Column_Button_Edit'
             )
             ->button(
-                'blog_pk',
+                $pkName,
                 '<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>',
                 [
                     'modelClassName' => $input['modelClassName'],
@@ -127,7 +130,6 @@ class Data_Model extends Action
                     'reRenderActionNames' => Arrays::toJsArrayString($input['reRenderActionNames']),
                 ],
                 'Ice:Table_Column_Button_Remove'
-
             )
             ->bind($queryResult->getRows());
 

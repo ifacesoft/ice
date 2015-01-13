@@ -1,4 +1,11 @@
 <?php
+
+if (defined('BOOTSTRAP')) {
+    return;
+}
+
+define('BOOTSTRAP', true);
+
 use Ice\Bootstrap;
 
 if (!defined('MODULE_DIR')) {
