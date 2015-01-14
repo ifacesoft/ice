@@ -1,14 +1,9 @@
 [Ice](http://iceframework.net) [![Build Status](https://travis-ci.org/ifacesoft/Ice.svg)](https://travis-ci.org/ifacesoft/Ice)
 ===
 
-scrutinizer-ci.com:
 [![Build Status](https://scrutinizer-ci.com/g/ifacesoft/Ice/badges/build.png?b=master)](https://scrutinizer-ci.com/g/ifacesoft/Ice/build-status/master)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/ifacesoft/Ice/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/ifacesoft/Ice/?branch=master)
 [![Code Coverage](https://scrutinizer-ci.com/g/ifacesoft/Ice/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/ifacesoft/Ice/?branch=master)
-
-codeclimate.com:
-[![Code Climate](https://codeclimate.com/github/ifacesoft/Ice/badges/gpa.svg)](https://codeclimate.com/github/ifacesoft/Ice)
-[![Test Coverage](https://codeclimate.com/github/ifacesoft/Ice/badges/coverage.svg)](https://codeclimate.com/github/ifacesoft/Ice)
 
 [![Latest Stable Version](https://poser.pugx.org/ifacesoft/ice/v/stable.svg)](https://packagist.org/packages/ifacesoft/ice)
 [![Total Downloads](https://poser.pugx.org/ifacesoft/ice/downloads.svg)](https://packagist.org/packages/ifacesoft/ice)

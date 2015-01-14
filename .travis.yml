@@ -20,4 +20,3 @@ addons:
 after_script:
 - travis_retry wget https://scrutinizer-ci.com/ocular.phar
 - php ocular.phar code-coverage:upload --access-token="e94d23c2fde554972a6c0e1ca4fee4db3b97663e82b35267c3f85c9f0726d0cc" --format=php-clover Var/vendor/phpunit/coverage.xml
-- ./Bin/codeclimate.sh
