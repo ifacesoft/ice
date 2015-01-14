@@ -169,10 +169,10 @@ class Logger
         session_write_close();
 
         if (Request::isAjax()) {
-            die('Terminated. Bye-bye...' . "\n");
-        } else {
             Logger::fb('Terminated. Bye-bye...');
             exit;
+        } else {
+            die('Terminated. Bye-bye...' . "\n");
         }
     }
 
@@ -249,12 +249,10 @@ class Logger
         }
     }
 
-    public static function fb($data, $type = 'LOG')
+    public static function fb($value, $type = 'LOG')
     {
         if (!Request::isCli() && !headers_sent()) {
-            foreach ((array)$data as $value) {
-                fb($value, $type);
-            }
+            fb($value, $type);
         }
     }
 

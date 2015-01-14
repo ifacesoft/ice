@@ -15,4 +15,7 @@ return [
     '<div class="alert alert-warning">Not_Null: param blog_pk is not valid</div>' => [
         'ru' => '<div class="alert alert-warning">Not_Null: param blog_pk is not valid</div>',
     ],
+    '<div class="alert alert-warning">Not_Null: param comment_pk is not valid</div>' => [
+        'ru' => '<div class="alert alert-warning">Not_Null: param comment_pk is not valid</div>',
+    ],
 ];

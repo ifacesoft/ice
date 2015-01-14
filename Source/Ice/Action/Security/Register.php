@@ -34,7 +34,7 @@ class Security_Register extends Action
         'defaultViewRenderClassName' => 'Ice:Php',
         'inputDefaults' => [
             'security' => 'Login_Password',
-            'redirect' => '/security/login'
+            'redirect' => '/ice/security/login'
         ]
     ];
 
