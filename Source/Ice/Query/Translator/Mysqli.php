@@ -10,7 +10,6 @@
 namespace Ice\Query\Translator;
 
 use Ice\Core\Exception;
-use Ice\Core\Logger;
 use Ice\Core\Model;
 use Ice\Core\Query_Builder;
 use Ice\Core\Query_Translator;
@@ -195,7 +194,8 @@ class Mysqli extends Query_Translator
      * @version 0.3
      * @since 0.3
      */
-    private function buildWhere(array $fields, $fieldName, $comparisonOperator, $tableAlias, $count) {
+    private function buildWhere(array $fields, $fieldName, $comparisonOperator, $tableAlias, $count)
+    {
         if (isset($fields[$fieldName])) {
             $fieldName = $fields[$fieldName];
         }

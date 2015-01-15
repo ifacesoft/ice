@@ -7,6 +7,18 @@ use Ice\Core\Menu;
 class Navbar extends Menu
 {
     /**
+     * Return instance of navbar menu
+     *
+     * @param null $key
+     * @param null $ttl
+     * @return Navbar
+     */
+    public static function getInstance($key = null, $ttl = null)
+    {
+        return parent::getInstance($key, $ttl);
+    }
+
+    /**
      * Add menu dropdown item
      *
      * @param $title
@@ -64,17 +76,5 @@ class Navbar extends Menu
     public function button($title, $onclick, $position = 'left', $isActive = true, $template = 'Ice:Navbar_Button')
     {
         return $this->addItem('button', $title, $onclick, $position, $isActive, $template);
-    }
-
-    /**
-     * Return instance of navbar menu
-     *
-     * @param null $key
-     * @param null $ttl
-     * @return Navbar
-     */
-    public static function getInstance($key = null, $ttl = null)
-    {
-        return parent::getInstance($key, $ttl);
     }
 }

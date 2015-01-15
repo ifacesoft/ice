@@ -1104,7 +1104,7 @@ class Query_Builder
 
             $this->_bindParts[$part] = [[]];
 
-            return $this;
+            return Query_Result::getInstance([$this->getQuery($sourceName), $ttl]);
         }
 
         if (!is_array(reset($data))) {

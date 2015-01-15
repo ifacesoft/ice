@@ -13,10 +13,10 @@ use Ice\Core\Model;
  * @see Ice\Core\Model
  * @package Ice\Model;
  * @author dp <email>
-
  * @version 0
  * @since 0
  */
-class Test extends Model {
+class Test extends Model
+{
 
 }

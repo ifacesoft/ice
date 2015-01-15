@@ -11,7 +11,6 @@ namespace Ice\Data\Source;
 
 use Ice\Core\Data_Source;
 use Ice\Core\Exception;
-use Ice\Core\Logger;
 use Ice\Core\Model;
 use Ice\Core\Query;
 use Ice\Core\Query_Builder;
@@ -499,7 +498,8 @@ class Mysqli extends Data_Source
      * @version 0.2
      * @since 0.2
      */
-    public function executeDrop($statement, Query $query) {
+    public function executeDrop($statement, Query $query)
+    {
         if ($statement->execute() === false) {
             $errno = $statement->errno;
             $error = $statement->error;

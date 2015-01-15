@@ -1,29 +1,29 @@
 <?php
 return [
-    'time' => '2015-01-12 16:08:12',
-    'revision' => '01121608',
+    'time' => '2015-01-14 15:32:43',
+    'revision' => '01141532',
     'scheme' => 'test',
     'tables' => [
         'bi_blog' => [
             'engine' => 'InnoDB',
             'charset' => 'utf8_general_ci',
             'comment' => '',
-            'modelClass' => 'Ice\\Model\\Bi_Blog',
-            'revision' => '01121546',
+            'modelClass' => 'Bi\\Model\\Blog',
+            'revision' => '01141443',
         ],
         'bi_comment' => [
             'engine' => 'InnoDB',
             'charset' => 'utf8_general_ci',
             'comment' => '',
-            'modelClass' => 'Ice\\Model\\Bi_Comment',
-            'revision' => '01121546',
+            'modelClass' => 'Bi\\Model\\Comment',
+            'revision' => '01141443',
         ],
         'bi_post' => [
             'engine' => 'InnoDB',
             'charset' => 'utf8_general_ci',
             'comment' => '',
-            'modelClass' => 'Ice\\Model\\Bi_Post',
-            'revision' => '01121546',
+            'modelClass' => 'Bi\\Model\\Post',
+            'revision' => '01141443',
         ],
         'ice_account' => [
             'engine' => 'InnoDB',

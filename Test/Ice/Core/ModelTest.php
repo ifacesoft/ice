@@ -28,11 +28,14 @@ class ModelTest extends PHPUnit_Framework_TestCase
         $user2 = Test::create(['/name' => 'test name'])
             ->select(['/name', 'name2']);
 
+        $user4 = Test::getModelBy(['/name' => 'test name'], ['/name', 'name2']);
+
         $this->assertEquals($user2->get('/name'), 'test name');
 
         $this->assertNotNull($user2);
         $this->assertTrue($user2 instanceof Test);
         $this->assertEquals($user1, $user2);
+        $this->assertEquals($user2->test_name, $user4->test_name);
 
         $user2->delete();
 

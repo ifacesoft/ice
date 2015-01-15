@@ -14,8 +14,17 @@ class Login_Password extends Form_Security_Login
 
         $resource = Login_Password::getResource();
 
-        $this->text('login', $resource->get('login'), $resource->get('login_placeholder'), ['Ice:Length_Min' => 2, 'Ice:LettersNumbers'])
-            ->password('password', $resource->get('password'), $resource->get('password_placeholder'), ['Ice:Length_Min' => 5]);
+        $this->text(
+            'login',
+            $resource->get('login'),
+            ['placeholder' => $resource->get('login_placeholder')],
+            ['Ice:Length_Min' => 2, 'Ice:LettersNumbers']
+        )->password(
+            'password',
+            $resource->get('password'),
+            ['placeholder' => $resource->get('password_placeholder')],
+            ['Ice:Length_Min' => 5]
+        );
     }
 
     /**
@@ -32,10 +41,10 @@ class Login_Password extends Form_Security_Login
             Form_Security_Login::getLogger()->fatal($error, __FILE__, __LINE__);
         }
 
-        foreach (Account::queryBy('login', $this->getValues()['login'], ['password', 'user__fk'])->getRows() as $accountRow) {
+        foreach (Account::query()->eq(['login' => $this->getValues()['login']])->select(['password', 'user__fk'])->getRows() as $accountRow) {
             if (password_verify($this->getValues()['password'], $accountRow['password'])) {
                 $_SESSION['userPk'] = $accountRow['user__fk'];
-                $_SESSION['roleKeys'] = User_Role_Link::queryBy('user__fk', $accountRow['user__fk'], 'role__fk')->getColumn();
+                $_SESSION['roleKeys'] = User_Role_Link::query()->eq(['user__fk' => $accountRow['user__fk']])->select('role__fk')->getColumn();
                 return;
             }
         }

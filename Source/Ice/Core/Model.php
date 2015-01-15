@@ -853,8 +853,7 @@ abstract class Model
     /**
      * Return model by custom field
      *
-     * @param $shortFieldName
-     * @param $fieldValue
+     * @param array $fieldNameValues
      * @param $fieldNames
      * @param null $sourceName
      * @param int $ttl
@@ -862,12 +861,14 @@ abstract class Model
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.2
+     * @version 0.4
      * @since 0.0
      */
-    public static function getModelBy($shortFieldName, $fieldValue, $fieldNames, $sourceName = null, $ttl = 3600)
+    public static function getModelBy(array $fieldNameValues, $fieldNames, $sourceName = null, $ttl = 3600)
     {
-        return self::queryBy($shortFieldName, $fieldValue, $fieldNames)
+        return self::query()
+            ->eq($fieldNameValues)
+            ->limit(1)
             ->select($fieldNames, null, null, null, $sourceName, $ttl)
             ->getModel();
     }
@@ -1117,7 +1118,8 @@ abstract class Model
         /** @var Model $modelClass */
         $modelClass = get_class($this);
 
-        $row = $modelClass::getQueryBuilderBy($this->_affected)
+        $row = $modelClass::query()
+            ->eq($this->_affected)
             ->select(array_merge($fieldNames, array_keys($this->_affected)), null, null, null, $sourceName, $ttl)
             ->getRow();
 
@@ -1130,24 +1132,6 @@ abstract class Model
         $this->_affected = [];
 
         return $this;
-    }
-
-    /**
-     * Return Query builder by custom field
-     *
-     * @param $fieldNameValues
-     * @return Query_Builder
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.2
-     * @since 0.1
-     */
-    public static function getQueryBuilderBy(array $fieldNameValues)
-    {
-        return self::query()
-            ->eq($fieldNameValues)
-            ->limit(1);
     }
 
     /**

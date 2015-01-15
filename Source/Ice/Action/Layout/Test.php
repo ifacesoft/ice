@@ -18,6 +18,7 @@ namespace Ice\Action;
  * @version 0.2
  * @since 0.2
  */
-class Layout_Test extends Layout {
+class Layout_Test extends Layout
+{
 
 }

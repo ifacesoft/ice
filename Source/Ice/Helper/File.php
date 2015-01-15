@@ -9,6 +9,7 @@
 
 namespace Ice\Helper;
 
+use Ice\Core\Exception;
 use Ice\Core\Logger as Core_Logger;
 
 /**
@@ -122,5 +123,55 @@ class File
         Directory::get(dirname($to));
         copy($from, $to);
         return $to;
+    }
+
+    /**
+     * Return data from csv-file
+     *
+     * @param $path
+     * @param string $delimiter
+     * @param string $enclosure
+     * @param string $escape
+     * @param bool $isRequire
+     * @return array|null
+     * @throws Exception
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.4
+     */
+    public static function loadCsvData($path, $delimiter = ',', $enclosure = '"', $escape = '\\', $isRequire = true)
+    {
+        if (empty($path)) {
+            Core_Logger::getInstance()->error('File path is empty', __FILE__, __LINE__);
+        }
+
+//        if (file_exists($path)) {
+//            return array_map(
+//               function ($row) use ($delimiter, $enclosure, $escape) {
+//                   return str_getcsv($row, $delimiter, $enclosure, $escape);
+//               },
+//               file($path)
+//           );
+//        }
+
+        if ($handle = fopen($path, "r")) {
+            $csvData = [];
+
+            while ($data = fgetcsv($handle, 4096, $delimiter, $enclosure, $escape)) {
+                $csvData[] = $data;
+            }
+
+            fclose($handle);
+
+            return $csvData;
+        }
+
+        if ($isRequire) {
+            Core_Logger::getInstance()->fatal(['File {$0} with data not found', $path], __FILE__, __LINE__);
+        }
+
+        return null;
     }
 } 

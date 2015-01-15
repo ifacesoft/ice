@@ -3,7 +3,6 @@
 namespace Ice\Core;
 
 use Ice\Action\Front;
-
 use PHPUnit_Framework_TestCase;
 
 class ActionTest extends PHPUnit_Framework_TestCase
