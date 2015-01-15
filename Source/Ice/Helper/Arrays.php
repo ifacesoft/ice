@@ -10,6 +10,7 @@
 namespace Ice\Helper;
 
 use Ice\Core\Exception;
+use Ice\Core\Logger as Core_Logger;
 
 /**
  * Class Arrays
@@ -149,36 +150,22 @@ class Arrays
     public static function column($input, $columnKey = null, $indexKey = null)
     {
         if (!is_array($input)) {
-            trigger_error('array_column() expects parameter 1 to be array, ' . gettype($input) . ' given', E_USER_WARNING);
-            return null;
+            Core_Logger::getInstance(__CLASS__)->fatal('array_column() expects parameter 1 to be array, ' . gettype($input) . ' given', __FILE__, __LINE__);
         }
 
-        if (!is_int($columnKey)
-            && !is_float($columnKey)
-            && !is_string($columnKey)
-            && !is_array($columnKey)
-            && $columnKey !== null
-            && !(is_object($columnKey) && method_exists($columnKey, '__toString'))
-        ) {
-            trigger_error('array_column(): The column key should be either a string or an integer', E_USER_WARNING);
-            return false;
+        if (!is_int($columnKey) && !is_float($columnKey) && !is_string($columnKey) && !is_array($columnKey) && $columnKey !== null && !(is_object($columnKey) && method_exists($columnKey, '__toString'))) {
+            Core_Logger::getInstance(__CLASS__)->fatal('array_column(): The column key should be either a string or an integer', __FILE__, __LINE__);
         }
 
-        if (isset($indexKey)
-            && !is_int($indexKey)
-            && !is_float($indexKey)
-            && !is_string($indexKey)
-            && !(is_object($indexKey) && method_exists($indexKey, '__toString'))
-        ) {
-            trigger_error('array_column(): The index key should be either a string or an integer', E_USER_WARNING);
-            return false;
+        if (isset($indexKey) && !is_int($indexKey) && !is_float($indexKey) && !is_string($indexKey) && !(is_object($indexKey) && method_exists($indexKey, '__toString'))) {
+            Core_Logger::getInstance(__CLASS__)->fatal('array_column(): The index key should be either a string or an integer', __FILE__, __LINE__);
         }
 
-        if (isset($params[2])) {
-            if (is_float($params[2]) || is_int($params[2])) {
-                $indexKey = (int)$params[2];
+        if (isset($indexKey)) {
+            if (is_float($indexKey) || is_int($indexKey)) {
+                $indexKey = (int)$indexKey;
             } else {
-                $indexKey = (string)$params[2];
+                $indexKey = (string)$indexKey;
             }
         }
 
@@ -201,10 +188,6 @@ class Arrays
                 $valueSet = true;
                 $value = reset($row);
             } else {
-                if (!is_array($row)) {
-                    continue;
-                }
-
                 if (is_array($columnKey)) {
                     $values = array_intersect_key($row, array_flip($columnKey));
                     if (!empty($values)) {
