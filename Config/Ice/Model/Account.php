@@ -8,9 +8,7 @@ return [
         'account_active' => 'account_active',
     ],
     'Ice\\Core\\Validator' => [
-        'account_pk' => [
-            0 => 'Ice:Not_Null',
-        ],
+        'account_pk' => [],
         'user__fk' => [],
         'login' => [],
         'password' => [],

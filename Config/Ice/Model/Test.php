@@ -6,9 +6,7 @@ return [
         'name2' => 'name2',
     ],
     'Ice\\Core\\Validator' => [
-        'test_pk' => [
-            0 => 'Ice:Not_Null',
-        ],
+        'test_pk' => [],
         'test_name' => [],
         'name2' => [
             0 => 'Ice:Not_Null',

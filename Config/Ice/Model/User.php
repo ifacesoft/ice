@@ -11,9 +11,7 @@ return [
         'user_created' => 'user_created',
     ],
     'Ice\\Core\\Validator' => [
-        'user_pk' => [
-            0 => 'Ice:Not_Null',
-        ],
+        'user_pk' => [],
         'user_phone' => [],
         'user_email' => [],
         'user_name' => [],

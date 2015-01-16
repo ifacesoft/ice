@@ -5,12 +5,8 @@ return [
         'role__fk' => 'role__fk',
     ],
     'Ice\\Core\\Validator' => [
-        'user__fk' => [
-            0 => 'Ice:Not_Null',
-        ],
-        'role__fk' => [
-            0 => 'Ice:Not_Null',
-        ],
+        'user__fk' => [],
+        'role__fk' => [],
     ],
     'Ice\\Core\\Form' => [
         'user__fk' => 'Number',

@@ -139,7 +139,7 @@ class Model_Scheme extends Container
                 default:
             }
 
-            if ($column['nullable'] === false) {
+            if ($column['nullable'] === false && !$column['is_primary']) {
                 $validators[$fieldName][] = 'Ice:Not_Null';
             }
         }
