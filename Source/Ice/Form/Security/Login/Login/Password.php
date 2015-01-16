@@ -44,7 +44,10 @@ class Login_Password extends Form_Security_Login
         foreach (Account::query()->eq(['login' => $this->getValues()['login']])->select(['password', 'user__fk'])->getRows() as $accountRow) {
             if (password_verify($this->getValues()['password'], $accountRow['password'])) {
                 $_SESSION['userPk'] = $accountRow['user__fk'];
-                $_SESSION['roleKeys'] = User_Role_Link::query()->eq(['user__fk' => $accountRow['user__fk']])->select('role__fk')->getColumn();
+                $_SESSION['roleNames'] = User_Role_Link::query()
+                    ->inner('Ice:Role', 'role_name')
+                    ->eq(['user__fk' => $accountRow['user__fk']])
+                    ->select('role_name')->getColumn();
                 return;
             }
         }

@@ -13,6 +13,7 @@ use Ice;
 use Ice\Core;
 use Ice\Data\Provider\Router;
 use Ice\Exception\File_Not_Found;
+use Ice\Helper\Arrays;
 use Ice\Helper\File;
 use Ice\Helper\Route as Helper_Route;
 use Ice\View\Render\Replace;
@@ -66,6 +67,12 @@ class Route extends Container
      * @var array
      */
     private $_route = null;
+
+    private static $_defaults = [
+        'params' => [],
+        'roles' => [],
+        'weight' => 0,
+    ];
 
     /**
      * Private constructor of route
@@ -128,7 +135,7 @@ class Route extends Container
             $name = 'ice_404';
         }
 
-        return new Route($name, Helper_Route::setDefaults($routes[$name]));
+        return new Route($name, Arrays::defaults($routes[$name], self::$_defaults));
     }
 
     /**
@@ -195,7 +202,7 @@ class Route extends Container
                     continue;
                 }
 
-                $route = Helper_Route::setDefaults($route);
+                $route = Arrays::defaults($route, self::$_defaults);
                 $route['route'] = $context . $route['route'];
 
                 if (isset($routes[$routeName])) {

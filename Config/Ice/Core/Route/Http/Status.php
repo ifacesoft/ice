@@ -1,6 +1,15 @@
 <?php
 
 return [
+    'ice_403' => [
+        'route' => '/403',
+        'GET' => [
+            'actions' => [
+                'title' => ['Ice:Title' => ['title' => '403 Forbidden']],
+                'main' => 'Ice:Http_Status_403'
+            ]
+        ]
+    ],
     'ice_404' => [
         'route' => '/404',
         'GET' => [

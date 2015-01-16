@@ -54,4 +54,7 @@ return [
     'Data source execute query failed' => [
         'en' => 'Data source execute query failed',
     ],
+    '#1052: {$0}' => [
+        'ru' => '#1052: {$0}',
+    ],
 ];

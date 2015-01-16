@@ -153,7 +153,7 @@ class Query_Builder
      */
     private function __construct($modelClass, $tableAlias = null)
     {
-        $this->_modelClass = $modelClass;
+        $this->_modelClass = Model::getClass($modelClass);
 
         if (empty($tableAlias)) {
             $tableAlias = Object::getName($modelClass);
@@ -238,13 +238,9 @@ class Query_Builder
      */
     private function where($sqlLogical, $fieldName, $sqlComparsion, $value = null, $modelClass = null, $tableAlias = null)
     {
-//        if ($this->_sql !== null) {
-//            throw new Exception('Запрос уже оттранслирован ранее. Внесение изменений в запрос не принесет никаких результатов');
-//        }
-
-        if (!$modelClass) {
-            $modelClass = $this->getModelClass();
-        }
+        $modelClass = !$modelClass
+            ? $modelClass = $this->getModelClass()
+            : Model::getClass($modelClass);
 
         if (!$tableAlias) {
             $tableAlias = $modelClass == $this->getModelClass()
@@ -802,9 +798,9 @@ class Query_Builder
      */
     private function join($joinType, $modelClass, $tableAlias = null, $condition = null)
     {
-//        if ($this->_sql !== null) {
-//            throw new Exception('Запрос уже оттранслирован ранее. Внесение изменений в запрос не принесет никаких результатов');
-//        }
+        $modelClass = !$modelClass
+            ? $modelClass = $this->getModelClass()
+            : Model::getClass($modelClass);
 
         if (!$tableAlias) {
             $tableAlias = $modelClass == $this->getModelClass()
@@ -889,25 +885,22 @@ class Query_Builder
      */
     private function _select($fieldName, $fieldAlias, $modelClass, $tableAlias)
     {
-
-        /** @var Model $class */
-        $class = $this->getModelClass();
-        if (!isset($this->_sqlParts[self::PART_SELECT][$class])) {
-            $pkFieldNames = $class::getPkFieldNames();
-
-            $this->_sqlParts[self::PART_SELECT][$class] = [
-                $this->getTableAlias(), array_combine($pkFieldNames, $pkFieldNames)
-            ];
-        }
-
-        if (!$modelClass) {
-            $modelClass = $class;
-        }
+        $modelClass = !$modelClass
+            ? $modelClass = $this->getModelClass()
+            : Model::getClass($modelClass);
 
         if (!$tableAlias) {
-            $tableAlias = $modelClass == $class
+            $tableAlias = $modelClass == $this->getModelClass()
                 ? $this->getTableAlias()
                 : Object::getName($modelClass);
+        }
+
+        if (!isset($this->_sqlParts[self::PART_SELECT][$modelClass])) {
+            $pkFieldNames = $modelClass::getPkFieldNames();
+
+            $this->_sqlParts[self::PART_SELECT][$modelClass] = [
+                $this->getTableAlias(), array_combine($pkFieldNames, $pkFieldNames)
+            ];
         }
 
         if ($fieldName == '*') {
@@ -1279,9 +1272,9 @@ class Query_Builder
             return $this;
         }
 
-        if (!$modelClass) {
-            $modelClass = $this->getModelClass();
-        }
+        $modelClass = !$modelClass
+            ? $modelClass = $this->getModelClass()
+            : Model::getClass($modelClass);
 
         if (!$tableAlias) {
             $tableAlias = $modelClass == $this->getModelClass()
@@ -1327,9 +1320,9 @@ class Query_Builder
             return $this;
         }
 
-        if (!$modelClass) {
-            $modelClass = $this->getModelClass();
-        }
+        $modelClass = !$modelClass
+            ? $modelClass = $this->getModelClass()
+            : Model::getClass($modelClass);
 
         if (!$tableAlias) {
             $tableAlias = $modelClass == $this->getModelClass()

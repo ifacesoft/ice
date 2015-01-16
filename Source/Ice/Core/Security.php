@@ -7,7 +7,6 @@ use Ice\Model\User;
 
 class Security
 {
-
     public static function getUser()
     {
         if (isset($_SESSION['userPk'])) {
@@ -24,5 +23,14 @@ class Security
         }
 
         return Role::getEmptyCollection();
+    }
+
+    public static function checkAccess($roles)
+    {
+        if (empty($roles)) {
+            return true;
+        }
+
+
     }
 }

@@ -12,8 +12,10 @@ namespace Ice\Data\Provider;
 use Ice\Core\Config;
 use Ice\Core\Data_Provider;
 use Ice\Core\Exception;
+use Ice\Core\Logger;
 use Ice\Core\Request as Core_Request;
 use Ice\Core\Route;
+use Ice\Core\Security;
 
 /**
  * Class Router
@@ -232,9 +234,8 @@ class Router extends Data_Provider
             }
 
             if (!isset($foundRoutes[$route['weight']])) {
-                $foundRoutes[$route['weight']] = [$routeName, $route['pattern'], $route['params']];
+                $foundRoutes[$route['weight']] = [$routeName, $route['pattern'], $route['params'], $route['roles']];
             }
-
         }
 
         if (empty($foundRoutes)) {
@@ -251,7 +252,17 @@ class Router extends Data_Provider
         }
 
         krsort($foundRoutes, SORT_NUMERIC);
-        list($routeName, $pattern, $params) = reset($foundRoutes);
+
+        list($routeName, $pattern, $params, $roles) = reset($foundRoutes);
+
+        if (!Security::checkAccess($roles)) {
+            $data = [
+                'routeName' => 'ice_403',
+                'method' => 'GET'
+            ];
+
+            return (bool)$connection = $dataProvider->set($key, $data);
+        }
 
         $baseMatches = [];
         preg_match_all($pattern, $url, $baseMatches, PREG_SET_ORDER);
