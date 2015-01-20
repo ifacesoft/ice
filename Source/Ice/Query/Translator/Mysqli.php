@@ -10,6 +10,7 @@
 namespace Ice\Query\Translator;
 
 use Ice\Core\Exception;
+use Ice\Core\Logger;
 use Ice\Core\Model;
 use Ice\Core\Query_Builder;
 use Ice\Core\Query_Translator;
@@ -301,6 +302,10 @@ class Mysqli extends Query_Translator
 
         $fields = [];
 
+        /** @var Model $modelClass */
+        $modelClass = null;
+        $tableAlias = null;
+
         foreach ($part as $modelClass => $items) {
             list($tableAlias, $fieldNames) = $items;
 
@@ -331,16 +336,10 @@ class Mysqli extends Query_Translator
             return $sql;
         }
 
-        reset($part);
-        $from = each($part);
-
-        /** @var Model $fromModelClass */
-        $fromModelClass = $from['key'];
-
         $sql .= "\n" . self::SQL_STATEMENT_SELECT . ($calcFoundRows ? ' ' . self::SQL_CALC_FOUND_ROWS . ' ' : '') .
             "\n\t" . implode(',' . "\n\t", $fields) .
             "\n" . self::SQL_CLAUSE_FROM .
-            "\n\t" . $fromModelClass::getTableName() . ' `' . reset($from['value']) . '`';
+            "\n\t" . $modelClass::getTableName() . ' `' . $tableAlias . '`';
 
         return $sql;
     }
@@ -363,7 +362,6 @@ class Mysqli extends Query_Translator
         if (empty($part)) {
             return $sql;
         }
-
 
         foreach ($part as $joinTable) {
             /** @var Model $joinModelClass */

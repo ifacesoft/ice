@@ -24,6 +24,20 @@ namespace Ice\Helper;
  */
 class Query
 {
+
+//SELECT T2.id, T2.table_name
+//FROM (
+//SELECT
+//@r AS _id,
+//(SELECT @r := table_id FROM ice_table WHERE id = _id) AS parent_id,
+//@l := @l + 1 AS lvl
+//FROM
+//(SELECT @r := 113, @l := 0) vars,
+//ice_table h
+//WHERE @r <> 0) T1
+//JOIN ice_table T2
+//ON T1._id = T2.id
+//ORDER BY T1.lvl DESC
     /**
      * Convert where part to array filter format
      *
@@ -63,18 +77,4 @@ class Query
 
         return $filterFields;
     }
-
-//SELECT T2.id, T2.table_name
-//FROM (
-//SELECT
-//@r AS _id,
-//(SELECT @r := table_id FROM ice_table WHERE id = _id) AS parent_id,
-//@l := @l + 1 AS lvl
-//FROM
-//(SELECT @r := 113, @l := 0) vars,
-//ice_table h
-//WHERE @r <> 0) T1
-//JOIN ice_table T2
-//ON T1._id = T2.id
-//ORDER BY T1.lvl DESC
 }
