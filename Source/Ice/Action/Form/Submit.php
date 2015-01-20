@@ -11,6 +11,7 @@ namespace Ice\Action;
 
 use Ice\Core\Action;
 use Ice\Core\Action_Context;
+use Ice\Core\Exception;
 use Ice\Core\Logger;
 
 /**

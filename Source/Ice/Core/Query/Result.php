@@ -159,7 +159,7 @@ class Query_Result extends Container implements Iterator, ArrayAccess, Countable
                 $cache['data'] = $query->execute();
                 $cache['time'] = time();
 
-                $cacheDataProvider->set($hash, $cache);
+                $cacheDataProvider->set($hash, $cache, $ttl);
                 break;
 
             case Query_Builder::TYPE_INSERT:

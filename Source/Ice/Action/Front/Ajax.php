@@ -126,8 +126,6 @@ class Front_Ajax extends Action
 
         $view->setParams($params);
 
-        Logger::clearLog();
-
         return $view;
     }
 }

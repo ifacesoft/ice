@@ -43,10 +43,6 @@ class Logger
      */
     public static function outputFb(\Exception $exception, $output)
     {
-        if (!Request::isCli() || headers_sent()) {
-            return;
-        }
-
         $e = $exception->getPrevious();
 
         if ($e) {
@@ -60,13 +56,12 @@ class Logger
         $output['message'] = Core_Logger::$errorCodes[$exception->getCode()] . ': ' . $exception->getMessage();
         $output['errPoint'] = '(' . $exception->getFile() . ':' . $exception->getLine() . ')';
         $output['errcontext'] = $errcontext;
-        $output['stackTrace'] = $exception->getTraceAsString();
 
         Core_Logger::fb($output['message'] . ' ' . $output['errPoint'], 'ERROR');
         if (!empty($errcontext) && Memory::getVarSize($errcontext) < 3500) {
             Core_Logger::fb($errcontext, 'INFO');
         }
-        Core_Logger::fb(explode("\n", $output['stackTrace']), 'WARN');
+        Core_Logger::fb($exception, 'WARN');
     }
 
     /**

@@ -308,7 +308,6 @@ class Logger
         Helper_Logger::outputFile($exception, $output);
         Helper_Logger::outputFb($exception, $output);
 
-
         $message = Helper_Logger::getMessage($exception);
 
         if (Request::isCli()) {
@@ -372,7 +371,9 @@ class Logger
      */
     public static function renderLog()
     {
-        Response::send(implode('', self::$log));
+        if (!Request::isAjax()) {
+            Response::send(implode('', self::$log));
+        }
     }
 
     /**
@@ -412,12 +413,6 @@ class Logger
      */
     public static function debug($arg)
     {
-        if (!Request::isAjax()) {
-            Logger::renderLog();
-        }
-
-        Logger::clearLog();
-
         foreach (func_get_args() as $arg) {
             $var = stripslashes(Php::varToPhpString($arg));
 

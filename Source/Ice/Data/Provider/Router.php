@@ -255,7 +255,7 @@ class Router extends Data_Provider
 
         list($routeName, $pattern, $params, $roles) = reset($foundRoutes);
 
-        if (!Security::checkAccess($roles)) {
+        if (!Security::checkAccess($roles, 'Role_Access')) {
             $data = [
                 'routeName' => 'ice_403',
                 'method' => 'GET'

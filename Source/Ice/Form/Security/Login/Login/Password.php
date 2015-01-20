@@ -3,6 +3,7 @@
 namespace Ice\Form\Security\Login;
 
 use Ice\Core\Form_Security_Login;
+use Ice\Core\Logger;
 use Ice\Model\Account;
 use Ice\Model\User_Role_Link;
 

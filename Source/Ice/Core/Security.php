@@ -16,21 +16,21 @@ class Security
         return null;
     }
 
-    public static function getRoles()
+    public static function getRoleNames()
     {
-        if (isset($_SESSION['roleKeys'])) {
-            return Role::getCollection($_SESSION['roleKeys']);
+        if (isset($_SESSION['roleNames'])) {
+            return $_SESSION['roleNames'];
         }
 
-        return Role::getEmptyCollection();
+        return $_SESSION['roleNames'] = Security::getUser() ? ['Ice:User'] : ['Ice:Guest'];
     }
 
-    public static function checkAccess($roles)
+    public static function checkAccess($roles, $permission)
     {
         if (empty($roles)) {
             return true;
         }
 
-
+        return in_array($permission, array_merge(array_intersect_key($roles, array_flip(Security::getRoleNames()))));
     }
 }
