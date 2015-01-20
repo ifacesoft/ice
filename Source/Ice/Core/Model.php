@@ -94,54 +94,20 @@ abstract class Model
      * Private constructor. Create model: Model::create()
      *
      * @param array $row
-     * @param null $pk
      * @throws Exception
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.4
      * @since 0.0
      */
-    private function __construct(array $row, $pk = null)
+    private function __construct(array $row)
     {
-        $this->_pk = $pk;
-
         /** @var Model $modelClass */
         $modelClass = self::getClass();
         $lowercaseModelName = strtolower(self::getClassName());
 
-        $modelScheme = $modelClass::getScheme();
         $fields = $modelClass::getMapping();
-        $flippedFields = array_flip($fields);
-
-        $pkColumnNames = $modelScheme->getIndexes()['PRIMARY KEY']['PRIMARY'];
-
-        if ($pk !== null) {
-            $this->_pk = is_array($pk) ? $pk : [$flippedFields[reset($pkColumnNames)] => $pk];
-        }
-
-        $detectedPk = [];
-        foreach ($pkColumnNames as $pkColumnName) {
-            $pkFieldName = $flippedFields[$pkColumnName];
-
-            if (!empty($row[$pkFieldName])) {
-                $detectedPk[$pkFieldName] = is_array($row[$pkFieldName]) ? reset($row[$pkFieldName]) : $row[$pkFieldName];
-                unset($row[$pkFieldName]);
-            }
-
-            unset($fields[$pkFieldName]);
-        }
-
-        if (!empty($detectedPk)) {
-            if (!empty($this->_pk) && $this->_pk != $detectedPk) {
-                Model::getLogger()->fatal(['Ambiguous pk: {$0} or {$1}', [var_export($this->_pk, true), var_export($detectedPk, true)]], __FILE__, __LINE__);
-            }
-
-            $this->set($detectedPk);
-            unset($detectedPk);
-        }
-
-//        $columns = $modelScheme->getColumnNames();
 
         foreach ($fields as $fieldName => $columnName) {
             $this->_row[$fieldName] = null;
@@ -170,16 +136,6 @@ abstract class Model
                     continue 2;
                 }
             }
-
-//            $default = $columns[$columnName]['default'];
-//
-//            if ($default) {
-//                if ($default == 'CURRENT_TIMESTAMP') {
-//                    $default = Date::get();
-//                }
-//
-//                $this->set($fieldName, $default, false);
-//            }
         }
 
         $this->_data = $row;
@@ -270,7 +226,7 @@ abstract class Model
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.4
      * @since 0.0
      */
     public function set($fieldName, $fieldValue = null, $isAffected = true)
@@ -293,16 +249,19 @@ abstract class Model
 
         if ($this->isPkName($fieldName)) {
             if ($isAffected) {
-                $this->_affected[$fieldName] = $fieldValue;
+                $this->addAffected($fieldName, $fieldValue);
             }
 
             $this->_pk[$fieldName] = $fieldValue;
+            if ($this->isFieldName($fieldName)) {
+                unset($this->_row[$fieldName]);
+            }
 
             return $this;
         }
-        if (array_key_exists($fieldName, $this->_row)) {
+        if ($this->isFieldName($fieldName)) {
             if ($isAffected) {
-                $this->_affected[$fieldName] = $fieldValue;
+                $this->addAffected($fieldName, $fieldValue);
             }
 
             $this->_row[$fieldName] = $fieldValue;
@@ -310,7 +269,7 @@ abstract class Model
         }
 
         $jsonFieldName = $fieldName . '__json';
-        if (array_key_exists($jsonFieldName, $this->_row)) {
+        if ($this->isFieldName($jsonFieldName)) {
             if ($fieldValue === null) {
                 $this->_json[$fieldName] = [];
                 return $this->set($jsonFieldName, Json::encode($this->_json[$fieldName]), $isAffected);
@@ -342,7 +301,7 @@ abstract class Model
         }
 
         $geoFieldName = $fieldName . '__geo';
-        if (array_key_exists($geoFieldName, $this->_row)) {
+        if ($this->isFieldName($geoFieldName)) {
             if ($fieldValue == null) {
                 $this->_geo[$fieldName] = null;
                 return $this->set($geoFieldName, null, $isAffected);
@@ -353,7 +312,7 @@ abstract class Model
         }
 
         $fkFieldName = $fieldName . '__fk';
-        if (array_key_exists($fkFieldName, $this->_row)) {
+        if ($this->isFieldName($fkFieldName)) {
             if ($fieldValue == null) {
                 $this->_fk[$fieldName] = null;
                 return $this->set($fkFieldName, null, $isAffected);
@@ -367,8 +326,64 @@ abstract class Model
 
         /** @var Model $modelClass */
         $modelClass = get_class($this);
+
         throw new Exception('Could not set value:' . "\n" . print_r($fieldValue, true) .
-            'Field "' . $fieldName . '" not found in Model "' . $modelClass::getClassName() . '"');
+            '. Field "' . $fieldName . '" not found in Model "' . $modelClass::getClassName() . '"');
+    }
+
+    /**
+     * Return affected fields
+     *
+     * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.4
+     */
+    private function getAffected()
+    {
+        return $this->_affected;
+    }
+
+    /**
+     * Add affected field value
+     *
+     * @param $fieldName
+     * @param $fieldValue
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.4
+     */
+    private function addAffected($fieldName, $fieldValue)
+    {
+        if ($fieldValue === null) {
+            /** @var Model $modelClass */
+            $modelClass = get_class($this);
+
+            $columnName = $modelClass::getMapping()[$fieldName];
+            if ($modelClass::getScheme()->getColumnNames()[$columnName]['default'] !== null) {
+                return;
+            }
+
+        }
+
+        $this->_affected[$fieldName] = $fieldValue;
+    }
+
+    /**
+     * Clear all affected values
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.4
+     */
+    private function clearAffected()
+    {
+        $this->_affected = [];
     }
 
     /**
@@ -484,7 +499,7 @@ abstract class Model
         }
 
         $jsonFieldName = $fieldName . '__json';
-        if (array_key_exists($jsonFieldName, $this->_row)) {
+        if ($this->isFieldName($jsonFieldName)) {
             $json = Json::decode($this->_row[$jsonFieldName]);
 
             if (empty($json)) {
@@ -496,7 +511,7 @@ abstract class Model
         }
 
         $geoFieldName = $fieldName . '__geo';
-        if (array_key_exists($geoFieldName, $this->_row)) {
+        if ($this->isFieldName($geoFieldName)) {
             $geo = Spatial::decode($this->_row[$geoFieldName]);
 
             if (empty($geo)) {
@@ -512,7 +527,7 @@ abstract class Model
 
         // one-to-many
         $foreignKeyName = strtolower(Object::getName($fieldName)) . '__fk';
-        if (array_key_exists($foreignKeyName, $this->_row)) {
+        if ($this->isFieldName($foreignKeyName)) {
             $key = $this->_row[$foreignKeyName];
 
             if (!$key) {
@@ -1065,14 +1080,14 @@ abstract class Model
         $this->beforeInsert();
 
         $insertId = $modelClass::query()
-            ->insert($this->_affected, $update, $sourceName)
+            ->insert($this->getAffected(), $update, $sourceName)
             ->getInsertId();
 
-        $this->_pk = reset($insertId);
+        $this->set(reset($insertId));
 
         $this->afterInsert();
 
-        $this->_affected = [];
+        $this->clearAffected();
 
         return $this;
     }
@@ -1118,9 +1133,11 @@ abstract class Model
         /** @var Model $modelClass */
         $modelClass = get_class($this);
 
+        $affected = $this->getAffected();
+
         $row = $modelClass::query()
-            ->eq($this->_affected)
-            ->select(array_merge($fieldNames, array_keys($this->_affected)), null, null, null, $sourceName, $ttl)
+            ->eq($affected)
+            ->select(array_merge($fieldNames, array_keys($affected)), null, null, null, $sourceName, $ttl)
             ->getRow();
 
         if (!$row) {
@@ -1129,7 +1146,7 @@ abstract class Model
 
         $this->set($row);
 
-        $this->_affected = [];
+        $this->clearAffected();
 
         return $this;
     }
@@ -1153,11 +1170,11 @@ abstract class Model
 
         $this->beforeUpdate();
 
-        $modelClass::query()->pk($this->getPk())->update($this->_affected, $sourceName);
+        $modelClass::query()->pk($this->getPk())->update($this->getAffected(), $sourceName);
 
         $this->afterUpdate();
 
-        $this->_affected = [];
+        $this->clearAffected();
 
         return $this;
     }
@@ -1357,5 +1374,21 @@ abstract class Model
     public static function dropTable()
     {
         return self::query()->drop();
+    }
+
+    /**
+     * Check for exists field name in model
+     *
+     * @param $fieldName
+     * @return bool
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.4
+     */
+    public function isFieldName($fieldName)
+    {
+        return array_key_exists($fieldName, $this->_row);
     }
 }
