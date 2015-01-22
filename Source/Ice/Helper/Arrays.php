@@ -255,7 +255,7 @@ class Arrays
      */
     public static function defaults(array $defaults, array $data = null)
     {
-        $data = (array) $data;
+        $data = (array)$data;
 
         foreach ($defaults as $key => $value) {
             if (!array_key_exists($key, $data)) {

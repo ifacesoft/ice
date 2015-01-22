@@ -466,7 +466,7 @@ abstract class Model
     public function get($fieldName = null, $isNotNull = true)
     {
         if ($fieldName === null) {
-            return array_merge((array) $this->_pk, $this->_row);
+            return array_merge((array)$this->_pk, $this->_row);
         }
 
         $fieldName = $this->getFieldName($fieldName);

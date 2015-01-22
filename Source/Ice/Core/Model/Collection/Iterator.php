@@ -192,18 +192,18 @@ class Model_Collection_Iterator implements Iterator
     }
 
     /**
-     * Return collection iterator model class
+     * Define rows
      *
-     * @return Model
+     * @param array $rows
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
      * @since 0.4
      */
-    public function getModelClass()
+    public function setRows(array $rows)
     {
-        return $this->_modelClass;
+        $this->_rows = $rows;
     }
 
     /**
@@ -239,17 +239,17 @@ class Model_Collection_Iterator implements Iterator
     }
 
     /**
-     * Define rows
+     * Return collection iterator model class
      *
-     * @param array $rows
+     * @return Model
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
      * @since 0.4
      */
-    public function setRows(array $rows)
+    public function getModelClass()
     {
-        $this->_rows = $rows;
+        return $this->_modelClass;
     }
 }

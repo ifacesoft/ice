@@ -12,7 +12,6 @@ namespace Ice\Data\Provider;
 use Ice\Core\Config;
 use Ice\Core\Data_Provider;
 use Ice\Core\Exception;
-use Ice\Core\Logger;
 use Ice\Core\Request as Core_Request;
 use Ice\Core\Route;
 use Ice\Core\Security;

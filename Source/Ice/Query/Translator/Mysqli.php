@@ -10,7 +10,6 @@
 namespace Ice\Query\Translator;
 
 use Ice\Core\Exception;
-use Ice\Core\Logger;
 use Ice\Core\Model;
 use Ice\Core\Query_Builder;
 use Ice\Core\Query_Translator;
