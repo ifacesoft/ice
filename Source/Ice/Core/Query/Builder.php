@@ -960,7 +960,7 @@ class Query_Builder
 
         $this->_select($fieldName, $fieldAlias, $modelClass, $tableAlias);
 
-        return Query_Result::getInstance([$this->getQuery($sourceName), $ttl]);
+        return $this->getQuery($sourceName)->execute($ttl);
     }
 
     /**
@@ -1073,7 +1073,7 @@ class Query_Builder
 
             $this->_bindParts[$part] = [[]];
 
-            return Query_Result::getInstance([$this->getQuery($sourceName), $ttl]);
+            return $this->getQuery($sourceName)->execute($ttl);
         }
 
         if (!is_array(reset($data))) {
@@ -1098,7 +1098,7 @@ class Query_Builder
 
         $this->_bindParts[$part] = array_merge($this->_bindParts[$part], $data);
 
-        return Query_Result::getInstance([$this->getQuery($sourceName), $ttl]);
+        return $this->getQuery($sourceName)->execute($ttl);
     }
 
     /**
@@ -1140,7 +1140,7 @@ class Query_Builder
 
         $this->inPk((array)$pkValues);
 
-        return Query_Result::getInstance([$this->getQuery($sourceName), $ttl]);
+        return $this->getQuery($sourceName)->execute($ttl);
     }
 
     /**
@@ -1348,12 +1348,7 @@ class Query_Builder
      */
     public function setPaginator(array $paginator)
     {
-        if (empty($paginator)) {
-            $page = 1;
-            $limit = 1000;
-        } else {
-            list($page, $limit) = $paginator;
-        }
+        list($page, $limit) = $paginator;
 
         return $this->calcFoundRows()
             ->limit($limit, ($page - 1) * $limit);
@@ -1436,7 +1431,7 @@ class Query_Builder
     public function create($sourceName = null, $ttl = 3600)
     {
         $this->_queryType = Query_Builder::TYPE_CREATE;
-        return Query_Result::getInstance([$this->getQuery($sourceName), $ttl]);
+        return $this->getQuery($sourceName)->execute($ttl);
     }
 
     /**
@@ -1455,7 +1450,7 @@ class Query_Builder
     {
         $this->_queryType = Query_Builder::TYPE_DROP;
         $this->_sqlParts[self::PART_DROP]['_drop'] = $this->_modelClass;
-        return Query_Result::getInstance([$this->getQuery($sourceName), $ttl]);
+        return $this->getQuery($sourceName)->execute($ttl);
     }
 
     /**

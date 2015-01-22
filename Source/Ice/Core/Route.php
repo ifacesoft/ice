@@ -135,7 +135,7 @@ class Route extends Container
             $name = 'ice_404';
         }
 
-        return new Route($name, Arrays::defaults($routes[$name], self::$_defaults));
+        return new Route($name, Arrays::defaults(self::$_defaults, $routes[$name]));
     }
 
     /**
@@ -202,7 +202,7 @@ class Route extends Container
                     continue;
                 }
 
-                $route = Arrays::defaults($route, self::$_defaults);
+                $route = Arrays::defaults(self::$_defaults, $route);
                 $route['route'] = $context . $route['route'];
 
                 if (isset($routes[$routeName])) {

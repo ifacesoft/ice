@@ -138,6 +138,6 @@ class Model extends Form
 
         /** @var Model $modelClass */
         $modelClass = $this->getKey();
-        $modelClass::create($this->getValues())->insertOrUpdate();
+        $modelClass::create($this->getValues())->save(null, true);
     }
 }

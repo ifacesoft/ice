@@ -241,8 +241,22 @@ class Arrays
         return $diff;
     }
 
-    public static function defaults($data, array $defaults = array())
+    /**
+     * Apply default values to array
+     *
+     * @param array $data
+     * @param array $defaults
+     * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.3
+     */
+    public static function defaults(array $defaults, array $data = null)
     {
+        $data = (array) $data;
+
         foreach ($defaults as $key => $value) {
             if (!array_key_exists($key, $data)) {
                 $data[$key] = is_callable($value) ? $value($key) : $value;
@@ -252,13 +266,36 @@ class Arrays
         return $data;
     }
 
-    public static function validate($data, array $validators = array())
+    /**
+     * Validate array
+     *
+     * @param array $data
+     * @param array $validators
+     * @return bool
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     * @todo need impements
+     * @version 0.3
+     * @since 0.3
+     */
+    public static function validate(array $data, array $validators = array())
     {
-
         return false;
     }
 
-    public static function convert($data, array $converters = array())
+    /**
+     * Convert array data
+     *
+     * @param array $data
+     * @param array $converters
+     * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.3
+     * @since 0.3
+     */
+    public static function convert(array $data, array $converters = array())
     {
         foreach ($converters as $key => $value) {
             if (!array_key_exists($key, $data)) {
@@ -288,6 +325,12 @@ class Arrays
         return '{' . implode(', ', $array) . '}';
     }
 
+    /**
+     * Convert array to string
+     *
+     * @param array $array
+     * @return string
+     */
     public static function toJsArrayString(array $array)
     {
         $string = '';

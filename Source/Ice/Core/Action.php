@@ -261,7 +261,7 @@ abstract class Action extends Container
             $input += (array)$dataProvider->get();
         }
 
-        $input = Arrays::defaults($input, $config->gets('inputDefaults', false));
+        $input = Arrays::defaults($config->gets('inputDefaults', false), $input);
 
         return [$input, Validator::validateByScheme($input, $config->gets('inputValidators', false))];
     }

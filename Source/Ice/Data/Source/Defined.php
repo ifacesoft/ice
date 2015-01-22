@@ -114,9 +114,7 @@ class Defined extends Data_Source
         $rows = array_filter($rows, $filterFunction(Helper_Query::convertWhereForFilter($query)));
 
         return [
-            Query_Result::RESULT_MODEL_CLASS => $modelClass,
-            Query_Result::RESULT_ROWS => $rows,
-            Query_Result::QUERY_FULL_HASH => 'definedHash:' . $query->getSqlPartsHash(),
+            Query_Result::ROWS => $rows,
             Query_Result::NUM_ROWS => count($rows)
         ];
     }

@@ -74,52 +74,47 @@ class Paginator extends Action
         /** @var Query_Result $data */
         $data = $input['data'];
 
-        $page = $data->getPage();
-
         $output = [];
 
-        if ($page > 1) {
+        list($output['page'], $output['limit'], $output['foundRows']) = $data->getPagination();
+
+        if ($output['page'] > 1) {
             $output['first'] = 1;
         }
 
-        if ($page - $input['fastStep'] >= 1) {
-            $output['fastPrev'] = $page - $input['fastStep'];
+        if ($output['page'] - $input['fastStep'] >= 1) {
+            $output['fastPrev'] = $output['page'] - $input['fastStep'];
         }
 
-        if ($page - 2 >= 1) {
-            $output['before2'] = $page - 2;
+        if ($output['page'] - 2 >= 1) {
+            $output['before2'] = $output['page'] - 2;
         }
 
-        if ($page - 1 >= 1) {
-            $output['prev'] = $page - 1;
-            $output['before1'] = $page - 1;
+        if ($output['page'] - 1 >= 1) {
+            $output['prev'] = $output['page'] - 1;
+            $output['before1'] = $output['page'] - 1;
         }
-
-        $output['curr'] = $page;
-
-        $output['foundRows'] = $data->getFoundRows();
-        $output['limit'] = $data->getLimit();
 
         $pageCount = intval($output['foundRows'] / $output['limit']) + 1;
 
-        if ($page == $pageCount) {
+        if ($output['page'] == $pageCount) {
             $output['limit'] = $output['foundRows'] - ($pageCount - 1) * $output['limit'];
         }
 
-        if ($page + 1 <= $pageCount) {
-            $output['next'] = $page + 1;
-            $output['after1'] = $page + 1;
+        if ($output['page'] + 1 <= $pageCount) {
+            $output['next'] = $output['page'] + 1;
+            $output['after1'] = $output['page'] + 1;
         }
 
-        if ($page + 2 <= $pageCount) {
-            $output['after2'] = $page + 2;
+        if ($output['page'] + 2 <= $pageCount) {
+            $output['after2'] = $output['page'] + 2;
         }
 
-        if ($page + $input['fastStep'] <= $pageCount) {
-            $output['fastNext'] = $page + $input['fastStep'];
+        if ($output['page'] + $input['fastStep'] <= $pageCount) {
+            $output['fastNext'] = $output['page'] + $input['fastStep'];
         }
 
-        if ($page < $pageCount) {
+        if ($output['page'] < $pageCount) {
             $output['last'] = $pageCount;
         }
 

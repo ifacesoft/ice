@@ -96,7 +96,7 @@ class Ice extends Container
      */
     protected static function create($moduleName, $hash = null)
     {
-        return new Ice($moduleName);
+        return new Ice($moduleName, $hash);
     }
 
     /**
@@ -143,7 +143,7 @@ class Ice extends Container
     {
         if (!Environment::isProduction()) {
             Logger::renderLog();
-            Logger::fb('running time: ' . Logger::microtimeResult($this->_startTime) * 1000 . ' ms | ' . Memory::memoryGetUsagePeak(), 'INFO');
+            Logger::fb('running time: ' . Logger::microtimeResult($this->_startTime) . ' | ' . Memory::memoryGetUsagePeak(), 'INFO');
         }
 
         if (!Request::isCli() && function_exists('fastcgi_finish_request')) {

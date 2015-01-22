@@ -89,10 +89,10 @@ class Model_Defined_Sync extends Action
                     $query = null;
                     $model = $rowCollection->get($pk);
                     if ($model) {
-                        $rowCollection->remove($pk)->update($row, null, $dataSource);
+                        $rowCollection->remove($pk)->save($row, null, $dataSource);
                         continue;
                     }
-                    $modelClass::create($row)->insert($dataSource);
+                    $modelClass::create($row)->save($dataSource);
                 }
 
                 if ($rowCollection->getCount()) {

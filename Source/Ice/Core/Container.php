@@ -30,6 +30,33 @@ use Ice\Helper\Object;
 abstract class Container
 {
     /**
+     * Return dat provider for self class
+     *
+     * @param null $postfix
+     * @return Data_Provider
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.1
+     * @since 0.1
+     */
+    public static function getDataProvider($postfix = null)
+    {
+        if (empty($postfix)) {
+            $postfix = strtolower(Object::getName(self::getClass()));
+        }
+
+        return Environment::getInstance()->getProvider(self::getBaseClass(), $postfix);
+    }
+
+    public static function getClass($className = null)
+    {
+        return empty($className)
+            ? get_called_class()
+            : Object::getClass(get_called_class(), $className);
+    }
+
+    /**
      * Get instance from container
      *
      * @param string $key
@@ -39,12 +66,12 @@ abstract class Container
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.4
      * @since 0.0
      */
     public static function getInstance($key = null, $ttl = null)
     {
-        /** @var Container $class */
+        /** @var Container|Core $class */
         $class = self::getClass();
 
         if (empty($key)) {
@@ -67,21 +94,16 @@ abstract class Container
 
         $object = null;
         try {
-            if (in_array('Ice\Core\Cacheable', class_implements($baseClass))) {
-                /** @var Cacheable $class */
-                $object = $class::getCache($data, $key);
-            } else {
-                $dataProvider = $class::getDataProvider('instance');
+            $dataProvider = $class::getDataProvider('instance');
 
-                if ($ttl != -1 && $object = $dataProvider->get($key)) {
-                    return $object;
-                }
+            if ($ttl != -1 && $object = $dataProvider->get($key)) {
+                return $object;
+            }
 
-                $object = $class::create($data, $key);
+            $object = $class::create($data, $key);
 
-                if ($object) {
-                    $dataProvider->set($key, $object, $ttl);
-                }
+            if ($object) {
+                $dataProvider->set($key, $object, $ttl);
             }
         } catch (File_Not_Found $e) {
             if ($baseClass == Code_Generator::getClass()) {
@@ -104,47 +126,21 @@ abstract class Container
         return $object;
     }
 
-    public static function getClass($className = null)
-    {
-        return empty($className)
-            ? get_called_class()
-            : Object::getClass(get_called_class(), $className);
-    }
-
     /**
-     * Return base class for self class (class extends Container)
+     * Create instance
      *
-     * @return Core
+     * @param $data
+     * @param $hash
+     * @return mixed
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.1
-     * @since 0.1
+     * @version 0.4
+     * @since 0.4
      */
-    public static function getBaseClass()
+    protected static function create($data, $hash)
     {
-        return Object::getBaseClass(self::getClass());
-    }
-
-
-    /**
-     * Return dat provider for self class
-     *
-     * @param null $postfix
-     * @return Data_Provider
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.1
-     * @since 0.1
-     */
-    public static function getDataProvider($postfix = null)
-    {
-        if (empty($postfix)) {
-            $postfix = strtolower(Object::getName(self::getClass()));
-        }
-
-        return Environment::getInstance()->getProvider(self::getBaseClass(), $postfix);
+        Resource::getLogger()->fatal(['Implementation {$0} is required for {$1}', [__FUNCTION__, self::getClass()]], __FILE__, __LINE__, null, [$data, $hash]);
     }
 
     /**
@@ -160,5 +156,20 @@ abstract class Container
     public static function getLogger()
     {
         return Logger::getInstance(self::getClass());
+    }
+
+    /**
+     * Return base class for self class (class extends Container)
+     *
+     * @return Core
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.1
+     * @since 0.1
+     */
+    public static function getBaseClass()
+    {
+        return Object::getBaseClass(self::getClass());
     }
 }

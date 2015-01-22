@@ -89,7 +89,7 @@ class Bootstrap
         }
 
         if (!Environment::isProduction()) {
-            Logger::fb('bootstrapping time: ' . Logger::microtimeResult($startTime) * 1000 . ' ms | ' . Memory::memoryGetUsagePeak(), 'INFO');
+            Logger::fb('bootstrapping time: ' . Logger::microtimeResult($startTime) . ' | ' . Memory::memoryGetUsagePeak(), 'INFO');
         }
     }
 }

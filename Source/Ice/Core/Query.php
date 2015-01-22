@@ -119,7 +119,7 @@ class Query extends Container
         list($sourceName, $queryType, $sqlParts, $modelClass, $cacheTags) = $data;
         $this->_sourceName = empty($sourceName) ? Data_Source::getDefaultKey() : $sourceName;
         $this->_queryType = $queryType;
-        $queryTranslator = Query_Translator::getInstance(get_class(Data_Source::getInstance($sourceName)));
+        $queryTranslator = Query_Translator::getInstance(get_class(Data_Source::getInstance($this->_sourceName)));
         $this->_sql = $queryTranslator->translate($sqlParts);
         $this->_modelClass = $modelClass;
         $this->_cacheTags = $cacheTags;
@@ -350,8 +350,8 @@ class Query extends Container
         return $this->_hash . '/' . $this->_bindHash;
     }
 
-    public function execute()
+    public function execute($ttl = 3600)
     {
-        return $this->getDataSource()->execute($this);
+        return $this->getDataSource()->execute($this, $ttl);
     }
 }

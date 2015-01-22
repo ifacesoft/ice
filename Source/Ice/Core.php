@@ -52,7 +52,7 @@ trait Core
     /**
      * Return class by base class
      *
-     * @param null $className
+     * @param string|null $className
      * @return Core
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -195,25 +195,6 @@ trait Core
     public static function getBaseClass()
     {
         return Object::getBaseClass(self::getClass());
-    }
-
-    /**
-     * Create new instance of self class
-     *
-     * @param $key
-     * @param $hash
-     * @return null
-     * @throws Core\Exception
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    protected static function create($key, $hash = null)
-    {
-        Resource::getLogger()->fatal(['Implementation {$0} is required for {$1}', [__FUNCTION__, self::getClass()]], __FILE__, __LINE__);
-        return null;
     }
 
     /**

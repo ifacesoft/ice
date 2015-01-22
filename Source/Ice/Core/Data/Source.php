@@ -12,6 +12,8 @@ namespace Ice\Core;
 use Ice;
 use Ice\Core;
 use Ice\Data\Provider\Mysqli as Data_Provider_Mysqli;
+use Ice\Helper\Arrays;
+use Ice\Helper\Memory;
 use Ice\Helper\Object;
 
 /**
@@ -123,12 +125,12 @@ abstract class Data_Source extends Container
             foreach ((array)$configSchemes as $configScheme) {
                 if ($configScheme == $scheme) {
                     $sourceDataProviderKey = $dataSourceKey;
-                    break;
+                    break 2;
                 }
             }
         }
 
-        if (empty($sourceDataProviderKey)) {
+        if (!$sourceDataProviderKey) {
             Data_Source::getLogger()->fatal(['Data source not found for scheme {$0}', $scheme], __FILE__, __LINE__);
         }
 
@@ -279,8 +281,6 @@ abstract class Data_Source extends Container
      * @param $tableName
      * @return array
      *
-     * @author anonymous <email>
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
@@ -294,8 +294,6 @@ abstract class Data_Source extends Container
      * @param $tableName
      * @return array
      *
-     * @author anonymous <email>
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.3
@@ -305,26 +303,106 @@ abstract class Data_Source extends Container
 
     /**
      * @param Query $query
-     * @return array
-     *
+     * @param $ttl
+     * @return Query_Result
+     * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.2
+     * @version 0.4
      * @since 0.2
      */
-    public function execute(Query $query)
+    public function execute(Query $query, $ttl)
     {
-        $queryCommand = 'execute' . ucfirst($query->getQueryType());
+        $startTime = Logger::microtime();
 
-        $queryResultData = [];
+        $queryResult = null;
+
+        $cache = ['tags' => $query->getValidateTags(), 'time' => 0, 'data' => []];
 
         try {
-            $queryResultData = $this->$queryCommand($this->getStatement($query), $query);
+            $queryType = $query->getQueryType();
+            if (
+                ($queryType == Query_Builder::TYPE_SELECT && !$ttl) ||
+                $queryType == Query_Builder::TYPE_CREATE ||
+                $queryType == Query_Builder::TYPE_DROP
+            ) {
+                return $this->getQueryResult($query);
+            }
+
+            switch ($queryType) {
+                case Query_Builder::TYPE_SELECT:
+                    $hash = $query->getFullHash();
+
+                    $cacheDataProvider = Query::getDataProvider('query');
+
+                    $cache = Arrays::defaults($cache, $cacheDataProvider->get($hash));
+
+                    if (Cache::validate(__CLASS__, $cache['tags'], $cache['time'])) {
+                        if (!Environment::isProduction()) {
+                            $message = 'sql cache: ' . str_replace("\t", '', str_replace("\n", ' ', $query->getSql())) . ' [' . implode(', ', $query->getBinds()) . '] ' . Logger::microtimeResult($startTime);
+
+                            if (Request::isCli()) {
+                                Query::getLogger()->info($message . ' ' . Memory::memoryGetUsagePeak(), Logger::SUCCESS, false);
+                            } else {
+                                Logger::fb($message);
+                            }
+                        }
+
+                        return Query_Result::create($query->getModelClass(), $cache['data']);
+                    }
+
+                    $queryResult = $this->getQueryResult($query);
+
+                    $cache['data'] = $queryResult->getResult();
+                    $cache['time'] = time();
+
+                    $cacheDataProvider->set($hash, $cache, $ttl);
+                    break;
+
+                case Query_Builder::TYPE_INSERT:
+                case Query_Builder::TYPE_UPDATE:
+                case Query_Builder::TYPE_DELETE:
+                    $queryResult = $this->getQueryResult($query);
+
+                    $cache['data'] = $queryResult->getResult();
+                    Cache::invalidate(__CLASS__, $query->getInvalidateTags());
+                    break;
+
+                default:
+                    Data_Source::getLogger()->fatal(['Unknown data source query statement type {$0}', $queryType], __FILE__, __LINE__, null, $query);
+            }
         } catch (Exception $e) {
             Data_Source::getLogger()->fatal('Data source execute query failed', __FILE__, __LINE__, $e, $query);
         }
 
-        return $queryResultData;
+        if (!Environment::isProduction()) {
+            $message = 'sql query: ' . str_replace("\t", '', str_replace("\n", ' ', $query->getSql())) . ' [' . implode(', ', $query->getBinds()) . '] ' . Logger::microtimeResult($startTime);
+
+            if (Request::isCli()) {
+                Query::getLogger()->info($message . ' ' . Memory::memoryGetUsagePeak(), Logger::SUCCESS, false);
+            } else {
+                Logger::fb($message);
+            }
+        }
+
+        return $queryResult;
+    }
+
+    /**
+     * Execute query command and return query result
+     *
+     * @param Query $query
+     * @return Query_Result
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.4
+     */
+    private function getQueryResult(Query $query)
+    {
+        $queryCommand = 'execute' . ucfirst($query->getQueryType());
+        return Query_Result::create($query->getModelClass(), $this->$queryCommand($this->getStatement($query), $query));
     }
 
     /**

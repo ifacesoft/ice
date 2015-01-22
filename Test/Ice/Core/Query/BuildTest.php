@@ -16,21 +16,21 @@ class BuildTest extends PHPUnit_Framework_TestCase
             '/phone' => '00000000000',
             '/email' => 'qw@er.ty',
             'surname' => 'test'
-        ])->insert();
+        ])->save();
 
-        $user1->set(['surname' => 'test surname'])->update();
+        $user1->set(['surname' => 'test surname'])->save();
 
         $this->assertNotNull($user1);
         $this->assertTrue($user1 instanceof User);
 
         $user2 = User::create(['surname' => 'test surname'])
-            ->select(['/name', '/phone', '/email']);
+            ->find(['/name', '/phone', '/email']);
 
         $this->assertNotNull($user2);
         $this->assertTrue($user2 instanceof User);
         $this->assertEquals($user1, $user2);
 
-        $user2->delete();
+        $user2->remove();
 
         $user3 = User::getModel(1, '/pk');
 

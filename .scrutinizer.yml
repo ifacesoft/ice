@@ -1,9 +1,9 @@
 imports:
     - php
 
-filter:
-    paths:
-        - Source/*
+#filter:
+#    paths:
+#        - Source/*
 
 tools:
     external_code_coverage:

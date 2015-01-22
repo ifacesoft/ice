@@ -9,9 +9,10 @@
 
 namespace Ice\Core;
 
+use Countable;
 use Ice\Core;
+use Ice\Helper\Arrays;
 use IteratorAggregate;
-use Traversable;
 
 /**
  * Class Model_Collection
@@ -23,82 +24,70 @@ use Traversable;
  * @package Ice
  * @subpackage Core
  *
- * @version 0.2
+ * @version 0.4
  * @since 0.0
  */
-class Model_Collection implements IteratorAggregate
+class Model_Collection implements IteratorAggregate, Countable
 {
     use Core;
 
     /**
-     * Data of model collection
+     * Collection data iterator
      *
-     * @var Query_Result
+     * @var Model_Collection_Iterator
      */
-    private $_queryResult = null;
+    private $_iterator = null;
+
+    private $_query = null;
+
+    private $_pagination = null;
 
     /**
      * Private constructor for model collection
      *
-     * @param Query_Result $queryResult
+     * @param $modelClass
+     * @param array $rows
+     * @param Query $query
+     * @param array $pagination
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.2
+     * @version 0.4
      * @since 0.0
      */
-    private function __construct(Query_Result $queryResult)
+    private function __construct($modelClass, array $rows = [], Query $query = null, array $pagination = [1, 1000, 0])
     {
-        $this->_queryResult = $queryResult;
+        $this->_iterator = Model_Collection_Iterator::create($modelClass, $rows);
+        $this->_query = $query;
+        $this->_pagination = $pagination;
     }
 
     /**
      * Create new instance of model collection
      *
-     * @param Query_Result $queryResult
+     * @param Model $modelClass
+     * @param mixed $data
      * @return Model_Collection
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.1
+     * @version 0.4
      * @since 0.0
      */
-    public static function create(Query_Result $queryResult = null)
+    public static function create($modelClass, $data = null)
     {
-        return new Model_Collection($queryResult);
-    }
-
-    /**
-     * Return size (count potential models) of model collection
-     *
-     * @return int
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.2
-     * @since 0.0
-     */
-    public function getCount()
-    {
-        if ($this->_queryResult === null) {
-            return 0;
+        if (is_array($data)) {
+            return new Model_Collection($modelClass, $data);
         }
 
-        return $this->_queryResult->count();
-    }
-
-    /**
-     * Return raw data
-     *
-     * @return Query_Result
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.2
-     * @since 0.0
-     */
-    public function getQueryResult()
-    {
-        return $this->_queryResult;
+        return $data && $data instanceof Query_Result
+            ? new Model_Collection(
+                $modelClass,
+                $data->getRows(),
+                $data->getQuery(),
+                $data->getPagination()
+            )
+            : new Model_Collection($modelClass);
     }
 
 //    /**
@@ -140,17 +129,17 @@ class Model_Collection implements IteratorAggregate
      */
     public function first()
     {
-        if ($this->_queryResult === null) {
+        if ($this->_iterator === null) {
             return null;
         }
 
-        $row = $this->_queryResult->getRow();
+        $row = $this->_iterator->getRow();
 
         if (!$row) {
             return null;
         }
 
-        $modelClass = $this->_queryResult->getModelClass();
+        $modelClass = $this->_iterator->getModelClass();
 
         return $modelClass::create($row);
     }
@@ -163,42 +152,116 @@ class Model_Collection implements IteratorAggregate
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @deprecated 0.2
-     * @version 0.2
+     * @version 0.4
      * @since 0.0
      */
     public function getRow($pk = null)
     {
-        if ($this->_queryResult === null) {
+        $rows = $this->getRows();
+
+        if (empty($rows)) {
             return null;
         }
 
-        return $this->_queryResult->getRow($pk);
+        if (isset($pk)) {
+            return isset($rows[$pk]) ? $rows[$pk] : null;
+        }
+
+        return reset($rows);
     }
 
     /**
-     * Add model to model collection
+     * Return collection as array
      *
-     * @param Model $model
+     * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.4
+     */
+    public function getRows()
+    {
+        return $this->getIterator()->getRows();
+    }
+
+    /**
+     * (PHP 5 &gt;= 5.0.0)<br/>
+     * Retrieve an external iterator
+     * @link http://php.net/manual/en/iteratoraggregate.getiterator.php
+     * @return Model_Collection_Iterator An instance of an object implementing <b>Iterator</b> or
+     * <b>Traversable</b>
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.0
+     */
+    public function getIterator()
+    {
+        return $this->_iterator;
+    }
+
+    /**
+     * Add data to model collection
+     *
+     * @param Model|Model_Collection|array $data
      * @return Model_Collection
      * @throws Exception
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.2
+     * @version 0.4
      * @since 0.0
      */
-    public function add(Model $model)
+    public function add($data)
     {
-        if ($this->_queryResult !== null) {
-            Model_Collection::getLogger()->fatal('Could not add item in collection created by query', __FILE__, __LINE__);
+        $modelClass = $this->getModelClass();
+
+        if ($data instanceof Model) {
+            if (!($data instanceof $modelClass)) {
+                Model_Collection::getLogger()->fatal(['Add model {$0} to collection of model {$1} failure: type mismatch', [get_class($data), $modelClass]], __FILE__, __LINE__);
+            }
+
+            $data = $data->get();
         }
 
-        $this->_queryResult = new Query_Result([Query_Result::RESULT_MODEL_CLASS => get_class($model)]);
+        if ($data instanceof Model_Collection) {
+            $modelClass2 = $data->getModelClass();
 
-        $this->_queryResult->setRow($model->getPk(), $model->get());
+            if ($modelClass != $modelClass2) {
+                Model_Collection::getLogger()->fatal(['Add collection of model {$0} to collection of model {$1} failure: type mismatch', [$modelClass2, $modelClass]], __FILE__, __LINE__);
+            }
+
+            $data = $data->getRows();
+        }
+
+        if (!is_array($data)) {
+            Model_Collection::getLogger()->fatal('Data mast by Model, Model_Collection or array type', __FILE__, __LINE__, null, $data);
+
+        }
+
+        $this->_query = null;
+        $this->_pagination = null;
+
+        $this->getIterator()->add($data);
 
         return $this;
+    }
+
+    /**
+     * Return model class of collection
+     *
+     * @return Model
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.4
+     */
+    public function getModelClass()
+    {
+        return $this->getIterator()->getModelClass();
     }
 
     /**
@@ -220,7 +283,7 @@ class Model_Collection implements IteratorAggregate
 
         $this->setQueryResult(
             $modelClass::query()
-                ->insert($this->getQueryResult()->getRows(), false, $sourceName)
+                ->insert($this->getIterator()->getRows(), false, $sourceName)
                 ->getQuery($sourceName)
         );
 
@@ -276,28 +339,11 @@ class Model_Collection implements IteratorAggregate
      */
     public function getKeys()
     {
-        if ($this->_queryResult === null) {
+        if ($this->_iterator === null) {
             return [];
         }
 
-        return $this->_queryResult->getKeys();
-    }
-
-    /**
-     * (PHP 5 &gt;= 5.0.0)<br/>
-     * Retrieve an external iterator
-     * @link http://php.net/manual/en/iteratoraggregate.getiterator.php
-     * @return Traversable An instance of an object implementing <b>Iterator</b> or
-     * <b>Traversable</b>
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function getIterator()
-    {
-        return new Model_Collection_Iterator($this->getQueryResult());
+        return $this->_iterator->getKeys();
     }
 
     /**
@@ -313,35 +359,35 @@ class Model_Collection implements IteratorAggregate
      */
     public function get($pk)
     {
-        $row = $this->_queryResult->getRow($pk);
+        $row = $this->_iterator->getRow($pk);
 
         if (!$row) {
             return null;
         }
 
-        $modelClass = $this->_queryResult->getModelClass();
+        $modelClass = $this->_iterator->getModelClass();
 
         return $modelClass::create($row);
     }
 
     /**
-     * Remove model from collection
+     * Remove from data source
      *
-     * @param null $pk
+     * @param null $sourceName
      * @return Model
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @todo need refactoring. Not work. ERROR: Sql query is empty ;)
      * @version 0.0
      * @since 0.0
      */
-    public function remove($pk = null)
+    public function remove($sourceName = null)
     {
-        /** @var Model $modelClass */
-        $modelClass = $this->_modelClass;
+        $modelClass = $this->getModelClass();
 
-        return $modelClass::create($this->getQueryResult()->delete($pk));
+        $pkFieldNames = $modelClass::getPkFieldNames();
+
+        $this->getIterator()->setRows($modelClass::query()->delete(Arrays::column($this->getRows(), reset($pkFieldNames)), $sourceName)->getRows());
     }
 
     /**
@@ -386,9 +432,47 @@ class Model_Collection implements IteratorAggregate
             return $this->filter([$fieldScheme]);
         }
 
-        $modelClass = $this->_queryResult->getModelClass();
+        $modelClass = $this->_iterator->getModelClass();
         $collection = $modelClass::getCollection();
-        $collection->setData($this->getQueryResult()->filter($fieldScheme));
+        $collection->setData($this->getIterator()->filter($fieldScheme));
         return $collection;
+    }
+
+    /**
+     * Return of size collection
+     *
+     * (PHP 5 &gt;= 5.1.0)<br/>
+     * Count elements of an object
+     * @link http://php.net/manual/en/countable.count.php
+     * @return int The custom count as an integer.
+     * </p>
+     * <p>
+     * The return value is cast to an integer.
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.4
+     */
+    public function count()
+    {
+        return count($this->getRows());
+    }
+
+    /**
+     * Insert or update collection
+     *
+     * @param null $sourceName
+     * @param bool $update
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.4
+     */
+    public function save($sourceName = null, $update = false)
+    {
+        $modelClass = $this->getModelClass();
+        $this->getIterator()->setRows($modelClass::query()->insert($this->getRows(), $update, $sourceName)->getRows());
     }
 }

@@ -472,7 +472,7 @@ class Logger
      */
     public static function microtimeResult($start)
     {
-        return round(microtime(true) - $start, 5);
+        return round(microtime(true) - $start, 5) * 1000 . ' ms';
     }
 
     /**

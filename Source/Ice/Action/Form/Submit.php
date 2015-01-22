@@ -11,8 +11,8 @@ namespace Ice\Action;
 
 use Ice\Core\Action;
 use Ice\Core\Action_Context;
-use Ice\Core\Exception;
 use Ice\Core\Logger;
+use Ice\Core\Form as Core_Form;
 
 /**
  * Class Form_Submit
@@ -72,7 +72,7 @@ class Form_Submit extends Action
      */
     protected function run(array $input, Action_Context $actionContext)
     {
-        /** @var Form $formClass */
+        /** @var Core_Form $formClass */
         $formClass = $input['formClass'];
         unset($input['formClass']);
 

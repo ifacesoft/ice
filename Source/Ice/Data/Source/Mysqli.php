@@ -11,11 +11,13 @@ namespace Ice\Data\Source;
 
 use Ice\Core\Data_Source;
 use Ice\Core\Exception;
+use Ice\Core\Logger;
 use Ice\Core\Model;
 use Ice\Core\Query;
 use Ice\Core\Query_Builder;
 use Ice\Core\Query_Result;
 use Ice\Helper\Arrays;
+use mysqli_result;
 use mysqli_stmt;
 
 /**
@@ -56,6 +58,7 @@ class Mysqli extends Data_Source
             Data_Source::getLogger()->fatal(['#' . $errno . ': {$0}', $error], __FILE__, __LINE__);
         }
 //            $statement->store_result(); // Так почемуто не работает
+        /** @var mysqli_result $result */
         $result = $statement->get_result();
 
         if ($result === false) {
@@ -70,13 +73,12 @@ class Mysqli extends Data_Source
         /** @var Model $modelClass */
         $modelClass = $query->getModelClass();
 
-        $data[Query_Result::RESULT_MODEL_CLASS] = $modelClass;
         $pkFieldNames = $modelClass::getPkFieldNames();
 
         $data[Query_Result::NUM_ROWS] = $result->num_rows;
 
         while ($row = $result->fetch_assoc()) {
-            $data[Query_Result::RESULT_ROWS][implode('_', array_intersect_key($row, array_flip($pkFieldNames)))] = $row;
+            $data[Query_Result::ROWS][implode('_', array_intersect_key($row, array_flip($pkFieldNames)))] = $row;
         }
 
         $result->close();
@@ -99,8 +101,6 @@ class Mysqli extends Data_Source
             $data[Query_Result::LIMIT] = $limit;
             $data[Query_Result::PAGE] = $offset / $limit + 1;
         }
-
-        $data[Query_Result::QUERY_FULL_HASH] = $query->getFullHash();
 
         return $data;
     }
@@ -210,8 +210,6 @@ class Mysqli extends Data_Source
 
         $pkFieldName = count($pkFieldNames) == 1 ? reset($pkFieldNames) : null;
 
-        $data[Query_Result::RESULT_MODEL_CLASS] = $modelclass;
-
         $insertId = $statement->insert_id;
 
         foreach ($query->getBindParts()[Query_Builder::PART_VALUES] as $row) {
@@ -227,7 +225,7 @@ class Mysqli extends Data_Source
             $insertKeys = array_intersect_key($row, array_flip($pkFieldNames));
 
             $data[Query_Result::INSERT_ID][] = $insertKeys;
-            $data[Query_Result::RESULT_ROWS][implode('_', $insertKeys)] = $row;
+            $data[Query_Result::ROWS][implode('_', $insertKeys)] = $row;
         }
 
         $data[Query_Result::AFFECTED_ROWS] = $statement->affected_rows;
@@ -264,11 +262,9 @@ class Mysqli extends Data_Source
         $modelclass = $query->getModelClass();
         $pkFieldNames = $modelclass::getPkFieldNames();
 
-        $data[Query_Result::RESULT_MODEL_CLASS] = $modelclass;
-
         foreach ($query->getBindParts()[Query_Builder::PART_SET] as $row) {
             $insertKey = implode('_', array_intersect_key($row, array_flip($pkFieldNames)));
-            $data[Query_Result::RESULT_ROWS][$insertKey] = $row;
+            $data[Query_Result::ROWS][$insertKey] = $row;
         }
 
         $data[Query_Result::AFFECTED_ROWS] = $statement->affected_rows;
@@ -478,7 +474,6 @@ class Mysqli extends Data_Source
 
         $data = [];
 
-        $data[Query_Result::RESULT_MODEL_CLASS] = $query->getModelClass();
         $data[Query_Result::AFFECTED_ROWS] = $statement->affected_rows;
 
         $statement->close();
@@ -509,7 +504,6 @@ class Mysqli extends Data_Source
 
         $data = [];
 
-        $data[Query_Result::RESULT_MODEL_CLASS] = $query->getModelClass();
         $data[Query_Result::AFFECTED_ROWS] = $statement->affected_rows;
 
         $statement->close();

@@ -160,7 +160,7 @@ abstract class Form extends Container
 
         return $this->addField(
             $fieldName,
-            Arrays::defaults($options, $this->_defaultOptions),
+            Arrays::defaults($this->_defaultOptions, $options),
             $validators,
             $value
         );
@@ -239,7 +239,7 @@ abstract class Form extends Container
 
         return $this->addField(
             $fieldName,
-            Arrays::defaults($options, $this->_defaultOptions),
+            Arrays::defaults($this->_defaultOptions, $options),
             $validators,
             $value
         );
@@ -269,7 +269,7 @@ abstract class Form extends Container
 
         return $this->addField(
             $fieldName,
-            Arrays::defaults($options, $this->_defaultOptions),
+            Arrays::defaults($this->_defaultOptions, $options),
             $validators,
             $value
         );
@@ -299,7 +299,7 @@ abstract class Form extends Container
 
         return $this->addField(
             $fieldName,
-            Arrays::defaults($options, $this->_defaultOptions),
+            Arrays::defaults($this->_defaultOptions, $options),
             $validators,
             $value
         );
@@ -329,7 +329,7 @@ abstract class Form extends Container
 
         return $this->addField(
             $fieldName,
-            Arrays::defaults($options, $this->_defaultOptions),
+            Arrays::defaults($this->_defaultOptions, $options),
             $validators,
             $value
         );
@@ -359,7 +359,7 @@ abstract class Form extends Container
 
         return $this->addField(
             $fieldName,
-            Arrays::defaults($options, $this->_defaultOptions),
+            Arrays::defaults($this->_defaultOptions, $options),
             $validators,
             $value
         );
@@ -389,7 +389,7 @@ abstract class Form extends Container
 
         return $this->addField(
             $fieldName,
-            Arrays::defaults($options, $this->_defaultOptions),
+            Arrays::defaults($this->_defaultOptions, $options),
             $validators,
             $value
         );
@@ -419,7 +419,7 @@ abstract class Form extends Container
 
         return $this->addField(
             $fieldName,
-            Arrays::defaults($options, $this->_defaultOptions),
+            Arrays::defaults($this->_defaultOptions, $options),
             $validators,
             $value
         );
