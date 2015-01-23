@@ -64,7 +64,6 @@ class Console
      * @param $string
      * @param Resource $resource
      * @return string
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0

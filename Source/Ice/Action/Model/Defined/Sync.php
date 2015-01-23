@@ -79,7 +79,7 @@ class Model_Defined_Sync extends Action
                 /** @var Model_Collection $rowCollection */
                 $rowCollection = $modelClass::getCollection($dataSource);
 
-                $dataRows = $modelClass::getCollection()->getRows();
+                $dataRows = $modelClass::getCollection('*')->getRows();
 
                 if (!count($dataRows)) {
                     throw new Exception('Не определен конфиг Defined модели "' . $modelClass . '"');
@@ -89,17 +89,13 @@ class Model_Defined_Sync extends Action
                     $query = null;
                     $model = $rowCollection->get($pk);
                     if ($model) {
-                        $rowCollection->remove($pk)->save($row, null, $dataSource);
+                        $rowCollection->remove($pk)->save($dataSource);
                         continue;
                     }
                     $modelClass::create($row)->save($dataSource);
                 }
 
-                if ($rowCollection->getCount()) {
-                    $modelClass::query('delete')
-                        ->in('/pk', $rowCollection->getKeys())
-                        ->getQuery($dataSource);
-                }
+                $rowCollection->remove($dataSource);
             }
         }
     }

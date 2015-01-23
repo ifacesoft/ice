@@ -76,7 +76,7 @@ class Paginator extends Action
 
         $output = [];
 
-        list($output['page'], $output['limit'], $output['foundRows']) = $data->getPagination();
+        list($output['page'], $output['limit'], $output['foundRows']) = $data->getQuery()->getPagination();
 
         if ($output['page'] > 1) {
             $output['first'] = 1;

@@ -58,7 +58,7 @@ class Model_Collection_Iterator implements Iterator
     private function __construct($modelClass, $rows)
     {
         $this->_modelClass = $modelClass;
-        $this->_rows = $rows;
+        $this->setRows($rows);
     }
 
     /**

@@ -97,9 +97,9 @@ class Model_Collection implements IteratorAggregate, Countable
      */
     public function first()
     {
-       if (!$this->count()) {
-           return null;
-       }
+        if (!$this->count()) {
+            return null;
+        }
 
         $modelClass = $this->getModelClass();
         $rows = $this->getRows();
@@ -108,51 +108,24 @@ class Model_Collection implements IteratorAggregate, Countable
     }
 
     /**
-     * Return last model of model collection if not empty
+     * Return of size collection
      *
-     * @return Model|null
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since 0.0
-     */
-    public function last()
-    {
-        if (!$this->count()) {
-            return null;
-        }
-
-        $modelClass = $this->getModelClass();
-        $rows = $this->getRows();
-
-        return $modelClass::create(end($rows))->clearAffected();
-    }
-
-    /**
-     * Return row from data in model collection
-     *
-     * @param mixed $pk
-     * @return array|null
+     * (PHP 5 &gt;= 5.1.0)<br/>
+     * Count elements of an object
+     * @link http://php.net/manual/en/countable.count.php
+     * @return int The custom count as an integer.
+     * </p>
+     * <p>
+     * The return value is cast to an integer.
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
-     * @since 0.0
+     * @since 0.4
      */
-    public function getRow($pk = null)
+    public function count()
     {
-        $rows = $this->getRows();
-
-        if (empty($rows)) {
-            return null;
-        }
-
-        if (isset($pk)) {
-            return isset($rows[$pk]) ? $rows[$pk] : null;
-        }
-
-        return reset($rows);
+        return count($this->getRows());
     }
 
     /**
@@ -185,6 +158,43 @@ class Model_Collection implements IteratorAggregate, Countable
     public function getIterator()
     {
         return $this->_iterator;
+    }
+
+    /**
+     * Return model class of collection
+     *
+     * @return Model
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.4
+     */
+    public function getModelClass()
+    {
+        return $this->getIterator()->getModelClass();
+    }
+
+    /**
+     * Return last model of model collection if not empty
+     *
+     * @return Model|null
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.0
+     */
+    public function last()
+    {
+        if (!$this->count()) {
+            return null;
+        }
+
+        $modelClass = $this->getModelClass();
+        $rows = $this->getRows();
+
+        return $modelClass::create(end($rows))->clearAffected();
     }
 
     /**
@@ -234,21 +244,6 @@ class Model_Collection implements IteratorAggregate, Countable
     }
 
     /**
-     * Return model class of collection
-     *
-     * @return Model
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since 0.4
-     */
-    public function getModelClass()
-    {
-        return $this->getIterator()->getModelClass();
-    }
-
-    /**
      * Return primary keys of all models in model collection
      *
      * @return array
@@ -292,23 +287,29 @@ class Model_Collection implements IteratorAggregate, Countable
     }
 
     /**
-     * Remove from data source
+     * Return row from data in model collection
      *
-     * @param string|null $sourceName
-     * @return Model_Collection
+     * @param mixed $pk
+     * @return array|null
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
-     * @since 0.4
+     * @since 0.0
      */
-    public function remove($sourceName = null)
+    public function getRow($pk = null)
     {
-        $modelClass = $this->getModelClass();
+        $rows = $this->getRows();
 
-        $pkFieldNames = $modelClass::getPkFieldNames();
+        if (empty($rows)) {
+            return null;
+        }
 
-        $this->getIterator()->setRows($modelClass::query()->delete(Arrays::column($this->getRows(), reset($pkFieldNames)), $sourceName)->getRows());
+        if (isset($pk)) {
+            return isset($rows[$pk]) ? $rows[$pk] : null;
+        }
+
+        return reset($rows);
     }
 
 //    /**
@@ -360,30 +361,29 @@ class Model_Collection implements IteratorAggregate, Countable
 //    }
 
     /**
-     * Return of size collection
+     * Remove from data source
      *
-     * (PHP 5 &gt;= 5.1.0)<br/>
-     * Count elements of an object
-     * @link http://php.net/manual/en/countable.count.php
-     * @return int The custom count as an integer.
-     * </p>
-     * <p>
-     * The return value is cast to an integer.
+     * @param string|null $sourceName
+     * @return Model_Collection
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
      * @since 0.4
      */
-    public function count()
+    public function remove($sourceName = null)
     {
-        return count($this->getRows());
+        $modelClass = $this->getModelClass();
+
+        $pkFieldNames = $modelClass::getPkFieldNames();
+
+        $this->getIterator()->setRows($modelClass::query()->delete(Arrays::column($this->getRows(), reset($pkFieldNames)), $sourceName)->getRows());
     }
 
     /**
      * Insert or update collection
      *
-     * @param string $sourceName
+     * @param string|null $sourceName
      * @param bool $update
      * @return Model_Collection
      *
@@ -395,7 +395,9 @@ class Model_Collection implements IteratorAggregate, Countable
     public function save($sourceName = null, $update = false)
     {
         $modelClass = $this->getModelClass();
-        $this->getIterator()->setRows($modelClass::query()->insert($this->getRows(), $update, $sourceName)->getRows());
+        $this->getIterator()->setRows(
+            $modelClass::query()->insert($this->getRows(), $update, $sourceName)->getRows()
+        );
         return $this;
     }
 

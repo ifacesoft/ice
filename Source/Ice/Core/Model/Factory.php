@@ -30,8 +30,9 @@ abstract class Model_Factory extends Model_Defined
      * Получение делегата модели
      *
      * @param $delegateName
+     * @param string|null $sourceName
+     * @param int $ttl
      * @return Model|null
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0

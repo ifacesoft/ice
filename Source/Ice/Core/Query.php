@@ -109,6 +109,7 @@ class Query extends Container
      * @var array
      */
     private $_pagination = null;
+
     /**
      * Private constructor of query builder. Create: Query::getInstance()->...
      *

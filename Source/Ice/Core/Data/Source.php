@@ -193,9 +193,9 @@ abstract class Data_Source extends Container
     /**
      * Execute query create table to data source
      *
+     * @param $statement
      * @param Query $query
      * @return array
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0

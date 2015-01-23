@@ -553,6 +553,7 @@ abstract class Model
         }
 
         Model::getLogger()->fatal(['Field {$0} not found in Model {$1}', [$fieldName, $modelName]], __FILE__, __LINE__);
+        return null;
     }
 
     /**
@@ -871,7 +872,7 @@ abstract class Model
      *
      * @param $pk
      * @param array|string $fieldNames
-     * @param string $sourceName
+     * @param string|null $sourceName
      * @param int $ttl
      * @return Model|null
      * @author dp <denis.a.shestakov@gmail.com>
@@ -1329,7 +1330,7 @@ abstract class Model
                 strtolower($selfClassName) . '__fk' => $this->getPk(),
                 strtolower($className) . '__fk' => $modelPk
             ])
-            ->select('*')
-            ->getModel($sourceName, $ttl);
+            ->select('*', null, null, null, $sourceName, $ttl)
+            ->getModel();
     }
 }
