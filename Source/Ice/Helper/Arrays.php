@@ -192,7 +192,7 @@ class Arrays
                     $values = array_intersect_key($row, array_flip($columnKey));
                     if (!empty($values)) {
                         $valueSet = true;
-                        $value = $values;
+                        $value = implode('_', $values);
                     }
                 } else {
                     if (array_key_exists($columnKey, $row)) {

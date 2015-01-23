@@ -173,7 +173,7 @@ abstract class Data_Provider
      * Get instance connection of data provider
      *
      * @throws Exception
-     * @return Object
+     * @return mixed
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *

@@ -53,7 +53,7 @@ class Model_CollectionTest extends PHPUnit_Framework_TestCase
 
         $testCollection = Test::getCollection(['/name', 'name2']);
 
-        $this->assertEquals($testCollection, Model_Collection::create(Test::getClass()));
+        $this->assertEquals($testCollection->getRows(), Model_Collection::create(Test::getClass())->getRows());
 
         $testCollection->add(Test::create($row))->save();
 
@@ -114,6 +114,8 @@ class Model_CollectionTest extends PHPUnit_Framework_TestCase
 
         Model_Collection::create(Test::getClass())->add($rows)->save();
 
+        $testCollection = Test::getCollection('*');
+
         $this->assertEquals(
             [
                 1 => [
@@ -147,30 +149,27 @@ class Model_CollectionTest extends PHPUnit_Framework_TestCase
                     'name2' => 'name26'
                 ]
             ],
-            Test::getCollection('*')->getRows()
+            $testCollection->getRows()
         );
 
         Test::query()->inPk([1, 3, 6])->select('/name')->getModelCollection()->remove();
 
-        $this->assertEquals(
-            [
-                2 => [
-                    'test_pk' => 2,
-                    'test_name' => 'name12',
-                    'name2' => 'name22'
-                ],
-                4 => [
-                    'test_pk' => 4,
-                    'test_name' => 'name14',
-                    'name2' => 'name24'
-                ],
-                5 => [
-                    'test_pk' => 5,
-                    'test_name' => 'name15',
-                    'name2' => 'name25'
-                ],
-            ],
-            Test::getCollection('*')->getRows()
-        );
+        $this->assertNotEquals($testCollection->getRows(), Test::getCollection('*')->getRows());
+
+        $this->assertEquals($testCollection->reload(), Test::getCollection('*'));
+
+        $this->assertEquals($testCollection->first(), Test::getModel(2, '*'));
+
+        $this->assertEquals($testCollection->last(), Test::getModel(5, '*'));
+
+        $this->assertEquals($testCollection->getRow(4), [
+            'test_pk' => 4,
+            'test_name' => 'name14',
+            'name2' => 'name24'
+        ]);
+
+        $this->assertEquals($testCollection->getKeys(), [2, 4, 5]);
+
+        $this->assertEquals($testCollection->get(4), Test::getModel(4, '*'));
     }
 }

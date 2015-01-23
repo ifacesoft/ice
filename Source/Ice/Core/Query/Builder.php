@@ -945,7 +945,7 @@ class Query_Builder
      * @param null $fieldAlias
      * @param null $modelClass
      * @param null $tableAlias
-     * @param null $sourceName
+     * @param string|null $sourceName
      * @param int $ttl
      * @return Query_Result
      *
@@ -966,7 +966,7 @@ class Query_Builder
     /**
      * Return instance of query by current query builder
      *
-     * @param null $sourceName
+     * @param string|null $sourceName
      * @return Query
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -1124,7 +1124,7 @@ class Query_Builder
      * Return query result for delete query
      *
      * @param array $pkValues
-     * @param null $sourceName
+     * @param string|null $sourceName
      * @param int $ttl
      * @return Query_Result
      *
@@ -1419,7 +1419,7 @@ class Query_Builder
     /**
      * Execute query create table
      *
-     * @param null $sourceName
+     * @param string|null $sourceName
      * @param int $ttl
      * @return Query_Result
      *
@@ -1437,7 +1437,7 @@ class Query_Builder
     /**
      * Execute query drop table
      *
-     * @param null $sourceName
+     * @param string|null $sourceName
      * @param int $ttl
      * @return Query_Result
      *

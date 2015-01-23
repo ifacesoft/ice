@@ -104,6 +104,12 @@ class Query extends Container
     private $_bindHash = null;
 
     /**
+     * Page, perpage and totalCount
+     *
+     * @var array
+     */
+    private $_pagination = null;
+    /**
      * Private constructor of query builder. Create: Query::getInstance()->...
      *
      * @param $data
@@ -126,6 +132,27 @@ class Query extends Container
         $this->_calcFoundRows = reset($sqlParts[Query_Builder::PART_SELECT]);
         $this->_limit = $sqlParts[Query_Builder::PART_LIMIT];
         $this->_hash = $hash;
+    }
+
+    /**
+     * @return array
+     */
+    public function getPagination()
+    {
+        return $this->_pagination;
+    }
+
+    /**
+     * @param $foundRows
+     */
+    public function setPagination($foundRows)
+    {
+        $limit = $this->getLimit();
+
+        if (!empty($limit)) {
+            list($limit, $offset) = $limit;
+            $this->_pagination = [$offset / $limit + 1, $limit, $foundRows];
+        }
     }
 
     /**

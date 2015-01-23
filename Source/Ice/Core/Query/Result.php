@@ -32,9 +32,6 @@ class Query_Result
     const NUM_ROWS = 'numRows';
     const AFFECTED_ROWS = 'affectedRows';
     const INSERT_ID = 'insertId';
-    const FOUND_ROWS = 'foundRows';
-    const PAGE = 'page';
-    const LIMIT = 'limit';
 
     /**
      * Default result
@@ -45,10 +42,7 @@ class Query_Result
         Query_Result::ROWS => [],
         Query_Result::QUERY => null,
         Query_Result::NUM_ROWS => 0,
-        Query_Result::FOUND_ROWS => null,
         Query_Result::AFFECTED_ROWS => 0,
-        Query_Result::PAGE => 1,
-        Query_Result::LIMIT => 1000,
         Query_Result::INSERT_ID => null
     ];
 
@@ -271,7 +265,7 @@ class Query_Result
 
         $modelClass = $this->getModelClass();
 
-        return $modelClass::create($row);
+        return $modelClass::create($row)->clearAffected();
     }
 
     /**
@@ -586,15 +580,4 @@ class Query_Result
     {
         return $this->_result[Query_Result::QUERY];
     }
-
-    public function getPagination()
-    {
-        return [
-            $this->_result[Query_Result::PAGE],
-            $this->_result[Query_Result::LIMIT],
-            $this->_result[Query_Result::FOUND_ROWS]
-        ];
-    }
-
-
 }

@@ -704,9 +704,9 @@ abstract class Model
     /**
      * Return all rows for self model class
      *
-     * @param array $paginator
+     * @param array $pagination
      * @param string $fieldNames
-     * @param null $sourceName
+     * @param string|null $sourceName
      * @param int $ttl
      * @return array
      * @author dp <denis.a.shestakov@gmail.com>
@@ -714,10 +714,10 @@ abstract class Model
      * @version 0.2
      * @since 0.0
      */
-    public static function getRows(array $paginator, $fieldNames = '*', $sourceName = null, $ttl = 3600)
+    public static function getRows(array $pagination, $fieldNames = '*', $sourceName = null, $ttl = 3600)
     {
         return self::query()
-            ->setPaginator($paginator)
+            ->setPaginator($pagination)
             ->select($fieldNames, null, null, null, $sourceName, $ttl)
             ->getRows();
     }
@@ -727,7 +727,7 @@ abstract class Model
      *
      * @param array $pagination
      * @param string $fieldNames
-     * @param null $sourceName
+     * @param string|null $sourceName
      * @param int $ttl
      * @return Model_Collection
      * @author dp <denis.a.shestakov@gmail.com>
@@ -848,7 +848,7 @@ abstract class Model
      *
      * @param array $fieldNameValues
      * @param $fieldNames
-     * @param null $sourceName
+     * @param string|null $sourceName
      * @param int $ttl
      * @return Model|null
      *
@@ -893,7 +893,7 @@ abstract class Model
      *
      * @param array $pk
      * @param string $fieldNames
-     * @param null $sourceName
+     * @param string|null $sourceName
      * @param int $ttl
      * @return array
      *
@@ -1104,7 +1104,7 @@ abstract class Model
     /**
      * Execute insert or update model data
      *
-     * @param null $sourceName
+     * @param string|null $sourceName
      * @return Model|null
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -1199,7 +1199,7 @@ abstract class Model
     /**
      * Execute delete for model
      *
-     * @param null $sourceName
+     * @param string|null $sourceName
      * @return Model|null
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -1296,7 +1296,7 @@ abstract class Model
      * @param Model $modelClass
      * @param mixed $modelPk
      * @param Model|null $linkModelClass
-     * @param null $sourceName
+     * @param string|null $sourceName
      * @param int $ttl
      * @return Model|null
      *

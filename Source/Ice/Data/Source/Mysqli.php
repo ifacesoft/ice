@@ -88,18 +88,12 @@ class Mysqli extends Data_Source
             $result = $this->getConnection()->query('SELECT FOUND_ROWS()');
             $foundRows = $result->fetch_row();
             $result->close();
-            $data[Query_Result::FOUND_ROWS] = reset($foundRows);
+            $query->setPagination(reset($foundRows));
         } else {
-            $data[Query_Result::FOUND_ROWS] = $data[Query_Result::NUM_ROWS];
+            $query->setPagination($data[Query_Result::NUM_ROWS]);
         }
 
-        $limit = $query->getLimit();
-
-        if (!empty($limit)) {
-            list($limit, $offset) = $limit;
-            $data[Query_Result::LIMIT] = $limit;
-            $data[Query_Result::PAGE] = $offset / $limit + 1;
-        }
+        $data[Query_Result::QUERY] = $query;
 
         return $data;
     }
@@ -231,6 +225,8 @@ class Mysqli extends Data_Source
 
         $statement->close();
 
+        $data[Query_Result::QUERY] = $query;
+
         return $data;
     }
 
@@ -270,6 +266,8 @@ class Mysqli extends Data_Source
 
         $statement->close();
 
+        $data[Query_Result::QUERY] = $query;
+
         return $data;
     }
 
@@ -299,6 +297,8 @@ class Mysqli extends Data_Source
         $data[Query_Result::AFFECTED_ROWS] = $statement->affected_rows;
 
         $statement->close();
+
+        $data[Query_Result::QUERY] = $query;
 
         return $data;
     }
@@ -477,6 +477,8 @@ class Mysqli extends Data_Source
 
         $statement->close();
 
+        $data[Query_Result::QUERY] = $query;
+
         return $data;
     }
 
@@ -506,6 +508,8 @@ class Mysqli extends Data_Source
         $data[Query_Result::AFFECTED_ROWS] = $statement->affected_rows;
 
         $statement->close();
+
+        $data[Query_Result::QUERY] = $query;
 
         return $data;
     }

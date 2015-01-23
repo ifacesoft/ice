@@ -40,26 +40,22 @@ class Model_Collection implements IteratorAggregate, Countable
 
     private $_query = null;
 
-    private $_pagination = null;
-
     /**
      * Private constructor for model collection
      *
      * @param $modelClass
      * @param array $rows
      * @param Query $query
-     * @param array $pagination
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
      * @since 0.0
      */
-    private function __construct($modelClass, array $rows = [], Query $query = null, array $pagination = [1, 1000, 0])
+    private function __construct($modelClass, array $rows = [], Query $query = null)
     {
         $this->_iterator = Model_Collection_Iterator::create($modelClass, $rows);
         $this->_query = $query;
-        $this->_pagination = $pagination;
     }
 
     /**
@@ -84,38 +80,10 @@ class Model_Collection implements IteratorAggregate, Countable
             ? new Model_Collection(
                 $modelClass,
                 $data->getRows(),
-                $data->getQuery(),
-                $data->getPagination()
+                $data->getQuery()
             )
             : new Model_Collection($modelClass);
     }
-
-//    /**
-//     * Return query builder of model collection
-//     *
-//     * @return Query_Builder
-//     *
-//     * @author dp <denis.a.shestakov@gmail.com>
-//     *
-//     * @version 0.0
-//     * @since 0.0
-//     */
-//    public function getQueryBuilder()
-//    {
-//        if ($this->_queryBuilder !== null) {
-//            return $this->_queryBuilder;
-//        }
-//
-//        if ($this->_queryResult !== null) {
-//            return null;
-//        }
-//
-//        /** @var Model $modelClass */
-//        $modelClass = $this->_modelClass;
-//
-//        $this->_queryBuilder = $modelClass::query();
-//        return $this->_queryBuilder;
-//    }
 
     /**
      * Return first model of model collection if not empty
@@ -124,24 +92,41 @@ class Model_Collection implements IteratorAggregate, Countable
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.2
+     * @version 0.4
      * @since 0.0
      */
     public function first()
     {
-        if ($this->_iterator === null) {
+       if (!$this->count()) {
+           return null;
+       }
+
+        $modelClass = $this->getModelClass();
+        $rows = $this->getRows();
+
+        return $modelClass::create(reset($rows))->clearAffected();
+    }
+
+    /**
+     * Return last model of model collection if not empty
+     *
+     * @return Model|null
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.0
+     */
+    public function last()
+    {
+        if (!$this->count()) {
             return null;
         }
 
-        $row = $this->_iterator->getRow();
+        $modelClass = $this->getModelClass();
+        $rows = $this->getRows();
 
-        if (!$row) {
-            return null;
-        }
-
-        $modelClass = $this->_iterator->getModelClass();
-
-        return $modelClass::create($row);
+        return $modelClass::create(end($rows))->clearAffected();
     }
 
     /**
@@ -242,7 +227,6 @@ class Model_Collection implements IteratorAggregate, Countable
         }
 
         $this->_query = null;
-        $this->_pagination = null;
 
         $this->getIterator()->add($data);
 
@@ -265,85 +249,24 @@ class Model_Collection implements IteratorAggregate, Countable
     }
 
     /**
-     * Insert rows-models to data source
-     *
-     * @param string|null $sourceName
-     * @return Model_Collection
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @todo need refactoring. Not work. ERROR: Sql query is empty ;)
-     * @version 0.2
-     * @since 0.0
-     */
-    public function insert($sourceName = null)
-    {
-        /** @var Model $modelClass */
-        $modelClass = $this->_modelClass;
-
-        $this->setQueryResult(
-            $modelClass::query()
-                ->insert($this->getIterator()->getRows(), false, $sourceName)
-                ->getQuery($sourceName)
-        );
-
-        return $this;
-    }
-
-    /**
-     * Update rows-models in data source
-     *
-     * @param $updates
-     * @param null $sourceName
-     * @param int $ttl
-     * @return $this
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @todo need refactoring. Not work. ERROR: Sql query is empty ;)
-     * @version 0.0
-     * @since 0.0
-     */
-    public function update($updates, $sourceName = null, $ttl = 3600)
-    {
-        if (empty($updates)) {
-            return $this;
-        }
-
-        /** @var Model $modelClass */
-        $modelClass = $this->_modelClass;
-        $keys = $this->getKeys();
-
-        $queryBuilder = $modelClass::query();
-
-        if (count($keys) == 1) {
-            $queryBuilder->eq(['/pk' => reset($keys)]);
-        } else {
-            $queryBuilder->in('/pk', $keys);
-        }
-
-        $this->setQueryResult($queryBuilder->update($updates, $sourceName, $ttl));
-
-        return $this;
-    }
-
-    /**
      * Return primary keys of all models in model collection
      *
      * @return array
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.2
+     * @version 0.4
      * @since 0.0
      */
     public function getKeys()
     {
-        if ($this->_iterator === null) {
-            return [];
+        if (!$this->count()) {
+            return null;
         }
 
-        return $this->_iterator->getKeys();
+        $modelClass = $this->getModelClass();
+
+        return Arrays::column($this->getRows(), $modelClass::getPkFieldNames(), '');
     }
 
     /**
@@ -354,32 +277,30 @@ class Model_Collection implements IteratorAggregate, Countable
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.2
+     * @version 0.4
      * @since 0.0
      */
     public function get($pk)
     {
-        $row = $this->_iterator->getRow($pk);
-
-        if (!$row) {
+        if (!$this->count()) {
             return null;
         }
 
-        $modelClass = $this->_iterator->getModelClass();
+        $modelClass = $this->getModelClass();
 
-        return $modelClass::create($row);
+        return $modelClass::create($this->getRow($pk))->clearAffected();
     }
 
     /**
      * Remove from data source
      *
-     * @param null $sourceName
-     * @return Model
+     * @param string|null $sourceName
+     * @return Model_Collection
+     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @todo need refactoring. Not work. ERROR: Sql query is empty ;)
-     * @version 0.0
-     * @since 0.0
+     * @version 0.4
+     * @since 0.4
      */
     public function remove($sourceName = null)
     {
@@ -390,53 +311,53 @@ class Model_Collection implements IteratorAggregate, Countable
         $this->getIterator()->setRows($modelClass::query()->delete(Arrays::column($this->getRows(), reset($pkFieldNames)), $sourceName)->getRows());
     }
 
-    /**
-     * Filter model collection by filterScheme
-     *
-     * example filter scheme:
-     * ```php
-     *      $filterScheme = [
-     *          ['name', 'Petya', '='],
-     *          ['age', 18, '>'],
-     *          ['surname', 'Iv%', 'like']
-     *      ];
-     * ```
-     *
-     * example usage:
-     * ```php
-     *  ->filter('name', 'Petya')
-     *  ->filter(['age', 18, '>'])
-     *  ->filter([['surname', 'Iv%', 'like']])
-     * ```
-     *
-     * @see Arrays::filter()
-     *
-     * @param $fieldScheme
-     * @param null $value
-     * @param string $comparison
-     * @return Model_Collection
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @todo need refactoring. Not work.
-     * @version 0.0
-     * @since 0.0
-     */
-    public function filter($fieldScheme, $value = null, $comparison = '=')
-    {
-        if (!is_array($fieldScheme)) {
-            return $this->filter([[$fieldScheme, $value, $comparison]]);
-        }
-
-        if (!is_array(reset($fieldScheme))) {
-            return $this->filter([$fieldScheme]);
-        }
-
-        $modelClass = $this->_iterator->getModelClass();
-        $collection = $modelClass::getCollection();
-        $collection->setData($this->getIterator()->filter($fieldScheme));
-        return $collection;
-    }
+//    /**
+//     * Filter model collection by filterScheme
+//     *
+//     * example filter scheme:
+//     * ```php
+//     *      $filterScheme = [
+//     *          ['name', 'Petya', '='],
+//     *          ['age', 18, '>'],
+//     *          ['surname', 'Iv%', 'like']
+//     *      ];
+//     * ```
+//     *
+//     * example usage:
+//     * ```php
+//     *  ->filter('name', 'Petya')
+//     *  ->filter(['age', 18, '>'])
+//     *  ->filter([['surname', 'Iv%', 'like']])
+//     * ```
+//     *
+//     * @see Arrays::filter()
+//     *
+//     * @param $fieldScheme
+//     * @param null $value
+//     * @param string $comparison
+//     * @return Model_Collection
+//     *
+//     * @author dp <denis.a.shestakov@gmail.com>
+//     *
+//     * @todo need refactoring. Not work.
+//     * @version 0.0
+//     * @since 0.0
+//     */
+//    public function filter($fieldScheme, $value = null, $comparison = '=')
+//    {
+//        if (!is_array($fieldScheme)) {
+//            return $this->filter([[$fieldScheme, $value, $comparison]]);
+//        }
+//
+//        if (!is_array(reset($fieldScheme))) {
+//            return $this->filter([$fieldScheme]);
+//        }
+//
+//        $modelClass = $this->_iterator->getModelClass();
+//        $collection = $modelClass::getCollection();
+//        $collection->setData($this->getIterator()->filter($fieldScheme));
+//        return $collection;
+//    }
 
     /**
      * Return of size collection
@@ -462,8 +383,9 @@ class Model_Collection implements IteratorAggregate, Countable
     /**
      * Insert or update collection
      *
-     * @param null $sourceName
+     * @param string $sourceName
      * @param bool $update
+     * @return Model_Collection
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
@@ -474,5 +396,26 @@ class Model_Collection implements IteratorAggregate, Countable
     {
         $modelClass = $this->getModelClass();
         $this->getIterator()->setRows($modelClass::query()->insert($this->getRows(), $update, $sourceName)->getRows());
+        return $this;
+    }
+
+    /**
+     * Reload collection if query known
+     *
+     * @return Model_Collection
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.4
+     */
+    public function reload()
+    {
+        if (!$this->_query) {
+            Model_Collection::getLogger()->fatal('Model collection is artificial', __FILE__, __LINE__);
+        }
+
+        $this->getIterator()->setRows($this->_query->execute()->getRows());
+        return $this;
     }
 }
