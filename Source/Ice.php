@@ -10,6 +10,7 @@
 use Ice\Action\Front;
 use Ice\Action\Front_Ajax;
 use Ice\Action\Front_Cli;
+use Ice\Action\Http_Status;
 use Ice\Core;
 use Ice\Core\Action;
 use Ice\Core\Action_Context;
@@ -18,6 +19,8 @@ use Ice\Core\Environment;
 use Ice\Core\Logger;
 use Ice\Core\Request;
 use Ice\Core\Response;
+use Ice\Exception\Http_Bad_Request;
+use Ice\Exception\Http_Not_Found;
 use Ice\Exception\Redirect;
 use Ice\Helper\Memory;
 
@@ -124,8 +127,12 @@ class Ice extends Container
             Response::send($action->call(new Action_Context()));
         } catch (Redirect $e) {
             Response::redirect($e->getMessage());
+        } catch (Http_Bad_Request $e) {
+            Response::send(Http_Status::getInstance()->call(new Action_Context(), ['code' => 400, 'exception' => $e]));
+        } catch (Http_Not_Found $e) {
+            Response::send(Http_Status::getInstance()->call(new Action_Context(), ['code' => 404, 'exception' => $e]));
         } catch (\Exception $e) {
-            Ice::getLogger()->error('Application failure', __FILE__, __LINE__, $e);
+            Response::send(Http_Status::getInstance()->call(new Action_Context(), ['code' => 500, 'exception' => $e]));
         }
 
         return $this;

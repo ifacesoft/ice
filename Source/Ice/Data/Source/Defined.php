@@ -20,7 +20,7 @@ use Ice\Helper\Query as Helper_Query;
 /**
  * Class Defined
  *
- * Implemets defined data source
+ * Implements defined data source
  *
  * @see Ice\Core\Data_Source
  *

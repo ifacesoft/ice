@@ -11,6 +11,8 @@ namespace Ice\Core;
 
 use Ice;
 use Ice\Core;
+use Ice\Exception\Http_Bad_Request;
+use Ice\Exception\Http_Not_Found;
 use Ice\Exception\Redirect;
 use Ice\Helper\Arrays;
 use Ice\Helper\Hash;
@@ -132,7 +134,7 @@ abstract class Action extends Container
         try {
             $config = $actionClass::getConfig();
 
-            list($input, $errors) = $this->getInput($config, $data);
+            $input = $this->getInput($config, $data);
 
             if (Environment::isDevelopment()) {
                 Logger::fb('action: ' . $actionClass . ' ' . Json::encode($input));
@@ -142,11 +144,7 @@ abstract class Action extends Container
             $inputHash = $actionClass . '/' . $hash;
 
             $actionContext->initAction($actionClass, $hash);
-
-            if (!empty($errors)) {
-                return $actionClass::getLogger()->info($actionClass . ': ' . $errors, Logger::DANGER, false, false);
-            }
-
+//
             $cacheDataProviderKey = null;
             $dataProvider = null;
 
@@ -182,6 +180,10 @@ abstract class Action extends Container
                     try {
                         $subView = $subAction->call($actionContext, $subActionParams, $newLevel);
                     } catch (Redirect $e) {
+                        throw $e;
+                    } catch (Http_Bad_Request $e) {
+                        throw $e;
+                    } catch (Http_Not_Found $e) {
                         throw $e;
                     } catch (\Exception $e) {
                         $subView = self::getLogger()->error(['Calling subAction "{$0}" in action "{$1}" failed', [$subActionName, $actionClass]], __FILE__, __LINE__, $e);
@@ -228,6 +230,10 @@ abstract class Action extends Container
             return $this->flush(View::getInstance($viewData));
         } catch (Redirect $e) {
             throw $e;
+        } catch (Http_Bad_Request $e) {
+            throw $e;
+        } catch (Http_Not_Found $e) {
+            throw $e;
         } catch (\Exception $e) {
             return Action::getLogger()->error(['Calling action "{$0}" failed', $actionClass], __FILE__, __LINE__, $e);
         }
@@ -261,9 +267,10 @@ abstract class Action extends Container
             $input += (array)$dataProvider->get();
         }
 
-        $input = Arrays::defaults($config->gets('inputDefaults', false), $input);
-
-        return [$input, Validator::validateByScheme($input, $config->gets('inputValidators', false))];
+        return Validator::validateByScheme(
+            Arrays::defaults($config->gets('inputDefaults', false), $input),
+            $config->gets('inputValidators', false)
+        );
     }
 
     /**

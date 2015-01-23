@@ -14,7 +14,7 @@ use Ice\Core\Exception;
 /**
  * Class Template_Not_Found
  *
- * Implemets template not found exception
+ * Implements template not found exception
  *
  * @see Ice\Core\Exception
  *
@@ -29,7 +29,7 @@ use Ice\Core\Exception;
 class Template_Not_Found extends Exception
 {
     /**
-     * Constrinctor for template not found exception
+     * Constructor for template not found exception
      *
      * @param string $errstr
      * @param array $errcontext
@@ -45,6 +45,6 @@ class Template_Not_Found extends Exception
      */
     public function __construct($errstr, $errcontext = [], $previous = null, $errfile = null, $errline = null, $errno = 0)
     {
-        parent::__construct(['TemplateNotFoundException: {$0}', $errstr], $errcontext, $previous, $errfile, $errline, E_USER_ERROR);
+        parent::__construct($errstr, $errcontext, $previous, $errfile, $errline, E_USER_ERROR);
     }
 }

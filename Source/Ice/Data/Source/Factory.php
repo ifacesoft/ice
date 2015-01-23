@@ -12,7 +12,7 @@ namespace Ice\Data\Source;
 /**
  * Class Factory
  *
- * Implemets factory data source
+ * Implements factory data source
  *
  * @see Ice\Core\Data_Source
  *

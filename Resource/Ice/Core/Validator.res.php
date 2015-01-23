@@ -55,4 +55,7 @@ return [
     'True or false?' => [
         'en' => 'True or false?',
     ],
+    'Pattern: param {$0} is not valid' => [
+        'ru' => 'Pattern: param {$0} is not valid',
+    ],
 ];

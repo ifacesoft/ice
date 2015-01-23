@@ -74,12 +74,14 @@ abstract class Container
         /** @var Container|Core $class */
         $class = self::getClass();
 
-        if (empty($key)) {
-            $key = $class::getDefaultKey();
-        }
-
-        /** @var Core $baseClass */
+        /** @var Container|Core $baseClass */
         $baseClass = $class::getBaseClass();
+
+        if (empty($key)) {
+            $key = $class == $baseClass
+                ? $class::getDefaultKey()
+                : $class;
+        }
 
         $data = null;
         if (is_string($key)) {

@@ -12,10 +12,8 @@ namespace Ice\Core;
 use Ice;
 use Ice\Core;
 use Ice\Data\Provider\Router;
-use Ice\Exception\File_Not_Found;
 use Ice\Helper\Arrays;
 use Ice\Helper\File;
-use Ice\Helper\Route as Helper_Route;
 use Ice\View\Render\Replace;
 
 /**
@@ -170,7 +168,6 @@ class Route extends Container
      *
      * @param array $routeFilePathes
      * @return array
-     * @throws File_Not_Found
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.2

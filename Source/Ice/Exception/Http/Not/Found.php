@@ -1,6 +1,6 @@
 <?php
 /**
- * Ice exception redirect class
+ * Ice exception page not found class
  *
  * @link http://www.iceframework.net
  * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
@@ -12,9 +12,9 @@ namespace Ice\Exception;
 use Ice\Core\Exception;
 
 /**
- * Class Redirect
+ * Class Page_Not_Found
  *
- * Implements redirect exception
+ * Implements page not found exception
  *
  * @see Ice\Core\Exception
  *
@@ -23,13 +23,13 @@ use Ice\Core\Exception;
  * @package Ice
  * @subpackage Exception
  *
- * @version 0.1
- * @since 0.1
+ * @version 0.0
+ * @since 0.0
  */
-class Redirect extends Exception
+class Http_Not_Found extends Exception
 {
     /**
-     * Constructor for redirect exception
+     * Constructor for page not found exception
      *
      * @param string $errstr
      * @param array $errcontext
@@ -40,11 +40,11 @@ class Redirect extends Exception
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.1
-     * @since 0.1
+     * @version 0.0
+     * @since 0.0
      */
-    public function __construct($errstr, $errcontext = [], $previous = null, $errfile = null, $errline = null, $errno = -1)
+    public function __construct($errstr, $errcontext = [], $previous = null, $errfile = null, $errline = null, $errno = 0)
     {
         parent::__construct($errstr, $errcontext, $previous, $errfile, $errline, E_USER_ERROR);
     }
-}
+} 

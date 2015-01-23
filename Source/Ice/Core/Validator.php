@@ -58,7 +58,8 @@ abstract class Validator extends Container
      *                      'VALIDATOR_PARAM_NAME1' => 'VALIDATOR_PARAM_VALUE1',
      *                      'VALIDATOR_PARAM_NAME2 => 'VALIDATOR_PARAM_VALUE2'
      *                  ],
-     *                  'message => 'validate failed for {$0}'
+     *                  'message' => 'validate failed for {$0}',
+     *                  'exception' => 'Ice:Http_Not_Found'
      *              ]
      *          ]
      *      ];
@@ -66,7 +67,7 @@ abstract class Validator extends Container
      *
      * @param $data
      * @param array $validateScheme
-     * @return string
+     * @return array
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
@@ -77,8 +78,6 @@ abstract class Validator extends Container
      */
     public static function validateByScheme(array $data, array $validateScheme)
     {
-        $errors = '';
-
         foreach ($validateScheme as $param => $validators) {
             foreach ((array)$validators as $validatorName => $params) {
                 $validator = null;
@@ -88,39 +87,36 @@ abstract class Validator extends Container
                     $params = null;
                 }
 
-                $validator = Validator::getInstance($validatorName);
+                $exceptionClass = null;
 
-                if ($validator->validate($data[$param], $params)) {
+                /** @var Validator $validatorClass */
+                $validatorClass = Validator::getClass($validatorName);
+
+                $value = isset($data[$param])
+                    ? $data[$param]
+                    : null;
+
+                if ($validatorClass::getInstance()->validate($value, $params)) {
                     continue;
                 }
 
-                $validatorClassName = $validator::getClassName();
+                $validator = 'Validator:' . $validatorClass::getClassName() . ' -> ';
 
-                $errors .= !empty($params) && isset($params['message'])
-                    ? Validator::getLogger()->info([$validatorClassName . ': ' . $params['message'], $param], Logger::WARNING)
-                    : Validator::getLogger()->info([$validatorClassName . ': param {$0} is not valid', $param], Logger::WARNING);
+                $message = empty($params) || !isset($params['message'])
+                    ? [$validator . 'param \'{$0}\' with value \'{$1}\' is not valid', [$param, print_r($value, true)]]
+                    : [$validator . $params['message'], [$param, print_r($value, true)]];
+
+                if (!$exceptionClass) {
+                    $exceptionClass = empty($params) || !isset($params['exception'])
+                        ? Exception::getClass('Ice:Not_Valid')
+                        : Exception::getClass($params['exception']);
+                }
+
+                throw new $exceptionClass($message);
             }
         }
 
-        return $errors;
-    }
-
-    /**
-     * Create new instance of validator
-     *
-     * @param $class
-     * @param null $hash
-     * @return Validator
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    protected static function create($class, $hash = null)
-    {
-        $class = Object::getClass(__CLASS__, $class);
-        return new $class();
+        return $data;
     }
 
     /**
@@ -170,5 +166,23 @@ abstract class Validator extends Container
     public static function getInstance($key = null, $ttl = null)
     {
         return parent::getInstance($key, $ttl);
+    }
+
+    /**
+     * Create new instance of validator
+     *
+     * @param $class
+     * @param null $hash
+     * @return Validator
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
+     */
+    protected static function create($class, $hash = null)
+    {
+        $class = Object::getClass(__CLASS__, $class);
+        return new $class();
     }
 }

@@ -22,7 +22,7 @@ use mysqli_stmt;
 /**
  * Class Mysqli
  *
- * Implemets mysqli data source
+ * Implements mysqli data source
  *
  * @see Ice\Core\Data_Source
  *
