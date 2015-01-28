@@ -145,7 +145,7 @@ abstract class Model
      * @param Model $modelClass
      *  class of short class (for example: Ice:User -> /Ice/Model/Ice/User)
      *
-     * @return Model
+     * @return string|Model
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
@@ -205,8 +205,8 @@ abstract class Model
      *  $user->set('data', ['data1' => 'string1', 'data2' => 'string2']); // set value of field data__json
      * ```
      *
-     * @param $fieldName
-     * @param null $fieldValue
+     * @param array|string $fieldName
+     * @param mixed $fieldValue
      * @param bool $isAffected Save for update
      * @return Model
      * @throws Exception
@@ -321,7 +321,7 @@ abstract class Model
     /**
      * Get primary key of model
      *
-     * @return mixed
+     * @return array
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
@@ -680,11 +680,13 @@ abstract class Model
 
         $fieldNames = array_keys($modelClass::getMapping());
 
-        if (empty($fields)) {
+        if (empty($fields) || $fields = '*') {
             return $fieldNames;
         }
 
-        foreach ((array)$fields as &$fieldName) {
+        $fields = (array) $fields;
+
+        foreach ($fields as &$fieldName) {
             $fieldName = $modelClass::getFieldName($fieldName);
 
             if (in_array($fieldName, $fieldNames)) {
@@ -696,10 +698,20 @@ abstract class Model
                 continue;
             }
 
+            if (in_array($fieldName . '__fk', $fieldNames)) {
+                $fieldName = $fieldName . '__fk';
+                continue;
+            }
+
+            if (in_array($fieldName . '__geo', $fieldNames)) {
+                $fieldName = $fieldName . '__geo';
+                continue;
+            }
+
             throw new Exception('Поле "' . $fieldName . '" не найдено в модели "' . self::getClass() . '"');
         }
 
-        return $fieldNames;
+        return $fields;
     }
 
     /**

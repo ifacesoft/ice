@@ -93,7 +93,7 @@ class Session
      * PHP >= 5.4.0<br/>
      * Cleanup old sessions
      * @link http://php.net/manual/en/sessionhandlerinterafce.gc.php
-     * @param int $maxlifetime <p>
+     * <p>
      * Sessions that have not updated for
      * the last maxlifetime seconds will be removed.
      * </p>
@@ -106,7 +106,7 @@ class Session
      * @version 0.0
      * @since 0.0
      */
-    public static function gc($maxlifetime)
+    public static function gc()
     {
         return true;
     }
@@ -127,7 +127,7 @@ class Session
      * @version 0.0
      * @since 0.0
      */
-    public static function open($save_path, $session_id)
+    public static function open()
     {
         return true;
     }

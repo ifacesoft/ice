@@ -100,7 +100,7 @@ Composer install via shell:
       $ php composer.phar create-project ifacesoft/ice Ice dev-master
       $ ./Ice/cli Ice:Module_Create
 
-Zip archive istall:
+Zip archive install:
 
       1. Download and unpack .zip
       2. $ ./Ice/cli Ice:Composer_Update
