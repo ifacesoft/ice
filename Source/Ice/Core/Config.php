@@ -14,7 +14,6 @@ use Ice\Core;
 use Ice\Data\Provider\Object;
 use Ice\Helper\Config as Helper_Config;
 use Ice\Helper\File;
-use Iterator;
 
 /**
  * Class Config

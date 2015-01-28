@@ -18,7 +18,6 @@ use Ice\Core\Loader;
 use Ice\Core\Module;
 use Ice\Data\Provider\Router;
 use Ice\Helper\Arrays;
-use Ice\Helper\Config;
 use Ice\Helper\Directory;
 use JSMin;
 

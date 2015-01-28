@@ -14,7 +14,6 @@ use Ice\Core\Data_Provider;
 use Ice\Core\Exception;
 use Ice\Core\Request as Core_Request;
 use Ice\Core\Route;
-use Ice\Core\Security;
 use Ice\Exception\Http_Forbidden;
 use Ice\Exception\Http_Not_Found;
 
