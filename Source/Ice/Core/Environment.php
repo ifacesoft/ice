@@ -10,6 +10,7 @@
 namespace Ice\Core;
 
 use Ice\Core;
+use Ice\Helper\Config as Helper_Config;
 
 /**
  * Class Environment
@@ -231,17 +232,20 @@ class Environment extends Container
     /**
      * Environment config param value (one (first) value)
      *
-     * @param string $key
-     * @return mixed|null
+     * @param string|null $key
+     * @param bool $isRequired
+     * @throws Exception
+     * @return string
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.4
      * @since 0.0
      */
-    public function get($key = null)
+    public function get($key = null, $isRequired = true)
     {
-        $params = $this->gets($key);
+        $params = $this->gets($key, $isRequired);
+
         return empty($params) ? null : reset($params);
     }
 
@@ -249,30 +253,17 @@ class Environment extends Container
      * Environment config param values
      *
      * @param string|null $key
+     * @param bool $isRequired
      * @return array
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.4
      * @since 0.0
      */
-    public function gets($key = null)
+    public function gets($key = null, $isRequired = true)
     {
-        $params = $this->_params;
-
-        if (empty($key)) {
-            return (array)$params;
-        }
-
-        foreach (explode('/', $key) as $keyPart) {
-            if (!isset($params[$keyPart])) {
-                $params = null;
-                break;
-            }
-
-            $params = $params[$keyPart];
-        }
-        return (array)$params;
+        return Helper_Config::gets($this->_params, $key, $isRequired);
     }
 
     /**
