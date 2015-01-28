@@ -18,15 +18,15 @@ class ModelTest extends PHPUnit_Framework_TestCase
         $user1 = Test::create([
             '/name' => 'name',
             'name2' => 'test'
-        ])->insert();
+        ])->save();
 
-        $user1->set(['/name' => 'test name'])->update();
+        $user1->set(['/name' => 'test name'])->save();
 
         $this->assertNotNull($user1);
         $this->assertTrue($user1 instanceof Test);
 
         $user2 = Test::create(['/name' => 'test name'])
-            ->select(['/name', 'name2']);
+            ->find(['/name', 'name2']);
 
         $user4 = Test::getModelBy(['/name' => 'test name'], ['/name', 'name2']);
 
@@ -37,7 +37,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($user1, $user2);
         $this->assertEquals($user2->test_name, $user4->test_name);
 
-        $user2->delete();
+        $user2->remove();
 
         $user3 = Test::getModel(1, '/pk');
 

@@ -46,18 +46,18 @@ class Loader
      * Load class
      *
      * @param $class
+     * @param bool $isRequired
      * @return bool
      * @throws Exception
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.4
      * @since 0.0
      */
-    public static function load($class)
+    public static function load($class, $isRequired = true)
     {
         if (class_exists($class, false)) {
-            return;
+            return true;
         }
 
         /** @var Data_Provider $dataProvider */
@@ -66,23 +66,29 @@ class Loader
         $fileName = $dataProvider->get($class);
         if ($fileName) {
             require_once $fileName;
-            return;
+            return true;
         }
 
-        $fileName = self::getFilePath($class, '.php', 'Source/');
+        $fileName = self::getFilePath($class, '.php', 'Source/', $isRequired);
 
         if (file_exists($fileName)) {
             require_once $fileName;
 
             if (class_exists($class, false) || interface_exists($class, false) || trait_exists($class, false)) {
                 $dataProvider->set($class, $fileName);
-                return;
+                return true;
             }
 
-            Loader::getLogger()->fatal(['File {$0} exists, but class {$1} not found', [$fileName, $class]], __FILE__, __LINE__);
+            if ($isRequired) {
+                Loader::getLogger()->fatal(['File {$0} exists, but class {$1} not found', [$fileName, $class]], __FILE__, __LINE__);
+            }
         }
 
-        Loader::getLogger()->fatal(['Class {$0} not found', $class], __FILE__, __LINE__, null);
+        if ($isRequired) {
+            Loader::getLogger()->fatal(['Class {$0} not found', $class], __FILE__, __LINE__, null);
+        }
+
+        return false;
     }
 
     /**

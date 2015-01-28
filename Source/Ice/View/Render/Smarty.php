@@ -15,7 +15,6 @@ use Ice\Core\Environment;
 use Ice\Core\Loader;
 use Ice\Core\Logger;
 use Ice\Core\Module;
-use Ice\Core\Response;
 use Ice\Core\View;
 use Ice\Core\View_Render;
 
@@ -77,50 +76,50 @@ class Smarty extends View_Render
         $this->_smarty->debugging = true;
     }
 
-    /**
-     * Display rendered view in standard output
-     *
-     * @param $template
-     * @param array $data
-     * @param string $templateType
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function display($template, array $data = [], $templateType = View_Render::TEMPLATE_TYPE_FILE)
-    {
-        if ($templateType == View_Render::TEMPLATE_TYPE_STRING) {
-            $template = 'string:' . $template;
-        }
-
-        /** @var \Smarty_Internal_Template $smartyTemplate */
-        $smartyTemplate = $this->_smarty->createTemplate($template . self::TEMPLATE_EXTENTION);
-
-        foreach ($data as $key => $value) {
-            $smartyTemplate->assign($key, $value);
-        }
-
-        try {
-            $smartyTemplate->display();
-        } catch (\Exception $e) {
-            if (Environment::isDevelopment()) {
-                View::getLogger()->info([Smarty::getClassName() . ': View {$0} not found. Trying generate template {$1}...', [$template, Smarty::getClassName()]], Logger::WARNING);
-
-                /** @var \Smarty_Internal_Template $smartyTemplate */
-                $smartyTemplate = $this->_smarty->createTemplate('string:' . Smarty::getCodeGenerator()->generate($template));
-
-                foreach ($data as $key => $value) {
-                    $smartyTemplate->assign($key, $value);
-                }
-
-                $smartyTemplate->display();
-            } else {
-                Response::send(View::getLogger()->error([Smarty::getClassName() . ': View {$0} not found', $template], __FILE__, __LINE__, $e));
-            }
-        }
-    }
+//    /**
+//     * Display rendered view in standard output
+//     *
+//     * @param $template
+//     * @param array $data
+//     * @param string $templateType
+//     *
+//     * @author dp <denis.a.shestakov@gmail.com>
+//     *
+//     * @version 0.0
+//     * @since 0.0
+//     */
+//    public function display($template, array $data = [], $templateType = View_Render::TEMPLATE_TYPE_FILE)
+//    {
+//        if ($templateType == View_Render::TEMPLATE_TYPE_STRING) {
+//            $template = 'string:' . $template;
+//        }
+//
+//        /** @var \Smarty_Internal_Template $smartyTemplate */
+//        $smartyTemplate = $this->_smarty->createTemplate($template . self::TEMPLATE_EXTENTION);
+//
+//        foreach ($data as $key => $value) {
+//            $smartyTemplate->assign($key, $value);
+//        }
+//
+//        try {
+//            $smartyTemplate->display();
+//        } catch (\Exception $e) {
+//            if (Environment::isDevelopment()) {
+//                View::getLogger()->info([Smarty::getClassName() . ': View {$0} not found. Trying generate template {$1}...', [$template, Smarty::getClassName()]], Logger::WARNING);
+//
+//                /** @var \Smarty_Internal_Template $smartyTemplate */
+//                $smartyTemplate = $this->_smarty->createTemplate('string:' . Smarty::getCodeGenerator()->generate($template));
+//
+//                foreach ($data as $key => $value) {
+//                    $smartyTemplate->assign($key, $value);
+//                }
+//
+//                $smartyTemplate->display();
+//            } else {
+//                Response::send(View::getLogger()->error([Smarty::getClassName() . ': View {$0} not found', $template], __FILE__, __LINE__, $e));
+//            }
+//        }
+//    }
 
     /**
      * Render view via current view render

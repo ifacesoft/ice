@@ -49,7 +49,7 @@ var Ice = {
                     var $block = $(result.html);
 
                     if (container) {
-                        var parentActionName = ''
+                        var parentActionName = '';
 
                         if (parentActionName = Ice_Helper_String.strstr(container, ':')) {
                             parentActionName = parentActionName.substr(1);

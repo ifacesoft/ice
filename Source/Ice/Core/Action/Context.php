@@ -59,6 +59,29 @@ class Action_Context
     private $_viewData = [];
 
     /**
+     * String temp content current action
+     *
+     * @var string
+     */
+    private $_tempContent = null;
+
+    /**
+     * Response
+     *
+     * @var Response
+     */
+    private $_response = null;
+
+    private function __construct()
+    {
+    }
+
+    public static function create()
+    {
+        return new Action_Context();
+    }
+
+    /**
      * Add child action
      *
      * 'Ice:Title',
@@ -257,5 +280,54 @@ class Action_Context
     {
         $inputHash = array_pop($this->_stack);
         unset($this->_viewData[$inputHash]);
+    }
+
+    /**
+     * Return response by request
+     *
+     * @return Response
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.4
+     */
+    public function getResponse()
+    {
+        if ($this->_response !== null) {
+            return $this->_response;
+        }
+
+        return $this->_response = Response::create();
+    }
+
+    /**
+     * Get current content
+     *
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.4
+     */
+    public function getContent()
+    {
+        return $this->_tempContent;
+    }
+
+    /**
+     * Set current content
+     *
+     * @param mixed $content
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.4
+     */
+    public function setContent($content)
+    {
+        $this->_tempContent = $content;
     }
 }

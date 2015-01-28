@@ -9,14 +9,9 @@
 
 namespace Ice\Core;
 
-use ArrayAccess;
-use Countable;
 use Ice\Core;
 use Ice\Helper\Arrays;
-use Ice\Helper\Memory;
 use Ice\Helper\Serializer;
-use Iterator;
-use Serializable;
 
 /**
  * Class Data
@@ -29,54 +24,35 @@ use Serializable;
  *
  * @package Ice
  * @subpackage Core
- *
- * @version 0.2
- * @since 0.2
  */
-class Query_Result extends Container implements Iterator, ArrayAccess, Countable, Serializable, Cacheable
+class Query_Result
 {
-    use Core;
-
-    const RESULT_MODEL_CLASS = 'modelName';
-    const RESULT_ROWS = 'rows';
-    const QUERY_FULL_HASH = 'query_hash';
+    const ROWS = 'rows';
+    const QUERY = 'query';
     const NUM_ROWS = 'numRows';
     const AFFECTED_ROWS = 'affectedRows';
     const INSERT_ID = 'insertId';
-    const FOUND_ROWS = 'foundRows';
-    const PAGE = 'page';
-    const LIMIT = 'limit';
 
     /**
-     * Default data
+     * Default result
      *
      * @var array
      */
-    protected $_result = [
-        self::RESULT_MODEL_CLASS => null,
-        self::RESULT_ROWS => [],
-        self::QUERY_FULL_HASH => '',
-        self::NUM_ROWS => 0,
-        self::FOUND_ROWS => 0,
-        self::AFFECTED_ROWS => 0,
-        self::PAGE => 1,
-        self::LIMIT => 1000,
-        self::INSERT_ID => null
+    protected $_default = [
+        Query_Result::ROWS => [],
+        Query_Result::QUERY => null,
+        Query_Result::NUM_ROWS => 0,
+        Query_Result::AFFECTED_ROWS => 0,
+        Query_Result::INSERT_ID => null
     ];
 
     /**
-     * Valid data flag
+     * Result
      *
-     * @var bool
+     * @var array
      */
-    private $isValid = false;
-
-    /**
-     * Row index of iterator
-     *
-     * @var int
-     */
-    private $position = 0;
+    private $_result = [];
+    private $_modelClass = null;
 
     /**
      * Attached transformations
@@ -88,125 +64,35 @@ class Query_Result extends Container implements Iterator, ArrayAccess, Countable
     /**
      * Constructor of data object
      *
+     * @param $modelClass
      * @param array $result
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.4
      * @since 0.0
      */
-    public function __construct(array $result)
+    private function __construct($modelClass, array $result)
     {
-        $this->_result = array_merge($this->_result, $result);
-        $this->isValid = true;
+        $this->_modelClass = $modelClass;
+        $this->_result = Arrays::defaults($this->_default, $result);
     }
 
     /**
      * Return data from cache
      *
-     * @param $data
-     * @param $hash
+     * @param $modelClass
+     * @param array $result
      * @return Query_Result
-     * @throws Exception
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.2
      * @since 0.0
      */
-    public static function getCache($data, $hash)
+    public static function create($modelClass, array $result = [])
     {
-        /** @var Query $query */
-        list($query, $ttl) = $data;
-
-        $queryType = $query->getQueryType();
-        if (
-
-            ($queryType == Query_Builder::TYPE_SELECT && !$ttl) ||
-            $queryType == Query_Builder::TYPE_CREATE ||
-            $queryType == Query_Builder::TYPE_DROP
-        ) {
-            return Query_Result::create($data);
-        }
-
-        if (Environment::isDevelopment()) {
-            $message = 'sql: ' . str_replace("\t", '', str_replace("\n", ' ', $query->getSql())) . ' [' . implode(', ', $query->getBinds()) . ']';
-
-            if (Request::isCli()) {
-                Query::getLogger()->info($message . ' ' . Memory::memoryGetUsagePeak(), Logger::GREY, false);
-            } else {
-                Logger::fb($message);
-            }
-        }
-
-        switch ($queryType) {
-            case Query_Builder::TYPE_SELECT:
-                $cacheDataProvider = Query::getDataProvider('query');
-                $cache = $cacheDataProvider->get($hash);
-
-                if (!$cache) {
-                    $cache = ['tags' => $query->getValidateTags(), 'time' => 0, 'data' => []];
-                }
-
-                if (Cache::validate(__CLASS__, $cache['tags'], $cache['time'])) {
-                    if (Environment::isDevelopment()) {
-                        Query::getLogger()->info('Data from cache!', Logger::MESSAGE, false);
-                    }
-
-                    return new Query_Result($cache['data']);
-                }
-
-                $cache['data'] = $query->execute();
-                $cache['time'] = time();
-
-                $cacheDataProvider->set($hash, $cache, $ttl);
-                break;
-
-            case Query_Builder::TYPE_INSERT:
-            case Query_Builder::TYPE_UPDATE:
-            case Query_Builder::TYPE_DELETE:
-                $cache['data'] = $query->execute();
-                Cache::invalidate(__CLASS__, $query->getInvalidateTags());
-                break;
-
-            default:
-                throw new Exception('Unknown data source query statment type "' . $queryType . '"');
-        }
-
-        $data = new Query_Result($cache['data']);
-
-        return $data;
-    }
-
-    /**
-     * Create new instance of data
-     *
-     * @param $data
-     * @param null $hash
-     * @return Query_Result
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    protected static function create($data, $hash = null)
-    {
-        /** @var Query $query */
-        list($query, $ttl) = $data;
-
-        if (Environment::isDevelopment()) {
-            $message = 'sql: ' . str_replace("\t", '', str_replace("\n", ' ', $query->getSql())) . ' [' . implode(', ', $query->getBinds()) . ']';
-
-            if (Request::isCli()) {
-                Query::getLogger()->info($message . ' ' . Memory::memoryGetUsagePeak(), Logger::GREY, false);
-            } else {
-                Logger::fb($message);
-            }
-        }
-
-        $data = new Query_Result($query->execute());
-        return $data;
+        return new Query_Result($modelClass, $result);
     }
 
     /**
@@ -221,7 +107,7 @@ class Query_Result extends Container implements Iterator, ArrayAccess, Countable
      */
     public function getRows()
     {
-        $rows = $this->getResult()[self::RESULT_ROWS];
+        $rows = $this->getResult()[self::ROWS];
         return empty($rows) ? [] : $rows;
     }
 
@@ -235,13 +121,13 @@ class Query_Result extends Container implements Iterator, ArrayAccess, Countable
      * @version 0.0
      * @since 0.0
      */
-    protected function getResult()
+    public function getResult()
     {
         if ($this->_transformations === null) {
             return $this->_result;
         }
 
-        $this->_result[self::RESULT_ROWS] = $this->applyTransformations($this->_result[self::RESULT_ROWS]);
+        $this->_result[self::ROWS] = $this->applyTransformations($this->_result[self::ROWS]);
 
         return $this->_result;
     }
@@ -288,12 +174,12 @@ class Query_Result extends Container implements Iterator, ArrayAccess, Countable
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.4
      * @since 0.0
      */
     public function getModelClass()
     {
-        return $this->getResult()[self::RESULT_MODEL_CLASS];
+        return $this->_modelClass;
     }
 
     /**
@@ -303,15 +189,12 @@ class Query_Result extends Container implements Iterator, ArrayAccess, Countable
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.4
      * @since 0.0
      */
-    public function getCollection()
+    public function getModelCollection()
     {
-        $modelClass = $this->getModelClass();
-        $collection = $modelClass::getCollection();
-        $collection->setData($this);
-        return $collection;
+        return Model_Collection::create($this->getModelClass(), $this->getRows(), $this->getQuery());
     }
 
     /**
@@ -348,7 +231,7 @@ class Query_Result extends Container implements Iterator, ArrayAccess, Countable
      */
     public function getRow($pk = null)
     {
-        $rows = $this->getResult()[self::RESULT_ROWS];
+        $rows = $this->getResult()[self::ROWS];
 
         if (empty($rows)) {
             return null;
@@ -382,34 +265,7 @@ class Query_Result extends Container implements Iterator, ArrayAccess, Countable
 
         $modelClass = $this->getModelClass();
 
-        return $modelClass::create($row);
-    }
-
-    /**
-     * Add row to data
-     *
-     * @param $pk
-     * @param $fieldName
-     * @param null $value
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function setRow($pk, $fieldName, $value = null)
-    {
-        $row = isset($this->_result[Query_Result::RESULT_ROWS][$pk])
-            ? $this->_result[Query_Result::RESULT_ROWS][$pk] : [];
-
-        if (is_array($fieldName)) {
-            $row = array_merge($row, $fieldName);
-        } else {
-            $row[$fieldName] = $value;
-        }
-
-        $this->_result[Query_Result::RESULT_ROWS][$pk] = $row;
-        $this->isValid = false;
+        return $modelClass::create($row)->clearAffected();
     }
 
     /**
@@ -428,104 +284,6 @@ class Query_Result extends Container implements Iterator, ArrayAccess, Countable
     }
 
     /**
-     * Return the current row of iterator
-     *
-     * (PHP 5 &gt;= 5.0.0)<br/>
-     * Return the current element
-     * @link http://php.net/manual/en/iterator.current.php
-     * @return mixed Can return any type.
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function current()
-    {
-        return current($this->_result[Query_Result::RESULT_ROWS]);
-    }
-
-    /**
-     * Move forward to next row of iterator
-     *
-     * (PHP 5 &gt;= 5.0.0)<br/>
-     * Move forward to next element
-     * @link http://php.net/manual/en/iterator.next.php
-     * @return void Any returned value is ignored.
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function next()
-    {
-        next($this->_result[Query_Result::RESULT_ROWS]);
-        ++$this->position;
-    }
-
-    /**
-     * Return index of iterator row
-     *
-     * (PHP 5 &gt;= 5.0.0)<br/>
-     * Return the key of the current element
-     * @link http://php.net/manual/en/iterator.key.php
-     * @throws Exception
-     * @return mixed scalar on success, or null on failure.
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function key()
-    {
-        return $this->position;
-    }
-
-    /**
-     * Validation current row position of iterator
-     *
-     * (PHP 5 &gt;= 5.0.0)<br/>
-     * Checks if current position is valid
-     * @link http://php.net/manual/en/iterator.valid.php
-     * @return boolean The return value will be casted to boolean and then evaluated.
-     * Returns true on success or false on failure.
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function valid()
-    {
-        $var = current($this->_result[Query_Result::RESULT_ROWS]); // todo: may be (bool) current($this->_result[DATA::RESULT_ROWS])
-        return !empty($var);
-    }
-
-    /**
-     * Reset iterator
-     *
-     * (PHP 5 &gt;= 5.0.0)<br/>
-     * Rewind the Iterator to the first element
-     * @link http://php.net/manual/en/iterator.rewind.php
-     * @return void Any returned value is ignored.
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function rewind()
-    {
-        if (!empty($this->getResult()[Query_Result::RESULT_ROWS])) {
-            reset($this->_result[Query_Result::RESULT_ROWS]);
-        }
-
-        $this->position = 0;
-    }
-
-    /**
      * Remove row from data by pk
      *
      * @param $pk
@@ -539,12 +297,12 @@ class Query_Result extends Container implements Iterator, ArrayAccess, Countable
     public function delete($pk = null)
     {
         if (empty($pk)) {
-            $this->_result[Query_Result::RESULT_ROWS] = [];
+            $this->_result[Query_Result::ROWS] = [];
             return [];
         }
 
-        $row = $this->_result[Query_Result::RESULT_ROWS][$pk];
-        unset($this->_result[Query_Result::RESULT_ROWS][$pk]);
+        $row = $this->_result[Query_Result::ROWS][$pk];
+        unset($this->_result[Query_Result::ROWS][$pk]);
 
         return $row;
     }
@@ -585,23 +343,8 @@ class Query_Result extends Container implements Iterator, ArrayAccess, Countable
     public function filter($filterScheme)
     {
         $data = clone $this;
-        $data->_result[Query_Result::RESULT_ROWS] = Arrays::filter($data->_result[Query_Result::RESULT_ROWS], $filterScheme);
+        $data->_result[Query_Result::ROWS] = Arrays::filter($data->_result[Query_Result::ROWS], $filterScheme);
         return $data;
-    }
-
-    /**
-     * Return count all found rows
-     *
-     * @return int
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function getFoundRows()
-    {
-        return $this->_result[Query_Result::FOUND_ROWS];
     }
 
     /**
@@ -620,7 +363,7 @@ class Query_Result extends Container implements Iterator, ArrayAccess, Countable
     {
         return empty($fieldName)
             ? $this->getKeys()
-            : Arrays::column($this->_result[Query_Result::RESULT_ROWS], $fieldName, $indexKey);
+            : Arrays::column($this->_result[Query_Result::ROWS], $fieldName, $indexKey);
     }
 
     /**
@@ -635,7 +378,7 @@ class Query_Result extends Container implements Iterator, ArrayAccess, Countable
      */
     public function getKeys()
     {
-        return array_keys($this->_result[Query_Result::RESULT_ROWS]);
+        return array_keys($this->_result[Query_Result::ROWS]);
     }
 
     /**
@@ -654,7 +397,7 @@ class Query_Result extends Container implements Iterator, ArrayAccess, Countable
      */
     public function offsetGet($offset)
     {
-        return $this->offsetExists($offset) ? $this->_result[Query_Result::RESULT_ROWS][$offset] : null;
+        return $this->offsetExists($offset) ? $this->_result[Query_Result::ROWS][$offset] : null;
     }
 
     /**
@@ -676,7 +419,7 @@ class Query_Result extends Container implements Iterator, ArrayAccess, Countable
      */
     public function offsetExists($offset)
     {
-        return isset($this->_result[Query_Result::RESULT_ROWS][$offset]);
+        return isset($this->_result[Query_Result::ROWS][$offset]);
     }
 
     /**
@@ -699,9 +442,9 @@ class Query_Result extends Container implements Iterator, ArrayAccess, Countable
     public function offsetSet($offset, $value)
     {
         if (is_null($offset)) {
-            $this->_result[Query_Result::RESULT_ROWS][] = $value;
+            $this->_result[Query_Result::ROWS][] = $value;
         } else {
-            $this->_result[Query_Result::RESULT_ROWS][$offset] = $value;
+            $this->_result[Query_Result::ROWS][$offset] = $value;
         }
     }
 
@@ -721,7 +464,7 @@ class Query_Result extends Container implements Iterator, ArrayAccess, Countable
      */
     public function offsetUnset($offset)
     {
-        unset($this->_result[Query_Result::RESULT_ROWS][$offset]);
+        unset($this->_result[Query_Result::ROWS][$offset]);
     }
 
     /**
@@ -740,7 +483,7 @@ class Query_Result extends Container implements Iterator, ArrayAccess, Countable
      */
     public function count()
     {
-        return count($this->_result[Query_Result::RESULT_ROWS]);
+        return count($this->_result[Query_Result::ROWS]);
     }
 
     /**
@@ -805,54 +548,7 @@ class Query_Result extends Container implements Iterator, ArrayAccess, Countable
      */
     public function getRandKey()
     {
-        return array_rand($this->getResult()[Query_Result::RESULT_ROWS]);
-    }
-
-    /**
-     * Return data limit
-     *
-     * @return mixed
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function getLimit()
-    {
-        return $this->_result[Query_Result::LIMIT];
-    }
-
-    /**
-     * Return data page
-     *
-     * @return int
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function getPage()
-    {
-        return $this->_result[Query_Result::PAGE];
-    }
-
-    /**
-     * Return instance of query result
-     *
-     * @param null $key
-     * @param null $ttl
-     * @return Query_Result
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.2
-     * @since 0.2
-     */
-    public static function getInstance($key = null, $ttl = null)
-    {
-        return parent::getInstance($key, $ttl);
+        return array_rand($this->getResult()[Query_Result::ROWS]);
     }
 
     /**
@@ -868,5 +564,20 @@ class Query_Result extends Container implements Iterator, ArrayAccess, Countable
     public function getAffectedRows()
     {
         return $this->_result[Query_Result::AFFECTED_ROWS];
+    }
+
+    /**
+     * Return query of query result
+     *
+     * @return Query
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.2
+     * @since 0.2
+     */
+    public function getQuery()
+    {
+        return $this->_result[Query_Result::QUERY];
     }
 }

@@ -29,7 +29,7 @@ use Ice\Core\Exception;
 class File_Not_Found extends Exception
 {
     /**
-     * Constrinctor for file not found exception
+     * Constructor for file not found exception
      *
      * @param string $errstr
      * @param array $errcontext

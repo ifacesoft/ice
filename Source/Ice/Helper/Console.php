@@ -12,7 +12,6 @@ namespace Ice\Helper;
 use Ice\Core;
 use Ice\Core\Logger as Core_Logger;
 use Ice\Core\Resource;
-use Ice\Core\Response;
 use Ice\Core\Validator;
 
 /**
@@ -64,7 +63,6 @@ class Console
      * @param $string
      * @param Resource $resource
      * @return string
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
@@ -133,7 +131,7 @@ class Console
 
         $title = Console::C_YELLOW . $resource->get($data['title'], $data['default']) . Console::C_GRAY_B;
 
-        Response::send($title);
+        echo $title;
 
         $f = fopen('php://stdin', 'r');
         while ($line = trim(fgets($f))) {
@@ -157,12 +155,12 @@ class Console
                         ? $params['message']
                         : 'param {$0} is not valid';
 
-                    Response::send(Validator::getLogger()->info([$message, $param], Core_Logger::DANGER, true, false));
+                    echo Validator::getLogger()->info([$message, $param], Core_Logger::DANGER, true, false);
                 }
             }
 
             if ($errors) {
-                Response::send($title);
+                echo $title;
                 continue;
             }
 
@@ -171,8 +169,8 @@ class Console
         }
         fclose($f);
 
-        Response::send(Console::C_GREEN_B . $data['default']);
-        Response::send(Resource::getLogger()->info('...value is accepted!' . "\n", Core_Logger::SUCCESS, true, false));
+        echo Console::C_GREEN_B . $data['default'];
+        echo Resource::getLogger()->info('...value is accepted!' . "\n", Core_Logger::SUCCESS, true, false);
 
         return $data['default'];
     }
@@ -180,7 +178,7 @@ class Console
     public static function run($commands)
     {
         foreach ((array)$commands as $command) {
-            Response::send(Console::getText($command, Console::C_GREEN_B) . "\n");
+            echo Console::getText($command, Console::C_GREEN_B) . "\n";
             system($command);
         }
     }

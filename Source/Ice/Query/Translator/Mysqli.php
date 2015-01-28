@@ -10,7 +10,6 @@
 namespace Ice\Query\Translator;
 
 use Ice\Core\Exception;
-use Ice\Core\Logger;
 use Ice\Core\Model;
 use Ice\Core\Query_Builder;
 use Ice\Core\Query_Translator;
@@ -252,8 +251,10 @@ class Mysqli extends Query_Translator
         $deleteClass = array_shift($part);
 
         if ($deleteClass) {
+            $tableAlias = reset($part)[0];
+
             $delete = "\n" . self::SQL_STATEMENT_DELETE . ' ' . self::SQL_CLAUSE_FROM .
-                "\n\t" . $deleteClass::getTableName();
+                "\n\t" . '`' . $tableAlias . '` USING ' . $deleteClass::getTableName() . ' AS  `' . $tableAlias . '`';
             $sql .= $delete;
         }
 
@@ -321,11 +322,11 @@ class Mysqli extends Query_Translator
                         $fieldAlias = 'asText(' . $tableAlias . '.' . $fieldName . ')' . ' AS `' . $fieldAlias . '`';
                     } else {
                         $fieldAlias = $fieldAlias == $fieldName
-                            ? $fieldName
+                            ? $tableAlias . '.' . $fieldName
                             : $tableAlias . '.' . $fieldName . ' AS `' . $fieldAlias . '`';
                     }
                 } else {
-                    $fieldAlias = $fieldName . ' AS `' . $fieldAlias . '`';
+                    $fieldAlias = $tableAlias . '.' . $fieldName . ' AS `' . $fieldAlias . '`';
                 }
             }
 

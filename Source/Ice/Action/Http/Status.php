@@ -1,6 +1,6 @@
 <?php
 /**
- * Ice action http status500 class
+ * Ice action http status 400 class
  *
  * @link http://www.iceframework.net
  * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
@@ -11,11 +11,12 @@ namespace Ice\Action;
 
 use Ice\Core\Action;
 use Ice\Core\Action_Context;
+use Ice\Helper\Http;
 
 /**
- * Class Http_Status_500
+ * Class Http_Status_400
  *
- * Action for page with status 505
+ * Action for page with status 400
  *
  * @see Ice\Core\Action
  * @see Ice\Core\Action_Context
@@ -28,7 +29,7 @@ use Ice\Core\Action_Context;
  * @version 0.0
  * @since 0.0
  */
-class Http_Status_500 extends Action
+class Http_Status extends Action
 {
     /**  public static $config = [
      *      'afterActions' => [],          // actions
@@ -61,6 +62,12 @@ class Http_Status_500 extends Action
      */
     protected function run(array $input, Action_Context $actionContext)
     {
-        header('HTTP/1.0 500 Internal Server Error');
+        header(Http::getStatusCodeHeader($input['code']), true, $input['code']);
+
+        $actionContext->setTemplate('_' . $input['code']);
+
+        return isset($input['exception'])
+            ? ['message' => $input['exception']->getMessage()]
+            : ['message' => ''];
     }
 }

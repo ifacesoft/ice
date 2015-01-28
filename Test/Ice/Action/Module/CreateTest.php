@@ -9,7 +9,7 @@ class Module_CreateTest extends PHPUnit_Framework_TestCase
     public function testActionRun()
     {
         Front_Cli::getInstance()->call(
-            new Action_Context(),
+            Action_Context::create(),
             [
                 'action' => 'Ice:Module_Create',
                 'name' => 'MyProject',

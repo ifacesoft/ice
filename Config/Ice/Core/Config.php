@@ -16,7 +16,7 @@ return [
             'ice' => 'Ice',
         ]
     ],
-    'Ice\\Core\\Data_Source' => [
+    'Ice\Core\Data_Source' => [
         'Ice:Mysqli/default' => 'test',
     ],
     'Ice\Core\Environment' => [
@@ -43,9 +43,6 @@ return [
         'layout' => null,
         'defaultViewRenderClassName' => 'Ice:Php'
     ],
-    'Ice\Core\Action' => [
-        'layoutActionName' => 'Ice:Layout_Main',
-    ],
     'Ice\Core\Request' => [
         'multilocale' => 1,
         'locale' => 'en',
@@ -56,4 +53,15 @@ return [
             'cookie' => 'true' // Allow cookie
         ]
     ],
+    'defaults' => [
+        'Ice\Core\Route' => [
+            'params' => [],
+            'weight' => 0,
+            'request' => [
+                'GET' => [
+                    'layout' => 'Ice:Layout_Main'
+                ]
+            ]
+        ]
+    ]
 ];

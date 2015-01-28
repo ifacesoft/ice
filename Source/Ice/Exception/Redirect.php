@@ -29,7 +29,7 @@ use Ice\Core\Exception;
 class Redirect extends Exception
 {
     /**
-     * Constrinctor for redirect exception
+     * Constructor for redirect exception
      *
      * @param string $errstr
      * @param array $errcontext

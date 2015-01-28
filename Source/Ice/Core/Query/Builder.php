@@ -945,7 +945,7 @@ class Query_Builder
      * @param null $fieldAlias
      * @param null $modelClass
      * @param null $tableAlias
-     * @param null $sourceName
+     * @param string|null $sourceName
      * @param int $ttl
      * @return Query_Result
      *
@@ -960,13 +960,13 @@ class Query_Builder
 
         $this->_select($fieldName, $fieldAlias, $modelClass, $tableAlias);
 
-        return Query_Result::getInstance([$this->getQuery($sourceName), $ttl]);
+        return $this->getQuery($sourceName)->execute($ttl);
     }
 
     /**
      * Return instance of query by current query builder
      *
-     * @param null $sourceName
+     * @param string|null $sourceName
      * @return Query
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -1073,7 +1073,7 @@ class Query_Builder
 
             $this->_bindParts[$part] = [[]];
 
-            return Query_Result::getInstance([$this->getQuery($sourceName), $ttl]);
+            return $this->getQuery($sourceName)->execute($ttl);
         }
 
         if (!is_array(reset($data))) {
@@ -1098,7 +1098,7 @@ class Query_Builder
 
         $this->_bindParts[$part] = array_merge($this->_bindParts[$part], $data);
 
-        return Query_Result::getInstance([$this->getQuery($sourceName), $ttl]);
+        return $this->getQuery($sourceName)->execute($ttl);
     }
 
     /**
@@ -1124,7 +1124,7 @@ class Query_Builder
      * Return query result for delete query
      *
      * @param array $pkValues
-     * @param null $sourceName
+     * @param string|null $sourceName
      * @param int $ttl
      * @return Query_Result
      *
@@ -1140,7 +1140,7 @@ class Query_Builder
 
         $this->inPk((array)$pkValues);
 
-        return Query_Result::getInstance([$this->getQuery($sourceName), $ttl]);
+        return $this->getQuery($sourceName)->execute($ttl);
     }
 
     /**
@@ -1348,12 +1348,7 @@ class Query_Builder
      */
     public function setPaginator(array $paginator)
     {
-        if (empty($paginator)) {
-            $page = 1;
-            $limit = 1000;
-        } else {
-            list($page, $limit) = $paginator;
-        }
+        list($page, $limit) = $paginator;
 
         return $this->calcFoundRows()
             ->limit($limit, ($page - 1) * $limit);
@@ -1424,7 +1419,7 @@ class Query_Builder
     /**
      * Execute query create table
      *
-     * @param null $sourceName
+     * @param string|null $sourceName
      * @param int $ttl
      * @return Query_Result
      *
@@ -1436,13 +1431,13 @@ class Query_Builder
     public function create($sourceName = null, $ttl = 3600)
     {
         $this->_queryType = Query_Builder::TYPE_CREATE;
-        return Query_Result::getInstance([$this->getQuery($sourceName), $ttl]);
+        return $this->getQuery($sourceName)->execute($ttl);
     }
 
     /**
      * Execute query drop table
      *
-     * @param null $sourceName
+     * @param string|null $sourceName
      * @param int $ttl
      * @return Query_Result
      *
@@ -1455,7 +1450,7 @@ class Query_Builder
     {
         $this->_queryType = Query_Builder::TYPE_DROP;
         $this->_sqlParts[self::PART_DROP]['_drop'] = $this->_modelClass;
-        return Query_Result::getInstance([$this->getQuery($sourceName), $ttl]);
+        return $this->getQuery($sourceName)->execute($ttl);
     }
 
     /**

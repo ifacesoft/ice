@@ -2,9 +2,10 @@ imports:
     - php
 
 filter:
-    paths:
-        - Source/*
-
+#    paths:
+#        - Source/*
+    excluded_paths:
+        - Test/*
 tools:
     external_code_coverage:
         timeout: 2100 # Timeout in seconds.

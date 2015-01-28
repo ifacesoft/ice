@@ -1,6 +1,6 @@
 <?php
 /**
- * Ice exception page not found class
+ * Ice exception http bad request (code 400) class
  *
  * @link http://www.iceframework.net
  * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
@@ -12,9 +12,9 @@ namespace Ice\Exception;
 use Ice\Core\Exception;
 
 /**
- * Class Page_Not_Found
+ * Class Http_Bad_Request
  *
- * Implemets page not found exception
+ * Implements http bad request exception
  *
  * @see Ice\Core\Exception
  *
@@ -22,14 +22,11 @@ use Ice\Core\Exception;
  *
  * @package Ice
  * @subpackage Exception
- *
- * @version 0.0
- * @since 0.0
  */
-class Page_Not_Found extends Exception
+class Http_Bad_Request extends Exception
 {
     /**
-     * Constrinctor for page not found exception
+     * Constructor for http bad request exception
      *
      * @param string $errstr
      * @param array $errcontext
@@ -40,11 +37,11 @@ class Page_Not_Found extends Exception
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
-     * @since 0.0
+     * @version 0.4
+     * @since 0.4
      */
     public function __construct($errstr, $errcontext = [], $previous = null, $errfile = null, $errline = null, $errno = 0)
     {
-        parent::__construct(['PageNotFoundException: {$0}', $errstr], $errcontext, $previous, $errfile, $errline, E_USER_ERROR);
+        parent::__construct($errstr, $errcontext, $previous, $errfile, $errline, E_USER_ERROR);
     }
 } 

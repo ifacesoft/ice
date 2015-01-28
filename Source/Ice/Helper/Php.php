@@ -39,7 +39,9 @@ class Php
     {
         $string = '<?php' . "\n" . 'return ' . var_export($var, true) . ';';
         $string = str_replace('array (', '[', $string);
+        $string = str_replace('(array(', '([', $string);
         $string = str_replace('),', '],', $string);
+        $string = str_replace(')],', ']),', $string);
         $string = str_replace(');', '];', $string);
         $string = preg_replace('/=>\s+\[/', '=> [', $string);
         $string = preg_replace('/=> \[\s+\]/', '=> []', $string);

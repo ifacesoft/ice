@@ -2,18 +2,17 @@
 
 namespace Ice\Core;
 
-use Ice\Model\Role;
 use Ice\Model\User;
 
 class Security
 {
-    public static function getUser()
+    public static function checkAccess($roles, $permission)
     {
-        if (isset($_SESSION['userPk'])) {
-            return User::getModel($_SESSION['userPk'], '*');
+        if (empty($roles)) {
+            return true;
         }
 
-        return null;
+        return in_array($permission, array_merge(array_intersect_key($roles, array_flip(Security::getRoleNames()))));
     }
 
     public static function getRoleNames()
@@ -25,12 +24,12 @@ class Security
         return $_SESSION['roleNames'] = Security::getUser() ? ['Ice:User'] : ['Ice:Guest'];
     }
 
-    public static function checkAccess($roles, $permission)
+    public static function getUser()
     {
-        if (empty($roles)) {
-            return true;
+        if (isset($_SESSION['userPk'])) {
+            return User::getModel($_SESSION['userPk'], '*');
         }
 
-        return in_array($permission, array_merge(array_intersect_key($roles, array_flip(Security::getRoleNames()))));
+        return null;
     }
 }

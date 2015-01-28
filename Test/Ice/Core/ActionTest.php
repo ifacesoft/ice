@@ -11,12 +11,7 @@ class ActionTest extends PHPUnit_Framework_TestCase
     {
         $_SERVER['REQUEST_URI'] = '/ice/test';
 
-        $actionContext = new Action_Context();
-
-        /** @var View $view */
-        $view = Front::getInstance()->call($actionContext);
-
-        $this->assertEquals($view->getContent(), 'Layout Test
+        $this->assertEquals(Front::getInstance()->call(Action_Context::create())->getContent(), 'Layout Test
 
 inputTestPhp1
 testPhpOk

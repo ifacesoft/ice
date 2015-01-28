@@ -12,7 +12,6 @@ namespace Ice\Action;
 use Ice\Core\Action;
 use Ice\Core\Action_Context;
 use Ice\Core\Logger;
-use Ice\Core\Response;
 use Ice\Helper\Console;
 use Ice\Helper\Directory;
 use Ice\Helper\File;
@@ -73,8 +72,7 @@ class Module_Create extends Action
         $moduleAlias = ucfirst($input['alias']);
 
         if (file_exists(ROOT_DIR . $moduleName)) {
-            Response::send(Module_Create::getLogger()->info(['Module {$0} already exists', $moduleName], Logger::INFO, true, false));
-            Logger::clearLog();
+            Module_Create::getLogger()->info(['Module {$0} already exists', $moduleName], Logger::INFO, true, false);
             $actionContext->setTemplate('');
             return [];
         }
@@ -155,9 +153,6 @@ class Module_Create extends Action
                     'layout' => null,
                     'defaultViewRenderClassName' => 'Ice:' . $input['viewRender']
                 ],
-                'Ice\Core\Action' => [
-                    'layoutActionName' => 'Ice:Layout_Main',
-                ],
                 'Ice\Core\Environment' => [
                     'environments' => [
                         '/' . strtolower($moduleName) . '.global$/' => 'production',
@@ -236,12 +231,13 @@ class Module_Create extends Action
             $route = [
                 strtolower($moduleAlias) . '_main' => [
                     'route' => '/',
-                    'GET' => [
-                        'actions' => [
-                            'title' => ['Ice:Title' => ['title' => $moduleAlias]],
-                            'main' => $moduleAlias . ':Index'
-                        ],
-                        'layout' => 'Ice:Layout_Main',
+                    'request' => [
+                        'GET' => [
+                            'actions' => [
+                                'title' => ['Ice:Title' => ['title' => $moduleAlias]],
+                                'main' => $moduleAlias . ':Index'
+                            ]
+                        ]
                     ],
                     'weight' => 10000
                 ]
@@ -299,9 +295,7 @@ class Module_Create extends Action
 
         Vcs::init($input['vcs'], $moduleDir);
 
-        Response::send(Module_Create::getLogger()->info(['Module {$0} created', $moduleName], Logger::SUCCESS, true, false));
-
-        Logger::clearLog();
+        Module_Create::getLogger()->info(['Module {$0} created', $moduleName], Logger::SUCCESS, true, false);
 
         return ['moduleName' => $moduleName];
     }

@@ -15,7 +15,6 @@ use Ice\Core\Environment;
 use Ice\Core\Loader;
 use Ice\Core\Logger;
 use Ice\Core\Module;
-use Ice\Core\Response;
 use Ice\Core\View;
 use Ice\Core\View_Render;
 
@@ -80,23 +79,6 @@ class Twig extends View_Render
         $loader = new \Twig_Loader_Filesystem($templateDirs);
         $this->_fileTwig = new \Twig_Environment($loader, ['cache' => CACHE_DIR . $config->get('cache')]);
         $this->_stringTwig = new \Twig_Environment(new \Twig_Loader_String());
-    }
-
-    /**
-     * Display rendered view in standard output
-     *
-     * @param $template
-     * @param array $data
-     * @param string $templateType
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function display($template, array $data = [], $templateType = View_Render::TEMPLATE_TYPE_FILE)
-    {
-        Response::send($this->fetch($template, $data, $templateType));
     }
 
     /**

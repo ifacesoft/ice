@@ -28,7 +28,7 @@
         </li>
     <?php } ?>
     <li class="active"><a
-            onclick="Ice_Paginator.page($(this), '<?= $curr ?>', '<?= $actionClassName ?>', <?= $params ?>); return false;"><?= $curr ?>
+            onclick="Ice_Paginator.page($(this), '<?= $page ?>', '<?= $actionClassName ?>', <?= $params ?>); return false;"><?= $page ?>
             (<?= $limit ?>/<?= $foundRows ?>)</a>
     </li>
     <?php if (isset($after1)) { ?>

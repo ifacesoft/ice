@@ -104,28 +104,44 @@ class Query extends Container
     private $_bindHash = null;
 
     /**
+     * Page, perpage and totalCount
+     *
+     * @var array
+     */
+    private $_pagination = null;
+
+    /**
      * Private constructor of query builder. Create: Query::getInstance()->...
      *
-     * @param $data
-     * @param $hash
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.4
      * @since 0.0
      */
-    private function __construct($data, $hash = null)
+    private function __construct()
     {
-        list($sourceName, $queryType, $sqlParts, $modelClass, $cacheTags) = $data;
-        $this->_sourceName = empty($sourceName) ? Data_Source::getDefaultKey() : $sourceName;
-        $this->_queryType = $queryType;
-        $queryTranslator = Query_Translator::getInstance(get_class(Data_Source::getInstance($sourceName)));
-        $this->_sql = $queryTranslator->translate($sqlParts);
-        $this->_modelClass = $modelClass;
-        $this->_cacheTags = $cacheTags;
-        $this->_calcFoundRows = reset($sqlParts[Query_Builder::PART_SELECT]);
-        $this->_limit = $sqlParts[Query_Builder::PART_LIMIT];
-        $this->_hash = $hash;
+    }
+
+    /**
+     * @return array
+     */
+    public function getPagination()
+    {
+        return $this->_pagination;
+    }
+
+    /**
+     * @param $foundRows
+     */
+    public function setPagination($foundRows)
+    {
+        $limit = $this->getLimit();
+
+        if (!empty($limit)) {
+            list($limit, $offset) = $limit;
+            $this->_pagination = [$offset / $limit + 1, $limit, $foundRows];
+        }
     }
 
     /**
@@ -137,12 +153,25 @@ class Query extends Container
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.4
      * @since 0.0
      */
     protected static function create($data, $hash = null)
     {
-        return new Query($data, $hash);
+        $query = new Query();
+
+        list($sourceName, $queryType, $sqlParts, $modelClass, $cacheTags) = $data;
+        $query->_sourceName = empty($sourceName) ? Data_Source::getDefaultKey() : $sourceName;
+        $query->_queryType = $queryType;
+        $queryTranslator = Query_Translator::getInstance(get_class(Data_Source::getInstance($query->_sourceName)));
+        $query->_sql = $queryTranslator->translate($sqlParts);
+        $query->_modelClass = $modelClass;
+        $query->_cacheTags = $cacheTags;
+        $query->_calcFoundRows = reset($sqlParts[Query_Builder::PART_SELECT]);
+        $query->_limit = $sqlParts[Query_Builder::PART_LIMIT];
+        $query->_hash = $hash;
+
+        return $query;
     }
 
     /**
@@ -206,7 +235,7 @@ class Query extends Container
         $this->_bindParts = $bindParts;
 
         if ($this->getQueryType() == Query_Builder::TYPE_SELECT) {
-            $this->_bindHash = serialize($bindParts);
+            $this->_bindHash = md5(json_encode($bindParts));
         }
 
         return $this;
@@ -350,8 +379,19 @@ class Query extends Container
         return $this->_hash . '/' . $this->_bindHash;
     }
 
-    public function execute()
+    public function execute($ttl = 3600)
     {
-        return $this->getDataSource()->execute($this);
+        return $this->getDataSource()->execute($this, $ttl);
+    }
+
+    public static function __set_state(array $data)
+    {
+        $query = new Query();
+
+        foreach ($data as $fieldName => $fieldValue) {
+            $query->$fieldName = $fieldValue;
+        }
+
+        return $query;
     }
 }

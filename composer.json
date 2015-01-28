@@ -44,6 +44,7 @@
     "jquery/jquery-ui": "1.11.1",
     "mrclay/minify": "dev-master",
     "firephp/firephp-core": "dev-master",
+    "facebook/xhprof": "dev-master",
     "mailru/fileapi": "2.0.10",
     "phpunit/phpunit": "4.4.0",
     "phpunit/php-invoker": "1.1.3",

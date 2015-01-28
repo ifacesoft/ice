@@ -4,27 +4,6 @@ return [
     'revision' => '01121508',
     'scheme' => 'test',
     'tables' => [
-        'bi_blog' => [
-            'engine' => 'InnoDB',
-            'charset' => 'utf8_general_ci',
-            'comment' => '',
-            'modelClass' => 'Bi\\Model\\Blog',
-            'revision' => '12151537',
-        ],
-        'bi_comment' => [
-            'engine' => 'InnoDB',
-            'charset' => 'utf8_general_ci',
-            'comment' => '',
-            'modelClass' => 'Bi\\Model\\Comment',
-            'revision' => '01121507',
-        ],
-        'bi_post' => [
-            'engine' => 'InnoDB',
-            'charset' => 'utf8_general_ci',
-            'comment' => '',
-            'modelClass' => 'Bi\\Model\\Post',
-            'revision' => '12151537',
-        ],
         'ice_account' => [
             'engine' => 'InnoDB',
             'charset' => 'utf8_general_ci',
@@ -52,6 +31,13 @@ return [
             'comment' => '',
             'modelClass' => 'Ice\\Model\\User_Role_Link',
             'revision' => '12281437',
+        ],
+        'ice_test' => [
+            'engine' => 'InnoDB',
+            'charset' => 'utf8_general_ci',
+            'comment' => '',
+            'modelClass' => 'Ice\\Model\\Test',
+            'revision' => '01081216',
         ],
     ],
 ];
