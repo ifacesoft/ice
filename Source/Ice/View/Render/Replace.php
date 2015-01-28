@@ -12,7 +12,6 @@ namespace Ice\View\Render;
 use Ice\Core\Action;
 use Ice\Core\Config;
 use Ice\Core\Loader;
-use Ice\Core\Response;
 use Ice\Core\View_Render;
 
 /**
@@ -46,23 +45,6 @@ class Replace extends View_Render
      */
     protected function __construct(Config $config)
     {
-    }
-
-    /**
-     * Display rendered view in standard output
-     *
-     * @param $template
-     * @param array $data
-     * @param string $templateType
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function display($template, array $data = [], $templateType = View_Render::TEMPLATE_TYPE_FILE)
-    {
-        Response::send($this->fetch($template, $data, $templateType));
     }
 
     /**

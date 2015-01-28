@@ -69,18 +69,20 @@ class Front extends Action
     {
         $route = Route::getInstance($input['routeName']);
 
-        $data = $route->getData();
+        $redirectUrl = $route->getResponseRedirect($input['method']);
 
-        $methodData = $data[$input['method']];
-
-        if (isset($methodData['redirect'])) {
-            throw new Redirect(isset($input['redirectUrl']) ? $input['redirectUrl'] : Route::getUrl($data[$input['method']]['redirect']));
+        if ($redirectUrl) {
+            $actionContext->getResponse()->setRedirectUrl($redirectUrl);
+            return;
         }
 
-        if (!isset($methodData['layout'])) {
-            $methodData['layout'] = Action::getConfig()->get('layoutActionName');
-        }
+        $actionContext->addAction(
+            $route->getLayoutActionClassName($input['method']),
+            ['actions' => $route->getActionClassNames($input['method'])],
+            'layout'
+        );
 
-        $actionContext->addAction($methodData['layout'], ['actions' => $methodData['actions']], 'layout');
+        $actionContext->getResponse()->setContentType($route->getResponseContentType($input['method']));
+        $actionContext->getResponse()->setStatusCode($route->getResponseStatusCode($input['method']));
     }
 }

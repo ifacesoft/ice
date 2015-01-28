@@ -134,7 +134,8 @@ abstract class Validator extends Container
      *                  'PATTERN_PARAM_NAME1' => 'PATTERN_PARAM_VALUE1',
      *                  'PATTERN_PARAM_NAME2 => 'PATTERN_PARAM_VALUE2'
      *              ],
-     *              'message => 'validate failed for {$0}'
+     *              'message => 'validate failed for {$0}',
+     *              'exception => 'Ice:Http_Not_Found'
      *              ]
      *          ]
      *      ];

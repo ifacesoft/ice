@@ -12,6 +12,7 @@ namespace Ice\Core;
 use Ice;
 use Ice\Core;
 use Ice\Data\Provider\Object;
+use Ice\Helper\Config as Helper_Config;
 use Ice\Helper\File;
 use Iterator;
 
@@ -26,11 +27,8 @@ use Iterator;
  *
  * @package Ice
  * @subpackage Core
- *
- * @version 0.0
- * @since 0.0
  */
-class Config implements Iterator
+class Config
 {
     use Core;
 
@@ -47,13 +45,6 @@ class Config implements Iterator
      * @var string
      */
     private $_configName = null;
-
-    /**
-     * Current iteration position
-     *
-     * @var int
-     */
-    private $_position = 0;
 
     /**
      * Constructor of config object
@@ -210,6 +201,23 @@ class Config implements Iterator
     }
 
     /**
+     * Get config param values
+     *
+     * @param null $key
+     * @param bool $isRequired
+     * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.0
+     */
+    public function gets($key = null, $isRequired = true)
+    {
+        return Helper_Config::gets($this->_config, $key, $isRequired);
+    }
+
+    /**
      * Return default key
      *
      * @return Core
@@ -222,64 +230,6 @@ class Config implements Iterator
     protected static function getDefaultKey()
     {
         return self::getClass();
-    }
-
-    /**
-     * Get more then one params of config
-     *
-     * @param $key
-     * @param bool $isRequired
-     * @throws Exception
-     * @return array
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function gets($key = null, $isRequired = true)
-    {
-        if (empty($key)) {
-            return $this->_config;
-        }
-
-        $params = $this->isSetKey($key);
-
-        if ($params === false) {
-            if ($isRequired) {
-                Config::getLogger()->fatal(['Could not found required param {$0} for class {$1}', [$key, $this->getConfigName()]], __FILE__, __LINE__);
-            }
-
-            return [];
-        }
-
-        return (array)$params;
-    }
-
-    /**
-     * Check is set key in config
-     *
-     * @param $key
-     * @return array|bool
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function isSetKey($key)
-    {
-        $params = $this->_config;
-
-        foreach (explode('/', $key) as $keyPart) {
-            if (!isset($params[$keyPart])) {
-                return false;
-            }
-
-            $params = $params[$keyPart];
-        }
-
-        return $params;
     }
 
     /**
@@ -315,92 +265,5 @@ class Config implements Iterator
         $params = $this->gets($key, $isRequired);
 
         return empty($params) ? null : reset($params);
-    }
-
-    /**
-     * (PHP 5 &gt;= 5.0.0)<br/>
-     * Return the current element
-     * @link http://php.net/manual/en/iterator.current.php
-     * @return mixed Can return any type.
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function current()
-    {
-        return new Config((array)current($this->_config), $this->_configName . '_' . $this->_position);
-    }
-
-    /**
-     * (PHP 5 &gt;= 5.0.0)<br/>
-     * Move forward to next element
-     * @link http://php.net/manual/en/iterator.next.php
-     * @return void Any returned value is ignored.
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function next()
-    {
-        next($this->_config);
-        ++$this->_position;
-    }
-
-    /**
-     * (PHP 5 &gt;= 5.0.0)<br/>
-     * Return the key of the current element
-     * @link http://php.net/manual/en/iterator.key.php
-     * @return mixed scalar on success, or null on failure.
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function key()
-    {
-        return $this->_position;
-    }
-
-    /**
-     * (PHP 5 &gt;= 5.0.0)<br/>
-     * Checks if current position is valid
-     * @link http://php.net/manual/en/iterator.valid.php
-     * @return boolean The return value will be casted to boolean and then evaluated.
-     * Returns true on success or false on failure.
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function valid()
-    {
-        $var = current($this->_config); // todo: may be (bool) current($this->_config)
-        return !empty($var);
-    }
-
-    /**
-     * (PHP 5 &gt;= 5.0.0)<br/>
-     * Rewind the Iterator to the first element
-     * @link http://php.net/manual/en/iterator.rewind.php
-     * @return void Any returned value is ignored.
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function rewind()
-    {
-        if (!empty($this->_config)) {
-            reset($this->_config);
-        }
-
-        $this->_position = 0;
     }
 }

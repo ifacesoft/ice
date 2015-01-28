@@ -187,7 +187,11 @@ class Resources extends Action
                         ? $name . '/' . $resourceKey . '/'
                         : 'vendor/' . $resourceKey . '/';
 
-                    $source .= Config::get($resourceItem['path']);
+                    $resourceItemPath = is_array($resourceItem['path'])
+                        ? reset($resourceItem['path'])
+                        : $resourceItem['path'];
+
+                    $source .= $resourceItemPath;
 
                     if ($resourceItem['isCopy']) {
                         Directory::copy($source, Directory::get(RESOURCE_DIR . $res));
@@ -200,7 +204,7 @@ class Resources extends Action
                         $resources['js'][] = [
                             'source' => $source . ltrim($resource, '-'),
                             'resource' => $jsResource,
-                            'url' => Config::get($resourceItem['path'])
+                            'url' => $resourceItemPath
                                 ? '/resource/' . $res . $resourceKey . '.pack.js'
                                 : '/resource/' . $name . '/javascript.pack.js',
                             'pack' => $resource[0] != '-'
@@ -213,7 +217,7 @@ class Resources extends Action
                         $resources['css'][] = [
                             'source' => $source . ltrim($resource, '-'),
                             'resource' => $cssResource,
-                            'url' => Config::get($resourceItem['path'])
+                            'url' => $resourceItemPath
                                 ? '/resource/' . $res . $resourceKey . '.pack.css'
                                 : '/resource/' . $name . '/style.pack.css',
                             'pack' => $resource[0] != '-',

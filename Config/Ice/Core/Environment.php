@@ -91,9 +91,6 @@ return [
                 'sql' => 'Ice:String/query',
                 'query' => 'Ice:String/query',
             ],
-            'Ice\Core\Query_Result' => [
-                'instance' => 'Ice:Object/query_result',
-            ],
             'Ice\Core\Code_Generator' => [
                 'instance' => 'Ice:Object/code_generator',
             ],
@@ -128,7 +125,17 @@ return [
             ]
         ],
     ],
-    'test' => [],
+    'test' => [
+        'dataProviderKeys' => [
+            'Ice\Core\Query' => [
+                'sql' => 'Ice:File/query',
+                'query' => 'Ice:File/query',
+            ],
+            'Ice\Core\Cache' => [
+                'tags' => 'Ice:File/cache',
+            ],
+        ]
+    ],
     'development' => [
         'dataProviderKeys' => [
             'Ice' => [
@@ -171,9 +178,6 @@ return [
                 'instance' => 'Ice:Registry/query',
                 'sql' => 'Ice:Registry/query',
                 'query' => 'Ice:Registry/query',
-            ],
-            'Ice\Core\Query_Result' => [
-                'instance' => 'Ice:Registry/data',
             ],
             'Ice\Core\Code_Generator' => [
                 'instance' => 'Ice:Registry/code_generator',

@@ -15,6 +15,8 @@ use Ice\Core\Exception;
 use Ice\Core\Request as Core_Request;
 use Ice\Core\Route;
 use Ice\Core\Security;
+use Ice\Exception\Http_Forbidden;
+use Ice\Exception\Http_Not_Found;
 
 /**
  * Class Router
@@ -183,14 +185,31 @@ class Router extends Data_Provider
     }
 
     /**
-     * Connect to data provider
+     * Return keys by pattern
      *
-     * @param $connection
-     * @return boolean
+     * @param string $pattern
+     * @return array
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
+     * @since 0.0
+     */
+    public function getKeys($pattern = null)
+    {
+        // TODO: Implement getKeys() method.
+    }
+
+    /**
+     * Connect to data provider
+     *
+     * @param $connection
+     * @return bool
+     * @throws Http_Forbidden
+     * @throws Http_Not_Found
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
      * @since 0.0
      */
     protected function connect(&$connection)
@@ -228,12 +247,16 @@ class Router extends Data_Provider
 
             $matchedRoutes[] = $routeName;
 
-            if (!isset($route[$method])) {
+            if (empty($route['request'][$method])) {
                 continue;
             }
 
             if (!isset($foundRoutes[$route['weight']])) {
-                $foundRoutes[$route['weight']] = [$routeName, $route['pattern'], $route['params'], $route['roles']];
+                $foundRoutes[$route['weight']] = [
+                    $routeName,
+                    $route['pattern'],
+                    $route['params']
+                ];
             }
         }
 
@@ -242,26 +265,12 @@ class Router extends Data_Provider
                 $this->getLogger()->warning(['Route not found for {$0} request of {$1}, but matched routes for pattern {$2}', [$method, $url, $route['pattern']]], __FILE__, __LINE__);
             }
 
-            $data = [
-                'routeName' => 'ice_404',
-                'method' => 'GET'
-            ];
-
-            return (bool)$connection = $dataProvider->set($key, $data);
+            throw new Http_Not_Found(['route for url \'{$0}\' not found', $url]);
         }
 
         krsort($foundRoutes, SORT_NUMERIC);
 
-        list($routeName, $pattern, $params, $roles) = reset($foundRoutes);
-
-        if (!Security::checkAccess($roles, 'Role_Access')) {
-            $data = [
-                'routeName' => 'ice_403',
-                'method' => 'GET'
-            ];
-
-            return (bool)$connection = $dataProvider->set($key, $data);
-        }
+        list($routeName, $pattern, $params) = reset($foundRoutes);
 
         $baseMatches = [];
         preg_match_all($pattern, $url, $baseMatches, PREG_SET_ORDER);
@@ -295,21 +304,5 @@ class Router extends Data_Provider
     {
         $connection = null;
         return true;
-    }
-
-    /**
-     * Return keys by pattern
-     *
-     * @param string $pattern
-     * @return array
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function getKeys($pattern = null)
-    {
-        // TODO: Implement getKeys() method.
     }
 }

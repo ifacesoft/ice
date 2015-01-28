@@ -9,7 +9,6 @@
 
 namespace Ice\Validator;
 
-use Ice\Core\Logger;
 use Ice\Core\Validator;
 
 /**

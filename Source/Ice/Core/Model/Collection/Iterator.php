@@ -58,7 +58,7 @@ class Model_Collection_Iterator implements Iterator
     private function __construct($modelClass, $rows)
     {
         $this->_modelClass = $modelClass;
-        $this->setRows($rows);
+        $this->_rows = $rows;
     }
 
     /**
@@ -174,82 +174,5 @@ class Model_Collection_Iterator implements Iterator
         }
 
         $this->position = 0;
-    }
-
-    /**
-     * Return iterated rows
-     *
-     * @return array
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since 0.4
-     */
-    public function getRows()
-    {
-        return $this->_rows;
-    }
-
-    /**
-     * Define rows
-     *
-     * @param array $rows
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since 0.4
-     */
-    public function setRows(array $rows)
-    {
-        $this->_rows = $rows;
-    }
-
-    /**
-     * Add data in collection
-     *
-     * @param array $data
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since 0.4
-     */
-    public function add(array $data)
-    {
-        if (empty($data)) {
-            return;
-        }
-
-        if (!is_numeric(each($data)[0])) {
-            $data = [$data];
-        }
-
-        $modelClass = $this->getModelClass();
-
-        foreach ($data as $row) {
-            $newRow = [];
-            foreach ($row as $fieldName => $fieldValue) {
-                $newRow[$modelClass::getFieldName($fieldName)] = $fieldValue;
-            }
-            unset($row);
-            $this->_rows[] = $newRow;
-        }
-    }
-
-    /**
-     * Return collection iterator model class
-     *
-     * @return Model
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since 0.4
-     */
-    public function getModelClass()
-    {
-        return $this->_modelClass;
     }
 }

@@ -49,38 +49,38 @@ class Php extends View_Render
     protected function __construct(Config $config)
     {
     }
-
-    /**
-     * Display rendered view in standard output
-     *
-     * @param $template
-     * @param array $data
-     * @param string $templateType
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function display($template, array $data = [], $templateType = View_Render::TEMPLATE_TYPE_FILE)
-    {
-        $templateFilePath = Loader::getFilePath($template, self::TEMPLATE_EXTENTION, 'Resource/', false);
-
-        if (!file_exists($templateFilePath)) {
-            if (Environment::isDevelopment()) {
-                View::getLogger()->info([Php::getClassName() . ': View {$0} not found. Trying generate template {$1}...', [$template, Php::getClassName()]], Logger::WARNING);
-
-                echo Php::getCodeGenerator()->generate($template);
-            } else {
-                echo View::getLogger()->error(['Render error in template "{$0}" "{$1}"', [$templateFilePath, ob_get_clean()]], __FILE__, __LINE__);
-            }
-        }
-
-        extract($data);
-        unset($data);
-
-        require $templateFilePath;
-    }
+//
+//    /**
+//     * Display rendered view in standard output
+//     *
+//     * @param $template
+//     * @param array $data
+//     * @param string $templateType
+//     *
+//     * @author dp <denis.a.shestakov@gmail.com>
+//     *
+//     * @version 0.0
+//     * @since 0.0
+//     */
+//    public function display($template, array $data = [], $templateType = View_Render::TEMPLATE_TYPE_FILE)
+//    {
+//        $templateFilePath = Loader::getFilePath($template, self::TEMPLATE_EXTENTION, 'Resource/', false);
+//
+//        if (!file_exists($templateFilePath)) {
+//            if (Environment::isDevelopment()) {
+//                View::getLogger()->info([Php::getClassName() . ': View {$0} not found. Trying generate template {$1}...', [$template, Php::getClassName()]], Logger::WARNING);
+//
+//                echo Php::getCodeGenerator()->generate($template);
+//            } else {
+//                echo View::getLogger()->error(['Render error in template "{$0}" "{$1}"', [$templateFilePath, ob_get_clean()]], __FILE__, __LINE__);
+//            }
+//        }
+//
+//        extract($data);
+//        unset($data);
+//
+//        require $templateFilePath;
+//    }
 
     /**
      * Render view via current view render

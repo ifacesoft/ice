@@ -1,6 +1,6 @@
 <?php
 /**
- * Ice exception page not found class
+ * Ice exception http forbidden class
  *
  * @link http://www.iceframework.net
  * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
@@ -12,7 +12,7 @@ namespace Ice\Exception;
 use Ice\Core\Exception;
 
 /**
- * Class Http_Not_Found
+ * Class Http_Forbidden
  *
  * Implements page not found exception
  *
@@ -22,11 +22,8 @@ use Ice\Core\Exception;
  *
  * @package Ice
  * @subpackage Exception
- *
- * @version 0.4
- * @since 0.0
  */
-class Http_Not_Found extends Exception
+class Http_Forbidden extends Exception
 {
     /**
      * Constructor for page not found exception
@@ -40,8 +37,8 @@ class Http_Not_Found extends Exception
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
-     * @since 0.0
+     * @version 0.4
+     * @since 0.4
      */
     public function __construct($errstr, $errcontext = [], $previous = null, $errfile = null, $errline = null, $errno = 0)
     {

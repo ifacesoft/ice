@@ -7,7 +7,7 @@ class Action_ContextTest extends PHPUnit_Framework_TestCase
 {
     public function testAddAction()
     {
-        $actionContext = new Action_Context();
+        $actionContext = Action_Context::create();
 
         $data = '';
         $actionContext->addAction($data);

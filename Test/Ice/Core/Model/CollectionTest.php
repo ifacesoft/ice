@@ -171,5 +171,11 @@ class Model_CollectionTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($testCollection->getKeys(), [2, 4, 5]);
 
         $this->assertEquals($testCollection->get(4), Test::getModel(4, '*'));
+
+        foreach ($testCollection as $test) {
+            $test->set(['/name' => ''])->save();
+        }
+        $testCollection->reload(); // todo: научить чтобы без релоада работало
+        $this->assertEquals($testCollection->column('test_name'), [2 => '', 4 => '', 5 => '']);
     }
 }

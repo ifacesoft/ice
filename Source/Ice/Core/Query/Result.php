@@ -194,7 +194,7 @@ class Query_Result
      */
     public function getModelCollection()
     {
-        return Model_Collection::create($this->getModelClass(), $this);
+        return Model_Collection::create($this->getModelClass(), $this->getRows(), $this->getQuery());
     }
 
     /**

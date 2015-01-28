@@ -92,19 +92,19 @@ abstract class View_Render extends Container
         return self::getClass();
     }
 
-    /**
-     * Display rendered view in standard output
-     *
-     * @param $template
-     * @param array $data
-     * @param string $templateType
-     *
-     * @author anonymous <email>
-     *
-     * @version 0
-     * @since 0
-     */
-    abstract public function display($template, array $data = [], $templateType = View_Render::TEMPLATE_TYPE_FILE);
+//    /**
+//     * Display rendered view in standard output
+//     *
+//     * @param $template
+//     * @param array $data
+//     * @param string $templateType
+//     *
+//     * @author anonymous <email>
+//     *
+//     * @version 0
+//     * @since 0
+//     */
+//    abstract public function display($template, array $data = [], $templateType = View_Render::TEMPLATE_TYPE_FILE);
 
     /**
      * Render view via current view render

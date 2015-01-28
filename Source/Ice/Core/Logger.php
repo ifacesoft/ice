@@ -15,6 +15,7 @@ use Ice\Helper\Console;
 use Ice\Helper\Directory;
 use Ice\Helper\File;
 use Ice\Helper\Logger as Helper_Logger;
+use Ice\Helper\Memory;
 use Ice\Helper\Php;
 
 /**
@@ -241,7 +242,7 @@ class Logger
 
         if (Request::isCli()) {
             $message = Console::getText(' ' . $message . ' ', Console::C_BLACK, self::$consoleColors[$type]) . "\n";
-            Response::send($message);
+            echo $message;
             return $logging ? $message : '';
         } else {
             $message = '<div class="alert alert-' . $type . '">' . $message . '</div>';
@@ -311,7 +312,7 @@ class Logger
         $message = Helper_Logger::getMessage($exception);
 
         if (Request::isCli()) {
-            Response::send($message);
+            echo $message;
             return $message;
         } else {
             return self::addLog($message);
@@ -372,7 +373,7 @@ class Logger
     public static function renderLog()
     {
         if (!Request::isAjax()) {
-            Response::send(implode('', self::$log));
+            echo implode('', self::$log);
         }
     }
 
@@ -417,11 +418,9 @@ class Logger
             $var = stripslashes(Php::varToPhpString($arg));
 
             if (!Request::isAjax()) {
-                Response::send(
-                    Request::isCli()
-                        ? Console::getText($var, Console::C_CYAN) . "\n"
-                        : '<div class="alert alert-' . self::INFO . '">' . highlight_string('<?php // Debug value:' . "\n" . $var, true) . '</div>'
-                );
+                echo Request::isCli()
+                    ? Console::getText($var, Console::C_CYAN) . "\n"
+                    : '<div class="alert alert-' . self::INFO . '">' . highlight_string('<?php // Debug value:' . "\n" . $var, true) . '</div>';
 
                 $logFile = Directory::get(LOG_DIR) . date('Y-m-d') . '/DEBUG.log';
                 File::createData($logFile, $var, false, FILE_APPEND);
@@ -536,5 +535,26 @@ class Logger
     public function fatal($message, $file, $line, \Exception $e = null, $errcontext = null, $errno = -1)
     {
         throw $this->createException($message, $file, $line, $e, $errcontext, $errno);
+    }
+
+    /**
+     * Log
+     *
+     * @param $message
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.4
+     */
+    public function log($message)
+    {
+        if (!Environment::isProduction()) {
+            if (Request::isCli()) {
+                Query::getLogger()->info($message . ' ' . Memory::memoryGetUsagePeak(), Logger::SUCCESS, false);
+            } else {
+                Logger::fb($message);
+            }
+        }
     }
 }

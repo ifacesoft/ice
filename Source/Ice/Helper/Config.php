@@ -8,16 +8,64 @@
 
 namespace Ice\Helper;
 
+use Ice\Core\Logger;
 
 class Config
 {
-    public static function get($value)
+    /**
+     * Get more then one params of config
+     *
+     * @param array $config
+     * @param $key
+     * @param bool $isRequired
+     * @return array
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.4
+     */
+    public static function gets(array $config, $key = null, $isRequired = true)
     {
-        return is_array($value) ? reset($value) : $value;
+        if (empty($key)) {
+            return $config;
+        }
+
+        $params = Config::isSetKey($config, $key);
+
+        if ($params === false) {
+            if ($isRequired) {
+                Logger::getInstance(__CLASS__)->fatal(['Could not found required param {$0}', $key], __FILE__, __LINE__);
+            }
+
+            return [];
+        }
+
+        return (array)$params;
     }
 
-    public static function gets($value)
+    /**
+     * Check is set key in config
+     *
+     * @param array $config
+     * @param $key
+     * @return array|bool
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.4
+     */
+    private static function isSetKey(array $config, $key)
     {
-        return is_array($value) ? $value : (array)$value;
+        $params = $config;
+
+        foreach (explode('/', $key) as $keyPart) {
+            if (!isset($params[$keyPart])) {
+                return false;
+            }
+
+            $params = $params[$keyPart];
+        }
+
+        return $params;
     }
 }

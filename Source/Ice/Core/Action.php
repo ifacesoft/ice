@@ -162,6 +162,11 @@ abstract class Action extends Container
 
             $params = $this->getParams($config->gets('outputDataProviderKeys', false), (array)$this->run($input, $actionContext));
 
+            if ($content = $actionContext->getContent()) {
+                $actionContext->setContent(null);
+                return $content;
+            }
+
             foreach ($actionContext->getActions() as $subActionName => $actionData) {
                 if ($subActionName[0] == '_') {
                     $subActionName = $actionClass . $subActionName;
@@ -198,8 +203,6 @@ abstract class Action extends Container
                     $actionContext->commit();
                 }
             }
-
-//            $params['container'] = $this->getContainer();
 
             $actionContext->setParams($params);
 

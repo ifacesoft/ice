@@ -18,7 +18,6 @@ use Ice\Core\Container;
 use Ice\Core\Environment;
 use Ice\Core\Logger;
 use Ice\Core\Request;
-use Ice\Core\Response;
 use Ice\Exception\Http_Bad_Request;
 use Ice\Exception\Http_Not_Found;
 use Ice\Exception\Redirect;
@@ -116,6 +115,8 @@ class Ice extends Container
      */
     public function run()
     {
+        $actionContext = Action_Context::create();
+
         try {
             /** @var Action $action */
             $action = Request::isCli()
@@ -124,30 +125,19 @@ class Ice extends Container
                     ? Front_Ajax::getInstance()
                     : Front::getInstance());
 
-            Response::send($action->call(new Action_Context()));
+            $actionContext->getResponse()->setContent($action->call($actionContext));
         } catch (Redirect $e) {
-            Response::redirect($e->getMessage());
+            $actionContext->getResponse()->setRedirectUrl($e->getMessage());
         } catch (Http_Bad_Request $e) {
-            Response::send(Http_Status::getInstance()->call(new Action_Context(), ['code' => 400, 'exception' => $e]));
+            $actionContext->getResponse()->setContent(Http_Status::getInstance()->call($actionContext, ['code' => 400, 'exception' => $e]));
         } catch (Http_Not_Found $e) {
-            Response::send(Http_Status::getInstance()->call(new Action_Context(), ['code' => 404, 'exception' => $e]));
+            $actionContext->getResponse()->setContent(Http_Status::getInstance()->call($actionContext, ['code' => 404, 'exception' => $e]));
         } catch (\Exception $e) {
-            Response::send(Http_Status::getInstance()->call(new Action_Context(), ['code' => 500, 'exception' => $e]));
+            $actionContext->getResponse()->setContent(Http_Status::getInstance()->call($actionContext, ['code' => 500, 'exception' => $e]));
         }
 
-        return $this;
-    }
+        $actionContext->getResponse()->send();
 
-    /**
-     * Flush ice application
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function flush()
-    {
         if (!Environment::isProduction()) {
             Logger::renderLog();
             Logger::fb('running time: ' . Logger::microtimeResult($this->_startTime) . ' | ' . Memory::memoryGetUsagePeak(), 'INFO');

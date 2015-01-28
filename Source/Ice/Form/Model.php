@@ -10,6 +10,7 @@
 namespace Ice\Form;
 
 use Ice\Core\Form;
+use Ice\Core\Logger;
 use Ice\Core\Model as Core_Model;
 
 /**
@@ -130,12 +131,8 @@ class Model extends Form
      */
     public function submit()
     {
-        if ($error = $this->validate()) {
-            Form::getLogger()->fatal($error, __FILE__, __LINE__);
-        }
-
         /** @var Model $modelClass */
         $modelClass = $this->getKey();
-        $modelClass::create($this->getValues())->save(null, true);
+        $modelClass::create($this->validate())->save(null, true);
     }
 }

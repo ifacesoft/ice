@@ -12,7 +12,9 @@ namespace Ice\Core;
 use Ice;
 use Ice\Core;
 use Ice\Data\Provider\Router;
+use Ice\Exception\Http_Not_Found;
 use Ice\Helper\Arrays;
+use Ice\Helper\Config as Helper_Config;
 use Ice\Helper\File;
 use Ice\View\Render\Replace;
 
@@ -20,23 +22,6 @@ use Ice\View\Render\Replace;
  * Class Route
  *
  * Core route class
- *
- * example:
- * ```php
- *      $route = [
- *          'route' => '/blog/cabinet/{$0}/post/{$1}',
- *          'actions' => [
- *              'main' => 'Blog:Cabinet_Post_Index',
- *              'title' => ['Ice:Title' => ['title' => 'Cabinet - Post']]
- *          ],
- *          'layout' => 'Blog:Layout_Cabinet',
- *          'params' => [
- *              'blogTranslit' => '([^/]+)',
- *              'postTranslit' => ['([^/]+)', true]
- *           ],
- *          'weight' => 1000
- *      ];
- * ```
  *
  * @see Ice\Core\Container
  *
@@ -58,19 +43,12 @@ class Route extends Container
      * @var string
      */
     private $_routeName = null;
-
     /**
      * Route data
      *
      * @var array
      */
     private $_route = null;
-
-    private static $_defaults = [
-        'params' => [],
-        'roles' => [],
-        'weight' => 0,
-    ];
 
     /**
      * Private constructor of route
@@ -90,39 +68,15 @@ class Route extends Container
     }
 
     /**
-     * Generate url by route
-     *
-     * @param $routeName
-     * @param array $params
-     * @return string
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public static function getUrl($routeName, array $params = [])
-    {
-        $route = Route::getInstance($routeName);
-
-        if (!$route) {
-            self::getLogger()->warning(['Route name "{$0}" not found', $routeName], __FILE__, __LINE__);
-            return '/';
-        }
-
-        return Replace::getInstance()->fetch($route->getRoute(), $params, View_Render::TEMPLATE_TYPE_STRING);
-    }
-
-    /**
      * Create new instance of route
      *
      * @param string $name
      * @param null $hash
      * @return Route
-     *
+     * @throws Http_Not_Found
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.4
      * @since 0.0
      */
     public static function create($name, $hash = null)
@@ -130,10 +84,10 @@ class Route extends Container
         $routes = self::getRoutes();
 
         if (!isset($routes[$name])) {
-            $name = 'ice_404';
+            throw new Http_Not_Found(['Creating route by name \'{$0}\' failed', $name]);
         }
 
-        return new Route($name, Arrays::defaults(self::$_defaults, $routes[$name]));
+        return new Route($name, $routes[$name]);
     }
 
     /**
@@ -177,6 +131,8 @@ class Route extends Container
     {
         $routes = [];
 
+        $defaultRoute = Config::getConfig()->gets('defaults/' . __CLASS__);
+
         foreach ($routeFilePathes as $context => $routeFilePath) {
             $configFromFile = File::loadData($routeFilePath);
 
@@ -199,7 +155,7 @@ class Route extends Container
                     continue;
                 }
 
-                $route = Arrays::defaults(self::$_defaults, $route);
+                $route = Arrays::defaults($defaultRoute, $route);
                 $route['route'] = $context . $route['route'];
 
                 if (isset($routes[$routeName])) {
@@ -263,6 +219,101 @@ class Route extends Container
         return $this->_routeName;
     }
 
+    public function getLayoutActionClassName($method)
+    {
+        return $this->get('request/' . $method . '/layout');
+    }
+
+    /**
+     * Get config param value
+     *
+     * @param $key
+     * @param bool $isRequired
+     * @throws Exception
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.4
+     */
+    private function get($key = null, $isRequired = true)
+    {
+        $params = $this->gets($key, $isRequired);
+
+        return empty($params) ? null : reset($params);
+    }
+
+    /**
+     * Get config param values
+     *
+     * @param null $key
+     * @param bool $isRequired
+     * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.4
+     */
+    private function gets($key = null, $isRequired = true)
+    {
+        return Helper_Config::gets($this->_route, $key, $isRequired);
+    }
+
+    public function getResponseRedirect($method)
+    {
+        return Route::getUrl($this->gets('request/' . $method . '/response/redirect', false));
+    }
+
+    /**
+     * Generate url by route
+     *
+     * @param $routeName
+     * @param array $params
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
+     */
+    public static function getUrl($routeName, array $params = [])
+    {
+        if (!$routeName) {
+            return null;
+        }
+
+        if (is_array($routeName)) {
+            list($routeName, $params) = each($routeName);
+        }
+
+        $route = Route::getInstance($routeName);
+
+        if (!$route) {
+            return $routeName;
+        }
+
+        return Replace::getInstance()->fetch($route->getRoute(), $params, View_Render::TEMPLATE_TYPE_STRING);
+    }
+
+    /**
+     * Return instance of Route
+     *
+     * @param null $key
+     * @param null $ttl
+     * @return Route
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.4
+     */
+    public static function getInstance($key = null, $ttl = null)
+    {
+        return parent::getInstance($key, $ttl);
+    }
+
     /**
      * Return route string
      *
@@ -291,5 +342,53 @@ class Route extends Container
     public function getData()
     {
         return $this->_route;
+    }
+
+    /**
+     * Return actions includes in layout
+     *
+     * @param $method
+     * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.4
+     */
+    public function getActionClassNames($method)
+    {
+        return $this->gets('request/' . $method . '/actions');
+    }
+
+    /**
+     * Return response content type (html|pdf|png etc.)
+     *
+     * @param $method
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.4
+     */
+    public function getResponseContentType($method)
+    {
+        return $this->get('request/' . $method . '/response/contentType', false);
+    }
+
+    /**
+     * Return response status code (200|404|500 etc.)
+     *
+     * @param $method
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.4
+     */
+    public function getResponseStatusCode($method)
+    {
+        return $this->get('request/' . $method . '/response/statusCode', false);
     }
 }

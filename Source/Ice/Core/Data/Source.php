@@ -13,7 +13,6 @@ use Ice;
 use Ice\Core;
 use Ice\Data\Provider\Mysqli as Data_Provider_Mysqli;
 use Ice\Helper\Arrays;
-use Ice\Helper\Memory;
 use Ice\Helper\Object;
 
 /**
@@ -338,15 +337,7 @@ abstract class Data_Source extends Container
                     $cache = Arrays::defaults($cache, $cacheDataProvider->get($hash));
 
                     if (Cache::validate(__CLASS__, $cache['tags'], $cache['time'])) {
-                        if (!Environment::isProduction()) {
-                            $message = 'sql cache: ' . str_replace("\t", '', str_replace("\n", ' ', $query->getSql())) . ' [' . implode(', ', $query->getBinds()) . '] ' . Logger::microtimeResult($startTime);
-
-                            if (Request::isCli()) {
-                                Query::getLogger()->info($message . ' ' . Memory::memoryGetUsagePeak(), Logger::SUCCESS, false);
-                            } else {
-                                Logger::fb($message);
-                            }
-                        }
+                        Data_Source::getLogger()->log('sql cache: ' . str_replace("\t", '', str_replace("\n", ' ', $query->getSql())) . ' [' . implode(', ', $query->getBinds()) . '] ' . Logger::microtimeResult($startTime));
 
                         return Query_Result::create($query->getModelClass(), $cache['data']);
                     }
@@ -372,18 +363,11 @@ abstract class Data_Source extends Container
                     Data_Source::getLogger()->fatal(['Unknown data source query statement type {$0}', $queryType], __FILE__, __LINE__, null, $query);
             }
         } catch (Exception $e) {
+            Data_Source::getLogger()->log('sql error: ' . str_replace("\t", '', str_replace("\n", ' ', $query->getSql())) . ' [' . implode(', ', $query->getBinds()) . '] ' . Logger::microtimeResult($startTime));
             Data_Source::getLogger()->fatal('Data source execute query failed', __FILE__, __LINE__, $e, $query);
         }
 
-        if (!Environment::isProduction()) {
-            $message = 'sql query: ' . str_replace("\t", '', str_replace("\n", ' ', $query->getSql())) . ' [' . implode(', ', $query->getBinds()) . '] ' . Logger::microtimeResult($startTime);
-
-            if (Request::isCli()) {
-                Query::getLogger()->info($message . ' ' . Memory::memoryGetUsagePeak(), Logger::SUCCESS, false);
-            } else {
-                Logger::fb($message);
-            }
-        }
+        Data_Source::getLogger()->log('sql query: ' . str_replace("\t", '', str_replace("\n", ' ', $query->getSql())) . ' [' . implode(', ', $query->getBinds()) . '] ' . Logger::microtimeResult($startTime));
 
         return $queryResult;
     }

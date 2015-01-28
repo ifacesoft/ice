@@ -11,7 +11,7 @@ namespace Ice\Action;
 
 use Ice\Core\Action;
 use Ice\Core\Action_Context;
-use Ice\Helper\Http\Status as Helper_Http_Status;
+use Ice\Helper\Http;
 
 /**
  * Class Http_Status_400
@@ -62,10 +62,12 @@ class Http_Status extends Action
      */
     protected function run(array $input, Action_Context $actionContext)
     {
-        header(Helper_Http_Status::$headers[$input['code']], true, $input['code']);
+        header(Http::getStatusCodeHeader($input['code']), true, $input['code']);
 
         $actionContext->setTemplate('_' . $input['code']);
 
-        return ['message' => $input['exception']->getMessage()];
+        return isset($input['exception'])
+            ? ['message' => $input['exception']->getMessage()]
+            : ['message' => ''];
     }
 }
