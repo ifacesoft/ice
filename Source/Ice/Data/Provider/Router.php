@@ -250,8 +250,10 @@ class Router extends Data_Provider
                 continue;
             }
 
-            if (!isset($foundRoutes[$route['weight']])) {
-                $foundRoutes[$route['weight']] = [
+            $weight = is_array($route['weight']) ? reset($route['weight']) : $route['weight'];
+
+            if (!isset($foundRoutes[$weight])) {
+                $foundRoutes[$weight] = [
                     $routeName,
                     $route['pattern'],
                     $route['params']

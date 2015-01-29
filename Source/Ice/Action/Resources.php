@@ -164,6 +164,9 @@ class Resources extends Action
             if (file_exists($imgSource = $modulePath . 'Resource/img')) {
                 Directory::copy($imgSource, Directory::get(RESOURCE_DIR . 'img'));
             }
+            if (file_exists($fontSource = $modulePath . 'Resource/font')) {
+                Directory::copy($fontSource, Directory::get(RESOURCE_DIR . 'font'));
+            }
             if (file_exists($apiSource = $modulePath . 'Resource/api')) {
                 Directory::copy($apiSource, Directory::get(RESOURCE_DIR . 'api'));
             }
