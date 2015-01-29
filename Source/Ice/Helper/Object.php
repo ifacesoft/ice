@@ -87,7 +87,7 @@ class Object
     /**
      * Return class name (without namespace)
      *
-     * @param $class
+     * @param string $class
      * @return string
      *
      * @author dp <denis.a.shestakov@gmail.com>

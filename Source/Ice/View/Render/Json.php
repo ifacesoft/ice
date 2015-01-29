@@ -33,14 +33,13 @@ class Json extends View_Render
     /**
      * Constructor of json view render
      *
-     * @param Config $config
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
      * @since 0.0
      */
-    protected function __construct(Config $config)
+    protected function __construct()
     {
     }
 

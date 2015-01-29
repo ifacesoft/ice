@@ -40,8 +40,8 @@ class Exception extends ErrorException
      *
      * Simple constructor for fast throws Exception
      *
-     * @param string $message
-     * @param array $errcontext context data of exception
+     * @param string|array $message
+     * @param array|null $errcontext context data of exception
      * @param \Exception $previous previous exception if exists
      * @param string $errfile filename where throw Exception
      * @param int $errline number of line where throws Exception

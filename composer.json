@@ -51,7 +51,6 @@
     "phpunit/dbunit": "1.3.1",
     "phpunit/phpunit-selenium": "1.4.2",
     "phpunit/phpunit-story": "1.0.2",
-    "ocramius/instantiator": "1.1.4",
-    "codeclimate/php-test-reporter": "dev-master"
+    "ocramius/instantiator": "1.1.4"
   }
 }

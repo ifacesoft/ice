@@ -226,13 +226,14 @@ class Route extends Container
     /**
      * Get config param value
      *
-     * @param $key
+     * @param string|null $key
      * @param bool $isRequired
      * @throws Exception
      * @return string
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
+     * @deprecated 0.4 todo: use directly array
      * @version 0.4
      * @since 0.4
      */
@@ -246,12 +247,13 @@ class Route extends Container
     /**
      * Get config param values
      *
-     * @param null $key
+     * @param string|null $key
      * @param bool $isRequired
      * @return array
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
+     * @deprecated 0.4 todo: use directly array
      * @version 0.4
      * @since 0.4
      */

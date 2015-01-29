@@ -208,7 +208,7 @@ class Logger
      * Info message
      *
      * @param $message
-     * @param null $type
+     * @param string|null $type
      * @param bool $isResource
      * @param bool $logging
      * @return string
@@ -335,7 +335,7 @@ class Logger
      * @version 0.0
      * @since 0.0
      */
-    private function createException($message, $file, $line, \Exception $e = null, $errcontext = null, $errno = 1)
+    private function createException($message, $file, $line, \Exception $e = null, $errcontext = [], $errno = 1)
     {
         $message = (array)$message;
         if (!isset($message[1])) {
@@ -380,14 +380,12 @@ class Logger
     /**
      * Debug variables with die application
      *
-     * @param $arg
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
      * @since 0.0
      */
-    public static function debugDie($arg)
+    public static function debugDie()
     {
         foreach (func_get_args() as $arg) {
             self::debug($arg);

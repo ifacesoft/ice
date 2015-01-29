@@ -202,7 +202,7 @@ class Config
     /**
      * Get config param values
      *
-     * @param null $key
+     * @param string|null $key
      * @param bool $isRequired
      * @return array
      *
@@ -249,7 +249,7 @@ class Config
     /**
      * Get config param value
      *
-     * @param $key
+     * @param string|null $key
      * @param bool $isRequired
      * @throws Exception
      * @return string

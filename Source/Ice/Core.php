@@ -120,7 +120,7 @@ trait Core
     /**
      * Return dat provider for self class
      *
-     * @param null $postfix
+     * @param string|null $postfix
      * @return Data_Provider
      *
      * @author dp <denis.a.shestakov@gmail.com>

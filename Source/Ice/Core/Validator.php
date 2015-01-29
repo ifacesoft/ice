@@ -80,8 +80,6 @@ abstract class Validator extends Container
     {
         foreach ($validateScheme as $param => $validators) {
             foreach ((array)$validators as $validatorName => $params) {
-                $validator = null;
-
                 if (is_int($validatorName)) {
                     $validatorName = $params;
                     $params = null;

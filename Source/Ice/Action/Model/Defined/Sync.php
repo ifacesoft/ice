@@ -68,8 +68,6 @@ class Model_Defined_Sync extends Action
      */
     protected function run(array $input, Action_Context $actionContext)
     {
-        $dataSource = Data_Source::getInstance();
-
         /** @var Model[] $modelClasses */
         $modelClasses = array_keys(Data_Scheme::getInstance()->getModelClasses());
 
@@ -77,7 +75,7 @@ class Model_Defined_Sync extends Action
             $modelClass = Model::getClass($modelClass);
             if (isset(class_parents($modelClass)[Model_Defined::getClass()])) {
                 /** @var Model_Collection $rowCollection */
-                $rowCollection = $modelClass::getCollection($dataSource);
+                $rowCollection = $modelClass::getCollection('*');
 
                 $dataRows = $modelClass::getCollection('*')->getRows();
 
@@ -86,16 +84,15 @@ class Model_Defined_Sync extends Action
                 }
 
                 foreach ($dataRows as $pk => $row) {
-                    $query = null;
                     $model = $rowCollection->get($pk);
                     if ($model) {
-                        $rowCollection->remove($pk)->save($dataSource);
+                        $rowCollection->remove($pk)->save();
                         continue;
                     }
-                    $modelClass::create($row)->save($dataSource);
+                    $modelClass::create($row)->save();
                 }
 
-                $rowCollection->remove($dataSource);
+                $rowCollection->remove();
             }
         }
     }

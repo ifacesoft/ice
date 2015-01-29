@@ -91,7 +91,7 @@ class Action_Context
      *
      * @param $actionName
      * @param array $params
-     * @param null $key
+     * @param string|null $key
      * @return Action_Context
      * @throws Exception
      *
