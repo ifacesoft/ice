@@ -154,7 +154,7 @@ class Route extends Container
                     continue;
                 }
 
-                $route = array_merge_recursive($defaultRoute, $route);
+                $route = array_merge_recursive($route, $defaultRoute);
                 $route['route'] = $context . $route['route'];
 
                 if (isset($routes[$routeName])) {
