@@ -13,7 +13,6 @@ use Ice;
 use Ice\Core;
 use Ice\Data\Provider\Router;
 use Ice\Exception\Http_Not_Found;
-use Ice\Helper\Arrays;
 use Ice\Helper\Config as Helper_Config;
 use Ice\Helper\File;
 use Ice\View\Render\Replace;
@@ -155,7 +154,7 @@ class Route extends Container
                     continue;
                 }
 
-                $route = Arrays::defaults($defaultRoute, $route);
+                $route = array_merge_recursive($defaultRoute, $route);
                 $route['route'] = $context . $route['route'];
 
                 if (isset($routes[$routeName])) {
