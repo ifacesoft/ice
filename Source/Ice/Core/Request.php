@@ -258,7 +258,7 @@ class Request
 
         if ($config->get('cors/' . $_SERVER['HTTP_ORIGIN'], false)) {
             header('Access-Control-Allow-Origin: ' . $_SERVER['HTTP_ORIGIN']);
-            header('Access-Control-Allow-Credentials: ' . $config->get('cors/' . $_SERVER['HTTP_ORIGIN'] . '/cookie'));
+            header('Access-Control-Allow-Credentials: ' . $config->get('cors/' . $_SERVER['HTTP_ORIGIN'] . '/cookie', false));
             header('Access-Control-Allow-Methods: ' . implode(', ', $config->get('cors/' . $_SERVER['HTTP_ORIGIN'] . '/methods')));
             header('Access-Control-Allow-Headers: ' . implode(', ', $config->get('cors/' . $_SERVER['HTTP_ORIGIN'] . '/headers')));
         }
