@@ -47,10 +47,11 @@ return [
         'multilocale' => 1,
         'locale' => 'en',
         'cors' => [
-            'methods' => [], // Permitted types of request ('POST', 'OPTIONS')
-            'headers' => [], // Describe custom headers ('Origin', 'X-Requested-With', 'Content-Range', 'Content-Disposition', 'Content-Type')
-            'hosts' => [], // A list of domains
-            'cookie' => 'true' // Allow cookie
+//            'host' => [
+//                'methods' => [], // Permitted types of request ('POST', 'OPTIONS')
+//                'headers' => [], // Describe custom headers ('Origin', 'X-Requested-With', 'Content-Range', 'Content-Disposition', 'Content-Type')
+//                'cookie' => 'true' // Allow cookie
+//            ]
         ]
     ],
     'defaults' => [
