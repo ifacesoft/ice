@@ -252,15 +252,13 @@ class Request
 
     public static function init()
     {
-        $config = Request::getConfig();
+        $cors = Request::getConfig()->gets('cors');
 
-//        Logger::debugDie($config);
-
-        if ($config->get('cors/' . $_SERVER['HTTP_ORIGIN'], false)) {
+        if (isset($_SERVER['HTTP_ORIGIN']) && isset($cors[$_SERVER['HTTP_ORIGIN']])) {
             header('Access-Control-Allow-Origin: ' . $_SERVER['HTTP_ORIGIN']);
-            header('Access-Control-Allow-Credentials: ' . $config->get('cors/' . $_SERVER['HTTP_ORIGIN'] . '/cookie', false));
-            header('Access-Control-Allow-Methods: ' . implode(', ', $config->get('cors/' . $_SERVER['HTTP_ORIGIN'] . '/methods')));
-            header('Access-Control-Allow-Headers: ' . implode(', ', $config->get('cors/' . $_SERVER['HTTP_ORIGIN'] . '/headers')));
+            if (isset($cors[$_SERVER['HTTP_ORIGIN']]['cookie'])) {header('Access-Control-Allow-Credentials: ' . $cors[$_SERVER['HTTP_ORIGIN']]['cookie']);}
+            header('Access-Control-Allow-Methods: ' . implode(', ', $cors[$_SERVER['HTTP_ORIGIN']]['methods']));
+            header('Access-Control-Allow-Headers: ' . implode(', ', $cors[$_SERVER['HTTP_ORIGIN']]['headers']));
         }
     }
 
