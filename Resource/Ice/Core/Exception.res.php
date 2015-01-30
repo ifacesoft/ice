@@ -20,5 +20,10 @@ return [
     ],
     'Implement flushAll() method.' => [
         'ru' => 'Implement flushAll() method.',
-    ]
+    ],
+    'Could not set value:
+. Field "" not found in Model "Upload_Task"' => [
+        'ru' => 'Could not set value:
+. Field "" not found in Model "Upload_Task"',
+    ],
 ];

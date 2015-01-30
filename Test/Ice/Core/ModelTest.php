@@ -20,7 +20,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
             'name2' => 'test'
         ])->save();
 
-        $user1->set(['/name' => 'test name'])->save();
+        $user1->save(['/name' => 'test name']);
 
         $this->assertNotNull($user1);
         $this->assertTrue($user1 instanceof Test);

@@ -18,7 +18,7 @@ class BuildTest extends PHPUnit_Framework_TestCase
             'surname' => 'test'
         ])->save();
 
-        $user1->set(['surname' => 'test surname'])->save();
+        $user1->save(['surname' => 'test surname']);
 
         $this->assertNotNull($user1);
         $this->assertTrue($user1 instanceof User);

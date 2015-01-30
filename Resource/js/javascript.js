@@ -72,7 +72,7 @@ var Ice = {
         );
     },
 
-    reRender: function (actionClassName, actionParams, callback) {
+    reRender: function (actionClassName, actionParams, callback, url) {
         Ice.call(
             actionClassName,
             actionParams,
@@ -83,7 +83,8 @@ var Ice = {
                 if (callback) {
                     callback();
                 }
-            }
+            },
+            url
         );
     },
 

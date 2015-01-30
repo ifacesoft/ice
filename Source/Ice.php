@@ -140,11 +140,15 @@ class Ice extends Container
 
         if (!Environment::isProduction()) {
             Logger::renderLog();
-            Logger::fb('running time: ' . Logger::microtimeResult($this->_startTime) . ' | ' . Memory::memoryGetUsagePeak(), 'INFO');
+            Logger::fb('application time: ' . Logger::getUsefulWork(true) . ' | ' .
+                'idle time: ' . Logger::microtimeResult($this->_startTime + Logger::getUsefulWork()) . ' | ' .
+                Memory::memoryGetUsagePeak(), 'INFO');
         }
 
         if (!Request::isCli() && function_exists('fastcgi_finish_request')) {
             fastcgi_finish_request();
         }
     }
+
+
 }

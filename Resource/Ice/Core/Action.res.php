@@ -18,4 +18,7 @@ return [
     'Calling action "{$0}" failed' => [
         'en' => 'Calling action "{$0}" failed',
     ],
+    '{$0}{$1} complete! [{$2}]' => [
+        'ru' => '{$0}{$1} complete! [{$2}]',
+    ],
 ];

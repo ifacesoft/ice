@@ -82,7 +82,7 @@ class Model_CollectionTest extends PHPUnit_Framework_TestCase
             ]
         );
 
-        $testCollection->add(Test::create($modelRow)->save());
+        $testCollection->add(Test::create()->save($modelRow));
 
         $this->assertEquals(
             [
@@ -173,7 +173,7 @@ class Model_CollectionTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($testCollection->get(4), Test::getModel(4, '*'));
 
         foreach ($testCollection as $test) {
-            $test->set(['/name' => ''])->save();
+            $test->save(['/name' => '']);
         }
         $testCollection->reload(); // todo: научить чтобы без релоада работало
         $this->assertEquals($testCollection->column('test_name'), [2 => '', 4 => '', 5 => '']);

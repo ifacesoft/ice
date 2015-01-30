@@ -102,6 +102,15 @@ class Logger
      */
     private static $log = [];
 
+
+    /**
+     * Useful work of application: sql, actions, etc
+     *
+     * @var float
+     */
+    private static $_usefulWork = 0;
+
+
     /**
      * Target Logger
      *
@@ -460,16 +469,27 @@ class Logger
      * Return delta time
      *
      * @param float $start Start time point
+     * @param bool $usefulWork
      * @return float
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
      * @since 0.0
      */
-    public static function microtimeResult($start)
+    public static function microtimeResult($start, $usefulWork = false)
     {
-        return round(microtime(true) - $start, 5) * 1000 . ' ms';
+        $time = microtime(true) - $start;
+
+        if ($usefulWork) {
+            Logger::$_usefulWork += $time;
+        }
+
+        return round($time, 5) * 1000 . ' ms';
+    }
+
+    public static function getUsefulWork($pretty = false)
+    {
+        return $pretty ? round(Logger::$_usefulWork, 5) * 1000 . ' ms' : Logger::$_usefulWork;
     }
 
     /**

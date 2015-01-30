@@ -124,6 +124,8 @@ abstract class Action extends Container
      */
     public function call(Action_Context $actionContext, array $data = [], $level = 0)
     {
+        $startTime = Logger::microtime();
+
         /** @var Action $actionClass */
         $actionClass = get_class($this);
 
@@ -135,10 +137,6 @@ abstract class Action extends Container
             $config = $actionClass::getConfig();
 
             $input = $this->getInput($config, $data);
-
-            if (Environment::isDevelopment()) {
-                Logger::fb('action: ' . $actionClass . ' ' . Json::encode($input));
-            }
 
             $hash = Hash::get($input, Hash::HASH_CRC32);
             $inputHash = $actionClass . '/' . $hash;
@@ -161,6 +159,8 @@ abstract class Action extends Container
             $actionContext->addAction($config->gets('afterActions', false));
 
             $params = $this->getParams($config->gets('outputDataProviderKeys', false), (array)$this->run($input, $actionContext));
+
+            $finishTime = Logger::microtimeResult($startTime, true);
 
             if ($content = $actionContext->getContent()) {
                 $actionContext->setContent(null);
@@ -227,7 +227,11 @@ abstract class Action extends Container
             }
 
             if (Request::isCli()) {
-                Action::getLogger()->info(['{$0}{$1} complete!', [str_repeat("\t", $level), $actionClass::getClassName()]], Logger::MESSAGE);
+                Action::getLogger()->info(['{$0}{$1} complete! [{$2}]', [str_repeat("\t", $level), $actionClass::getClassName(), $finishTime]], Logger::MESSAGE);
+            }
+
+            if (Environment::isDevelopment()) {
+                Logger::fb('action: ' . $actionClass . ' ' . Json::encode($input) . ' [' . $finishTime . ']');
             }
 
             return $this->flush(View::getInstance($viewData));

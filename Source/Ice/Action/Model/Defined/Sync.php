@@ -89,7 +89,7 @@ class Model_Defined_Sync extends Action
                         $rowCollection->remove($pk)->save();
                         continue;
                     }
-                    $modelClass::create($row)->save();
+                    $modelClass::create($row)->save($row);
                 }
 
                 $rowCollection->remove();

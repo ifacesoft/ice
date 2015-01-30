@@ -91,6 +91,8 @@ class View extends Container
      */
     public function getContent()
     {
+        $startTime = Logger::microtime();
+
         if ($this->_result != null) {
             return $this->_result;
         }
@@ -119,17 +121,19 @@ class View extends Container
 
             $layout = $this->getLayout();
 
-            if (empty($layout)) {
-                return $this->_result;
+            if (!empty($layout)) {
+                $emmetedResult = Emmet::translate($this->getLayout(), ['view' => $this->_result]);
+
+                if (empty($emmetedResult)) {
+                    $this->_result = $this->getLogger()->error(['Defined emmet layout string "{$0}" is corrupt', $this->getLayout()], __FILE__, __LINE__);
+                }
+
+                $this->_result = $emmetedResult;
             }
 
-            $emmetedResult = Emmet::translate($this->getLayout(), ['view' => $this->_result]);
-
-            if (empty($emmetedResult)) {
-                $this->_result = $this->getLogger()->error(['Defined emmet layout string "{$0}" is corrupt', $this->getLayout()], __FILE__, __LINE__);
+            if (Environment::isDevelopment()) {
+                Logger::fb('view: ' . $template . ' (' . $viewRenderClass . ') [' . Logger::microtimeResult($startTime) . ']');
             }
-
-            $this->_result = $emmetedResult;
 
             $dataProvider->set($hash, $this->_result);
         } catch (\Exception $e) {

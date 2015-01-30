@@ -130,8 +130,7 @@ class Model extends Form
      */
     public function submit()
     {
-        /** @var Model $modelClass */
         $modelClass = $this->getKey();
-        $modelClass::create($this->validate())->save(null, true);
+        $modelClass::create()->save($this->validate(), null, true);
     }
 }

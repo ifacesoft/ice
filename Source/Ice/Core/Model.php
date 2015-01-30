@@ -109,6 +109,10 @@ abstract class Model
         foreach ($fields as $fieldName => $columnName) {
             $this->_row[$fieldName] = null;
 
+            if (empty($row)) {
+                continue;
+            }
+
             if (array_key_exists($fieldName, $row)) {
                 $this->set($fieldName, $row[$fieldName]);
                 unset($row[$fieldName]);
@@ -684,7 +688,7 @@ abstract class Model
             return $fieldNames;
         }
 
-        $fields = (array) $fields;
+        $fields = (array)$fields;
 
         foreach ($fields as &$fieldName) {
             $fieldName = $modelClass::getFieldName($fieldName);
@@ -1128,21 +1132,38 @@ abstract class Model
      */
     public function insertOrUpdate($sourceName = null)
     {
-        return $this->save($sourceName, true);
+        return $this->save([], $sourceName, true);
     }
 
-    public function save($sourceName = null, $update = false)
+    /**
+     * Insert or update model
+     *
+     * @param array $fields
+     * @param string|null $sourceName
+     * @param bool $update
+     * @return Model
+     * @throws Exception
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.4
+     */
+    public function save(array $fields = [], $sourceName = null, $update = false)
     {
         /** @var Model $modelClass */
         $modelClass = get_class($this);
 
-        $pk = $this->getPk();
+        $this->set($fields);
 
-        if (empty($pk) || $update) {
+        $pk = $this->getPk();
+        $affected = $this->getAffected();
+
+        if (empty($pk) || $pk == $affected || $update) {
             $this->beforeInsert();
 
             $insertId = $modelClass::query()
-                ->insert($this->getAffected(), $update, $sourceName)
+                ->insert($affected, $update, $sourceName)
                 ->getInsertId();
 
             $this->set(reset($insertId));
@@ -1153,7 +1174,7 @@ abstract class Model
 
             $modelClass::query()
                 ->pk($this->getPk())
-                ->update($this->getAffected(), $sourceName);
+                ->update($affected, $sourceName);
 
             $this->afterUpdate();
         }
