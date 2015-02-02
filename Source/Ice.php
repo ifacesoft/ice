@@ -149,6 +149,4 @@ class Ice extends Container
             fastcgi_finish_request();
         }
     }
-
-
 }
