@@ -44,7 +44,22 @@ class Cli extends Data_Provider
      */
     protected static function getDefaultKey()
     {
-        return self::DEFAULT_KEY;
+        return Cli::DEFAULT_KEY;
+    }
+
+    /**
+     * Return default data provider key
+     *
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
+     */
+    protected static function getDefaultDataProviderKey()
+    {
+        return Cli::DEFAULT_KEY;
     }
 
     /**
@@ -170,23 +185,23 @@ class Cli extends Data_Provider
     {
         $connection = [];
 
-        array_shift($_SERVER ['argv']);
+        array_shift($_SERVER['argv']);
 
-        foreach ($_SERVER ['argv'] as $arg) {
-            if (!isset($connection['action']) && !strpos($arg, '=')) {
-                $arg = 'action=' . $arg;
-            }
+        if (!isset($connection['actionClass'])) {
+            $connection['actionClass'] = array_shift($_SERVER['argv']);
+        }
 
+        foreach ($_SERVER['argv'] as $arg) {
             $param = explode('=', $arg);
 
-            if (isset($connection['action']) && count($param) != 2) {
-                Cli::getLogger()->info('Invalid command line. Usage: ./cli param=value', Logger::WARNING);
+            if (isset($connection['actionClass']) && count($param) != 2) {
+                Cli::getLogger()->info('Invalid command line. Invalid params. Usage: ./cli Mp:Action_Name param=value', Logger::WARNING);
                 continue;
             }
 
             list($param, $value) = $param;
 
-//            if ($param == 'action') {
+//            if ($param == 'actionClass') {
 //                if (!strpos($value, ':')) {
 //                    try {
 //                        Loader::getFilePath($value, '.php', 'Source/');
@@ -197,6 +212,11 @@ class Cli extends Data_Provider
 //            }
 
             $connection[$param] = $value;
+        }
+
+        if (!isset($connection['actionClass'])) {
+            Cli::getLogger()->info('Invalid command line. Action not found. Usage: ./cli Mp:Action_Name param=value', Logger::WARNING);
+            exit;
         }
 
         return true;

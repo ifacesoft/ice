@@ -18,6 +18,8 @@ use Ice\Core\Container;
 use Ice\Core\Environment;
 use Ice\Core\Logger;
 use Ice\Core\Request;
+use Ice\Core\View;
+use Ice\Data\Provider\Cli;
 use Ice\Exception\Http_Bad_Request;
 use Ice\Exception\Http_Not_Found;
 use Ice\Exception\Redirect;
@@ -119,13 +121,25 @@ class Ice extends Container
 
         try {
             /** @var Action $action */
-            $action = Request::isCli()
-                ? Front_Cli::getInstance()
-                : (Request::isAjax()
-                    ? Front_Ajax::getInstance()
-                    : Front::getInstance());
+            $action = null;
+            /** @var View $view */
+            $view = '';
 
-            $actionContext->getResponse()->setContent($action->call($actionContext));
+            if (Request::isCli()) {
+                ini_set('memory_limit', '1024M');
+
+                $input = Cli::getInstance()->get();
+                $action = $input['actionClass'];
+                unset($input['actionClass']);
+
+                $view = $action::getInstance()->call($actionContext, $input);
+            } elseif (Request::isAjax()) {
+                $view = Front_Ajax::getInstance()->call($actionContext);
+            } else {
+                $view = Front::getInstance()->call($actionContext);
+            }
+
+            $actionContext->getResponse()->setContent($view);
         } catch (Redirect $e) {
             $actionContext->getResponse()->setRedirectUrl($e->getMessage());
         } catch (Http_Bad_Request $e) {

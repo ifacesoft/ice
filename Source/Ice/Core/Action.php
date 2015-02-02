@@ -15,6 +15,7 @@ use Ice\Exception\Http_Bad_Request;
 use Ice\Exception\Http_Not_Found;
 use Ice\Exception\Redirect;
 use Ice\Helper\Arrays;
+use Ice\Helper\Console;
 use Ice\Helper\Hash;
 use Ice\Helper\Json;
 
@@ -167,6 +168,8 @@ abstract class Action extends Container
                 return $content;
             }
 
+            $startTimeAfter = Logger::microtime();
+
             foreach ($actionContext->getActions() as $subActionName => $actionData) {
                 if ($subActionName[0] == '_') {
                     $subActionName = $actionClass . $subActionName;
@@ -174,12 +177,25 @@ abstract class Action extends Container
 
                 $newLevel = $level + 1;
 
-                /** @var Action $action */
-                $subAction = Action::getInstance($subActionName);
                 /** @var Action $subActionClass */
-                $subActionClass = get_class($subAction);
+                $subActionClass = Action::getClass($subActionName);
+
+                $isThread = in_array(Action_Thread::getClass(), class_parents($subActionClass));
+
+                /** @var Action $action */
+                $subAction = null;
+
+                if (!$isThread) {
+                    $subAction = Action::getInstance($subActionClass);
+                }
 
                 foreach ($actionData as $subActionKey => $subActionParams) {
+                    if ($isThread) {
+//                        $actionContext->initAction($subActionClass, Hash::get($subActionParams, Hash::HASH_CRC32))->commit();
+                        array_walk($subActionParams, function(&$value, $key) { return $value = $key . '=' . $value;});
+                        continue;
+                    }
+
                     $subView = null;
 
                     try {
@@ -204,6 +220,8 @@ abstract class Action extends Container
                 }
             }
 
+            $finishTimeAfter = Logger::microtimeResult($startTimeAfter);
+
             $actionContext->setParams($params);
 
             $viewData = $actionContext->getViewData();
@@ -227,11 +245,11 @@ abstract class Action extends Container
             }
 
             if (Request::isCli()) {
-                Action::getLogger()->info(['{$0}{$1} complete! [{$2}]', [str_repeat("\t", $level), $actionClass::getClassName(), $finishTime]], Logger::MESSAGE);
+                Action::getLogger()->info(['{$0}{$1} complete! [{$2} + {$3}]', [str_repeat("\t", $level), $actionClass::getClassName(), $finishTime, $finishTimeAfter]], Logger::MESSAGE);
             }
 
             if (Environment::isDevelopment()) {
-                Logger::fb('action: ' . $actionClass . ' ' . Json::encode($input) . ' [' . $finishTime . ']');
+                Logger::fb('action: ' . $actionClass . ' ' . Json::encode($input) . ' [' . $finishTime . ' ' . $finishTimeAfter . ']');
             }
 
             return $this->flush(View::getInstance($viewData));

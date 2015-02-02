@@ -251,7 +251,7 @@ class Logger
 
         if (Request::isCli()) {
             $message = Console::getText(' ' . $message . ' ', Console::C_BLACK, self::$consoleColors[$type]) . "\n";
-            echo $message;
+            fwrite(STDOUT, $message);
             return $logging ? $message : '';
         } else {
             $message = '<div class="alert alert-' . $type . '">' . $message . '</div>';
@@ -321,7 +321,7 @@ class Logger
         $message = Helper_Logger::getMessage($exception);
 
         if (Request::isCli()) {
-            echo $message;
+            fwrite(STDOUT, $message . "\n");
             return $message;
         } else {
             return self::addLog($message);
@@ -426,7 +426,7 @@ class Logger
 
             if (!Request::isAjax()) {
                 echo Request::isCli()
-                    ? Console::getText($var, Console::C_CYAN) . "\n"
+                    ? fwrite(STDOUT, Console::getText($var, Console::C_CYAN) . "\n")
                     : '<div class="alert alert-' . self::INFO . '">' . highlight_string('<?php // Debug value:' . "\n" . $var, true) . '</div>';
 
                 $logFile = Directory::get(LOG_DIR) . date('Y-m-d') . '/DEBUG.log';
