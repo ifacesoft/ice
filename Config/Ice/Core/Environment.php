@@ -14,6 +14,7 @@ return [
                 'session' => [
                     'ttl' => 60 * 60 * 24
                 ],
+                'cache' => []
             ],
             'Ice\Data\Provider\File' => [
                 'cache' => [

@@ -42,7 +42,7 @@ class Php
         $string = str_replace('(array(', '([', $string);
         $string = str_replace('),', '],', $string);
         $string = str_replace(')],', ']),', $string);
-        $string = str_replace(");\n", "];\n", $string);
+        $string = str_replace(');', '];', $string);
         $string = preg_replace('/=>\s+\[/', '=> [', $string);
         $string = preg_replace('/=> \[\s+\]/', '=> []', $string);
         for ($i = 10; $i >= 1; $i--) {

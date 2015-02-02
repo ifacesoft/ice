@@ -108,7 +108,7 @@ class Resource extends Container
         /** @var string $message */
         /** @var Core $class */
         $resource = isset($class)
-            ? $class::getResource()->_resource
+            ? Resource::getInstance($class)->_resource
             : $this->_resource;
 
         if (!isset($class)) {

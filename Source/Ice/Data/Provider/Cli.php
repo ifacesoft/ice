@@ -9,6 +9,7 @@
 
 namespace Ice\Data\Provider;
 
+use Ice\Core\Action;
 use Ice\Core\Data_Provider;
 use Ice\Core\Exception;
 use Ice\Core\Logger;
@@ -188,7 +189,7 @@ class Cli extends Data_Provider
         array_shift($_SERVER['argv']);
 
         if (!isset($connection['actionClass'])) {
-            $connection['actionClass'] = array_shift($_SERVER['argv']);
+            $connection['actionClass'] = Action::getClass(array_shift($_SERVER['argv']));
         }
 
         foreach ($_SERVER['argv'] as $arg) {
