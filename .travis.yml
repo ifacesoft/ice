@@ -8,14 +8,12 @@ php:
 services:
 - redis-server
 
-install:
-- Bin/apc_install.sh
-
 before_script:
+  - pecl install apcu
+  - ./Bin/apc_install.sh
   - wget http://getcomposer.org/composer.phar
   - php composer.phar install
   - mysql -e "create database IF NOT EXISTS test;" -uroot
-
 
 script: ./cli Ice:Phpunit_Run
 
