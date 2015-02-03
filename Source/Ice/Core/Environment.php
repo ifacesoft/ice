@@ -80,9 +80,10 @@ class Environment extends Container
         $this->_params = $settings;
     }
 
-    public static function getInstance()
-    {
-        $key = Environment::getDefaultKey();
+    public static function getInstance($key = null, $ttl = null) {
+        if (!$key) {
+            $key = Environment::getDefaultKey();
+        }
 
         /** @var Data_Provider $dataProvider */
         $dataProvider = Data_Provider::getInstance(Environment::getDefaultDataProviderKey());
