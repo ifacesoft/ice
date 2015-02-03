@@ -9,8 +9,7 @@ services:
 - redis-server
 
 before_script:
-  - pecl install apcu
-  - ./Bin/apc_install.sh
+  - ./Bin/apc-install.sh
   - wget http://getcomposer.org/composer.phar
   - php composer.phar install
   - mysql -e "create database IF NOT EXISTS test;" -uroot
