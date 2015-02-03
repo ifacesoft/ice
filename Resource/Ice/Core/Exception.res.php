@@ -26,4 +26,7 @@ return [
         'ru' => 'Could not set value:
 . Field "" not found in Model "Upload_Task"',
     ],
+    'Implement set() method.' => [
+        'en' => 'Implement set() method.',
+    ],
 ];

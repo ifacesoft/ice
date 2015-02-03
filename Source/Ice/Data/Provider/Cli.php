@@ -25,28 +25,11 @@ use Ice\Core\Logger;
  *
  * @package Ice
  * @subpackage Data_Provider
- *
- * @version 0.0
- * @since 0.0
  */
 class Cli extends Data_Provider
 {
-    const DEFAULT_KEY = 'Ice:Cli/default';
-
-    /**
-     * Return default data provider key
-     *
-     * @return string
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    protected static function getDefaultKey()
-    {
-        return Cli::DEFAULT_KEY;
-    }
+    const DEFAULT_DATA_PROVIDER_KEY = 'Ice:Cli/default';
+    const DEFAULT_KEY = 'default';
 
     /**
      * Return default data provider key
@@ -60,7 +43,22 @@ class Cli extends Data_Provider
      */
     protected static function getDefaultDataProviderKey()
     {
-        return Cli::DEFAULT_KEY;
+        return self::DEFAULT_DATA_PROVIDER_KEY;
+    }
+
+    /**
+     * Return default key
+     *
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
+     */
+    protected static function getDefaultKey()
+    {
+        return self::DEFAULT_KEY;
     }
 
     /**
@@ -135,7 +133,7 @@ class Cli extends Data_Provider
      * @version 0.0
      * @since 0.0
      */
-    public function inc($key, $step = 1)
+    public function incr($key, $step = 1)
     {
         throw new Exception('Implement inc() method.');
     }
@@ -153,7 +151,7 @@ class Cli extends Data_Provider
      * @version 0.0
      * @since 0.0
      */
-    public function dec($key, $step = 1)
+    public function decr($key, $step = 1)
     {
         throw new Exception('Implement dec() method.');
     }
@@ -169,6 +167,22 @@ class Cli extends Data_Provider
     public function flushAll()
     {
         throw new Exception('Implement flushAll() method.');
+    }
+
+    /**
+     * Return keys by pattern
+     *
+     * @param string $pattern
+     * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
+     */
+    public function getKeys($pattern = null)
+    {
+        // TODO: Implement getKeys() method.
     }
 
     /**
@@ -238,21 +252,5 @@ class Cli extends Data_Provider
     {
         $connection = null;
         return true;
-    }
-
-    /**
-     * Return keys by pattern
-     *
-     * @param string $pattern
-     * @return array
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function getKeys($pattern = null)
-    {
-        // TODO: Implement getKeys() method.
     }
 }

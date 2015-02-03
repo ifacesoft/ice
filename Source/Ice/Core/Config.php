@@ -11,7 +11,7 @@ namespace Ice\Core;
 
 use Ice;
 use Ice\Core;
-use Ice\Data\Provider\Object;
+use Ice\Data\Provider\Repository;
 use Ice\Helper\Config as Helper_Config;
 use Ice\Helper\File;
 
@@ -140,7 +140,7 @@ class Config
         }
 
         /** @var Data_Provider $dataProvider */
-        $dataProvider = Object::getInstance(Config::getDefaultDataProviderKey());
+        $dataProvider = Data_Provider::getInstance(Config::getDefaultDataProviderKey());
 
         $_config = $isUseCache ? $dataProvider->get($class) : null;
 
@@ -196,7 +196,7 @@ class Config
      */
     protected static function getDefaultDataProviderKey()
     {
-        return 'Ice:Object/' . __CLASS__;
+        return 'Ice:Registry/' . __CLASS__;
     }
 
     /**

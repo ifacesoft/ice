@@ -10,13 +10,20 @@
 return [
     'production' => [
         'Ice\Core\Data_Provider' => [
+            'Ice\Data\Provider\Apc' => [
+                'default' => [],
+            ],
             'Ice\Data\Provider\Redis' => [
+                'default' => [],
                 'session' => [
                     'ttl' => 60 * 60 * 24
                 ],
                 'cache' => []
             ],
             'Ice\Data\Provider\File' => [
+                'default' => [
+                    'path' => STORAGE_DIR
+                ],
                 'cache' => [
                     'path' => CACHE_DIR
                 ],
@@ -52,77 +59,77 @@ return [
         ],
         'dataProviderKeys' => [
             'Ice' => [
-                'instance' => 'Ice:Object/ice',
+                'instance' => 'Ice:Repository/ice',
             ],
             'Ice\Core\Loader' => [
-                'loader' => 'Ice:Object/loader',
+                'loader' => 'Ice:Repository/loader',
             ],
             'Ice\Core\Action' => [
-                'instance' => 'Ice:Object/action',
-                'cache' => 'Ice:String/action'
+                'instance' => 'Ice:Repository/action',
+                'cache' => 'Ice:Cache/action'
             ],
             'Ice\Core\Route' => [
-                'instance' => 'Ice:Object/route',
-                'route' => 'Ice:Object/route',
-                'routes' => 'Ice:Object/route',
+                'instance' => 'Ice:Repository/route',
+                'route' => 'Ice:Repository/route',
+                'routes' => 'Ice:Repository/route',
             ],
             'Ice\Core\Config' => [
-                'config' => 'Ice:Object/config',
+                'config' => 'Ice:Repository/config',
             ],
             'Ice\Core\Form' => [
-                'instance' => 'Ice:Object/form',
+                'instance' => 'Ice:Repository/form',
             ],
             'Ice\Core\Menu' => [
-                'instance' => 'Ice:Object/menu',
+                'instance' => 'Ice:Repository/menu',
             ],
             'Ice\Core\Data' => [
-                'instance' => 'Ice:Object/data',
+                'instance' => 'Ice:Repository/data',
             ],
             'Ice\Core\Container' => [
-                'instance' => 'Ice:Object/container',
+                'instance' => 'Ice:Repository/container',
             ],
             'Ice\Core\View_Render' => [
-                'instance' => 'Ice:Object/view_render',
+                'instance' => 'Ice:Repository/view_render',
             ],
             'Ice\Core\Query_Translator' => [
-                'instance' => 'Ice:Object/query_translator',
+                'instance' => 'Ice:Repository/query_translator',
             ],
             'Ice\Core\Query' => [
-                'instance' => 'Ice:Object/query',
-                'sql' => 'Ice:String/query',
-                'query' => 'Ice:String/query',
+                'instance' => 'Ice:Repository/query',
+                'sql' => 'Ice:Cache/query',
+                'query' => 'Ice:Cache/query',
             ],
             'Ice\Core\Code_Generator' => [
-                'instance' => 'Ice:Object/code_generator',
+                'instance' => 'Ice:Repository/code_generator',
             ],
             'Ice\Core\Data_Source' => [
-                'instance' => 'Ice:Object/data_source',
+                'instance' => 'Ice:Repository/data_source',
                 'cache' => 'Ice:File/data_source'
             ],
             'Ice\Core\Data_Scheme' => [
-                'instance' => 'Ice:Object/data_scheme',
+                'instance' => 'Ice:Repository/data_scheme',
             ],
             'Ice\Core\Model_Scheme' => [
-                'instance' => 'Ice:Object/model_scheme',
+                'instance' => 'Ice:Repository/model_scheme',
             ],
             'Ice\Core\Validator' => [
-                'instance' => 'Ice:Object/validator',
+                'instance' => 'Ice:Repository/validator',
             ],
             'Ice\Core\Cache' => [
-                'tags' => 'Ice:String/cache',
+                'tags' => 'Ice:Cache/cache',
             ],
             'Ice\Core\View' => [
-                'instance' => 'Ice:Object/view',
-                'view' => 'Ice:String/view',
+                'instance' => 'Ice:Repository/view',
+                'view' => 'Ice:Cache/view',
             ],
             'Ice\Core\Resource' => [
-                'instance' => 'Ice:Object/resource'
+                'instance' => 'Ice:Repository/resource'
             ],
             'Ice\Core\Module' => [
-                'instance' => 'Ice:Object/module'
+                'instance' => 'Ice:Repository/module'
             ],
             'Ice\Core\Session' => [
-                'session' => 'Ice:String/session'
+                'session' => 'Ice:Cache/session'
             ]
         ],
     ],

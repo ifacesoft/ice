@@ -11,6 +11,7 @@ namespace Ice\Data\Provider;
 
 use Ice\Core\Data_Provider;
 use Ice\Core\Exception;
+use Ice\Core\Logger;
 
 /**
  * Class Apc
@@ -23,31 +24,40 @@ use Ice\Core\Exception;
  *
  * @package Ice
  * @subpackage Data_Provider
- *
- * @version 0.0
- * @since 0.0
  */
 class Apc extends Data_Provider
 {
+    const DEFAULT_DATA_PROVIDER_KEY = 'Ice:Apc/default';
+    const DEFAULT_KEY = 'default';
+
     /**
-     * Get data from data provider by key
+     * Return default data provider key
      *
-     * @param string $key
-     * @throws Exception
-     * @return mixed
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.4
+     */
+    protected static function getDefaultDataProviderKey()
+    {
+        return self::DEFAULT_DATA_PROVIDER_KEY;
+    }
+
+    /**
+     * Return default key
+     *
+     * @return string
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
      * @since 0.0
      */
-    public function get($key = null)
+    protected static function getDefaultKey()
     {
-        if ($key === null) {
-            throw new Exception("Not implemented get all values from data provider APC");
-        }
-
-        return apc_fetch($this->getFullKey($key));
+        return self::DEFAULT_KEY;
     }
 
     /**
@@ -106,6 +116,24 @@ class Apc extends Data_Provider
     }
 
     /**
+     * Get data from data provider by key
+     *
+     * @param string $key
+     * @throws Exception
+     * @return mixed
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.0
+     */
+    public function get($key = null)
+    {
+        $value = apc_fetch($this->getFullKey($key));
+        return $value === false ? null : $value;
+    }
+
+    /**
      * Increment value by key with defined step (default 1)
      *
      * @param $key
@@ -117,7 +145,7 @@ class Apc extends Data_Provider
      * @version 0.0
      * @since 0.0
      */
-    public function inc($key, $step = 1)
+    public function incr($key, $step = 1)
     {
         return apc_inc($this->getFullKey($key), $step);
     }
@@ -134,7 +162,7 @@ class Apc extends Data_Provider
      * @version 0.0
      * @since 0.0
      */
-    public function dec($key, $step = 1)
+    public function decr($key, $step = 1)
     {
         return apc_dec($this->getFullKey($key), $step);
     }
@@ -150,6 +178,22 @@ class Apc extends Data_Provider
     public function flushAll()
     {
         return apc_clear_cache();
+    }
+
+    /**
+     * Return keys by pattern
+     *
+     * @param string $pattern
+     * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
+     */
+    public function getKeys($pattern = null)
+    {
+        // TODO: Implement getKeys() method.
     }
 
     /**
@@ -182,21 +226,5 @@ class Apc extends Data_Provider
     protected function close(&$connection)
     {
         return true;
-    }
-
-    /**
-     * Return keys by pattern
-     *
-     * @param string $pattern
-     * @return array
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function getKeys($pattern = null)
-    {
-        // TODO: Implement getKeys() method.
     }
 }

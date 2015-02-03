@@ -75,7 +75,7 @@ class Http
 
     public static function getContentTypeHeader($ext)
     {
-        return 'Content-Type: ' . Http::$_mimeTypes[$ext];
+        return 'Content-Type: ' . Http::$_mimeTypes[$ext] . '; charset=utf-8';
     }
 
     public static function getStatusCodeHeader($code)

@@ -23,12 +23,42 @@ use Ice\Core\Exception;
  *
  * @package Ice
  * @subpackage Data_Provider
- *
- * @version 0.0
- * @since 0.0
  */
-class String extends Data_Provider
+class Cache extends Data_Provider
 {
+    const DEFAULT_DATA_PROVIDER_KEY = 'Ice:Cache/default';
+    const DEFAULT_KEY = 'default';
+
+    /**
+     * Return default data provider key
+     *
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.4
+     */
+    protected static function getDefaultDataProviderKey()
+    {
+        return self::DEFAULT_DATA_PROVIDER_KEY;
+    }
+
+    /**
+     * Return default key
+     *
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.4
+     */
+    protected static function getDefaultKey()
+    {
+        return self::DEFAULT_KEY;
+    }
+
     /**
      * Get data from data provider by key
      *
@@ -112,9 +142,9 @@ class String extends Data_Provider
      * @version 0.0
      * @since 0.0
      */
-    public function inc($key, $step = 1)
+    public function incr($key, $step = 1)
     {
-        return $this->getConnection()->inc($key, $step);
+        return $this->getConnection()->incr($key, $step);
     }
 
     /**
@@ -129,9 +159,9 @@ class String extends Data_Provider
      * @version 0.0
      * @since 0.0
      */
-    public function dec($key, $step = 1)
+    public function decr($key, $step = 1)
     {
-        return $this->getConnection()->dec($key, $step);
+        return $this->getConnection()->decr($key, $step);
     }
 
     /**
@@ -160,7 +190,7 @@ class String extends Data_Provider
      */
     public function getKeys($pattern = null)
     {
-        // TODO: Implement getKeys() method.
+        return $this->getConnection()->getKeys($pattern);
     }
 
     /**

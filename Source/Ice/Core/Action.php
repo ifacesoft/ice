@@ -15,7 +15,6 @@ use Ice\Exception\Http_Bad_Request;
 use Ice\Exception\Http_Not_Found;
 use Ice\Exception\Redirect;
 use Ice\Helper\Arrays;
-use Ice\Helper\Console;
 use Ice\Helper\Hash;
 use Ice\Helper\Json;
 
@@ -37,8 +36,6 @@ use Ice\Helper\Json;
 abstract class Action extends Container
 {
     use Core;
-
-    const REGISTRY_DATA_PROVIDER_KEY = 'Ice:Registry/action';
 
     /**
      * Default config
@@ -192,7 +189,9 @@ abstract class Action extends Container
                 foreach ($actionData as $subActionKey => $subActionParams) {
                     if ($isThread) {
 //                        $actionContext->initAction($subActionClass, Hash::get($subActionParams, Hash::HASH_CRC32))->commit();
-                        array_walk($subActionParams, function(&$value, $key) { return $value = $key . '=' . $value;});
+                        array_walk($subActionParams, function (&$value, $key) {
+                            return $value = $key . '=' . $value;
+                        });
                         continue;
                     }
 
@@ -310,7 +309,7 @@ abstract class Action extends Container
      */
     public static function getRegistryDataProviderKey()
     {
-        return self::REGISTRY_DATA_PROVIDER_KEY . get_called_class();
+        return 'Ice:Registry/' . self::getClass();
     }
 
     /**

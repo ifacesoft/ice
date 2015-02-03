@@ -1,32 +1,13 @@
 <?php
-/**
- * Ice data provider implementation session class
- *
- * @link http://www.iceframework.net
- * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
- * @license https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
- */
 
 namespace Ice\Data\Provider;
 
 use Ice\Core\Data_Provider;
 use Ice\Core\Exception;
 
-/**
- * Class Session
- *
- * Data provider for session data
- *
- * @see Ice\Core\Data_Provider
- *
- * @author dp <denis.a.shestakov@gmail.com>
- *
- * @package Ice
- * @subpackage Data_Provider
- */
-class Session extends Data_Provider
+class Mongodb extends Data_Provider
 {
-    const DEFAULT_DATA_PROVIDER_KEY = 'Ice:Session/default';
+    const DEFAULT_DATA_PROVIDER_KEY = 'Ice:Mongodb/default';
     const DEFAULT_KEY = 'default';
 
     /**
@@ -51,12 +32,28 @@ class Session extends Data_Provider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.4
-     * @since 0.4
+     * @version 0.0
+     * @since 0.0
      */
     protected static function getDefaultKey()
     {
         return self::DEFAULT_KEY;
+    }
+
+    /**
+     * Get data from data provider by key
+     *
+     * @param string $key
+     * @return mixed
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.4
+     */
+    public function get($key = null)
+    {
+        // TODO: Implement get() method.
     }
 
     /**
@@ -69,16 +66,12 @@ class Session extends Data_Provider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
-     * @since 0.0
+     * @version 0.4
+     * @since 0.4
      */
     public function set($key, $value, $ttl = null)
     {
-        if ($ttl == -1) {
-            return $value;
-        }
-
-        return $_SESSION[$key] = $value;
+        // TODO: Implement set() method.
     }
 
     /**
@@ -91,41 +84,12 @@ class Session extends Data_Provider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
-     * @since 0.0
+     * @version 0.4
+     * @since 0.4
      */
     public function delete($key, $force = true)
     {
-        if ($force) {
-            unset($_SESSION[$key]);
-            return true;
-        }
-
-        $value = $this->get($key);
-
-        unset($_SESSION[$key]);
-
-        return $value;
-    }
-
-    /**
-     * Get data from data provider by key
-     *
-     * @param string $key
-     * @return mixed
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since 0.0
-     */
-    public function get($key = null)
-    {
-        if (empty($key)) {
-            return $_SESSION;
-        }
-
-        return isset($_SESSION[$key]) ? $_SESSION[$key] : null;
+        // TODO: Implement delete() method.
     }
 
     /**
@@ -138,11 +102,11 @@ class Session extends Data_Provider
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
-     * @since 0.0
+     * @since 0.4
      */
     public function incr($key, $step = 1)
     {
-        return $_SESSION[$key] += $step;
+        // TODO: Implement inc() method.
     }
 
     /**
@@ -155,24 +119,26 @@ class Session extends Data_Provider
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
-     * @since 0.0
+     * @since 0.4
      */
     public function decr($key, $step = 1)
     {
-        return $_SESSION[$key] -= $step;
+        // TODO: Implement dec() method.
     }
 
     /**
      * Flush all stored data
      *
+     * @author anonymous <email>
+     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
-     * @since 0.0
+     * @version 0.4
+     * @since 0.4
      */
     public function flushAll()
     {
-        $_SESSION = [];
+        // TODO: Implement flushAll() method.
     }
 
     /**
@@ -183,13 +149,12 @@ class Session extends Data_Provider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @todo 0.4 implements filter by pattern
      * @version 0.4
-     * @since 0.0
+     * @since 0.4
      */
     public function getKeys($pattern = null)
     {
-        return array_keys($_SESSION);
+        // TODO: Implement getKeys() method.
     }
 
     /**
@@ -200,28 +165,48 @@ class Session extends Data_Provider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
-     * @since 0.0
+     * @version 0.4
+     * @since 0.4
      */
     protected function connect(&$connection)
     {
-        return isset($_SESSION);
+        $options = $this->getOptions(__CLASS__);
+        try {
+            $connection = new \Mongo('mongodb://' . $options['host'] . ':' . $options['port']);
+        } catch (\MongoConnectionException $e) {
+            Mysqli::getLogger()->fatal('mongodb - ' . $this->getConnection()->lastError(), __FILE__, __LINE__, $e);
+        }
+
+        return (bool)$connection;
+    }
+
+    /**
+     * Return connection of mongodb
+     *
+     * @return \Mongo
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.4
+     */
+    public function getConnection()
+    {
+        return parent::getConnection();
     }
 
     /**
      * Close connection with data provider
      *
      * @param $connection
-     * @return boolean
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
-     * @since 0.0
+     * @since 0.4
      */
     protected function close(&$connection)
     {
-        unset($_SESSION);
-        return true;
+        // TODO: Implement close() method.
     }
 }

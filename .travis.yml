@@ -5,6 +5,12 @@ php:
 #  - 5.4
 #  - hhvm
 
+services:
+- redis-server
+
+install:
+- tests/unit/data/travis/apc-setup.sh
+
 before_script:
   - wget http://getcomposer.org/composer.phar
   - php composer.phar install

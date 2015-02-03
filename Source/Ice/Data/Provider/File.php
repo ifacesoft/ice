@@ -26,12 +26,42 @@ use Ice\Helper\Hash;
  *
  * @package Ice
  * @subpackage Data_Provider
- *
- * @version 0.0
- * @since 0.0
  */
 class File extends Data_Provider
 {
+    const DEFAULT_DATA_PROVIDER_KEY = 'Ice:File/default';
+    const DEFAULT_KEY = 'default';
+
+    /**
+     * Return default data provider key
+     *
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.4
+     */
+    protected static function getDefaultDataProviderKey()
+    {
+        return self::DEFAULT_DATA_PROVIDER_KEY;
+    }
+
+    /**
+     * Return default key
+     *
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
+     */
+    protected static function getDefaultKey()
+    {
+        return self::DEFAULT_KEY;
+    }
+
     /**
      * Set data to data provider
      *
@@ -148,12 +178,12 @@ class File extends Data_Provider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.4
      * @since 0.0
      */
-    public function inc($key, $step = 1)
+    public function incr($key, $step = 1)
     {
-        throw new Exception('Implement inc() method.');
+        return $this->set($key, $this->get($key) + $step);
     }
 
     /**
@@ -169,9 +199,9 @@ class File extends Data_Provider
      * @version 0.0
      * @since 0.0
      */
-    public function dec($key, $step = 1)
+    public function decr($key, $step = 1)
     {
-        throw new Exception('Implement dec() method.');
+        return $this->set($key, $this->get($key) - $step);
     }
 
     /**
@@ -184,7 +214,6 @@ class File extends Data_Provider
      */
     public function flushAll()
     {
-        File::getLogger()->info(['Trying remove {$0}', $this->getConnection()]);
         Directory::remove($this->getConnection());
     }
 

@@ -23,13 +23,11 @@ use Ice\Core\Exception;
  *
  * @package Ice
  * @subpackage Data_Provider
- *
- * @version 0.0
- * @since 0.0
  */
 class Request extends Data_Provider
 {
-    const DEFAULT_KEY = 'Ice:Request/http';
+    const DEFAULT_DATA_PROVIDER_KEY = 'Ice:Request/default';
+    const DEFAULT_KEY = 'default';
 
 //    public static function getInstance($dataProviderKey = null)
 //    {
@@ -56,6 +54,21 @@ class Request extends Data_Provider
     }
 
     /**
+     * Return default data provider key
+     *
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.4
+     */
+    protected static function getDefaultDataProviderKey()
+    {
+        return self::DEFAULT_DATA_PROVIDER_KEY;
+    }
+
+    /**
      * Get data from data provider by key
      *
      * @param string $key
@@ -63,22 +76,16 @@ class Request extends Data_Provider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.4
      * @since 0.0
      */
     public function get($key = null)
     {
-        $connection = $this->getConnection();
-
-        if (!$connection) {
-            return null;
+        if (empty($key)) {
+            return $_REQUEST;
         }
 
-        if ($key === null) {
-            return $connection;
-        }
-
-        return isset($connection[$key]) ? $connection[$key] : null;
+        return isset($_REQUEST[$key]) ? $_REQUEST[$key] : null;
     }
 
     /**
@@ -92,12 +99,16 @@ class Request extends Data_Provider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.4
      * @since 0.0
      */
     public function set($key, $value, $ttl = null)
     {
-        throw new Exception('Implement set() method.');
+        if ($ttl == -1) {
+            return $value;
+        }
+
+        return $_REQUEST[$key] = $value;
     }
 
     /**
@@ -110,12 +121,21 @@ class Request extends Data_Provider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.4
      * @since 0.0
      */
     public function delete($key, $force = true)
     {
-        throw new Exception('Implement delete() method.');
+        if ($force) {
+            unset($_REQUEST[$key]);
+            return true;
+        }
+
+        $value = $this->get($key);
+
+        unset($_REQUEST[$key]);
+
+        return $value;
     }
 
     /**
@@ -128,12 +148,12 @@ class Request extends Data_Provider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.4
      * @since 0.0
      */
-    public function inc($key, $step = 1)
+    public function incr($key, $step = 1)
     {
-        throw new Exception('Implement inc() method.');
+        return $_REQUEST[$key] += $step;
     }
 
     /**
@@ -146,12 +166,12 @@ class Request extends Data_Provider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.4
      * @since 0.0
      */
-    public function dec($key, $step = 1)
+    public function decr($key, $step = 1)
     {
-        throw new Exception('Implement dec() method.');
+        return $_REQUEST[$key] -= $step;
     }
 
     /**
@@ -159,50 +179,12 @@ class Request extends Data_Provider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.4
      * @since 0.0
      */
     public function flushAll()
     {
-        throw new Exception('Implement flushAll() method.');
-    }
-
-    /**
-     * Connect to data provider
-     *
-     * @param $connection
-     * @return boolean
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    protected function connect(&$connection)
-    {
-        if (!isset($_SERVER)) {
-            return false;
-        }
-
-        $connection = (array)$_REQUEST;
-        return true;
-    }
-
-    /**
-     * Close connection with data provider
-     *
-     * @param $connection
-     * @return boolean
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    protected function close(&$connection)
-    {
-        $connection = null;
-        return true;
+        $_REQUEST = [];
     }
 
     /**
@@ -213,11 +195,45 @@ class Request extends Data_Provider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @todo 0.4 implements filter by pattern
+     * @version 0.4
      * @since 0.0
      */
     public function getKeys($pattern = null)
     {
-        // TODO: Implement getKeys() method.
+        return array_keys($_REQUEST);
+    }
+
+    /**
+     * Connect to data provider
+     *
+     * @param $connection
+     * @return boolean
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.0
+     */
+    protected function connect(&$connection)
+    {
+        return isset($_REQUEST);
+    }
+
+    /**
+     * Close connection with data provider
+     *
+     * @param $connection
+     * @return boolean
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.0
+     */
+    protected function close(&$connection)
+    {
+        unset($_REQUEST);
+        return true;
     }
 }

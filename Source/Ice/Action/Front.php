@@ -50,7 +50,7 @@ class Front extends Action
     public static $config = [
         'layout' => '',
         'defaultViewRenderClassName' => 'Ice:Php',
-        'inputDataProviderKeys' => [Router::DEFAULT_KEY],
+        'inputDataProviderKeys' => [Router::DEFAULT_DATA_PROVIDER_KEY],
     ];
 
     /**
