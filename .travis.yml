@@ -9,7 +9,7 @@ services:
 - redis-server
 
 install:
-- tests/unit/data/travis/apc-setup.sh
+- Bin/apc_install.sh
 
 before_script:
   - wget http://getcomposer.org/composer.phar
