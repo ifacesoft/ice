@@ -1,6 +1,6 @@
 #!/bin/sh -e
 
-pecl install apcu
+pecl install channel://pecl.php.net/apcu-4.0.7
 
 if [ "$(expr "$TRAVIS_PHP_VERSION" "<" "5.5")" -eq 1 ]; then
 echo "extension = apc.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
