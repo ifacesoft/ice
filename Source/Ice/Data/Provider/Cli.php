@@ -29,7 +29,7 @@ use Ice\Core\Logger;
 class Cli extends Data_Provider
 {
     const DEFAULT_DATA_PROVIDER_KEY = 'Ice:Cli/default';
-    const DEFAULT_KEY = 'default';
+    const DEFAULT_KEY = 'instance';
 
     /**
      * Return default data provider key

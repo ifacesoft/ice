@@ -30,7 +30,7 @@ use Ice\Core;
 abstract class View_Render extends Container
 {
     use Core;
-
+    const DEFAULT_KEY = 'instance';
     const TEMPLATE_TYPE_FILE = 'file';
     const TEMPLATE_TYPE_STRING = 'string';
 
@@ -44,18 +44,17 @@ abstract class View_Render extends Container
     /**
      * Create new instance of view render
      *
-     * @param View_Render $viewRenderClass
-     * @param $hash
+     * @param $key
      * @return View_Render
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.4
      * @since 0.0
      */
-    protected static function create($viewRenderClass, $hash = null)
+    protected static function create($key)
     {
-        return new $viewRenderClass($viewRenderClass::getConfig());
+        $viewRenderClass = self::getClass();
+        return new $viewRenderClass();
     }
 
     /**
@@ -75,21 +74,6 @@ abstract class View_Render extends Container
         }
 
         return reset(View_Render::$templates);
-    }
-
-    /**
-     * Return default view render key
-     *
-     * @return View_Render
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    protected static function getDefaultKey()
-    {
-        return self::getClass();
     }
 
 //    /**
@@ -120,4 +104,34 @@ abstract class View_Render extends Container
      * @since 0
      */
     abstract public function fetch($template, array $data = [], $templateType = View_Render::TEMPLATE_TYPE_FILE);
+
+    /**
+     * Default action key
+     *
+     * @return Core
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.0
+     */
+    protected static function getDefaultKey()
+    {
+        return View_Render::DEFAULT_KEY;
+    }
+
+    /**
+     * Default class key
+     *
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.4
+     */
+    protected static function getDefaultClassKey()
+    {
+        return self::getClass() . '/default';
+    }
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * Ice query translator implementation mysqli class
+ * Ice query translator implementation sql class
  *
  * @link http://www.iceframework.net
  * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
@@ -15,7 +15,7 @@ use Ice\Core\Query_Builder;
 use Ice\Core\Query_Translator;
 
 /**
- * Class Mysqli
+ * Class Sql
  *
  * Translate with query translator mysqli
  *
@@ -25,11 +25,8 @@ use Ice\Core\Query_Translator;
  *
  * @package Ice
  * @subpackage Query_Translator
- *
- * @version 0.0
- * @since 0.0
  */
-class Mysqli extends Query_Translator
+class Sql extends Query_Translator
 {
     const SQL_CALC_FOUND_ROWS = 'SQL_CALC_FOUND_ROWS';
     const SQL_STATEMENT_CREATE = 'CREATE TABLE IF NOT EXISTS';
@@ -47,6 +44,8 @@ class Mysqli extends Query_Translator
     const SQL_CLAUSE_ORDER = 'ORDER';
     const SQL_CLAUSE_LIMIT = 'LIMIT';
     const ON_DUPLICATE_KEY_UPDATE = 'ON DUPLICATE KEY UPDATE';
+    const DEFAULT_CLASS_KEY = 'Ice:Sql/default';
+    const DEFAULT_KEY = 'instance';
 
     /**
      * Translate query parts to sql string
@@ -526,5 +525,33 @@ class Mysqli extends Query_Translator
         }
 
         return "\n" . self::SQL_STATEMENT_DROP . ' `' . $modelClass::getTableName() . '`';
+    }
+
+    /**
+     * Return default class key
+     *
+     * @return string
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.4
+     */
+    protected static function getDefaultClassKey()
+    {
+        return Sql::DEFAULT_CLASS_KEY;
+    }
+
+    /**
+     * Return default key
+     *
+     * @return string
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.4
+     */
+    protected static function getDefaultKey()
+    {
+        return Sql::DEFAULT_KEY;
     }
 }

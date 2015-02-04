@@ -67,8 +67,7 @@ class Data_Scheme extends Container
     /**
      * Create new instance of data scheme
      *
-     * @param $scheme
-     * @param null $hash
+     * @param $key
      * @return Data_Scheme
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -76,9 +75,9 @@ class Data_Scheme extends Container
      * @version 0.0
      * @since 0.0
      */
-    protected static function create($scheme, $hash = null)
+    protected static function create($key)
     {
-        return new Data_Scheme(self::getFilePathData($scheme));
+        return new Data_Scheme(self::getFilePathData($key));
     }
 
     /**

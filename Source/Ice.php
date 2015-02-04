@@ -30,11 +30,8 @@ use Ice\Helper\Memory;
  *
  * Run and flush ice application
  * @author dp <denis.a.shestakov@gmail.com>
- *
- * @version 0.0
- * @since 0.0
  */
-class Ice extends Container
+class Ice
 {
     use Core;
 
@@ -90,7 +87,6 @@ class Ice extends Container
      * Create new instance of Ice application
      *
      * @param $moduleName string main module name
-     * @param $hash string hash md5
      * @return Ice
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -98,9 +94,9 @@ class Ice extends Container
      * @version 0.0
      * @since 0.0
      */
-    protected static function create($moduleName, $hash = null)
+    public static function create($moduleName)
     {
-        return new Ice($moduleName, $hash);
+        return new Ice($moduleName);
     }
 
     /**

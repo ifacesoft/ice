@@ -32,6 +32,8 @@ abstract class Validator extends Container
 {
     use Core;
 
+    const DEFAULT_KEY = 'instance';
+
     /**
      * Validate data by validate scheme
      *
@@ -170,8 +172,7 @@ abstract class Validator extends Container
     /**
      * Create new instance of validator
      *
-     * @param $class
-     * @param null $hash
+     * @param $key
      * @return Validator
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -179,9 +180,39 @@ abstract class Validator extends Container
      * @version 0.0
      * @since 0.0
      */
-    protected static function create($class, $hash = null)
+    protected static function create($key)
     {
-        $class = Object::getClass(__CLASS__, $class);
+        $class = self::getClass();
         return new $class();
+    }
+
+    /**
+     * Default action key
+     *
+     * @return Core
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.0
+     */
+    protected static function getDefaultKey()
+    {
+        return Validator::DEFAULT_KEY;
+    }
+
+    /**
+     * Default class key
+     *
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.4
+     */
+    protected static function getDefaultClassKey()
+    {
+        return self::getClass() . '/default';
     }
 }

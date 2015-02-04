@@ -27,7 +27,7 @@ use Ice\Core\Exception;
 class Mysqli extends Data_Provider
 {
     const DEFAULT_DATA_PROVIDER_KEY = 'Ice:Mysqli/default';
-    const DEFAULT_KEY = 'default';
+    const DEFAULT_KEY = 'instance';
 
     /**
      * Return default data provider key

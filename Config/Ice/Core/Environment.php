@@ -55,6 +55,12 @@ return [
                     'password' => '',
                     'charset' => 'utf8'
                 ]
+            ],
+            'Ice\Data\Provider\Mongodb' => [
+                'default' => [
+                    'host' => 'localhost',
+                    'port' => '27017'
+                ]
             ]
         ],
         'dataProviderKeys' => [

@@ -28,7 +28,7 @@ use Ice\Helper\Object;
 class Repository extends Data_Provider
 {
     const DEFAULT_DATA_PROVIDER_KEY = 'Ice:Repository/default';
-    const DEFAULT_KEY = 'default';
+    const DEFAULT_KEY = 'instance';
 
     /**
      * Return default data provider key

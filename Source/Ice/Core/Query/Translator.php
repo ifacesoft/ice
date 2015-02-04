@@ -11,7 +11,6 @@ namespace Ice\Core;
 
 use Ice;
 use Ice\Core;
-use Ice\Helper\Object;
 
 /**
  * Class Query_Translator
@@ -33,24 +32,27 @@ abstract class Query_Translator extends Container
     use Core;
 
     /**
+     * Private constructor for query translator
+     */
+    private function __construct()
+    {
+    }
+
+    /**
      * Create new instance of query translator
      *
-     * @param $class
-     * @param null $hash
+     * @param $key
      * @return Query_Translator
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.4
      * @since 0.0
      */
-    protected static function create($class, $hash = null)
+    protected static function create($key)
     {
-        $moduleAlias = Object::getModuleAlias($class);
-        $baseName = Query_Translator::getClassName();
-
-        $class = $moduleAlias . '\\' . str_replace('_', '\\', $baseName) . '\\' . Object::getName($class);
-        return new $class();
+        $queryTranslatorClass = self::getClass();
+        return new $queryTranslatorClass();
     }
 
     /**

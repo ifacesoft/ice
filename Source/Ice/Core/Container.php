@@ -12,7 +12,9 @@ namespace Ice\Core;
 use Ice;
 use Ice\Core;
 use Ice\Exception\File_Not_Found;
+use Ice\Helper\Json;
 use Ice\Helper\Object;
+use Ice\Helper\String;
 
 /**
  * Class Container
@@ -23,9 +25,6 @@ use Ice\Helper\Object;
  *
  * @package Ice
  * @subpackage Core
- *
- * @version 0.0
- * @since 0.0
  */
 abstract class Container
 {
@@ -57,6 +56,21 @@ abstract class Container
     }
 
     /**
+     * Return base class for self class (class extends Container)
+     *
+     * @return Core
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.1
+     * @since 0.1
+     */
+    public static function getBaseClass()
+    {
+        return Object::getBaseClass(self::getClass());
+    }
+
+    /**
      * Get instance from container
      *
      * @param string $key
@@ -77,32 +91,44 @@ abstract class Container
         /** @var Container|Core $baseClass */
         $baseClass = $class::getBaseClass();
 
-        if (empty($key)) {
-            $key = $class == $baseClass
-                ? $class::getDefaultKey()
-                : $class;
+        if (!$key && $class == $baseClass) {
+            /** @var Container|Core $defaultClass */
+            $defaultClass = $baseClass::getDefaultClass();
+
+            return $defaultClass::getInstance(null, $ttl);
         }
 
-        $data = null;
-        if (is_string($key)) {
-            if ($class == $baseClass) {
-                $key = $baseClass::getClass($key);
-            }
-            $data = $key;
-        } else {
-            $data = $key;
-            $key = md5(serialize($key));
+        if (!$key) {
+            return $baseClass::getInstance($class::getDefaultClassKey(), $ttl);
         }
+
+        if ($class == $baseClass && is_string($key) && strpos($key, '/')) {
+            list($class, $key) = explode('/', $key);
+
+            $class = Object::getClass($baseClass, $class);
+
+            return $class::getInstance($key, $ttl);
+        }
+
+        if (is_string($key) && String::startsWith($key, 'default')) {
+            $key = $class::getDefaultKey();
+        }
+
+        $data = $key;
+
+        $key = is_string($key)
+            ? $class . '/' . $key
+            : $class . '/' . md5(Json::encode($key));
 
         $object = null;
         try {
-            $dataProvider = $class::getDataProvider('instance');
+            $dataProvider = $baseClass::getDataProvider('instance');
 
             if ($ttl != -1 && $object = $dataProvider->get($key)) {
                 return $object;
             }
 
-            $object = $class::create($data, $key);
+            $object = $class::create($data);
 
             if ($object) {
                 $dataProvider->set($key, $object, $ttl);
@@ -115,7 +141,7 @@ abstract class Container
             if (Environment::isDevelopment()) {
                 Code_Generator::getLogger()->warning(['File {$0} not found. Trying generate {$1}...', [$key, $baseClass]], __FILE__, __LINE__, $e);
                 $baseClass::getCodeGenerator()->generate($key);
-                $object = $class::create($key);
+                $object = $class::create($key, '');
             } else {
                 Container::getLogger()->error(['File {$0} not found', $key], __FILE__, __LINE__, $e);
             }
@@ -129,10 +155,57 @@ abstract class Container
     }
 
     /**
+     * Return default class
+     *
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.4
+     */
+    protected static function getDefaultClass()
+    {
+        Resource::getLogger()->fatal(['Implementation {$0} is required for {$1}', [__FUNCTION__, self::getClass()]], __FILE__, __LINE__);
+        return null;
+    }
+
+    /**
+     * Return default class key
+     *
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.4
+     */
+    protected static function getDefaultClassKey()
+    {
+        Resource::getLogger()->fatal(['Implementation {$0} is required for {$1}', [__FUNCTION__, self::getClass()]], __FILE__, __LINE__);
+        return null;
+    }
+
+    /**
+     * Return default key
+     *
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.4
+     */
+    protected static function getDefaultKey()
+    {
+        Resource::getLogger()->fatal(['Implementation {$0} is required for {$1}', [__FUNCTION__, self::getClass()]], __FILE__, __LINE__);
+        return null;
+    }
+
+    /**
      * Create instance
      *
-     * @param $data
-     * @param $hash
+     * @param $key
      * @return mixed
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -140,9 +213,9 @@ abstract class Container
      * @version 0.4
      * @since 0.4
      */
-    protected static function create($data, $hash)
+    protected static function create($key)
     {
-        Resource::getLogger()->fatal(['Implementation {$0} is required for {$1}', [__FUNCTION__, self::getClass()]], __FILE__, __LINE__, null, [$data, $hash]);
+        Resource::getLogger()->fatal(['Implementation {$0} is required for {$1}', [__FUNCTION__, self::getClass()]], __FILE__, __LINE__, null, $key);
     }
 
     /**
@@ -158,20 +231,5 @@ abstract class Container
     public static function getLogger()
     {
         return Logger::getInstance(self::getClass());
-    }
-
-    /**
-     * Return base class for self class (class extends Container)
-     *
-     * @return Core
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.1
-     * @since 0.1
-     */
-    public static function getBaseClass()
-    {
-        return Object::getBaseClass(self::getClass());
     }
 }

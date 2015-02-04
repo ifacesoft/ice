@@ -30,7 +30,7 @@ use Ice\Helper\Hash;
 class File extends Data_Provider
 {
     const DEFAULT_DATA_PROVIDER_KEY = 'Ice:File/default';
-    const DEFAULT_KEY = 'default';
+    const DEFAULT_KEY = 'instance';
 
     /**
      * Return default data provider key

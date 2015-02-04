@@ -29,13 +29,12 @@ use Ice\Helper\Json;
  *
  * @package Ice
  * @subpackage Core
- *
- * @version 0.1
- * @since 0.0
  */
 abstract class Action extends Container
 {
     use Core;
+
+    const DEFAULT_KEY = 'instance';
 
     /**
      * Default config
@@ -77,17 +76,17 @@ abstract class Action extends Container
     /**
      * Get action object by name
      *
-     * @param $actionClass
-     * @param $hash
+     * @param $key
      * @return Action
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.4
      * @since 0.0
      */
-    protected static function create($actionClass, $hash = null)
+    protected static function create($key)
     {
+        $actionClass = self::getClass();
         return new $actionClass();
     }
 
@@ -98,12 +97,27 @@ abstract class Action extends Container
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.4
      * @since 0.0
      */
     protected static function getDefaultKey()
     {
-        return self::getClass();
+        return Action::DEFAULT_KEY;
+    }
+
+    /**
+     * Default class key
+     *
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.4
+     */
+    protected static function getDefaultClassKey()
+    {
+        return self::getClass() . '/default';
     }
 
     /**
@@ -183,7 +197,7 @@ abstract class Action extends Container
                 $subAction = null;
 
                 if (!$isThread) {
-                    $subAction = Action::getInstance($subActionClass);
+                    $subAction = $subActionClass::getInstance();
                 }
 
                 foreach ($actionData as $subActionKey => $subActionParams) {

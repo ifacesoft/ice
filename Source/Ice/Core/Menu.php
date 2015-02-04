@@ -36,7 +36,6 @@ abstract class Menu extends Container
      * Create new instance of menu
      *
      * @param $key
-     * @param null $hash
      * @return Menu
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -44,7 +43,7 @@ abstract class Menu extends Container
      * @version 0.1
      * @since 0.1
      */
-    protected static function create($key, $hash = null)
+    protected static function create($key)
     {
         /** @var Menu $class */
         $class = self::getClass();

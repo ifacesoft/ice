@@ -966,7 +966,7 @@ class Query_Builder
     /**
      * Return instance of query by current query builder
      *
-     * @param string|null $sourceName
+     * @param string|null $dataSourceKey
      * @return Query
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -974,9 +974,9 @@ class Query_Builder
      * @version 0.2
      * @since 0.0
      */
-    public function getQuery($sourceName = null)
+    public function getQuery($dataSourceKey = null)
     {
-        return Query::getInstance([$sourceName, $this->_queryType, $this->_sqlParts, $this->_modelClass, $this->_cacheTags])
+        return Query::create([$dataSourceKey, $this->_queryType, $this->_sqlParts, $this->_modelClass, $this->_cacheTags])
             ->bind($this->_bindParts);
     }
 

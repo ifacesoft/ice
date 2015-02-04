@@ -8,7 +8,6 @@ abstract class Form_Security_Login extends Form
      * Create new instance of form security login
      *
      * @param $key
-     * @param null $hash
      * @return Form_Security_Login
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -16,7 +15,7 @@ abstract class Form_Security_Login extends Form
      * @version 0.1
      * @since 0.1
      */
-    protected static function create($key, $hash = null)
+    protected static function create($key)
     {
         /** @var Form_Security_Login $class */
         $class = self::getClass();

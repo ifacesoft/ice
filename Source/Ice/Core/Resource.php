@@ -25,11 +25,8 @@ use Ice\View\Render\Replace;
  *
  * @package Ice
  * @subpackage Core
- *
- * @version 0.0
- * @since 0.0
  */
-class Resource extends Container
+class Resource
 {
     use Core;
 
@@ -68,16 +65,16 @@ class Resource extends Container
      * Create new instance of resource
      *
      * @param $class
-     * @param null $hash
      * @return Resource
      * @throws File_Not_Found
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
+     * @todo need caching
      * @version 0.0
      * @since 0.0
      */
-    protected static function create($class, $hash = null)
+    public static function create($class)
     {
         $resourceFile = Loader::getFilePath($class, '.res.php', 'Resource/', false);
 
@@ -108,7 +105,7 @@ class Resource extends Container
         /** @var string $message */
         /** @var Core $class */
         $resource = isset($class)
-            ? Resource::getInstance($class)->_resource
+            ? Resource::create($class)->_resource
             : $this->_resource;
 
         if (!isset($class)) {

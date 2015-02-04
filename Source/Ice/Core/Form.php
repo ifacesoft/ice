@@ -110,7 +110,6 @@ abstract class Form extends Container
      * Create new instance of form
      *
      * @param $key
-     * @param null $hash
      * @return Form
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -118,7 +117,7 @@ abstract class Form extends Container
      * @version 0.0
      * @since 0.0
      */
-    protected static function create($key, $hash = null)
+    protected static function create($key)
     {
         /** @var Form $class */
         $class = self::getClass();

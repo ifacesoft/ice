@@ -86,7 +86,7 @@ abstract class Data_Provider
     /**
      * Return new instance of data provider
      *
-     * @param $dataProviderKey
+     * @param $key
      * @param string $index
      * @return Data_Provider
      *
@@ -95,37 +95,37 @@ abstract class Data_Provider
      * @version 0.0
      * @since 0.0
      */
-    public static function getInstance($dataProviderKey = null, $index = 'default')
+    public static function getInstance($key = null, $index = 'default')
     {
         /** @var Data_Provider $class */
         $class = self::getClass();
 
-        if (!$dataProviderKey && $class == __CLASS__) {
+        if (!$key && $class == __CLASS__) {
             Data_Provider::getLogger()->fatal('Not known how create instance of data provider. Need data provider key.', __FILE__, __LINE__);
         }
 
-        if (!$dataProviderKey) {
+        if (!$key) {
             return Data_Provider::getInstance($class::getDefaultDataProviderKey(), $index);
         }
 
         if ($class == __CLASS__) {
-            list($class, $key) = explode('/', $dataProviderKey);
+            list($class, $key) = explode('/', $key);
 
             $class = Object::getClass(__CLASS__, $class);
 
             return $class::getInstance($key, $index);
         }
 
-        if ($dataProviderKey == 'default') {
-            $dataProviderKey = $class::getDefaultKey();
+        if ($key == 'default') {
+            $key = $class::getDefaultKey();
         }
 
         /** @var string $class */
-        if (isset(self::$_dataProviders[$class][$dataProviderKey][$index])) {
-            return self::$_dataProviders[$class][$dataProviderKey][$index];
+        if (isset(self::$_dataProviders[$class][$key][$index])) {
+            return self::$_dataProviders[$class][$key][$index];
         }
 
-        return self::$_dataProviders[$class][$dataProviderKey][$index] = new $class($dataProviderKey, $index);
+        return self::$_dataProviders[$class][$key][$index] = new $class($key, $index);
     }
 
     /**

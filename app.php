@@ -12,4 +12,4 @@
 
 require_once 'bootstrap.php';
 
-Ice::getInstance(dirname(MODULE_DIR))->run();
+Ice::create(dirname(MODULE_DIR))->run();

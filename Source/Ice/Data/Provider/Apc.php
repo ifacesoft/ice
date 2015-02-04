@@ -28,7 +28,7 @@ use Ice\Core\Logger;
 class Apc extends Data_Provider
 {
     const DEFAULT_DATA_PROVIDER_KEY = 'Ice:Apc/default';
-    const DEFAULT_KEY = 'default';
+    const DEFAULT_KEY = 'instance';
 
     /**
      * Return default data provider key

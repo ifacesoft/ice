@@ -187,7 +187,7 @@ class Environment extends Container
      * Create new instance of environment
      *
      * @param string $environment Name of environment (production|test|devlepment)
-     * @param string|null $hash Generated md5 hash
+     *
      * @return Environment
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -195,7 +195,7 @@ class Environment extends Container
      * @version 0.0
      * @since 0.0
      */
-    protected static function create($environment, $hash = null)
+    protected static function create($environment)
     {
         return new Environment($environment);
     }

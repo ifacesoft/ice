@@ -27,7 +27,7 @@ use Ice\Core\Exception;
 class Request extends Data_Provider
 {
     const DEFAULT_DATA_PROVIDER_KEY = 'Ice:Request/default';
-    const DEFAULT_KEY = 'default';
+    const DEFAULT_KEY = 'instance';
 
 //    public static function getInstance($dataProviderKey = null)
 //    {

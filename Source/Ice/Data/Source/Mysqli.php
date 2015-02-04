@@ -9,12 +9,14 @@
 
 namespace Ice\Data\Source;
 
+use Ice\Core\Data_Provider;
 use Ice\Core\Data_Source;
 use Ice\Core\Exception;
 use Ice\Core\Model;
 use Ice\Core\Query;
 use Ice\Core\Query_Builder;
 use Ice\Core\Query_Result;
+use Ice\Core\Query_Translator;
 use Ice\Helper\Arrays;
 use mysqli_result;
 use mysqli_stmt;
@@ -30,12 +32,12 @@ use mysqli_stmt;
  *
  * @package Ice
  * @subpackage Data_Source
- *
- * @version 0.1
- * @since 0.0
  */
 class Mysqli extends Data_Source
 {
+    const DATA_PROVIDER_CLASS = 'Ice\Data\Provider\Mysqli';
+    const QUERY_TRANSLATOR_CLASS = 'Ice\Query\Translator\Sql';
+
     /**
      * Execute query select to data source
      *
@@ -99,6 +101,22 @@ class Mysqli extends Data_Source
     }
 
     /**
+     * Get connection instance
+     *
+     * @param string|null $scheme
+     * @return \Mysqli
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
+     */
+    public function getConnection($scheme = null)
+    {
+        return parent::getConnection();
+    }
+
+    /**
      * Prepare query statement for query
      *
      * @param Query $query
@@ -136,22 +154,6 @@ class Mysqli extends Data_Source
         }
 
         return $statement;
-    }
-
-    /**
-     * Get connection instance
-     *
-     * @param string|null $scheme
-     * @return \Mysqli
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function getConnection($scheme = null)
-    {
-        return parent::getConnection();
     }
 
     /**
@@ -327,11 +329,11 @@ class Mysqli extends Data_Source
             'UNIQUE' => []
         ];
 
-        foreach ($dataProvider->get(['TABLE_CONSTRAINTS:TABLE_SCHEMA/' . $this->getScheme(), 'TABLE_CONSTRAINTS:TABLE_NAME/' . $tableName]) as $constraint) {
+        foreach ($dataProvider->get(['TABLE_CONSTRAINTS:TABLE_SCHEMA/' . $this->_scheme, 'TABLE_CONSTRAINTS:TABLE_NAME/' . $tableName]) as $constraint) {
             $constraints[$constraint['CONSTRAINT_TYPE']][$constraint['CONSTRAINT_NAME']] = [];
         }
 
-        $indexes = $dataProvider->get(['STATISTICS:TABLE_SCHEMA/' . $this->getScheme(), 'STATISTICS:TABLE_NAME/' . $tableName]);
+        $indexes = $dataProvider->get(['STATISTICS:TABLE_SCHEMA/' . $this->_scheme, 'STATISTICS:TABLE_NAME/' . $tableName]);
 
         foreach ($constraints['PRIMARY KEY'] as $constraintName => &$constraint) {
             foreach ($indexes as $index) {
@@ -360,7 +362,7 @@ class Mysqli extends Data_Source
         $foreignKeys = [];
 
         $referenceColumns = Arrays::column(
-            $dataProvider->get(['KEY_COLUMN_USAGE:TABLE_SCHEMA/' . $this->getScheme(), 'KEY_COLUMN_USAGE:TABLE_NAME/' . $tableName]),
+            $dataProvider->get(['KEY_COLUMN_USAGE:TABLE_SCHEMA/' . $this->_scheme, 'KEY_COLUMN_USAGE:TABLE_NAME/' . $tableName]),
             'COLUMN_NAME',
             'CONSTRAINT_NAME'
         );
@@ -392,7 +394,7 @@ class Mysqli extends Data_Source
         $dataProvider = $this->getSourceDataProvider();
         $dataProvider->setScheme('information_schema');
 
-        foreach ($dataProvider->get('TABLES:TABLE_SCHEMA/' . $this->getScheme()) as $table) {
+        foreach ($dataProvider->get('TABLES:TABLE_SCHEMA/' . $this->_scheme) as $table) {
             $tables[$table['TABLE_NAME']] = [
                 'engine' => $table['ENGINE'],
                 'charset' => $table['TABLE_COLLATION'],
@@ -421,7 +423,7 @@ class Mysqli extends Data_Source
         $dataProvider = $this->getSourceDataProvider();
         $dataProvider->setScheme('information_schema');
 
-        foreach ($dataProvider->get(['COLUMNS:TABLE_SCHEMA/' . $this->getScheme(), 'COLUMNS:TABLE_NAME/' . $tableName]) as $column) {
+        foreach ($dataProvider->get(['COLUMNS:TABLE_SCHEMA/' . $this->_scheme, 'COLUMNS:TABLE_NAME/' . $tableName]) as $column) {
             $columnName = $column['COLUMN_NAME'];
             $default = $default = $column['COLUMN_DEFAULT'];
 
@@ -512,5 +514,35 @@ class Mysqli extends Data_Source
         $data[Query_Result::QUERY] = $query;
 
         return $data;
+    }
+
+    /**
+     * Return data provider class
+     *
+     * @return Data_Provider
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.4
+     */
+    public function getDataProviderClass()
+    {
+        return Mysqli::DATA_PROVIDER_CLASS;
+    }
+
+    /**
+     * Return query translator class
+     *
+     * @return Query_Translator
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.4
+     */
+    public function getQueryTranslatorClass()
+    {
+        return Mysqli::QUERY_TRANSLATOR_CLASS;
     }
 }

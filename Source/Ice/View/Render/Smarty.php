@@ -47,15 +47,15 @@ class Smarty extends View_Render
     /**
      * Constructor of php view render
      *
-     * @param Config $config
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
      * @since 0.0
      */
-    protected function __construct(Config $config)
+    protected function __construct()
     {
+        $config = Smarty::getConfig();
+
         require_once VENDOR_DIR . $config->get('vendor') . '/libs/Smarty.class.php';
 
         $this->_smarty = new \Smarty();

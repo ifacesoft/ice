@@ -11,9 +11,7 @@ namespace Ice\Core;
 
 use Ice;
 use Ice\Core;
-use Ice\Data\Provider\Mysqli as Data_Provider_Mysqli;
 use Ice\Helper\Arrays;
-use Ice\Helper\Object;
 
 /**
  * Class Data_Source
@@ -35,35 +33,34 @@ abstract class Data_Source extends Container
     use Core;
 
     /**
-     * Data provider key for this data source
+     * Data source scheme
      *
      * @var string
      */
-    private $_sourceDataProviderKey = null;
-
+    protected $_scheme = null;
     /**
-     * Connected data scheme
+     * Data source key
      *
      * @var string
      */
-    private $_scheme = null;
+    private $_key = null;
 
     /**
      * Private constructor for dat source
      *
+     * @param $key
      * @param $scheme
-     * @param $sourceDataProviderKey
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.4
      * @since 0.0
      */
-    private function __construct($scheme, $sourceDataProviderKey)
+    private function __construct($key, $scheme)
     {
+        $this->_key = $key;
         $this->_scheme = $scheme;
-        $this->_sourceDataProviderKey = $sourceDataProviderKey;
-        $this->getSourceDataProvider()->setScheme($scheme);
+        $this->getSourceDataProvider()->setScheme($this->_scheme);
     }
 
     /**
@@ -78,8 +75,10 @@ abstract class Data_Source extends Container
      */
     public function getSourceDataProvider()
     {
-        /** @var Data_Provider_Mysqli $sourceDataProvider */
-        $sourceDataProvider = Data_Provider::getInstance($this->_sourceDataProviderKey);
+        $sourceDataProviderClass = $this->getDataProviderClass();
+
+        /** @var Data_Provider $sourceDataProvider */
+        $sourceDataProvider = $sourceDataProviderClass::getInstance($this->_key);
 
         if ($sourceDataProvider->getScheme() != $this->_scheme) {
             $sourceDataProvider->setScheme($this->_scheme);
@@ -89,161 +88,16 @@ abstract class Data_Source extends Container
     }
 
     /**
-     * Default key of data source
-     *
-     * @return string
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public static function getDefaultKey()
-    {
-        $schemes = Data_Source::getConfig()->get();
-        return is_array($schemes) ? reset($schemes) : $schemes;
-    }
-
-    /**
-     * Create new instance of data source
-     *
-     * @param $scheme
-     * @param $hash
-     * @return Data_Source
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    protected static function create($scheme, $hash = null)
-    {
-        $sourceDataProviderKey = null;
-
-        foreach (Data_Source::getConfig()->gets() as $dataSourceKey => $configSchemes) {
-            foreach ((array)$configSchemes as $configScheme) {
-                if ($configScheme == $scheme) {
-                    $sourceDataProviderKey = $dataSourceKey;
-                    break 2;
-                }
-            }
-        }
-
-        if (!$sourceDataProviderKey) {
-            Data_Source::getLogger()->fatal(['Data source not found for scheme {$0}', $scheme], __FILE__, __LINE__);
-        }
-
-        $dataSourceClass = Object::getClass(Data_Source::getClass(), strstr($sourceDataProviderKey, '/', true));
-        return new $dataSourceClass($scheme, $sourceDataProviderKey);
-    }
-
-    /**
-     * Execute query select to data source
-     *
-     * @param mixed $statement
-     * @param Query $query
-     * @return array
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    abstract public function executeSelect($statement, Query $query);
-
-    /**
-     * Execute query insert to data source
-     *
-     * @param mixed $statement
-     * @param Query $query
-     * @return array
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    abstract public function executeInsert($statement, Query $query);
-
-    /**
-     * Execute query update to data source
-     *
-     * @param mixed $statement
-     * @param Query $query
-     * @return array
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    abstract public function executeUpdate($statement, Query $query);
-
-    /**
-     * Execute query update to data source
-     *
-     * @param mixed $statement
-     * @param Query $query
-     * @return array
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    abstract public function executeDelete($statement, Query $query);
-
-    /**
-     * Execute query create table to data source
-     *
-     * @param $statement
-     * @param Query $query
-     * @return array
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    abstract public function executeCreate($statement, Query $query);
-
-    /**
-     * Execute query drop table to data source
-     *
-     * @param mixed $statement
-     * @param Query $query
-     * @return array
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    abstract public function executeDrop($statement, Query $query);
-
-    /**
-     * Get connection instance
-     *
-     * @return Object
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function getConnection()
-    {
-        return $this->getSourceDataProvider()->getConnection();
-    }
-
-    /**
-     * Return cache data provider
+     * Return data provider class
      *
      * @return Data_Provider
      *
-     * @author dp <denis.a.shestakov@gmail.com>
+     * @author anonymous <email>
      *
-     * @version 0.0
-     * @since 0.0
+     * @version 0
+     * @since 0
      */
-    public function getCacheDataProvider()
-    {
-        return Data_Source::getInstance('cache');
-    }
+    abstract public function getDataProviderClass();
 
     /**
      * Return instance of data source
@@ -260,6 +114,214 @@ abstract class Data_Source extends Container
     public static function getInstance($key = null, $ttl = null)
     {
         return parent::getInstance($key, $ttl);
+    }
+
+    /**
+     * Default key of data source
+     *
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.0
+     */
+    protected static function getDefaultKey()
+    {
+        /** @var Data_Source $dataSourceClass */
+        $dataSourceClass = self::getClass();
+
+        $key = 'defaultKey_' . $dataSourceClass;
+        $repository = Data_Source::getRepository();
+
+        if ($defaultKey = $repository->get($key)) {
+            return $defaultKey;
+        }
+
+        return $repository->set($key, substr(strstr($dataSourceClass::getDefaultClassKey(), '/'), 1), 0);
+    }
+
+    /**
+     * Return default class key
+     *
+     * @return string
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.4
+     */
+    protected static function getDefaultClassKey()
+    {
+        /** @var Data_Source $dataSourceClass */
+        $dataSourceClass = self::getClass();
+
+        $key = 'defaultClassKey_' . $dataSourceClass;
+        $repository = Data_Source::getRepository();
+
+        if ($defaultClassKey = $repository->get($key)) {
+            return $defaultClassKey;
+        }
+
+        $defaultConfig = Data_Source::getConfig()->gets('default');
+
+        if ($dataSourceClass == __CLASS__) {
+            list($dataSourceClass, $schemes) = each($defaultConfig);
+        } else {
+            $schemes = $defaultConfig[$dataSourceClass];
+        }
+
+        $schemes = (array)$schemes;
+
+        return $repository->set($key, $dataSourceClass . '/default.' . reset($schemes), 0);
+    }
+
+    /**
+     * Return default class
+     *
+     * @return Data_Source
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.4
+     */
+    protected static function getDefaultClass()
+    {
+        /** @var Data_Source $dataSourceClass */
+        $dataSourceClass = self::getClass();
+
+        $key = 'defaultClass_' . $dataSourceClass;
+        $repository = Data_Source::getRepository();
+
+        if ($defaultClass = $repository->get($key)) {
+            return $defaultClass;
+        }
+
+        return $repository->set($key, strstr($dataSourceClass::getDefaultClassKey(), '/', true), 0);
+    }
+
+    /**
+     * Create new instance of data source
+     *
+     * @param $key
+     * @return Data_Source
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.0
+     */
+    protected static function create($key)
+    {
+        list($key, $scheme) = explode('.', $key);
+
+        $schemes = Data_Source::getConfig()->gets($key . '/' . self::getClass(), false);
+
+        if (empty($schemes) || !in_array($scheme, $schemes)) {
+            Data_Source::getLogger()->fatal(['Data source not found for scheme {$0}', $key], __FILE__, __LINE__);
+        }
+
+        $dataSourceClass = self::getClass();
+        return new $dataSourceClass($key, $scheme);
+    }
+
+    /**
+     * Execute query select to data source
+     *
+     * @param mixed $statement
+     * @param Query $query
+     * @return array
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since 0
+     */
+    abstract public function executeSelect($statement, Query $query);
+
+    /**
+     * Execute query insert to data source
+     *
+     * @param mixed $statement
+     * @param Query $query
+     * @return array
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since 0
+     */
+    abstract public function executeInsert($statement, Query $query);
+
+    /**
+     * Execute query update to data source
+     *
+     * @param mixed $statement
+     * @param Query $query
+     * @return array
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since 0
+     */
+    abstract public function executeUpdate($statement, Query $query);
+
+    /**
+     * Execute query update to data source
+     *
+     * @param mixed $statement
+     * @param Query $query
+     * @return array
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since 0
+     */
+    abstract public function executeDelete($statement, Query $query);
+
+    /**
+     * Execute query create table to data source
+     *
+     * @param $statement
+     * @param Query $query
+     * @return array
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since 0
+     */
+    abstract public function executeCreate($statement, Query $query);
+
+    /**
+     * Execute query drop table to data source
+     *
+     * @param mixed $statement
+     * @param Query $query
+     * @return array
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since 0
+     */
+    abstract public function executeDrop($statement, Query $query);
+
+    /**
+     * Get connection instance
+     *
+     * @return Object
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
+     */
+    public function getConnection()
+    {
+        return $this->getSourceDataProvider()->getConnection();
     }
 
     /**
@@ -280,10 +342,10 @@ abstract class Data_Source extends Container
      * @param $tableName
      * @return array
      *
-     * @author dp <denis.a.shestakov@gmail.com>
+     * @author anonymous <email>
      *
-     * @version 0.0
-     * @since 0.0
+     * @version 0
+     * @since 0
      */
     public abstract function getColumns($tableName);
 
@@ -293,10 +355,10 @@ abstract class Data_Source extends Container
      * @param $tableName
      * @return array
      *
-     * @author dp <denis.a.shestakov@gmail.com>
+     * @author anonymous <email>
      *
-     * @version 0.3
-     * @since 0.3
+     * @version 0
+     * @since 0
      */
     public abstract function getIndexes($tableName);
 
@@ -395,25 +457,22 @@ abstract class Data_Source extends Container
      * @param Query $query
      * @return mixed
      *
-     * @author dp <denis.a.shestakov@gmail.com>
+     * @author anonymous <email>
      *
-     * @version 0.2
-     * @since 0.2
+     * @version 0
+     * @since 0
      */
-    public abstract function getStatement(Query $query);
+    abstract public function getStatement(Query $query);
 
     /**
-     * Get current connected data scheme
+     * Return query translator class
      *
-     * @return string
+     * @return Query_Translator
      *
-     * @author dp <denis.a.shestakov@gmail.com>
+     * @author anonymous <email>
      *
-     * @version 0.0
-     * @since 0.0
+     * @version 0
+     * @since 0
      */
-    public function getScheme()
-    {
-        return $this->_scheme;
-    }
+    abstract public function getQueryTranslatorClass();
 }

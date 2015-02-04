@@ -4,11 +4,12 @@ namespace Ice\Data\Provider;
 
 use Ice\Core\Data_Provider;
 use Ice\Core\Exception;
+use Ice\Core\Logger;
 
 class Mongodb extends Data_Provider
 {
     const DEFAULT_DATA_PROVIDER_KEY = 'Ice:Mongodb/default';
-    const DEFAULT_KEY = 'default';
+    const DEFAULT_KEY = 'instance';
 
     /**
      * Return default data provider key
@@ -171,10 +172,12 @@ class Mongodb extends Data_Provider
     protected function connect(&$connection)
     {
         $options = $this->getOptions(__CLASS__);
+
+        Logger::debug($options);
         try {
-            $connection = new \Mongo('mongodb://' . $options['host'] . ':' . $options['port']);
+            $connection = new \MongoClient('mongodb://' . $options['host'] . ':' . $options['port']);
         } catch (\MongoConnectionException $e) {
-            Mysqli::getLogger()->fatal('mongodb - ' . $this->getConnection()->lastError(), __FILE__, __LINE__, $e);
+            Mongodb::getLogger()->fatal('mongodb - ' . $e->getMessage(), __FILE__, __LINE__, $e);
         }
 
         return (bool)$connection;

@@ -9,6 +9,7 @@
 
 namespace Ice\View\Render;
 
+use Ice\Code\Generator\View_Render_Php;
 use Ice\Core\Action;
 use Ice\Core\Config;
 use Ice\Core\Environment;
@@ -39,14 +40,12 @@ class Php extends View_Render
     /**
      * Constructor of php view render
      *
-     * @param Config $config
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
      * @since 0.0
      */
-    protected function __construct(Config $config)
+    protected function __construct()
     {
     }
 //
@@ -117,5 +116,22 @@ class Php extends View_Render
 
         require $templateFilePath;
         return ob_get_clean();
+    }
+
+    /**
+     * Return php view render
+     *
+     * @param mixed $key
+     * @param int $ttl
+     * @return Php
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.4
+     */
+    public static function getInstance($key = null, $ttl = null)
+    {
+        return parent::getInstance($key, $ttl);
     }
 }
