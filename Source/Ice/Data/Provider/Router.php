@@ -28,13 +28,10 @@ use Ice\Exception\Http_Not_Found;
  *
  * @package Ice
  * @subpackage Data_Provider
- *
- * @version 0.0
- * @since 0.0
  */
 class Router extends Data_Provider
 {
-    const DEFAULT_KEY = 'Ice:Router/default';
+    const DEFAULT_DATA_PROVIDER_KEY = 'Ice:Router/default';
 
     /**
      * Return default data provider key
@@ -63,7 +60,7 @@ class Router extends Data_Provider
      */
     protected static function getDefaultDataProviderKey()
     {
-        return Router::DEFAULT_KEY;
+        return Router::DEFAULT_DATA_PROVIDER_KEY;
     }
 
     /**
@@ -147,7 +144,7 @@ class Router extends Data_Provider
      * @version 0.0
      * @since 0.0
      */
-    public function inc($key, $step = 1)
+    public function incr($key, $step = 1)
     {
         throw new Exception('Not implemented!');
     }
@@ -165,7 +162,7 @@ class Router extends Data_Provider
      * @version 0.0
      * @since 0.0
      */
-    public function dec($key, $step = 1)
+    public function decr($key, $step = 1)
     {
         throw new Exception('Not implemented!');
     }

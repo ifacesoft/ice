@@ -26,4 +26,18 @@ return [
         'ru' => 'Could not set value:
 . Field "" not found in Model "Upload_Task"',
     ],
+    'Implement set() method.' => [
+        'en' => 'Implement set() method.',
+    ],
+    'Could not set value:
+. Field "" not found in Model "Test"' => [
+        'en' => 'Could not set value:
+. Field "" not found in Model "Test"',
+    ],
+    'Query is empty' => [
+        'en' => 'Query is empty',
+    ],
+    'Not implemented' => [
+        'en' => 'Not implemented',
+    ],
 ];

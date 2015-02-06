@@ -197,8 +197,7 @@ class Model_Scheme extends Container
     /**
      * Create new instance of model scheme
      *
-     * @param $modelClass
-     * @param null $hash
+     * @param $modelKey
      * @return Model_Scheme
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -206,9 +205,9 @@ class Model_Scheme extends Container
      * @version 0.0
      * @since 0.0
      */
-    protected static function create($modelClass, $hash = null)
+    protected static function create($modelKey)
     {
-        return new Model_Scheme(self::getFilePathData($modelClass));
+        return new Model_Scheme(self::getFilePathData($modelKey));
     }
 
     /**
@@ -287,5 +286,20 @@ class Model_Scheme extends Container
         }
 
         return $this->_modelScheme['scheme']['indexes'];
+    }
+
+    /**
+     * Return primary key columns
+     *
+     * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.4
+     */
+    public function getPkColumnNames()
+    {
+        return $this->getIndexes()['PRIMARY KEY']['PRIMARY'];
     }
 }

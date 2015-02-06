@@ -15,6 +15,7 @@ use Ice\Core\Loader;
 use Ice\Core\Logger;
 use Ice\Core\Request;
 use Ice\Core\Session;
+use Ice\Helper\Http;
 use Ice\Helper\Memory;
 
 /**
@@ -85,7 +86,7 @@ class Bootstrap
                 Session::init();
             }
         } catch (\Exception $e) {
-            die('Bootstraping failed: ' . $e->getMessage());
+            die('Bootstrapping failed: ' . $e->getMessage());
         }
 
         if (!Environment::isProduction()) {

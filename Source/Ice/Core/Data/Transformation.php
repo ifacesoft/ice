@@ -42,7 +42,7 @@ abstract class Data_Transformation extends Container
      */
     public static function getInstance($transformationName)
     {
-        Data_Transformation::getLogger()->fatal('Need implements', __FILE__, __LINE__);
+        Data_Transformation::getLogger()->fatal(['Need implements {$0} for {$1}', [__METHOD__, self::getClass()]], __FILE__, __LINE__);
         return null;
     }
 

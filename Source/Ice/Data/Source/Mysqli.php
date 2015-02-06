@@ -9,12 +9,15 @@
 
 namespace Ice\Data\Source;
 
+use Ice\Core\Data_Provider;
 use Ice\Core\Data_Source;
 use Ice\Core\Exception;
+use Ice\Core\Logger;
 use Ice\Core\Model;
 use Ice\Core\Query;
 use Ice\Core\Query_Builder;
 use Ice\Core\Query_Result;
+use Ice\Core\Query_Translator;
 use Ice\Helper\Arrays;
 use mysqli_result;
 use mysqli_stmt;
@@ -30,26 +33,33 @@ use mysqli_stmt;
  *
  * @package Ice
  * @subpackage Data_Source
- *
- * @version 0.1
- * @since 0.0
  */
 class Mysqli extends Data_Source
 {
+    const DATA_PROVIDER_CLASS = 'Ice\Data\Provider\Mysqli';
+    const QUERY_TRANSLATOR_CLASS = 'Ice\Query\Translator\Sql';
+
     /**
      * Execute query select to data source
      *
-     * @param mixed $statement
      * @param Query $query
      * @return array
      * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.2
+     * @version 0.4
      * @since 0.0
      */
-    public function executeSelect($statement, Query $query)
+    public function executeSelect(Query $query)
     {
+        $data = [];
+
+        $queryTranslatorClass = $this->getQueryTranslatorClass();
+        $data[Query_Result::QUERY_BODY] = $queryTranslatorClass::getInstance()->translate($query->getBodyParts());
+        $data[Query_Result::QUERY_PARAMS] = $query->getBinds();
+
+        $statement = $this->getStatement($data[Query_Result::QUERY_BODY], $data[Query_Result::QUERY_PARAMS]);
+
         if ($statement->execute() === false) {
             $errno = $statement->errno;
             $error = $statement->error;
@@ -66,8 +76,6 @@ class Mysqli extends Data_Source
             $statement->close();
             Data_Source::getLogger()->fatal(['#' . $errno . ': {$0}', $error], __FILE__, __LINE__);
         }
-
-        $data = [];
 
         /** @var Model $modelClass */
         $modelClass = $query->getModelClass();
@@ -99,26 +107,41 @@ class Mysqli extends Data_Source
     }
 
     /**
+     * Get connection instance
+     *
+     * @param string|null $scheme
+     * @return \Mysqli
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
+     */
+    public function getConnection($scheme = null)
+    {
+        return parent::getConnection();
+    }
+
+    /**
      * Prepare query statement for query
      *
-     * @param Query $query
-     * @throws Exception
+     * @param $body
+     * @param array $binds
      * @return mysqli_stmt
-     *
+     * @throws Exception
+     * @internal param array $bodyParts
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.2
      * @since 0.0
      */
-    public function getStatement(Query $query)
+    public function getStatement($body, array $binds)
     {
-        $statement = $this->getConnection()->prepare($query->getSql());
+        $statement = $this->getConnection()->prepare($body);
 
         if (!$statement) {
             Data_Source::getLogger()->fatal(['#' . $this->getConnection()->errno . ': {$0}', $this->getConnection()->error], __FILE__, __LINE__);
         }
-
-        $binds = $query->getBinds();
 
         $types = '';
         foreach ($binds as $bind) {
@@ -136,22 +159,6 @@ class Mysqli extends Data_Source
         }
 
         return $statement;
-    }
-
-    /**
-     * Get connection instance
-     *
-     * @param string|null $scheme
-     * @return \Mysqli
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function getConnection($scheme = null)
-    {
-        return parent::getConnection();
     }
 
     /**
@@ -177,17 +184,24 @@ class Mysqli extends Data_Source
     /**
      * Execute query insert to data source
      *
-     * @param mixed $statement
      * @param Query $query
      * @return array
      * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.2
+     * @version 0.4
      * @since 0.0
      */
-    public function executeInsert($statement, Query $query)
+    public function executeInsert(Query $query)
     {
+        $data = [];
+
+        $queryTranslatorClass = $this->getQueryTranslatorClass();
+        $data[Query_Result::QUERY_BODY] = $queryTranslatorClass::getInstance()->translate($query->getBodyParts());
+        $data[Query_Result::QUERY_PARAMS] = $query->getBinds();
+
+        $statement = $this->getStatement($data[Query_Result::QUERY_BODY], $data[Query_Result::QUERY_PARAMS]);
+
         if ($statement->execute() === false) {
             $errno = $statement->errno;
             $error = $statement->error;
@@ -195,11 +209,9 @@ class Mysqli extends Data_Source
             Data_Source::getLogger()->fatal(['#' . $errno . ': {$0}', $error], __FILE__, __LINE__);
         }
 
-        $data = [];
-
-        /** @var Model $modelclass */
-        $modelclass = $query->getModelClass();
-        $pkFieldNames = $modelclass::getPkFieldNames();
+        /** @var Model $modelClass */
+        $modelClass = $query->getModelClass();
+        $pkFieldNames = $modelClass::getPkFieldNames();
 
         $pkFieldName = count($pkFieldNames) == 1 ? reset($pkFieldNames) : null;
 
@@ -233,7 +245,6 @@ class Mysqli extends Data_Source
     /**
      * Execute query update to data source
      *
-     * @param mixed $statement
      * @param Query $query
      * @return array
      * @throws Exception
@@ -242,16 +253,22 @@ class Mysqli extends Data_Source
      * @version 0.2
      * @since 0.0
      */
-    public function executeUpdate($statement, Query $query)
+    public function executeUpdate(Query $query)
     {
+        $data = [];
+
+        $queryTranslatorClass = $this->getQueryTranslatorClass();
+        $data[Query_Result::QUERY_BODY] = $queryTranslatorClass::getInstance()->translate($query->getBodyParts());
+        $data[Query_Result::QUERY_PARAMS] = $query->getBinds();
+
+        $statement = $this->getStatement($data[Query_Result::QUERY_BODY], $data[Query_Result::QUERY_PARAMS]);
+
         if ($statement->execute() === false) {
             $errno = $statement->errno;
             $error = $statement->error;
             $statement->close();
             Data_Source::getLogger()->fatal(['#' . $errno . ': {$0}', $error], __FILE__, __LINE__);
         }
-
-        $data = [];
 
         /** @var Model $modelclass */
         $modelclass = $query->getModelClass();
@@ -274,7 +291,6 @@ class Mysqli extends Data_Source
     /**
      * Execute query update to data source
      *
-     * @param mixed $statement
      * @param Query $query
      * @return array
      * @throws Exception
@@ -283,16 +299,22 @@ class Mysqli extends Data_Source
      * @version 0.2
      * @since 0.0
      */
-    public function executeDelete($statement, Query $query)
+    public function executeDelete(Query $query)
     {
+        $data = [];
+
+        $queryTranslatorClass = $this->getQueryTranslatorClass();
+        $data[Query_Result::QUERY_BODY] = $queryTranslatorClass::getInstance()->translate($query->getBodyParts());
+        $data[Query_Result::QUERY_PARAMS] = $query->getBinds();
+
+        $statement = $this->getStatement($data[Query_Result::QUERY_BODY], $data[Query_Result::QUERY_PARAMS]);
+
         if ($statement->execute() === false) {
             $errno = $statement->errno;
             $error = $statement->error;
             $statement->close();
             Data_Source::getLogger()->fatal(['#' . $errno . ': {$0}', $error], __FILE__, __LINE__);
         }
-
-        $data = [];
 
         $data[Query_Result::AFFECTED_ROWS] = $statement->affected_rows;
 
@@ -327,11 +349,11 @@ class Mysqli extends Data_Source
             'UNIQUE' => []
         ];
 
-        foreach ($dataProvider->get(['TABLE_CONSTRAINTS:TABLE_SCHEMA/' . $this->getScheme(), 'TABLE_CONSTRAINTS:TABLE_NAME/' . $tableName]) as $constraint) {
+        foreach ($dataProvider->get(['TABLE_CONSTRAINTS:TABLE_SCHEMA/' . $this->_scheme, 'TABLE_CONSTRAINTS:TABLE_NAME/' . $tableName]) as $constraint) {
             $constraints[$constraint['CONSTRAINT_TYPE']][$constraint['CONSTRAINT_NAME']] = [];
         }
 
-        $indexes = $dataProvider->get(['STATISTICS:TABLE_SCHEMA/' . $this->getScheme(), 'STATISTICS:TABLE_NAME/' . $tableName]);
+        $indexes = $dataProvider->get(['STATISTICS:TABLE_SCHEMA/' . $this->_scheme, 'STATISTICS:TABLE_NAME/' . $tableName]);
 
         foreach ($constraints['PRIMARY KEY'] as $constraintName => &$constraint) {
             foreach ($indexes as $index) {
@@ -360,7 +382,7 @@ class Mysqli extends Data_Source
         $foreignKeys = [];
 
         $referenceColumns = Arrays::column(
-            $dataProvider->get(['KEY_COLUMN_USAGE:TABLE_SCHEMA/' . $this->getScheme(), 'KEY_COLUMN_USAGE:TABLE_NAME/' . $tableName]),
+            $dataProvider->get(['KEY_COLUMN_USAGE:TABLE_SCHEMA/' . $this->_scheme, 'KEY_COLUMN_USAGE:TABLE_NAME/' . $tableName]),
             'COLUMN_NAME',
             'CONSTRAINT_NAME'
         );
@@ -392,7 +414,7 @@ class Mysqli extends Data_Source
         $dataProvider = $this->getSourceDataProvider();
         $dataProvider->setScheme('information_schema');
 
-        foreach ($dataProvider->get('TABLES:TABLE_SCHEMA/' . $this->getScheme()) as $table) {
+        foreach ($dataProvider->get('TABLES:TABLE_SCHEMA/' . $this->_scheme) as $table) {
             $tables[$table['TABLE_NAME']] = [
                 'engine' => $table['ENGINE'],
                 'charset' => $table['TABLE_COLLATION'],
@@ -421,7 +443,7 @@ class Mysqli extends Data_Source
         $dataProvider = $this->getSourceDataProvider();
         $dataProvider->setScheme('information_schema');
 
-        foreach ($dataProvider->get(['COLUMNS:TABLE_SCHEMA/' . $this->getScheme(), 'COLUMNS:TABLE_NAME/' . $tableName]) as $column) {
+        foreach ($dataProvider->get(['COLUMNS:TABLE_SCHEMA/' . $this->_scheme, 'COLUMNS:TABLE_NAME/' . $tableName]) as $column) {
             $columnName = $column['COLUMN_NAME'];
             $default = $default = $column['COLUMN_DEFAULT'];
 
@@ -453,7 +475,6 @@ class Mysqli extends Data_Source
     /**
      * Execute query create table to data source
      *
-     * @param $statement
      * @param Query $query
      * @return array
      * @throws Exception
@@ -462,16 +483,22 @@ class Mysqli extends Data_Source
      * @version 0.2
      * @since 0.2
      */
-    public function executeCreate($statement, Query $query)
+    public function executeCreate(Query $query)
     {
+        $data = [];
+
+        $queryTranslatorClass = $this->getQueryTranslatorClass();
+        $data[Query_Result::QUERY_BODY] = $queryTranslatorClass::getInstance()->translate($query->getBodyParts());
+        $data[Query_Result::QUERY_PARAMS] = $query->getBinds();
+
+        $statement = $this->getStatement($data[Query_Result::QUERY_BODY], $data[Query_Result::QUERY_PARAMS]);
+
         if ($statement->execute() === false) {
             $errno = $statement->errno;
             $error = $statement->error;
             $statement->close();
             Data_Source::getLogger()->fatal(['#' . $errno . ': {$0}', $error], __FILE__, __LINE__);
         }
-
-        $data = [];
 
         $data[Query_Result::AFFECTED_ROWS] = $statement->affected_rows;
 
@@ -485,7 +512,6 @@ class Mysqli extends Data_Source
     /**
      * Execute query drop table to data source
      *
-     * @param $statement
      * @param Query $query
      * @return array
      * @throws Exception
@@ -494,16 +520,22 @@ class Mysqli extends Data_Source
      * @version 0.2
      * @since 0.2
      */
-    public function executeDrop($statement, Query $query)
+    public function executeDrop(Query $query)
     {
+        $data = [];
+
+        $queryTranslatorClass = $this->getQueryTranslatorClass();
+        $data[Query_Result::QUERY_BODY] = $queryTranslatorClass::getInstance()->translate($query->getBodyParts());
+        $data[Query_Result::QUERY_PARAMS] = $query->getBinds();
+
+        $statement = $this->getStatement($data[Query_Result::QUERY_BODY], $data[Query_Result::QUERY_PARAMS]);
+
         if ($statement->execute() === false) {
             $errno = $statement->errno;
             $error = $statement->error;
             $statement->close();
             Data_Source::getLogger()->fatal(['#' . $errno . ': {$0}', $error], __FILE__, __LINE__);
         }
-
-        $data = [];
 
         $data[Query_Result::AFFECTED_ROWS] = $statement->affected_rows;
 
@@ -512,5 +544,35 @@ class Mysqli extends Data_Source
         $data[Query_Result::QUERY] = $query;
 
         return $data;
+    }
+
+    /**
+     * Return data provider class
+     *
+     * @return Data_Provider
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.4
+     */
+    public function getDataProviderClass()
+    {
+        return Mysqli::DATA_PROVIDER_CLASS;
+    }
+
+    /**
+     * Return query translator class
+     *
+     * @return Query_Translator
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.4
+     */
+    public function getQueryTranslatorClass()
+    {
+        return Mysqli::QUERY_TRANSLATOR_CLASS;
     }
 }

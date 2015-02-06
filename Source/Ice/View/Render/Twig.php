@@ -54,15 +54,15 @@ class Twig extends View_Render
     /**
      * Constructor of php view render
      *
-     * @param Config $config
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
      * @since 0.0
      */
-    protected function __construct(Config $config)
+    protected function __construct()
     {
+        $config = Twig::getConfig();
+
         $twigPath = VENDOR_DIR . $config->get('vendor') . '/lib/';
 
         require_once $twigPath . 'Twig/Environment.php';

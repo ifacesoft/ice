@@ -5,11 +5,14 @@ php:
 #  - 5.4
 #  - hhvm
 
+services:
+- redis-server
+
 before_script:
+  - ./Bin/apc-install.sh
   - wget http://getcomposer.org/composer.phar
   - php composer.phar install
   - mysql -e "create database IF NOT EXISTS test;" -uroot
-
 
 script: ./cli Ice:Phpunit_Run
 

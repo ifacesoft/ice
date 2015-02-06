@@ -11,6 +11,7 @@ namespace Ice\Core;
 
 use Ice;
 use Ice\Core;
+use Ice\Helper\Json;
 
 /**
  * Class Query
@@ -23,11 +24,8 @@ use Ice\Core;
  *
  * @package Ice
  * @subpackage Core
- *
- * @version 0.0
- * @since 0.0
  */
-class Query extends Container
+class Query
 {
     use Core;
 
@@ -55,13 +53,6 @@ class Query extends Container
     private $_bindParts = [];
 
     /**
-     * Translated query
-     *
-     * @var string
-     */
-    private $_sql = null;
-
-    /**
      * Cache tags  (validate|invalidate)
      *
      * @var array
@@ -73,21 +64,14 @@ class Query extends Container
      *
      * @var string
      */
-    private $_sourceName = null;
+    private $_dataSourceKey = null;
 
     /**
-     * Flag to needs calc found rows query execute
-     *
-     * @var boolean
-     */
-    private $_calcFoundRows = null;
-
-    /**
-     * Query limits
+     * Sql parts
      *
      * @var array
      */
-    private $_limit = null;
+    private $_bodyParts = null;
 
     /**
      * Query sql md5 hash
@@ -111,7 +95,7 @@ class Query extends Container
     private $_pagination = null;
 
     /**
-     * Private constructor of query builder. Create: Query::getInstance()->...
+     * Private constructor of query builder. Create: Query::create()->...
      *
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -121,6 +105,44 @@ class Query extends Container
      */
     private function __construct()
     {
+    }
+
+    /**
+     * Create new instance of query
+     *
+     * @param $key
+     * @return Query
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @todo Need caching
+     * @version 0.4
+     * @since 0.0
+     */
+    public static function create($key)
+    {
+        $query = new Query();
+        $query->_hash = md5(Json::encode($key));
+
+        list($dataSourceKey, $queryType, $sqlParts, $modelClass, $cacheTags) = $key;
+        $query->_dataSourceKey = $dataSourceKey;
+        $query->_queryType = $queryType;
+        $query->_modelClass = $modelClass;
+        $query->_cacheTags = $cacheTags;
+        $query->_bodyParts = $sqlParts;
+
+        return $query;
+    }
+
+    public static function __set_state(array $data)
+    {
+        $query = new Query();
+
+        foreach ($data as $fieldName => $fieldValue) {
+            $query->$fieldName = $fieldValue;
+        }
+
+        return $query;
     }
 
     /**
@@ -145,48 +167,18 @@ class Query extends Container
     }
 
     /**
-     * Create new instance of query
-     *
-     * @param $data
-     * @param null $hash
-     * @return Query
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since 0.0
-     */
-    protected static function create($data, $hash = null)
-    {
-        $query = new Query();
-
-        list($sourceName, $queryType, $sqlParts, $modelClass, $cacheTags) = $data;
-        $query->_sourceName = empty($sourceName) ? Data_Source::getDefaultKey() : $sourceName;
-        $query->_queryType = $queryType;
-        $queryTranslator = Query_Translator::getInstance(get_class(Data_Source::getInstance($query->_sourceName)));
-        $query->_sql = $queryTranslator->translate($sqlParts);
-        $query->_modelClass = $modelClass;
-        $query->_cacheTags = $cacheTags;
-        $query->_calcFoundRows = reset($sqlParts[Query_Builder::PART_SELECT]);
-        $query->_limit = $sqlParts[Query_Builder::PART_LIMIT];
-        $query->_hash = $hash;
-
-        return $query;
-    }
-
-    /**
      * Return query limits
      *
      * @return array
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.4
      * @since 0.0
      */
     public function getLimit()
     {
-        return $this->_limit;
+        return $this->_bodyParts[Query_Builder::PART_LIMIT];
     }
 
     /**
@@ -196,27 +188,12 @@ class Query extends Container
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.4
      * @since 0.0
      */
     public function isCalcFoundRows()
     {
-        return $this->_calcFoundRows;
-    }
-
-    /**
-     * Return data source name
-     *
-     * @return Data_Source
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function getDataSource()
-    {
-        return Data_Source::getInstance($this->_sourceName);
+        return reset($this->_bodyParts[Query_Builder::PART_SELECT]);
     }
 
     /**
@@ -301,18 +278,18 @@ class Query extends Container
     }
 
     /**
-     * Return translated query
+     * Return data source name
      *
-     * @return string
+     * @return Data_Source
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.4
      * @since 0.0
      */
-    public function getSql()
+    public function getDataSource()
     {
-        return $this->_sql;
+        return Data_Source::getInstance($this->getDataSourceKey());
     }
 
     /**
@@ -379,19 +356,49 @@ class Query extends Container
         return $this->_hash . '/' . $this->_bindHash;
     }
 
+    /**
+     * Execute query
+     *
+     * @param int $ttl
+     * @return Query_Result
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.4
+     */
     public function execute($ttl = 3600)
     {
         return $this->getDataSource()->execute($this, $ttl);
     }
 
-    public static function __set_state(array $data)
+    /**
+     * Return data source key of query
+     *
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.4
+     */
+    public function getDataSourceKey()
     {
-        $query = new Query();
+        return $this->_dataSourceKey;
+    }
 
-        foreach ($data as $fieldName => $fieldValue) {
-            $query->$fieldName = $fieldValue;
-        }
-
-        return $query;
+    /**
+     * Return query body parts
+     *
+     * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.4
+     */
+    public function getBodyParts()
+    {
+        return $this->_bodyParts;
     }
 }

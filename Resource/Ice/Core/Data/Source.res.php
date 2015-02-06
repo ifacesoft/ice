@@ -60,4 +60,10 @@ return [
     '#1066: {$0}' => [
         'ru' => '#1066: {$0}',
     ],
+    'Failed creating query result' => [
+        'en' => 'Failed creating query result',
+    ],
+    'Failed creating result of query \'{$0}\' with data source {$1}' => [
+        'en' => 'Failed creating result of query \'{$0}\' with data source {$1}',
+    ],
 ];

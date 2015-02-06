@@ -1,6 +1,6 @@
 <?php
 /**
- * Ice data provider implementation string class
+ * Ice data provider implementation object class
  *
  * @link http://www.iceframework.net
  * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
@@ -11,11 +11,12 @@ namespace Ice\Data\Provider;
 
 use Ice\Core\Data_Provider;
 use Ice\Core\Exception;
+use Ice\Helper\Object;
 
 /**
- * Class String
+ * Class Object
  *
- * Data provider for string cache
+ * Data provider for object cache
  *
  * @see Ice\Core\Data_Provider
  *
@@ -23,12 +24,42 @@ use Ice\Core\Exception;
  *
  * @package Ice
  * @subpackage Data_Provider
- *
- * @version 0.0
- * @since 0.0
  */
-class String extends Data_Provider
+class Repository extends Data_Provider
 {
+    const DEFAULT_DATA_PROVIDER_KEY = 'Ice:Repository/default';
+    const DEFAULT_KEY = 'instance';
+
+    /**
+     * Return default data provider key
+     *
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.4
+     */
+    protected static function getDefaultDataProviderKey()
+    {
+        return self::DEFAULT_DATA_PROVIDER_KEY;
+    }
+
+    /**
+     * Return default key
+     *
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.4
+     */
+    protected static function getDefaultKey()
+    {
+        return self::DEFAULT_KEY;
+    }
+
     /**
      * Get data from data provider by key
      *
@@ -112,9 +143,9 @@ class String extends Data_Provider
      * @version 0.0
      * @since 0.0
      */
-    public function inc($key, $step = 1)
+    public function incr($key, $step = 1)
     {
-        return $this->getConnection()->inc($key, $step);
+        return $this->getConnection()->incr($key, $step);
     }
 
     /**
@@ -129,9 +160,9 @@ class String extends Data_Provider
      * @version 0.0
      * @since 0.0
      */
-    public function dec($key, $step = 1)
+    public function decr($key, $step = 1)
     {
-        return $this->getConnection()->dec($key, $step);
+        return $this->getConnection()->decr($key, $step);
     }
 
     /**
@@ -160,7 +191,7 @@ class String extends Data_Provider
      */
     public function getKeys($pattern = null)
     {
-        // TODO: Implement getKeys() method.
+        return $this->getConnection()->getKeys($pattern);
     }
 
     /**
@@ -176,11 +207,11 @@ class String extends Data_Provider
      */
     protected function connect(&$connection)
     {
-        $dataProviderClass = class_exists('Redis', false)
-            ? Redis::getClass()
-            : File::getClass();
+        $dataProviderClass = function_exists('apc_store')
+            ? Apc::getClass()
+            : Registry::getClass();
 
-        return $connection = new $dataProviderClass($this->getKey(), $this->getIndex());
+        return $connection = new $dataProviderClass($this->getKey() . '_' . Object::getName($dataProviderClass), $this->getIndex());
     }
 
     /**
@@ -199,4 +230,6 @@ class String extends Data_Provider
         $connection = null;
         return true;
     }
+
+
 }

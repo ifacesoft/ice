@@ -1,34 +1,14 @@
 <?php
-/**
- * Ice data provider implementation cli class
- *
- * @link http://www.iceframework.net
- * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
- * @license https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
- */
 
 namespace Ice\Data\Provider;
 
-use Ice\Core\Action;
 use Ice\Core\Data_Provider;
 use Ice\Core\Exception;
 use Ice\Core\Logger;
 
-/**
- * Class Cli
- *
- * Data provider for cli streams
- *
- * @see Ice\Core\Data_Provider
- *
- * @author dp <denis.a.shestakov@gmail.com>
- *
- * @package Ice
- * @subpackage Data_Provider
- */
-class Cli extends Data_Provider
+class Mongodb extends Data_Provider
 {
-    const DEFAULT_DATA_PROVIDER_KEY = 'Ice:Cli/default';
+    const DEFAULT_DATA_PROVIDER_KEY = 'Ice:Mongodb/default';
     const DEFAULT_KEY = 'instance';
 
     /**
@@ -38,8 +18,8 @@ class Cli extends Data_Provider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
-     * @since 0.0
+     * @version 0.4
+     * @since 0.4
      */
     protected static function getDefaultDataProviderKey()
     {
@@ -69,18 +49,12 @@ class Cli extends Data_Provider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
-     * @since 0.0
+     * @version 0.4
+     * @since 0.4
      */
     public function get($key = null)
     {
-        $connection = $this->getConnection();
-
-        if (!$connection) {
-            return null;
-        }
-
-        return $key ? $connection[$key] : $connection;
+        // TODO: Implement get() method.
     }
 
     /**
@@ -89,17 +63,16 @@ class Cli extends Data_Provider
      * @param string $key
      * @param $value
      * @param null $ttl
-     * @throws Exception
      * @return mixed setted value
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
-     * @since 0.0
+     * @version 0.4
+     * @since 0.4
      */
     public function set($key, $value, $ttl = null)
     {
-        throw new Exception('Implement set() method.');
+        // TODO: Implement set() method.
     }
 
     /**
@@ -112,12 +85,12 @@ class Cli extends Data_Provider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
-     * @since 0.0
+     * @version 0.4
+     * @since 0.4
      */
     public function delete($key, $force = true)
     {
-        throw new Exception('Implement delete() method.');
+        // TODO: Implement delete() method.
     }
 
     /**
@@ -125,17 +98,16 @@ class Cli extends Data_Provider
      *
      * @param $key
      * @param int $step
-     * @throws Exception
      * @return mixed new value
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
-     * @since 0.0
+     * @version 0.4
+     * @since 0.4
      */
     public function incr($key, $step = 1)
     {
-        throw new Exception('Implement inc() method.');
+        // TODO: Implement inc() method.
     }
 
     /**
@@ -143,30 +115,31 @@ class Cli extends Data_Provider
      *
      * @param $key
      * @param int $step
-     * @throws Exception
      * @return mixed new value
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
-     * @since 0.0
+     * @version 0.4
+     * @since 0.4
      */
     public function decr($key, $step = 1)
     {
-        throw new Exception('Implement dec() method.');
+        // TODO: Implement dec() method.
     }
 
     /**
      * Flush all stored data
      *
+     * @author anonymous <email>
+     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
-     * @since 0.0
+     * @version 0.4
+     * @since 0.4
      */
     public function flushAll()
     {
-        throw new Exception('Implement flushAll() method.');
+        // TODO: Implement flushAll() method.
     }
 
     /**
@@ -177,8 +150,8 @@ class Cli extends Data_Provider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
-     * @since 0.0
+     * @version 0.4
+     * @since 0.4
      */
     public function getKeys($pattern = null)
     {
@@ -193,64 +166,49 @@ class Cli extends Data_Provider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
-     * @since 0.0
+     * @version 0.4
+     * @since 0.4
      */
     protected function connect(&$connection)
     {
-        $connection = [];
+        $options = $this->getOptions(__CLASS__);
 
-        array_shift($_SERVER['argv']);
-
-        if (!isset($connection['actionClass'])) {
-            $connection['actionClass'] = Action::getClass(array_shift($_SERVER['argv']));
+        try {
+            $connection = new \MongoClient('mongodb://' . $options['host'] . ':' . $options['port']);
+        } catch (\MongoConnectionException $e) {
+            Mongodb::getLogger()->fatal('mongodb - ' . $e->getMessage(), __FILE__, __LINE__, $e);
         }
 
-        foreach ($_SERVER['argv'] as $arg) {
-            $param = explode('=', $arg);
+        return (bool)$connection;
+    }
 
-            if (isset($connection['actionClass']) && count($param) != 2) {
-                Cli::getLogger()->info('Invalid command line. Invalid params. Usage: ./cli Mp:Action_Name param=value', Logger::WARNING);
-                continue;
-            }
-
-            list($param, $value) = $param;
-
-//            if ($param == 'actionClass') {
-//                if (!strpos($value, ':')) {
-//                    try {
-//                        Loader::getFilePath($value, '.php', 'Source/');
-//                    } catch (File_Not_Found $e) {
-//                        $value = Module::getInstance()->getAlias() . ':' . $value;
-//                    }
-//                }
-//            }
-
-            $connection[$param] = $value;
-        }
-
-        if (!isset($connection['actionClass'])) {
-            Cli::getLogger()->info('Invalid command line. Action not found. Usage: ./cli Mp:Action_Name param=value', Logger::WARNING);
-            exit;
-        }
-
-        return true;
+    /**
+     * Return connection of mongodb
+     *
+     * @return \Mongo
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.4
+     */
+    public function getConnection()
+    {
+        return parent::getConnection();
     }
 
     /**
      * Close connection with data provider
      *
      * @param $connection
-     * @return boolean
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
-     * @since 0.0
+     * @version 0.4
+     * @since 0.4
      */
     protected function close(&$connection)
     {
-        $connection = null;
-        return true;
+        // TODO: Implement close() method.
     }
 }

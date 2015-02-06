@@ -74,7 +74,7 @@ class Exception extends ErrorException
                 }
             }
 
-            $message = self::getResource()->get($message, $params, $class);
+            $message = Exception::getResource()->get($message, $params, $class);
         } else {
             if (is_array($message)) {
                 if (!$isExistsResourceClass && !empty($message[1])) {

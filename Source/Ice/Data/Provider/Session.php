@@ -23,12 +23,42 @@ use Ice\Core\Exception;
  *
  * @package Ice
  * @subpackage Data_Provider
- *
- * @version 0.0
- * @since 0.0
  */
 class Session extends Data_Provider
 {
+    const DEFAULT_DATA_PROVIDER_KEY = 'Ice:Session/default';
+    const DEFAULT_KEY = 'instance';
+
+    /**
+     * Return default data provider key
+     *
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.4
+     */
+    protected static function getDefaultDataProviderKey()
+    {
+        return self::DEFAULT_DATA_PROVIDER_KEY;
+    }
+
+    /**
+     * Return default key
+     *
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.4
+     */
+    protected static function getDefaultKey()
+    {
+        return self::DEFAULT_KEY;
+    }
+
     /**
      * Set data to data provider
      *
@@ -86,7 +116,7 @@ class Session extends Data_Provider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.4
      * @since 0.0
      */
     public function get($key = null)
@@ -95,7 +125,7 @@ class Session extends Data_Provider
             return $_SESSION;
         }
 
-        return $_SESSION[$key];
+        return isset($_SESSION[$key]) ? $_SESSION[$key] : null;
     }
 
     /**
@@ -107,12 +137,12 @@ class Session extends Data_Provider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.4
      * @since 0.0
      */
-    public function inc($key, $step = 1)
+    public function incr($key, $step = 1)
     {
-        $_SESSION[$key] += $step;
+        return $_SESSION[$key] += $step;
     }
 
     /**
@@ -124,12 +154,12 @@ class Session extends Data_Provider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.4
      * @since 0.0
      */
-    public function dec($key, $step = 1)
+    public function decr($key, $step = 1)
     {
-        $_SESSION[$key] -= $step;
+        return $_SESSION[$key] -= $step;
     }
 
     /**
@@ -153,12 +183,13 @@ class Session extends Data_Provider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @todo 0.4 implements filter by pattern
+     * @version 0.4
      * @since 0.0
      */
     public function getKeys($pattern = null)
     {
-        // TODO: Implement getKeys() method.
+        return array_keys($_SESSION);
     }
 
     /**
@@ -185,11 +216,12 @@ class Session extends Data_Provider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.4
      * @since 0.0
      */
     protected function close(&$connection)
     {
+        unset($_SESSION);
         return true;
     }
 }

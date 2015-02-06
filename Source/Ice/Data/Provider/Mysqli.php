@@ -23,14 +23,29 @@ use Ice\Core\Exception;
  *
  * @package Ice
  * @subpackage Data_Provider
- *
- * @version 0.0
- * @since 0.0
  */
 class Mysqli extends Data_Provider
 {
+    const DEFAULT_DATA_PROVIDER_KEY = 'Ice:Mysqli/default';
+    const DEFAULT_KEY = 'instance';
+
     /**
      * Return default data provider key
+     *
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.4
+     */
+    protected static function getDefaultDataProviderKey()
+    {
+        return self::DEFAULT_DATA_PROVIDER_KEY;
+    }
+
+    /**
+     * Return default key
      *
      * @return string
      *
@@ -41,7 +56,7 @@ class Mysqli extends Data_Provider
      */
     protected static function getDefaultKey()
     {
-        return 'default';
+        return self::DEFAULT_KEY;
     }
 
     /**
@@ -163,7 +178,7 @@ class Mysqli extends Data_Provider
      * @version 0.0
      * @since 0.0
      */
-    public function inc($key, $step = 1)
+    public function incr($key, $step = 1)
     {
         throw new Exception('Implement inc() method.');
     }
@@ -181,7 +196,7 @@ class Mysqli extends Data_Provider
      * @version 0.0
      * @since 0.0
      */
-    public function dec($key, $step = 1)
+    public function decr($key, $step = 1)
     {
         throw new Exception('Implement dec() method.');
     }
@@ -216,6 +231,22 @@ class Mysqli extends Data_Provider
         }
 
         parent::setScheme($scheme);
+    }
+
+    /**
+     * Return keys by pattern
+     *
+     * @param string $pattern
+     * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
+     */
+    public function getKeys($pattern = null)
+    {
+        // TODO: Implement getKeys() method.
     }
 
     /**
@@ -260,21 +291,5 @@ class Mysqli extends Data_Provider
         $connection->close();
         $connection = null;
         return true;
-    }
-
-    /**
-     * Return keys by pattern
-     *
-     * @param string $pattern
-     * @return array
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function getKeys($pattern = null)
-    {
-        // TODO: Implement getKeys() method.
     }
 }

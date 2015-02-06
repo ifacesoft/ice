@@ -33,8 +33,7 @@ abstract class Code_Generator extends Container
     /**
      * Create instance of code generator
      *
-     * @param string $class Class of generated object
-     * @param string $hash generated md5 hash
+     * @param string $key Class of generated object
      * @return mixed
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -42,18 +41,18 @@ abstract class Code_Generator extends Container
      * @version 0.0
      * @since 0.0
      */
-    protected static function create($class, $hash = null)
+    protected static function create($key)
     {
-        /** @var Core $class */
-        $baseClass = $class::getBaseClass();
+        /** @var Core $key */
+        $baseClass = $key::getBaseClass();
 
-        $className = $baseClass == $class
-            ? $class::getClassName()
-            : $baseClass::getClassName() . '_' . $class::getClassName();
+        $className = $baseClass == $key
+            ? $key::getClassName()
+            : $baseClass::getClassName() . '_' . $key::getClassName();
 
-        $class = 'Ice\Code\Generator\\' . $className;
+        $key = 'Ice\Code\Generator\\' . $className;
 
-        return new $class();
+        return new $key();
     }
 
     /**

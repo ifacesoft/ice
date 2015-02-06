@@ -131,7 +131,7 @@ class Console
 
         $title = Console::C_YELLOW . $resource->get($data['title'], $data['default']) . Console::C_GRAY_B;
 
-        echo $title;
+        fwrite(STDOUT, $title);
 
         $f = fopen('php://stdin', 'r');
         while ($line = trim(fgets($f))) {
@@ -155,12 +155,12 @@ class Console
                         ? $params['message']
                         : 'param {$0} is not valid';
 
-                    echo Validator::getLogger()->info([$message, $param], Core_Logger::DANGER, true, false);
+                    Validator::getLogger()->info([$message, $param], Core_Logger::DANGER, true, false);
                 }
             }
 
             if ($errors) {
-                echo $title;
+                fwrite(STDOUT, $title);
                 continue;
             }
 
@@ -169,17 +169,22 @@ class Console
         }
         fclose($f);
 
-        echo Console::C_GREEN_B . $data['default'];
-        echo Resource::getLogger()->info('...value is accepted!' . "\n", Core_Logger::SUCCESS, true, false);
+        fwrite(STDOUT, Console::C_GREEN_B . $data['default'] . "\n");
+        Resource::getLogger()->info('...value is accepted!' . "\n", Core_Logger::SUCCESS, true, false);
 
         return $data['default'];
     }
 
-    public static function run($commands)
+    public static function run($commands, $toDevNull = false)
     {
         foreach ((array)$commands as $command) {
-            echo Console::getText($command, Console::C_GREEN_B) . "\n";
-            system($command);
+            if ($toDevNull) {
+                $command .= ' > /dev/null 2>&1';
+            }
+
+            fwrite(STDOUT, Console::getText($command, Console::C_GREEN_B) . "\n");
+
+            passthru($command);
         }
     }
 }

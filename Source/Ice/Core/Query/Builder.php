@@ -966,7 +966,7 @@ class Query_Builder
     /**
      * Return instance of query by current query builder
      *
-     * @param string|null $sourceName
+     * @param string|null $dataSourceKey
      * @return Query
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -974,9 +974,9 @@ class Query_Builder
      * @version 0.2
      * @since 0.0
      */
-    public function getQuery($sourceName = null)
+    public function getQuery($dataSourceKey = null)
     {
-        return Query::getInstance([$sourceName, $this->_queryType, $this->_sqlParts, $this->_modelClass, $this->_cacheTags])
+        return Query::create([$dataSourceKey, $this->_queryType, $this->_sqlParts, $this->_modelClass, $this->_cacheTags])
             ->bind($this->_bindParts);
     }
 
@@ -1028,7 +1028,7 @@ class Query_Builder
      *
      * @param array $data Key-value array
      * @param bool $update
-     * @param null $dataSource
+     * @param string|null $dataSourceKey
      * @param int $ttl
      * @return Query_Result
      *
@@ -1037,11 +1037,11 @@ class Query_Builder
      * @version 0.2
      * @since 0.0
      */
-    public function insert(array $data, $update = false, $dataSource = null, $ttl = 3600)
+    public function insert(array $data, $update = false, $dataSourceKey = null, $ttl = 3600)
     {
         $this->_queryType = Query_Builder::TYPE_INSERT;
         $this->_sqlParts[Query_Builder::PART_VALUES]['_update'] = $update;
-        return $this->affect($data, Query_Builder::PART_VALUES, $dataSource, $ttl);
+        return $this->affect($data, Query_Builder::PART_VALUES, $dataSourceKey, $ttl);
     }
 
     /**
@@ -1049,7 +1049,7 @@ class Query_Builder
      *
      * @param array $data Key-value array
      * @param $part
-     * @param $sourceName
+     * @param $dataSourceKey
      * @param $ttl
      * @return Query_Builder
      *
@@ -1058,7 +1058,7 @@ class Query_Builder
      * @version 0.2
      * @since 0.1
      */
-    private function affect(array $data, $part, $sourceName, $ttl)
+    private function affect(array $data, $part, $dataSourceKey, $ttl)
     {
         $modelClass = $this->getModelClass();
 
@@ -1073,11 +1073,11 @@ class Query_Builder
 
             $this->_bindParts[$part] = [[]];
 
-            return $this->getQuery($sourceName)->execute($ttl);
+            return $this->getQuery($dataSourceKey)->execute($ttl);
         }
 
         if (!is_array(reset($data))) {
-            return $this->affect([$data], $part, $sourceName, $ttl);
+            return $this->affect([$data], $part, $dataSourceKey, $ttl);
         }
 
         $fieldNames = [];
@@ -1098,7 +1098,7 @@ class Query_Builder
 
         $this->_bindParts[$part] = array_merge($this->_bindParts[$part], $data);
 
-        return $this->getQuery($sourceName)->execute($ttl);
+        return $this->getQuery($dataSourceKey)->execute($ttl);
     }
 
     /**

@@ -12,7 +12,6 @@ namespace Ice\Data\Provider;
 use ArrayObject;
 use Ice\Core\Data_Provider;
 use Ice\Core\Exception;
-use Ice\Core\Registry as Core_Registry;
 
 /**
  * Class Registry
@@ -25,14 +24,29 @@ use Ice\Core\Registry as Core_Registry;
  *
  * @package Ice
  * @subpackage Data_Provider
- *
- * @version 0.0
- * @since 0.0
  */
 class Registry extends Data_Provider
 {
+    const DEFAULT_DATA_PROVIDER_KEY = 'Ice:Registry/default';
+    const DEFAULT_KEY = 'instance';
+
     /**
      * Return default data provider key
+     *
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.4
+     */
+    protected static function getDefaultDataProviderKey()
+    {
+        return self::DEFAULT_DATA_PROVIDER_KEY;
+    }
+
+    /**
+     * Return default key
      *
      * @return string
      *
@@ -43,35 +57,39 @@ class Registry extends Data_Provider
      */
     protected static function getDefaultKey()
     {
-        return Core_Registry::DEFAULT_DATA_PROVIDER_KEY;
+        return self::DEFAULT_KEY;
     }
 
     /**
-     * Get data from data provider by key
+     * Delete from data provider by key
      *
      * @param string $key
-     * @return mixed
+     * @param bool $force if true return boolean else deleted value
+     * @throws Exception
+     * @return mixed|boolean
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.4
      * @since 0.0
      */
-    public function get($key = null)
+    public function delete($key, $force = true)
     {
         $keyPrefix = $this->getKeyPrefix();
-
-        if (!isset($this->getConnection()->$keyPrefix)) {
-            return null;
-        }
-
         $data = $this->getConnection()->$keyPrefix;
 
-        if (empty($key)) {
-            return $data;
+        if ($force) {
+            unset($data[$key]);
+            $this->getConnection()->$keyPrefix = $data;
+            return true;
         }
 
-        return isset($data[$key]) ? $data[$key] : null;
+        $value = $data[$key];
+
+        unset($data[$key]);
+        $this->getConnection()->$keyPrefix = $data;
+
+        return $value;
     }
 
     /**
@@ -87,6 +105,25 @@ class Registry extends Data_Provider
     public function getConnection()
     {
         return parent::getConnection();
+    }
+
+    /**
+     * Increment value by key with defined step (default 1)
+     *
+     * @param $key
+     * @param int $step
+     * @throws Exception
+     * @return mixed new value
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @todo 0.4 need refactoring // long time execute
+     * @version 0.4
+     * @since 0.0
+     */
+    public function incr($key, $step = 1)
+    {
+        return $this->set($key, $this->get($key) + $step);
     }
 
     /**
@@ -131,39 +168,31 @@ class Registry extends Data_Provider
     }
 
     /**
-     * Delete from data provider by key
+     * Get data from data provider by key
      *
      * @param string $key
-     * @param bool $force if true return boolean else deleted value
-     * @throws Exception
-     * @return mixed|boolean
+     * @return mixed
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
      * @since 0.0
      */
-    public function delete($key, $force = true)
+    public function get($key = null)
     {
-        throw new Exception('Implement delete() method.');
-    }
+        $keyPrefix = $this->getKeyPrefix();
 
-    /**
-     * Increment value by key with defined step (default 1)
-     *
-     * @param $key
-     * @param int $step
-     * @throws Exception
-     * @return mixed new value
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function inc($key, $step = 1)
-    {
-        throw new Exception('Implement inc() method.');
+        if (!isset($this->getConnection()->$keyPrefix)) {
+            return null;
+        }
+
+        $data = $this->getConnection()->$keyPrefix;
+
+        if (empty($key)) {
+            return $data;
+        }
+
+        return isset($data[$key]) ? $data[$key] : null;
     }
 
     /**
@@ -176,12 +205,13 @@ class Registry extends Data_Provider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
+     * @todo 0.4 need refactoring // long time execute
      * @version 0.0
      * @since 0.0
      */
-    public function dec($key, $step = 1)
+    public function decr($key, $step = 1)
     {
-        throw new Exception('Implement dec() method.');
+        return $this->set($key, $this->get($key) - $step);
     }
 
     /**
@@ -189,19 +219,29 @@ class Registry extends Data_Provider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.4
      * @since 0.0
      */
     public function flushAll()
     {
         $keyPrefix = $this->getKeyPrefix();
+        $this->getConnection()->$keyPrefix = [];
+    }
 
-        File::getLogger()->info(['Trying remove {$0}', $keyPrefix]);
-
-        if (isset($this->getConnection()->$keyPrefix)) {
-            unset($this->getConnection()->$keyPrefix);
-        }
-
+    /**
+     * Return keys by pattern
+     *
+     * @param string $pattern
+     * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
+     */
+    public function getKeys($pattern = null)
+    {
+        return array_keys($this->get());
     }
 
     /**
@@ -236,21 +276,5 @@ class Registry extends Data_Provider
     {
         $connection = null;
         return true;
-    }
-
-    /**
-     * Return keys by pattern
-     *
-     * @param string $pattern
-     * @return array
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function getKeys($pattern = null)
-    {
-        // TODO: Implement getKeys() method.
     }
 }

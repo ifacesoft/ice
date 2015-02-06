@@ -49,7 +49,7 @@ class Front_Ajax extends Action
     public static $config = [
         'layout' => '',
         'defaultViewRenderClassName' => 'Ice:Json',
-        'inputDataProviderKeys' => [Request::DEFAULT_KEY],
+        'inputDataProviderKeys' => Request::DEFAULT_DATA_PROVIDER_KEY,
         'inputValidators' => [
             'call' => 'Ice:Not_Empty'
         ]

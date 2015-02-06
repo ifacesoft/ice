@@ -2,6 +2,7 @@
 
 namespace Ice\Core;
 
+use Ice\Helper\Console;
 use Ice\Model\Test;
 use PHPUnit_Framework_TestCase;
 
@@ -15,32 +16,39 @@ class ModelTest extends PHPUnit_Framework_TestCase
 
     public function testActiveRecordCrud()
     {
-        $user1 = Test::create([
-            '/name' => 'name',
-            'name2' => 'test'
-        ])->save();
+//        foreach (Data_Source::getConfig()->gets('default') as $dataSourceClass => $scheme) {
+//            $dataSourceKey = $dataSourceClass . '/default.' . $scheme;
 
-        $user1->save(['/name' => 'test name']);
+//        $dataSourceKey = 'Ice:Mongodb/default.test';
+        $dataSourceKey = 'Ice:Mysqli/default.test';
 
-        $this->assertNotNull($user1);
-        $this->assertTrue($user1 instanceof Test);
+            $user1 = Test::create([
+                '/name' => 'name',
+                'name2' => 'test'
+            ])->save([], $dataSourceKey);
 
-        $user2 = Test::create(['/name' => 'test name'])
-            ->find(['/name', 'name2']);
+            $user1->save(['/name' => 'test name'], $dataSourceKey);
 
-        $user4 = Test::getModelBy(['/name' => 'test name'], ['/name', 'name2']);
+            $this->assertNotNull($user1);
+            $this->assertTrue($user1 instanceof Test);
 
-        $this->assertEquals($user2->get('/name'), 'test name');
+            $user2 = Test::create(['/name' => 'test name'])
+                ->find(['/name', 'name2'], $dataSourceKey);
 
-        $this->assertNotNull($user2);
-        $this->assertTrue($user2 instanceof Test);
-        $this->assertEquals($user1, $user2);
-        $this->assertEquals($user2->test_name, $user4->test_name);
+            $user4 = Test::getModelBy(['/name' => 'test name'], ['/name', 'name2'], $dataSourceKey);
 
-        $user2->remove();
+            $this->assertEquals($user2->get('/name'), 'test name');
 
-        $user3 = Test::getModel(1, '/pk');
+            $this->assertNotNull($user2);
+            $this->assertTrue($user2 instanceof Test);
+            $this->assertEquals($user1, $user2);
+            $this->assertEquals($user2->test_name, $user4->test_name);
 
-        $this->assertNull($user3);
-    }
+            $user2->remove($dataSourceKey);
+
+            $user3 = Test::getModel(1, '/pk', $dataSourceKey);
+
+            $this->assertNull($user3);
+        }
+//    }
 }

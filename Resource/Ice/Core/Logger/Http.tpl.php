@@ -21,7 +21,7 @@ use Ice\Helper\Php;
             <span style="font-size: 12px;"><?= highlight_string(Php::varToPhpString($errcontext), true) ?></span>
         <?php } ?>
         <pre
-            style="margin: 0;"><?= str_replace('#', '</span>#', str_replace('):', '):<span style="color: grey;">', str_replace(ROOT_DIR, '/', $stackTrace))) ?></pre>
+            style="margin: 0;"><?= str_replace('#', '</span>#', str_replace('):', '):<span style="color: grey;">', str_replace(ROOT_DIR, '', $stackTrace))) ?></pre>
         <?php if (isset($previous)) { ?>
             <?= $previous ?>
         <?php } ?>

@@ -1,6 +1,6 @@
 <?php
 /**
- * Ice query translator implementation mysqli class
+ * Ice query translator implementation sql class
  *
  * @link http://www.iceframework.net
  * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
@@ -13,9 +13,10 @@ use Ice\Core\Exception;
 use Ice\Core\Model;
 use Ice\Core\Query_Builder;
 use Ice\Core\Query_Translator;
+use Ice\Helper\Mapping;
 
 /**
- * Class Mysqli
+ * Class Sql
  *
  * Translate with query translator mysqli
  *
@@ -25,11 +26,8 @@ use Ice\Core\Query_Translator;
  *
  * @package Ice
  * @subpackage Query_Translator
- *
- * @version 0.0
- * @since 0.0
  */
-class Mysqli extends Query_Translator
+class Sql extends Query_Translator
 {
     const SQL_CALC_FOUND_ROWS = 'SQL_CALC_FOUND_ROWS';
     const SQL_STATEMENT_CREATE = 'CREATE TABLE IF NOT EXISTS';
@@ -47,40 +45,8 @@ class Mysqli extends Query_Translator
     const SQL_CLAUSE_ORDER = 'ORDER';
     const SQL_CLAUSE_LIMIT = 'LIMIT';
     const ON_DUPLICATE_KEY_UPDATE = 'ON DUPLICATE KEY UPDATE';
-
-    /**
-     * Translate query parts to sql string
-     *
-     * @param array $sqlParts
-     * @return string
-     * @throws Exception
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function translate(array $sqlParts)
-    {
-        $sql = '';
-
-        foreach ($sqlParts as $sqlPart => $part) {
-            if (empty($part)) {
-                continue;
-            }
-
-            $translate = 'translate' . ucfirst($sqlPart);
-            $sql .= $this->$translate($part);
-        }
-
-        $sql = trim($sql);
-
-        if (empty($sql)) {
-            throw new Exception('Sql query is empty');
-        }
-
-        return $sql;
-    }
+    const DEFAULT_CLASS_KEY = 'Ice:Sql/default';
+    const DEFAULT_KEY = 'instance';
 
     /**
      * Translate set part
@@ -93,12 +59,10 @@ class Mysqli extends Query_Translator
      * @version 0.1
      * @since 0.0
      */
-    private function translateSet(array $part)
+    protected function translateSet(array $part)
     {
         /** @var Model $modelClass */
         $modelClass = $part['modelClass'];
-
-        $modelMapping = $modelClass::getMapping();
 
         if ($part['rowCount'] > 1) {
             $part['_update'] = true;
@@ -108,9 +72,7 @@ class Mysqli extends Query_Translator
         $sql = "\n" . self::SQL_STATEMENT_UPDATE .
             "\n\t" . $modelClass::getTableName();
         $sql .= "\n" . self::SQL_CLAUSE_SET;
-        $sql .= "\n\t" . '`' . implode('`=?,`', array_map(function ($fieldName) use ($modelMapping) {
-                return $modelMapping[$fieldName];
-            }, $part['fieldNames'])) . '`=?';
+        $sql .= "\n\t" . '`' . implode('`=?,`', Mapping::columnNames($modelClass, $part['fieldNames'])) . '`=?';
 
         return $sql;
     }
@@ -126,7 +88,7 @@ class Mysqli extends Query_Translator
      * @version 0.1
      * @since 0.0
      */
-    private function translateValues(array $part)
+    protected function translateValues(array $part)
     {
         $update = $part['_update'];
         unset($part['_update']);
@@ -154,9 +116,7 @@ class Mysqli extends Query_Translator
 
         $modelMapping = $modelClass::getMapping();
 
-        $sql .= "\n\t" . '(`' . implode('`,`', array_map(function ($fieldName) use ($modelMapping) {
-                return $modelMapping[$fieldName];
-            }, $part['fieldNames'])) . '`)';
+        $sql .= "\n\t" . '(`' . implode('`,`', Mapping::columnNames($modelClass, $part['fieldNames'])) . '`)';
         $sql .= "\n" . self::SQL_CLAUSE_VALUES;
 
         $values = "\n\t" . '(?' . str_repeat(',?', $fieldNamesCount - 1) . ')';
@@ -243,7 +203,7 @@ class Mysqli extends Query_Translator
      * @version 0.3
      * @since 0.0
      */
-    private function translateWhere(array $part)
+    protected function translateWhere(array $part)
     {
         $sql = '';
         $delete = '';
@@ -291,7 +251,7 @@ class Mysqli extends Query_Translator
      * @version 0.0
      * @since 0.0
      */
-    private function translateSelect(array $part)
+    protected function translateSelect(array $part)
     {
         $sql = '';
 
@@ -356,7 +316,7 @@ class Mysqli extends Query_Translator
      * @version 0.0
      * @since 0.0
      */
-    private function translateJoin(array $part)
+    protected function translateJoin(array $part)
     {
         $sql = '';
 
@@ -387,7 +347,7 @@ class Mysqli extends Query_Translator
      * @version 0.0
      * @since 0.0
      */
-    private function translateOrder(array $part)
+    protected function translateOrder(array $part)
     {
         $sql = '';
 
@@ -424,7 +384,7 @@ class Mysqli extends Query_Translator
      * @version 0.0
      * @since 0.0
      */
-    private function translateGroup(array $part)
+    protected function translateGroup(array $part)
     {
         $sql = '';
 
@@ -461,7 +421,7 @@ class Mysqli extends Query_Translator
      * @version 0.0
      * @since 0.0
      */
-    private function translateLimit($part)
+    protected function translateLimit($part)
     {
         if (empty($part)) {
             return '';
@@ -484,7 +444,7 @@ class Mysqli extends Query_Translator
      * @version 0.2
      * @since 0.2
      */
-    private function translateCreate(array $part)
+    protected function translateCreate(array $part)
     {
         $sql = '';
 
@@ -526,5 +486,33 @@ class Mysqli extends Query_Translator
         }
 
         return "\n" . self::SQL_STATEMENT_DROP . ' `' . $modelClass::getTableName() . '`';
+    }
+
+    /**
+     * Return default class key
+     *
+     * @return string
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.4
+     */
+    protected static function getDefaultClassKey()
+    {
+        return Sql::DEFAULT_CLASS_KEY;
+    }
+
+    /**
+     * Return default key
+     *
+     * @return string
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.4
+     */
+    protected static function getDefaultKey()
+    {
+        return Sql::DEFAULT_KEY;
     }
 }

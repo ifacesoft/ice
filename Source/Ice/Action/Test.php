@@ -31,7 +31,7 @@ class Test extends Action
      */
     public static $config = [
         'defaultViewRenderClassName' => 'Ice:Php',
-        'inputDataProviderKeys' => [Request::DEFAULT_KEY],
+        'inputDataProviderKeys' => Request::DEFAULT_DATA_PROVIDER_KEY,
         'afterActions' => [
             '_NoView',
             '_Smarty' => ['inputTestSmarty' => 'inputTestSmarty'],

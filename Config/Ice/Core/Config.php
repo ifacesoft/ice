@@ -17,7 +17,10 @@ return [
         ]
     ],
     'Ice\Core\Data_Source' => [
-        'Ice:Mysqli/default' => 'test',
+        'default' => [
+            'Ice\Data\Source\Mysqli' => 'test',
+            'Ice\Data\Source\Mongodb' => 'test',
+        ]
     ],
     'Ice\Core\Environment' => [
         'environments' => [

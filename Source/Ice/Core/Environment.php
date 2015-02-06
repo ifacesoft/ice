@@ -10,6 +10,7 @@
 namespace Ice\Core;
 
 use Ice\Core;
+use Ice\Data\Provider\Repository;
 use Ice\Helper\Config as Helper_Config;
 
 /**
@@ -79,6 +80,21 @@ class Environment extends Container
         $this->_params = $settings;
     }
 
+    public static function getInstance($key = null, $ttl = null) {
+        if (!$key) {
+            $key = Environment::getDefaultKey();
+        }
+
+        /** @var Data_Provider $dataProvider */
+        $dataProvider = Data_Provider::getInstance(Environment::getDefaultDataProviderKey());
+
+        if ($_config = $dataProvider->get($key)) {
+            return $_config;
+        }
+
+        return $dataProvider->set($key, new Environment($key));
+    }
+
     /**
      * Return data provider
      *
@@ -105,9 +121,9 @@ class Environment extends Container
      * @version 0.0
      * @since 0.0
      */
-    public static function getDefaultDataProviderKey()
+    protected static function getDefaultDataProviderKey()
     {
-        return 'Ice:Object/' . __CLASS__;
+        return 'Ice:Registry/' . __CLASS__;
     }
 
 
@@ -171,7 +187,7 @@ class Environment extends Container
      * Create new instance of environment
      *
      * @param string $environment Name of environment (production|test|devlepment)
-     * @param string|null $hash Generated md5 hash
+     *
      * @return Environment
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -179,7 +195,7 @@ class Environment extends Container
      * @version 0.0
      * @since 0.0
      */
-    protected static function create($environment, $hash = null)
+    protected static function create($environment)
     {
         return new Environment($environment);
     }

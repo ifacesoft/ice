@@ -29,15 +29,12 @@ use Ice\Helper\Json;
  *
  * @package Ice
  * @subpackage Core
- *
- * @version 0.1
- * @since 0.0
  */
 abstract class Action extends Container
 {
     use Core;
 
-    const REGISTRY_DATA_PROVIDER_KEY = 'Ice:Registry/action';
+    const DEFAULT_KEY = 'instance';
 
     /**
      * Default config
@@ -79,17 +76,17 @@ abstract class Action extends Container
     /**
      * Get action object by name
      *
-     * @param $actionClass
-     * @param $hash
+     * @param $key
      * @return Action
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.4
      * @since 0.0
      */
-    protected static function create($actionClass, $hash = null)
+    protected static function create($key)
     {
+        $actionClass = self::getClass();
         return new $actionClass();
     }
 
@@ -100,12 +97,27 @@ abstract class Action extends Container
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.4
      * @since 0.0
      */
     protected static function getDefaultKey()
     {
-        return self::getClass();
+        return Action::DEFAULT_KEY;
+    }
+
+    /**
+     * Default class key
+     *
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.4
+     */
+    protected static function getDefaultClassKey()
+    {
+        return self::getClass() . '/default';
     }
 
     /**
@@ -167,6 +179,8 @@ abstract class Action extends Container
                 return $content;
             }
 
+            $startTimeAfter = Logger::microtime();
+
             foreach ($actionContext->getActions() as $subActionName => $actionData) {
                 if ($subActionName[0] == '_') {
                     $subActionName = $actionClass . $subActionName;
@@ -174,12 +188,27 @@ abstract class Action extends Container
 
                 $newLevel = $level + 1;
 
-                /** @var Action $action */
-                $subAction = Action::getInstance($subActionName);
                 /** @var Action $subActionClass */
-                $subActionClass = get_class($subAction);
+                $subActionClass = Action::getClass($subActionName);
+
+                $isThread = in_array(Action_Thread::getClass(), class_parents($subActionClass));
+
+                /** @var Action $action */
+                $subAction = null;
+
+                if (!$isThread) {
+                    $subAction = $subActionClass::getInstance();
+                }
 
                 foreach ($actionData as $subActionKey => $subActionParams) {
+                    if ($isThread) {
+//                        $actionContext->initAction($subActionClass, Hash::get($subActionParams, Hash::HASH_CRC32))->commit();
+                        array_walk($subActionParams, function (&$value, $key) {
+                            return $value = $key . '=' . $value;
+                        });
+                        continue;
+                    }
+
                     $subView = null;
 
                     try {
@@ -204,6 +233,8 @@ abstract class Action extends Container
                 }
             }
 
+            $finishTimeAfter = Logger::microtimeResult($startTimeAfter);
+
             $actionContext->setParams($params);
 
             $viewData = $actionContext->getViewData();
@@ -227,11 +258,11 @@ abstract class Action extends Container
             }
 
             if (Request::isCli()) {
-                Action::getLogger()->info(['{$0}{$1} complete! [{$2}]', [str_repeat("\t", $level), $actionClass::getClassName(), $finishTime]], Logger::MESSAGE);
+                Action::getLogger()->info(['{$0}{$1} complete! [{$2} + {$3}]', [str_repeat("\t", $level), $actionClass::getClassName(), $finishTime, $finishTimeAfter]], Logger::MESSAGE);
             }
 
             if (Environment::isDevelopment()) {
-                Logger::fb('action: ' . $actionClass . ' ' . Json::encode($input) . ' [' . $finishTime . ']');
+                Logger::fb('action: ' . $actionClass . ' ' . Json::encode($input) . ' [' . $finishTime . ' ' . $finishTimeAfter . ']');
             }
 
             return $this->flush(View::getInstance($viewData));
@@ -292,7 +323,7 @@ abstract class Action extends Container
      */
     public static function getRegistryDataProviderKey()
     {
-        return self::REGISTRY_DATA_PROVIDER_KEY . get_called_class();
+        return 'Ice:Registry/' . self::getClass();
     }
 
     /**

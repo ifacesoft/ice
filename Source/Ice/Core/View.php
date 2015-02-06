@@ -65,8 +65,7 @@ class View extends Container
     /**
      * Return new instance of view
      *
-     * @param $viewData
-     * @param null $hash
+     * @param $viewKey
      * @return View
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -74,9 +73,9 @@ class View extends Container
      * @version 0.0
      * @since 0.0
      */
-    protected static function create($viewData, $hash = null)
+    protected static function create($viewKey)
     {
-        return new View($viewData);
+        return new View($viewKey);
     }
 
     /**

@@ -86,7 +86,7 @@ abstract class Data_Provider
     /**
      * Return new instance of data provider
      *
-     * @param $dataProviderKey
+     * @param $key
      * @param string $index
      * @return Data_Provider
      *
@@ -95,20 +95,26 @@ abstract class Data_Provider
      * @version 0.0
      * @since 0.0
      */
-    public static function getInstance($dataProviderKey = null, $index = 'default')
+    public static function getInstance($key = null, $index = 'default')
     {
         /** @var Data_Provider $class */
         $class = self::getClass();
 
-        if (empty($dataProviderKey)) {
-            $dataProviderKey = $class::getDefaultDataProviderKey();
-        } else if ($class != __CLASS__) {
-            $dataProviderKey = $class . '/' . $dataProviderKey;
+        if (!$key && $class == __CLASS__) {
+            Data_Provider::getLogger()->fatal('Not known how create instance of data provider. Need data provider key.', __FILE__, __LINE__);
         }
 
-        list($class, $key) = explode('/', $dataProviderKey);
+        if (!$key) {
+            return Data_Provider::getInstance($class::getDefaultDataProviderKey(), $index);
+        }
 
-        $class = Object::getClass(__CLASS__, $class);
+        if ($class == __CLASS__) {
+            list($class, $key) = explode('/', $key);
+
+            $class = Object::getClass(__CLASS__, $class);
+
+            return $class::getInstance($key, $index);
+        }
 
         if ($key == 'default') {
             $key = $class::getDefaultKey();
@@ -125,7 +131,7 @@ abstract class Data_Provider
     /**
      * Return default data provider key
      *
-     * @return null
+     * @return string
      * @throws Exception
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -135,7 +141,7 @@ abstract class Data_Provider
      */
     protected static function getDefaultDataProviderKey()
     {
-        Data_Provider::getLogger()->fatal('Need implements', __FILE__, __LINE__);
+        Data_Provider::getLogger()->fatal(['Need implements {$0} for {$1}', [__METHOD__, self::getClass()]], __FILE__, __LINE__);
         return null;
     }
 
@@ -241,6 +247,7 @@ abstract class Data_Provider
     /**
      * Close self connection
      *
+     * @return boolean
      * @throws Exception
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -257,6 +264,7 @@ abstract class Data_Provider
         }
 
         $this->_connection = null;
+        return true;
     }
 
     /**
@@ -326,7 +334,7 @@ abstract class Data_Provider
      * @version 0
      * @since 0
      */
-    abstract public function inc($key, $step = 1);
+    abstract public function incr($key, $step = 1);
 
     /**
      * Decrement value by key with defined step (default 1)
@@ -340,7 +348,7 @@ abstract class Data_Provider
      * @version 0
      * @since 0
      */
-    abstract public function dec($key, $step = 1);
+    abstract public function decr($key, $step = 1);
 
     /**
      * Flush all stored data

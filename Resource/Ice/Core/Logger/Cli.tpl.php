@@ -12,7 +12,7 @@ use Ice\Helper\Php;
 
 <?php if (!empty($errcontext)) { ?><?= Console::getText(Php::varToPhpString($errcontext), Console::C_GREEN) ?><?php } ?>
 
-<?= str_replace("):", '):' . Console::RESET, str_replace("#", Console::C_GRAY_B . "#", str_replace(ROOT_DIR, '/', $stackTrace))) . Console::RESET ?>
+<?= str_replace("):", '):' . Console::RESET, str_replace("#", Console::C_GRAY_B . "#", str_replace(ROOT_DIR, '', $stackTrace))) . Console::RESET ?>
 
 <?php if (isset($previous)) { ?>
     <?= str_repeat("\t", $level) . str_replace("\n", "\n" . str_repeat("\t", $level), $previous) ?>

@@ -18,6 +18,7 @@ use Ice\Core\Exception;
 use Ice\Core\Logger;
 use Ice\Core\Resource;
 use Ice\Data\Provider\Registry;
+use Ice\Data\Provider\Repository;
 use Ice\Helper\Object;
 
 /**
@@ -96,7 +97,7 @@ trait Core
      */
     public static function getResource()
     {
-        return Resource::getInstance(self::getClass());
+        return Resource::create(self::getClass());
     }
 
     /**
@@ -153,6 +154,21 @@ trait Core
     }
 
     /**
+     * Return base class for self class (class extends Container)
+     *
+     * @return Core
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
+     */
+    public static function getBaseClass()
+    {
+        return Object::getBaseClass(self::getClass());
+    }
+
+    /**
      * Return code generator for self class type
      *
      * @return Code_Generator
@@ -183,21 +199,6 @@ trait Core
     }
 
     /**
-     * Return base class for self class (class extends Container)
-     *
-     * @return Core
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public static function getBaseClass()
-    {
-        return Object::getBaseClass(self::getClass());
-    }
-
-    /**
      * Return logger for self class
      *
      * @return Logger
@@ -213,22 +214,6 @@ trait Core
     }
 
     /**
-     * Return default data provider key
-     *
-     * @return string
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    protected static function getDefaultKey()
-    {
-        Resource::getLogger()->fatal(['Implementation {$0} is required for {$1}', [__FUNCTION__, self::getClass()]], __FILE__, __LINE__);
-        return null;
-    }
-
-    /**
      * Return registry storage for  class
      *
      * @return Registry
@@ -241,5 +226,20 @@ trait Core
     public static function getRegistry()
     {
         return Registry::getInstance(self::getClass());
+    }
+
+    /**
+     * Return repository storage for  class
+     *
+     * @return Repository
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.4
+     */
+    public static function getRepository()
+    {
+        return Repository::getInstance(self::getClass());
     }
 }

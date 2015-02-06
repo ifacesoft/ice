@@ -56,7 +56,7 @@ class Resources extends Action
         'layout' => '',
         'cacheDataProviderKey' => 'Ice:File/cache',
         'defaultViewRenderClassName' => 'Ice:Php',
-        'inputDataProviderKeys' => Router::DEFAULT_KEY
+        'inputDataProviderKeys' => Router::DEFAULT_DATA_PROVIDER_KEY
     ];
 
     /**

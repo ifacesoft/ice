@@ -45,7 +45,6 @@ abstract class Data extends Container
      * Create new instance of data
      *
      * @param $key
-     * @param null $hash
      * @return Data
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -53,7 +52,7 @@ abstract class Data extends Container
      * @version 0.2
      * @since 0.2
      */
-    protected static function create($key, $hash = null)
+    protected static function create($key)
     {
         /** @var Data $class */
         $class = self::getClass();

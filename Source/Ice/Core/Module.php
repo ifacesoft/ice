@@ -28,9 +28,11 @@ use Ice\Helper\File;
  * @version 0.0
  * @since 0.0
  */
-class Module extends Container
+class Module
 {
     use Core;
+
+    private static $_instance = null;
 
     /**
      * All available modules
@@ -88,17 +90,24 @@ class Module extends Container
      * Create new instance of module
      *
      * @param $moduleAlias
-     * @param $hash
      * @return Module
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.4
      * @since 0.0
      */
-    protected static function create($moduleAlias, $hash = null)
+    public static function getInstance($moduleAlias = null)
     {
-        return new Module($moduleAlias, self::get($moduleAlias));
+        if (!$moduleAlias) {
+            $moduleAlias = Module::getDefaultKey();
+        }
+
+        if (isset(Module::$_instance[$moduleAlias])) {
+            return Module::$_instance[$moduleAlias];
+        }
+
+        return Module::$_instance[$moduleAlias] = new Module($moduleAlias, self::get($moduleAlias));
     }
 
     /**
@@ -247,17 +256,5 @@ class Module extends Container
     {
         $aliases = self::getAliases();
         return reset($aliases);
-    }
-
-    /**
-     * Return instance of module
-     *
-     * @param null $key
-     * @param null $ttl
-     * @return Module
-     */
-    public static function getInstance($key = null, $ttl = null)
-    {
-        return parent::getInstance($key, $ttl);
     }
 }

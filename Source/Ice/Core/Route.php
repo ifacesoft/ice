@@ -28,9 +28,6 @@ use Ice\View\Render\Replace;
  *
  * @package Ice
  * @subpackage Core
- *
- * @version 0.0
- * @since 0.0
  */
 class Route extends Container
 {
@@ -70,7 +67,6 @@ class Route extends Container
      * Create new instance of route
      *
      * @param string $name
-     * @param null $hash
      * @return Route
      * @throws Http_Not_Found
      * @author dp <denis.a.shestakov@gmail.com>
@@ -78,7 +74,7 @@ class Route extends Container
      * @version 0.4
      * @since 0.0
      */
-    public static function create($name, $hash = null)
+    protected static function create($name)
     {
         $routes = self::getRoutes();
 
@@ -312,6 +308,10 @@ class Route extends Container
      */
     public static function getInstance($key = null, $ttl = null)
     {
+        if (!$key) {
+            $key = Route::getDefaultKey();
+        }
+
         return parent::getInstance($key, $ttl);
     }
 
