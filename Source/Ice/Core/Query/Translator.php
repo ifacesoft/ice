@@ -56,16 +56,61 @@ abstract class Query_Translator extends Container
     }
 
     /**
-     * Translate query parts to sql string
+     * Translate query body
      *
      * @param array $sqlParts
-     * @return string
+     * @return string|array
      * @throws Exception
      *
-     * @author anonymous <email>
+     * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0
-     * @since 0
+     * @version 0.4
+     * @since 0.4
      */
-    abstract public function translate(array $sqlParts);
+    public function translate(array $sqlParts)
+    {
+        $body = null;
+
+        foreach ($sqlParts as $sqlPart => $part) {
+            if (empty($part)) {
+                continue;
+            }
+
+            $translate = 'translate' . ucfirst($sqlPart);
+            $result = $this->$translate($part);
+
+            if ($body === null) {
+                $body = is_string($result) ? '' : [];
+            }
+
+            if (is_string($result)) {
+                $body .= $this->$translate($part);
+            } else {
+                $body += $this->$translate($part);
+            }
+        }
+
+        if (empty($body)) {
+            Query_Translator::getLogger()->fatal('Query body is empty', __FILE__, __LINE__, null, $sqlParts);
+        }
+
+        return $body;
+    }
+
+    /**
+     * Return instance of query translator
+     *
+     * @param null $key
+     * @param null $ttl
+     * @return Query_Translator
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.4
+     */
+    public static function getInstance($key = null, $ttl = null)
+    {
+        return parent::getInstance($key, $ttl);
+    }
 }

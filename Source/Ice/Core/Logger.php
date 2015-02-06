@@ -15,7 +15,7 @@ use Ice\Helper\Console;
 use Ice\Helper\Directory;
 use Ice\Helper\File;
 use Ice\Helper\Logger as Helper_Logger;
-use Ice\Helper\Memory;
+use Ice\Helper\Resource as Helper_Resource;
 use Ice\Helper\Php;
 
 /**
@@ -116,7 +116,7 @@ class Logger
      *
      * @var string
      */
-    private $class;
+    private $_class;
 
     /**
      * Private constructor for logger object
@@ -130,7 +130,7 @@ class Logger
      */
     private function __construct($class)
     {
-        $this->class = $class;
+        $this->_class = $class;
     }
 
     /**
@@ -235,7 +235,7 @@ class Logger
 
         if ($isResource) {
             /** @var Core $class */
-            $class = $this->class;
+            $class = $this->_class;
             $params = null;
             if (is_array($message)) {
                 list($message, $params) = $message;
@@ -350,7 +350,7 @@ class Logger
         if (!isset($message[1])) {
             $message[1] = [];
         }
-        $message[2] = $this->class;
+        $message[2] = $this->_class;
 
         return new Exception($message, $errcontext, $e, $file, $line, $errno);
     }
@@ -560,16 +560,17 @@ class Logger
      *
      * @param $message
      *
+     * @param string $type
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
      * @since 0.4
      */
-    public function log($message)
+    public function log($message, $type = Logger::SUCCESS)
     {
         if (!Environment::isProduction()) {
             if (Request::isCli()) {
-                Query::getLogger()->info($message . ' ' . Memory::memoryGetUsagePeak(), Logger::SUCCESS, false);
+                $this->info(Helper_Resource::getMessage($message), $type, false);
             } else {
                 Logger::fb($message);
             }

@@ -184,7 +184,7 @@ class Console
 
             fwrite(STDOUT, Console::getText($command, Console::C_GREEN_B) . "\n");
 
-            exec($command);
+            passthru($command);
         }
     }
 }

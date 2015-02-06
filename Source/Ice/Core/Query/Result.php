@@ -32,6 +32,8 @@ class Query_Result
     const NUM_ROWS = 'numRows';
     const AFFECTED_ROWS = 'affectedRows';
     const INSERT_ID = 'insertId';
+    const QUERY_BODY = 'queryBody';
+    const QUERY_PARAMS = 'queryParams';
 
     /**
      * Default result
@@ -43,7 +45,9 @@ class Query_Result
         Query_Result::QUERY => null,
         Query_Result::NUM_ROWS => 0,
         Query_Result::AFFECTED_ROWS => 0,
-        Query_Result::INSERT_ID => null
+        Query_Result::INSERT_ID => null,
+        Query_Result::QUERY_BODY => null,
+        Query_Result::QUERY_PARAMS => []
     ];
 
     /**
@@ -579,5 +583,35 @@ class Query_Result
     public function getQuery()
     {
         return $this->_result[Query_Result::QUERY];
+    }
+
+    /**
+     * Return query body
+     *
+     * @return string|array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.4
+     */
+    public function getQueryBody()
+    {
+        return $this->_result[Query_Result::QUERY_BODY];
+    }
+
+    /**
+     * Return query params
+     *
+     * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.4
+     */
+    public function getQueryParams()
+    {
+        return $this->_result[Query_Result::QUERY_PARAMS];
     }
 }

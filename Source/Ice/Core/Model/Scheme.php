@@ -287,4 +287,19 @@ class Model_Scheme extends Container
 
         return $this->_modelScheme['scheme']['indexes'];
     }
+
+    /**
+     * Return primary key columns
+     *
+     * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.4
+     */
+    public function getPkColumnNames()
+    {
+        return $this->getIndexes()['PRIMARY KEY']['PRIMARY'];
+    }
 }

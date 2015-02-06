@@ -131,14 +131,7 @@ abstract class Data_Source extends Container
         /** @var Data_Source $dataSourceClass */
         $dataSourceClass = self::getClass();
 
-        $key = 'defaultKey_' . $dataSourceClass;
-        $repository = Data_Source::getRepository();
-
-        if ($defaultKey = $repository->get($key)) {
-            return $defaultKey;
-        }
-
-        return $repository->set($key, substr(strstr($dataSourceClass::getDefaultClassKey(), '/'), 1), 0);
+        return substr(strstr($dataSourceClass::getDefaultClassKey(), '/'), 1);
     }
 
     /**
@@ -176,31 +169,6 @@ abstract class Data_Source extends Container
     }
 
     /**
-     * Return default class
-     *
-     * @return Data_Source
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since 0.4
-     */
-    protected static function getDefaultClass()
-    {
-        /** @var Data_Source $dataSourceClass */
-        $dataSourceClass = self::getClass();
-
-        $key = 'defaultClass_' . $dataSourceClass;
-        $repository = Data_Source::getRepository();
-
-        if ($defaultClass = $repository->get($key)) {
-            return $defaultClass;
-        }
-
-        return $repository->set($key, strstr($dataSourceClass::getDefaultClassKey(), '/', true), 0);
-    }
-
-    /**
      * Create new instance of data source
      *
      * @param $key
@@ -228,7 +196,6 @@ abstract class Data_Source extends Container
     /**
      * Execute query select to data source
      *
-     * @param mixed $statement
      * @param Query $query
      * @return array
      *
@@ -237,12 +204,11 @@ abstract class Data_Source extends Container
      * @version 0
      * @since 0
      */
-    abstract public function executeSelect($statement, Query $query);
+    abstract public function executeSelect(Query $query);
 
     /**
      * Execute query insert to data source
      *
-     * @param mixed $statement
      * @param Query $query
      * @return array
      *
@@ -251,12 +217,11 @@ abstract class Data_Source extends Container
      * @version 0
      * @since 0
      */
-    abstract public function executeInsert($statement, Query $query);
+    abstract public function executeInsert(Query $query);
 
     /**
      * Execute query update to data source
      *
-     * @param mixed $statement
      * @param Query $query
      * @return array
      *
@@ -265,12 +230,11 @@ abstract class Data_Source extends Container
      * @version 0
      * @since 0
      */
-    abstract public function executeUpdate($statement, Query $query);
+    abstract public function executeUpdate(Query $query);
 
     /**
      * Execute query update to data source
      *
-     * @param mixed $statement
      * @param Query $query
      * @return array
      *
@@ -279,12 +243,11 @@ abstract class Data_Source extends Container
      * @version 0
      * @since 0
      */
-    abstract public function executeDelete($statement, Query $query);
+    abstract public function executeDelete(Query $query);
 
     /**
      * Execute query create table to data source
      *
-     * @param $statement
      * @param Query $query
      * @return array
      *
@@ -293,12 +256,11 @@ abstract class Data_Source extends Container
      * @version 0
      * @since 0
      */
-    abstract public function executeCreate($statement, Query $query);
+    abstract public function executeCreate(Query $query);
 
     /**
      * Execute query drop table to data source
      *
-     * @param mixed $statement
      * @param Query $query
      * @return array
      *
@@ -307,7 +269,7 @@ abstract class Data_Source extends Container
      * @version 0
      * @since 0
      */
-    abstract public function executeDrop($statement, Query $query);
+    abstract public function executeDrop(Query $query);
 
     /**
      * Get connection instance
@@ -378,7 +340,13 @@ abstract class Data_Source extends Container
 
         $queryResult = null;
 
-        $cache = ['tags' => $query->getValidateTags(), 'time' => 0, 'data' => []];
+        $cache = [
+            'tags' => $query->getValidateTags(),
+            'time' => 0,
+            'data' => [],
+            'queryBody' => null,
+            'queryParams' => []
+        ];
 
         try {
             $queryType = $query->getQueryType();
@@ -399,7 +367,14 @@ abstract class Data_Source extends Container
                     $cache = Arrays::defaults($cache, $cacheDataProvider->get($hash));
 
                     if (Cache::validate(__CLASS__, $cache['tags'], $cache['time'])) {
-                        Data_Source::getLogger()->log('sql cache: ' . str_replace("\t", '', str_replace("\n", ' ', $query->getSql())) . ' [' . implode(', ', $query->getBinds()) . '] ' . Logger::microtimeResult($startTime));
+                        Data_Source::getLogger()->log([
+                            'sql cache: {$0} [{$1}] {$2}',
+                            [
+                                print_r($cache['queryBody'], true),
+                                implode(', ', $cache['queryParams']),
+                                Logger::microtimeResult($startTime)
+                            ]
+                        ], Logger::INFO);
 
                         return Query_Result::create($query->getModelClass(), $cache['data']);
                     }
@@ -407,6 +382,8 @@ abstract class Data_Source extends Container
                     $queryResult = $this->getQueryResult($query);
 
                     $cache['data'] = $queryResult->getResult();
+                    $cache['queryBody'] = $queryResult->getQueryBody();
+                    $cache['queryParams'] = $queryResult->getQueryParams();
                     $cache['time'] = time();
 
                     $cacheDataProvider->set($hash, $cache, $ttl);
@@ -417,7 +394,9 @@ abstract class Data_Source extends Container
                 case Query_Builder::TYPE_DELETE:
                     $queryResult = $this->getQueryResult($query);
 
-                    $cache['data'] = $queryResult->getResult();
+                $cache['data'] = $queryResult->getResult();
+                $cache['queryBody'] = $queryResult->getQueryBody();
+                $cache['queryParams'] = $queryResult->getQueryParams();
                     Cache::invalidate(__CLASS__, $query->getInvalidateTags());
                     break;
 
@@ -425,11 +404,26 @@ abstract class Data_Source extends Container
                     Data_Source::getLogger()->fatal(['Unknown data source query statement type {$0}', $queryType], __FILE__, __LINE__, null, $query);
             }
         } catch (Exception $e) {
-            Data_Source::getLogger()->log('sql error: ' . str_replace("\t", '', str_replace("\n", ' ', $query->getSql())) . ' [' . implode(', ', $query->getBinds()) . '] ' . Logger::microtimeResult($startTime));
+            Data_Source::getLogger()->log([
+                'query error: {$0} [{$1}] {$2}',
+                [
+                    print_r($cache['queryBody'], true),
+                    implode(', ', $cache['queryParams']),
+                    Logger::microtimeResult($startTime)
+                ]
+            ], Logger::DANGER);
+
             Data_Source::getLogger()->fatal('Data source execute query failed', __FILE__, __LINE__, $e, $query);
         }
 
-        Data_Source::getLogger()->log('sql query: ' . str_replace("\t", '', str_replace("\n", ' ', $query->getSql())) . ' [' . implode(', ', $query->getBinds()) . '] ' . Logger::microtimeResult($startTime));
+        Data_Source::getLogger()->log([
+            'query: {$0} [{$1}] {$2}',
+            [
+                print_r($cache['queryBody'], true),
+                implode(', ', $cache['queryParams']),
+                Logger::microtimeResult($startTime)
+            ]
+        ]);
 
         return $queryResult;
     }
@@ -448,21 +442,33 @@ abstract class Data_Source extends Container
     private function getQueryResult(Query $query)
     {
         $queryCommand = 'execute' . ucfirst($query->getQueryType());
-        return Query_Result::create($query->getModelClass(), $this->$queryCommand($this->getStatement($query), $query));
+
+        $data = $this->$queryCommand($query);
+
+        if (empty($data)) {
+            Data_Source::getLogger()->fatal(
+                [
+                    'Failed creating result of query \'{$0}\' [$1] with data source {$2}',
+                    [$data['queryBody'], implode(', ', $data['queryParams']), $query->getDataSourceKey()]
+                ], __FILE__, __LINE__, null, $query
+            );
+        }
+
+        return Query_Result::create($query->getModelClass(), $data);
     }
 
     /**
      * Prepare query statement for query
      *
-     * @param Query $query
+     * @param $body
+     * @param array $binds
      * @return mixed
-     *
      * @author anonymous <email>
      *
      * @version 0
      * @since 0
      */
-    abstract public function getStatement(Query $query);
+    abstract public function getStatement($body, array $binds);
 
     /**
      * Return query translator class

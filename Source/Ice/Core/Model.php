@@ -391,7 +391,7 @@ abstract class Model
 
         $columnName = $modelMapping[$fieldName];
 
-        $pkColumnNames = $modelClass::getScheme()->getIndexes()['PRIMARY KEY']['PRIMARY'];
+        $pkColumnNames = $modelClass::getScheme()->getPkColumnNames();
 
         return in_array($columnName, $pkColumnNames);
     }
@@ -970,7 +970,7 @@ abstract class Model
                 function ($columnName) use ($fieldNames) {
                     return $fieldNames[$columnName];
                 },
-                self::getScheme()->getIndexes()['PRIMARY KEY']['PRIMARY']
+                self::getScheme()->getPkColumnNames()
             )
         );
     }
@@ -1139,7 +1139,7 @@ abstract class Model
      * Insert or update model
      *
      * @param array $fields
-     * @param string|null $sourceName
+     * @param string|null $dataSourceKey
      * @param bool $update
      * @return Model
      * @throws Exception
@@ -1149,7 +1149,7 @@ abstract class Model
      * @version 0.4
      * @since 0.4
      */
-    public function save(array $fields = [], $sourceName = null, $update = false)
+    public function save(array $fields = [], $dataSourceKey = null, $update = false)
     {
         /** @var Model $modelClass */
         $modelClass = get_class($this);
@@ -1163,7 +1163,7 @@ abstract class Model
             $this->beforeInsert();
 
             $insertId = $modelClass::query()
-                ->insert($affected, $update, $sourceName)
+                ->insert($affected, $update, $dataSourceKey)
                 ->getInsertId();
 
             $this->set(reset($insertId));
@@ -1174,7 +1174,7 @@ abstract class Model
 
             $modelClass::query()
                 ->pk($this->getPk())
-                ->update($affected, $sourceName);
+                ->update($affected, $dataSourceKey);
 
             $this->afterUpdate();
         }

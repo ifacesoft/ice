@@ -53,13 +53,6 @@ class Query
     private $_bindParts = [];
 
     /**
-     * Translated query
-     *
-     * @var string
-     */
-    private $_sql = null;
-
-    /**
      * Cache tags  (validate|invalidate)
      *
      * @var array
@@ -78,7 +71,7 @@ class Query
      *
      * @var array
      */
-    private $_sqlParts = null;
+    private $_bodyParts = null;
 
     /**
      * Query sql md5 hash
@@ -136,7 +129,7 @@ class Query
         $query->_queryType = $queryType;
         $query->_modelClass = $modelClass;
         $query->_cacheTags = $cacheTags;
-        $query->_sqlParts = $sqlParts;
+        $query->_bodyParts = $sqlParts;
 
         return $query;
     }
@@ -185,7 +178,7 @@ class Query
      */
     public function getLimit()
     {
-        return $this->_sqlParts[Query_Builder::PART_LIMIT];
+        return $this->_bodyParts[Query_Builder::PART_LIMIT];
     }
 
     /**
@@ -200,7 +193,7 @@ class Query
      */
     public function isCalcFoundRows()
     {
-        return reset($this->_sqlParts[Query_Builder::PART_SELECT]);
+        return reset($this->_bodyParts[Query_Builder::PART_SELECT]);
     }
 
     /**
@@ -285,27 +278,6 @@ class Query
     }
 
     /**
-     * Return translated query
-     *
-     * @return string
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since 0.0
-     */
-    public function getSql()
-    {
-        if ($this->_sql) {
-            return $this->_sql;
-        }
-
-        $queryTranslatorClass = $this->getDataSource()->getQueryTranslatorClass();
-
-        return $this->_sql = $queryTranslatorClass::getInstance()->translate($this->_sqlParts);
-    }
-
-    /**
      * Return data source name
      *
      * @return Data_Source
@@ -317,7 +289,7 @@ class Query
      */
     public function getDataSource()
     {
-        return Data_Source::getInstance($this->_dataSourceKey);
+        return Data_Source::getInstance($this->getDataSourceKey());
     }
 
     /**
@@ -384,8 +356,49 @@ class Query
         return $this->_hash . '/' . $this->_bindHash;
     }
 
+    /**
+     * Execute query
+     *
+     * @param int $ttl
+     * @return Query_Result
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.4
+     */
     public function execute($ttl = 3600)
     {
         return $this->getDataSource()->execute($this, $ttl);
+    }
+
+    /**
+     * Return data source key of query
+     *
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.4
+     */
+    public function getDataSourceKey()
+    {
+        return $this->_dataSourceKey;
+    }
+
+    /**
+     * Return query body parts
+     *
+     * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.4
+     */
+    public function getBodyParts()
+    {
+        return $this->_bodyParts;
     }
 }

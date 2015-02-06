@@ -173,7 +173,6 @@ class Mongodb extends Data_Provider
     {
         $options = $this->getOptions(__CLASS__);
 
-        Logger::debug($options);
         try {
             $connection = new \MongoClient('mongodb://' . $options['host'] . ':' . $options['port']);
         } catch (\MongoConnectionException $e) {

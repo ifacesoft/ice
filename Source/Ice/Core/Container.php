@@ -91,23 +91,16 @@ abstract class Container
         /** @var Container|Core $baseClass */
         $baseClass = $class::getBaseClass();
 
-        if (!$key && $class == $baseClass) {
-            /** @var Container|Core $defaultClass */
-            $defaultClass = $baseClass::getDefaultClass();
+        if ($class == $baseClass) {
+            if (!$key) {
+                return $baseClass::getInstance($class::getDefaultClassKey(), $ttl);
+            } else if (is_string($key) && strpos($key, '/')) {
+                list($class, $key) = explode('/', $key);
 
-            return $defaultClass::getInstance(null, $ttl);
-        }
+                $class = Object::getClass($baseClass, $class);
 
-        if (!$key) {
-            return $baseClass::getInstance($class::getDefaultClassKey(), $ttl);
-        }
-
-        if ($class == $baseClass && is_string($key) && strpos($key, '/')) {
-            list($class, $key) = explode('/', $key);
-
-            $class = Object::getClass($baseClass, $class);
-
-            return $class::getInstance($key, $ttl);
+                return $class::getInstance($key, $ttl);
+            }
         }
 
         if (is_string($key) && String::startsWith($key, 'default')) {
@@ -152,22 +145,6 @@ abstract class Container
         }
 
         return $object;
-    }
-
-    /**
-     * Return default class
-     *
-     * @return string
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since 0.4
-     */
-    protected static function getDefaultClass()
-    {
-        Resource::getLogger()->fatal(['Implementation {$0} is required for {$1}', [__FUNCTION__, self::getClass()]], __FILE__, __LINE__);
-        return null;
     }
 
     /**
