@@ -297,7 +297,7 @@ class Model_Collection implements IteratorAggregate, Countable
     /**
      * Remove from data source
      *
-     * @param string|null $sourceName
+     * @param string|null $dataSourceKey
      * @return Model_Collection
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -305,14 +305,14 @@ class Model_Collection implements IteratorAggregate, Countable
      * @version 0.4
      * @since 0.4
      */
-    public function remove($sourceName = null)
+    public function remove($dataSourceKey = null)
     {
         $modelClass = $this->getModelClass();
 
         $pkFieldNames = $modelClass::getPkFieldNames();
 
         $this->_rows = $modelClass::query()
-            ->delete(Arrays::column($this->getRows(), reset($pkFieldNames)), $sourceName)
+            ->delete(Arrays::column($this->getRows(), reset($pkFieldNames)), $dataSourceKey)
             ->getRows();
 
         $this->_query = null;
@@ -386,7 +386,7 @@ class Model_Collection implements IteratorAggregate, Countable
     /**
      * Insert or update collection
      *
-     * @param string|null $sourceName
+     * @param string|null $dataSourceKey
      * @param bool $update
      * @return Model_Collection
      *
@@ -395,11 +395,11 @@ class Model_Collection implements IteratorAggregate, Countable
      * @version 0.4
      * @since 0.4
      */
-    public function save($sourceName = null, $update = false)
+    public function save($dataSourceKey = null, $update = false)
     {
         $modelClass = $this->getModelClass();
         $this->_rows = $modelClass::query()
-            ->insert($this->getRows(), $update, $sourceName)
+            ->insert($this->getRows(), $update, $dataSourceKey)
             ->getRows();
 
         $this->_query = null;

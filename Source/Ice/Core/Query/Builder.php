@@ -945,7 +945,7 @@ class Query_Builder
      * @param null $fieldAlias
      * @param null $modelClass
      * @param null $tableAlias
-     * @param string|null $sourceName
+     * @param string|null $dataSourceKey
      * @param int $ttl
      * @return Query_Result
      *
@@ -954,13 +954,13 @@ class Query_Builder
      * @version 0.2
      * @since 0.0
      */
-    public function select($fieldName, $fieldAlias = null, $modelClass = null, $tableAlias = null, $sourceName = null, $ttl = 3600)
+    public function select($fieldName, $fieldAlias = null, $modelClass = null, $tableAlias = null, $dataSourceKey = null, $ttl = 3600)
     {
         $this->_queryType = Query_Builder::TYPE_SELECT;
 
         $this->_select($fieldName, $fieldAlias, $modelClass, $tableAlias);
 
-        return $this->getQuery($sourceName)->execute($ttl);
+        return $this->getQuery($dataSourceKey)->execute($ttl);
     }
 
     /**
@@ -1124,7 +1124,7 @@ class Query_Builder
      * Return query result for delete query
      *
      * @param array $pkValues
-     * @param string|null $sourceName
+     * @param string|null $dataSourceKey
      * @param int $ttl
      * @return Query_Result
      *
@@ -1133,14 +1133,14 @@ class Query_Builder
      * @version 0.2
      * @since 0.0
      */
-    public function delete($pkValues = [], $sourceName = null, $ttl = 3600)
+    public function delete($pkValues = [], $dataSourceKey = null, $ttl = 3600)
     {
         $this->_queryType = Query_Builder::TYPE_DELETE;
         $this->_sqlParts[Query_Builder::PART_WHERE]['_delete'] = $this->_modelClass;
 
         $this->inPk((array)$pkValues);
 
-        return $this->getQuery($sourceName)->execute($ttl);
+        return $this->getQuery($dataSourceKey)->execute($ttl);
     }
 
     /**
@@ -1419,7 +1419,7 @@ class Query_Builder
     /**
      * Execute query create table
      *
-     * @param string|null $sourceName
+     * @param string|null $dataSourceKey
      * @param int $ttl
      * @return Query_Result
      *
@@ -1428,16 +1428,16 @@ class Query_Builder
      * @version 0.2
      * @since 0.2
      */
-    public function create($sourceName = null, $ttl = 3600)
+    public function create($dataSourceKey = null, $ttl = 3600)
     {
         $this->_queryType = Query_Builder::TYPE_CREATE;
-        return $this->getQuery($sourceName)->execute($ttl);
+        return $this->getQuery($dataSourceKey)->execute($ttl);
     }
 
     /**
      * Execute query drop table
      *
-     * @param string|null $sourceName
+     * @param string|null $dataSourceKey
      * @param int $ttl
      * @return Query_Result
      *
@@ -1446,11 +1446,11 @@ class Query_Builder
      * @version 0.2
      * @since 0.2
      */
-    public function drop($sourceName = null, $ttl = 3600)
+    public function drop($dataSourceKey = null, $ttl = 3600)
     {
         $this->_queryType = Query_Builder::TYPE_DROP;
         $this->_sqlParts[self::PART_DROP]['_drop'] = $this->_modelClass;
-        return $this->getQuery($sourceName)->execute($ttl);
+        return $this->getQuery($dataSourceKey)->execute($ttl);
     }
 
     /**

@@ -142,6 +142,9 @@ class Module_Create extends Action
                         strtolower($moduleAlias) => $moduleAlias,
                     ]
                 ],
+                'Ice\Helper\Api_Yandex' => [
+                    'translateKey' => ''
+                ],
                 'Ice\Core\Data_Source' => [
                     'Ice:Mysqli/default' => $input['scheme'],
                 ],

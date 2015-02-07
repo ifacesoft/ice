@@ -2,25 +2,18 @@
 
 namespace Ice\Core;
 
-use Ice\Helper\Console;
 use Ice\Model\Test;
 use PHPUnit_Framework_TestCase;
 
 class ModelTest extends PHPUnit_Framework_TestCase
 {
-    public function setUp()
+    public function testCrud()
     {
-        Test::dropTable();
-        Test::createTable();
-    }
+        foreach (Data_Source::getConfig()->gets('default') as $dataSourceClass => $scheme) {
+            $dataSourceKey = $dataSourceClass . '/default.' . $scheme;
 
-    public function testActiveRecordCrud()
-    {
-//        foreach (Data_Source::getConfig()->gets('default') as $dataSourceClass => $scheme) {
-//            $dataSourceKey = $dataSourceClass . '/default.' . $scheme;
-
-//        $dataSourceKey = 'Ice:Mongodb/default.test';
-        $dataSourceKey = 'Ice:Mysqli/default.test';
+            Test::dropTable($dataSourceKey);
+            Test::createTable($dataSourceKey);
 
             $user1 = Test::create([
                 '/name' => 'name',
@@ -44,11 +37,13 @@ class ModelTest extends PHPUnit_Framework_TestCase
             $this->assertEquals($user1, $user2);
             $this->assertEquals($user2->test_name, $user4->test_name);
 
+            $pkValue = $user2->getPk();
+
             $user2->remove($dataSourceKey);
 
-            $user3 = Test::getModel(1, '/pk', $dataSourceKey);
+            $user3 = Test::getModel($pkValue, '/pk', $dataSourceKey);
 
             $this->assertNull($user3);
         }
-//    }
+    }
 }

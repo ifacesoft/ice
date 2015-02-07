@@ -37,20 +37,21 @@ class Mongodb extends Data_Source
 
         $statement = $this->getStatement($data[Query_Result::QUERY_BODY], $data[Query_Result::QUERY_PARAMS]);
 
-        Logger::debug($statement);
-
         /** @var Model $modelClass */
         $modelClass = $query->getModelClass();
-        $modelName = $modelClass::getClassName();
+        $tableName = $modelClass::getTableName();
+
+        $pkFieldNames = $modelClass::getPkFieldNames();
+
+        $pkFieldName = count($pkFieldNames) == 1 ? reset($pkFieldNames) : null;
 
         $data[Query_Result::ROWS] = [];
 
-        foreach ($query->getDataSource()->getConnection()->$modelName->find($statement['where']['data'], $statement['select']['columnNames']) as $row) {
-            $data[Query_Result::ROWS][$row['_id']->{'$id'}] = $row;
+        foreach ($query->getDataSource()->getConnection()->$tableName->find($statement['where']['data'], $statement['select']['columnNames']) as $row) {
+            $pkFieldValue = $row['_id']->{'$id'};
+            unset($row['_id']);
+            $data[Query_Result::ROWS][] = array_merge([$pkFieldName => $pkFieldValue], $row);
         }
-
-        Logger::debug($data[Query_Result::ROWS]);die();
-
         $data[Query_Result::NUM_ROWS] = count($data[Query_Result::ROWS]);
 
         $data[Query_Result::QUERY] = $query;
@@ -80,9 +81,9 @@ class Mongodb extends Data_Source
 
         /** @var Model $modelClass */
         $modelClass = $query->getModelClass();
-        $modelName = $modelClass::getClassName();
+        $tableName = $modelClass::getTableName();
 
-        $query->getDataSource()->getConnection()->$modelName->batchInsert($statement['insert']['data']);
+        $query->getDataSource()->getConnection()->$tableName->batchInsert($statement['insert']['data']);
 
         $pkFieldNames = $modelClass::getPkFieldNames();
 
@@ -91,10 +92,11 @@ class Mongodb extends Data_Source
         $data[Query_Result::ROWS] = [];
 
         foreach ($statement['insert']['data'] as $row) {
-            $id = $row['_id']->{'$id'};
-            $insertId = [$pkFieldName => $id];
+            $pkFieldValue = $row['_id']->{'$id'};
+            unset($row['_id']);
+            $insertId = [$pkFieldName => $pkFieldValue];
             $data[Query_Result::INSERT_ID][] = $insertId;
-            $data[Query_Result::ROWS][$id] = array_merge($insertId, $row);
+            $data[Query_Result::ROWS][$pkFieldValue] = array_merge($insertId, $row);
         }
 
         $data[Query_Result::AFFECTED_ROWS] = count($statement['insert']['data']);
@@ -125,9 +127,9 @@ class Mongodb extends Data_Source
 
         /** @var Model $modelClass */
         $modelClass = $query->getModelClass();
-        $modelName = $modelClass::getClassName();
+        $tableName = $modelClass::getTableName();
 
-        $query->getDataSource()->getConnection()->$modelName->update($statement['where']['data'], ['$set' => $statement['update']['data']]);
+        $query->getDataSource()->getConnection()->$tableName->update($statement['where']['data'], $statement['update']['data']);
 
         $data[Query_Result::AFFECTED_ROWS] = 1;
 
@@ -148,7 +150,25 @@ class Mongodb extends Data_Source
      */
     public function executeDelete(Query $query)
     {
-        throw new Exception('Not implemented');
+        $data = [];
+
+        $queryTranslatorClass = $this->getQueryTranslatorClass();
+        $data[Query_Result::QUERY_BODY] = $queryTranslatorClass::getInstance()->translate($query->getBodyParts());
+        $data[Query_Result::QUERY_PARAMS] = $query->getBinds();
+
+        $statement = $this->getStatement($data[Query_Result::QUERY_BODY], $data[Query_Result::QUERY_PARAMS]);
+
+        /** @var Model $modelClass */
+        $modelClass = $query->getModelClass();
+        $tableName = $modelClass::getTableName();
+
+        $query->getDataSource()->getConnection()->$tableName->remove($statement['where']['data']);
+
+        $data[Query_Result::AFFECTED_ROWS] = 1;
+
+        $data[Query_Result::QUERY] = $query;
+
+        return $data;
     }
 
     /**
@@ -163,7 +183,15 @@ class Mongodb extends Data_Source
      */
     public function executeCreate(Query $query)
     {
-        throw new Exception('Not implemented');
+        /** @var Model $modelClass */
+        $modelClass = $query->getModelClass();
+        $tableName = $modelClass::getTableName();
+
+        $query->getDataSource()->getConnection()->$tableName;
+
+        $data[Query_Result::QUERY] = $query;
+
+        return $data;
     }
 
     /**
@@ -178,7 +206,15 @@ class Mongodb extends Data_Source
      */
     public function executeDrop(Query $query)
     {
-        throw new Exception('Not implemented');
+        /** @var Model $modelClass */
+        $modelClass = $query->getModelClass();
+        $tableName = $modelClass::getTableName();
+
+        $query->getDataSource()->getConnection()->$tableName->drop();
+
+        $data[Query_Result::QUERY] = $query;
+
+        return $data;
     }
 
     /**
@@ -242,6 +278,7 @@ class Mongodb extends Data_Source
     {
         foreach ($body as $statementType => &$data) {
             if ($statementType == 'select') {
+                $data['columnNames'] = array_keys($data['columnNames']);
                 continue;
             }
 
@@ -259,15 +296,23 @@ class Mongodb extends Data_Source
             for ($i = 0; $i < $data['rowCount']; $i++) {
                 $row = [];
 
-                foreach ($data['columnNames'] as $columnName) {
+                foreach ($data['columnNames'] as $columnName => $operator) {
                     if (in_array($columnName, $pkColumnNames)) {
                         $row['_id'] = new MongoId(array_shift($binds));
                     } else {
-                        $row[$columnName] = array_shift($binds);
+                        if ($operator) {
+                            if (!isset($row[$operator])) {
+                                $row[$operator] = [];
+                            }
+
+                            $row[$operator][$columnName] = array_shift($binds);
+                        } else {
+                            $row[$columnName] = array_shift($binds);
+                        }
                     }
                 }
 
-                if ($statementType == 'where') {
+                if ($statementType == 'where' || $statementType == 'update') {
                     $data['data'] = $row;
                 } else {
                     $data['data'][] = $row;

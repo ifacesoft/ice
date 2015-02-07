@@ -11,6 +11,7 @@ namespace Ice\Core;
 use Ice;
 use Ice\Core;
 use Ice\Exception\File_Not_Found;
+use Ice\Helper\Api_Yandex;
 use Ice\Helper\File;
 use Ice\View\Render\Replace;
 
@@ -97,11 +98,6 @@ class Resource
      */
     public function get($message, $params = null, $class = null)
     {
-        // TODO: Remove..
-        if (is_array($message)) {
-            Resource::getLogger()->warning('Method get not be array', __FILE__, __LINE__);
-        }
-
         /** @var string $message */
         /** @var Core $class */
         $resource = isset($class)
@@ -118,7 +114,8 @@ class Resource
 
         $locale = Request::locale();
 
-        if (isset($resource[$message][$locale])) {
+        if (!isset($resource[$message][$locale])) {
+            $resource = self::update($message, $class);
             $message = $resource[$message][$locale];
         }
 
@@ -140,15 +137,41 @@ class Resource
      */
     private static function update($message, $class)
     {
-        $resourceFile = Loader::getFilePath($class, '.res.php', 'Resource/', false, true);
+        $resourceFile = Loader::getFilePath($class, '.res.php', 'Resource/', false, true, true);
 
         $data = file_exists($resourceFile)
             ? File::loadData($resourceFile)
             : [];
 
-        $data[$message] = [
-            Request::locale() => $message
-        ];
+        if (!isset($data[$message])) {
+            $data[$message] = [];
+        }
+
+        try {
+            $from = Api_Yandex::detect($message);
+
+            $langs = [];
+
+            foreach (Api_Yandex::getLangs() as $lang) {
+                if (Ice\Helper\String::startsWith($lang, $from)) {
+                    $to = substr($lang, strlen($from . '_'));
+
+                    if (!in_array($to, $data[$message])) {
+                        $langs[$to] = $lang;
+                    }
+                }
+            }
+
+            foreach ($langs as $to => $lang) {
+                if (is_array($lang)) {
+                    Logger::debug($langs);die();
+                }
+                $data[$message][$to] = Api_Yandex::translate($message, $lang);
+            }
+
+        } catch (\Exception $e) {
+            $data[$message][Request::locale()] = $message;
+        }
 
         return File::createData($resourceFile, $data);
     }
