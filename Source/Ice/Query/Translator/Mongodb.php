@@ -54,10 +54,16 @@ class Mongodb extends Query_Translator
             return $this->translateValues($part);
         }
 
+        $columnNames = [];
+
+        foreach (Mapping::columnNames($modelClass, $part['fieldNames']) as $columnName) {
+            $columnNames[$columnName] = '$set';
+        }
+
         return [
             'update' => [
                 'modelClass' => $modelClass,
-                'columnNames' => Mapping::columnNames($modelClass, $part['fieldNames']),
+                'columnNames' => $columnNames,
                 'rowCount' => $part['rowCount']
             ]
         ];
@@ -95,10 +101,16 @@ class Mongodb extends Query_Translator
         /** @var Model $modelClass */
         $modelClass = $part['modelClass'];
 
+        $columnNames = [];
+
+        foreach (Mapping::columnNames($modelClass, $part['fieldNames']) as $columnName) {
+            $columnNames[$columnName] = null;
+        }
+
         return [
             'insert' => [
                 'modelClass' => $modelClass,
-                'columnNames' => Mapping::columnNames($modelClass, $part['fieldNames']),
+                'columnNames' => $columnNames,
                 'rowCount' => $part['rowCount']
             ]
         ];
@@ -184,10 +196,16 @@ class Mongodb extends Query_Translator
             $where[] = $fieldName;
         }
 
+        $columnNames = [];
+
+        foreach (Mapping::columnNames($modelClass, $where) as $columnName) {
+            $columnNames[$columnName] = null;
+        }
+
         return [
             'where' => [
                 'modelClass' => $modelClass,
-                'columnNames' => Mapping::columnNames($modelClass, $where),
+                'columnNames' => $columnNames,
             ]
         ];
 
@@ -234,10 +252,16 @@ class Mongodb extends Query_Translator
 
         list($tableAlias, $fieldNames) = $items;
 
+        $columnNames = [];
+
+        foreach (Mapping::columnNames($modelClass, array_keys($fieldNames)) as $columnName) {
+            $columnNames[$columnName] = null;
+        }
+
         return [
             'select' => [
                 'modelClass' => $modelClass,
-                'columnNames' => Mapping::columnNames($modelClass, array_keys($fieldNames)),
+                'columnNames' => $columnNames,
             ]
         ];
 

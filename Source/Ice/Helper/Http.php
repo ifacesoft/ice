@@ -9,8 +9,15 @@
 namespace Ice\Helper;
 
 
+use Ice\Core\Request;
+
 class Http
 {
+    /**
+     * Headers by http response code
+     *
+     * @var array
+     */
     private static $_statusCodeHeaders = [
         '400' => 'HTTP/1.1 400 Bad Request',
         '403' => 'HTTP/1.1 403 Forbidden',
@@ -18,6 +25,11 @@ class Http
         '500' => 'HTTP/1.1 500 Internal Server Error'
     ];
 
+    /**
+     * Mime types by file extensions
+     *
+     * @var array
+     */
     private static $_mimeTypes = [
         'txt' => 'text/plain',
         'htm' => 'text/html',
@@ -73,13 +85,64 @@ class Http
         'ods' => 'application/vnd.oasis.opendocument.spreadsheet',
     ];
 
-    public static function getContentTypeHeader($ext)
+    /**
+     * Return content type header by file extension
+     *
+     * @param $extension
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @package Ice
+     * @subpackage Helper
+     *
+     * @version 0.4
+     * @since 0.4
+     */
+    public static function getContentTypeHeader($extension)
     {
-        return 'Content-Type: ' . Http::$_mimeTypes[$ext] . '; charset=utf-8';
+        return 'Content-Type: ' . Http::$_mimeTypes[$extension] . '; charset=utf-8';
     }
 
+    /**
+     * Return status code header by code
+     *
+     * @param $code
+     * @return mixed
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @package Ice
+     * @subpackage Helper
+     *
+     * @version 0.4
+     * @since 0.4
+     */
     public static function getStatusCodeHeader($code)
     {
         return Http::$_statusCodeHeaders[$code];
+    }
+
+    /**
+     * Gets content via http
+     *
+     * @param $url
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @package Ice
+     * @subpackage Helper
+     *
+     * @version 0.4
+     * @since 0.4
+     */
+    public static function getContents($url)
+    {
+        if (Request::isCli()) {
+            fwrite(STDOUT, Console::getText($url, Console::C_GREEN_B) . "\n");
+        }
+
+        return file_get_contents($url);
     }
 }

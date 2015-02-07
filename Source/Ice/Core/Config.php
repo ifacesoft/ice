@@ -14,6 +14,7 @@ use Ice\Core;
 use Ice\Data\Provider\Repository;
 use Ice\Helper\Config as Helper_Config;
 use Ice\Helper\File;
+use Ice\Helper\Object;
 
 /**
  * Class Config
@@ -133,7 +134,7 @@ class Config
             $config = array_merge_recursive($class::$config, $selfConfig);
         }
 
-        $baseClass = $class::getBaseClass();
+        $baseClass = Object::getBaseClass($class);
 
         if ($postfix) {
             $class .= '_' . $postfix;

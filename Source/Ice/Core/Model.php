@@ -723,7 +723,7 @@ abstract class Model
      *
      * @param array $pagination
      * @param string $fieldNames
-     * @param string|null $sourceName
+     * @param string|null $dataSourceKey
      * @param int $ttl
      * @return array
      * @author dp <denis.a.shestakov@gmail.com>
@@ -731,11 +731,11 @@ abstract class Model
      * @version 0.2
      * @since 0.0
      */
-    public static function getRows(array $pagination, $fieldNames = '*', $sourceName = null, $ttl = 3600)
+    public static function getRows(array $pagination, $fieldNames = '*', $dataSourceKey = null, $ttl = 3600)
     {
         return self::query()
             ->setPaginator($pagination)
-            ->select($fieldNames, null, null, null, $sourceName, $ttl)
+            ->select($fieldNames, null, null, null, $dataSourceKey, $ttl)
             ->getRows();
     }
 
@@ -744,7 +744,7 @@ abstract class Model
      *
      * @param array $pagination
      * @param string $fieldNames
-     * @param string|null $sourceName
+     * @param string|null $dataSourceKey
      * @param int $ttl
      * @return Model_Collection
      * @author dp <denis.a.shestakov@gmail.com>
@@ -752,12 +752,12 @@ abstract class Model
      * @version 0.2
      * @since 0.0
      */
-    public static function getCollection($fieldNames, array $pagination = [1, 1000, 0], $sourceName = null, $ttl = 3600)
+    public static function getCollection($fieldNames, array $pagination = [1, 1000, 0], $dataSourceKey = null, $ttl = 3600)
     {
         return self::query()
             ->setPaginator($pagination)
             ->select($fieldNames)
-            ->getModelCollection($sourceName, $ttl);
+            ->getModelCollection($dataSourceKey, $ttl);
     }
 
     /**
@@ -865,7 +865,7 @@ abstract class Model
      *
      * @param array $fieldNameValues
      * @param $fieldNames
-     * @param string|null $sourceName
+     * @param string|null $dataSourceKey
      * @param int $ttl
      * @return Model|null
      *
@@ -874,12 +874,12 @@ abstract class Model
      * @version 0.4
      * @since 0.0
      */
-    public static function getModelBy(array $fieldNameValues, $fieldNames, $sourceName = null, $ttl = 3600)
+    public static function getModelBy(array $fieldNameValues, $fieldNames, $dataSourceKey = null, $ttl = 3600)
     {
         return self::query()
             ->eq($fieldNameValues)
             ->limit(1)
-            ->select($fieldNames, null, null, null, $sourceName, $ttl)
+            ->select($fieldNames, null, null, null, $dataSourceKey, $ttl)
             ->getModel();
     }
 
@@ -888,7 +888,7 @@ abstract class Model
      *
      * @param $pk
      * @param array|string $fieldNames
-     * @param string|null $sourceName
+     * @param string|null $dataSourceKey
      * @param int $ttl
      * @return Model|null
      * @author dp <denis.a.shestakov@gmail.com>
@@ -896,12 +896,12 @@ abstract class Model
      * @version 0.2
      * @since 0.0
      */
-    public static function getModel($pk, $fieldNames, $sourceName = null, $ttl = 3600)
+    public static function getModel($pk, $fieldNames, $dataSourceKey = null, $ttl = 3600)
     {
         return self::query()
             ->pk($pk)
             ->limit(1)
-            ->select($fieldNames, null, null, null, $sourceName, $ttl)
+            ->select($fieldNames, null, null, null, $dataSourceKey, $ttl)
             ->getModel();
     }
 
@@ -910,7 +910,7 @@ abstract class Model
      *
      * @param array $pk
      * @param string $fieldNames
-     * @param string|null $sourceName
+     * @param string|null $dataSourceKey
      * @param int $ttl
      * @return array
      *
@@ -919,11 +919,11 @@ abstract class Model
      * @version 0.2
      * @since 0.2
      */
-    public static function getRow($pk = [], $fieldNames = '*', $sourceName = null, $ttl = 3600)
+    public static function getRow($pk = [], $fieldNames = '*', $dataSourceKey = null, $ttl = 3600)
     {
         return self::query()
             ->pk($pk)
-            ->select($fieldNames, null, null, null, $sourceName, $ttl)
+            ->select($fieldNames, null, null, null, $dataSourceKey, $ttl)
             ->getRow($pk);
     }
 
@@ -978,14 +978,14 @@ abstract class Model
     /**
      * Create table by model
      *
+     * @param string|null $dataSourceKey
      * @return Query_Result
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.2
      * @since 0.2
      */
-    public static function createTable()
+    public static function createTable($dataSourceKey = null)
     {
         $queryBuilder = self::query();
 
@@ -993,22 +993,22 @@ abstract class Model
             $queryBuilder->column($name, $scheme);
         }
 
-        return $queryBuilder->create();
+        return $queryBuilder->create($dataSourceKey);
     }
 
     /**
      * Drop table by model
      *
+     * @param string|null $dataSourceKey
      * @return Query_Result
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.2
      * @since 0.2
      */
-    public static function dropTable()
+    public static function dropTable($dataSourceKey = null)
     {
-        return self::query()->drop();
+        return self::query()->drop($dataSourceKey);
     }
 
     /**
@@ -1058,7 +1058,7 @@ abstract class Model
      * Execute select from data source
      *
      * @param $fieldNames
-     * @param string|null $sourceName
+     * @param string|null $dataSourceKey
      * @param int $ttl
      * @return Model|null
      * @author dp <denis.a.shestakov@gmail.com>
@@ -1066,7 +1066,7 @@ abstract class Model
      * @version 0.2
      * @since 0.2
      */
-    public function find(array $fieldNames = [], $sourceName = null, $ttl = 3600)
+    public function find(array $fieldNames = [], $dataSourceKey = null, $ttl = 3600)
     {
         /** @var Model $modelClass */
         $modelClass = get_class($this);
@@ -1075,7 +1075,7 @@ abstract class Model
 
         $row = $modelClass::query()
             ->eq($affected)
-            ->select(array_merge($fieldNames, array_keys($affected)), null, null, null, $sourceName, $ttl)
+            ->select(array_merge($fieldNames, array_keys($affected)), null, null, null, $dataSourceKey, $ttl)
             ->getRow();
 
         if (!$row) {
@@ -1121,18 +1121,18 @@ abstract class Model
     /**
      * Execute insert or update model data
      *
-     * @param string|null $sourceName
+     * @param string|null $dataSourceKey
      * @return Model|null
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @deprecated 0.4 Use ->save($sourceName, true);
+     * @deprecated 0.4 Use ->save($dataSourceKey, true);
      * @version 0.1
      * @since 0.0
      */
-    public function insertOrUpdate($sourceName = null)
+    public function insertOrUpdate($dataSourceKey = null)
     {
-        return $this->save([], $sourceName, true);
+        return $this->save([], $dataSourceKey, true);
     }
 
     /**
@@ -1233,7 +1233,7 @@ abstract class Model
     /**
      * Execute delete for model
      *
-     * @param string|null $sourceName
+     * @param string|null $dataSourceKey
      * @return Model|null
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -1241,14 +1241,14 @@ abstract class Model
      * @version 0.2
      * @since 0.0
      */
-    public function remove($sourceName = null)
+    public function remove($dataSourceKey = null)
     {
         /** @var Model $modelClass */
         $modelClass = get_class($this);
 
         $this->beforeDelete();
 
-        $modelClass::query()->delete($this->getPk(), $sourceName);
+        $modelClass::query()->delete($this->getPk(), $dataSourceKey);
 
         $this->afterDelete();
 
@@ -1330,7 +1330,7 @@ abstract class Model
      * @param Model $modelClass
      * @param mixed $modelPk
      * @param Model|null $linkModelClass
-     * @param string|null $sourceName
+     * @param string|null $dataSourceKey
      * @param int $ttl
      * @return Model|null
      *
@@ -1339,7 +1339,7 @@ abstract class Model
      * @version 0.2
      * @since 0.0
      */
-    public function getLink($modelClass, $modelPk, $linkModelClass = null, $sourceName = null, $ttl = 3600)
+    public function getLink($modelClass, $modelPk, $linkModelClass = null, $dataSourceKey = null, $ttl = 3600)
     {
         /** @var Model $selfClass */
         $selfClass = get_class($this);
@@ -1363,7 +1363,7 @@ abstract class Model
                 strtolower($selfClassName) . '__fk' => $this->getPk(),
                 strtolower($className) . '__fk' => $modelPk
             ])
-            ->select('*', null, null, null, $sourceName, $ttl)
+            ->select('*', null, null, null, $dataSourceKey, $ttl)
             ->getModel();
     }
 }
