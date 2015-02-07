@@ -150,6 +150,10 @@ class Resource
         try {
             $from = Api_Yandex::detect($message);
 
+            if (!in_array($from, $data[$message])) {
+                $data[$message][$from] = $message;
+            }
+
             $langs = [];
 
             foreach (Api_Yandex::getLangs() as $lang) {
