@@ -55,6 +55,7 @@ class Query_Builder
     const SQL_COMPARSION_OPERATOR_GREATER = '>';
     const SQL_COMPARSION_OPERATOR_GREATER_OR_EQUAL = '>=';
     const SQL_COMPARSION_OPERATOR_LESS_OR_EQUAL = '<=';
+    const SQL_COMPARSION_KEYWORD_REGEXP = 'REGEXP';
     const SQL_COMPARSION_KEYWORD_LIKE = 'LIKE';
     const SQL_COMPARSION_KEYWORD_RLIKE = 'RLIKE';
     const SQL_COMPARSION_KEYWORD_RLIKE_REVERSE = 'RLIKE_REVERSE';
@@ -63,7 +64,6 @@ class Query_Builder
     const SQL_COMPARSION_KEYWORD_BETWEEN = 'BETWEEN';
     const SQL_COMPARSION_KEYWORD_IS_NULL = 'IS NULL';
     const SQL_COMPARSION_KEYWORD_IS_NOT_NULL = 'IS NOT NULL';
-
 
     /**
      * Main model class for builded query
@@ -471,6 +471,33 @@ class Query_Builder
             $sqlLogical,
             $fieldName,
             Query_Builder::SQL_COMPARSION_OPERATOR_GREATER_OR_EQUAL,
+            $value,
+            $modelClass,
+            $tableAlias
+        );
+    }
+
+    /**
+     * Set in query part where expression 'REGEXP ?'
+     *
+     * @param $fieldName
+     * @param $value
+     * @param null $modelClass
+     * @param null $tableAlias
+     * @param string $sqlLogical
+     * @return Query_Builder
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.4
+     */
+    public function regex($fieldName, $value, $modelClass = null, $tableAlias = null, $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
+    {
+        return $this->where(
+            $sqlLogical,
+            $fieldName,
+            Query_Builder::SQL_COMPARSION_KEYWORD_REGEXP,
             $value,
             $modelClass,
             $tableAlias

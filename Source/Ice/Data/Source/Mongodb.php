@@ -127,7 +127,7 @@ class Mongodb extends Data_Source
         $modelClass = $query->getModelClass();
         $modelName = $modelClass::getClassName();
 
-        $query->getDataSource()->getConnection()->$modelName->update($statement['where']['data'], ['$set' => $statement['update']['data']]);
+        $query->getDataSource()->getConnection()->$modelName->update($statement['where']['data'], [$statement['update']['data']]);
 
         $data[Query_Result::AFFECTED_ROWS] = 1;
 
