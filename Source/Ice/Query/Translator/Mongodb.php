@@ -452,7 +452,7 @@ class Mongodb extends Query_Translator
     protected function translateLimit($part)
     {
 //        if (empty($part)) {
-            return [];
+        return [];
 //        } else {
 //            Logger::debug($part);
 //            throw new Exception('Not implemented');

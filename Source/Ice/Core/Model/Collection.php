@@ -198,13 +198,16 @@ class Model_Collection implements IteratorAggregate, Countable
             $data = [$data];
         }
 
+        $pkFieldName = $modelClass::getPkFieldName();
+
         foreach ($data as $row) {
             $newRow = [];
             foreach ($row as $fieldName => $fieldValue) {
                 $newRow[$modelClass::getFieldName($fieldName)] = $fieldValue;
             }
             unset($row);
-            $this->_rows[] = $newRow;
+
+            $this->_rows[$newRow[$pkFieldName]] = $newRow;
         }
 
         $this->_query = null;

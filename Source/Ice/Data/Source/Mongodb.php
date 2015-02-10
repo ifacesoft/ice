@@ -47,10 +47,14 @@ class Mongodb extends Data_Source
 
         $data[Query_Result::ROWS] = [];
 
-        foreach ($query->getDataSource()->getConnection()->$tableName->find($statement['where']['data'], $statement['select']['columnNames']) as $row) {
+        $filter = isset($statement['where']) && isset($statement['where']['data'])
+            ? $statement['where']['data']
+            : [];
+
+        foreach ($query->getDataSource()->getConnection()->$tableName->find($filter, $statement['select']['columnNames']) as $row) {
             $pkFieldValue = $row['_id']->{'$id'};
             unset($row['_id']);
-            $data[Query_Result::ROWS][] = array_merge([$pkFieldName => $pkFieldValue], $row);
+            $data[Query_Result::ROWS][$pkFieldValue] = array_merge([$pkFieldName => $pkFieldValue], $row);
         }
         $data[Query_Result::NUM_ROWS] = count($data[Query_Result::ROWS]);
 
@@ -83,7 +87,13 @@ class Mongodb extends Data_Source
         $modelClass = $query->getModelClass();
         $tableName = $modelClass::getTableName();
 
-        $query->getDataSource()->getConnection()->$tableName->batchInsert($statement['insert']['data']);
+        try {
+            $query->getDataSource()->getConnection()->$tableName->batchInsert($statement['insert']['data']);
+        } catch (\Exception $e) {
+            foreach ($statement['insert']['data'] as $doc) {
+                $query->getDataSource()->getConnection()->$tableName->update(['_id' => $doc['_id']], $doc, ['upsert' => true]);
+            }
+        }
 
         $pkFieldNames = $modelClass::getPkFieldNames();
 
@@ -279,6 +289,7 @@ class Mongodb extends Data_Source
         foreach ($body as $statementType => &$data) {
             if ($statementType == 'select') {
                 $data['columnNames'] = array_keys($data['columnNames']);
+
                 continue;
             }
 
