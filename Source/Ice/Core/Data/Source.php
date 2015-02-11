@@ -348,6 +348,8 @@ abstract class Data_Source extends Container
             'queryParams' => []
         ];
 
+        $queryCommand = 'execute' . ucfirst($query->getQueryType());
+
         try {
             $queryType = $query->getQueryType();
             if (
@@ -355,7 +357,7 @@ abstract class Data_Source extends Container
                 $queryType == Query_Builder::TYPE_CREATE ||
                 $queryType == Query_Builder::TYPE_DROP
             ) {
-                return $this->getQueryResult($query);
+                return Query_Result::create($query->getModelClass(), $this->$queryCommand($query));
             }
 
             switch ($queryType) {
@@ -379,7 +381,7 @@ abstract class Data_Source extends Container
                         return Query_Result::create($query->getModelClass(), $cache['data']);
                     }
 
-                    $queryResult = $this->getQueryResult($query);
+                    $queryResult = Query_Result::create($query->getModelClass(), $this->$queryCommand($query));;
 
                     $cache['data'] = $queryResult->getResult();
                     $cache['queryBody'] = $queryResult->getQueryBody();
@@ -392,11 +394,11 @@ abstract class Data_Source extends Container
                 case Query_Builder::TYPE_INSERT:
                 case Query_Builder::TYPE_UPDATE:
                 case Query_Builder::TYPE_DELETE:
-                    $queryResult = $this->getQueryResult($query);
+                    $queryResult = Query_Result::create($query->getModelClass(), $this->$queryCommand($query));
 
-                $cache['data'] = $queryResult->getResult();
-                $cache['queryBody'] = $queryResult->getQueryBody();
-                $cache['queryParams'] = $queryResult->getQueryParams();
+                    $cache['data'] = $queryResult->getResult();
+                    $cache['queryBody'] = $queryResult->getQueryBody();
+                    $cache['queryParams'] = $queryResult->getQueryParams();
                     Cache::invalidate(__CLASS__, $query->getInvalidateTags());
                     break;
 
@@ -426,35 +428,6 @@ abstract class Data_Source extends Container
         ]);
 
         return $queryResult;
-    }
-
-    /**
-     * Execute query command and return query result
-     *
-     * @param Query $query
-     * @return Query_Result
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since 0.4
-     */
-    private function getQueryResult(Query $query)
-    {
-        $queryCommand = 'execute' . ucfirst($query->getQueryType());
-
-        $data = $this->$queryCommand($query);
-
-        if (empty($data)) {
-            Data_Source::getLogger()->fatal(
-                [
-                    'Failed creating result of query \'{$0}\' [$1] with data source {$2}',
-                    [$data['queryBody'], implode(', ', $data['queryParams']), $query->getDataSourceKey()]
-                ], __FILE__, __LINE__, null, $query
-            );
-        }
-
-        return Query_Result::create($query->getModelClass(), $data);
     }
 
     /**

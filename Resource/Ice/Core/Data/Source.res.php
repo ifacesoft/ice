@@ -29,6 +29,7 @@ return [
     ],
     'Data source not found for scheme {$0}' => [
         'ru' => 'Data source not found for scheme {$0}',
+        'en' => 'Data source not found for scheme {$0}',
     ],
     '#1264: {$0}' => [
         'ru' => '#1264: {$0}',

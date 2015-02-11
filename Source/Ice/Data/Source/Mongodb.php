@@ -288,8 +288,6 @@ class Mongodb extends Data_Source
     {
         foreach ($body as $statementType => &$data) {
             if ($statementType == 'select') {
-                $data['columnNames'] = array_keys($data['columnNames']);
-
                 continue;
             }
 
@@ -307,11 +305,23 @@ class Mongodb extends Data_Source
             for ($i = 0; $i < $data['rowCount']; $i++) {
                 $row = [];
 
-                foreach ($data['columnNames'] as $columnName => $operator) {
+                foreach ($data['columnNames'] as $columnName) {
+                    if (is_array($columnName)) {
+                        list($columnName, $operator) = each($columnName);
+                    }
+
                     if (in_array($columnName, $pkColumnNames)) {
-                        $row['_id'] = new MongoId(array_shift($binds));
+                        if (!isset($row['_id'])) {
+                            $row['_id'] = new MongoId(array_shift($binds));
+                        } else {
+                            if (is_array($row['_id'])) {
+                                $row['_id']['$in'][] = new MongoId(array_shift($binds));
+                            } else {
+                                $row['_id'] = ['$in' => [$row['_id'], new MongoId(array_shift($binds))]];
+                            }
+                        }
                     } else {
-                        if ($operator) {
+                        if (isset($operator)) {
                             if (!isset($row[$operator])) {
                                 $row[$operator] = [];
                             }
@@ -332,6 +342,10 @@ class Mongodb extends Data_Source
 
             unset($data['rowCount']);
             unset($data['columnNames']);
+        }
+
+        if (!empty($binds)) {
+            Mongodb::getLogger()->fatal('Bind params failure', __FILE__, __LINE__, null, $binds);
         }
 
         return $body;

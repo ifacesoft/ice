@@ -64,7 +64,14 @@ class Mysqli extends Data_Source
             $errno = $statement->errno;
             $error = $statement->error;
             $statement->close();
-            Data_Source::getLogger()->fatal(['#' . $errno . ': {$0}', $error], __FILE__, __LINE__);
+
+            Data_Source::getLogger()->fatal(
+                [
+                    '#' . $errno . ': {$0} - {$1} [{$2}]',
+                    [$error, print_r($data[Query_Result::QUERY_BODY], true), implode(', ', $data[Query_Result::QUERY_PARAMS])]
+                ],
+                __FILE__, __LINE__
+            );
         }
 //            $statement->store_result(); // Так почемуто не работает
         /** @var mysqli_result $result */
@@ -74,7 +81,14 @@ class Mysqli extends Data_Source
             $errno = $statement->errno;
             $error = $statement->error;
             $statement->close();
-            Data_Source::getLogger()->fatal(['#' . $errno . ': {$0}', $error], __FILE__, __LINE__);
+
+            Data_Source::getLogger()->fatal(
+                [
+                    '#' . $errno . ': {$0} - {$1} [{$2}]',
+                    [$error, print_r($data[Query_Result::QUERY_BODY], true), implode(', ', $data[Query_Result::QUERY_PARAMS])]
+                ],
+                __FILE__, __LINE__
+            );
         }
 
         /** @var Model $modelClass */
@@ -154,7 +168,7 @@ class Mysqli extends Data_Source
             $values = array_merge($values, $binds);
 
             if (call_user_func_array(array($statement, 'bind_param'), $this->makeValuesReferenced($values)) === false) {
-                Data_Source::getLogger()->fatal('Bind params failure', __FILE__, __LINE__);
+                Mysqli::getLogger()->fatal('Bind params failure', __FILE__, __LINE__, null, $types);
             }
         }
 
@@ -206,7 +220,14 @@ class Mysqli extends Data_Source
             $errno = $statement->errno;
             $error = $statement->error;
             $statement->close();
-            Data_Source::getLogger()->fatal(['#' . $errno . ': {$0}', $error], __FILE__, __LINE__);
+
+            Data_Source::getLogger()->fatal(
+                [
+                    '#' . $errno . ': {$0} - {$1} [{$2}]',
+                    [$error, print_r($data[Query_Result::QUERY_BODY], true), implode(', ', $data[Query_Result::QUERY_PARAMS])]
+                ],
+                __FILE__, __LINE__
+            );
         }
 
         /** @var Model $modelClass */
@@ -267,7 +288,14 @@ class Mysqli extends Data_Source
             $errno = $statement->errno;
             $error = $statement->error;
             $statement->close();
-            Data_Source::getLogger()->fatal(['#' . $errno . ': {$0}', $error], __FILE__, __LINE__);
+
+            Data_Source::getLogger()->fatal(
+                [
+                    '#' . $errno . ': {$0} - {$1} [{$2}]',
+                    [$error, print_r($data[Query_Result::QUERY_BODY], true), implode(', ', $data[Query_Result::QUERY_PARAMS])]
+                ],
+                __FILE__, __LINE__
+            );
         }
 
         /** @var Model $modelclass */
@@ -313,7 +341,14 @@ class Mysqli extends Data_Source
             $errno = $statement->errno;
             $error = $statement->error;
             $statement->close();
-            Data_Source::getLogger()->fatal(['#' . $errno . ': {$0}', $error], __FILE__, __LINE__);
+
+            Data_Source::getLogger()->fatal(
+                [
+                    '#' . $errno . ': {$0} - {$1} [{$2}]',
+                    [$error, print_r($data[Query_Result::QUERY_BODY], true), implode(', ', $data[Query_Result::QUERY_PARAMS])]
+                ],
+                __FILE__, __LINE__
+            );
         }
 
         $data[Query_Result::AFFECTED_ROWS] = $statement->affected_rows;
@@ -497,7 +532,14 @@ class Mysqli extends Data_Source
             $errno = $statement->errno;
             $error = $statement->error;
             $statement->close();
-            Data_Source::getLogger()->fatal(['#' . $errno . ': {$0}', $error], __FILE__, __LINE__);
+
+            Data_Source::getLogger()->fatal(
+                [
+                    '#' . $errno . ': {$0} - {$1} [{$2}]',
+                    [$error, print_r($data[Query_Result::QUERY_BODY], true), implode(', ', $data[Query_Result::QUERY_PARAMS])]
+                ],
+                __FILE__, __LINE__
+            );
         }
 
         $data[Query_Result::AFFECTED_ROWS] = $statement->affected_rows;
@@ -534,7 +576,14 @@ class Mysqli extends Data_Source
             $errno = $statement->errno;
             $error = $statement->error;
             $statement->close();
-            Data_Source::getLogger()->fatal(['#' . $errno . ': {$0}', $error], __FILE__, __LINE__);
+
+            Data_Source::getLogger()->fatal(
+                [
+                    '#' . $errno . ': {$0} - {$1} [{$2}]',
+                    [$error, print_r($data[Query_Result::QUERY_BODY], true), implode(', ', $data[Query_Result::QUERY_PARAMS])]
+                ],
+                __FILE__, __LINE__
+            );
         }
 
         $data[Query_Result::AFFECTED_ROWS] = $statement->affected_rows;
