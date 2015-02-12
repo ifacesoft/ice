@@ -10,6 +10,7 @@
 namespace Ice\Helper;
 
 use Ice\Core\Exception;
+use Ice\Core\Logger;
 
 /**
  * Class Spatial
@@ -74,7 +75,7 @@ class Spatial
                     ]
                 ];
             default:
-                throw new Exception('Unknown spatial type');
+                Logger::getInstance(__CLASS__)->exception(['Unknown spatial type {$0}', $type], __FILE__, __LINE__);
         }
     }
 

@@ -304,7 +304,7 @@ class Query_Builder
      */
     private function appendCacheTag($modelClass, $fieldNames, $isValidate, $isInvalidate)
     {
-        $fields = $modelClass::getMapping();
+        $fields = $modelClass::getScheme()->getFieldNames();
 
         foreach ((array)$fieldNames as $fieldName) {
             if (array_key_exists($fieldName, $fields)) {
@@ -744,7 +744,7 @@ class Query_Builder
             $modelClass = $this->getModelClass();
         }
 
-        $modelFields = $modelClass::getMapping();
+        $modelFields = $modelClass::getScheme()->getFieldNames();
         $fieldValue = $modelClass::getFieldName($value);
 
         /** check ability use pattern from field in base */
@@ -800,7 +800,7 @@ class Query_Builder
 
         if (!$condition) {
             $modelName = Object::getName($modelClass);
-            $fields = $modelClass::getMapping();
+            $fields = $modelClass::getScheme()->getFieldNames();
             $fieldNamesOnly = array_keys($fields);
 
             $joins = [['class' => $this->getModelClass(), 'alias' => Object::getName($this->getModelClass())]];
@@ -816,7 +816,7 @@ class Query_Builder
                 $joinModelClass = $join['class'];
                 $joinTableAlias = $join['alias'];
 
-                $joinFieldNames = $joinModelClass::getMapping();
+                $joinFieldNames = $joinModelClass::getScheme()->getFieldNames();
                 $joinFieldNamesOnly = array_keys($joinFieldNames);
 
                 $joinModelName = Object::getName($joinModelClass);
@@ -841,7 +841,7 @@ class Query_Builder
             }
 
             if (!$condition) {
-                throw new Exception('Could not defined condition for join part of sql query', $this->_sqlParts);
+                Logger::getInstance(__CLASS__)->exception(['Could not defined condition for join part of sql query {$0}', $this->_sqlParts], __FILE__, __LINE__);
             }
         }
 
@@ -1168,7 +1168,7 @@ class Query_Builder
     public function inPk(array $value, $modelClass = null, $tableAlias = null, $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
     {
         if (empty($value)) {
-            throw new Exception('Primary key is empty');
+            Logger::getInstance(__CLASS__)->exception('Primary key is empty', __FILE__, __LINE__);
         }
 
         return $this->in('/pk', $value, $modelClass, $tableAlias, $sqlLogical);

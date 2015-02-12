@@ -47,7 +47,7 @@ class Mongodb extends Data_Source
 
         $data[Query_Result::ROWS] = [];
 
-        foreach ($query->getDataSource()->getConnection()->$tableName->find($statement['where']['data'], $statement['select']['columnNames']) as $row) {
+        foreach ($this->getConnection()->$tableName->find($statement['where']['data'], $statement['select']['columnNames']) as $row) {
             $pkFieldValue = $row['_id']->{'$id'};
             unset($row['_id']);
             $data[Query_Result::ROWS][] = array_merge([$pkFieldName => $pkFieldValue], $row);
@@ -83,7 +83,7 @@ class Mongodb extends Data_Source
         $modelClass = $query->getModelClass();
         $tableName = $modelClass::getTableName();
 
-        $query->getDataSource()->getConnection()->$tableName->batchInsert($statement['insert']['data']);
+        $this->getConnection()->$tableName->batchInsert($statement['insert']['data']);
 
         $pkFieldNames = $modelClass::getPkFieldNames();
 
@@ -129,7 +129,7 @@ class Mongodb extends Data_Source
         $modelClass = $query->getModelClass();
         $tableName = $modelClass::getTableName();
 
-        $query->getDataSource()->getConnection()->$tableName->update($statement['where']['data'], $statement['update']['data']);
+        $this->getConnection()->$tableName->update($statement['where']['data'], $statement['update']['data']);
 
         $data[Query_Result::AFFECTED_ROWS] = 1;
 
@@ -162,7 +162,7 @@ class Mongodb extends Data_Source
         $modelClass = $query->getModelClass();
         $tableName = $modelClass::getTableName();
 
-        $query->getDataSource()->getConnection()->$tableName->remove($statement['where']['data']);
+        $this->getConnection()->$tableName->remove($statement['where']['data']);
 
         $data[Query_Result::AFFECTED_ROWS] = 1;
 
@@ -187,7 +187,7 @@ class Mongodb extends Data_Source
         $modelClass = $query->getModelClass();
         $tableName = $modelClass::getTableName();
 
-        $query->getDataSource()->getConnection()->$tableName;
+        $this->getConnection()->$tableName;
 
         $data[Query_Result::QUERY] = $query;
 
@@ -210,7 +210,7 @@ class Mongodb extends Data_Source
         $modelClass = $query->getModelClass();
         $tableName = $modelClass::getTableName();
 
-        $query->getDataSource()->getConnection()->$tableName->drop();
+        $this->getConnection()->$tableName->drop();
 
         $data[Query_Result::QUERY] = $query;
 
@@ -223,12 +223,22 @@ class Mongodb extends Data_Source
      * @return array
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.4
+     * @version 0.5
      * @since 0.4
      */
     public function getTables()
     {
-        // TODO: Implement getTables() method.
+        $tables = [];
+
+        foreach ($this->getConnection()->getCollectionNames() as $name) {
+            $tables[$name] = [
+                    'engine' => 'MongoDB',
+                    'charset' => 'utf-8',
+                    'comment' => $name
+                ];
+        }
+
+        return $tables;
     }
 
     /**
@@ -239,12 +249,12 @@ class Mongodb extends Data_Source
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.4
+     * @version 0.5
      * @since 0.4
      */
     public function getColumns($tableName)
     {
-        // TODO: Implement getColumns() method.
+        return [];
     }
 
     /**
@@ -386,5 +396,44 @@ class Mongodb extends Data_Source
     public static function getInstance($key = null, $ttl = null)
     {
         return parent::getInstance($key, $ttl);
+    }
+
+    /**
+     * Begin transaction
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since 0
+     */
+    public function beginTransaction()
+    {
+        // TODO: Implement beginTransaction() method.
+    }
+
+    /**
+     * Commit transaction
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since 0
+     */
+    public function commitTransaction()
+    {
+        // TODO: Implement commitTransaction() method.
+    }
+
+    /**
+     * Rollback transaction
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since 0
+     */
+    public function rollbackTransaction()
+    {
+        // TODO: Implement rollbackTransaction() method.
     }
 }

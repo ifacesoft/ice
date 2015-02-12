@@ -11,7 +11,6 @@ class Api_Yandex
      * Получение списка направлений перевода
      * @return array
      * @throws \Exception
-     * @throws \Ice\Core\Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
@@ -25,7 +24,7 @@ class Api_Yandex
             return $langs;
         }
 
-        $yaKey = Core_Config::getInstance(__CLASS__)->get('translateKey');
+        $yaKey = Core_Config::create(__CLASS__)->get('translateKey');
 
         if (empty($yaKey)) {
             throw new \Exception('Key is empty. See https://tech.yandex.ru/keys/get/?service=trnsl');
@@ -36,7 +35,7 @@ class Api_Yandex
 
     public static function detect($text)
     {
-        $yaKey = Core_Config::getInstance(__CLASS__)->get('translateKey');
+        $yaKey = Core_Config::create(__CLASS__)->get('translateKey');
 
         if (empty($yaKey)) {
             throw new \Exception('Key is empty. See https://tech.yandex.ru/keys/get/?service=trnsl');
@@ -47,7 +46,7 @@ class Api_Yandex
 
     public static function translate($text, $lang)
     {
-        $yaKey = Core_Config::getInstance(__CLASS__)->get('translateKey');
+        $yaKey = Core_Config::create(__CLASS__)->get('translateKey');
 
         if (empty($yaKey)) {
             throw new \Exception('Key is empty. See https://tech.yandex.ru/keys/get/?service=trnsl');

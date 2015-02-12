@@ -1,38 +1,14 @@
-<?php
-/**
- * Ice action data scheme update class
- *
- * @link http://www.iceframework.net
- * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
- * @license https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
- */
-
-namespace Ice\Action;
+<?php namespace Ice\Action;
 
 use Ice\Core\Action;
 use Ice\Core\Action_Context;
 use Ice\Core\Data_Scheme;
 use Ice\Core\Data_Source;
 
-/**
- * Class Scheme_Update
- *
- * Synchronization remote scheme data source with local data scheme
- *
- * @see Ice\Core\Action
- * @see Ice\Core\Action_Context
- *
- * @author dp <denis.a.shestakov@gmail.com>
- *
- * @package Ice
- * @subpackage Action
- *
- * @version 0.0
- * @since 0.0
- */
-class Scheme_Update extends Action
+class Orm_Scheme_Update extends Action
 {
-    /**  public static $config = [
+    /**
+     *  public static $config = [
      *      'afterActions' => [],          // actions
      *      'layout' => null,               // Emmet style layout
      *      'template' => null,             // Template of view
@@ -46,12 +22,14 @@ class Scheme_Update extends Action
      *  ];
      */
     public static $config = [
+        'defaultViewRenderClassName' => 'Ice:Php',
         'template' => '',
-        'inputDefaults' => ['force' => false]
+        'inputDefaults' => [
+            'force' => 0
+        ]
     ];
 
-    /**
-     * Run action
+    /** Run action
      *
      * @param array $input
      * @param Action_Context $actionContext
@@ -59,15 +37,25 @@ class Scheme_Update extends Action
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.2
-     * @since 0.0
+     * @package Ice
+     * @subpackage Action
+     *
+     * @version 0.5
+     * @since 0.5
      */
     protected function run(array $input, Action_Context $actionContext)
     {
-        foreach (Data_Source::getConfig()->gets() as $schemes) {
-            foreach ((array)$schemes as $scheme) {
-                Data_Scheme::update($scheme, $input['force']);
+        $output = [];
+
+        foreach (Data_Source::getConfig()->gets() as $dataSourceClass => $config) {
+            foreach ($config as $dataProviderKey => $schemes) {
+                foreach ((array)$schemes as $scheme) {
+                    $output[$dataProviderKey . '.' . $scheme] =
+                        Data_Scheme::create($dataSourceClass . '/' . $dataProviderKey . '.' . $scheme)->update($input['force']);
+                }
             }
         }
+
+        return $output;
     }
 }

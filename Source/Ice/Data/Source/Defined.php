@@ -9,12 +9,14 @@
 
 namespace Ice\Data\Source;
 
+use Ice\Core\Data_Provider;
 use Ice\Core\Data_Source;
 use Ice\Core\Exception;
 use Ice\Core\Model;
 use Ice\Core\Query;
 use Ice\Core\Query_Builder;
 use Ice\Core\Query_Result;
+use Ice\Core\Query_Translator;
 use Ice\Helper\Query as Helper_Query;
 
 /**
@@ -53,7 +55,7 @@ class Defined extends Data_Source
 
         $pkName = $modelClass::getFieldName('/pk');
 
-        $fieldNames = $modelClass::getMapping();
+        $fieldNames = $modelClass::getScheme()->getFieldNames();
         $flippedFieldNames = array_flip($fieldNames);
 
         $definedRows = [];
@@ -103,7 +105,7 @@ class Defined extends Data_Source
                             }
                             break;
                         default:
-                            throw new Exception('Unknown comparsion operator');
+                            Defined::getLogger()->exception(['Unknown comparsion operator {$0}', $part[2]], __FILE__, __LINE__);
                     }
                 }
 
@@ -122,52 +124,49 @@ class Defined extends Data_Source
     /**
      * Execute query insert to data source
      *
-     * @param mixed $statement
      * @param Query $query
      * @return array
-     * @throws Exception
+     * @throws \Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
      * @since 0.0
      */
-    public function executeInsert($statement, Query $query)
+    public function executeInsert(Query $query)
     {
-        throw new Exception('Implement insert() method.');
+        throw new \Exception('Implement insert() method.');
     }
 
     /**
      * Execute query update to data source
      *
-     * @param mixed $statement
      * @param Query $query
      * @return array
-     * @throws Exception
+     * @throws \Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
      * @since 0.0
      */
-    public function executeUpdate($statement, Query $query)
+    public function executeUpdate(Query $query)
     {
-        throw new Exception('Implement update() method.');
+        throw new \Exception('Implement update() method.');
     }
 
     /**
      * Execute query update to data source
      *
-     * @param mixed $statement
      * @param Query $query
      * @return array
-     * @throws Exception
+     * @throws \Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
      * @since 0.0
      */
-    public function executeDelete($statement, Query $query)
+    public function executeDelete(Query $query)
     {
-        throw new Exception('Implement delete() method.');
+        throw new \Exception('Implement delete() method.');
     }
 
     /**
@@ -280,5 +279,74 @@ class Defined extends Data_Source
     public function getStatement(Query $query)
     {
         // TODO: Implement getStatement() method.
+    }
+
+    /**
+     * Return data provider class
+     *
+     * @return Data_Provider
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since 0
+     */
+    public function getDataProviderClass()
+    {
+        // TODO: Implement getDataProviderClass() method.
+    }
+
+    /**
+     * Return query translator class
+     *
+     * @return Query_Translator
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since 0
+     */
+    public function getQueryTranslatorClass()
+    {
+        // TODO: Implement getQueryTranslatorClass() method.
+    }
+
+    /**
+     * Begin transaction
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since 0
+     */
+    public function beginTransaction()
+    {
+        // TODO: Implement beginTransaction() method.
+    }
+
+    /**
+     * Commit transaction
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since 0
+     */
+    public function commitTransaction()
+    {
+        // TODO: Implement commitTransaction() method.
+    }
+
+    /**
+     * Rollback transaction
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since 0
+     */
+    public function rollbackTransaction()
+    {
+        // TODO: Implement rollbackTransaction() method.
     }
 }

@@ -67,12 +67,36 @@ class String
         return $string;
     }
 
+    /**
+     * Check starts with string
+     *
+     * @param $haystack
+     * @param $needle
+     * @return bool
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
+     */
     public static function startsWith($haystack, $needle)
     {
         $length = strlen($needle);
         return (substr($haystack, 0, $length) === $needle);
     }
 
+    /**
+     * Check ends with string
+     *
+     * @param $haystack
+     * @param $needle
+     * @return bool
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
+     */
     public static function endsWith($haystack, $needle)
     {
         $length = strlen($needle);
@@ -81,5 +105,26 @@ class String
         }
 
         return (substr($haystack, -$length) === $needle);
+    }
+
+    /**
+     * Return random string
+     *
+     * @param int $length
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
+     */
+    public static function getRandomString($length = 12) {
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $charactersLength = strlen($characters);
+        $randomString = '';
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[rand(0, $charactersLength - 1)];
+        }
+        return $randomString;
     }
 } 

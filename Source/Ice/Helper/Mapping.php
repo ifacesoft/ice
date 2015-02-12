@@ -13,7 +13,7 @@ class Mapping
      */
     public static function columnNames($modelClass, $fieldNames)
     {
-        $modelMapping = $modelClass::getMapping();
+        $modelMapping = $modelClass::getScheme()->getFieldNames();
 
         return array_map(
             function ($fieldName) use ($modelMapping) {

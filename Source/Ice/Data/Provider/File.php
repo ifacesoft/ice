@@ -249,7 +249,7 @@ class File extends Data_Provider
         $options = $this->getOptions(__CLASS__);
 
         if (!isset($options['path'])) {
-            Data_Provider::getLogger()->fatal(['Require param {$0} in environment config {$1}', ['path', Data_Provider::getClass() . '/' . get_class($this) . '/' . $this->getIndex()]], __FILE__, __LINE__);
+            Data_Provider::getLogger()->exception(['Require param {$0} in environment config {$1}', ['path', Data_Provider::getClass() . '/' . get_class($this) . '/' . $this->getIndex()]], __FILE__, __LINE__);
         }
 
         $connection = $options['path'];

@@ -10,12 +10,12 @@ use Ice\Core\Model;
  * @property mixed role_name
  *
  * @see Ice\Core\Model
- * @package Ice\Model;
- * @author dp<email>
+ *
+ * @package Ice\Model * @author dp <email>
+ *
  * @version 0
  * @since 0
  */
-class Role extends Model
-{
+class Role extends Model {
 
 }

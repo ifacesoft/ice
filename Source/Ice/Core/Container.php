@@ -118,6 +118,7 @@ abstract class Container
             $dataProvider = $baseClass::getDataProvider('instance');
 
             if ($ttl != -1 && $object = $dataProvider->get($key)) {
+                Container::getLogger()->log('(cache) ' . __CLASS__ . ' - ' . $dataProvider->getFullKey($key) . ': ' . get_class($object), Logger::INFO);
                 return $object;
             }
 
@@ -126,9 +127,11 @@ abstract class Container
             if ($object) {
                 $dataProvider->set($key, $object, $ttl);
             }
+
+            Container::getLogger()->log('(new) ' . __CLASS__ . ' - ' . $dataProvider->getFullKey($key) . ': ' . get_class($object));
         } catch (File_Not_Found $e) {
             if ($baseClass == Code_Generator::getClass()) {
-                Container::getLogger()->fatal(['Code generator for {$0} not found', $key], __FILE__, __LINE__, $e);
+                Container::getLogger()->exception(['Code generator for {$0} not found', $key], __FILE__, __LINE__, $e);
             }
 
             if (Environment::isDevelopment()) {
@@ -141,7 +144,7 @@ abstract class Container
         }
 
         if (!$object) {
-            self::getLogger()->fatal('Could not create object', __FILE__, __LINE__);
+            self::getLogger()->exception('Could not create object', __FILE__, __LINE__);
         }
 
         return $object;
@@ -159,7 +162,7 @@ abstract class Container
      */
     protected static function getDefaultClassKey()
     {
-        Resource::getLogger()->fatal(['Implementation {$0} is required for {$1}', [__FUNCTION__, self::getClass()]], __FILE__, __LINE__);
+        Resource::getLogger()->exception(['Implementation {$0} is required for {$1}', [__FUNCTION__, self::getClass()]], __FILE__, __LINE__);
         return null;
     }
 
@@ -175,7 +178,7 @@ abstract class Container
      */
     protected static function getDefaultKey()
     {
-        Resource::getLogger()->fatal(['Implementation {$0} is required for {$1}', [__FUNCTION__, self::getClass()]], __FILE__, __LINE__);
+        Resource::getLogger()->exception(['Implementation {$0} is required for {$1}', [__FUNCTION__, self::getClass()]], __FILE__, __LINE__);
         return null;
     }
 
@@ -192,7 +195,7 @@ abstract class Container
      */
     protected static function create($key)
     {
-        Resource::getLogger()->fatal(['Implementation {$0} is required for {$1}', [__FUNCTION__, self::getClass()]], __FILE__, __LINE__, null, $key);
+        Resource::getLogger()->exception(['Implementation {$0} is required for {$1}', [__FUNCTION__, self::getClass()]], __FILE__, __LINE__, null, $key);
     }
 
     /**

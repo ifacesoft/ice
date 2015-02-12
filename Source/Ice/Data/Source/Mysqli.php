@@ -64,7 +64,7 @@ class Mysqli extends Data_Source
             $errno = $statement->errno;
             $error = $statement->error;
             $statement->close();
-            Data_Source::getLogger()->fatal(['#' . $errno . ': {$0}', $error], __FILE__, __LINE__);
+            Data_Source::getLogger()->exception(['#' . $errno . ': {$0}', $error], __FILE__, __LINE__);
         }
 //            $statement->store_result(); // Так почемуто не работает
         /** @var mysqli_result $result */
@@ -74,7 +74,7 @@ class Mysqli extends Data_Source
             $errno = $statement->errno;
             $error = $statement->error;
             $statement->close();
-            Data_Source::getLogger()->fatal(['#' . $errno . ': {$0}', $error], __FILE__, __LINE__);
+            Data_Source::getLogger()->exception(['#' . $errno . ': {$0}', $error], __FILE__, __LINE__);
         }
 
         /** @var Model $modelClass */
@@ -140,7 +140,7 @@ class Mysqli extends Data_Source
         $statement = $this->getConnection()->prepare($body);
 
         if (!$statement) {
-            Data_Source::getLogger()->fatal(['#' . $this->getConnection()->errno . ': {$0}', $this->getConnection()->error], __FILE__, __LINE__);
+            Data_Source::getLogger()->exception(['#' . $this->getConnection()->errno . ': {$0}', $this->getConnection()->error], __FILE__, __LINE__);
         }
 
         $types = '';
@@ -154,7 +154,7 @@ class Mysqli extends Data_Source
             $values = array_merge($values, $binds);
 
             if (call_user_func_array(array($statement, 'bind_param'), $this->makeValuesReferenced($values)) === false) {
-                Data_Source::getLogger()->fatal('Bind params failure', __FILE__, __LINE__);
+                Data_Source::getLogger()->exception('Bind params failure', __FILE__, __LINE__);
             }
         }
 
@@ -206,7 +206,7 @@ class Mysqli extends Data_Source
             $errno = $statement->errno;
             $error = $statement->error;
             $statement->close();
-            Data_Source::getLogger()->fatal(['#' . $errno . ': {$0}', $error], __FILE__, __LINE__);
+            Data_Source::getLogger()->exception(['#' . $errno . ': {$0}', $error], __FILE__, __LINE__);
         }
 
         /** @var Model $modelClass */
@@ -267,7 +267,7 @@ class Mysqli extends Data_Source
             $errno = $statement->errno;
             $error = $statement->error;
             $statement->close();
-            Data_Source::getLogger()->fatal(['#' . $errno . ': {$0}', $error], __FILE__, __LINE__);
+            Data_Source::getLogger()->exception(['#' . $errno . ': {$0}', $error], __FILE__, __LINE__);
         }
 
         /** @var Model $modelclass */
@@ -313,7 +313,7 @@ class Mysqli extends Data_Source
             $errno = $statement->errno;
             $error = $statement->error;
             $statement->close();
-            Data_Source::getLogger()->fatal(['#' . $errno . ': {$0}', $error], __FILE__, __LINE__);
+            Data_Source::getLogger()->exception(['#' . $errno . ': {$0}', $error], __FILE__, __LINE__);
         }
 
         $data[Query_Result::AFFECTED_ROWS] = $statement->affected_rows;
@@ -497,7 +497,7 @@ class Mysqli extends Data_Source
             $errno = $statement->errno;
             $error = $statement->error;
             $statement->close();
-            Data_Source::getLogger()->fatal(['#' . $errno . ': {$0}', $error], __FILE__, __LINE__);
+            Data_Source::getLogger()->exception(['#' . $errno . ': {$0}', $error], __FILE__, __LINE__);
         }
 
         $data[Query_Result::AFFECTED_ROWS] = $statement->affected_rows;
@@ -534,7 +534,7 @@ class Mysqli extends Data_Source
             $errno = $statement->errno;
             $error = $statement->error;
             $statement->close();
-            Data_Source::getLogger()->fatal(['#' . $errno . ': {$0}', $error], __FILE__, __LINE__);
+            Data_Source::getLogger()->exception(['#' . $errno . ': {$0}', $error], __FILE__, __LINE__);
         }
 
         $data[Query_Result::AFFECTED_ROWS] = $statement->affected_rows;
@@ -574,5 +574,46 @@ class Mysqli extends Data_Source
     public function getQueryTranslatorClass()
     {
         return Mysqli::QUERY_TRANSLATOR_CLASS;
+    }
+
+    /**
+     * Begin transaction
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
+     */
+    public function beginTransaction()
+    {
+        $this->getConnection()->autocommit(false);
+    }
+
+    /**
+     * Commit transaction
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
+     */
+    public function commitTransaction()
+    {
+        $this->getConnection()->commit();
+        $this->getConnection()->autocommit(true);
+    }
+
+    /**
+     * Rollback transaction
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
+     */
+    public function rollbackTransaction()
+    {
+        $this->getConnection()->rollback();
+        $this->getConnection()->autocommit(true);
     }
 }

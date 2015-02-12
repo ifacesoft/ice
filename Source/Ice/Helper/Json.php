@@ -31,7 +31,7 @@ class Json
      *
      * @param $json
      * @return array
-     * @throws Exception
+     * @throws \Exception
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
@@ -50,18 +50,18 @@ class Json
 
         switch ($error) {
             case JSON_ERROR_DEPTH:
-                throw new Exception('JSON - Достигнута максимальная глубина стека', print_r($json, true));
+                throw new \Exception('JSON - Достигнута максимальная глубина стека', print_r($json, true));
             case JSON_ERROR_STATE_MISMATCH:
-                throw new Exception('JSON - Некорректные разряды или не совпадение режимов', print_r($json, true));
+                throw new \Exception('JSON - Некорректные разряды или не совпадение режимов', print_r($json, true));
             case JSON_ERROR_CTRL_CHAR:
-                throw new Exception('JSON - Некорректный управляющий символ', print_r($json, true));
+                throw new \Exception('JSON - Некорректный управляющий символ', print_r($json, true));
             case JSON_ERROR_SYNTAX:
-                throw new Exception('JSON - Синтаксическая ошибка, не корректный JSON', print_r(
+                throw new \Exception('JSON - Синтаксическая ошибка, не корректный JSON', print_r(
                     $json, true));
             case JSON_ERROR_UTF8:
-                throw new Exception('JSON - Некорректные символы UTF-8, возможно неверная кодировка', print_r($json, true));
+                throw new \Exception('JSON - Некорректные символы UTF-8, возможно неверная кодировка', print_r($json, true));
             default:
-                throw new Exception('JSON - Неизвестная ошибка', print_r($json, true));
+                throw new \Exception('JSON - Неизвестная ошибка', print_r($json, true));
         }
     }
 

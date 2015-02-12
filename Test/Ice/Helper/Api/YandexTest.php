@@ -10,21 +10,21 @@ class Api_YandexTest extends PHPUnit_Framework_TestCase
 
     public function testGetLangs()
     {
-        if (!empty(Core_Config::getInstance('Ice\Helper\Api_Yandex')->get('translateKey'))) {
+        if (!empty(Core_Config::create('Ice\Helper\Api_Yandex')->get('translateKey'))) {
             $this->assertTrue(!empty(Helper_Api_Yandex::getLangs()));
         }
     }
 
     public function testDetect()
     {
-        if (!empty(Core_Config::getInstance('Ice\Helper\Api_Yandex')->get('translateKey'))) {
+        if (!empty(Core_Config::create('Ice\Helper\Api_Yandex')->get('translateKey'))) {
             $this->assertEquals('ru', Helper_Api_Yandex::detect('Определение языка'));
         }
     }
 
     public function testTranslate()
     {
-        if (!empty(Core_Config::getInstance('Ice\Helper\Api_Yandex')->get('translateKey'))) {
+        if (!empty(Core_Config::create('Ice\Helper\Api_Yandex')->get('translateKey'))) {
             $this->assertEquals('The language definition', Helper_Api_Yandex::translate('Определение языка', 'ru-en'));
         }
     }

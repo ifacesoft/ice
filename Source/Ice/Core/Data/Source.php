@@ -11,6 +11,7 @@ namespace Ice\Core;
 
 use Ice;
 use Ice\Core;
+use Ice\Data\Source\Mysqli;
 use Ice\Helper\Arrays;
 
 /**
@@ -143,7 +144,7 @@ abstract class Data_Source extends Container
      * @version 0.4
      * @since 0.4
      */
-    protected static function getDefaultClassKey()
+    public static function getDefaultClassKey()
     {
         /** @var Data_Source $dataSourceClass */
         $dataSourceClass = self::getClass();
@@ -155,15 +156,11 @@ abstract class Data_Source extends Container
             return $defaultClassKey;
         }
 
-        $defaultConfig = Data_Source::getConfig()->gets('default');
-
         if ($dataSourceClass == __CLASS__) {
-            list($dataSourceClass, $schemes) = each($defaultConfig);
-        } else {
-            $schemes = $defaultConfig[$dataSourceClass];
+            $dataSourceClass = Mysqli::getClass();
         }
 
-        $schemes = (array)$schemes;
+        $schemes = Data_Source::getConfig()->gets($dataSourceClass . '/default');
 
         return $repository->set($key, $dataSourceClass . '/default.' . reset($schemes), 0);
     }
@@ -181,13 +178,11 @@ abstract class Data_Source extends Container
      */
     protected static function create($key)
     {
-        list($key, $scheme) = explode('.', $key);
-
-        $schemes = Data_Source::getConfig()->gets($key . '/' . self::getClass(), false);
-
-        if (empty($schemes) || !in_array($scheme, $schemes)) {
-            Data_Source::getLogger()->fatal(['Data source not found for scheme {$0}', $key], __FILE__, __LINE__);
+        if (!strpos($key, '.')) {
+            Data_Source::getLogger()->exception(['Data source name not valid {$0}', $key], __FILE__, __LINE__);
         }
+
+        list($key, $scheme) = explode('.', $key);
 
         $dataSourceClass = self::getClass();
         return new $dataSourceClass($key, $scheme);
@@ -368,7 +363,7 @@ abstract class Data_Source extends Container
 
                     if (Cache::validate(__CLASS__, $cache['tags'], $cache['time'])) {
                         Data_Source::getLogger()->log([
-                            'sql cache: {$0} [{$1}] {$2}',
+                            '(cache) ' . $query->getModelClass() . ' - ' . '{$0} [{$1}] {$2}',
                             [
                                 print_r($cache['queryBody'], true),
                                 implode(', ', $cache['queryParams']),
@@ -394,18 +389,18 @@ abstract class Data_Source extends Container
                 case Query_Builder::TYPE_DELETE:
                     $queryResult = $this->getQueryResult($query);
 
-                $cache['data'] = $queryResult->getResult();
-                $cache['queryBody'] = $queryResult->getQueryBody();
-                $cache['queryParams'] = $queryResult->getQueryParams();
+                    $cache['data'] = $queryResult->getResult();
+                    $cache['queryBody'] = $queryResult->getQueryBody();
+                    $cache['queryParams'] = $queryResult->getQueryParams();
                     Cache::invalidate(__CLASS__, $query->getInvalidateTags());
                     break;
 
                 default:
-                    Data_Source::getLogger()->fatal(['Unknown data source query statement type {$0}', $queryType], __FILE__, __LINE__, null, $query);
+                    Data_Source::getLogger()->exception(['Unknown data source query statement type {$0}', $queryType], __FILE__, __LINE__, null, $query);
             }
         } catch (Exception $e) {
             Data_Source::getLogger()->log([
-                'query error: {$0} [{$1}] {$2}',
+                '(error) ' . $query->getModelClass() . ' - ' . '{$0} [{$1}] {$2}',
                 [
                     print_r($cache['queryBody'], true),
                     implode(', ', $cache['queryParams']),
@@ -413,11 +408,11 @@ abstract class Data_Source extends Container
                 ]
             ], Logger::DANGER);
 
-            Data_Source::getLogger()->fatal('Data source execute query failed', __FILE__, __LINE__, $e, $query);
+            Data_Source::getLogger()->exception('Data source execute query failed', __FILE__, __LINE__, $e, $query);
         }
 
         Data_Source::getLogger()->log([
-            'query: {$0} [{$1}] {$2}',
+            '(new) ' . $query->getModelClass() . ' - ' . '{$0} [{$1}] {$2}',
             [
                 print_r($cache['queryBody'], true),
                 implode(', ', $cache['queryParams']),
@@ -446,7 +441,7 @@ abstract class Data_Source extends Container
         $data = $this->$queryCommand($query);
 
         if (empty($data)) {
-            Data_Source::getLogger()->fatal(
+            Data_Source::getLogger()->exception(
                 [
                     'Failed creating result of query \'{$0}\' [$1] with data source {$2}',
                     [$data['queryBody'], implode(', ', $data['queryParams']), $query->getDataSourceKey()]
@@ -481,4 +476,78 @@ abstract class Data_Source extends Container
      * @since 0
      */
     abstract public function getQueryTranslatorClass();
+
+    /**
+     * Begin transaction
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since 0
+     */
+    abstract public function beginTransaction();
+
+    /**
+     * Commit transaction
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since 0
+     */
+    abstract public function commitTransaction();
+
+    /**
+     * Rollback transaction
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since 0
+     */
+    abstract public function rollbackTransaction();
+
+    /**
+     * Return data source key
+     *
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
+     */
+    public function getDataSourceKey() {
+        return get_class($this) . '/' . $this->getKey() . '.' . $this->getScheme();
+    }
+
+    /**
+     * Return current scheme
+     *
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
+     */
+    public function getScheme()
+    {
+        return $this->_scheme;
+    }
+
+    /**
+     * Return current key
+     *
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
+     */
+    public function getKey()
+    {
+        return $this->_key;
+    }
 }

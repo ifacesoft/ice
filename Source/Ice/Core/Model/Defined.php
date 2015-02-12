@@ -38,6 +38,6 @@ abstract class Model_Defined extends Model
      */
     public static function getDefinedConfig()
     {
-        return Config::getInstance(self::getClass(), [], 'Defined', true);
+        return Config::create(self::getClass(), 'Defined', true);
     }
 } 

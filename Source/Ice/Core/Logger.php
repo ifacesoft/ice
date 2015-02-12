@@ -15,6 +15,7 @@ use Ice\Helper\Console;
 use Ice\Helper\Directory;
 use Ice\Helper\File;
 use Ice\Helper\Logger as Helper_Logger;
+use Ice\Helper\Object;
 use Ice\Helper\Resource as Helper_Resource;
 use Ice\Helper\Php;
 
@@ -344,7 +345,7 @@ class Logger
      * @version 0.0
      * @since 0.0
      */
-    private function createException($message, $file, $line, \Exception $e = null, $errcontext = [], $errno = 1)
+    private function createException($message, $file, $line, \Exception $e = null, $errcontext = [], $errno = 1, $exceptionClass = 'Ice:Error')
     {
         $message = (array)$message;
         if (!isset($message[1])) {
@@ -352,7 +353,10 @@ class Logger
         }
         $message[2] = $this->_class;
 
-        return new Exception($message, $errcontext, $e, $file, $line, $errno);
+        /** @var Exception $exceptionClass */
+        $exceptionClass = Object::getClass(Exception::getClass(), $exceptionClass);
+
+        return new $exceptionClass($message, $errcontext, $e, $file, $line, $errno);
     }
 
     /**
@@ -543,16 +547,16 @@ class Logger
      * @param \Exception $e
      * @param null $errcontext
      * @param int $errno
+     * @param string $exceptionClass
      * @throws Exception
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.5
      * @since 0.0
      */
-    public function fatal($message, $file, $line, \Exception $e = null, $errcontext = null, $errno = -1)
+    public function exception($message, $file, $line, \Exception $e = null, $errcontext = null, $errno = -1, $exceptionClass = 'Ice:Error')
     {
-        throw $this->createException($message, $file, $line, $e, $errcontext, $errno);
+        throw $this->createException($message, $file, $line, $e, $errcontext, $errno, $exceptionClass);
     }
 
     /**

@@ -80,12 +80,12 @@ class Loader
             }
 
             if ($isRequired) {
-                Loader::getLogger()->fatal(['File {$0} exists, but class {$1} not found', [$fileName, $class]], __FILE__, __LINE__);
+                Loader::getLogger()->exception(['File {$0} exists, but class {$1} not found', [$fileName, $class]], __FILE__, __LINE__);
             }
         }
 
         if ($isRequired) {
-            Loader::getLogger()->fatal(['Class {$0} not found', $class], __FILE__, __LINE__, null);
+            Loader::getLogger()->exception(['Class {$0} not found', $class], __FILE__, __LINE__, null);
         }
 
         return false;
@@ -162,7 +162,7 @@ class Loader
                     $fullStackPathes[] = $fileName;
                     $matchedPathes[] = $fileName;
                 } else {
-                    Loader::getLogger()->fatal(['Files for {$0} not found', $class], __FILE__, __LINE__, null, $fullStackPathes);
+                    Loader::getLogger()->exception(['Files for {$0} not found', $class], __FILE__, __LINE__, null, $fullStackPathes, -1, 'Ice:File_Not_Found');
                 }
             }
         }

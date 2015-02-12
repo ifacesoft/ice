@@ -9,7 +9,6 @@
 
 namespace Ice\Helper;
 
-use Ice\Core\Exception;
 use Ice\Core\Logger as Core_Logger;
 
 /**
@@ -50,10 +49,10 @@ class Arrays
         $filterFunction = function ($filterSchemes) {
             return function ($row) use ($filterSchemes) {
                 foreach ($filterSchemes as $filterScheme) {
-                    list($field, $value, $comparsion) = $filterScheme;
+                    list($field, $value, $comparison) = $filterScheme;
                     $field = trim($field);
                     $value = trim($value);
-                    switch ($comparsion) {
+                    switch ($comparison) {
                         case '<=':
                             if ($row[$field] > $value) {
                                 return false;
@@ -85,7 +84,7 @@ class Arrays
                             }
                             break;
                         default:
-                            throw new Exception('Unknown comparsion operator');
+                            Logger::getInstance(__CLASS__)->exception(['Unknown comparison operator {$0}', $comparison], __FILE__, __LINE__);
                     };
                 }
                 return true;
@@ -150,15 +149,15 @@ class Arrays
     public static function column($input, $columnKey = null, $indexKey = null)
     {
         if (!is_array($input)) {
-            Core_Logger::getInstance(__CLASS__)->fatal('array_column() expects parameter 1 to be array, ' . gettype($input) . ' given', __FILE__, __LINE__);
+            Core_Logger::getInstance(__CLASS__)->exception('array_column() expects parameter 1 to be array, ' . gettype($input) . ' given', __FILE__, __LINE__);
         }
 
         if (!is_int($columnKey) && !is_float($columnKey) && !is_string($columnKey) && !is_array($columnKey) && $columnKey !== null && !(is_object($columnKey) && method_exists($columnKey, '__toString'))) {
-            Core_Logger::getInstance(__CLASS__)->fatal('array_column(): The column key should be either a string or an integer', __FILE__, __LINE__);
+            Core_Logger::getInstance(__CLASS__)->exception('array_column(): The column key should be either a string or an integer', __FILE__, __LINE__);
         }
 
         if (isset($indexKey) && !is_int($indexKey) && !is_float($indexKey) && !is_string($indexKey) && !(is_object($indexKey) && method_exists($indexKey, '__toString'))) {
-            Core_Logger::getInstance(__CLASS__)->fatal('array_column(): The index key should be either a string or an integer', __FILE__, __LINE__);
+            Core_Logger::getInstance(__CLASS__)->exception('array_column(): The index key should be either a string or an integer', __FILE__, __LINE__);
         }
 
         if (isset($indexKey)) {

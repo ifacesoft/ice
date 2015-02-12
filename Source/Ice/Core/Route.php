@@ -126,7 +126,7 @@ class Route extends Container
     {
         $routes = [];
 
-        $defaultRoute = Config::getConfig()->gets('defaults/' . __CLASS__);
+        $defaultConfig = Config::getDefault(__CLASS__);
 
         foreach ($routeFilePathes as $context => $routeFilePath) {
             $configFromFile = File::loadData($routeFilePath);
@@ -150,7 +150,7 @@ class Route extends Container
                     continue;
                 }
 
-                $route = array_merge_recursive($route, $defaultRoute);
+                $route = array_merge_recursive($route, $defaultConfig);
                 $route['route'] = $context . $route['route'];
 
                 if (isset($routes[$routeName])) {

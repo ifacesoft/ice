@@ -134,7 +134,7 @@ class Mysqli extends Data_Provider
      * @param string $key
      * @param $value
      * @param null $ttl
-     * @throws Exception
+     * @throws \Exception
      * @return mixed setted value
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -144,7 +144,7 @@ class Mysqli extends Data_Provider
      */
     public function set($key, $value, $ttl = null)
     {
-        throw new Exception('Implement set() method.');
+        throw new \Exception('Implement set() method.');
     }
 
     /**
@@ -152,7 +152,7 @@ class Mysqli extends Data_Provider
      *
      * @param string $key
      * @param bool $force if true return boolean else deleted value
-     * @throws Exception
+     * @throws \Exception
      * @return mixed|boolean
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -162,7 +162,7 @@ class Mysqli extends Data_Provider
      */
     public function delete($key, $force = true)
     {
-        throw new Exception('Implement delete() method.');
+        throw new \Exception('Implement delete() method.');
     }
 
     /**
@@ -170,7 +170,7 @@ class Mysqli extends Data_Provider
      *
      * @param $key
      * @param int $step
-     * @throws Exception
+     * @throws \Exception
      * @return mixed new value
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -180,7 +180,7 @@ class Mysqli extends Data_Provider
      */
     public function incr($key, $step = 1)
     {
-        throw new Exception('Implement inc() method.');
+        throw new \Exception('Implement inc() method.');
     }
 
     /**
@@ -188,7 +188,7 @@ class Mysqli extends Data_Provider
      *
      * @param $key
      * @param int $step
-     * @throws Exception
+     * @throws \Exception
      * @return mixed new value
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -198,7 +198,7 @@ class Mysqli extends Data_Provider
      */
     public function decr($key, $step = 1)
     {
-        throw new Exception('Implement dec() method.');
+        throw new \Exception('Implement dec() method.');
     }
 
     /**
@@ -227,7 +227,7 @@ class Mysqli extends Data_Provider
     public function setScheme($scheme)
     {
         if (!$this->getConnection()->select_db($scheme)) {
-            Mysqli::getLogger()->fatal(['mysql - #' . $this->getConnection()->errno . ': {$0}', $this->getConnection()->error], __FILE__, __LINE__);
+            Mysqli::getLogger()->exception(['mysql - #' . $this->getConnection()->errno . ': {$0}', $this->getConnection()->error], __FILE__, __LINE__);
         }
 
         parent::setScheme($scheme);
@@ -267,7 +267,7 @@ class Mysqli extends Data_Provider
         $connection = mysqli_init();
         $isConnected = $connection->real_connect($options['host'], $options['username'], $options['password'], null, $options['port']);
         if (!$isConnected) {
-            Mysqli::getLogger()->fatal(['mysql - #' . $connection->errno . ': {$0}', $connection->error], __FILE__, __LINE__);
+            Mysqli::getLogger()->exception(['mysql - #' . $connection->errno . ': {$0}', $connection->error], __FILE__, __LINE__);
         }
 
         $connection->set_charset($options['charset']);

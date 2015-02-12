@@ -16,12 +16,12 @@ use Ice\Core\Model;
  * @property mixed user_created
  *
  * @see Ice\Core\Model
- * @package Ice\Model;
- * @author dp<email>
+ *
+ * @package Ice\Model * @author dp <email>
+ *
  * @version 0
  * @since 0
  */
-class User extends Model
-{
+class User extends Model {
 
 }

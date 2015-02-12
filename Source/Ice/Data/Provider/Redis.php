@@ -257,7 +257,7 @@ class Redis extends Data_Provider
         $isConnected = $connection->connect($options['host'], $options['port']);
 
         if (!$isConnected) {
-            Mysqli::getLogger()->fatal('redis - ' . $this->getConnection()->getLastError(), __FILE__, __LINE__);
+            Mysqli::getLogger()->exception('redis - ' . $this->getConnection()->getLastError(), __FILE__, __LINE__);
         }
 
         if (function_exists('igbinary_serialize')) {

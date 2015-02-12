@@ -15,6 +15,7 @@ use Ice\Form\Model as Form_Model;
 use Ice\Helper\Json;
 use Ice\Helper\Object;
 use Ice\Helper\Spatial;
+use Ice\Helper\Model as Helper_Model;
 
 /**
  * Class Model
@@ -91,8 +92,6 @@ abstract class Model
      * Private constructor. Create model: Model::create()
      *
      * @param array $row
-     * @throws Exception
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
@@ -104,7 +103,7 @@ abstract class Model
         $modelClass = self::getClass();
         $lowercaseModelName = strtolower(self::getClassName());
 
-        $fields = $modelClass::getMapping();
+        $fields = $modelClass::getFieldNames();
 
         foreach ($fields as $fieldName => $columnName) {
             $this->_row[$fieldName] = null;
@@ -166,7 +165,7 @@ abstract class Model
         $modelClass = Object::getClass(__CLASS__, $modelClass);
 
         if (!Loader::load($modelClass, false)) {
-            Model::getLogger()->fatal(['Model class {$0} not found', $modelClass], __FILE__, __LINE__);
+            Model::getLogger()->exception(['Model class {$0} not found', $modelClass], __FILE__, __LINE__);
         }
 
 //        if (Object::isShortName($modelClass)) {
@@ -182,21 +181,6 @@ abstract class Model
         }
 
         return $modelClass;
-    }
-
-    /**
-     * Return model mapping
-     *
-     * @return array
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public static function getMapping()
-    {
-        return self::getConfig()->gets(__CLASS__);
     }
 
     /**
@@ -318,8 +302,13 @@ abstract class Model
         /** @var Model $modelClass */
         $modelClass = get_class($this);
 
-        throw new Exception('Could not set value:' . "\n" . print_r($fieldValue, true) .
-            '. Field "' . $fieldName . '" not found in Model "' . $modelClass::getClassName() . '"');
+        Model::getLogger()->exception(
+            [
+                'Could not set value: Field "{$0}" not found in Model "{$1}"',
+                [$fieldName, $modelClass::getClassName()]
+            ],
+            __FILE__, __LINE__, null, $fieldValue
+        );
     }
 
     /**
@@ -383,7 +372,7 @@ abstract class Model
         /** @var Model $modelClass */
         $modelClass = get_class($this);
 
-        $modelMapping = $modelClass::getMapping();
+        $modelMapping = $modelClass::getScheme()->getFieldNames();
 
         if (!isset($modelMapping[$fieldName])) {
             return false;
@@ -391,7 +380,7 @@ abstract class Model
 
         $columnName = $modelMapping[$fieldName];
 
-        $pkColumnNames = $modelClass::getScheme()->getPkColumnNames();
+        $pkColumnNames = $modelClass::getScheme($this->getDataSource())->getPkColumnNames();
 
         return in_array($columnName, $pkColumnNames);
     }
@@ -400,15 +389,14 @@ abstract class Model
      * Return scheme of table in data source: 'columnNames => (types, defaults, comments)')
      *
      * @return Model_Scheme
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.5
      * @since 0.0
      */
     public static function getScheme()
     {
-        return Model_Scheme::getInstance(self::getClass());
+        return Model_Scheme::create(self::getClass());
     }
 
     /**
@@ -428,8 +416,8 @@ abstract class Model
             /** @var Model $modelClass */
             $modelClass = get_class($this);
 
-            $columnName = $modelClass::getMapping()[$fieldName];
-            if ($modelClass::getScheme()->getColumnNames()[$columnName]['default'] !== null) {
+            $columnName = $modelClass::getScheme()->getFieldNames()[$fieldName];
+            if ($modelClass::getScheme()->getColumns()[$columnName]['default'] !== null) {
                 return;
             }
 
@@ -486,7 +474,7 @@ abstract class Model
         foreach (array($this->_row, $this->_json, $this->_fk) as $fields) {
             if (array_key_exists($fieldName, $fields)) {
                 if ($isNotNull && $fields[$fieldName] === null) {
-                    throw new Exception('field "' . $fieldName . '" of model "' . $modelName . '" is null');
+                    Model::getLogger()->exception(['field "{$0}" of model "{$1}" is null', [$fieldName, $modelName]], __FILE__, __LINE__);
                 }
                 return $fields[$fieldName];
             }
@@ -526,15 +514,20 @@ abstract class Model
                 $key = $this->_row[$foreignKeyName];
 
                 if (!$key) {
-                    throw new Exception('Model::__get: Не определен внешний ключ ' . $foreignKeyName . ' в модели ' . $modelName);
+                    Model::getLogger()->exception(['Model::__get: Не определен внешний ключ {$0} в модели {$1}', [$foreignKeyName, $modelName]], __FILE__, __LINE__);
                 }
 
                 $row = array_merge($this->_data, [strtolower(Object::getName($fieldName)) . '_pk' => $key]);
                 $joinModel = $fieldName::create($row);
 
                 if (!$joinModel) {
-                    throw new Exception('Model::__get: Не удалось получить модель по внешнему ключу ' .
-                        $foreignKeyName . '="' . $key . '" в модели ' . $modelName);
+                    Model::getLogger()->exception(
+                        [
+                            'Model::__get: Не удалось получить модель по внешнему ключу {$0} = "{$1}" в модели {$2}',
+                        [$foreignKeyName, $key, $modelName]
+                        ],
+                        __FILE__, __LINE__
+                    );
                 }
 
                 $this->_fk[$fieldName] = $joinModel;
@@ -544,7 +537,7 @@ abstract class Model
             // TODO: Пока лениво подгружаем
             // many-to-one
             $foreignKeyName = strtolower($modelName) . '__fk';
-            if (array_key_exists($foreignKeyName, $fieldName::getMapping())) {
+            if (array_key_exists($foreignKeyName, $fieldName::getScheme()->getFieldNames())) {
                 $this->_fk[$fieldName] = $fieldName::query()
                     ->eq([$foreignKeyName => $this->getPk()])
                     ->select('*')
@@ -556,7 +549,7 @@ abstract class Model
             // $fieldName not model // todo: refactoring
         }
 
-        Model::getLogger()->fatal(['Field {$0} not found in Model {$1}', [$fieldName, $modelName]], __FILE__, __LINE__);
+        Model::getLogger()->exception(['Field {$0} not found in Model {$1}', [$fieldName, $modelName]], __FILE__, __LINE__);
         return null;
     }
 
@@ -651,10 +644,10 @@ abstract class Model
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.5
      * @since 0.0
      */
-    public static function getDataSource()
+    public function getDataSource()
     {
         $modelName = self::getClass();
         $parentModelName = get_parent_class($modelName);
@@ -663,7 +656,7 @@ abstract class Model
             return Data_Source::getInstance(Object::getName($parentModelName) . ':model/' . $modelName);
         }
 
-        return Data_Source::getInstance();
+        return Data_Source::getInstance($this->getDataSourceKey());
     }
 
     /**
@@ -675,14 +668,14 @@ abstract class Model
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.5
      * @since 0.0
      */
     public static function getFieldNames($fields = [])
     {
         $modelClass = self::getClass();
 
-        $fieldNames = array_keys($modelClass::getMapping());
+        $fieldNames = array_keys($modelClass::getScheme()->getFieldNames());
 
         if (empty($fields) || $fields = '*') {
             return $fieldNames;
@@ -712,7 +705,7 @@ abstract class Model
                 continue;
             }
 
-            throw new Exception('Поле "' . $fieldName . '" не найдено в модели "' . self::getClass() . '"');
+            Model::getLogger()->exception(['Поле "{$0}" не найдено в модели "{$1}"', [$fieldName, self::getClass()]], __FILE__, __LINE__);
         }
 
         return $fields;
@@ -780,20 +773,22 @@ abstract class Model
         return self::getResource()->get($tableName);
     }
 
+    public static function getTablePrefix() {
+        return Helper_Model::getTablePrefix(self::getTableName());
+    }
+
     /**
      * Return table name of self model class
      *
      * @return string
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.5
      * @since 0.0
      */
     public static function getTableName()
     {
-        $modelClass = self::getClass();
-        return Data_Scheme::getInstance($modelClass::getScheme()->getScheme())->getModelClasses()[$modelClass];
+        return self::getScheme()->getTableName();
     }
 
     /**
@@ -964,7 +959,7 @@ abstract class Model
             return $pkFieldNames;
         }
 
-        $fieldNames = array_flip(self::getMapping());
+        $fieldNames = array_flip(self::getScheme()->getFieldNames());
 
         return self::getRegistry()->set('pkFieldNames', array_map(
                 function ($columnName) use ($fieldNames) {
@@ -989,7 +984,7 @@ abstract class Model
     {
         $queryBuilder = self::query();
 
-        foreach (self::getScheme()->getColumnNames() as $name => $scheme) {
+        foreach (self::getScheme()->getColumns() as $name => $scheme) {
             $queryBuilder->column($name, $scheme);
         }
 
@@ -1366,4 +1361,14 @@ abstract class Model
             ->select('*', null, null, null, $dataSourceKey, $ttl)
             ->getModel();
     }
+
+    /**
+     * @return null
+     */
+    public function getDataSourceKey()
+    {
+        return $this->_dataSourceKey;
+    }
+
+
 }

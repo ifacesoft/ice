@@ -12,6 +12,7 @@ namespace Ice\Core;
 use Ice;
 use Ice\Core;
 use Ice\Data\Provider\Repository;
+use Ice\Exception\File_Not_Found;
 use Ice\Helper\Config as Helper_Config;
 use Ice\Helper\File;
 use Ice\Helper\Object;
@@ -49,7 +50,7 @@ class Config
     /**
      * Constructor of config object
      *
-     * @param array $_config
+     * @param array $config
      * @param $configName
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -57,83 +58,28 @@ class Config
      * @version 0.0
      * @since 0.0
      */
-    protected function __construct(array $_config, $configName)
+    protected function __construct(array $config, $configName)
     {
-        $this->_config = $_config;
+        $this->_config = $config;
         $this->_configName = $configName;
     }
-
-//    /**
-//     * Create file config
-//     *
-//     * @param $className
-//     * @param array $configData
-//     * @param null $postfix
-//     * @param bool $force save only $configData
-//     * @throws Exception
-//     * @return Config
-//     */
-//    public static function create($className, array $configData, $postfix = null, $force = false, $moduleName = null)
-//    {
-//        if (empty($configData)) {
-//            throw new Exception('Create config file for class "' . $className . '" failed. Data is empty.');
-//        }
-//
-//        $configName = $postfix
-//            ? $className . '_' . $postfix
-//            : $className;
-//
-//        if (!$moduleName) {
-//            $moduleName = MODULE;
-//        }
-//
-//        $fileName = Module::get($moduleName) . 'Config/' . str_replace(['_', '\\'], '/', $configName) . '.php';
-//
-//        if (!$force) {
-//            if (file_exists($fileName)) {
-//                $configData = array_merge(File::loadData($fileName), $configData);
-//            }
-//        }
-//
-//        File::createData($fileName, $configData);
-//
-//        return Config::getInstance($className, [], $postfix, true, false);
-//    }
 
     /**
      * Get config object by type or key
      *
      * @param Core $class
-     * @param array $selfConfig
-     * @param null $postfix // TODO: Когда-нибудь выпилить
+     * @param null $postfix
      * @param bool $isRequired
      * @param bool $isUseCache
-     * @throws Exception
      * @return Config
-     *
+     * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
      * @since 0.0
      */
-    public static function getInstance(
-        $class,
-        array $selfConfig = [],
-        $postfix = null,
-        $isRequired = false,
-        $isUseCache = true
-    )
+    public static function create($class, $postfix = null, $isRequired = false, $isUseCache = true)
     {
-        $config = [];
-
-        if (!empty($class::$configDefaults)) {
-            $config = array_merge_recursive($class::$configDefaults, $selfConfig);
-        }
-
-        if (!empty($class::$config)) {
-            $config = array_merge_recursive($class::$config, $selfConfig);
-        }
-
         $baseClass = Object::getBaseClass($class);
 
         if ($postfix) {
@@ -143,44 +89,53 @@ class Config
         /** @var Data_Provider $dataProvider */
         $dataProvider = Data_Provider::getInstance(Config::getDefaultDataProviderKey());
 
-        $_config = $isUseCache ? $dataProvider->get($class) : null;
-
-        if ($_config) {
+        if ($_config = $isUseCache ? $dataProvider->get($class) : null) {
             return $_config;
         }
 
+        $config = [];
+
+        if (Object::isClass($class) && !empty($class::$configDefaults)) {
+            $config = array_merge_recursive($class::$configDefaults, $config);
+        }
+
+        if (Object::isClass($class) && !empty($class::$config)) {
+            $config = array_merge_recursive($class::$config, $config);
+        }
+
+        if ($class != __CLASS__ && $iceConfig = self::getConfig()->gets($class, false)) {
+            $config = array_merge_recursive($iceConfig, $config);
+        }
+
         if ($baseClass != $class) {
-            foreach (Loader::getFilePath($baseClass, '.php', 'Config/', $isRequired, false, false, true) as $configFilePath) {
+            foreach (array_reverse(Loader::getFilePath($baseClass, '.php', 'Config/', false, false, false, true)) as $configFilePath) {
                 $configFromFile = File::loadData($configFilePath);
                 if (!is_array($configFromFile)) {
-                    throw new Exception('Не валидный файл конфиг: ' . $configFilePath);
+                    Config::getLogger()->exception(['Не валидный файл конфиг: {$0}', $configFilePath], __FILE__, __LINE__);
                 }
-                if (isset($configFromFile[$class]))
-                    $config = array_merge_recursive($config, $configFromFile[$class]);
+                if (isset($configFromFile[$class])) {
+                    $config = array_merge_recursive($configFromFile[$class], $config);
+                }
             }
         }
 
-        foreach (Loader::getFilePath($class, '.php', 'Config/', $isRequired, false, false, true) as $configFilePath) {
-            $configFromFile = File::loadData($configFilePath);
-            if (!is_array($configFromFile)) {
-                throw new Exception('Не валидный файл конфиг: ' . $configFilePath);
+        try {
+            foreach (array_reverse(Loader::getFilePath($class, '.php', 'Config/', $isRequired, false, false, true)) as $configFilePath) {
+                $configFromFile = File::loadData($configFilePath);
+                if (!is_array($configFromFile)) {
+                    Config::getLogger()->exception(['Не валидный файл конфиг: {$0}', $configFilePath], __FILE__, __LINE__);
+                }
+                $config = array_merge_recursive($configFromFile, $config);
             }
-            $config = array_merge_recursive($config, $configFromFile);
+        } catch (File_Not_Found $e) {
+            Config::getLogger()->exception(['Config for {$0} not found', $class], __FILE__, __LINE__, $e, null, -1, 'Ice:Config_Not_Found');
         }
-
-        if ($class != __CLASS__) {
-            $iceConfig = self::getConfig()->gets($class, false);
-
-            if (!empty($iceConfig)) {
-                $config = array_merge_recursive($config, $iceConfig);
-            }
-        }
-
-        $config = array_merge_recursive($config, $selfConfig);
 
         $_config = new Config($config, $class);
 
-        $dataProvider->set($class, $_config);
+        if ($isUseCache) {
+            $dataProvider->set($class, $_config);
+        }
 
         return $_config;
     }
@@ -215,6 +170,40 @@ class Config
     public function gets($key = null, $isRequired = true)
     {
         return Helper_Config::gets($this->_config, $key, $isRequired);
+    }
+
+    /**
+     * Return default config for class
+     *
+     * @param $key
+     * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
+     */
+    public static function getDefault($key)
+    {
+        return Config::getConfig()->gets('defaults/' . $key, false);
+    }
+
+    /**
+     * Create new config
+     *
+     * @param $class
+     * @param $config
+     * @return Config
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
+     */
+    public static function newConfig($class, array $config)
+    {
+
+        return new Config($config, $class);
     }
 
     /**
@@ -265,5 +254,74 @@ class Config
         $params = $this->gets($key, $isRequired);
 
         return empty($params) ? null : reset($params);
+    }
+
+    /**
+     * Set config param
+     *
+     * @param $key
+     * @param $value
+     * @param bool $force
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
+     */
+    public function set($key, $value, $force = false)
+    {
+        Helper_Config::set($this->_config, $key, $value, $force);
+    }
+
+    /**
+     * Remove param
+     *
+     * @param $key
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
+     */
+    public function remove($key)
+    {
+        Helper_Config::remove($this->_config, $key);
+    }
+
+    /**
+     * Backup config
+     *
+     * @param $revision
+     * @return Config
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
+     */
+    public function backup($revision)
+    {
+        File::move(
+            Loader::getFilePath($this->getConfigName(), '.php', 'Config/', false, true),
+            Loader::getFilePath($this->getConfigName() . '/' . $revision, '.php', 'Var/Backup/Config/', false, true)
+        );
+
+        return $this;
+    }
+
+    /**
+     * Save config
+     *
+     * @return Config
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
+     */
+    public function save()
+    {
+
+        File::createData(Loader::getFilePath($this->getConfigName(), '.php', 'Config/', false, true), $this->_config);
+        return $this;
     }
 }

@@ -237,7 +237,7 @@ class Environment extends Container
         $dataProviderKey = $this->get($key);
 
         if ($dataProviderKey === null) {
-            Environment::getLogger()->fatal(['In environment config param {$0} not found', $key], __FILE__, __LINE__);
+            Environment::getLogger()->exception(['In environment config param {$0} not found', $key], __FILE__, __LINE__);
         }
 
         return is_array($dataProviderKey)

@@ -18,9 +18,6 @@ namespace Ice\Helper;
  *
  * @package Ice
  * @subpackage Helper
- *
- * @version 0.0
- * @since 0.0
  */
 class Php
 {
@@ -52,4 +49,14 @@ class Php
         $string = str_replace('NULL', 'null', $string);
         return $string;
     }
-} 
+
+    /**
+     * Test passing by reference
+     *
+     * @param $var
+     */
+    public static function passingByReference(&$var)
+    {
+        $var = String::getRandomString();
+    }
+}

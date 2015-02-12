@@ -11,7 +11,10 @@ namespace Ice\Core;
 
 use Ice;
 use Ice\Core;
+use Ice\Exception\Config_Not_Found;
+use Ice\Exception\Data_Scheme_Error;
 use Ice\Exception\File_Not_Found;
+use Ice\Exception\Model_Scheme_Error;
 use Ice\Form\Model as Form_Model;
 use Ice\Helper\Arrays;
 use Ice\Helper\Date;
@@ -35,72 +38,90 @@ use Ice\Helper\String;
  * @version 0.0
  * @since 0.0
  */
-class Model_Scheme extends Container
+class Model_Scheme
 {
     use Core;
 
     /**
-     * Model schame
+     * Model scheme
      *
-     * @var array
+     * @var Config
      */
-    private $_modelScheme = null;
+    private $_modelSchemeConfig = null;
 
     /**
      * Private constructor for model scheme
      *
-     * @param $dataScheme
+     * @param $modelClass
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.5
      * @since 0.0
      */
-    private function __construct($dataScheme)
+    private function __construct($modelClass)
     {
-        $this->_modelScheme = [
-            'scheme' => $dataScheme
-        ];
+        try {
+            $this->_modelSchemeConfig = Config::create($modelClass, null, true);
+        } catch (Config_Not_Found $e) {
+            $this->_modelSchemeConfig = Config::newConfig($modelClass, Config::getDefault(__CLASS__))->save();
+        }
     }
 
     /**
      * Synchronization local model scheme with remote data source table scheme
      *
+     * @param $dataSourceKey
      * @param $tableName
-     * @param $schemeData
      * @param bool $force
-     * @return mixed
-     * @throws Exception
-     * @throws File_Not_Found
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.5
      * @since 0.0
+     * @return $this
      */
-    public static function update($tableName, $schemeData, $force = false)
+    public function update($dataSourceKey, $tableName, $force = false)
     {
-        $schemeData['modelClass'] = Helper_Model::getModelClassByTableName($tableName);
-        $schemeData['prefix'] = Helper_Model::getTablePrefix($tableName);
-
-        $diff = self::diff($schemeData['scheme'], $tableName);
-
-        if (empty($diff['added']) && empty($diff['deleted']) && !$force) {
-            return self::getFilePathData($schemeData['modelClass']);
+        try {
+            $this->setDataSourceKey($dataSourceKey);
+            $this->setTableName($tableName);
+        } catch (Model_Scheme_Error $e) {
+            Model_Scheme::getLogger()->warning('Fail update model scheme', __FILE__, __LINE__, $e);
+            return $this;
         }
 
-        $schemeData['columns'] = Data_Source::getInstance($schemeData['scheme'])->getColumns($tableName);
-        $schemeData['indexes'] = Data_Source::getInstance($schemeData['scheme'])->getIndexes($tableName);
+        $dataSource = Data_Source::getInstance($dataSourceKey);
 
-        $modelMapping = [];
-        $validators = [];
-        $form = [];
-        $data = [];
+        $columns = $dataSource->getColumns($tableName);
 
-        $primaryKeys = $schemeData['indexes']['PRIMARY KEY']['PRIMARY'];
-        $foreignKeys = Arrays::column($schemeData['indexes']['FOREIGN KEY'], 0, '');
 
-        foreach ($schemeData['columns'] as $columnName => &$column) {
+        $diffColumns = Arrays::diff($this->getColumns(), $columns);
+
+        if (empty($diffColumns['added']) && empty($diffColumns['deleted']) && !$force) {
+            return $this;
+        }
+
+        $currentRevision = $this->getRevision();
+
+        $this->_modelSchemeConfig->set('time', Date::get(), true);
+        $this->_modelSchemeConfig->set('revision', Date::getRevision(), true);
+
+        $columnNames = array_flip($this->getFieldNames());
+
+        $primaryKeys = $this->getPkColumnNames();
+        $foreignKeys = $this->getFkColumnNames();
+
+        $modelClass = $this->getModelClass();
+
+        foreach ($diffColumns['deleted'] as $columnName => $column) {
+            $this->_modelSchemeConfig->remove(Model::getClass() . '/' . $columnNames[$columnName]);
+            $this->_modelSchemeConfig->remove(__CLASS__ . '/columns/' . $columnName);
+            $this->_modelSchemeConfig->remove(Validator::getClass() . '/' . $columnNames[$columnName]);
+            $this->_modelSchemeConfig->remove(Form::getClass() . '/' . $columnNames[$columnName]);
+            $this->_modelSchemeConfig->remove(Data::getClass() . '/' . $columnNames[$columnName]);
+        }
+
+        foreach ($diffColumns['added'] as $columnName => $column) {
             $fieldName = strtolower($columnName);
 
             $column['is_primary'] = false;
@@ -114,129 +135,68 @@ class Model_Scheme extends Container
             } else if (in_array($columnName, $primaryKeys)) {
                 $column['is_primary'] = true;
                 if (substr($fieldName, -3, 3) != '_pk') {
-                    $fieldName = strtolower(Object::getName($schemeData['modelClass']));
+                    $fieldName = strtolower(Object::getName($modelClass));
                     do { // some primary fields
                         $fieldName .= '_pk';
                     } while (isset($modelMapping[$fieldName]));
                 }
             }
 
-            $modelMapping[$fieldName] = $columnName;
-
             $fieldType = isset(Form_Model::$typeMap[$column['dataType']]) ? Form_Model::$typeMap[$column['dataType']] : 'text';
 
-            $data[$fieldName] = 'text';
-
-            $form[$fieldName] = $fieldType;
-
-            $validators[$fieldName] = [];
+            $validators = [];
 
             switch ($fieldType) {
                 case 'text':
                 case 'textarea':
-                    $validators[$fieldName]['Ice:Length_Max'] = (int)$column['length'];
+                    $validators['Ice:Length_Max'] = (int)$column['length'];
                     break;
                 default:
             }
 
             if ($column['nullable'] === false && !$column['is_primary']) {
-                $validators[$fieldName][] = 'Ice:Not_Null';
+                $validators[] = 'Ice:Not_Null';
             }
+
+            $this->_modelSchemeConfig->set(Model::getClass() . '/' . $fieldName, $columnName);
+            $this->_modelSchemeConfig->set(__CLASS__ . '/columns/' . $columnName, $column);
+            $this->_modelSchemeConfig->set(Data::getClass() . '/' . $fieldName, 'text');
+            $this->_modelSchemeConfig->set(Form::getClass() . '/' . $fieldName, $fieldType);
+            $this->_modelSchemeConfig->set(Validator::getClass() . '/' . $fieldName, $validators);
         }
 
-        $modelClass = $schemeData['modelClass'];
+        $this->_modelSchemeConfig->set(__CLASS__ . '/indexes', $dataSource->getIndexes($this->getTableName()), true);
 
-        Model::getCodeGenerator()->generate([$modelClass, array_keys($modelMapping)]);
+        $this->_modelSchemeConfig->backup($currentRevision);
+        $this->_modelSchemeConfig->save();
 
-        $modelConfigData = Config::getInstance($schemeData['modelClass'])->gets(null, false);
-
-        if (empty($modelConfigData)) {
-            $modelConfigData = [];
-        }
-
-        $modelConfigData[Model::getClass()] = $modelMapping;
-        $modelConfigData[Validator::getClass()] = $validators;
-        $modelConfigData[Form::getClass()] = $form;
-        $modelConfigData[Data::getClass()] = $data;
-
-        $modelMappingFile = Loader::getFilePath($modelClass, '.php', 'Config/', false, true);
-        File::createData($modelMappingFile, $modelConfigData);
-
-        $prevRevision = self::getFilePathData($modelClass)['revision'];
-        $prevModelSchemeFile = Loader::getFilePath($modelClass . '/' . $prevRevision, '.php', 'Var/', false, true);
-
-        $modelSchemeFile = Loader::getFilePath($modelClass, '.php', 'Var/', false, true);
-
-        File::move($modelSchemeFile, $prevModelSchemeFile);
+        Model::getCodeGenerator()->generate([$modelClass, array_keys($this->getFieldNames())]);
 
         Model_Scheme::getLogger()->info(['Update scheme for model: {$0}', $modelClass], Logger::SUCCESS, true);
 
-        return File::createData($modelSchemeFile, $schemeData);
-    }
+        return $this;
 
-    /**
-     * Return different between local model scheme with remote data source table scheme
-     *
-     * @param $scheme
-     * @param $tableName
-     * @return array
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public static function diff($scheme, $tableName)
-    {
-        return Arrays::diff(
-            self::getFilePathData(Helper_Model::getModelClassByTableName($tableName))['columns'],
-            Data_Source::getInstance($scheme)->getColumns($tableName)
-        );
     }
 
     /**
      * Create new instance of model scheme
      *
-     * @param $modelKey
-     * @return Model_Scheme
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    protected static function create($modelKey)
-    {
-        return new Model_Scheme(self::getFilePathData($modelKey));
-    }
-
-    /**
-     * Return path of model scheme data
-     *
      * @param $modelClass
-     * @return mixed
-     * @throws File_Not_Found
-     *
+     * @return Model_Scheme
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.5
      * @since 0.0
      */
-    public static function getFilePathData($modelClass)
+    public static function create($modelClass)
     {
-        $filePath = Loader::getFilePath($modelClass, '.php', 'Var/', false, true);
+        $dataProvider = Model_Scheme::getDataProvider();
 
-        if (file_exists($filePath)) {
-            return File::loadData($filePath);
+        if ($modelScheme = $dataProvider->get($modelClass)) {
+            return $modelScheme;
         }
 
-        $data = [
-            'time' => Date::get(),
-            'revision' => date('00000000'),
-            'columns' => []
-        ];
-
-        return File::createData($filePath, $data);
+        return $dataProvider->set($modelClass, new Model_Scheme($modelClass));
     }
 
     /**
@@ -246,27 +206,12 @@ class Model_Scheme extends Container
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.5
      * @since 0.0
      */
-    public function getColumnNames()
+    public function getColumns()
     {
-        return $this->_modelScheme['scheme']['columns'];
-    }
-
-    /**
-     * Scheme name of this model scheme
-     *
-     * @return string
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function getScheme()
-    {
-        return $this->_modelScheme['scheme']['scheme'];
+        return $this->_modelSchemeConfig->gets(__CLASS__ . '/columns');
     }
 
     /**
@@ -276,16 +221,12 @@ class Model_Scheme extends Container
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.5
      * @since 0.0
      */
     public function getIndexes()
     {
-        if (!isset($this->_modelScheme['scheme']['indexes'])) {
-            Model_Scheme::getLogger()->fatal('Scheme indexes not found. Run Ice:Module_Deploy', __FILE__, __LINE__, null, $this->_modelScheme);
-        }
-
-        return $this->_modelScheme['scheme']['indexes'];
+        return $this->_modelSchemeConfig->gets(__CLASS__ . '/indexes');
     }
 
     /**
@@ -301,5 +242,157 @@ class Model_Scheme extends Container
     public function getPkColumnNames()
     {
         return $this->getIndexes()['PRIMARY KEY']['PRIMARY'];
+    }
+
+    /**
+     * Return model class
+     *
+     * @return Model
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
+     */
+    public function getModelClass()
+    {
+        return $this->_modelSchemeConfig->getConfigName();
+    }
+
+    /**
+     * Return model scheme revision
+     *
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
+     */
+    public function getRevision()
+    {
+        return $this->_modelSchemeConfig->get('revision');
+    }
+
+    /**
+     * Return table name
+     *
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
+     */
+    public function getTableName()
+    {
+        return $this->_modelSchemeConfig->get('tableName', false);
+    }
+
+    /**
+     * Return data source name
+     *
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
+     */
+    public function getDataSourceKey()
+    {
+        return $this->_modelSchemeConfig->get('dataSourceKey', false);
+    }
+
+    /**
+     * Set data source key
+     *
+     * @param $dataSourceKey
+     * @throws Exception
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
+     */
+    private function setDataSourceKey($dataSourceKey)
+    {
+        $key = $this->getDataSourceKey();
+
+        if (!$key) {
+            $this->_modelSchemeConfig->set('dataSourceKey', $dataSourceKey);
+            return;
+        }
+
+        if ($key != $dataSourceKey) {
+            Model_Scheme::getLogger()->exception(
+                [
+                    'Scheme of model {$0} expected dataSourceKey "{$1}" but found {$2}',
+                    [$this->getModelClass(), $key, $dataSourceKey]
+                ],
+                __FILE__, __LINE__, null, null, -1, 'Ice:Model_Scheme_Error'
+            );
+        }
+    }
+
+    /**
+     * Set table name
+     *
+     * @param $tableName
+     * @throws Exception
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
+     */
+    private function setTableName($tableName)
+    {
+        $name = $this->getTableName();
+
+        if (!$name) {
+            $this->_modelSchemeConfig->set('tableName', $tableName);
+            return;
+        }
+
+        if ($name != $tableName) {
+            Model_Scheme::getLogger()->exception(
+                [
+                    'Scheme of model {$0} expected tableName "{$1}" but found {$2}',
+                    [$this->getModelClass(), $name, $tableName]
+                ],
+                __FILE__, __LINE__, null, null, -1, 'Ice:Model_Scheme_Error'
+            );
+        }
+    }
+
+    /**
+     * Return model scheme field names with column names
+     *
+     * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
+     */
+    public function getFieldNames()
+    {
+        return $this->_modelSchemeConfig->gets(Model::getClass());
+    }
+
+    /**
+     * Return foreign key column names
+     *
+     * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
+     */
+    public function getFkColumnNames()
+    {
+        return Arrays::column($this->getIndexes()['FOREIGN KEY'], 0, '');
     }
 }

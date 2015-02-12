@@ -45,7 +45,7 @@ class Model
     {
         $moduleAlias = null;
         $tableNamePart = $tableName;
-        foreach (Core_Config::getInstance(Core_Model::getClass())->gets('prefixes') as $prefix => $value) {
+        foreach (Core_Config::create(Core_Model::getClass())->gets('prefixes') as $prefix => $value) {
             if (strrpos($tableName, $prefix, -strlen($tableName)) !== FALSE) {
                 $moduleAlias = $value;
                 $tableNamePart = ltrim(substr($tableName, strlen($prefix)), '_');
@@ -81,7 +81,7 @@ class Model
     {
         $prefix = strstr($tableName, '_', true);
 
-        if (!Core_Config::getInstance(Core_Model::getClass())->get('prefixes/' . $prefix, false)) {
+        if (!Core_Config::create(Core_Model::getClass())->get('prefixes/' . $prefix, false)) {
             return '';
         }
 

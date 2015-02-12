@@ -129,7 +129,7 @@ class Mongodb extends Query_Translator
 //            return $sql;
 //        }
 //
-//        $modelMapping = $modelClass::getMapping();
+//        $modelMapping = $modelClass::getScheme()->getFieldNames();
 //
 //        $sql .= "\n\t" . '(`' . implode('`,`', Mapping::columnNames($modelClass, $part['fieldNames'])) . '`)';
 //        $sql .= "\n" . self::SQL_CLAUSE_VALUES;
@@ -220,7 +220,7 @@ class Mongodb extends Query_Translator
 //                $sql .= $sql
 //                    ? ' ' . $logicalOperator . "\n\t"
 //                    : "\n" . self::SQL_CLAUSE_WHERE . "\n\t";
-//                $sql .= $this->buildWhere($modelClass::getMapping(), $fieldName, $comparisonOperator, $tableAlias, $count);
+//                $sql .= $this->buildWhere($modelClass::getScheme()->getFieldNames(), $fieldName, $comparisonOperator, $tableAlias, $count);
 //            }
 //        }
 //
@@ -274,7 +274,7 @@ class Mongodb extends Query_Translator
 //        foreach ($part as $modelClass => $items) {
 //            list($tableAlias, $fieldNames) = $items;
 //
-//            $modelMapping = $modelClass::getMapping();
+//            $modelMapping = $modelClass::getScheme()->getFieldNames();
 //
 //            foreach ($fieldNames as $fieldName => &$fieldAlias) {
 //                $isSpatial = (boolean)strpos($fieldName, '__geo');
@@ -314,7 +314,7 @@ class Mongodb extends Query_Translator
      *
      * @param array $part
      * @return string
-     *
+     * @throws \Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
@@ -326,7 +326,7 @@ class Mongodb extends Query_Translator
             return [];
         } else {
             Logger::debug($part);
-            throw new Exception('Not implemented');
+            throw new \Exception('Not implemented');
         }
 
 
@@ -353,7 +353,7 @@ class Mongodb extends Query_Translator
      *
      * @param array $part
      * @return string
-     *
+     * @throws \Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
@@ -365,7 +365,7 @@ class Mongodb extends Query_Translator
             return [];
         } else {
             Logger::debug($part);
-            throw new Exception('Not implemented');
+            throw new \Exception('Not implemented');
         }
 
 
@@ -380,7 +380,7 @@ class Mongodb extends Query_Translator
         foreach ($part as $modelClass => $item) {
             list($tableAlias, $fieldNames) = $item;
 
-            $fields = $modelClass::getMapping();
+            $fields = $modelClass::getScheme()->getFieldNames();
 
             foreach ($fieldNames as $fieldName => $ascending) {
                 $orders[] = $tableAlias . '.' . $fields[$fieldName] . ' ' . $ascending;
@@ -398,7 +398,7 @@ class Mongodb extends Query_Translator
      *
      * @param array $part
      * @return string
-     *
+     * @throws \Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
@@ -410,7 +410,7 @@ class Mongodb extends Query_Translator
             return [];
         } else {
             Logger::debug($part);
-            throw new Exception('Not implemented');
+            throw new \Exception('Not implemented');
         }
 
 
@@ -425,7 +425,7 @@ class Mongodb extends Query_Translator
         foreach ($part as $modelClass => $items) {
             list(, $fieldNames) = $items;
 
-            $fields = $modelClass::getMapping();
+            $fields = $modelClass::getScheme()->getFieldNames();
 
             foreach ($fieldNames as $fieldName) {
                 $groups[] = $fields[$fieldName];
@@ -474,7 +474,7 @@ class Mongodb extends Query_Translator
      *
      * @param array $part
      * @return string
-     *
+     * @throws \Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
@@ -486,7 +486,7 @@ class Mongodb extends Query_Translator
             return [];
         } else {
             Logger::debug($part);
-            throw new Exception('Not implemented');
+            throw new \Exception('Not implemented');
         }
 
 
@@ -521,6 +521,17 @@ class Mongodb extends Query_Translator
         return $sql;
     }
 
+    /**
+     * Translate drop table part
+     *
+     * @param array $part
+     * @return array|string
+     * @throws \Exception
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.4
+     */
     public function translateDrop(array $part)
     {
         $modelClass = array_shift($part);
@@ -533,7 +544,7 @@ class Mongodb extends Query_Translator
             return [];
         } else {
             Logger::debug($part);
-            throw new Exception('Not implemented');
+            throw new \Exception('Not implemented');
         }
 
 

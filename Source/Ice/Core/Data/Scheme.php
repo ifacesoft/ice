@@ -11,10 +11,12 @@ namespace Ice\Core;
 
 use Ice;
 use Ice\Core;
-use Ice\Exception\File_Not_Found;
+use Ice\Exception\Data_Scheme_Error;
 use Ice\Helper\Arrays;
 use Ice\Helper\Date;
 use Ice\Helper\File;
+use Ice\Helper\Model as Helper_Model;
+use Ice\Helper\Php;
 
 /**
  * Class Data_Scheme
@@ -27,13 +29,17 @@ use Ice\Helper\File;
  *
  * @package Ice
  * @subpackage Core
- *
- * @version 0.0
- * @since 0.0
  */
-class Data_Scheme extends Container
+class Data_Scheme
 {
     use Core;
+
+    /**
+     * Data source key
+     *
+     * @var string
+     */
+    private $_dataSourceKey = null;
 
     /**
      * Data scheme data
@@ -52,52 +58,21 @@ class Data_Scheme extends Container
     /**
      * Private constructor of dat scheme
      *
-     * @param $dataScheme
+     * @param $dataSourceKey
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
      * @since 0.0
      */
-    private function __construct($dataScheme)
+    private function __construct($dataSourceKey)
     {
-        $this->_dataScheme = $dataScheme;
-    }
+        $this->_dataSourceKey = $dataSourceKey;
 
-    /**
-     * Create new instance of data scheme
-     *
-     * @param $key
-     * @return Data_Scheme
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    protected static function create($key)
-    {
-        return new Data_Scheme(self::getFilePathData($key));
-    }
-
-    /**
-     * Return path to data scheme data
-     *
-     * @param $scheme
-     * @return mixed
-     * @throws File_Not_Found
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public static function getFilePathData($scheme)
-    {
-        $filePath = Loader::getFilePath($scheme, '.php', 'Var/Scheme/', false, true);
+        $filePath = Loader::getFilePath($dataSourceKey, '.php', 'Var/Scheme/', false, true);
 
         if (file_exists($filePath)) {
-            return File::loadData($filePath);
+            $this->_dataScheme = File::loadData($filePath);
         }
 
         $data = [
@@ -106,104 +81,29 @@ class Data_Scheme extends Container
             'tables' => []
         ];
 
-        File::createData($filePath, $data);
-
-        return self::update($scheme);
+        $this->_dataScheme = File::createData($filePath, $data);
     }
 
     /**
-     * Synchronization local data scheme with remote data source scheme
+     * Create new instance of data scheme
      *
-     * @param $scheme
-     * @param bool $force
-     * @return mixed
-     * @throws File_Not_Found
+     * @param $dataSourceKey
+     * @return Data_Scheme
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.4
      * @since 0.0
      */
-    public static function update($scheme, $force = false)
+    public static function create($dataSourceKey)
     {
-        $schemeData = [
-            'time' => Date::get(),
-            'revision' => date('mdHi'),
-            'scheme' => $scheme
-        ];
+        $dataProvider = Data_Scheme::getDataProvider();
 
-        $localTables = Data_Scheme::getFilePathData($scheme)['tables'];
-        $sourceTables = Data_Source::getInstance($scheme)->getTables();
-
-        $diff = Data_Scheme::diff($localTables, $sourceTables);
-
-        $tables = [
-            'updated' => [],
-            'notChanged' => []
-        ];
-
-        foreach ($diff['added'] as $tableName => $table) {
-            $modelScheme = Model_Scheme::update($tableName, $schemeData, $force);
-
-            if (empty($table['engine'])) {
-                continue;
-            }
-
-            $table['modelClass'] = $modelScheme['modelClass'];
-            $table['revision'] = $modelScheme['revision'];
-            $tables['updated'][$tableName] = $table;
+        if ($object = $dataProvider->get($dataSourceKey)) {
+            return $object;
         }
 
-        foreach ($diff['other'] as $tableName => $table) {
-            $modelSchemeDiff = Model_Scheme::diff($scheme, $tableName);
-
-            if (empty($modelSchemeDiff['added']) && empty($modelSchemeDiff['deleted'])) {
-                $tables['notChanged'][$tableName] = $localTables[$tableName];
-                continue;
-            }
-
-            $modelScheme = Model_Scheme::update($tableName, $schemeData, $force);
-            $table['modelClass'] = $modelScheme['modelClass'];
-            $table['revision'] = $modelScheme['revision'];
-            $tables['updated'][$tableName] = $table;
-        }
-
-        if (empty($diff['deleted']) && empty($tables['updated']) && !$force) {
-            return self::getFilePathData($scheme);
-        }
-
-        $schemeData['tables'] = array_merge($tables['updated'], $tables['notChanged']);
-        unset($tables);
-
-        ksort($schemeData['tables']);
-
-        $dataSchemeFile = Loader::getFilePath($scheme, '.php', 'Var/Scheme/', false, true);
-
-        $prevRevision = self::getFilePathData($scheme)['revision'];
-        $prevDataSchemeFile = Loader::getFilePath($scheme . '/' . $prevRevision, '.php', 'Var/Scheme/', false, true);
-
-        File::move($dataSchemeFile, $prevDataSchemeFile);
-
-        Data_Scheme::getLogger()->info(['Update scheme for tables: {$0}', Ice\Helper\Php::varToPhpString(array_keys($schemeData['tables']))], Logger::SUCCESS, true);
-
-        return File::createData($dataSchemeFile, $schemeData);
-    }
-
-    /**
-     * Return different between local data scheme with remote data source scheme
-     *
-     * @param array $localTables
-     * @param array $sourceTables
-     * @return array
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public static function diff(array $localTables, array $sourceTables)
-    {
-        return Arrays::diff($localTables, $sourceTables);
+        return $dataProvider->set($dataSourceKey, new Data_Scheme($dataSourceKey));
     }
 
     /**
@@ -269,5 +169,198 @@ class Data_Scheme extends Container
     public function getName()
     {
         return $this->_dataScheme['scheme'];
+    }
+
+    /**
+     * Return tables
+     *
+     * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
+     */
+    public function getTables()
+    {
+        return $this->_dataScheme['tables'];
+    }
+
+    /**
+     * Return data scheme (source) key
+     *
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
+     */
+    public function getDataSourceKey()
+    {
+        return $this->_dataSourceKey;
+    }
+
+    /**
+     * Return data scheme revision
+     *
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
+     */
+    public function getRevision()
+    {
+        return $this->_dataScheme['revision'];
+    }
+
+    /**
+     * Return data scheme
+     *
+     * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
+     */
+    public function getDataScheme()
+    {
+        return $this->_dataScheme;
+    }
+
+    /**
+     * Return model scheme by table name
+     *
+     * @param $tableName
+     * @return Model_Scheme
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
+     */
+    public function getModelScheme($tableName)
+    {
+        return Model_Scheme::create($this->getModelClass($tableName));
+    }
+
+    /**
+     * Return model class by table name
+     *
+     * @param $tableName
+     * @return Model
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
+     */
+    public function getModelClass($tableName)
+    {
+        return isset($this->getTables()[$tableName])
+            ? $this->getTables()[$tableName]['modelClass']
+            : Helper_Model::getModelClassByTableName($tableName);
+    }
+
+    /**
+     * Return data source
+     *
+     * @return Data_Source
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
+     */
+    public function getDataSource()
+    {
+        return Data_Source::getInstance($this->getDataSourceKey());
+    }
+
+    public function update($force = false)
+    {
+        $dataSource = $this->getDataSource();
+
+        $localTables = $this->getTables();
+
+        $schemeData = [
+            'time' => Date::get(),
+            'revision' => date('mdHi')
+        ];
+
+        $diffTables = Arrays::diff($this->getTables(), $dataSource->getTables());
+
+        $tables = [
+            'updated' => [],
+            'notChanged' => []
+        ];
+
+        foreach ($diffTables['added'] as $tableName => $table) {
+            $table['modelClass'] = Helper_Model::getModelClassByTableName($tableName);
+
+            $modelScheme = Model_Scheme::create($table['modelClass'])
+                ->update($dataSource->getDataSourceKey(), $tableName, $force);
+
+            $table['revision'] = $modelScheme->getRevision();
+            $tables['updated'][$tableName] = $table;
+        }
+
+        foreach ($diffTables['other'] as $tableName => $table) {
+            $table['modelClass'] = Helper_Model::getModelClassByTableName($tableName);
+
+            $modelScheme = Model_Scheme::create($table['modelClass']);
+
+            $diffColumns = Arrays::diff($modelScheme->getColumns(), $dataSource->getColumns($tableName));
+
+            if (empty($diffColumns['added']) && empty($diffColumns['deleted'])) {
+                $tables['notChanged'][$tableName] = $localTables[$tableName];
+                continue;
+            }
+
+            $table['revision'] = $modelScheme->getRevision();
+            $tables['updated'][$tableName] = $table;
+        }
+
+        if (empty($diffTables['deleted']) && empty($tables['updated']) && !$force) {
+            return $schemeData;
+        }
+
+        $schemeData['tables'] = array_merge($tables['updated'], $tables['notChanged']);
+        unset($tables);
+
+        ksort($schemeData['tables']);
+
+
+        $dataSchemeFile = Loader::getFilePath($this->getDataSourceKey(), '.php', 'Var/Scheme/', false, true);
+
+        $prevDataSchemeFile = Loader::getFilePath($this->getDataSourceKey() . '/' . $this->getRevision(), '.php', 'Var/Scheme/', false, true);
+
+        File::move($dataSchemeFile, $prevDataSchemeFile);
+
+        Data_Scheme::getLogger()->info(['Update scheme for tables: {$0}', Php::varToPhpString(array_keys($schemeData['tables']))], Logger::SUCCESS, true);
+
+        return File::createData($dataSchemeFile, $schemeData);
+    }
+
+    public function getTableName($modelClass)
+    {
+        foreach ($this->getTables() as $tableName => $table) {
+            if ($table['modelClass'] == $modelClass) {
+                return $tableName;
+            }
+        }
+
+        Data_Scheme::getLogger()->exception(
+            [
+                'Table name not found for class {$0} in data scheme {$1}',
+                [$modelClass, $this->getDataSourceKey()]
+            ],
+            __FILE__, __LINE__, null, null, -1, 'Ice:Data_Scheme_Error'
+        );
+
+        return null;
     }
 }

@@ -11,6 +11,7 @@ namespace Ice\Helper;
 
 
 use Ice\Core\Exception;
+use Ice\Core\Logger;
 
 /**
  * Class Hash
@@ -38,7 +39,7 @@ class Hash
      * @param mixed $data
      * @param string $serializer
      * @param string $hash
-     * @throws \Ice\Core\Exception
+     * @throws Exception
      * @return string
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -70,7 +71,7 @@ class Hash
             case self::HASH_SHA1:
                 return sha1($data);
             default:
-                throw new Exception('Unknown hash "' . $hash . "");
+                Logger::getInstance(__CLASS__)->exception(['Unknown hash {$0}', $hash], __FILE__, __LINE__);
         }
     }
 } 

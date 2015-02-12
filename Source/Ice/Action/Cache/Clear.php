@@ -74,7 +74,7 @@ class Cache_Clear extends Action
                     $dataProviderKey = reset($dataProviderKey);
                 }
 
-                $logger->info(['Class {$0}: {$1} - {$2}... removed', [$class, $key, $dataProviderKey]], Logger::SUCCESS);
+                $logger->info(['{$0}: {$1} - {$2}... cleared', [$class, $key, $dataProviderKey]], Logger::SUCCESS);
             }
         }
     }

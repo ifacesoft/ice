@@ -10,6 +10,7 @@
 namespace Ice\Helper;
 
 use Ice\Core\Exception;
+use Ice\Core\Logger;
 
 /**
  * Class Serializer
@@ -35,7 +36,7 @@ class Serializer
      *
      * @param mixed $data
      * @param string $serializer
-     * @throws \Ice\Core\Exception
+     * @throws Exception
      * @return string
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -53,7 +54,7 @@ class Serializer
             case self::SERIALIZER_IGBINARY:
                 return igbinary_serialize($data);
             default:
-                throw new Exception('Unknown serializer "' . $serializer . "");
+                Logger::getInstance(__CLASS__)->exception(['Unknown serializer {$0}', $serializer], __FILE__, __LINE__);
         }
     }
 
@@ -84,7 +85,7 @@ class Serializer
      *
      * @param mixed $data
      * @param string $serializer
-     * @throws \Ice\Core\Exception
+     * @throws Exception
      * @return string
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -102,7 +103,7 @@ class Serializer
             case self::SERIALIZER_IGBINARY:
                 return igbinary_unserialize($data);
             default:
-                throw new Exception('Unknown serializer "' . $serializer . "");
+                Logger::getInstance(__CLASS__)->exception(['Unknown serializer {$0}', $serializer], __FILE__, __LINE__);
         }
     }
 } 

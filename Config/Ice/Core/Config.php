@@ -10,6 +10,13 @@
  * @since 0.0
  */
 
+use Ice\Core\Data;
+use Ice\Core\Form;
+use Ice\Core\Model;
+use Ice\Core\Model_Scheme;
+use Ice\Core\Validator;
+use Ice\Helper\Date;
+
 return [
     'Ice\Core\Model' => [
         'prefixes' => [
@@ -20,10 +27,12 @@ return [
         'translateKey' => 'trnsl.1.1.20150207T134028Z.19bab9f8d9228706.89067e4f90535d4a934a39fbaf284d8af968c9a9'
     ],
     'Ice\Core\Data_Source' => [
-        'default' => [
-            'Ice\Data\Source\Mysqli' => 'test',
-            'Ice\Data\Source\Mongodb' => 'test',
-        ]
+        'Ice\Data\Source\Mysqli' => [
+            'default' => 'test',
+        ],
+        'Ice\Data\Source\Mongodb' => [
+            'default' => 'test',
+        ],
     ],
     'Ice\Core\Environment' => [
         'environments' => [
@@ -69,6 +78,20 @@ return [
                     'layout' => 'Ice:Layout_Main'
                 ]
             ]
+        ],
+        'Ice\Core\Model_Scheme' => [
+            'time' => Date::get(),
+            'revision' => date('00000000'),
+            'tableName' => null,
+            'dataSourceKey' => null,
+            'Ice\Core\Model' => [],
+            'Ice\Core\Model_Scheme' => [
+                'columns' => [],
+                'indexes' => ['PRIMARY KEY' => ['PRIMARY' => []], 'FOREIGN KEY' => []]
+            ],
+            'Ice\Core\Validator' => [],
+            'Ice\Core\Form' => [],
+            'Ice\Core\Data' => [],
         ]
     ]
 ];

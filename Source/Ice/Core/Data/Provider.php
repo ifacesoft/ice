@@ -101,7 +101,7 @@ abstract class Data_Provider
         $class = self::getClass();
 
         if (!$key && $class == __CLASS__) {
-            Data_Provider::getLogger()->fatal('Not known how create instance of data provider. Need data provider key.', __FILE__, __LINE__);
+            Data_Provider::getLogger()->exception('Not known how create instance of data provider. Need data provider key.', __FILE__, __LINE__);
         }
 
         if (!$key) {
@@ -141,7 +141,7 @@ abstract class Data_Provider
      */
     protected static function getDefaultDataProviderKey()
     {
-        Data_Provider::getLogger()->fatal(['Need implements {$0} for {$1}', [__METHOD__, self::getClass()]], __FILE__, __LINE__);
+        Data_Provider::getLogger()->exception(['Need implements {$0} for {$1}', [__METHOD__, self::getClass()]], __FILE__, __LINE__);
         return null;
     }
 
@@ -195,7 +195,7 @@ abstract class Data_Provider
         if (!$this->connect($this->_connection)) {
             /** @var Data_Provider $class */
             $class = __CLASS__;
-            $class::getLogger()->fatal(['Data provider "{$0}" connection failed', get_class($this) . '/' . $this->getKey() . ' (index: ' . $this->getIndex() . ')'], __FILE__, __LINE__);
+            $class::getLogger()->exception(['Data provider "{$0}" connection failed', get_class($this) . '/' . $this->getKey() . ' (index: ' . $this->getIndex() . ')'], __FILE__, __LINE__);
         }
 
         return $this->_connection;
@@ -260,7 +260,7 @@ abstract class Data_Provider
         if (!$this->close($this->_connection)) {
             /** @var Data_Provider $class */
             $class = __CLASS__;
-            $class::getLogger()->fatal(['Не удалось закрыть соединенеие с дата провайдером {$0}', get_class($this) . '/' . $this->getKey() . ' (index: ' . $this->getIndex() . ')'], __FILE__, __LINE__);
+            $class::getLogger()->exception(['Не удалось закрыть соединенеие с дата провайдером {$0}', get_class($this) . '/' . $this->getKey() . ' (index: ' . $this->getIndex() . ')'], __FILE__, __LINE__);
         }
 
         $this->_connection = null;
@@ -384,7 +384,7 @@ abstract class Data_Provider
      * @version 0.0
      * @since 0.0
      */
-    protected function getFullKey($key)
+    public function getFullKey($key)
     {
         return $this->getKeyPrefix() . Data_Provider::PREFIX_KEY_DELIMETER . $key;
     }

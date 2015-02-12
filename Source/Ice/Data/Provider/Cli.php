@@ -89,7 +89,7 @@ class Cli extends Data_Provider
      * @param string $key
      * @param $value
      * @param null $ttl
-     * @throws Exception
+     * @throws \Exception
      * @return mixed setted value
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -99,7 +99,7 @@ class Cli extends Data_Provider
      */
     public function set($key, $value, $ttl = null)
     {
-        throw new Exception('Implement set() method.');
+        throw new \Exception('Implement set() method.');
     }
 
     /**
@@ -107,7 +107,7 @@ class Cli extends Data_Provider
      *
      * @param string $key
      * @param bool $force if true return boolean else deleted value
-     * @throws Exception
+     * @throws \Exception
      * @return mixed|boolean
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -117,7 +117,7 @@ class Cli extends Data_Provider
      */
     public function delete($key, $force = true)
     {
-        throw new Exception('Implement delete() method.');
+        throw new \Exception('Implement delete() method.');
     }
 
     /**
@@ -125,7 +125,7 @@ class Cli extends Data_Provider
      *
      * @param $key
      * @param int $step
-     * @throws Exception
+     * @throws \Exception
      * @return mixed new value
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -135,7 +135,7 @@ class Cli extends Data_Provider
      */
     public function incr($key, $step = 1)
     {
-        throw new Exception('Implement inc() method.');
+        throw new \Exception('Implement inc() method.');
     }
 
     /**
@@ -143,7 +143,7 @@ class Cli extends Data_Provider
      *
      * @param $key
      * @param int $step
-     * @throws Exception
+     * @throws \Exception
      * @return mixed new value
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -153,7 +153,7 @@ class Cli extends Data_Provider
      */
     public function decr($key, $step = 1)
     {
-        throw new Exception('Implement dec() method.');
+        throw new \Exception('Implement dec() method.');
     }
 
     /**
@@ -166,7 +166,7 @@ class Cli extends Data_Provider
      */
     public function flushAll()
     {
-        throw new Exception('Implement flushAll() method.');
+        throw new \Exception('Implement flushAll() method.');
     }
 
     /**

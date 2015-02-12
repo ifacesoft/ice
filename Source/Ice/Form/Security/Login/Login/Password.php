@@ -38,7 +38,7 @@ class Login_Password extends Form_Security_Login
     public function submit()
     {
         if ($error = $this->validate()) {
-            Form_Security_Login::getLogger()->fatal($error, __FILE__, __LINE__);
+            Form_Security_Login::getLogger()->exception($error, __FILE__, __LINE__);
         }
 
         foreach (Account::query()->eq(['login' => $this->getValues()['login']])->select(['password', 'user__fk'])->getRows() as $accountRow) {
@@ -52,6 +52,6 @@ class Login_Password extends Form_Security_Login
             }
         }
 
-        Form_Security_Login::getLogger()->fatal('Authorization failed: login-password incorrect', __FILE__, __LINE__);
+        Form_Security_Login::getLogger()->exception('Authorization failed: login-password incorrect', __FILE__, __LINE__);
     }
 }

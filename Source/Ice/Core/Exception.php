@@ -21,11 +21,8 @@ use Ice\Core;
  *
  * @package Ice
  * @subpackage Core
- *
- * @version 0.0
- * @since 0.0
  */
-class Exception extends ErrorException
+abstract class Exception extends ErrorException
 {
     use Core;
 
@@ -102,7 +99,10 @@ class Exception extends ErrorException
             }
         }
 
-        parent::__construct($message, $errno, 1, $errfile, $errline, $previous);
+        /** @var Exception $exceptionClass */
+        $exceptionClass = get_class($this);
+
+        parent::__construct($exceptionClass::getClassName() . ' - ' . $message, $errno, 1, $errfile, $errline, $previous);
     }
 
     /**

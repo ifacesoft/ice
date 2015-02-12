@@ -169,7 +169,7 @@ class Model_Collection implements IteratorAggregate, Countable
 
         if ($data instanceof Model) {
             if (!($data instanceof $modelClass)) {
-                Model_Collection::getLogger()->fatal(['Add model {$0} to collection of model {$1} failure: type mismatch', [get_class($data), $modelClass]], __FILE__, __LINE__);
+                Model_Collection::getLogger()->exception(['Add model {$0} to collection of model {$1} failure: type mismatch', [get_class($data), $modelClass]], __FILE__, __LINE__);
             }
 
             $data = $data->get();
@@ -179,14 +179,14 @@ class Model_Collection implements IteratorAggregate, Countable
             $modelClass2 = $data->getModelClass();
 
             if ($modelClass != $modelClass2) {
-                Model_Collection::getLogger()->fatal(['Add collection of model {$0} to collection of model {$1} failure: type mismatch', [$modelClass2, $modelClass]], __FILE__, __LINE__);
+                Model_Collection::getLogger()->exception(['Add collection of model {$0} to collection of model {$1} failure: type mismatch', [$modelClass2, $modelClass]], __FILE__, __LINE__);
             }
 
             $data = $data->getRows();
         }
 
         if (!is_array($data)) {
-            Model_Collection::getLogger()->fatal('Data mast by Model, Model_Collection or array type', __FILE__, __LINE__, null, $data);
+            Model_Collection::getLogger()->exception('Data mast by Model, Model_Collection or array type', __FILE__, __LINE__, null, $data);
 
         }
 
@@ -420,7 +420,7 @@ class Model_Collection implements IteratorAggregate, Countable
     public function reload()
     {
         if (!$this->_query) {
-            Model_Collection::getLogger()->fatal('Model collection is artificial', __FILE__, __LINE__);
+            Model_Collection::getLogger()->exception('Model collection is artificial', __FILE__, __LINE__);
         }
 
         $this->_rows = $this->_query->execute()->getRows();

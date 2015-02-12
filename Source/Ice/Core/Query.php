@@ -350,7 +350,7 @@ class Query
     public function getFullHash()
     {
         if ($this->_bindHash === null) {
-            Query::getLogger()->fatal('Bind hash is empty', __FILE__, __LINE__, null, $this);
+            Query::getLogger()->exception('Bind hash is empty', __FILE__, __LINE__, null, $this);
         }
 
         return $this->_hash . '/' . $this->_bindHash;

@@ -6,17 +6,17 @@ use Ice\Core\Model;
 /**
  * Class Test
  *
- * @property mixed test_pk
+ * @property mixed id
  * @property mixed test_name
  * @property mixed name2
  *
  * @see Ice\Core\Model
- * @package Ice\Model;
- * @author dp <email>
+ *
+ * @package Ice\Model * @author dp <email>
+ *
  * @version 0
  * @since 0
  */
-class Test extends Model
-{
+class Test extends Model {
 
 }

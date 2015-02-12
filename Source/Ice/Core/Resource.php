@@ -167,9 +167,6 @@ class Resource
             }
 
             foreach ($langs as $to => $lang) {
-                if (is_array($lang)) {
-                    Logger::debug($langs);die();
-                }
                 $data[$message][$to] = Api_Yandex::translate($message, $lang);
             }
 

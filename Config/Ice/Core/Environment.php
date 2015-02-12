@@ -113,10 +113,10 @@ return [
                 'cache' => 'Ice:File/data_source'
             ],
             'Ice\Core\Data_Scheme' => [
-                'instance' => 'Ice:Repository/data_scheme',
+                'data_scheme' => 'Ice:Repository/data_scheme',
             ],
             'Ice\Core\Model_Scheme' => [
-                'instance' => 'Ice:Repository/model_scheme',
+                'model_scheme' => 'Ice:Repository/model_scheme',
             ],
             'Ice\Core\Validator' => [
                 'instance' => 'Ice:Repository/validator',
@@ -201,10 +201,10 @@ return [
                 'cache' => 'Ice:Registry/cache'
             ],
             'Ice\Core\Data_Scheme' => [
-                'instance' => 'Ice:Registry/data_scheme',
+                'data_scheme' => 'Ice:Registry/data_scheme',
             ],
             'Ice\Core\Model_Scheme' => [
-                'instance' => 'Ice:Registry/model_scheme',
+                'model_scheme' => 'Ice:Registry/model_scheme',
             ],
             'Ice\Core\Validator' => [
                 'instance' => 'Ice:Registry/validator',

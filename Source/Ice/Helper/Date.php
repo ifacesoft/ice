@@ -27,21 +27,35 @@ class Date
     /**
      * 2001-03-10 17:16:18 (формат MySQL DATETIME)
      */
-    const FORMAT = 'Y-m-d H:i:s';
+    const FORMAT_MYSQL = 'Y-m-d H:i:s';
+    const FORMAT_REVISION = 'mdHi';
 
     /**
      * Return current data in default (mysql) format
      *
      * @param null $time
-     * @return bool|string
-     *
+     * @param string $format
+     * @return string
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
      * @since 0.0
      */
-    public static function get($time = null)
+    public static function get($time = null, $format = Date::FORMAT_MYSQL)
     {
-        return $time ? date(Date::FORMAT, $time) : date(Date::FORMAT);
+        return $time ? date($format, $time) : date($format);
+    }
+
+    /**
+     * Return revision by current time
+     *
+     * @return string
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
+     */
+    public static function getRevision() {
+        return Date::get(null, Date::FORMAT_REVISION);
     }
 } 

@@ -80,7 +80,7 @@ class Model_Defined_Sync extends Action
                 $dataRows = $modelClass::getCollection('*')->getRows();
 
                 if (!count($dataRows)) {
-                    throw new Exception('Не определен конфиг Defined модели "' . $modelClass . '"');
+                    Model_Defined_Sync::getLogger()->exception(['Не определен конфиг Defined модели "{$0}"', $modelClass], __FILE__, __LINE__);
                 }
 
                 foreach ($dataRows as $pk => $row) {

@@ -10,6 +10,8 @@
 namespace Ice\Helper;
 
 use Ice\Core\Container;
+use Ice\Core\Loader;
+use Ice\Core\Logger;
 use Ice\Core\Module;
 
 /**
@@ -31,7 +33,7 @@ class Object
      * Return namespace by base class
      *
      * @param $baseClass
-     * @param $name
+     * @param $className
      * @return string
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -39,9 +41,9 @@ class Object
      * @version 0.0
      * @since 0.0
      */
-    public static function getNamespace($baseClass, $name)
+    public static function getNamespace($baseClass, $className)
     {
-        $class = self::getClass($baseClass, $name);
+        $class = self::getClass($baseClass, $className);
         return strstr($class, Object::getName($class), true);
     }
 
@@ -97,27 +99,11 @@ class Object
      */
     public static function getName($class)
     {
-        if (!self::isClass($class)) {
+        if (!strpos(ltrim($class, '\\'), '\\')) {
             return $class;
         }
 
         return substr($class, strrpos($class, '\\') + 1);
-    }
-
-    /**
-     * Check is class with namespace (?)
-     *
-     * @param $class
-     * @return bool
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    private static function isClass($class)
-    {
-        return (bool)strpos(ltrim($class, '\\'), '\\');
     }
 
     /**
@@ -185,6 +171,10 @@ class Object
      */
     public static function getBaseClass($class)
     {
+        if (!Object::isClass($class)) {
+            return $class;
+        }
+
         foreach (class_parents($class) as $parentClass) {
             if ($parentClass == Container::getClass()) {
                 break;
@@ -194,5 +184,19 @@ class Object
         }
 
         return $class;
+    }
+
+    /**
+     * @param $class
+     * @return bool
+     */
+    public static function isClass($class) {
+        if (!class_exists($class, false)) {
+            if (!Loader::load($class, false)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 } 

@@ -66,7 +66,7 @@ class File
      * @param $path
      * @param bool $isRequire
      * @return mixed
-     * @throws \Ice\Core\Exception
+     * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.1
@@ -83,7 +83,7 @@ class File
         }
 
         if ($isRequire) {
-            Core_Logger::getInstance()->fatal(['File {$0} with data not found', $path], __FILE__, __LINE__);
+            Core_Logger::getInstance()->exception(['File {$0} with data not found', $path], __FILE__, __LINE__);
         }
 
         return null;
@@ -169,7 +169,7 @@ class File
         }
 
         if ($isRequire) {
-            Core_Logger::getInstance()->fatal(['File {$0} with data not found', $path], __FILE__, __LINE__);
+            Core_Logger::getInstance()->exception(['File {$0} with data not found', $path], __FILE__, __LINE__);
         }
 
         return null;

@@ -291,4 +291,5 @@ class View extends Container
     {
         return $this->_viewData['actionClass'];
     }
+
 }

@@ -20,7 +20,6 @@ use Ice\Core\Model;
  * @version 0
  * @since 0
  */
-class Bi_Comment extends Model
-{
+class Bi_Comment extends Model {
 
 }

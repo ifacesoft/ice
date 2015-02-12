@@ -42,7 +42,7 @@ abstract class Form_Security_Register extends Form
     public function submit()
     {
         if ($error = $this->validate()) {
-            Form_Security_Register::getLogger()->fatal($error, __FILE__, __LINE__);
+            Form_Security_Register::getLogger()->exception($error, __FILE__, __LINE__);
         }
 
         $accountRow = Arrays::convert(

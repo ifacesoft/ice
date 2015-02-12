@@ -146,7 +146,9 @@ class Module_Create extends Action
                     'translateKey' => ''
                 ],
                 'Ice\Core\Data_Source' => [
-                    'Ice:Mysqli/default' => $input['scheme'],
+                    'Ice\Data\Source\Mysqli' => [
+                        'default' => $input['scheme'],
+                    ],
                 ],
                 'Ice\Core\Request' => [
                     'multilocale' => $isMultilocale,

@@ -103,7 +103,6 @@ trait Core
     /**
      * Return config of self class
      *
-     * @param array $config
      * @param null $postfix
      * @return Config
      * @throws Exception
@@ -113,9 +112,9 @@ trait Core
      * @version 0.0
      * @since 0.0
      */
-    public static function getConfig(array $config = [], $postfix = null)
+    public static function getConfig($postfix = null)
     {
-        return Config::getInstance(self::getClass(), $config, $postfix);
+        return Config::create(self::getClass(), $postfix);
     }
 
     /**

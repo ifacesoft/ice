@@ -21,7 +21,6 @@ use Ice\Core\Model;
  * @version 0
  * @since 0
  */
-class Bi_Post extends Model
-{
+class Bi_Post extends Model {
 
 }
