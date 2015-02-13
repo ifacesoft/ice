@@ -18,8 +18,8 @@ class ProviderTest extends PHPUnit_Framework_TestCase
     public function testProviders()
     {
         foreach (scandir(ICE_DIR . 'Source/Ice/Data/Provider', 1) as $dataProviderFile) {
-            if ($dataProviderFile == '..' || $dataProviderFile == '.') {
-                break;
+            if ($dataProviderFile == '..' || $dataProviderFile == '.' || $dataProviderFile == 'Apc.php') {
+                continue;
             }
 
             /** @var Data_Provider $class */
