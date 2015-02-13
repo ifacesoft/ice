@@ -10,7 +10,7 @@ services:
   - redis-server
 
 before_script:
-  - ./Bin/apc-install.sh
+  - ./Bin/install.sh
   - wget http://getcomposer.org/composer.phar
   - php composer.phar install
   - mysql -e "create database IF NOT EXISTS test;" -uroot
