@@ -6,7 +6,8 @@ php:
 #  - hhvm
 
 services:
-- redis-server
+  - mongodb
+  - redis-server
 
 before_script:
   - ./Bin/apc-install.sh
