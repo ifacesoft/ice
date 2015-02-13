@@ -1,7 +1,7 @@
 <?php
 return [
-    'time' => '2015-02-13 10:14:25',
-    'revision' => '02131014',
+    'time' => '2015-02-13 10:34:18',
+    'revision' => '02131034',
     'tables' => [
         'bi_blog' => [
             'engine' => 'InnoDB',
