@@ -1,27 +1,13 @@
 <?php
 return [
-    'time' => '2015-02-13 10:34:18',
-    'revision' => '02131034',
+    'time' => '2015-02-13 10:35:23',
+    'revision' => '02131035',
     'tables' => [
-        'Test' => [
-            'engine' => 'MongoDB',
-            'charset' => 'utf-8',
-            'comment' => 'Test',
-            'modelClass' => 'Ice\\Model\\Test',
-            'revision' => '02131014',
-        ],
-        'ice_test' => [
-            'engine' => 'MongoDB',
-            'charset' => 'utf-8',
-            'comment' => 'ice_test',
-            'modelClass' => 'Ice\\Model\\Test',
-            'revision' => '02131014',
-        ],
         'pages' => [
             'engine' => 'MongoDB',
             'charset' => 'utf-8',
             'comment' => 'pages',
-            'modelClass' => 'Ice\\Model\\Pages',
+            'modelClass' => 'Ebs\\Model\\Pages',
             'revision' => '00000000',
         ],
     ],
