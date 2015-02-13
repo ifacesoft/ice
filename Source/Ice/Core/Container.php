@@ -118,7 +118,7 @@ abstract class Container
             $dataProvider = $baseClass::getDataProvider('instance');
 
             if ($ttl != -1 && $object = $dataProvider->get($key)) {
-                Container::getLogger()->log('(cache) ' . __CLASS__ . ' - ' . $dataProvider->getFullKey($key) . ': ' . get_class($object), Logger::INFO);
+//                Container::getLogger()->log('(cache) ' . __CLASS__ . ' - ' . $dataProvider->getFullKey($key) . ': ' . get_class($object), Logger::INFO);
                 return $object;
             }
 
@@ -128,7 +128,7 @@ abstract class Container
                 $dataProvider->set($key, $object, $ttl);
             }
 
-            Container::getLogger()->log('(new) ' . __CLASS__ . ' - ' . $dataProvider->getFullKey($key) . ': ' . get_class($object));
+//            Container::getLogger()->log('(new) ' . __CLASS__ . ' - ' . $dataProvider->getFullKey($key) . ': ' . get_class($object));
         } catch (File_Not_Found $e) {
             if ($baseClass == Code_Generator::getClass()) {
                 Container::getLogger()->exception(['Code generator for {$0} not found', $key], __FILE__, __LINE__, $e);

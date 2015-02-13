@@ -12,14 +12,10 @@ namespace Ice\Core;
 use Ice;
 use Ice\Core;
 use Ice\Exception\Config_Not_Found;
-use Ice\Exception\Data_Scheme_Error;
-use Ice\Exception\File_Not_Found;
 use Ice\Exception\Model_Scheme_Error;
 use Ice\Form\Model as Form_Model;
 use Ice\Helper\Arrays;
 use Ice\Helper\Date;
-use Ice\Helper\File;
-use Ice\Helper\Model as Helper_Model;
 use Ice\Helper\Object;
 use Ice\Helper\String;
 
@@ -108,9 +104,6 @@ class Model_Scheme
 
         $columnNames = array_flip($this->getFieldNames());
 
-        $primaryKeys = $this->getPkColumnNames();
-        $foreignKeys = $this->getFkColumnNames();
-
         $modelClass = $this->getModelClass();
 
         foreach ($diffColumns['deleted'] as $columnName => $column) {
@@ -120,6 +113,11 @@ class Model_Scheme
             $this->_modelSchemeConfig->remove(Form::getClass() . '/' . $columnNames[$columnName]);
             $this->_modelSchemeConfig->remove(Data::getClass() . '/' . $columnNames[$columnName]);
         }
+
+        $this->_modelSchemeConfig->set(__CLASS__ . '/indexes', $dataSource->getIndexes($this->getTableName()), true);
+
+        $primaryKeys = $this->getPkColumnNames();
+        $foreignKeys = $this->getFkColumnNames();
 
         foreach ($diffColumns['added'] as $columnName => $column) {
             $fieldName = strtolower($columnName);
@@ -164,8 +162,6 @@ class Model_Scheme
             $this->_modelSchemeConfig->set(Form::getClass() . '/' . $fieldName, $fieldType);
             $this->_modelSchemeConfig->set(Validator::getClass() . '/' . $fieldName, $validators);
         }
-
-        $this->_modelSchemeConfig->set(__CLASS__ . '/indexes', $dataSource->getIndexes($this->getTableName()), true);
 
         $this->_modelSchemeConfig->backup($currentRevision);
         $this->_modelSchemeConfig->save();
