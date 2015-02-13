@@ -36,9 +36,9 @@ class ProviderTest extends PHPUnit_Framework_TestCase
                 continue;
             }
 
-            $dataProvider->set('test', '8');
+            Logger::debug($dataProviderFile);
 
-            $this->assertEquals('8', $dataProvider->get('test'));
+            $this->assertEquals($dataProvider->set('test', '8'), $dataProvider->get('test'));
 
             if (
                 $dataProviderFile != 'Redis.php' &&

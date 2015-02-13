@@ -171,6 +171,8 @@ class Sql extends Query_Translator
                 return '`' . $fieldName . '` ' . Query_Builder::SQL_COMPARSION_OPERATOR_GREATER_OR_EQUAL . ' ?';
             case Query_Builder::SQL_COMPARSION_OPERATOR_LESS_OR_EQUAL:
                 return '`' . $fieldName . '` ' . Query_Builder::SQL_COMPARSION_OPERATOR_LESS_OR_EQUAL . ' ?';
+            case Query_Builder::SQL_COMPARSION_KEYWORD_REGEXP:
+                return '`' . $fieldName . '` ' . Query_Builder::SQL_COMPARSION_OPERATOR_LESS_OR_EQUAL . ' ?';
             case Query_Builder::SQL_COMPARSION_OPERATOR_NOT_EQUAL:
                 return $tableAlias . '.' . $fieldName . ' ' . Query_Builder::SQL_COMPARSION_OPERATOR_NOT_EQUAL . ' ?';
             case Query_Builder::SQL_COMPARSION_KEYWORD_IN:

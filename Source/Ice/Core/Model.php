@@ -742,15 +742,15 @@ abstract class Model
      * @return Model_Collection
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.2
+     * @version 0.5
      * @since 0.0
      */
     public static function getCollection($fieldNames, array $pagination = [1, 1000, 0], $dataSourceKey = null, $ttl = 3600)
     {
         return self::query()
             ->setPaginator($pagination)
-            ->select($fieldNames)
-            ->getModelCollection($dataSourceKey, $ttl);
+            ->select($fieldNames, null, null, null, $dataSourceKey, $ttl)
+            ->getModelCollection();
     }
 
     /**

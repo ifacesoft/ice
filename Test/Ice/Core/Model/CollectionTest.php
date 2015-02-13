@@ -2,6 +2,7 @@
 
 namespace Ice\Core;
 
+use Ice\Data\Source\Mongodb;
 use Ice\Model\Test;
 use PHPUnit_Framework_TestCase;
 
@@ -9,14 +10,28 @@ class Model_CollectionTest extends PHPUnit_Framework_TestCase
 {
     public function testCollection()
     {
-//        foreach (Data_Source::getConfig()->gets('default') as $dataSourceClass => $scheme) {
-//            $dataSourceKey = $dataSourceClass . '/default.' . $scheme;
+        foreach (Data_Source::getConfig()->gets('default') as $dataSourceClass => $scheme) {
+            $dataSourceKey = $dataSourceClass . '/default.' . $scheme;
 
-        $dataSourceKey = 'Ice:Mysqli/default.test';
+            switch ($dataSourceClass) {
+                case Mongodb::getClass():
+                    $id2 = '543457734521999473008348';
+                    $id3 = '540957798821997873008349';
+                    $id5 = '543454734521499443008348';
+                    $id6 = '543454834521499443009348';
+                    break;
+                default:
+                    $id2 = 2222;
+                    $id3 = 3333;
+                    $id5 = 5555;
+                    $id6 = 6666;
+            }
+
+//        $dataSourceKey = 'Ice:Mysqli/default.test';
 //        $dataSourceKey = 'Ice:Mongodb/default.test';
 
-        Test::dropTable();
-        Test::createTable();
+            Test::dropTable($dataSourceKey);
+            Test::createTable($dataSourceKey);
 
             $row = [
                 '/name' => 'name11',
@@ -25,12 +40,12 @@ class Model_CollectionTest extends PHPUnit_Framework_TestCase
 
             $collectionRows = [
                 [
-                    'test_pk' => 2,
+                    'test_pk' => $id2,
                     '/name' => 'name12',
                     'name2' => 'name22'
                 ],
                 [
-                    'test_pk' => 3,
+                    'test_pk' => $id3,
                     '/name' => 'name13',
                     'name2' => 'name23'
                 ]
@@ -43,12 +58,12 @@ class Model_CollectionTest extends PHPUnit_Framework_TestCase
 
             $rows = [
                 [
-                    'test_pk' => 5,
+                    'test_pk' => $id5,
                     '/name' => 'name15',
                     'name2' => 'name25'
                 ],
                 [
-                    'test_pk' => 6,
+                    'test_pk' => $id6,
                     '/name' => 'name16',
                     'name2' => 'name26'
                 ]
@@ -60,6 +75,8 @@ class Model_CollectionTest extends PHPUnit_Framework_TestCase
 
             $testCollection->add(Test::create($row))->save($dataSourceKey);
 
+            $firstId = $testCollection->first()->getPk();
+
             $this->assertEquals($testCollection->getRows(), Test::getCollection('*', [1, 1000, 0], $dataSourceKey)->getRows());
 
             $testCollection->add(Model_Collection::create(Test::getClass(), $collectionRows))->save($dataSourceKey, true);
@@ -67,18 +84,18 @@ class Model_CollectionTest extends PHPUnit_Framework_TestCase
             $this->assertEquals(
                 $testCollection->getRows(),
                 [
-                    1 => [
-                        'test_pk' => 1,
+                    reset($firstId) => [
+                        'test_pk' => reset($firstId),
                         'test_name' => 'name11',
                         'name2' => 'name21'
                     ],
-                    2 => [
-                        'test_pk' => 2,
+                    $id2 => [
+                        'test_pk' => $id2,
                         'test_name' => 'name12',
                         'name2' => 'name22'
                     ],
-                    3 => [
-                        'test_pk' => 3,
+                    $id3 => [
+                        'test_pk' => $id3,
                         'test_name' => 'name13',
                         'name2' => 'name23'
                     ]
@@ -87,25 +104,27 @@ class Model_CollectionTest extends PHPUnit_Framework_TestCase
 
             $testCollection->add(Test::create()->save($modelRow, $dataSourceKey));
 
+            $forthPk = Test::getCollection('*', [1, 1000, 0], $dataSourceKey)->last()->getPk();
+
             $this->assertEquals(
                 [
-                    1 => [
-                        'test_pk' => 1,
+                    reset($firstId) => [
+                        'test_pk' => reset($firstId),
                         'test_name' => 'name11',
                         'name2' => 'name21'
                     ],
-                    2 => [
-                        'test_pk' => 2,
+                    $id2 => [
+                        'test_pk' => $id2,
                         'test_name' => 'name12',
                         'name2' => 'name22'
                     ],
-                    3 => [
-                        'test_pk' => 3,
+                    $id3 => [
+                        'test_pk' => $id3,
                         'test_name' => 'name13',
                         'name2' => 'name23'
                     ],
-                    4 => [
-                        'test_pk' => 4,
+                    reset($forthPk) => [
+                        'test_pk' => reset($forthPk),
                         'test_name' => 'name14',
                         'name2' => 'name24'
                     ]
@@ -117,37 +136,37 @@ class Model_CollectionTest extends PHPUnit_Framework_TestCase
 
             Model_Collection::create(Test::getClass())->add($rows)->save($dataSourceKey);
 
-            $testCollection = Test::getCollection('*', [1,1000, 0]);
+            $testCollection = Test::getCollection('*', [1, 1000, 0], $dataSourceKey);
 
             $this->assertEquals(
                 [
-                    1 => [
-                        'test_pk' => 1,
+                    reset($firstId) => [
+                        'test_pk' => reset($firstId),
                         'test_name' => 'name11',
                         'name2' => 'name21'
                     ],
-                    2 => [
-                        'test_pk' => 2,
+                    $id2 => [
+                        'test_pk' => $id2,
                         'test_name' => 'name12',
                         'name2' => 'name22'
                     ],
-                    3 => [
-                        'test_pk' => 3,
+                    $id3 => [
+                        'test_pk' => $id3,
                         'test_name' => 'name13',
                         'name2' => 'name23'
                     ],
-                    4 => [
-                        'test_pk' => 4,
+                    reset($forthPk) => [
+                        'test_pk' => reset($forthPk),
                         'test_name' => 'name14',
                         'name2' => 'name24'
                     ],
-                    5 => [
-                        'test_pk' => 5,
+                    $id5 => [
+                        'test_pk' => $id5,
                         'test_name' => 'name15',
                         'name2' => 'name25'
                     ],
-                    6 => [
-                        'test_pk' => 6,
+                    $id6 => [
+                        'test_pk' => $id6,
                         'test_name' => 'name16',
                         'name2' => 'name26'
                     ]
@@ -155,31 +174,31 @@ class Model_CollectionTest extends PHPUnit_Framework_TestCase
                 $testCollection->getRows()
             );
 
-            Test::query()->inPk([1, 3, 6])->select('/name', null, null, null, $dataSourceKey)->getModelCollection()->remove($dataSourceKey);
+            Test::query()->inPk([reset($firstId), $id3, $id6])->select('/name', null, null, null, $dataSourceKey)->getModelCollection()->remove($dataSourceKey);
 
             $this->assertNotEquals($testCollection->getRows(), Test::getCollection('*', [1, 1000, 0], $dataSourceKey)->getRows());
 
             $this->assertEquals($testCollection->reload(), Test::getCollection('*', [1, 1000, 0], $dataSourceKey));
 
-            $this->assertEquals($testCollection->first(), Test::getModel(2, '*', $dataSourceKey));
+            $this->assertEquals($testCollection->first(), Test::getModel($id2, '*', $dataSourceKey));
 
-            $this->assertEquals($testCollection->last(), Test::getModel(5, '*', $dataSourceKey));
+            $this->assertEquals($testCollection->last(), Test::getModel($id5, '*', $dataSourceKey));
 
-            $this->assertEquals($testCollection->getRow(4), [
-                'test_pk' => 4,
+            $this->assertEquals($testCollection->getRow(reset($forthPk)), [
+                'test_pk' => reset($forthPk),
                 'test_name' => 'name14',
                 'name2' => 'name24'
             ]);
 
-            $this->assertEquals($testCollection->getKeys(), [2, 4, 5]);
+            $this->assertEquals($testCollection->getKeys(), [$id2, reset($forthPk), $id5]);
 
-            $this->assertEquals($testCollection->get(4), Test::getModel(4, '*', $dataSourceKey));
+            $this->assertEquals($testCollection->get(reset($forthPk)), Test::getModel(reset($forthPk), '*', $dataSourceKey));
 
             foreach ($testCollection as $test) {
                 $test->save(['/name' => ''], $dataSourceKey);
             }
             $testCollection->reload(); // todo: научить чтобы без релоада работало
-            $this->assertEquals($testCollection->column('test_name'), [2 => '', 4 => '', 5 => '']);
+            $this->assertEquals($testCollection->column('test_name'), [$id2 => '', reset($forthPk) => '', $id5 => '']);
         }
-//    }
+    }
 }

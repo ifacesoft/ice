@@ -57,7 +57,7 @@ class Mongodb extends Query_Translator
         $columnNames = [];
 
         foreach (Mapping::columnNames($modelClass, $part['fieldNames']) as $columnName) {
-            $columnNames[$columnName] = '$set';
+            $columnNames[] = [$columnName => '$set'];
         }
 
         return [
@@ -104,7 +104,7 @@ class Mongodb extends Query_Translator
         $columnNames = [];
 
         foreach (Mapping::columnNames($modelClass, $part['fieldNames']) as $columnName) {
-            $columnNames[$columnName] = null;
+            $columnNames[] = $columnName;
         }
 
         return [
@@ -192,14 +192,15 @@ class Mongodb extends Query_Translator
 
         foreach ($fieldNames as $fieldNameArr) {
             list($logicalOperator, $fieldName, $comparisonOperator, $count) = $fieldNameArr;
-
-            $where[] = $fieldName;
+            for ($i = 0; $i < $count; $i++) {
+                $where[] = $fieldName;
+            }
         }
 
         $columnNames = [];
 
         foreach (Mapping::columnNames($modelClass, $where) as $columnName) {
-            $columnNames[$columnName] = null;
+            $columnNames[] = $columnName;
         }
 
         return [
@@ -255,7 +256,7 @@ class Mongodb extends Query_Translator
         $columnNames = [];
 
         foreach (Mapping::columnNames($modelClass, array_keys($fieldNames)) as $columnName) {
-            $columnNames[$columnName] = null;
+            $columnNames[] = $columnName;
         }
 
         return [
@@ -452,7 +453,7 @@ class Mongodb extends Query_Translator
     protected function translateLimit($part)
     {
 //        if (empty($part)) {
-            return [];
+        return [];
 //        } else {
 //            Logger::debug($part);
 //            throw new Exception('Not implemented');
