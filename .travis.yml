@@ -6,8 +6,8 @@ php:
 #  - hhvm
 
 services:
-  - mongodb
   - redis-server
+  - mongodb
 
 before_script:
   - ./Bin/install.sh
