@@ -523,7 +523,7 @@ abstract class Model
                     Model::getLogger()->exception(
                         [
                             'Model::__get: Не удалось получить модель по внешнему ключу {$0} = "{$1}" в модели {$2}',
-                        [$foreignKeyName, $key, $modelName]
+                            [$foreignKeyName, $key, $modelName]
                         ],
                         __FILE__, __LINE__
                     );
@@ -656,7 +656,7 @@ abstract class Model
             return Data_Source::getInstance(Object::getName($parentModelName) . ':model/' . $modelClass);
         }
 
-        return Data_Source::getInstance($modelClass::getScheme()->getDataSourceKey());
+        return Data_Source::getInstance($modelClass::getDataSourceKey());
     }
 
     /**
@@ -773,7 +773,8 @@ abstract class Model
         return self::getResource()->get($tableName);
     }
 
-    public static function getTablePrefix() {
+    public static function getTablePrefix()
+    {
         return Helper_Model::getTablePrefix(self::getTableName());
     }
 
@@ -1006,7 +1007,7 @@ abstract class Model
      */
     public static function dropTable($dataSourceKey = null)
     {
-        return self::query()->drop($dataSourceKey);
+         return self::query()->drop($dataSourceKey);
     }
 
     /**
@@ -1064,10 +1065,14 @@ abstract class Model
      * @version 0.2
      * @since 0.2
      */
-    public function find(array $fieldNames = [], $dataSourceKey = null, $ttl = 3600)
+    public function find($fieldNames, $dataSourceKey = null, $ttl = 3600)
     {
         /** @var Model $modelClass */
         $modelClass = get_class($this);
+
+        if ($fieldNames == '*') {
+            $fieldNames = $modelClass::getFieldNames();
+        }
 
         $affected = $this->getAffected();
 
@@ -1363,5 +1368,20 @@ abstract class Model
             ])
             ->select('*', null, null, null, $dataSourceKey, $ttl)
             ->getModel();
+    }
+
+    /**
+     * Return data source key
+     *
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
+     */
+    public static function getDataSourceKey()
+    {
+        return self::getScheme()->getDataSourceKey();
     }
 }

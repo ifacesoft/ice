@@ -125,6 +125,11 @@ class Query
         $query->_hash = md5(Json::encode($key));
 
         list($dataSourceKey, $queryType, $sqlParts, $modelClass, $cacheTags) = $key;
+
+        if (!$dataSourceKey) {
+            $dataSourceKey = $modelClass::getDataSourceKey();
+        }
+
         $query->_dataSourceKey = $dataSourceKey;
         $query->_queryType = $queryType;
         $query->_modelClass = $modelClass;

@@ -144,4 +144,7 @@ return [
         'tr' => 'Veri kaynağı adı geçerli değil {$0}',
         'uk' => 'Data source name not valid {$0}',
     ],
+    '#1217: {$0} - {$1} [{$2}]' => [
+        'ru' => '#1217: {$0} - {$1} [{$2}]',
+    ],
 ];

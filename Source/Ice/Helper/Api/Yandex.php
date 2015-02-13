@@ -30,7 +30,11 @@ class Api_Yandex
             throw new \Exception('Key is empty. See https://tech.yandex.ru/keys/get/?service=trnsl');
         }
 
-        return $repository->set('langs', Json::decode(Http::getContents('https://translate.yandex.net/api/v1.5/tr.json/getLangs?key=' . $yaKey))['dirs']);
+        if ($langs = $repository->set('langs', Json::decode(Http::getContents('https://translate.yandex.net/api/v1.5/tr.json/getLangs?key=' . $yaKey))['dirs'])) {
+            return $langs;
+        }
+
+        throw new \Exception('Fail getLangs');
     }
 
     public static function detect($text)
@@ -41,7 +45,11 @@ class Api_Yandex
             throw new \Exception('Key is empty. See https://tech.yandex.ru/keys/get/?service=trnsl');
         }
 
-        return Json::decode(Http::getContents('https://translate.yandex.net/api/v1.5/tr.json/detect?key=' . $yaKey . '&text=' . $text))['lang'];
+        if ($detct = Json::decode(Http::getContents('https://translate.yandex.net/api/v1.5/tr.json/detect?key=' . $yaKey . '&text=' . $text))['lang']) {
+            return $detct;
+        }
+
+        throw new \Exception('Fail detect');
     }
 
     public static function translate($text, $lang)
@@ -51,7 +59,9 @@ class Api_Yandex
         if (empty($yaKey)) {
             throw new \Exception('Key is empty. See https://tech.yandex.ru/keys/get/?service=trnsl');
         }
-
-        return Json::decode(Http::getContents('https://translate.yandex.net/api/v1.5/tr.json/translate?key=' . $yaKey . '&text=' . $text . '&lang=' . $lang))['text'][0];
+        if ($translate = Json::decode(Http::getContents('https://translate.yandex.net/api/v1.5/tr.json/translate?key=' . $yaKey . '&text=' . $text . '&lang=' . $lang))['text'][0]) {
+            return $translate;
+        }
+        throw new \Exception('Fail translate');
     }
 }
