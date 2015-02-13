@@ -36,8 +36,6 @@ class ProviderTest extends PHPUnit_Framework_TestCase
                 continue;
             }
 
-            Logger::debug($dataProviderFile);
-
             $this->assertEquals($dataProvider->set('test', '8'), $dataProvider->get('test'));
 
             if (

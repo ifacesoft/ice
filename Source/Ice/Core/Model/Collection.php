@@ -191,7 +191,7 @@ class Model_Collection implements IteratorAggregate, Countable
         }
 
         if (empty($data)) {
-            return;
+            return $this;
         }
 
         if (!is_numeric(each($data)[0])) {

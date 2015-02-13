@@ -118,8 +118,9 @@ class Ice
         try {
             /** @var Action $action */
             $action = null;
+
             /** @var View $view */
-            $view = '';
+            $view = null;
 
             if (Request::isCli()) {
                 ini_set('memory_limit', '1024M');

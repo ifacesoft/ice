@@ -9,41 +9,46 @@ class ModelTest extends PHPUnit_Framework_TestCase
 {
     public function testCrud()
     {
-        foreach (Data_Source::getConfig()->gets('default') as $dataSourceClass => $scheme) {
-            $dataSourceKey = $dataSourceClass . '/default.' . $scheme;
+        foreach (Data_Source::getConfig()->gets() as $dataSourceClass => $config) {
+            foreach ($config as $key => $schemes) {
+                foreach ((array)$schemes as $scheme) {
 
-            Test::dropTable($dataSourceKey);
-            Test::createTable($dataSourceKey);
+                    $dataSourceKey = $dataSourceClass . '/' . $key . '.' . $scheme;
 
-            $user1 = Test::create([
-                '/name' => 'name',
-                'name2' => 'test'
-            ])->save([], $dataSourceKey);
+                    Test::dropTable($dataSourceKey);
+                    Test::createTable($dataSourceKey);
 
-            $user1->save(['/name' => 'test name'], $dataSourceKey);
+                    $user1 = Test::create([
+                        '/name' => 'name',
+                        'name2' => 'test'
+                    ])->save([], $dataSourceKey);
 
-            $this->assertNotNull($user1);
-            $this->assertTrue($user1 instanceof Test);
+                    $user1->save(['/name' => 'test name'], $dataSourceKey);
 
-            $user2 = Test::create(['/name' => 'test name'])
-                ->find(['/name', 'name2'], $dataSourceKey);
+                    $this->assertNotNull($user1);
+                    $this->assertTrue($user1 instanceof Test);
 
-            $user4 = Test::getModelBy(['/name' => 'test name'], ['/name', 'name2'], $dataSourceKey);
+                    $user2 = Test::create(['/name' => 'test name'])
+                        ->find(['/name', 'name2'], $dataSourceKey);
 
-            $this->assertEquals($user2->get('/name'), 'test name');
+                    $user4 = Test::getModelBy(['/name' => 'test name'], ['/name', 'name2'], $dataSourceKey);
 
-            $this->assertNotNull($user2);
-            $this->assertTrue($user2 instanceof Test);
-            $this->assertEquals($user1, $user2);
-            $this->assertEquals($user2->test_name, $user4->test_name);
+                    $this->assertEquals($user2->get('/name'), 'test name');
 
-            $pkValue = $user2->getPk();
+                    $this->assertNotNull($user2);
+                    $this->assertTrue($user2 instanceof Test);
+                    $this->assertEquals($user1, $user2);
+                    $this->assertEquals($user2->test_name, $user4->test_name);
 
-            $user2->remove($dataSourceKey);
+                    $pkValue = $user2->getPk();
 
-            $user3 = Test::getModel($pkValue, '/pk', $dataSourceKey);
+                    $user2->remove($dataSourceKey);
 
-            $this->assertNull($user3);
+                    $user3 = Test::getModel($pkValue, '/pk', $dataSourceKey);
+
+                    $this->assertNull($user3);
+                }
+            }
         }
     }
 }

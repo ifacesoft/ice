@@ -355,7 +355,7 @@ class Mongodb extends Data_Source
         }
 
         if (!empty($binds)) {
-            Mongodb::getLogger()->fatal('Bind params failure', __FILE__, __LINE__, null, $binds);
+            Mongodb::getLogger()->exception('Bind params failure', __FILE__, __LINE__, null, $binds);
         }
 
         return $body;

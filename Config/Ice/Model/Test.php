@@ -5,7 +5,7 @@ return [
     'tableName' => 'ice_test',
     'dataSourceKey' => 'Ice\\Data\\Source\\Mysqli/default.test',
     'Ice\\Core\\Model' => [
-        'id' => 'id',
+        'test_pk' => 'id',
         'test_name' => 'test_name',
         'name2' => 'name2',
     ],

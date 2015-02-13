@@ -48,10 +48,10 @@ class Orm_Scheme_Update extends Action
         $output = [];
 
         foreach (Data_Source::getConfig()->gets() as $dataSourceClass => $config) {
-            foreach ($config as $dataProviderKey => $schemes) {
+            foreach ($config as $key => $schemes) {
                 foreach ((array)$schemes as $scheme) {
-                    $output[$dataProviderKey . '.' . $scheme] =
-                        Data_Scheme::create($dataSourceClass . '/' . $dataProviderKey . '.' . $scheme)->update($input['force']);
+                    $output[$key . '.' . $scheme] =
+                        Data_Scheme::create($dataSourceClass . '/' . $key . '.' . $scheme)->update($input['force']);
                 }
             }
         }

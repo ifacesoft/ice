@@ -103,7 +103,7 @@ abstract class Model
         $modelClass = self::getClass();
         $lowercaseModelName = strtolower(self::getClassName());
 
-        $fields = $modelClass::getFieldNames();
+        $fields = $modelClass::getScheme()->getFieldNames();
 
         foreach ($fields as $fieldName => $columnName) {
             $this->_row[$fieldName] = null;
@@ -649,14 +649,15 @@ abstract class Model
      */
     public function getDataSource()
     {
-        $modelName = self::getClass();
-        $parentModelName = get_parent_class($modelName);
+        /** @var Model $modelClass */
+        $modelClass = get_class($this);
+        $parentModelName = get_parent_class($modelClass);
 
         if ($parentModelName == Model_Defined::getClass() || $parentModelName == Model_Factory::getClass()) {
-            return Data_Source::getInstance(Object::getName($parentModelName) . ':model/' . $modelName);
+            return Data_Source::getInstance(Object::getName($parentModelName) . ':model/' . $modelClass);
         }
 
-        return Data_Source::getInstance($this->getDataSourceKey());
+        return Data_Source::getInstance($modelClass::getScheme()->getDataSourceKey());
     }
 
     /**
@@ -953,15 +954,15 @@ abstract class Model
      */
     public static function getPkFieldNames()
     {
-        $pkFieldNames = self::getRegistry()->get('pkFieldNames');
-
-        if ($pkFieldNames) {
+        if ($pkFieldNames = self::getRegistry()->get('pkFieldNames')) {
             return $pkFieldNames;
         }
 
         $fieldNames = array_flip(self::getScheme()->getFieldNames());
 
-        return self::getRegistry()->set('pkFieldNames', array_map(
+        return self::getRegistry()->set(
+            'pkFieldNames',
+            array_map(
                 function ($columnName) use ($fieldNames) {
                     return $fieldNames[$columnName];
                 },
@@ -1361,14 +1362,4 @@ abstract class Model
             ->select('*', null, null, null, $dataSourceKey, $ttl)
             ->getModel();
     }
-
-    /**
-     * @return null
-     */
-    public function getDataSourceKey()
-    {
-        return $this->_dataSourceKey;
-    }
-
-
 }
