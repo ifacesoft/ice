@@ -114,7 +114,7 @@ class Sql extends Query_Translator
             return $sql;
         }
 
-        $modelMapping = $modelClass::getScheme()->getFieldNames();
+        $modelMapping = $modelClass::getScheme()->getFieldMapping();
 
         $sql .= "\n\t" . '(`' . implode('`,`', Mapping::columnNames($modelClass, $part['fieldNames'])) . '`)';
         $sql .= "\n" . self::SQL_CLAUSE_VALUES;
@@ -235,7 +235,7 @@ class Sql extends Query_Translator
                 $sql .= $sql
                     ? ' ' . $logicalOperator . "\n\t"
                     : "\n" . self::SQL_CLAUSE_WHERE . "\n\t";
-                $sql .= $this->buildWhere($modelClass::getScheme()->getFieldNames(), $fieldName, $comparisonOperator, $tableAlias, $count);
+                $sql .= $this->buildWhere($modelClass::getScheme()->getFieldMapping(), $fieldName, $comparisonOperator, $tableAlias, $count);
             }
         }
 
@@ -272,7 +272,7 @@ class Sql extends Query_Translator
         foreach ($part as $modelClass => $items) {
             list($tableAlias, $fieldNames) = $items;
 
-            $modelMapping = $modelClass::getScheme()->getFieldNames();
+            $modelMapping = $modelClass::getScheme()->getFieldMapping();
 
             foreach ($fieldNames as $fieldName => &$fieldAlias) {
                 $isSpatial = (boolean)strpos($fieldName, '__geo');
@@ -362,7 +362,7 @@ class Sql extends Query_Translator
         foreach ($part as $modelClass => $item) {
             list($tableAlias, $fieldNames) = $item;
 
-            $fields = $modelClass::getScheme()->getFieldNames();
+            $fields = $modelClass::getScheme()->getFieldMapping();
 
             foreach ($fieldNames as $fieldName => $ascending) {
                 $orders[] = $tableAlias . '.' . $fields[$fieldName] . ' ' . $ascending;
@@ -399,7 +399,7 @@ class Sql extends Query_Translator
         foreach ($part as $modelClass => $items) {
             list(, $fieldNames) = $items;
 
-            $fields = $modelClass::getScheme()->getFieldNames();
+            $fields = $modelClass::getScheme()->getFieldMapping();
 
             foreach ($fieldNames as $fieldName) {
                 $groups[] = $fields[$fieldName];

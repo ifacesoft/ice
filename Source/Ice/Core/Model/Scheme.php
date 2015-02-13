@@ -88,10 +88,9 @@ class Model_Scheme
 
         $dataSource = Data_Source::getInstance($dataSourceKey);
 
-        $columns = $dataSource->getColumns($tableName);
+        $dataSourceColumns = $dataSource->getColumns($tableName);
 
-
-        $diffColumns = Arrays::diff($this->getColumns(), $columns);
+        $diffColumns = Arrays::diff($this->getColumnMapping(), $dataSourceColumns);
 
         if (empty($diffColumns['added']) && empty($diffColumns['deleted']) && !$force) {
             return $this;
@@ -102,19 +101,15 @@ class Model_Scheme
         $this->_modelSchemeConfig->set('time', Date::get(), true);
         $this->_modelSchemeConfig->set('revision', Date::getRevision(), true);
 
-        $columnNames = array_flip($this->getFieldNames());
+        $columnNames = array_flip($this->getFieldMapping());
 
         $modelClass = $this->getModelClass();
 
         foreach ($diffColumns['deleted'] as $columnName => $column) {
-            $this->_modelSchemeConfig->remove(Model::getClass() . '/' . $columnNames[$columnName]);
-            $this->_modelSchemeConfig->remove(__CLASS__ . '/columns/' . $columnName);
-            $this->_modelSchemeConfig->remove(Validator::getClass() . '/' . $columnNames[$columnName]);
-            $this->_modelSchemeConfig->remove(Form::getClass() . '/' . $columnNames[$columnName]);
-            $this->_modelSchemeConfig->remove(Data::getClass() . '/' . $columnNames[$columnName]);
+            $this->_modelSchemeConfig->remove('fields/' . $columnNames[$columnName]);
         }
 
-        $this->_modelSchemeConfig->set(__CLASS__ . '/indexes', $dataSource->getIndexes($this->getTableName()), true);
+        $this->_modelSchemeConfig->set('indexes', $dataSource->getIndexes($this->getTableName()), true);
 
         $primaryKeys = $this->getPkColumnNames();
         $foreignKeys = $this->getFkColumnNames();
@@ -122,6 +117,7 @@ class Model_Scheme
         foreach ($diffColumns['added'] as $columnName => $column) {
             $fieldName = strtolower($columnName);
 
+            $column['columnName'] = $columnName;
             $column['is_primary'] = false;
             $column['is_foreign'] = false;
 
@@ -156,17 +152,16 @@ class Model_Scheme
                 $validators[] = 'Ice:Not_Null';
             }
 
-            $this->_modelSchemeConfig->set(Model::getClass() . '/' . $fieldName, $columnName);
-            $this->_modelSchemeConfig->set(__CLASS__ . '/columns/' . $columnName, $column);
-            $this->_modelSchemeConfig->set(Data::getClass() . '/' . $fieldName, 'text');
-            $this->_modelSchemeConfig->set(Form::getClass() . '/' . $fieldName, $fieldType);
-            $this->_modelSchemeConfig->set(Validator::getClass() . '/' . $fieldName, $validators);
+            $this->_modelSchemeConfig->set('fields/' . $fieldName . '/' . __CLASS__, $column);
+            $this->_modelSchemeConfig->set('fields/' . $fieldName . '/' . Data::getClass(), 'text');
+            $this->_modelSchemeConfig->set('fields/' . $fieldName . '/' . Form::getClass(), $fieldType);
+            $this->_modelSchemeConfig->set('fields/' . $fieldName . '/' . Validator::getClass(), $validators);
         }
 
         $this->_modelSchemeConfig->backup($currentRevision);
         $this->_modelSchemeConfig->save();
 
-        Model::getCodeGenerator()->generate([$modelClass, array_keys($this->getFieldNames())]);
+        Model::getCodeGenerator()->generate([$modelClass, array_keys($this->getFieldMapping())]);
 
         Model_Scheme::getLogger()->info(['Update scheme for model: {$0}', $modelClass], Logger::SUCCESS, true);
 
@@ -195,6 +190,10 @@ class Model_Scheme
         return $dataProvider->set($modelClass, new Model_Scheme($modelClass));
     }
 
+    public function getFieldScheme($fieldName) {
+        return $this->getFields()[$fieldName][__CLASS__];
+    }
+
     /**
      * Return columns with their column schemes
      *
@@ -205,9 +204,21 @@ class Model_Scheme
      * @version 0.5
      * @since 0.0
      */
-    public function getColumns()
+    public function getColumnMapping()
     {
-        return $this->_modelSchemeConfig->gets(__CLASS__ . '/columns');
+        $repository = Model_Scheme::getRepository();
+        $key = $this->getModelClass() . '/columns';
+        if ($columns = $repository->get($key)) {
+            return $columns;
+        }
+
+        $columns = [];
+
+        foreach ($this->_modelSchemeConfig->gets('fields') as $fieldName => $fieldScheme) {
+            $columns[$fieldScheme[__CLASS__]['columnName']] = $fieldName;
+        }
+
+        return $repository->set($key, $columns);
     }
 
     /**
@@ -222,7 +233,7 @@ class Model_Scheme
      */
     public function getIndexes()
     {
-        return $this->_modelSchemeConfig->gets(__CLASS__ . '/indexes');
+        return $this->_modelSchemeConfig->gets('indexes');
     }
 
     /**
@@ -372,9 +383,9 @@ class Model_Scheme
      * @version 0.5
      * @since 0.5
      */
-    public function getFieldNames()
+    public function getFieldMapping()
     {
-        return $this->_modelSchemeConfig->gets(Model::getClass());
+        return array_flip($this->getColumnMapping());
     }
 
     /**
@@ -390,5 +401,10 @@ class Model_Scheme
     public function getFkColumnNames()
     {
         return Arrays::column($this->getIndexes()['FOREIGN KEY'], 0, '');
+    }
+
+    public function getFields()
+    {
+        return $this->_modelSchemeConfig->gets('fields');
     }
 }

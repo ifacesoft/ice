@@ -1,19 +1,12 @@
 <?php
 return [
-    'time' => '2015-02-12 18:35:46',
-    'revision' => '02121835',
+    'time' => '2015-02-13 10:14:26',
+    'revision' => '02131014',
     'tableName' => 'ice_account',
     'dataSourceKey' => 'Ice\\Data\\Source\\Mysqli/default.test',
-    'Ice\\Core\\Model' => [
-        'account_pk' => 'account_pk',
-        'user__fk' => 'user__fk',
-        'login' => 'login',
-        'password' => 'password',
-        'account_active' => 'account_active',
-    ],
-    'Ice\\Core\\Model_Scheme' => [
-        'columns' => [
-            'account_pk' => [
+    'fields' => [
+        'account_pk' => [
+            'Ice\\Core\\Model_Scheme' => [
                 'extra' => 'auto_increment',
                 'type' => 'bigint(20)',
                 'dataType' => 'bigint',
@@ -22,10 +15,16 @@ return [
                 'nullable' => false,
                 'default' => null,
                 'comment' => '',
-                'is_primary' => false,
+                'columnName' => 'account_pk',
+                'is_primary' => true,
                 'is_foreign' => false,
             ],
-            'user__fk' => [
+            'Ice\\Core\\Data' => 'text',
+            'Ice\\Core\\Form' => 'Number',
+            'Ice\\Core\\Validator' => [],
+        ],
+        'user__fk' => [
+            'Ice\\Core\\Model_Scheme' => [
                 'extra' => '',
                 'type' => 'bigint(20)',
                 'dataType' => 'bigint',
@@ -34,10 +33,16 @@ return [
                 'nullable' => true,
                 'default' => null,
                 'comment' => '',
+                'columnName' => 'user__fk',
                 'is_primary' => false,
-                'is_foreign' => false,
+                'is_foreign' => true,
             ],
-            'login' => [
+            'Ice\\Core\\Data' => 'text',
+            'Ice\\Core\\Form' => 'Number',
+            'Ice\\Core\\Validator' => [],
+        ],
+        'login' => [
+            'Ice\\Core\\Model_Scheme' => [
                 'extra' => '',
                 'type' => 'varchar(255)',
                 'dataType' => 'varchar',
@@ -46,10 +51,16 @@ return [
                 'nullable' => true,
                 'default' => null,
                 'comment' => '',
+                'columnName' => 'login',
                 'is_primary' => false,
                 'is_foreign' => false,
             ],
-            'password' => [
+            'Ice\\Core\\Data' => 'text',
+            'Ice\\Core\\Form' => 'Text',
+            'Ice\\Core\\Validator' => [],
+        ],
+        'password' => [
+            'Ice\\Core\\Model_Scheme' => [
                 'extra' => '',
                 'type' => 'varchar(255)',
                 'dataType' => 'varchar',
@@ -58,10 +69,16 @@ return [
                 'nullable' => true,
                 'default' => null,
                 'comment' => '',
+                'columnName' => 'password',
                 'is_primary' => false,
                 'is_foreign' => false,
             ],
-            'account_active' => [
+            'Ice\\Core\\Data' => 'text',
+            'Ice\\Core\\Form' => 'Text',
+            'Ice\\Core\\Validator' => [],
+        ],
+        'account_active' => [
+            'Ice\\Core\\Model_Scheme' => [
                 'extra' => '',
                 'type' => 'tinyint(1)',
                 'dataType' => 'tinyint',
@@ -70,47 +87,28 @@ return [
                 'nullable' => false,
                 'default' => '1',
                 'comment' => '',
+                'columnName' => 'account_active',
                 'is_primary' => false,
                 'is_foreign' => false,
             ],
-        ],
-        'indexes' => [
-            'PRIMARY KEY' => [
-                'PRIMARY' => [
-                    1 => 'account_pk',
-                ],
+            'Ice\\Core\\Data' => 'text',
+            'Ice\\Core\\Form' => 'Checkbox',
+            'Ice\\Core\\Validator' => [
+                0 => 'Ice:Not_Null',
             ],
-            'FOREIGN KEY' => [
-                'fk_ice_account_ice_user' => [
-                    'fk_ice_account_ice_user' => 'user__fk',
-                ],
+        ],
+    ],
+    'indexes' => [
+        'PRIMARY KEY' => [
+            'PRIMARY' => [
+                1 => 'account_pk',
             ],
-            'UNIQUE' => [],
         ],
-    ],
-    'Ice\\Core\\Validator' => [
-        'account_pk' => [
-            0 => 'Ice:Not_Null',
+        'FOREIGN KEY' => [
+            'fk_ice_account_ice_user' => [
+                'fk_ice_account_ice_user' => 'user__fk',
+            ],
         ],
-        'user__fk' => [],
-        'login' => [],
-        'password' => [],
-        'account_active' => [
-            0 => 'Ice:Not_Null',
-        ],
-    ],
-    'Ice\\Core\\Form' => [
-        'account_pk' => 'Number',
-        'user__fk' => 'Number',
-        'login' => 'Text',
-        'password' => 'Text',
-        'account_active' => 'Checkbox',
-    ],
-    'Ice\\Core\\Data' => [
-        'account_pk' => 'text',
-        'user__fk' => 'text',
-        'login' => 'text',
-        'password' => 'text',
-        'account_active' => 'text',
+        'UNIQUE' => [],
     ],
 ];

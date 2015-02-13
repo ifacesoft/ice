@@ -304,7 +304,7 @@ class Query_Builder
      */
     private function appendCacheTag($modelClass, $fieldNames, $isValidate, $isInvalidate)
     {
-        $fields = $modelClass::getScheme()->getFieldNames();
+        $fields = $modelClass::getScheme()->getFieldMapping();
 
         foreach ((array)$fieldNames as $fieldName) {
             if (array_key_exists($fieldName, $fields)) {
@@ -771,7 +771,7 @@ class Query_Builder
             $modelClass = $this->getModelClass();
         }
 
-        $modelFields = $modelClass::getScheme()->getFieldNames();
+        $modelFields = $modelClass::getScheme()->getFieldMapping();
         $fieldValue = $modelClass::getFieldName($value);
 
         /** check ability use pattern from field in base */
@@ -804,7 +804,7 @@ class Query_Builder
      * Set  *join query part
      *
      * @param $joinType
-     * @param $modelClass Model
+     * @param Model $modelClass
      * @param null $tableAlias
      * @param null $condition
      * @return Query_Builder
@@ -827,7 +827,7 @@ class Query_Builder
 
         if (!$condition) {
             $modelName = Object::getName($modelClass);
-            $fields = $modelClass::getScheme()->getFieldNames();
+            $fields = $modelClass::getScheme()->getFieldMapping();
             $fieldNamesOnly = array_keys($fields);
 
             $joins = [['class' => $this->getModelClass(), 'alias' => Object::getName($this->getModelClass())]];
@@ -843,7 +843,7 @@ class Query_Builder
                 $joinModelClass = $join['class'];
                 $joinTableAlias = $join['alias'];
 
-                $joinFieldNames = $joinModelClass::getScheme()->getFieldNames();
+                $joinFieldNames = $joinModelClass::getScheme()->getFieldMapping();
                 $joinFieldNamesOnly = array_keys($joinFieldNames);
 
                 $joinModelName = Object::getName($joinModelClass);

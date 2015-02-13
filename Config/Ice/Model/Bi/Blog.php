@@ -1,20 +1,12 @@
 <?php
 return [
-    'time' => '2015-02-12 18:35:46',
-    'revision' => '02121835',
+    'time' => '2015-02-13 10:14:26',
+    'revision' => '02131014',
     'tableName' => 'bi_blog',
     'dataSourceKey' => 'Ice\\Data\\Source\\Mysqli/default.test',
-    'Ice\\Core\\Model' => [
-        'blog_pk' => 'blog_pk',
-        'blog_name' => 'blog_name',
-        'blog_translit' => 'blog_translit',
-        'user__fk' => 'user__fk',
-        'blog_active' => 'blog_active',
-        'blog_created' => 'blog_created',
-    ],
-    'Ice\\Core\\Model_Scheme' => [
-        'columns' => [
-            'blog_pk' => [
+    'fields' => [
+        'blog_pk' => [
+            'Ice\\Core\\Model_Scheme' => [
                 'extra' => 'auto_increment',
                 'type' => 'bigint(20)',
                 'dataType' => 'bigint',
@@ -23,10 +15,16 @@ return [
                 'nullable' => false,
                 'default' => null,
                 'comment' => '',
-                'is_primary' => false,
+                'columnName' => 'blog_pk',
+                'is_primary' => true,
                 'is_foreign' => false,
             ],
-            'blog_name' => [
+            'Ice\\Core\\Data' => 'text',
+            'Ice\\Core\\Form' => 'Number',
+            'Ice\\Core\\Validator' => [],
+        ],
+        'blog_name' => [
+            'Ice\\Core\\Model_Scheme' => [
                 'extra' => '',
                 'type' => 'varchar(255)',
                 'dataType' => 'varchar',
@@ -35,10 +33,18 @@ return [
                 'nullable' => false,
                 'default' => null,
                 'comment' => '',
+                'columnName' => 'blog_name',
                 'is_primary' => false,
                 'is_foreign' => false,
             ],
-            'blog_translit' => [
+            'Ice\\Core\\Data' => 'text',
+            'Ice\\Core\\Form' => 'Text',
+            'Ice\\Core\\Validator' => [
+                0 => 'Ice:Not_Null',
+            ],
+        ],
+        'blog_translit' => [
+            'Ice\\Core\\Model_Scheme' => [
                 'extra' => '',
                 'type' => 'varchar(255)',
                 'dataType' => 'varchar',
@@ -47,10 +53,18 @@ return [
                 'nullable' => false,
                 'default' => null,
                 'comment' => '',
+                'columnName' => 'blog_translit',
                 'is_primary' => false,
                 'is_foreign' => false,
             ],
-            'user__fk' => [
+            'Ice\\Core\\Data' => 'text',
+            'Ice\\Core\\Form' => 'Text',
+            'Ice\\Core\\Validator' => [
+                0 => 'Ice:Not_Null',
+            ],
+        ],
+        'user__fk' => [
+            'Ice\\Core\\Model_Scheme' => [
                 'extra' => '',
                 'type' => 'bigint(20)',
                 'dataType' => 'bigint',
@@ -59,10 +73,16 @@ return [
                 'nullable' => true,
                 'default' => null,
                 'comment' => '',
+                'columnName' => 'user__fk',
                 'is_primary' => false,
-                'is_foreign' => false,
+                'is_foreign' => true,
             ],
-            'blog_active' => [
+            'Ice\\Core\\Data' => 'text',
+            'Ice\\Core\\Form' => 'Number',
+            'Ice\\Core\\Validator' => [],
+        ],
+        'blog_active' => [
+            'Ice\\Core\\Model_Scheme' => [
                 'extra' => '',
                 'type' => 'tinyint(4)',
                 'dataType' => 'tinyint',
@@ -71,10 +91,18 @@ return [
                 'nullable' => false,
                 'default' => '1',
                 'comment' => '',
+                'columnName' => 'blog_active',
                 'is_primary' => false,
                 'is_foreign' => false,
             ],
-            'blog_created' => [
+            'Ice\\Core\\Data' => 'text',
+            'Ice\\Core\\Form' => 'Checkbox',
+            'Ice\\Core\\Validator' => [
+                0 => 'Ice:Not_Null',
+            ],
+        ],
+        'blog_created' => [
+            'Ice\\Core\\Model_Scheme' => [
                 'extra' => '',
                 'type' => 'timestamp',
                 'dataType' => 'timestamp',
@@ -83,56 +111,28 @@ return [
                 'nullable' => false,
                 'default' => 'CURRENT_TIMESTAMP',
                 'comment' => '',
+                'columnName' => 'blog_created',
                 'is_primary' => false,
                 'is_foreign' => false,
             ],
-        ],
-        'indexes' => [
-            'PRIMARY KEY' => [
-                'PRIMARY' => [
-                    1 => 'blog_pk',
-                ],
+            'Ice\\Core\\Data' => 'text',
+            'Ice\\Core\\Form' => 'Date',
+            'Ice\\Core\\Validator' => [
+                0 => 'Ice:Not_Null',
             ],
-            'FOREIGN KEY' => [
-                'fk_bi_blog_ice_user' => [
-                    'fk_bi_blog_ice_user' => 'user__fk',
-                ],
+        ],
+    ],
+    'indexes' => [
+        'PRIMARY KEY' => [
+            'PRIMARY' => [
+                1 => 'blog_pk',
             ],
-            'UNIQUE' => [],
         ],
-    ],
-    'Ice\\Core\\Validator' => [
-        'blog_pk' => [
-            0 => 'Ice:Not_Null',
+        'FOREIGN KEY' => [
+            'fk_bi_blog_ice_user' => [
+                'fk_bi_blog_ice_user' => 'user__fk',
+            ],
         ],
-        'blog_name' => [
-            0 => 'Ice:Not_Null',
-        ],
-        'blog_translit' => [
-            0 => 'Ice:Not_Null',
-        ],
-        'user__fk' => [],
-        'blog_active' => [
-            0 => 'Ice:Not_Null',
-        ],
-        'blog_created' => [
-            0 => 'Ice:Not_Null',
-        ],
-    ],
-    'Ice\\Core\\Form' => [
-        'blog_pk' => 'Number',
-        'blog_name' => 'Text',
-        'blog_translit' => 'Text',
-        'user__fk' => 'Number',
-        'blog_active' => 'Checkbox',
-        'blog_created' => 'Date',
-    ],
-    'Ice\\Core\\Data' => [
-        'blog_pk' => 'text',
-        'blog_name' => 'text',
-        'blog_translit' => 'text',
-        'user__fk' => 'text',
-        'blog_active' => 'text',
-        'blog_created' => 'text',
+        'UNIQUE' => [],
     ],
 ];

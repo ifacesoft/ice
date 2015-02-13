@@ -1,22 +1,12 @@
 <?php
 return [
-    'time' => '2015-02-12 18:35:46',
-    'revision' => '02121835',
+    'time' => '2015-02-13 10:14:26',
+    'revision' => '02131014',
     'tableName' => 'ice_user',
     'dataSourceKey' => 'Ice\\Data\\Source\\Mysqli/default.test',
-    'Ice\\Core\\Model' => [
-        'user_pk' => 'user_pk',
-        'user_phone' => 'user_phone',
-        'user_email' => 'user_email',
-        'user_name' => 'user_name',
-        'surname' => 'surname',
-        'patronymic' => 'patronymic',
-        'user_active' => 'user_active',
-        'user_created' => 'user_created',
-    ],
-    'Ice\\Core\\Model_Scheme' => [
-        'columns' => [
-            'user_pk' => [
+    'fields' => [
+        'user_pk' => [
+            'Ice\\Core\\Model_Scheme' => [
                 'extra' => 'auto_increment',
                 'type' => 'bigint(20)',
                 'dataType' => 'bigint',
@@ -25,10 +15,16 @@ return [
                 'nullable' => false,
                 'default' => null,
                 'comment' => '',
-                'is_primary' => false,
+                'columnName' => 'user_pk',
+                'is_primary' => true,
                 'is_foreign' => false,
             ],
-            'user_phone' => [
+            'Ice\\Core\\Data' => 'text',
+            'Ice\\Core\\Form' => 'Number',
+            'Ice\\Core\\Validator' => [],
+        ],
+        'user_phone' => [
+            'Ice\\Core\\Model_Scheme' => [
                 'extra' => '',
                 'type' => 'varchar(11)',
                 'dataType' => 'varchar',
@@ -37,10 +33,16 @@ return [
                 'nullable' => true,
                 'default' => null,
                 'comment' => '',
+                'columnName' => 'user_phone',
                 'is_primary' => false,
                 'is_foreign' => false,
             ],
-            'user_email' => [
+            'Ice\\Core\\Data' => 'text',
+            'Ice\\Core\\Form' => 'Text',
+            'Ice\\Core\\Validator' => [],
+        ],
+        'user_email' => [
+            'Ice\\Core\\Model_Scheme' => [
                 'extra' => '',
                 'type' => 'varchar(255)',
                 'dataType' => 'varchar',
@@ -49,10 +51,16 @@ return [
                 'nullable' => true,
                 'default' => null,
                 'comment' => '',
+                'columnName' => 'user_email',
                 'is_primary' => false,
                 'is_foreign' => false,
             ],
-            'user_name' => [
+            'Ice\\Core\\Data' => 'text',
+            'Ice\\Core\\Form' => 'Text',
+            'Ice\\Core\\Validator' => [],
+        ],
+        'user_name' => [
+            'Ice\\Core\\Model_Scheme' => [
                 'extra' => '',
                 'type' => 'varchar(255)',
                 'dataType' => 'varchar',
@@ -61,10 +69,16 @@ return [
                 'nullable' => true,
                 'default' => null,
                 'comment' => '',
+                'columnName' => 'user_name',
                 'is_primary' => false,
                 'is_foreign' => false,
             ],
-            'surname' => [
+            'Ice\\Core\\Data' => 'text',
+            'Ice\\Core\\Form' => 'Text',
+            'Ice\\Core\\Validator' => [],
+        ],
+        'surname' => [
+            'Ice\\Core\\Model_Scheme' => [
                 'extra' => '',
                 'type' => 'varchar(255)',
                 'dataType' => 'varchar',
@@ -73,10 +87,16 @@ return [
                 'nullable' => true,
                 'default' => null,
                 'comment' => '',
+                'columnName' => 'surname',
                 'is_primary' => false,
                 'is_foreign' => false,
             ],
-            'patronymic' => [
+            'Ice\\Core\\Data' => 'text',
+            'Ice\\Core\\Form' => 'Text',
+            'Ice\\Core\\Validator' => [],
+        ],
+        'patronymic' => [
+            'Ice\\Core\\Model_Scheme' => [
                 'extra' => '',
                 'type' => 'varchar(255)',
                 'dataType' => 'varchar',
@@ -85,10 +105,16 @@ return [
                 'nullable' => true,
                 'default' => null,
                 'comment' => '',
+                'columnName' => 'patronymic',
                 'is_primary' => false,
                 'is_foreign' => false,
             ],
-            'user_active' => [
+            'Ice\\Core\\Data' => 'text',
+            'Ice\\Core\\Form' => 'Text',
+            'Ice\\Core\\Validator' => [],
+        ],
+        'user_active' => [
+            'Ice\\Core\\Model_Scheme' => [
                 'extra' => '',
                 'type' => 'tinyint(4)',
                 'dataType' => 'tinyint',
@@ -97,10 +123,18 @@ return [
                 'nullable' => false,
                 'default' => '1',
                 'comment' => '',
+                'columnName' => 'user_active',
                 'is_primary' => false,
                 'is_foreign' => false,
             ],
-            'user_created' => [
+            'Ice\\Core\\Data' => 'text',
+            'Ice\\Core\\Form' => 'Checkbox',
+            'Ice\\Core\\Validator' => [
+                0 => 'Ice:Not_Null',
+            ],
+        ],
+        'user_created' => [
+            'Ice\\Core\\Model_Scheme' => [
                 'extra' => '',
                 'type' => 'timestamp',
                 'dataType' => 'timestamp',
@@ -109,52 +143,22 @@ return [
                 'nullable' => true,
                 'default' => null,
                 'comment' => '',
+                'columnName' => 'user_created',
                 'is_primary' => false,
                 'is_foreign' => false,
             ],
+            'Ice\\Core\\Data' => 'text',
+            'Ice\\Core\\Form' => 'Date',
+            'Ice\\Core\\Validator' => [],
         ],
-        'indexes' => [
-            'PRIMARY KEY' => [
-                'PRIMARY' => [
-                    1 => 'user_pk',
-                ],
+    ],
+    'indexes' => [
+        'PRIMARY KEY' => [
+            'PRIMARY' => [
+                1 => 'user_pk',
             ],
-            'FOREIGN KEY' => [],
-            'UNIQUE' => [],
         ],
-    ],
-    'Ice\\Core\\Validator' => [
-        'user_pk' => [
-            0 => 'Ice:Not_Null',
-        ],
-        'user_phone' => [],
-        'user_email' => [],
-        'user_name' => [],
-        'surname' => [],
-        'patronymic' => [],
-        'user_active' => [
-            0 => 'Ice:Not_Null',
-        ],
-        'user_created' => [],
-    ],
-    'Ice\\Core\\Form' => [
-        'user_pk' => 'Number',
-        'user_phone' => 'Text',
-        'user_email' => 'Text',
-        'user_name' => 'Text',
-        'surname' => 'Text',
-        'patronymic' => 'Text',
-        'user_active' => 'Checkbox',
-        'user_created' => 'Date',
-    ],
-    'Ice\\Core\\Data' => [
-        'user_pk' => 'text',
-        'user_phone' => 'text',
-        'user_email' => 'text',
-        'user_name' => 'text',
-        'surname' => 'text',
-        'patronymic' => 'text',
-        'user_active' => 'text',
-        'user_created' => 'text',
+        'FOREIGN KEY' => [],
+        'UNIQUE' => [],
     ],
 ];

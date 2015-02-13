@@ -103,7 +103,7 @@ abstract class Model
         $modelClass = self::getClass();
         $lowercaseModelName = strtolower(self::getClassName());
 
-        $fields = $modelClass::getScheme()->getFieldNames();
+        $fields = $modelClass::getScheme()->getFieldMapping();
 
         foreach ($fields as $fieldName => $columnName) {
             $this->_row[$fieldName] = null;
@@ -372,7 +372,7 @@ abstract class Model
         /** @var Model $modelClass */
         $modelClass = get_class($this);
 
-        $modelMapping = $modelClass::getScheme()->getFieldNames();
+        $modelMapping = $modelClass::getScheme()->getFieldMapping();
 
         if (!isset($modelMapping[$fieldName])) {
             return false;
@@ -416,8 +416,7 @@ abstract class Model
             /** @var Model $modelClass */
             $modelClass = get_class($this);
 
-            $columnName = $modelClass::getScheme()->getFieldNames()[$fieldName];
-            if ($modelClass::getScheme()->getColumns()[$columnName]['default'] !== null) {
+            if ($modelClass::getScheme()->getFieldScheme($fieldName)['default'] !== null) {
                 return;
             }
 
@@ -537,7 +536,7 @@ abstract class Model
             // TODO: Пока лениво подгружаем
             // many-to-one
             $foreignKeyName = strtolower($modelName) . '__fk';
-            if (array_key_exists($foreignKeyName, $fieldName::getScheme()->getFieldNames())) {
+            if (array_key_exists($foreignKeyName, $fieldName::getScheme()->getFieldMapping())) {
                 $this->_fk[$fieldName] = $fieldName::query()
                     ->eq([$foreignKeyName => $this->getPk()])
                     ->select('*')
@@ -676,7 +675,7 @@ abstract class Model
     {
         $modelClass = self::getClass();
 
-        $fieldNames = array_keys($modelClass::getScheme()->getFieldNames());
+        $fieldNames = array_keys($modelClass::getScheme()->getFieldMapping());
 
         if (empty($fields) || $fields = '*') {
             return $fieldNames;
@@ -958,7 +957,7 @@ abstract class Model
             return $pkFieldNames;
         }
 
-        $fieldNames = array_flip(self::getScheme()->getFieldNames());
+        $fieldNames = array_flip(self::getScheme()->getFieldMapping());
 
         return self::getRegistry()->set(
             'pkFieldNames',
@@ -985,8 +984,11 @@ abstract class Model
     {
         $queryBuilder = self::query();
 
-        foreach (self::getScheme()->getColumns() as $name => $scheme) {
-            $queryBuilder->column($name, $scheme);
+        $modelSchemeClass = Model_Scheme::getClass();
+
+        foreach (self::getScheme()->getFields() as $field) {
+            $fieldScheme = $field[$modelSchemeClass];
+            $queryBuilder->column($fieldScheme['columnName'], $fieldScheme);
         }
 
         return $queryBuilder->create($dataSourceKey);

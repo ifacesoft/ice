@@ -1,20 +1,12 @@
 <?php
 return [
-    'time' => '2015-02-12 18:35:46',
-    'revision' => '02121835',
+    'time' => '2015-02-13 10:14:26',
+    'revision' => '02131014',
     'tableName' => 'bi_comment',
     'dataSourceKey' => 'Ice\\Data\\Source\\Mysqli/default.test',
-    'Ice\\Core\\Model' => [
-        'comment_pk' => 'comment_pk',
-        'comment_title' => 'comment_title',
-        'comment_text' => 'comment_text',
-        'comment_active' => 'comment_active',
-        'comment_created' => 'comment_created',
-        'post__fk' => 'post__fk',
-    ],
-    'Ice\\Core\\Model_Scheme' => [
-        'columns' => [
-            'comment_pk' => [
+    'fields' => [
+        'comment_pk' => [
+            'Ice\\Core\\Model_Scheme' => [
                 'extra' => 'auto_increment',
                 'type' => 'bigint(20)',
                 'dataType' => 'bigint',
@@ -23,10 +15,16 @@ return [
                 'nullable' => false,
                 'default' => null,
                 'comment' => '',
-                'is_primary' => false,
+                'columnName' => 'comment_pk',
+                'is_primary' => true,
                 'is_foreign' => false,
             ],
-            'comment_title' => [
+            'Ice\\Core\\Data' => 'text',
+            'Ice\\Core\\Form' => 'Number',
+            'Ice\\Core\\Validator' => [],
+        ],
+        'comment_title' => [
+            'Ice\\Core\\Model_Scheme' => [
                 'extra' => '',
                 'type' => 'varchar(50)',
                 'dataType' => 'varchar',
@@ -35,10 +33,18 @@ return [
                 'nullable' => false,
                 'default' => null,
                 'comment' => '',
+                'columnName' => 'comment_title',
                 'is_primary' => false,
                 'is_foreign' => false,
             ],
-            'comment_text' => [
+            'Ice\\Core\\Data' => 'text',
+            'Ice\\Core\\Form' => 'Text',
+            'Ice\\Core\\Validator' => [
+                0 => 'Ice:Not_Null',
+            ],
+        ],
+        'comment_text' => [
+            'Ice\\Core\\Model_Scheme' => [
                 'extra' => '',
                 'type' => 'text',
                 'dataType' => 'text',
@@ -47,10 +53,18 @@ return [
                 'nullable' => false,
                 'default' => null,
                 'comment' => '',
+                'columnName' => 'comment_text',
                 'is_primary' => false,
                 'is_foreign' => false,
             ],
-            'comment_active' => [
+            'Ice\\Core\\Data' => 'text',
+            'Ice\\Core\\Form' => 'Textarea',
+            'Ice\\Core\\Validator' => [
+                0 => 'Ice:Not_Null',
+            ],
+        ],
+        'comment_active' => [
+            'Ice\\Core\\Model_Scheme' => [
                 'extra' => '',
                 'type' => 'tinyint(1)',
                 'dataType' => 'tinyint',
@@ -59,10 +73,18 @@ return [
                 'nullable' => false,
                 'default' => '1',
                 'comment' => '',
+                'columnName' => 'comment_active',
                 'is_primary' => false,
                 'is_foreign' => false,
             ],
-            'comment_created' => [
+            'Ice\\Core\\Data' => 'text',
+            'Ice\\Core\\Form' => 'Checkbox',
+            'Ice\\Core\\Validator' => [
+                0 => 'Ice:Not_Null',
+            ],
+        ],
+        'comment_created' => [
+            'Ice\\Core\\Model_Scheme' => [
                 'extra' => '',
                 'type' => 'timestamp',
                 'dataType' => 'timestamp',
@@ -71,10 +93,16 @@ return [
                 'nullable' => true,
                 'default' => 'CURRENT_TIMESTAMP',
                 'comment' => '',
+                'columnName' => 'comment_created',
                 'is_primary' => false,
                 'is_foreign' => false,
             ],
-            'post__fk' => [
+            'Ice\\Core\\Data' => 'text',
+            'Ice\\Core\\Form' => 'Date',
+            'Ice\\Core\\Validator' => [],
+        ],
+        'post__fk' => [
+            'Ice\\Core\\Model_Scheme' => [
                 'extra' => '',
                 'type' => 'bigint(20)',
                 'dataType' => 'bigint',
@@ -83,54 +111,26 @@ return [
                 'nullable' => true,
                 'default' => null,
                 'comment' => '',
+                'columnName' => 'post__fk',
                 'is_primary' => false,
-                'is_foreign' => false,
+                'is_foreign' => true,
             ],
-        ],
-        'indexes' => [
-            'PRIMARY KEY' => [
-                'PRIMARY' => [
-                    1 => 'comment_pk',
-                ],
-            ],
-            'FOREIGN KEY' => [
-                'fk_bi_comment_bi_post' => [
-                    'fk_bi_comment_bi_post' => 'post__fk',
-                ],
-            ],
-            'UNIQUE' => [],
+            'Ice\\Core\\Data' => 'text',
+            'Ice\\Core\\Form' => 'Number',
+            'Ice\\Core\\Validator' => [],
         ],
     ],
-    'Ice\\Core\\Validator' => [
-        'comment_pk' => [
-            0 => 'Ice:Not_Null',
+    'indexes' => [
+        'PRIMARY KEY' => [
+            'PRIMARY' => [
+                1 => 'comment_pk',
+            ],
         ],
-        'comment_title' => [
-            0 => 'Ice:Not_Null',
+        'FOREIGN KEY' => [
+            'fk_bi_comment_bi_post' => [
+                'fk_bi_comment_bi_post' => 'post__fk',
+            ],
         ],
-        'comment_text' => [
-            0 => 'Ice:Not_Null',
-        ],
-        'comment_active' => [
-            0 => 'Ice:Not_Null',
-        ],
-        'comment_created' => [],
-        'post__fk' => [],
-    ],
-    'Ice\\Core\\Form' => [
-        'comment_pk' => 'Number',
-        'comment_title' => 'Text',
-        'comment_text' => 'Textarea',
-        'comment_active' => 'Checkbox',
-        'comment_created' => 'Date',
-        'post__fk' => 'Number',
-    ],
-    'Ice\\Core\\Data' => [
-        'comment_pk' => 'text',
-        'comment_title' => 'text',
-        'comment_text' => 'text',
-        'comment_active' => 'text',
-        'comment_created' => 'text',
-        'post__fk' => 'text',
+        'UNIQUE' => [],
     ],
 ];

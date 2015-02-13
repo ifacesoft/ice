@@ -55,7 +55,7 @@ class Defined extends Data_Source
 
         $pkName = $modelClass::getFieldName('/pk');
 
-        $fieldNames = $modelClass::getScheme()->getFieldNames();
+        $fieldNames = $modelClass::getScheme()->getFieldMapping();
         $flippedFieldNames = array_flip($fieldNames);
 
         $definedRows = [];

@@ -6,7 +6,7 @@ use Ice\Core\Model;
 /**
  * Class Test
  *
- * @property mixed id
+ * @property mixed test_pk
  * @property mixed test_name
  * @property mixed name2
  *

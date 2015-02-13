@@ -1,16 +1,12 @@
 <?php
 return [
-    'time' => '2015-02-12 18:35:46',
-    'revision' => '02121835',
+    'time' => '2015-02-13 10:14:26',
+    'revision' => '02131014',
     'tableName' => 'ice_role',
     'dataSourceKey' => 'Ice\\Data\\Source\\Mysqli/default.test',
-    'Ice\\Core\\Model' => [
-        'role_pk' => 'role_pk',
-        'role_name' => 'role_name',
-    ],
-    'Ice\\Core\\Model_Scheme' => [
-        'columns' => [
-            'role_pk' => [
+    'fields' => [
+        'role_pk' => [
+            'Ice\\Core\\Model_Scheme' => [
                 'extra' => 'auto_increment',
                 'type' => 'bigint(20)',
                 'dataType' => 'bigint',
@@ -19,10 +15,16 @@ return [
                 'nullable' => false,
                 'default' => null,
                 'comment' => '',
-                'is_primary' => false,
+                'columnName' => 'role_pk',
+                'is_primary' => true,
                 'is_foreign' => false,
             ],
-            'role_name' => [
+            'Ice\\Core\\Data' => 'text',
+            'Ice\\Core\\Form' => 'Number',
+            'Ice\\Core\\Validator' => [],
+        ],
+        'role_name' => [
+            'Ice\\Core\\Model_Scheme' => [
                 'extra' => '',
                 'type' => 'varchar(255)',
                 'dataType' => 'varchar',
@@ -31,32 +33,22 @@ return [
                 'nullable' => true,
                 'default' => null,
                 'comment' => '',
+                'columnName' => 'role_name',
                 'is_primary' => false,
                 'is_foreign' => false,
             ],
+            'Ice\\Core\\Data' => 'text',
+            'Ice\\Core\\Form' => 'Text',
+            'Ice\\Core\\Validator' => [],
         ],
-        'indexes' => [
-            'PRIMARY KEY' => [
-                'PRIMARY' => [
-                    1 => 'role_pk',
-                ],
+    ],
+    'indexes' => [
+        'PRIMARY KEY' => [
+            'PRIMARY' => [
+                1 => 'role_pk',
             ],
-            'FOREIGN KEY' => [],
-            'UNIQUE' => [],
         ],
-    ],
-    'Ice\\Core\\Validator' => [
-        'role_pk' => [
-            0 => 'Ice:Not_Null',
-        ],
-        'role_name' => [],
-    ],
-    'Ice\\Core\\Form' => [
-        'role_pk' => 'Number',
-        'role_name' => 'Text',
-    ],
-    'Ice\\Core\\Data' => [
-        'role_pk' => 'text',
-        'role_name' => 'text',
+        'FOREIGN KEY' => [],
+        'UNIQUE' => [],
     ],
 ];

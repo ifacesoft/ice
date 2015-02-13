@@ -313,7 +313,7 @@ class Data_Scheme
 
             $modelScheme = Model_Scheme::create($table['modelClass']);
 
-            $diffColumns = Arrays::diff($modelScheme->getColumns(), $dataSource->getColumns($tableName));
+            $diffColumns = Arrays::diff($modelScheme->getColumnMapping(), $dataSource->getColumns($tableName));
 
             if (empty($diffColumns['added']) && empty($diffColumns['deleted'])) {
                 $tables['notChanged'][$tableName] = $localTables[$tableName];

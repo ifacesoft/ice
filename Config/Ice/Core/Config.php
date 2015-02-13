@@ -84,14 +84,7 @@ return [
             'revision' => date('00000000'),
             'tableName' => null,
             'dataSourceKey' => null,
-            'Ice\Core\Model' => [],
-            'Ice\Core\Model_Scheme' => [
-                'columns' => [],
-                'indexes' => ['PRIMARY KEY' => ['PRIMARY' => []], 'FOREIGN KEY' => []]
-            ],
-            'Ice\Core\Validator' => [],
-            'Ice\Core\Form' => [],
-            'Ice\Core\Data' => [],
+            'fields' => [],
         ]
     ]
 ];
