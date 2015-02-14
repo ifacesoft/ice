@@ -9,7 +9,6 @@
 
 namespace Ice\View\Render;
 
-use Ice\Core\Config;
 use Ice\Core\View_Render;
 
 /**

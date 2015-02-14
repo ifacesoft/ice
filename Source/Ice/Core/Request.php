@@ -81,6 +81,10 @@ class Request
             return $config->get('locale');
         }
 
+        if (isset($_SESSION['locale'])) {
+            return $_SESSION['locale'];
+        }
+
         $locale = isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])
             ? Locale::acceptFromHttp($_SERVER['HTTP_ACCEPT_LANGUAGE'])
             : $config->get('locale');
@@ -256,7 +260,9 @@ class Request
 
         if (isset($_SERVER['HTTP_ORIGIN']) && isset($cors[$_SERVER['HTTP_ORIGIN']])) {
             header('Access-Control-Allow-Origin: ' . $_SERVER['HTTP_ORIGIN']);
-            if (!empty($cors[$_SERVER['HTTP_ORIGIN']]['cookie'])) {header('Access-Control-Allow-Credentials: true');}
+            if (!empty($cors[$_SERVER['HTTP_ORIGIN']]['cookie'])) {
+                header('Access-Control-Allow-Credentials: true');
+            }
             header('Access-Control-Allow-Methods: ' . implode(', ', $cors[$_SERVER['HTTP_ORIGIN']]['methods']));
             header('Access-Control-Allow-Headers: ' . implode(', ', $cors[$_SERVER['HTTP_ORIGIN']]['headers']));
         }

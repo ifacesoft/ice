@@ -190,7 +190,8 @@ class Model_Scheme
         return $dataProvider->set($modelClass, new Model_Scheme($modelClass));
     }
 
-    public function getFieldScheme($fieldName) {
+    public function getFieldScheme($fieldName)
+    {
         return $this->getFields()[$fieldName][__CLASS__];
     }
 

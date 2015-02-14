@@ -2,6 +2,7 @@
 
 use Ice\Core\Exception;
 
-class Data_Scheme_Error extends Exception {
+class Data_Scheme_Error extends Exception
+{
 
 }

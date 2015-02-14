@@ -10,7 +10,6 @@
 namespace Ice\View\Render;
 
 use Ice\Core\Action;
-use Ice\Core\Config;
 use Ice\Core\Loader;
 use Ice\Core\View_Render;
 

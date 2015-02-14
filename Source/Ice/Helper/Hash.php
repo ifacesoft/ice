@@ -9,9 +9,8 @@
 
 namespace Ice\Helper;
 
-
 use Ice\Core\Exception;
-use Ice\Core\Logger;
+use Ice\Core\Logger as Core_Logger;
 
 /**
  * Class Hash
@@ -71,7 +70,7 @@ class Hash
             case self::HASH_SHA1:
                 return sha1($data);
             default:
-                Logger::getInstance(__CLASS__)->exception(['Unknown hash {$0}', $hash], __FILE__, __LINE__);
+                Core_Logger::getInstance(__CLASS__)->exception(['Unknown hash {$0}', $hash], __FILE__, __LINE__);
         }
     }
 } 

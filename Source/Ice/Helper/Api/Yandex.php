@@ -3,6 +3,7 @@
 namespace Ice\Helper;
 
 use Ice\Core\Config as Core_Config;
+use Ice\Core\Request;
 use Ice\Data\Provider\Repository;
 
 class Api_Yandex
@@ -63,5 +64,22 @@ class Api_Yandex
             return $translate;
         }
         throw new \Exception('Fail translate');
+    }
+
+    public static function getLocales($locale = null)
+    {
+        if (!$locale) {
+            $locale = Request::getConfig()->get('locale');
+        }
+
+        $locales = [$locale];
+
+        foreach (Api_Yandex::getLangs() as $lang) {
+            if (String::startsWith($lang, $locale)) {
+                $locales[] = substr($lang, strlen($locale . '_'));
+            }
+        }
+
+        return $locales;
     }
 }

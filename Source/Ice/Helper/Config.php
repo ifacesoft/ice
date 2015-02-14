@@ -38,41 +38,6 @@ class Config
     }
 
     /**
-     * Set or update config param
-     *
-     * @param array $config
-     * @param $key
-     * @param $value
-     * @param bool $force
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since 0.5
-     */
-    public static function set(array &$config, $key, $value, $force = false) {
-        $params = &$config;
-
-        foreach (explode('/', $key) as $keyPart) {
-            if (!isset($params)) {
-                $params = [];
-            }
-
-            if (!isset($params[$keyPart])) {
-                $params[$keyPart] = null;
-            }
-
-            $params = &$params[$keyPart];
-        }
-
-        if ($force || !isset($params)) {
-            $params = $value;
-        } else {
-            $params = (array) $params;
-            array_unshift($params, $value);
-        }
-    }
-
-    /**
      * Check is set key in config
      *
      * @param array $config
@@ -96,6 +61,42 @@ class Config
         }
 
         return $params;
+    }
+
+    /**
+     * Set or update config param
+     *
+     * @param array $config
+     * @param $key
+     * @param $value
+     * @param bool $force
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
+     */
+    public static function set(array &$config, $key, $value, $force = false)
+    {
+        $params = &$config;
+
+        foreach (explode('/', $key) as $keyPart) {
+            if (!isset($params)) {
+                $params = [];
+            }
+
+            if (!isset($params[$keyPart])) {
+                $params[$keyPart] = null;
+            }
+
+            $params = &$params[$keyPart];
+        }
+
+        if ($force || !isset($params)) {
+            $params = $value;
+        } else {
+            $params = (array)$params;
+            array_unshift($params, $value);
+        }
     }
 
     /**

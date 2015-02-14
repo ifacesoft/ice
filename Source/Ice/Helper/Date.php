@@ -31,6 +31,20 @@ class Date
     const FORMAT_REVISION = 'mdHi';
 
     /**
+     * Return revision by current time
+     *
+     * @return string
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
+     */
+    public static function getRevision()
+    {
+        return Date::get(null, Date::FORMAT_REVISION);
+    }
+
+    /**
      * Return current data in default (mysql) format
      *
      * @param null $time
@@ -44,18 +58,5 @@ class Date
     public static function get($time = null, $format = Date::FORMAT_MYSQL)
     {
         return $time ? date($format, $time) : date($format);
-    }
-
-    /**
-     * Return revision by current time
-     *
-     * @return string
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since 0.5
-     */
-    public static function getRevision() {
-        return Date::get(null, Date::FORMAT_REVISION);
     }
 } 

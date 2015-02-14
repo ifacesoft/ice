@@ -10,7 +10,6 @@
 namespace Ice\Core;
 
 use Ice\Core;
-use Ice\Data\Provider\Repository;
 use Ice\Helper\Config as Helper_Config;
 
 /**
@@ -80,7 +79,8 @@ class Environment extends Container
         $this->_params = $settings;
     }
 
-    public static function getInstance($key = null, $ttl = null) {
+    public static function getInstance($key = null, $ttl = null)
+    {
         if (!$key) {
             $key = Environment::getDefaultKey();
         }

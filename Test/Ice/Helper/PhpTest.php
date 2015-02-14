@@ -5,7 +5,8 @@ use PHPUnit_Framework_TestCase;
 
 class PhpTest extends PHPUnit_Framework_TestCase
 {
-    public function testPassingByReference() {
+    public function testPassingByReference()
+    {
         $a = 2;
         $b = &$a;
         $b = 5;

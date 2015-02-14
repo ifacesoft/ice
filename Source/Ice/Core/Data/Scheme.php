@@ -11,7 +11,6 @@ namespace Ice\Core;
 
 use Ice;
 use Ice\Core;
-use Ice\Exception\Data_Scheme_Error;
 use Ice\Helper\Arrays;
 use Ice\Helper\Date;
 use Ice\Helper\File;

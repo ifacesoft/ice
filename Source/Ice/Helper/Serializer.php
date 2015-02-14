@@ -10,7 +10,7 @@
 namespace Ice\Helper;
 
 use Ice\Core\Exception;
-use Ice\Core\Logger;
+use Ice\Core\Logger as Core_Logger;
 
 /**
  * Class Serializer
@@ -54,7 +54,7 @@ class Serializer
             case self::SERIALIZER_IGBINARY:
                 return igbinary_serialize($data);
             default:
-                Logger::getInstance(__CLASS__)->exception(['Unknown serializer {$0}', $serializer], __FILE__, __LINE__);
+                Core_Logger::getInstance(__CLASS__)->exception(['Unknown serializer {$0}', $serializer], __FILE__, __LINE__);
         }
     }
 
@@ -103,7 +103,7 @@ class Serializer
             case self::SERIALIZER_IGBINARY:
                 return igbinary_unserialize($data);
             default:
-                Logger::getInstance(__CLASS__)->exception(['Unknown serializer {$0}', $serializer], __FILE__, __LINE__);
+                Core_Logger::getInstance(__CLASS__)->exception(['Unknown serializer {$0}', $serializer], __FILE__, __LINE__);
         }
     }
 } 

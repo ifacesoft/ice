@@ -154,12 +154,12 @@ class Route extends Container
                 $route['route'] = $context . $route['route'];
 
                 if (isset($routes[$routeName])) {
-                    self::getLogger()->info(['Route name "{$0}" already defined in other route config', $routeName], null, true);
+                    Route::getLogger()->warning(['Route name "{$0}" already defined in other route config', $routeName], __FILE__, __LINE__);
                     continue;
                 }
 
                 if (substr_count($route['route'], '{$') != count($route['params'])) {
-                    self::getLogger()->info(['Count of params in {$0} not equal with count of defined params', $route['route']], null, true);
+                    Route::getLogger()->warning(['Count of params in {$0} not equal with count of defined params', $route['route']], __FILE__, __LINE__, null, [$route['route'], $route['params']]);
                     continue;
                 }
 

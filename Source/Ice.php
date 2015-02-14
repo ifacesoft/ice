@@ -138,7 +138,7 @@ class Ice
 
             $actionContext->getResponse()->setContent($view);
         } catch (Redirect $e) {
-            $actionContext->getResponse()->setRedirectUrl($e->getMessage());
+            $actionContext->getResponse()->setRedirectUrl($e->getRedirectUrl());
         } catch (Http_Bad_Request $e) {
             $actionContext->getResponse()->setContent(Http_Status::getInstance()->call($actionContext, ['code' => 400, 'exception' => $e]));
         } catch (Http_Not_Found $e) {

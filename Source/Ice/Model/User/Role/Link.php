@@ -16,6 +16,7 @@ use Ice\Core\Model;
  * @version 0
  * @since 0
  */
-class User_Role_Link extends Model {
+class User_Role_Link extends Model
+{
 
 }

@@ -16,6 +16,7 @@ use Ice\Core\Model;
  * @version 0
  * @since 0
  */
-class Role extends Model {
+class Role extends Model
+{
 
 }

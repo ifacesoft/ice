@@ -28,6 +28,8 @@ use Ice\Core\Exception;
  */
 class Redirect extends Exception
 {
+    private $_redirectUrl = null;
+
     /**
      * Constructor for redirect exception
      *
@@ -40,11 +42,20 @@ class Redirect extends Exception
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.1
+     * @version 0.5
      * @since 0.1
      */
     public function __construct($errstr, $errcontext = [], $previous = null, $errfile = null, $errline = null, $errno = -1)
     {
+        $this->_redirectUrl = $errstr;
         parent::__construct($errstr, $errcontext, $previous, $errfile, $errline, E_USER_ERROR);
+    }
+
+    /**
+     * @return null
+     */
+    public function getRedirectUrl()
+    {
+        return $this->_redirectUrl;
     }
 }

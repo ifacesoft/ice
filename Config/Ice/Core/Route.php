@@ -23,6 +23,20 @@ return [
             ]
         ]
     ],
+    'ice_locale' => [
+        'route' => '/locale/{$locale}',
+        'params' => [
+            'locale' => '([a-z]+)',
+        ],
+        'request' => [
+            'GET' => [
+                'blank' => 'Ice:Layout_Blank',
+                'actions' => [
+                    'content' => 'Ice:Locale'
+                ]
+            ]
+        ]
+    ],
     'ice_redirect' => [
         'route' => '/redirect',
         'request' => [

@@ -490,7 +490,8 @@ abstract class Data_Source extends Container
      * @version 0.5
      * @since 0.5
      */
-    public function getDataSourceKey() {
+    public function getDataSourceKey()
+    {
         return get_class($this) . '/' . $this->getKey() . '.' . $this->getScheme();
     }
 

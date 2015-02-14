@@ -192,6 +192,7 @@ class Action_Context
      *
      * @param string $actionClass
      * @param $hash
+     * @return Action_Context
      * @throws Exception
      *
      * @author dp <denis.a.shestakov@gmail.com>

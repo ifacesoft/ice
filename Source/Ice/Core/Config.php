@@ -11,7 +11,6 @@ namespace Ice\Core;
 
 use Ice;
 use Ice\Core;
-use Ice\Data\Provider\Repository;
 use Ice\Exception\File_Not_Found;
 use Ice\Helper\Config as Helper_Config;
 use Ice\Helper\File;

@@ -162,7 +162,6 @@ abstract class Action extends Container
                 $dataProvider = Data_Provider::getInstance($cacheDataProviderKey, 'cache');
 
                 $viewData = $dataProvider->get($inputHash);
-
                 if ($viewData) {
                     return $this->flush(View::getInstance($viewData));
                 }
@@ -364,8 +363,7 @@ abstract class Action extends Container
         $dataProvider = null;
 
         foreach ($dataProviderKeys as $dataProviderKey) {
-            $dataProvider = Data_Provider::getInstance($dataProviderKey);
-            $output += (array)$dataProvider->get();
+            $output += (array)Data_Provider::getInstance($dataProviderKey)->get();
         }
 
         return $output;

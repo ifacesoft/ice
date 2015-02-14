@@ -9,9 +9,7 @@
 
 namespace Ice\View\Render;
 
-use Ice\Code\Generator\View_Render_Php;
 use Ice\Core\Action;
-use Ice\Core\Config;
 use Ice\Core\Environment;
 use Ice\Core\Loader;
 use Ice\Core\Logger;

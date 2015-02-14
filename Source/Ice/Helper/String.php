@@ -118,7 +118,8 @@ class String
      * @version 0.5
      * @since 0.5
      */
-    public static function getRandomString($length = 12) {
+    public static function getRandomString($length = 12)
+    {
         $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $charactersLength = strlen($characters);
         $randomString = '';

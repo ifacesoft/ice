@@ -13,9 +13,9 @@ use Ice\Core;
 use Ice\Data\Model as Data_Model;
 use Ice\Form\Model as Form_Model;
 use Ice\Helper\Json;
+use Ice\Helper\Model as Helper_Model;
 use Ice\Helper\Object;
 use Ice\Helper\Spatial;
-use Ice\Helper\Model as Helper_Model;
 
 /**
  * Class Model
@@ -1007,7 +1007,7 @@ abstract class Model
      */
     public static function dropTable($dataSourceKey = null)
     {
-         return self::query()->drop($dataSourceKey);
+        return self::query()->drop($dataSourceKey);
     }
 
     /**

@@ -13,6 +13,7 @@ use Ice\Core;
 use Ice\Exception\File_Not_Found;
 use Ice\Helper\Api_Yandex;
 use Ice\Helper\File;
+use Ice\Helper\String;
 use Ice\View\Render\Replace;
 
 /**
@@ -108,36 +109,24 @@ class Resource
             $class = $this->_class;
         }
 
-        if (empty($resource[$message])) {
-            $resource = self::update($message, $class);
-        }
-
         $locale = Request::locale();
 
-        if (!isset($resource[$message][$locale])) {
-            $resource = self::update($message, $class);
+        if (!isset($resource[$message]) || !isset($resource[$message][$locale])) {
+            $resource = $class::getResource();
+            $resource->set(rtrim($message, ';'));
+            $resource = $resource->_resource;
+        }
+
+        if (isset($resource[$message][$locale])) {
             $message = $resource[$message][$locale];
         }
 
         return Replace::getInstance()->fetch($message, (array)$params, View_Render::TEMPLATE_TYPE_STRING);
     }
 
-    /**
-     * Add to resource file new resource message
-     *
-     * @param $message
-     * @param $class
-     * @return mixed
-     * @throws File_Not_Found
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    private static function update($message, $class)
+    public function set($message)
     {
-        $resourceFile = Loader::getFilePath($class, '.res.php', 'Resource/', false, true, true);
+        $resourceFile = Loader::getFilePath($this->_class, '.res.php', 'Resource/', false, true, true);
 
         $data = file_exists($resourceFile)
             ? File::loadData($resourceFile)
@@ -157,7 +146,7 @@ class Resource
             $langs = [];
 
             foreach (Api_Yandex::getLangs() as $lang) {
-                if (Ice\Helper\String::startsWith($lang, $from)) {
+                if (String::startsWith($lang, $from)) {
                     $to = substr($lang, strlen($from . '_'));
 
                     if (!in_array($to, $data[$message])) {
@@ -174,6 +163,8 @@ class Resource
             $data[$message][Request::locale()] = $message;
         }
 
-        return File::createData($resourceFile, $data);
+        File::createData($resourceFile, $data);
+
+        return $message;
     }
 }

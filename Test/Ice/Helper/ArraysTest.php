@@ -57,7 +57,8 @@ class ArraysTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(Arrays::column($array, ['one', 'two'], 'one'), [1 => '1_2', 11 => '11_22', 111 => '111_222']);
     }
 
-    public function testPassingByReference() {
+    public function testPassingByReference()
+    {
         $a = 2;
         $b = &$a;
         $b = 5;

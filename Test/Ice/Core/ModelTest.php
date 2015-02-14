@@ -15,7 +15,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
 
                     $dataSourceKey = $dataSourceClass . '/' . $key . '.' . $scheme;
 
-                    Test::dropTable($dataSourceKey);
+                    Test::query()->drop($dataSourceKey);
                     Test::createTable($dataSourceKey);
 
                     $user1 = Test::create([

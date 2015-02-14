@@ -9,8 +9,6 @@
 
 namespace Ice\Helper;
 
-use Ice\Core\Exception;
-
 /**
  * Class Json
  *

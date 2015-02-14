@@ -22,6 +22,8 @@ class ProviderTest extends PHPUnit_Framework_TestCase
                 continue;
             }
 
+            Logger::getInstance(__CLASS__)->info('test ' . $dataProviderFile . '...', null, false);
+
             /** @var Data_Provider $class */
             $class = Data_Provider::getClass('Ice:' . basename($dataProviderFile, '.php'));
 
@@ -37,6 +39,10 @@ class ProviderTest extends PHPUnit_Framework_TestCase
             }
 
             $this->assertEquals($dataProvider->set('test', '8'), $dataProvider->get('test'));
+
+            if ($dataProviderFile == 'Resource.php') {
+                continue;
+            }
 
             if (
                 $dataProviderFile != 'Redis.php' &&

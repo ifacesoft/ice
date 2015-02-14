@@ -1,36 +1,18 @@
-<?php
-/**
- * Ice action blank class
- *
- * @link http://www.iceframework.net
- * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
- * @license https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
- */
+<?php namespace Ice\Action;
 
-namespace Ice\Action;
 
 use Ice\Core\Action;
 use Ice\Core\Action_Context;
+use Ice\Core\Request;
+use Ice\Data\Provider\Router;
+use Ice\Exception\Redirect;
+use Ice\Helper\Api_Yandex;
 
-/**
- * Class Blank
- *
- * Action with simple blank template
- *
- * @see Ice\Core\Action
- * @see Ice\Core\Action_Context
- *
- * @author dp <denis.a.shestakov@gmail.com>
- *
- * @package Ice
- * @subpackage Action
- *
- * @version 0.0
- * @since 0.0
- */
-class Blank extends Action
+class Locale extends Action
 {
-    /**  public static $config = [
+
+    /**
+     *  public static $config = [
      *      'afterActions' => [],          // actions
      *      'layout' => null,               // Emmet style layout
      *      'template' => null,             // Template of view
@@ -45,21 +27,34 @@ class Blank extends Action
      */
     public static $config = [
         'defaultViewRenderClassName' => 'Ice:Php',
+        'template' => '',
+        'inputDataProviderKeys' => Router::DEFAULT_DATA_PROVIDER_KEY,
+        'inputDefaults' => ['locale' => '']
     ];
 
-    /**
-     * Run action
+    /** Run action
      *
      * @param array $input
      * @param Action_Context $actionContext
      * @return array
+     * @throws Redirect
+     * @author anonymous <email>
      *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
+     * @version 0
+     * @since 0
      */
     protected function run(array $input, Action_Context $actionContext)
     {
+        if (in_array($input['locale'], Api_Yandex::getLocales())) {
+            $_SESSION['locale'] = $input['locale'];
+        }
+
+        if (Request::referer()) {
+            throw new Redirect(Request::referer());
+        }
+
+        throw new Redirect('/');
+
+
     }
 }

@@ -16,8 +16,8 @@ use Ice\Helper\Directory;
 use Ice\Helper\File;
 use Ice\Helper\Logger as Helper_Logger;
 use Ice\Helper\Object;
-use Ice\Helper\Resource as Helper_Resource;
 use Ice\Helper\Php;
+use Ice\Helper\Resource as Helper_Resource;
 
 /**
  * Class Logger

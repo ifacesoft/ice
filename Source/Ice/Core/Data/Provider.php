@@ -146,6 +146,23 @@ abstract class Data_Provider
     }
 
     /**
+     * Return default key
+     *
+     * @return string
+     * @throws Exception
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
+     */
+    protected static function getDefaultKey()
+    {
+        Data_Provider::getLogger()->exception(['Need implements {$0} for {$1}', [__METHOD__, self::getClass()]], __FILE__, __LINE__);
+        return null;
+    }
+
+    /**
      * Return current scheme
      *
      * @return string

@@ -11,7 +11,6 @@ namespace Ice\Helper;
 
 use Ice\Core\Container;
 use Ice\Core\Loader;
-use Ice\Core\Logger;
 use Ice\Core\Module;
 
 /**
@@ -190,7 +189,8 @@ class Object
      * @param $class
      * @return bool
      */
-    public static function isClass($class) {
+    public static function isClass($class)
+    {
         if (!class_exists($class, false)) {
             if (!Loader::load($class, false)) {
                 return false;

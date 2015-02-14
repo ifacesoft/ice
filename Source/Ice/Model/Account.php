@@ -19,6 +19,7 @@ use Ice\Core\Model;
  * @version 0
  * @since 0
  */
-class Account extends Model {
+class Account extends Model
+{
 
 }

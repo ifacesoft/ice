@@ -15,7 +15,6 @@ use Ice\Core\Loader;
 use Ice\Core\Logger;
 use Ice\Core\Request;
 use Ice\Core\Session;
-use Ice\Helper\Http;
 use Ice\Helper\Memory;
 
 /**

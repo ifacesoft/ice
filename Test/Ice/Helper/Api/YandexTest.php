@@ -1,9 +1,8 @@
 <?php namespace Ice\Helper;
 
-use Ice\Core\Logger;
-use PHPUnit_Framework_TestCase;
-use Ice\Helper\Api_Yandex as Helper_Api_Yandex;
 use Ice\Core\Config as Core_Config;
+use Ice\Helper\Api_Yandex as Helper_Api_Yandex;
+use PHPUnit_Framework_TestCase;
 
 class Api_YandexTest extends PHPUnit_Framework_TestCase
 {

@@ -17,6 +17,7 @@ use Ice\Core\Model;
  * @version 0
  * @since 0
  */
-class Test extends Model {
+class Test extends Model
+{
 
 }

@@ -2,8 +2,8 @@
 
 namespace Ice\Core;
 
-use Ice\Model\User;
 use Ice\Model\Test;
+use Ice\Model\User;
 use PHPUnit_Framework_TestCase;
 
 class BuilderTest extends PHPUnit_Framework_TestCase
