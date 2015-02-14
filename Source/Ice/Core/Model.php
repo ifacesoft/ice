@@ -985,12 +985,7 @@ abstract class Model
     {
         $queryBuilder = self::query();
 
-        $modelSchemeClass = Model_Scheme::getClass();
 
-        foreach (self::getScheme()->getFields() as $field) {
-            $fieldScheme = $field[$modelSchemeClass];
-            $queryBuilder->column($fieldScheme['columnName'], $fieldScheme);
-        }
 
         return $queryBuilder->create($dataSourceKey);
     }

@@ -246,7 +246,7 @@ class Logger
         }
 
         $logFile = Directory::get(LOG_DIR) . date('Y-m-d') . '/INFO.log';
-        File::createData($logFile, $message, false, FILE_APPEND);
+        File::createData($logFile, $message . "\n", false, FILE_APPEND);
 
         Logger::fb($message, 'INFO');
 

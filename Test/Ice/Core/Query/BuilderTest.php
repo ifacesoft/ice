@@ -8,14 +8,11 @@ use PHPUnit_Framework_TestCase;
 
 class BuilderTest extends PHPUnit_Framework_TestCase
 {
-    public function setUp()
-    {
-        Test::dropTable();
-        Test::createTable();
-    }
-
     public function testActiveRecordCrud()
     {
+        Test::query()->drop();
+        Test::query()->create();
+
         $userRow = Test::query()
             ->insert([
                 '/name' => 'name',

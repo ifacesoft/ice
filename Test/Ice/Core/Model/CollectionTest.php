@@ -13,11 +13,12 @@ class Model_CollectionTest extends PHPUnit_Framework_TestCase
         foreach (Data_Source::getConfig()->gets() as $dataSourceClass => $config) {
             foreach ($config as $key => $schemes) {
                 foreach ((array)$schemes as $scheme) {
-
                     $dataSourceKey = $dataSourceClass . '/' . $key . '.' . $scheme;
 
-                    Test::dropTable($dataSourceKey);
-                    Test::createTable($dataSourceKey);
+                    Logger::getInstance(__CLASS__)->info('test ' . __CLASS__ . ' ' . $dataSourceKey . '...', null, false);
+
+                    Test::query()->drop($dataSourceKey);
+                    Test::query()->create($dataSourceKey);
 
                     switch ($dataSourceClass) {
                         case Mongodb::getClass():

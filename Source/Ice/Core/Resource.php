@@ -139,26 +139,19 @@ class Resource
         try {
             $from = Api_Yandex::detect($message);
 
-            if (!in_array($from, $data[$message])) {
+            if (!isset($data[$message][$from])) {
                 $data[$message][$from] = $message;
             }
-
-            $langs = [];
 
             foreach (Api_Yandex::getLangs() as $lang) {
                 if (String::startsWith($lang, $from)) {
                     $to = substr($lang, strlen($from . '_'));
 
-                    if (!in_array($to, $data[$message])) {
-                        $langs[$to] = $lang;
+                    if (!isset($data[$message][$to])) {
+                        $data[$message][$to] = Api_Yandex::translate($message, $lang);
                     }
                 }
             }
-
-            foreach ($langs as $to => $lang) {
-                $data[$message][$to] = Api_Yandex::translate($message, $lang);
-            }
-
         } catch (\Exception $e) {
             $data[$message][Request::locale()] = $message;
         }

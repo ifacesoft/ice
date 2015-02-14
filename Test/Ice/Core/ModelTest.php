@@ -12,11 +12,12 @@ class ModelTest extends PHPUnit_Framework_TestCase
         foreach (Data_Source::getConfig()->gets() as $dataSourceClass => $config) {
             foreach ($config as $key => $schemes) {
                 foreach ((array)$schemes as $scheme) {
-
                     $dataSourceKey = $dataSourceClass . '/' . $key . '.' . $scheme;
 
+                    Logger::getInstance(__CLASS__)->info('test ' . __CLASS__ . ' ' . $dataSourceKey . '...', null, false);
+
                     Test::query()->drop($dataSourceKey);
-                    Test::createTable($dataSourceKey);
+                    Test::query()->create($dataSourceKey);
 
                     $user1 = Test::create([
                         '/name' => 'name',

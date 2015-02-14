@@ -1457,6 +1457,14 @@ class Query_Builder
      */
     public function create($dataSourceKey = null, $ttl = 3600)
     {
+        $modelClass = $this->_modelClass;
+        $modelSchemeClass = Model_Scheme::getClass();
+
+        foreach ($modelClass::getScheme()->getFields() as $field) {
+            $fieldScheme = $field[$modelSchemeClass];
+            $this->column($fieldScheme['columnName'], $fieldScheme);
+        }
+
         $this->_queryType = Query_Builder::TYPE_CREATE;
         return $this->getQuery($dataSourceKey)->execute($ttl);
     }

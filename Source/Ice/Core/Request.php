@@ -85,7 +85,7 @@ class Request
             return $_SESSION['locale'];
         }
 
-        $locale = isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])
+        $locale = class_exists('Locale', false) && isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])
             ? Locale::acceptFromHttp($_SERVER['HTTP_ACCEPT_LANGUAGE'])
             : $config->get('locale');
 
