@@ -11,7 +11,7 @@ namespace Ice\Core;
 use Ice;
 use Ice\Core;
 use Ice\Exception\File_Not_Found;
-use Ice\Helper\Api_Yandex;
+use Ice\Helper\Api_Client_Yandex_Translate;
 use Ice\Helper\File;
 use Ice\Helper\String;
 use Ice\View\Render\Replace;
@@ -137,18 +137,18 @@ class Resource
         }
 
         try {
-            $from = Api_Yandex::detect($message);
+            $from = Api_Client_Yandex_Translate::detect($message);
 
             if (!isset($data[$message][$from])) {
                 $data[$message][$from] = $message;
             }
 
-            foreach (Api_Yandex::getLangs() as $lang) {
+            foreach (Api_Client_Yandex_Translate::getLangs() as $lang) {
                 if (String::startsWith($lang, $from)) {
                     $to = substr($lang, strlen($from . '_'));
 
                     if (!isset($data[$message][$to])) {
-                        $data[$message][$to] = Api_Yandex::translate($message, $lang);
+                        $data[$message][$to] = Api_Client_Yandex_Translate::translate($message, $lang);
                     }
                 }
             }

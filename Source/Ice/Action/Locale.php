@@ -6,7 +6,7 @@ use Ice\Core\Action_Context;
 use Ice\Core\Request;
 use Ice\Data\Provider\Router;
 use Ice\Exception\Redirect;
-use Ice\Helper\Api_Yandex;
+use Ice\Helper\Api_Client_Yandex_Translate;
 
 class Locale extends Action
 {
@@ -45,7 +45,7 @@ class Locale extends Action
      */
     protected function run(array $input, Action_Context $actionContext)
     {
-        if (in_array($input['locale'], Api_Yandex::getLocales())) {
+        if (in_array($input['locale'], Api_Client_Yandex_Translate::getLocales())) {
             $_SESSION['locale'] = $input['locale'];
         }
 

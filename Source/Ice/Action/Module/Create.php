@@ -142,7 +142,7 @@ class Module_Create extends Action
                         strtolower($moduleAlias) => $moduleAlias,
                     ]
                 ],
-                'Ice\Helper\Api_Yandex' => [
+                'Ice\Helper\Api_Client_Yandex_Translate' => [
                     'translateKey' => ''
                 ],
                 'Ice\Core\Data_Source' => [
