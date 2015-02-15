@@ -209,19 +209,105 @@ class Model_Scheme
     {
         $repository = Model_Scheme::getRepository();
         $key = $this->getModelClass() . '/columns';
+
         if ($columns = $repository->get($key)) {
             return $columns;
         }
 
         $columns = [];
 
-//        Ice\Core\Logger::debug($this->_modelSchemeConfig->gets());
-
         foreach ($this->_modelSchemeConfig->gets('fields') as $fieldName => $fieldScheme) {
             $columns[$fieldScheme[__CLASS__]['columnName']] = $fieldName;
         }
 
         return $repository->set($key, $columns);
+    }
+
+    /**
+     * Return data type mapping
+     *
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
+     */
+    public function getDataTypeMapping() {
+        $repository = Model_Scheme::getRepository();
+        $key = $this->getModelClass() . '/dataTypes';
+
+        if ($dataTypes = $repository->get($key)) {
+            return $dataTypes;
+        }
+
+        $dataTypes = [];
+
+        $dataClass = Data::getClass();
+
+        foreach ($this->_modelSchemeConfig->gets('fields') as $fieldName => $fieldScheme) {
+            $dataTypes[$fieldName] = $fieldScheme[$dataClass];
+        }
+
+        return $repository->set($key, $dataTypes);
+    }
+
+    /**
+     * Return form type mapping
+     *
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
+     */
+    public function getFormTypeMapping() {
+        $repository = Model_Scheme::getRepository();
+        $key = $this->getModelClass() . '/formTypes';
+
+        if ($formTypes = $repository->get($key)) {
+            return $formTypes;
+        }
+
+        $formTypes = [];
+
+        $dataClass = Form::getClass();
+
+        foreach ($this->_modelSchemeConfig->gets('fields') as $fieldName => $fieldScheme) {
+            $formTypes[$fieldName] = $fieldScheme[$dataClass];
+        }
+
+        return $repository->set($key, $formTypes);
+    }
+
+    /**
+     * Return validators mapping
+     *
+     * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
+     */
+    public function getValidatorsMapping() {
+        $repository = Model_Scheme::getRepository();
+        $key = $this->getModelClass() . '/validators';
+
+        if ($validators = $repository->get($key)) {
+            return $validators;
+        }
+
+        $validators = [];
+
+        $dataClass = Validator::getClass();
+
+        foreach ($this->_modelSchemeConfig->gets('fields') as $fieldName => $fieldScheme) {
+            $validators[$fieldName] = $fieldScheme[$dataClass];
+        }
+
+        return $repository->set($key, $validators);
     }
 
     /**

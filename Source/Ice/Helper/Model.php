@@ -11,6 +11,7 @@ namespace Ice\Helper;
 
 use Ice\Core\Config as Core_Config;
 use Ice\Core\Exception;
+use Ice\Core\Logger;
 use Ice\Core\Model as Core_Model;
 use Ice\Core\Module;
 
@@ -45,10 +46,14 @@ class Model
     {
         $moduleAlias = null;
         $tableNamePart = $tableName;
+
         foreach (Core_Config::create(Core_Model::getClass())->gets('prefixes') as $prefix => $value) {
-            if (strrpos($tableName, $prefix, -strlen($tableName)) !== FALSE) {
+            $prefix .= '_';
+
+            if (String::startsWith($tableName, $prefix)) {
                 $moduleAlias = $value;
-                $tableNamePart = ltrim(substr($tableName, strlen($prefix)), '_');
+                $tableNamePart = substr($tableName, strlen($prefix));
+                break;
             }
         }
 

@@ -1,14 +1,49 @@
 <?php
 return [
-    'time' => '2015-02-15 21:05:27',
-    'revision' => '02152105',
+    'time' => '2015-02-15 21:37:26',
+    'revision' => '02152137',
     'tables' => [
+        'bl_blog' => [
+            'engine' => 'InnoDB',
+            'charset' => 'utf8_general_ci',
+            'comment' => '',
+            'modelClass' => 'Bi\\Model\\Blog',
+            'revision' => '02152137',
+        ],
+        'bl_comment' => [
+            'engine' => 'InnoDB',
+            'charset' => 'utf8_general_ci',
+            'comment' => '',
+            'modelClass' => 'Bi\\Model\\Comment',
+            'revision' => '02152137',
+        ],
+        'bl_post' => [
+            'engine' => 'InnoDB',
+            'charset' => 'utf8_general_ci',
+            'comment' => '',
+            'modelClass' => 'Bi\\Model\\Post',
+            'revision' => '02152137',
+        ],
         'ice_account' => [
             'engine' => 'InnoDB',
             'charset' => 'utf8_general_ci',
             'comment' => '',
             'modelClass' => 'Ice\\Model\\Account',
             'revision' => '02152057',
+        ],
+        'ice_account_type' => [
+            'engine' => 'InnoDB',
+            'charset' => 'utf8_general_ci',
+            'comment' => '',
+            'modelClass' => 'Ice\\Model\\Account_Type',
+            'revision' => '02152117',
+        ],
+        'ice_city' => [
+            'engine' => 'InnoDB',
+            'charset' => 'utf8_general_ci',
+            'comment' => '',
+            'modelClass' => 'Ice\\Model\\City',
+            'revision' => '02152117',
         ],
         'ice_role' => [
             'engine' => 'InnoDB',
@@ -17,12 +52,19 @@ return [
             'modelClass' => 'Ice\\Model\\Role',
             'revision' => '02152057',
         ],
-        'ice_test' => [
+        'ice_route' => [
             'engine' => 'InnoDB',
             'charset' => 'utf8_general_ci',
             'comment' => '',
-            'modelClass' => 'Ice\\Model\\Test',
-            'revision' => '02152057',
+            'modelClass' => 'Ice\\Model\\Route',
+            'revision' => '02152117',
+        ],
+        'ice_session' => [
+            'engine' => 'InnoDB',
+            'charset' => 'utf8_general_ci',
+            'comment' => '',
+            'modelClass' => 'Ice\\Model\\Session',
+            'revision' => '02152117',
         ],
         'ice_user' => [
             'engine' => 'InnoDB',

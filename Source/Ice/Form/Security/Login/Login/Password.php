@@ -37,12 +37,8 @@ class Login_Password extends Form_Security_Login
      */
     public function submit()
     {
-        if ($error = $this->validate()) {
-            Form_Security_Login::getLogger()->exception($error, __FILE__, __LINE__);
-        }
-
         foreach (Account::query()->eq(['login' => $this->getValues()['login']])->select(['password', 'user__fk'])->getRows() as $accountRow) {
-            if (password_verify($this->getValues()['password'], $accountRow['password'])) {
+            if (password_verify($this->validate()['password'], $accountRow['password'])) {
                 $_SESSION['userPk'] = $accountRow['user__fk'];
                 $_SESSION['roleNames'] = User_Role_Link::query()
                     ->inner('Ice:Role', 'role_name')

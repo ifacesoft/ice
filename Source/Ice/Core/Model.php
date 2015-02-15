@@ -372,13 +372,13 @@ abstract class Model
         /** @var Model $modelClass */
         $modelClass = get_class($this);
 
-        $modelMapping = $modelClass::getScheme()->getFieldMapping();
+        $FieldColumnMapping = $modelClass::getScheme()->getFieldMapping();
 
-        if (!isset($modelMapping[$fieldName])) {
+        if (!isset($FieldColumnMapping[$fieldName])) {
             return false;
         }
 
-        $columnName = $modelMapping[$fieldName];
+        $columnName = $FieldColumnMapping[$fieldName];
 
         $pkColumnNames = $modelClass::getScheme($this->getDataSource())->getPkColumnNames();
 
@@ -598,12 +598,12 @@ abstract class Model
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.5
      * @since 0.0
      */
     public static function getValidateScheme()
     {
-        return self::getConfig()->gets(Validator::getClass());
+        return self::getScheme()->getValidatorsMapping();
     }
 
     /**
@@ -613,12 +613,12 @@ abstract class Model
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.5
      * @since 0.0
      */
     public static function getFormFieldTypes()
     {
-        return self::getConfig()->gets(Form::getClass());
+        return self::getScheme()->getFormTypeMapping();
     }
 
     /**
@@ -628,12 +628,12 @@ abstract class Model
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.2
+     * @version 0.5
      * @since 0.2
      */
     public static function getDataFieldTypes()
     {
-        return self::getConfig()->gets(Data::getClass());
+        return self::getScheme()->getDataTypeMapping();
     }
 
     /**
@@ -1152,7 +1152,7 @@ abstract class Model
         /** @var Model $modelClass */
         $modelClass = get_class($this);
 
-        $this->set($fields);
+        $this->set(array_intersect_key($fields, $modelClass::getScheme()->getFieldMapping()));
 
         $pk = $this->getPk();
         $affected = $this->getAffected();
