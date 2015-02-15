@@ -1,7 +1,7 @@
 <?php
 return [
-    'time' => '2015-02-13 10:14:26',
-    'revision' => '02131014',
+    'time' => '2015-02-15 20:57:42',
+    'revision' => '02152057',
     'tableName' => 'ice_user_role_link',
     'dataSourceKey' => 'Ice\\Data\\Source\\Mysqli/default.test',
     'fields' => [
@@ -57,7 +57,7 @@ return [
             'fk_ice_user_role_link_ice_role' => [
                 'fk_ice_user_role_link_ice_role' => 'role__fk',
             ],
-            'user__fk' => [
+            'PRIMARY' => [
                 'fk_ice_user_role_link_ice_user' => 'user__fk',
             ],
         ],

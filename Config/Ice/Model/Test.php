@@ -1,7 +1,7 @@
 <?php
 return [
-    'time' => '2015-02-13 10:14:26',
-    'revision' => '02131014',
+    'time' => '2015-02-15 20:57:42',
+    'revision' => '02152057',
     'tableName' => 'ice_test',
     'dataSourceKey' => 'Ice\\Data\\Source\\Mysqli/default.test',
     'fields' => [
@@ -30,7 +30,7 @@ return [
                 'dataType' => 'varchar',
                 'length' => '50',
                 'characterSet' => 'utf8',
-                'nullable' => false,
+                'nullable' => true,
                 'default' => null,
                 'comment' => '',
                 'columnName' => 'test_name',
@@ -39,9 +39,7 @@ return [
             ],
             'Ice\\Core\\Data' => 'text',
             'Ice\\Core\\Form' => 'Text',
-            'Ice\\Core\\Validator' => [
-                0 => 'Ice:Not_Null',
-            ],
+            'Ice\\Core\\Validator' => [],
         ],
         'name2' => [
             'Ice\\Core\\Model_Scheme' => [
@@ -50,7 +48,7 @@ return [
                 'dataType' => 'varchar',
                 'length' => '50',
                 'characterSet' => 'utf8',
-                'nullable' => true,
+                'nullable' => false,
                 'default' => null,
                 'comment' => '',
                 'columnName' => 'name2',
@@ -59,7 +57,9 @@ return [
             ],
             'Ice\\Core\\Data' => 'text',
             'Ice\\Core\\Form' => 'Text',
-            'Ice\\Core\\Validator' => [],
+            'Ice\\Core\\Validator' => [
+                0 => 'Ice:Not_Null',
+            ],
         ],
     ],
     'indexes' => [

@@ -20,7 +20,7 @@ return [
         'nl' => 'Kon niet gevonden vereist param {$0}',
         'no' => 'Kunne ikke funnet nødvendig param {$0}',
         'pt' => 'Não foi encontrado necessário param {$0}',
-        'ru' => 'Не смогли найти необходимые param {$0}',
+        'ru' => 'Не найден обязательный параметр param {$0}',
         'sk' => 'Nenašli požadované param {$0}',
         'sl' => 'Ni mogel najti potrebne param {$0}',
         'sq' => 'Nuk mund të gjendet kërkohet param {$0}',

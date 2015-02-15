@@ -60,7 +60,7 @@ return [
         'nl' => 'Bellen actie "{$0}" is mislukt',
         'no' => 'Kall handling "{$0}" failed',
         'pt' => 'Chamada de ação "{$0}" falhou',
-        'ru' => 'Называя действия "{$0}" не удалось',
+        'ru' => 'Вызов экшена "{$0}" не удался',
         'sk' => 'Volanie akcia "{$0}" zlyhalo',
         'sl' => 'Klicanje akciji "{$0}" ni uspelo',
         'sq' => 'E quajtur veprim "{$0}" dështoi',

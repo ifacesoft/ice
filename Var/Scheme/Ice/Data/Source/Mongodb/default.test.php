@@ -1,14 +1,14 @@
 <?php
 return [
-    'time' => '2015-02-13 10:35:23',
-    'revision' => '02131035',
+    'time' => '2015-02-15 21:05:27',
+    'revision' => '02152105',
     'tables' => [
-        'pages' => [
+        'ice_test' => [
             'engine' => 'MongoDB',
             'charset' => 'utf-8',
-            'comment' => 'pages',
-            'modelClass' => 'Ebs\\Model\\Pages',
-            'revision' => '00000000',
+            'comment' => 'ice_test',
+            'modelClass' => 'Ice\\Model\\Test',
+            'revision' => '02152057',
         ],
     ],
 ];

@@ -215,6 +215,8 @@ class Model_Scheme
 
         $columns = [];
 
+//        Ice\Core\Logger::debug($this->_modelSchemeConfig->gets());
+
         foreach ($this->_modelSchemeConfig->gets('fields') as $fieldName => $fieldScheme) {
             $columns[$fieldScheme[__CLASS__]['columnName']] = $fieldName;
         }

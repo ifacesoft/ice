@@ -1,7 +1,7 @@
 <?php
 return [
-    'time' => '2015-02-13 10:14:26',
-    'revision' => '02131014',
+    'time' => '2015-02-15 20:57:42',
+    'revision' => '02152057',
     'tableName' => 'ice_role',
     'dataSourceKey' => 'Ice\\Data\\Source\\Mysqli/default.test',
     'fields' => [
