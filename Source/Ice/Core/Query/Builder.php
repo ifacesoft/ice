@@ -49,21 +49,24 @@ class Query_Builder
     const SQL_LOGICAL_AND = 'AND';
     const SQL_LOGICAL_OR = 'OR';
     const SQL_LOGICAL_NOT = 'NOT';
-    const SQL_COMPARSION_OPERATOR_EQUAL = '=';
-    const SQL_COMPARSION_OPERATOR_NOT_EQUAL = '<>';
-    const SQL_COMPARSION_OPERATOR_LESS = '<';
-    const SQL_COMPARSION_OPERATOR_GREATER = '>';
-    const SQL_COMPARSION_OPERATOR_GREATER_OR_EQUAL = '>=';
-    const SQL_COMPARSION_OPERATOR_LESS_OR_EQUAL = '<=';
-    const SQL_COMPARSION_KEYWORD_REGEXP = 'REGEXP';
-    const SQL_COMPARSION_KEYWORD_LIKE = 'LIKE';
-    const SQL_COMPARSION_KEYWORD_RLIKE = 'RLIKE';
-    const SQL_COMPARSION_KEYWORD_RLIKE_REVERSE = 'RLIKE_REVERSE';
-    const SQL_COMPARSION_KEYWORD_IN = 'IN';
-    const SQL_COMPARSION_KEYWORD_NOT_IN = 'NOT IN';
-    const SQL_COMPARSION_KEYWORD_BETWEEN = 'BETWEEN';
-    const SQL_COMPARSION_KEYWORD_IS_NULL = 'IS NULL';
-    const SQL_COMPARSION_KEYWORD_IS_NOT_NULL = 'IS NOT NULL';
+    const SQL_COMPARISON_OPERATOR_EQUAL = '=';
+    const SQL_COMPARISON_OPERATOR_NOT_EQUAL = '<>';
+    const SQL_COMPARISON_OPERATOR_LESS = '<';
+    const SQL_COMPARISON_OPERATOR_GREATER = '>';
+    const SQL_COMPARISON_OPERATOR_GREATER_OR_EQUAL = '>=';
+    const SQL_COMPARISON_OPERATOR_LESS_OR_EQUAL = '<=';
+    const SQL_COMPARISON_KEYWORD_REGEXP = 'REGEXP';
+    const SQL_COMPARISON_KEYWORD_LIKE = 'LIKE';
+    const SQL_COMPARISON_KEYWORD_RLIKE = 'RLIKE';
+    const SQL_COMPARISON_KEYWORD_RLIKE_REVERSE = 'RLIKE_REVERSE';
+    const SQL_COMPARISON_KEYWORD_IN = 'IN';
+    const SQL_COMPARISON_KEYWORD_NOT_IN = 'NOT IN';
+    const SQL_COMPARISON_KEYWORD_BETWEEN = 'BETWEEN';
+    const SQL_COMPARISON_KEYWORD_IS_NULL = 'IS NULL';
+    const SQL_COMPARISON_KEYWORD_IS_NOT_NULL = 'IS NOT NULL';
+    const SQL_ORDERING_ASC = 'ASC';
+    const SQL_ORDERING_DESC = 'DESC';
+    const SEARCH_KEYWORD = '$search';
 
     /**
      * Main model class for builded query
@@ -198,7 +201,7 @@ class Query_Builder
         return $this->where(
             $sqlLogical,
             $fieldName,
-            Query_Builder::SQL_COMPARSION_KEYWORD_IS_NOT_NULL,
+            Query_Builder::SQL_COMPARISON_KEYWORD_IS_NOT_NULL,
             null,
             $modelClass,
             $tableAlias
@@ -216,7 +219,7 @@ class Query_Builder
      *                  [
      *                      Query::CLAUSE_WHERE_LOGICAL_OPERATOR => $sqlLogical,
      *                      Query::CLAUSE_WHERE_FIELD_NAME => $fieldName,
-     *                      Query::CLAUSE_WHERE_COMPARSION_OPERATOR => $sql_comparsion
+     *                      Query::CLAUSE_WHERE_COMPARISON_OPERATOR => $sql_comparison
      *                  ]
      *              ]
      *          ]
@@ -224,7 +227,7 @@ class Query_Builder
      * ```
      * @param $sqlLogical
      * @param $fieldName
-     * @param $sqlComparsion
+     * @param $sqlComparison
      * @param null $value
      * @param $modelClass
      * @param $tableAlias
@@ -236,13 +239,13 @@ class Query_Builder
      * @version 0.0
      * @since 0.0
      */
-    private function where($sqlLogical, $fieldName, $sqlComparsion, $value = null, $modelClass = null, $tableAlias = null)
+    private function where($sqlLogical, $fieldName, $sqlComparison, $value = null, $modelClass = null, $tableAlias = null)
     {
         list($modelClass, $tableAlias) = $this->getModelClassTableAlias($modelClass, $tableAlias);
 
         $fieldName = $modelClass::getFieldName($fieldName);
 
-        $where = [$sqlLogical, $fieldName, $sqlComparsion, count((array)$value)];
+        $where = [$sqlLogical, $fieldName, $sqlComparison, count((array)$value)];
 
         if (isset($this->_sqlParts[Query_Builder::PART_WHERE][$modelClass])) {
             $this->_sqlParts[Query_Builder::PART_WHERE][$modelClass][1][] = $where;
@@ -337,7 +340,7 @@ class Query_Builder
         return $this->where(
             $sqlLogical,
             $fieldName,
-            Query_Builder::SQL_COMPARSION_KEYWORD_IS_NULL,
+            Query_Builder::SQL_COMPARISON_KEYWORD_IS_NULL,
             null,
             $modelClass,
             $tableAlias
@@ -405,7 +408,7 @@ class Query_Builder
             $this->where(
                 $sqlLogical,
                 $fieldName,
-                Query_Builder::SQL_COMPARSION_OPERATOR_EQUAL,
+                Query_Builder::SQL_COMPARISON_OPERATOR_EQUAL,
                 $value,
                 $modelClass,
                 $tableAlias
@@ -443,7 +446,7 @@ class Query_Builder
         return $this->where(
             $sqlLogical,
             $fieldName,
-            Query_Builder::SQL_COMPARSION_KEYWORD_IN,
+            Query_Builder::SQL_COMPARISON_KEYWORD_IN,
             $value,
             $modelClass,
             $tableAlias
@@ -470,7 +473,7 @@ class Query_Builder
         return $this->where(
             $sqlLogical,
             $fieldName,
-            Query_Builder::SQL_COMPARSION_OPERATOR_GREATER_OR_EQUAL,
+            Query_Builder::SQL_COMPARISON_OPERATOR_GREATER_OR_EQUAL,
             $value,
             $modelClass,
             $tableAlias
@@ -497,7 +500,7 @@ class Query_Builder
         return $this->where(
             $sqlLogical,
             $fieldName,
-            Query_Builder::SQL_COMPARSION_KEYWORD_REGEXP,
+            Query_Builder::SQL_COMPARISON_KEYWORD_REGEXP,
             $value,
             $modelClass,
             $tableAlias
@@ -524,7 +527,7 @@ class Query_Builder
         return $this->where(
             $sqlLogical,
             $fieldName,
-            Query_Builder::SQL_COMPARSION_OPERATOR_LESS_OR_EQUAL,
+            Query_Builder::SQL_COMPARISON_OPERATOR_LESS_OR_EQUAL,
             $value,
             $modelClass,
             $tableAlias
@@ -551,7 +554,7 @@ class Query_Builder
         return $this->where(
             $sqlLogical,
             $fieldName,
-            Query_Builder::SQL_COMPARSION_OPERATOR_GREATER,
+            Query_Builder::SQL_COMPARISON_OPERATOR_GREATER,
             $value,
             $modelClass,
             $tableAlias
@@ -578,7 +581,7 @@ class Query_Builder
         return $this->where(
             $sqlLogical,
             $fieldName,
-            Query_Builder::SQL_COMPARSION_OPERATOR_LESS,
+            Query_Builder::SQL_COMPARISON_OPERATOR_LESS,
             $value,
             $modelClass,
             $tableAlias
@@ -643,7 +646,7 @@ class Query_Builder
         return $this->where(
             $sqlLogical,
             $fieldName,
-            Query_Builder::SQL_COMPARSION_OPERATOR_NOT_EQUAL,
+            Query_Builder::SQL_COMPARISON_OPERATOR_NOT_EQUAL,
             $value,
             $modelClass,
             $tableAlias
@@ -678,7 +681,7 @@ class Query_Builder
         return $this->where(
             $sqlLogical,
             $fieldName,
-            Query_Builder::SQL_COMPARSION_KEYWORD_NOT_IN,
+            Query_Builder::SQL_COMPARISON_KEYWORD_NOT_IN,
             $value,
             $modelClass,
             $tableAlias
@@ -743,7 +746,7 @@ class Query_Builder
         return $this->where(
             $sqlLogical,
             $fieldName,
-            Query_Builder::SQL_COMPARSION_KEYWORD_LIKE,
+            Query_Builder::SQL_COMPARISON_KEYWORD_LIKE,
             $value,
             $modelClass,
             $tableAlias
@@ -776,8 +779,8 @@ class Query_Builder
 
         /** check ability use pattern from field in base */
         return array_key_exists($fieldValue, $modelFields)
-            ? $this->where($sqlLogical, $fieldValue, Query_Builder::SQL_COMPARSION_KEYWORD_RLIKE_REVERSE, $fieldName, $modelClass, $tableAlias)
-            : $this->where($sqlLogical, $modelClass::getFieldName($fieldName), Query_Builder::SQL_COMPARSION_KEYWORD_RLIKE, $value, $modelClass, $tableAlias);
+            ? $this->where($sqlLogical, $fieldValue, Query_Builder::SQL_COMPARISON_KEYWORD_RLIKE_REVERSE, $fieldName, $modelClass, $tableAlias)
+            : $this->where($sqlLogical, $modelClass::getFieldName($fieldName), Query_Builder::SQL_COMPARISON_KEYWORD_RLIKE, $value, $modelClass, $tableAlias);
     }
 
     /**
@@ -1248,7 +1251,7 @@ class Query_Builder
      */
     public function asc($fieldName, $modelClass = null, $tableAlias = null)
     {
-        return $this->order($fieldName, 'ASC', $modelClass, $tableAlias);
+        return $this->order($fieldName, Query_Builder::SQL_ORDERING_ASC, $modelClass, $tableAlias);
     }
 
     public function getModelClassTableAlias($modelClass, $tableAlias)
@@ -1360,7 +1363,7 @@ class Query_Builder
      */
     public function desc($fieldName, $modelClass = null, $tableAlias = null)
     {
-        return $this->order($fieldName, 'DESC', $modelClass, $tableAlias);
+        return $this->order($fieldName, Query_Builder::SQL_ORDERING_DESC, $modelClass, $tableAlias);
     }
 
     /**
@@ -1501,5 +1504,32 @@ class Query_Builder
     public function cloneBuilder()
     {
         return clone $this;
+    }
+
+    /**
+     * Set in query part where expression for search
+     *
+     * @param $fieldName
+     * @param $value
+     * @param null $modelClass
+     * @param null $tableAlias
+     * @param string $sqlLogical
+     * @return Query_Builder
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
+     */
+    public function search($fieldName, $value, $modelClass = null, $tableAlias = null, $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
+    {
+        return $this->where(
+            $sqlLogical,
+            $fieldName,
+            Query_Builder::SEARCH_KEYWORD,
+            $value,
+            $modelClass,
+            $tableAlias
+        );
     }
 }

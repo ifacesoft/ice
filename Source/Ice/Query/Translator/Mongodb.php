@@ -12,6 +12,7 @@ namespace Ice\Query\Translator;
 use Ice\Core\Exception;
 use Ice\Core\Logger;
 use Ice\Core\Model;
+use Ice\Core\Query_Builder;
 use Ice\Core\Query_Translator;
 use Ice\Helper\Mapping;
 
@@ -31,6 +32,27 @@ class Mongodb extends Query_Translator
 {
     const DEFAULT_CLASS_KEY = 'Ice:Mongodb/default';
     const DEFAULT_KEY = 'instance';
+
+    private static $_operators = [
+        Query_Builder::SQL_COMPARISON_OPERATOR_GREATER => '$gt',
+        Query_Builder::SQL_COMPARISON_OPERATOR_LESS => '$lt',
+        Query_Builder::SQL_COMPARISON_OPERATOR_GREATER_OR_EQUAL => '$gte',
+        Query_Builder::SQL_COMPARISON_OPERATOR_LESS_OR_EQUAL => '$lte',
+        Query_Builder::SQL_COMPARISON_KEYWORD_REGEXP => '$regex',
+        Query_Builder::SQL_COMPARISON_OPERATOR_NOT_EQUAL => '$ne',
+        Query_Builder::SQL_COMPARISON_KEYWORD_IN => '$in',
+        Query_Builder::SQL_COMPARISON_KEYWORD_IS_NULL => '$notExists', // dummy
+        Query_Builder::SQL_COMPARISON_KEYWORD_IS_NOT_NULL => '$exists',
+        Query_Builder::SQL_COMPARISON_KEYWORD_LIKE => '$like', // dummy
+        Query_Builder::SQL_COMPARISON_KEYWORD_RLIKE => '$rlike', // dummy
+        Query_Builder::SQL_COMPARISON_KEYWORD_RLIKE_REVERSE => '$rlikeReverse', // dummy
+        Query_Builder::SEARCH_KEYWORD => '$search'
+    ];
+
+    private static $_orderings = [
+        Query_Builder::SQL_ORDERING_ASC => 1,
+        Query_Builder::SQL_ORDERING_DESC => -1
+    ];
 
     /**
      * Translate set part
@@ -187,19 +209,22 @@ class Mongodb extends Query_Translator
 
         list($tableAlias, $fieldNames) = $items;
 
-        $where = [];
+        $columnNames = [];
+
+        $modelMapping = $modelClass::getScheme()->getFieldMapping();
 
         foreach ($fieldNames as $fieldNameArr) {
             list($logicalOperator, $fieldName, $comparisonOperator, $count) = $fieldNameArr;
+
             for ($i = 0; $i < $count; $i++) {
-                $where[] = $fieldName;
+                $columnName = isset($modelMapping[$fieldName])
+                    ? $modelMapping[$fieldName]
+                    : $fieldName;
+
+                $columnNames[] = $comparisonOperator == Query_Builder::SQL_COMPARISON_OPERATOR_EQUAL
+                    ? $columnName
+                    : [$columnName => Mongodb::$_operators[$comparisonOperator]];
             }
-        }
-
-        $columnNames = [];
-
-        foreach (Mapping::columnNames($modelClass, $where) as $columnName) {
-            $columnNames[] = $columnName;
         }
 
         return [
@@ -363,17 +388,30 @@ class Mongodb extends Query_Translator
     {
         if (empty($part)) {
             return [];
-        } else {
-            Logger::debug($part);
-            throw new \Exception('Not implemented');
         }
 
+        list($modelClass, $items) = each($part);
+
+        list($tableAlias, $fieldNames) = $items;
+
+        $columnNames = [];
+
+        $modelMapping = $modelClass::getScheme()->getFieldMapping();
+
+        foreach ($fieldNames as $fieldName => $ordering) {
+            $columnNames[$modelMapping[$fieldName]] = self::$_orderings[$ordering];
+        }
+
+        return [
+            'order' => [
+                'modelClass' => $modelClass,
+                'columnNames' => $columnNames,
+            ]
+        ];
 
         $sql = '';
 
-        if (empty($part)) {
-            return $sql;
-        }
+
 
         $orders = [];
 
@@ -451,22 +489,18 @@ class Mongodb extends Query_Translator
      */
     protected function translateLimit($part)
     {
-//        if (empty($part)) {
-        return [];
-//        } else {
-//            Logger::debug($part);
-//            throw new Exception('Not implemented');
-//        }
-
-
         if (empty($part)) {
-            return '';
+            return [];
         }
 
-        list($part, $offset) = $part;
+        list($limit, $skip) = $part;
 
-        return "\n" . 'LIMIT ' .
-        "\n\t" . $offset . ', ' . $part;
+        return [
+            'limit' => [
+                'limit' => $limit,
+                'skip' => $skip,
+            ]
+        ];
     }
 
     /**

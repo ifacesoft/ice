@@ -496,4 +496,9 @@ class Model_Scheme
     {
         return $this->_modelSchemeConfig->gets('fields');
     }
+
+    public function getSearchIndexes()
+    {
+        return $this->_modelSchemeConfig->gets('searchIndexes');
+    }
 }

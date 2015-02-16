@@ -400,7 +400,7 @@ abstract class Data_Source extends Container
                 default:
                     Data_Source::getLogger()->exception(['Unknown data source query statement type {$0}', $queryType], __FILE__, __LINE__, null, $query);
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             Data_Source::getLogger()->log([
                 '(error) ' . $query->getModelClass() . ' - ' . '{$0} [{$1}] {$2}',
                 [

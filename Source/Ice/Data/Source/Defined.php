@@ -78,27 +78,27 @@ class Defined extends Data_Source
                     $whereQuery = null;
 
                     switch ($part[2]) {
-                        case Query_Builder::SQL_COMPARSION_OPERATOR_EQUAL:
+                        case Query_Builder::SQL_COMPARISON_OPERATOR_EQUAL:
                             if (!isset($row[$part[1]]) || $row[$part[1]] != reset($part[3])) {
                                 return false;
                             }
                             break;
-                        case Query_Builder::SQL_COMPARSION_OPERATOR_NOT_EQUAL:
+                        case Query_Builder::SQL_COMPARISON_OPERATOR_NOT_EQUAL:
                             if ($row[$part[1]] == reset($part[3])) {
                                 return false;
                             }
                             break;
-                        case Query_Builder::SQL_COMPARSION_KEYWORD_IN:
+                        case Query_Builder::SQL_COMPARISON_KEYWORD_IN:
                             if (!in_array($row[$part[1]], $part[3])) {
                                 return false;
                             }
                             break;
-                        case Query_Builder::SQL_COMPARSION_KEYWORD_IS_NULL:
+                        case Query_Builder::SQL_COMPARISON_KEYWORD_IS_NULL:
                             if ($row[$part[1]] !== null) {
                                 return false;
                             }
                             break;
-                        case Query_Builder::SQL_COMPARSION_KEYWORD_IS_NOT_NULL:
+                        case Query_Builder::SQL_COMPARISON_KEYWORD_IS_NOT_NULL:
                             if ($row[$part[1]] === null) {
                                 return false;
                             }

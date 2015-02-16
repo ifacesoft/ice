@@ -272,8 +272,10 @@ abstract class Action extends Container
         } catch (Http_Not_Found $e) {
             throw $e;
         } catch (\Exception $e) {
-            return Action::getLogger()->error(['Calling action "{$0}" failed', $actionClass], __FILE__, __LINE__, $e);
+            Action::getLogger()->exception(['Calling action "{$0}" failed', $actionClass], __FILE__, __LINE__, $e);
         }
+
+        return '';
     }
 
     /**

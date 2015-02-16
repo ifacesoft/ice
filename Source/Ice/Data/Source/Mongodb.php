@@ -4,10 +4,12 @@ namespace Ice\Data\Source;
 
 use Ice\Core\Data_Provider;
 use Ice\Core\Data_Source;
+use Ice\Core\Logger;
 use Ice\Core\Model;
 use Ice\Core\Query;
 use Ice\Core\Query_Result;
 use Ice\Core\Query_Translator;
+use MongoCursor;
 use MongoId;
 
 class Mongodb extends Data_Source
@@ -49,11 +51,38 @@ class Mongodb extends Data_Source
             ? $statement['where']['data']
             : [];
 
-        foreach ($query->getDataSource()->getConnection()->$tableName->find($filter, $statement['select']['columnNames']) as $row) {
-            $pkFieldValue = $row['_id']->{'$id'};
-            unset($row['_id']);
-            $data[Query_Result::ROWS][$pkFieldValue] = array_merge([$pkFieldName => $pkFieldValue], $row);
+        try {
+            /** @var MongoCursor $cursor */
+            $cursor = $query->getDataSource()->getConnection()->$tableName->find($filter, $statement['select']['columnNames']);
+
+            if (isset($statement['order'])) {
+                $cursor = $cursor->sort($statement['order']['columnNames']);
+            }
+
+            if (isset($statement['limit'])) {
+                if (!empty($statement['limit']['skip'])) {
+                    $cursor = $cursor->skip($statement['limit']['skip']);
+                }
+                if (!empty($statement['limit']['limit'])) {
+                    $cursor = $cursor->limit($statement['limit']['limit']);
+                }
+            }
+
+            foreach ($cursor as $row) {
+                $pkFieldValue = $row['_id']->{'$id'};
+                unset($row['_id']);
+                $data[Query_Result::ROWS][$pkFieldValue] = array_merge([$pkFieldName => $pkFieldValue], $row);
+            }
+        } catch (\MongoException $e) {
+            Mongodb::getLogger()->exception(
+                [
+                    '#' . $e->getCode() . ': {$0} - {$1} [{$2}]',
+                    [$e->getMessage(), print_r($data[Query_Result::QUERY_BODY], true), implode(', ', $data[Query_Result::QUERY_PARAMS])]
+                ],
+                __FILE__, __LINE__, $e
+            );
         }
+
         $data[Query_Result::NUM_ROWS] = count($data[Query_Result::ROWS]);
 
         $data[Query_Result::QUERY] = $query;
@@ -295,7 +324,7 @@ class Mongodb extends Data_Source
     public function getStatement($body, array $binds)
     {
         foreach ($body as $statementType => &$data) {
-            if ($statementType == 'select') {
+            if ($statementType == 'select' || $statementType == 'order' || $statementType == 'limit') {
                 continue;
             }
 
@@ -329,15 +358,9 @@ class Mongodb extends Data_Source
                             }
                         }
                     } else {
-                        if (isset($operator)) {
-                            if (!isset($row[$operator])) {
-                                $row[$operator] = [];
-                            }
-
-                            $row[$operator][$columnName] = array_shift($binds);
-                        } else {
-                            $row[$columnName] = array_shift($binds);
-                        }
+                        $row[$columnName] = isset($operator)
+                            ? [$operator => array_shift($binds)]
+                            : array_shift($binds);
                     }
                 }
 

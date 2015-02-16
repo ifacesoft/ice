@@ -161,32 +161,32 @@ class Sql extends Query_Translator
         }
 
         switch ($comparisonOperator) {
-            case Query_Builder::SQL_COMPARSION_OPERATOR_EQUAL:
-                return '`' . $fieldName . '` ' . Query_Builder::SQL_COMPARSION_OPERATOR_EQUAL . ' ?';
-            case Query_Builder::SQL_COMPARSION_OPERATOR_GREATER:
-                return '`' . $fieldName . '` ' . Query_Builder::SQL_COMPARSION_OPERATOR_GREATER . ' ?';
-            case Query_Builder::SQL_COMPARSION_OPERATOR_LESS:
-                return '`' . $fieldName . '` ' . Query_Builder::SQL_COMPARSION_OPERATOR_LESS . ' ?';
-            case Query_Builder::SQL_COMPARSION_OPERATOR_GREATER_OR_EQUAL:
-                return '`' . $fieldName . '` ' . Query_Builder::SQL_COMPARSION_OPERATOR_GREATER_OR_EQUAL . ' ?';
-            case Query_Builder::SQL_COMPARSION_OPERATOR_LESS_OR_EQUAL:
-                return '`' . $fieldName . '` ' . Query_Builder::SQL_COMPARSION_OPERATOR_LESS_OR_EQUAL . ' ?';
-            case Query_Builder::SQL_COMPARSION_KEYWORD_REGEXP:
-                return '`' . $fieldName . '` ' . Query_Builder::SQL_COMPARSION_OPERATOR_LESS_OR_EQUAL . ' ?';
-            case Query_Builder::SQL_COMPARSION_OPERATOR_NOT_EQUAL:
-                return $tableAlias . '.' . $fieldName . ' ' . Query_Builder::SQL_COMPARSION_OPERATOR_NOT_EQUAL . ' ?';
-            case Query_Builder::SQL_COMPARSION_KEYWORD_IN:
+            case Query_Builder::SQL_COMPARISON_OPERATOR_EQUAL:
+                return '`' . $fieldName . '` ' . Query_Builder::SQL_COMPARISON_OPERATOR_EQUAL . ' ?';
+            case Query_Builder::SQL_COMPARISON_OPERATOR_GREATER:
+                return '`' . $fieldName . '` ' . Query_Builder::SQL_COMPARISON_OPERATOR_GREATER . ' ?';
+            case Query_Builder::SQL_COMPARISON_OPERATOR_LESS:
+                return '`' . $fieldName . '` ' . Query_Builder::SQL_COMPARISON_OPERATOR_LESS . ' ?';
+            case Query_Builder::SQL_COMPARISON_OPERATOR_GREATER_OR_EQUAL:
+                return '`' . $fieldName . '` ' . Query_Builder::SQL_COMPARISON_OPERATOR_GREATER_OR_EQUAL . ' ?';
+            case Query_Builder::SQL_COMPARISON_OPERATOR_LESS_OR_EQUAL:
+                return '`' . $fieldName . '` ' . Query_Builder::SQL_COMPARISON_OPERATOR_LESS_OR_EQUAL . ' ?';
+            case Query_Builder::SQL_COMPARISON_KEYWORD_REGEXP:
+                return '`' . $fieldName . '` ' . Query_Builder::SQL_COMPARISON_KEYWORD_REGEXP . ' ?';
+            case Query_Builder::SQL_COMPARISON_OPERATOR_NOT_EQUAL:
+                return $tableAlias . '.' . $fieldName . ' ' . Query_Builder::SQL_COMPARISON_OPERATOR_NOT_EQUAL . ' ?';
+            case Query_Builder::SQL_COMPARISON_KEYWORD_IN:
                 return $tableAlias . '.' . $fieldName . ' IN (?' . str_repeat(',?', $count - 1) . ')';
-            case Query_Builder::SQL_COMPARSION_KEYWORD_IS_NULL:
-                return $tableAlias . '.' . $fieldName . ' ' . Query_Builder::SQL_COMPARSION_KEYWORD_IS_NULL;
-            case Query_Builder::SQL_COMPARSION_KEYWORD_IS_NOT_NULL:
-                return $tableAlias . '.' . $fieldName . ' ' . Query_Builder::SQL_COMPARSION_KEYWORD_IS_NOT_NULL;
-            case Query_Builder::SQL_COMPARSION_KEYWORD_LIKE:
-                return $tableAlias . '.' . $fieldName . ' ' . Query_Builder::SQL_COMPARSION_KEYWORD_LIKE . ' ?';
-            case Query_Builder::SQL_COMPARSION_KEYWORD_RLIKE:
-                return $tableAlias . '.' . $fieldName . ' ' . Query_Builder::SQL_COMPARSION_KEYWORD_RLIKE . ' ?';
-            case Query_Builder::SQL_COMPARSION_KEYWORD_RLIKE_REVERSE:
-                return '? ' . Query_Builder::SQL_COMPARSION_KEYWORD_RLIKE . ' ' . $fieldName;
+            case Query_Builder::SQL_COMPARISON_KEYWORD_IS_NULL:
+                return $tableAlias . '.' . $fieldName . ' ' . Query_Builder::SQL_COMPARISON_KEYWORD_IS_NULL;
+            case Query_Builder::SQL_COMPARISON_KEYWORD_IS_NOT_NULL:
+                return $tableAlias . '.' . $fieldName . ' ' . Query_Builder::SQL_COMPARISON_KEYWORD_IS_NOT_NULL;
+            case Query_Builder::SQL_COMPARISON_KEYWORD_LIKE:
+                return $tableAlias . '.' . $fieldName . ' ' . Query_Builder::SQL_COMPARISON_KEYWORD_LIKE . ' ?';
+            case Query_Builder::SQL_COMPARISON_KEYWORD_RLIKE:
+                return $tableAlias . '.' . $fieldName . ' ' . Query_Builder::SQL_COMPARISON_KEYWORD_RLIKE . ' ?';
+            case Query_Builder::SQL_COMPARISON_KEYWORD_RLIKE_REVERSE:
+                return '? ' . Query_Builder::SQL_COMPARISON_KEYWORD_RLIKE . ' ' . $fieldName;
             default:
                 Sql::getLogger()->exception(['Unknown comparison operator "{$0}"', $comparisonOperator], __FILE__, __LINE__);
         }
@@ -429,10 +429,10 @@ class Sql extends Query_Translator
             return '';
         }
 
-        list($part, $offset) = $part;
+        list($limit, $offset) = $part;
 
         return "\n" . 'LIMIT ' .
-        "\n\t" . $offset . ', ' . $part;
+        "\n\t" . $offset . ', ' . $limit;
     }
 
     /**
