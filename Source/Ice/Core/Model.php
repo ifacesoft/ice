@@ -1152,7 +1152,7 @@ abstract class Model
         /** @var Model $modelClass */
         $modelClass = get_class($this);
 
-        $this->set(array_intersect_key($fields, $modelClass::getScheme()->getFieldMapping()));
+        $this->set($fields);
 
         $pk = $this->getPk();
         $affected = $this->getAffected();
