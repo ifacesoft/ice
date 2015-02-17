@@ -11,11 +11,12 @@ namespace Ice\Core;
 
 use Ice;
 use Ice\Core;
+use Ice\Data\Provider\Cacher;
+use Ice\Data\Provider\Registry;
+use Ice\Data\Provider\Repository;
 use Ice\Exception\Http_Bad_Request;
 use Ice\Exception\Http_Not_Found;
 use Ice\Exception\Redirect;
-use Ice\Helper\Arrays;
-use Ice\Helper\Hash;
 use Ice\Helper\Json;
 
 /**
@@ -30,101 +31,189 @@ use Ice\Helper\Json;
  * @package Ice
  * @subpackage Core
  */
-abstract class Action extends Container
+abstract class Action
 {
     use Core;
 
-    const DEFAULT_KEY = 'instance';
-
-    /**
-     * Default config
-     *
-     * @var array
-     */
-    public static $configDefaults = [
-        'afterActions' => [],
-        'layout' => null,
-        'template' => null,
-        'output' => null,
-        'defaultViewRenderClassName' => null,
-        'inputDefaults' => [],
-        'inputValidators' => [],
-        'inputDataProviderKeys' => [],
-        'outputDataProviderKeys' => [],
-        'cacheDataProviderKey' => ''
-    ];
-
-    /**
-     * Overridable config
-     *
-     * @var array
-     */
-    public static $config = [];
+    private $_input = [];
+    private $_inputHash = null;
 
     /**
      * Private constructor of action
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.1
+     * @version 0.5
      * @since 0.0
+     * @param array $input
      */
-    private function __construct()
+    private function __construct(array $input)
     {
+        $this->_input = $input;
+        $this->_inputHash = md5(Json::encode($input));
+    }
+
+    /**
+     * Action config
+     *
+     * example:
+     * ```php
+     *  $config = [
+     *      'actions' => [],
+     *      'view' => [
+     *          'layout' => null,
+     *          'template' => null,
+     *          'viewRenderClass' => null,
+     *      ],
+     *      'input' => [],
+     *      'output' => [],
+     *      'ttl' => 3600
+     *      'roles' => []
+     *  ];
+     * ```
+     * @return array
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since 0
+     */
+    protected static function config()
+    {
+        return [
+            'actions' => [],
+            'view' => [
+                'layout' => null,
+                'template' => null,
+                'viewRenderClass' => null,
+            ],
+            'input' => [],
+            'output' => [],
+            'ttl' => 3600,
+            'roles' => []
+        ];
+    }
+
+    /**
+     * Get action config
+     *
+     * @return Config
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
+     */
+    public static function getConfig()
+    {
+        $repository = self::getRepository();
+
+        if ($config = $repository->get('config')) {
+            return $config;
+        }
+
+        $config = Config::create(self::getClass(), array_merge_recursive(Config::getInstance(self::getClass(), null, false, -1)->gets(), self::config()));
+
+        return $repository->set('config', $config);
+    }
+
+    /**
+     * Return action repository
+     *
+     * @return Repository
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
+     */
+    public static function getRepository()
+    {
+        return Repository::getInstance(__CLASS__, self::getClass());
+    }
+
+    /**
+     * Return action cacher
+     *
+     * @return Cacher
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
+     */
+    public function getCacher()
+    {
+        return Cacher::getInstance(__CLASS__, self::getClass());
+    }
+
+    /**
+     * Return action registry
+     *
+     * @return Registry
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
+     */
+    public static function getRegistry()
+    {
+        return Registry::getInstance(__CLASS__, self::getClass());
     }
 
     /**
      * Get action object by name
      *
-     * @param $key
+     * @param array $input
      * @return Action
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.4
+     * @version 0.5
      * @since 0.0
      */
-    protected static function create($key)
+    public static function create($input = [])
     {
+        foreach (self::getConfig()->gets('input') as $dataProviderKey => $params) {
+            $dataProvider = Data_Provider::getInstance($dataProviderKey);
+
+            foreach ((array)$params as $name => $param) {
+                if (is_int($name)) {
+                    $name = $param;
+                    $param = null;
+                }
+
+                $input[$name] = $dataProvider->get($name);
+
+                if (is_array($param)) {
+                    if ($input[$name] === null && isset($param['default'])) {
+                        $input[$name] = $param['default'];
+                    }
+
+                    if (isset($param['validators'])) {
+                        foreach ((array)$param['validators'] as $validatorKey => $validatorParams) {
+                            if (is_int($validatorKey)) {
+                                $validatorKey = $validatorParams;
+                                $validatorParams = null;
+                            }
+
+                            Validator::getInstance($validatorKey)->validate($input[$name], $validatorParams);
+                        }
+                    }
+                }
+            }
+        }
+
         $actionClass = self::getClass();
-        return new $actionClass();
-    }
 
-    /**
-     * Default action key
-     *
-     * @return Core
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since 0.0
-     */
-    protected static function getDefaultKey()
-    {
-        return Action::DEFAULT_KEY;
-    }
-
-    /**
-     * Default class key
-     *
-     * @return string
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since 0.4
-     */
-    protected static function getDefaultClassKey()
-    {
-        return self::getClass() . '/default';
+        return new $actionClass($input);
     }
 
     /**
      * Calling action
      *
      * @param Action_Context $actionContext
-     * @param array $data
      * @param int $level
      * @return View|null|string
      * @throws Redirect
@@ -134,7 +223,7 @@ abstract class Action extends Container
      * @version 0.0
      * @since 0.0
      */
-    public function call(Action_Context $actionContext, array $data = [], $level = 0)
+    public function call(Action_Context $actionContext, $level = 0)
     {
         $startTime = Logger::microtime();
 
@@ -146,30 +235,19 @@ abstract class Action extends Container
         }
 
         try {
-            $config = $actionClass::getConfig();
-
-            $input = $this->getInput($config, $data);
-
-            $hash = Hash::get($input, Hash::HASH_CRC32);
-            $inputHash = $actionClass . '/' . $hash;
-
-            $actionContext->initAction($actionClass, $hash);
+//            $config = $actionClass::getConfig();
 //
-            $cacheDataProviderKey = null;
-            $dataProvider = null;
+//            $actionContext->initAction($actionClass, $this->_inputHash);
 
-            if ($cacheDataProviderKey = $config->get('cacheDataProviderKey', false)) {
-                $dataProvider = Data_Provider::getInstance($cacheDataProviderKey, 'cache');
+            $cacher = $this->getCacher();
 
-                $viewData = $dataProvider->get($inputHash);
-                if ($viewData) {
-                    return $this->flush(View::getInstance($viewData));
-                }
+            if ($viewData = $cacher->get('view/' . $this->_inputHash)) {
+                return $this->flush(View::getInstance($viewData));
             }
 
             $actionContext->addAction($config->gets('afterActions', false));
 
-            $params = $this->getParams($config->gets('outputDataProviderKeys', false), (array)$this->run($input, $actionContext));
+            $params = $this->getParams($config->gets('outputDataProviderKeys', false), (array)$this->run($this->_input, $actionContext));
 
             $finishTime = Logger::microtimeResult($startTime, true);
 
@@ -252,9 +330,7 @@ abstract class Action extends Container
                 $viewData['template'] = $input['template'];
             }
 
-            if ($cacheDataProviderKey) {
-                $dataProvider->set($inputHash, $viewData);
-            }
+            $cacher->set($this->_inputHash, $viewData);
 
             if (Request::isCli()) {
                 Action::getLogger()->info(['{$0}{$1} complete! [{$2} + {$3}]', [str_repeat("\t", $level), $actionClass::getClassName(), $finishTime, $finishTimeAfter]], Logger::MESSAGE);
@@ -276,55 +352,6 @@ abstract class Action extends Container
         }
 
         return '';
-    }
-
-    /**
-     * Gets input data from data providers
-     *
-     * @param Config $config
-     * @param array $input
-     * @return array
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function getInput(Config $config, array $input)
-    {
-        $dataProviderKeys = $config->gets('inputDataProviderKeys', false);
-
-        /** @var Action $actionClass */
-        $actionClass = get_class($this);
-        $dataProviderKeys[] = $actionClass::getRegistryDataProviderKey();
-
-        /** @var Data_Provider $dataProvider */
-        $dataProvider = null;
-
-        foreach ($dataProviderKeys as $dataProviderKey) {
-            $dataProvider = Data_Provider::getInstance($dataProviderKey);
-            $input += (array)$dataProvider->get();
-        }
-
-        return Validator::validateByScheme(
-            Arrays::defaults($config->gets('inputDefaults', false), $input),
-            $config->gets('inputValidators', false)
-        );
-    }
-
-    /**
-     * Return default input registry data provider for this action
-     *
-     * @return string
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public static function getRegistryDataProviderKey()
-    {
-        return 'Ice:Registry/' . self::getClass();
     }
 
     /**
@@ -372,22 +399,33 @@ abstract class Action extends Container
     }
 
     /**
-     *  public static $config = [
-     *      'afterActions' => [],          // actions
-     *      'layout' => null,               // Emmet style layout
-     *      'template' => null,             // Template of view
-     *      'output' => null,               // Output type: standard|file
-     *      'defaultViewRenderClassName' => null,  // Render class for view (example: Ice:Php)
-     *      'inputDefaults' => [],          // Default input data
-     *      'inputValidators' => [],        // Input data validators
-     *      'inputDataProviderKeys' => [],  // InputDataProviders keys
-     *      'outputDataProviderKeys' => [], // OutputDataProviders keys
-     *      'cacheDataProviderKey' => ''    // Cache data provider key
-     *  ];
+     * Action config
      *
-     * public static $config = [
-     *      'defaultViewRenderClassName' => 'Ice:Php'
-     * ];
+     * @return array
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since 0
+     *
+     *  protected static function config()
+     *  {
+     *      return array_merge_recursive(
+     *          [
+     *             'actions' => [],
+     *              'view' => [
+     *                  'layout' => null,
+     *                  'template' => null,
+     *                  'viewRenderClass' => null,
+     *              ],
+     *              'input' => [],
+     *              'output' => [],
+     *              'ttl' => 3600
+     *              'roles' => []
+     *          ],
+     *          parent::config()
+     *      );
+     *  }
      *
      * /** Run action
      *
@@ -401,21 +439,4 @@ abstract class Action extends Container
      * @since 0
      */
     abstract protected function run(array $input, Action_Context $actionContext);
-
-    /**
-     * Return instance of Action
-     *
-     * @param null $key
-     * @param null $ttl
-     * @return Action
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.2
-     * @since 0.2
-     */
-    public static function getInstance($key = null, $ttl = null)
-    {
-        return parent::getInstance($key, $ttl);
-    }
 }

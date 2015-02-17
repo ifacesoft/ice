@@ -29,14 +29,7 @@ class Request extends Data_Provider
     const DEFAULT_DATA_PROVIDER_KEY = 'Ice:Request/default';
     const DEFAULT_KEY = 'instance';
 
-//    public static function getInstance($dataProviderKey = null)
-//    {
-//        if (!$dataProviderKey) {
-//            $dataProviderKey = self::getDefaultKey();
-//        }
-//
-//        return parent::getInstance($dataProviderKey);
-//    }
+    protected $_options = null;
 
     /**
      * Return default data provider key
@@ -104,10 +97,6 @@ class Request extends Data_Provider
      */
     public function set($key, $value, $ttl = null)
     {
-        if ($ttl == -1) {
-            return $value;
-        }
-
         return $_REQUEST[$key] = $value;
     }
 

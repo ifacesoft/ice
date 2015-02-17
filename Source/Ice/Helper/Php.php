@@ -21,6 +21,8 @@ namespace Ice\Helper;
  */
 class Php
 {
+    const INTEGER = 'integer';
+
     /**
      * Pretty formatting php data (array)
      *

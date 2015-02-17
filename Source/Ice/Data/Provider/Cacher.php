@@ -9,13 +9,17 @@
 
 namespace Ice\Data\Provider;
 
+use Ice\Core\Cache;
 use Ice\Core\Data_Provider;
+use Ice\Core\Environment;
 use Ice\Core\Exception;
+use Ice\Core\Logger;
+use Ice\Core\Request;
 
 /**
  * Class String
  *
- * Data provider for string cache
+ * Data provider for cache
  *
  * @see Ice\Core\Data_Provider
  *
@@ -24,7 +28,7 @@ use Ice\Core\Exception;
  * @package Ice
  * @subpackage Data_Provider
  */
-class Cache extends Data_Provider
+class Cacher extends Data_Provider
 {
     const DEFAULT_DATA_PROVIDER_KEY = 'Ice:Cache/default';
     const DEFAULT_KEY = 'instance';
@@ -67,12 +71,21 @@ class Cache extends Data_Provider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.5
      * @since 0.0
      */
     public function get($key = null)
     {
-        return $this->getConnection()->get($key);
+        /** @var Cache $cache */
+        if ($cache = $this->getConnection()->get($key) && $object = $cache->validate()) {
+            if (!Environment::isProduction()) {
+                Cacher::getLogger()->log(['(cache) {$0}', $object], Logger::INFO);
+            }
+
+            return $object;
+        }
+
+        return null;
     }
 
     /**
@@ -109,7 +122,23 @@ class Cache extends Data_Provider
             return $value;
         }
 
-        return $this->getConnection()->set($key, $value, $ttl);
+        if ($ttl === null) {
+            $options = $this->getOptions(__CLASS__);
+            $ttl = $options['ttl'];
+        }
+
+        $time = time();
+
+        $cache = Cache::create($value, $time);
+        $object = $cache->invalidate($time);
+
+        $this->getConnection()->set($key, $cache, $ttl);
+
+        if (!Environment::isProduction()) {
+            Cacher::getLogger()->log(['(new) {$0}', $object], Logger::SUCCESS);
+        }
+
+        return $object;
     }
 
     /**
@@ -206,11 +235,12 @@ class Cache extends Data_Provider
      */
     protected function connect(&$connection)
     {
+        /** @var Data_Provider $dataProviderClass */
         $dataProviderClass = class_exists('Redis', false)
             ? Redis::getClass()
             : File::getClass();
 
-        return $connection = new $dataProviderClass($this->getKey(), $this->getIndex());
+        return $connection = $dataProviderClass::getInstance($this->getKey(), $this->getIndex());
     }
 
     /**

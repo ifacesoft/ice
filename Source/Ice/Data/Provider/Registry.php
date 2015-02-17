@@ -30,6 +30,8 @@ class Registry extends Data_Provider
     const DEFAULT_DATA_PROVIDER_KEY = 'Ice:Registry/default';
     const DEFAULT_KEY = 'instance';
 
+    protected $_options = null;
+
     /**
      * Return default data provider key
      *
@@ -131,7 +133,7 @@ class Registry extends Data_Provider
      *
      * @param string $key
      * @param $value
-     * @param null $ttl
+     * @param integer $ttl
      * @return mixed setted value
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -139,12 +141,8 @@ class Registry extends Data_Provider
      * @version 0.0
      * @since 0.0
      */
-    public function set($key, $value, $ttl = null)
+    public function set($key, $value, $ttl = 0)
     {
-        if ($ttl == -1) {
-            return $value;
-        }
-
         if (is_array($key)) {
             foreach ($key as $k => $item) {
                 $this->set($key, $item, $ttl);

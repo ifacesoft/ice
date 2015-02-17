@@ -342,11 +342,7 @@ class Mongodb extends Data_Source
             for ($i = 0; $i < $data['rowCount']; $i++) {
                 $row = [];
 
-                foreach ($data['columnNames'] as $columnName) {
-                    if (is_array($columnName)) {
-                        list($columnName, $operator) = each($columnName);
-                    }
-
+                foreach ($data['columnNames'] as $columnName => $operator) {
                     if (in_array($columnName, $pkColumnNames)) {
                         if (!isset($row['_id'])) {
                             $row['_id'] = new MongoId(array_shift($binds));

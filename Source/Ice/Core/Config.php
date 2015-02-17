@@ -11,6 +11,7 @@ namespace Ice\Core;
 
 use Ice;
 use Ice\Core;
+use Ice\Data\Provider\Repository;
 use Ice\Exception\File_Not_Found;
 use Ice\Helper\Config as Helper_Config;
 use Ice\Helper\File;
@@ -57,10 +58,27 @@ class Config
      * @version 0.0
      * @since 0.0
      */
-    protected function __construct(array $config, $configName)
+    protected function __construct($configName, array $config)
     {
-        $this->_config = $config;
         $this->_configName = $configName;
+        $this->_config = $config;
+    }
+
+    /**
+     * Return new Config
+     *
+     * @param $configName
+     * @param array $config
+     * @return Config
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
+     */
+    public static function create($configName, array $config)
+    {
+        return new Config($configName, $config);
     }
 
     /**
@@ -69,15 +87,15 @@ class Config
      * @param Core $class
      * @param null $postfix
      * @param bool $isRequired
-     * @param bool $isUseCache
+     * @param integer $ttl
      * @return Config
      * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.5
      * @since 0.0
      */
-    public static function create($class, $postfix = null, $isRequired = false, $isUseCache = true)
+    public static function getInstance($class, $postfix = null, $isRequired = false, $ttl = 3600)
     {
         $baseClass = Object::getBaseClass($class);
 
@@ -85,10 +103,10 @@ class Config
             $class .= '_' . $postfix;
         }
 
-        /** @var Data_Provider $dataProvider */
-        $dataProvider = Data_Provider::getInstance(Config::getDefaultDataProviderKey());
+        /** @var Repository $repository */
+        $repository = self::getRepository();
 
-        if ($_config = $isUseCache ? $dataProvider->get($class) : null) {
+        if ($_config = $ttl >= 0 ? $repository->get($class) : null) {
             return $_config;
         }
 
@@ -130,29 +148,23 @@ class Config
             Config::getLogger()->exception(['Config for {$0} not found', $class], __FILE__, __LINE__, $e, null, -1, 'Ice:Config_Not_Found');
         }
 
-        $_config = new Config($config, $class);
-
-        if ($isUseCache) {
-            $dataProvider->set($class, $_config);
-        }
-
-        return $_config;
+        return $repository->set($class, Config::create($class, $config), $ttl);
     }
 
-    /**
-     * Retuurn default data provider key
-     *
-     * @return string
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    protected static function getDefaultDataProviderKey()
-    {
-        return 'Ice:Registry/' . __CLASS__;
-    }
+//    /**
+//     * Retuurn default data provider key
+//     *
+//     * @return string
+//     *
+//     * @author dp <denis.a.shestakov@gmail.com>
+//     *
+//     * @version 0.0
+//     * @since 0.0
+//     */
+//    protected static function getDefaultDataProviderKey()
+//    {
+//        return 'Ice:Registry/' . __CLASS__;
+//    }
 
     /**
      * Get config param values
@@ -185,24 +197,6 @@ class Config
     public static function getDefault($key)
     {
         return Config::getConfig()->gets('defaults/' . $key, false);
-    }
-
-    /**
-     * Create new config
-     *
-     * @param $class
-     * @param $config
-     * @return Config
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since 0.5
-     */
-    public static function newConfig($class, array $config)
-    {
-
-        return new Config($config, $class);
     }
 
     /**
@@ -319,8 +313,23 @@ class Config
      */
     public function save()
     {
-
         File::createData(Loader::getFilePath($this->getConfigName(), '.php', 'Config/', false, true), $this->_config);
         return $this;
+    }
+
+    /**
+     * Restore object
+     *
+     * @param array $data
+     * @return object
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
+     */
+    public static function __set_state(array $data)
+    {
+        return new self($data['_configName'], $data['_config']);
     }
 }

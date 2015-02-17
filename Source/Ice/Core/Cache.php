@@ -11,6 +11,7 @@ namespace Ice\Core;
 
 use Ice;
 use Ice\Core;
+use Ice\Data\Provider\Repository;
 
 /**
  * Class Cache
@@ -21,58 +22,61 @@ use Ice\Core;
  *
  * @package Ice
  * @subpackage Core
- *
- * @version 0.0
- * @since 0.0
  */
 class Cache
 {
-    use Core;
+    const VALIDATE = 'validate';
+    const INVALIDATE = 'invalidate';
+
+    private $_tags = null;
+    private $_time = null;
+    private $_object = null;
+
+    private function __construct($object, $time)
+    {
+        $this->_tags = $object->getCacheTags;
+        $this->_time = $time;
+        $this->_object = $object;
+    }
+
+    public static function create($object, $time) {
+        return new Cache($object, $time);
+    }
 
     /**
      * Validate cache
      *
-     * @param $class
-     * @param array $cacheTags
-     * @param $time
-     * @return bool
+     * @return Cacheable
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.5
      * @since 0.0
      */
-    public static function validate($class, array $cacheTags, $time)
+    public function validate()
     {
-        if (empty($cacheTags)) {
-            return false;
-        }
+        $repository = Repository::getInstance(__CLASS__, get_class($this->_object));
 
-        /** @var Data_Provider $dataProvider */
-        $dataProvider = Cache::getDataProvider('tags');
+        foreach ($this->getKeys($this->_tags[Cache::VALIDATE]) as $key) {
+            $time = $repository->get($key);
 
-        $isValid = true;
-
-        foreach (self::getKeys($cacheTags) as $key) {
-            $tagCreate = $dataProvider->get($class . '/' . $key);
-
-            if (!$tagCreate) {
-                $tagCreate = time();
-                $dataProvider->set($class . '/' . $key, $tagCreate);
+            if (!$time) {
+                $time = time();
+                $repository->set($key, $time);
             }
 
-            if ($isValid) {
-                $isValid = $tagCreate < $time;
+            if ($time >= $this->_time) {
+                return null;
             }
         }
 
-        return $isValid;
+        return $this->_object;
     }
 
     /**
-     * Return validateion keys
+     * Return validation keys
      *
-     * @param $cacheTags
+     * @param $tags
      * @return array
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -80,11 +84,11 @@ class Cache
      * @version 0.0
      * @since 0.0
      */
-    private static function getKeys($cacheTags)
+    private function getKeys($tags)
     {
         $keys = [];
 
-        foreach ($cacheTags as $tagKey => $tagValue) {
+        foreach ($tags as $tagKey => $tagValue) {
             if (is_array($tagValue)) {
                 $newKeys = self::getKeys($tagValue);
 
@@ -104,21 +108,23 @@ class Cache
     /**
      * Invalidation cache
      *
-     * @param $class
-     * @param $cacheTags
+     * @param $time
+     * @return Cacheable
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.5
      * @since 0.0
+     *
      */
-    public static function invalidate($class, $cacheTags)
+    public function invalidate($time)
     {
-        /** @var Data_Provider $dataProvider */
-        $dataProvider = Cache::getDataProvider('tags');
+        $repository = Repository::getInstance(__CLASS__, get_class($this->_object));
 
-        foreach (self::getKeys($cacheTags) as $key) {
-            $dataProvider->set($class . '/' . $key, time());
+        foreach (self::getKeys($this->_tags[Cache::VALIDATE]) as $key) {
+            $repository->set($key, $time);
         }
+
+        return $this->_object;
     }
 } 

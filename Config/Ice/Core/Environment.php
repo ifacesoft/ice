@@ -10,25 +10,16 @@
 return [
     'production' => [
         'Ice\Core\Data_Provider' => [
-            'Ice\Data\Provider\Apc' => [
-                'default' => [],
-            ],
             'Ice\Data\Provider\Redis' => [
-                'default' => [],
                 'session' => [
                     'ttl' => 60 * 60 * 24
                 ],
-                'cache' => []
             ],
             'Ice\Data\Provider\File' => [
-                'default' => [
-                    'path' => STORAGE_DIR
-                ],
                 'cache' => [
                     'path' => CACHE_DIR
                 ],
                 'session' => [
-                    'path' => STORAGE_DIR,
                     'ttl' => 60 * 60 * 24
                 ],
                 'route' => [
@@ -49,17 +40,12 @@ return [
             ],
             'Ice\Data\Provider\Mysqli' => [
                 'default' => [
-                    'host' => 'localhost',
-                    'port' => '3306',
                     'username' => 'root',
                     'password' => '',
-                    'charset' => 'utf8'
                 ]
             ],
             'Ice\Data\Provider\Mongodb' => [
                 'default' => [
-                    'host' => 'localhost',
-                    'port' => '27017'
                 ]
             ]
         ],

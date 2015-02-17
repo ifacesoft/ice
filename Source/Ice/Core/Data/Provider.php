@@ -66,6 +66,8 @@ abstract class Data_Provider
      */
     private $_scheme = null;
 
+    protected $_options = [];
+
     /**
      * Constructor of Data provider
      *
@@ -81,6 +83,12 @@ abstract class Data_Provider
     {
         $this->_key = $key;
         $this->_index = $index;
+
+        if ($this->_options !== null && $key != Config::getClass() && $key != Environment::getClass()) {
+            foreach (Environment::getInstance()->gets(__CLASS__ . '/' . get_class($this) . '/' . $key, false) as $key => $value) {
+                $this->_options[$key] = is_array($value) ? reset($value) : $value;
+            }
+        }
     }
 
     /**
@@ -426,24 +434,15 @@ abstract class Data_Provider
     /**
      * Return connection options
      *
-     * @param $class
      * @return array
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.5
      * @since 0.0
      */
-    protected function getOptions($class)
+    protected function getOptions()
     {
-        $options = [
-            'ttl' => 3600
-        ];
-
-        foreach (Environment::getInstance()->gets(__CLASS__ . '/' . $class . '/' . $this->getIndex()) as $key => $value) {
-            $options[$key] = is_array($value) ? reset($value) : $value;
-        }
-
-        return $options;
+        return $this->_options;
     }
 }

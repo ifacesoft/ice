@@ -25,7 +25,7 @@ use Ice\Helper\Serializer;
  * @package Ice
  * @subpackage Core
  */
-class Query_Result
+class Query_Result  implements Cacheable
 {
     const ROWS = 'rows';
     const QUERY = 'query';

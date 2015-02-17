@@ -221,9 +221,9 @@ class Mongodb extends Query_Translator
                     ? $modelMapping[$fieldName]
                     : $fieldName;
 
-                $columnNames[] = $comparisonOperator == Query_Builder::SQL_COMPARISON_OPERATOR_EQUAL
-                    ? $columnName
-                    : [$columnName => Mongodb::$_operators[$comparisonOperator]];
+                $columnNames[$columnName] = $comparisonOperator == Query_Builder::SQL_COMPARISON_OPERATOR_EQUAL
+                    ? null
+                    : Mongodb::$_operators[$comparisonOperator];
             }
         }
 

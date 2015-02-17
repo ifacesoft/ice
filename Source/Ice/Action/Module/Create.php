@@ -104,7 +104,7 @@ class Module_Create extends Action
         if ($isWeb == 'web') {
             $defaultLocale = 'en';
 
-            $isMultilocale = Console::getInteractive(
+            $isMultiLocale = Console::getInteractive(
                 __CLASS__,
                 'isMultilocale',
                 [
@@ -119,7 +119,7 @@ class Module_Create extends Action
                 ]
             );
 
-            if ($isMultilocale == 'true') {
+            if ($isMultiLocale == 'true') {
                 $defaultLocale = Console::getInteractive(
                     __CLASS__,
                     'defaultLocale',
@@ -151,7 +151,7 @@ class Module_Create extends Action
                     ],
                 ],
                 'Ice\Core\Request' => [
-                    'multilocale' => $isMultilocale,
+                    'multiLocale' => $isMultiLocale,
                     'locale' => $defaultLocale,
                 ],
                 'Ice\Core\View' => [

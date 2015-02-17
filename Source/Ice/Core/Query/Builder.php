@@ -139,8 +139,8 @@ class Query_Builder
      * @var array
      */
     private $_cacheTags = [
-        'validate' => [],
-        'invalidate' => []
+        Cache::VALIDATE => [],
+        Cache::INVALIDATE => []
     ];
 
     /**
@@ -312,10 +312,10 @@ class Query_Builder
         foreach ((array)$fieldNames as $fieldName) {
             if (array_key_exists($fieldName, $fields)) {
                 if ($isValidate) {
-                    $this->_cacheTags['validate'][$modelClass][$fieldName] = true;
+                    $this->_cacheTags[Cache::VALIDATE][$modelClass][$fieldName] = true;
                 }
                 if ($isInvalidate) {
-                    $this->_cacheTags['invalidate'][$modelClass][$fieldName] = true;
+                    $this->_cacheTags[Cache::INVALIDATE][$modelClass][$fieldName] = true;
                 }
             }
         }

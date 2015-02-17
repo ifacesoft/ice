@@ -58,9 +58,9 @@ class Model_Scheme
     private function __construct($modelClass)
     {
         try {
-            $this->_modelSchemeConfig = Config::create($modelClass, null, true);
+            $this->_modelSchemeConfig = Config::getInstance($modelClass, null, true);
         } catch (Config_Not_Found $e) {
-            $this->_modelSchemeConfig = Config::newConfig($modelClass, Config::getDefault(__CLASS__))->save();
+            $this->_modelSchemeConfig = Config::create($modelClass, Config::getDefault(__CLASS__))->save();
         }
     }
 

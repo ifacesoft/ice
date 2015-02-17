@@ -336,7 +336,7 @@ abstract class Data_Source extends Container
         $queryResult = null;
 
         $cache = [
-            'tags' => $query->getValidateTags(),
+            'tags' => $query->getCacheTags(),
             'time' => 0,
             'data' => [],
             'queryBody' => null,
@@ -357,33 +357,14 @@ abstract class Data_Source extends Container
 
             switch ($queryType) {
                 case Query_Builder::TYPE_SELECT:
-                    $hash = $query->getFullHash();
+                    $cacher = $query->getCacher();
+                    $queryHash = $query->getFullHash();
 
-                    $cacheDataProvider = Query::getDataProvider('query');
-
-                    $cache = Arrays::defaults($cache, $cacheDataProvider->get($hash));
-
-                    if (Cache::validate(__CLASS__, $cache['tags'], $cache['time'])) {
-                        Data_Source::getLogger()->log([
-                            '(cache) ' . $query->getModelClass() . ' - ' . '{$0} [{$1}] {$2}',
-                            [
-                                print_r($cache['queryBody'], true),
-                                implode(', ', $cache['queryParams']),
-                                Logger::microtimeResult($startTime)
-                            ]
-                        ], Logger::INFO);
-
-                        return Query_Result::create($query->getModelClass(), $cache['data']);
+                    if ($queryResult = $cacher->get($queryHash)) {
+                        return $queryResult;
                     }
 
-                    $queryResult = Query_Result::create($query->getModelClass(), $this->$queryCommand($query));;
-
-                    $cache['data'] = $queryResult->getResult();
-                    $cache['queryBody'] = $queryResult->getQueryBody();
-                    $cache['queryParams'] = $queryResult->getQueryParams();
-                    $cache['time'] = time();
-
-                    $cacheDataProvider->set($hash, $cache, $ttl);
+                    $cacher->set($queryHash, Query_Result::create($query->getModelClass(), $this->$queryCommand($query)), $ttl);
                     break;
 
                 case Query_Builder::TYPE_INSERT:
@@ -394,7 +375,7 @@ abstract class Data_Source extends Container
                     $cache['data'] = $queryResult->getResult();
                     $cache['queryBody'] = $queryResult->getQueryBody();
                     $cache['queryParams'] = $queryResult->getQueryParams();
-                    Cache::invalidate(__CLASS__, $query->getInvalidateTags());
+                    Cacher::invalidate(__CLASS__, $query->getInvalidateTags());
                     break;
 
                 default:

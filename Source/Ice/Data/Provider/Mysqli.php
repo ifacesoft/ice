@@ -29,6 +29,12 @@ class Mysqli extends Data_Provider
     const DEFAULT_DATA_PROVIDER_KEY = 'Ice:Mysqli/default';
     const DEFAULT_KEY = 'instance';
 
+    protected $_options = [
+        'host' => 'localhost',
+        'port' => '3306',
+        'charset' => 'utf8'
+    ];
+
     /**
      * Return default data provider key
      *

@@ -32,6 +32,10 @@ class File extends Data_Provider
     const DEFAULT_DATA_PROVIDER_KEY = 'Ice:File/default';
     const DEFAULT_KEY = 'instance';
 
+    protected $_options = [
+        'path' => STORAGE_DIR
+    ];
+
     /**
      * Return default data provider key
      *

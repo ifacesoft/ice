@@ -11,6 +11,7 @@ namespace Ice\Core;
 
 use Ice;
 use Ice\Core;
+use Ice\Data\Provider\Cacher;
 use Ice\Helper\Json;
 
 /**
@@ -139,15 +140,26 @@ class Query
         return $query;
     }
 
+    /**
+     * Restore object
+     *
+     * @param array $data
+     * @return object
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
+     */
     public static function __set_state(array $data)
     {
-        $query = new Query();
+        $object = new self();
 
         foreach ($data as $fieldName => $fieldValue) {
-            $query->$fieldName = $fieldValue;
+            $object->$fieldName = $fieldValue;
         }
 
-        return $query;
+        return $object;
     }
 
     /**
@@ -313,33 +325,33 @@ class Query
     }
 
     /**
-     * Return validate tags
+     * Return query cacher
      *
-     * @return array
+     * @return Cacher
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
-     * @since 0.0
+     * @version 0.5
+     * @since 0.5
      */
-    public function getValidateTags()
+    public function getCacher()
     {
-        return $this->_cacheTags['validate'];
+        return Cacher::getInstance(__CLASS__);
     }
 
     /**
-     * Return invalidate tags
+     * Return cache tags
      *
      * @return array
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.5
      * @since 0.0
      */
-    public function getInvalidateTags()
+    public function getCacheTags()
     {
-        return $this->_cacheTags['invalidate'];
+        return $this->_cacheTags;
     }
 
     /**

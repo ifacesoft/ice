@@ -33,6 +33,8 @@ class Router extends Data_Provider
 {
     const DEFAULT_DATA_PROVIDER_KEY = 'Ice:Router/default';
 
+    protected $_options = null;
+
     /**
      * Return default data provider key
      *

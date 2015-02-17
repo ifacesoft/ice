@@ -17,6 +17,7 @@ use Ice\Core\Environment;
 use Ice\Core\Exception;
 use Ice\Core\Logger;
 use Ice\Core\Resource;
+use Ice\Data\Provider\Cache;
 use Ice\Data\Provider\Registry;
 use Ice\Data\Provider\Repository;
 use Ice\Helper\Object;
@@ -114,7 +115,7 @@ trait Core
      */
     public static function getConfig($postfix = null)
     {
-        return Config::create(self::getClass(), $postfix);
+        return Config::getInstance(self::getClass(), $postfix);
     }
 
     /**
@@ -213,32 +214,34 @@ trait Core
     }
 
     /**
-     * Return registry storage for  class
+     * Return registry storage for class
      *
+     * @param string $index
      * @return Registry
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.5
      * @since 0.0
      */
-    public static function getRegistry()
+    public static function getRegistry($index = 'default')
     {
-        return Registry::getInstance(self::getClass());
+        return Registry::getInstance(self::getClass(), $index);
     }
 
     /**
-     * Return repository storage for  class
+     * Return repository storage for class
      *
+     * @param string $index
      * @return Repository
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.4
+     * @version 0.5
      * @since 0.4
      */
-    public static function getRepository()
+    public static function getRepository($index = 'default')
     {
-        return Repository::getInstance(self::getClass());
+        return Repository::getInstance(self::getClass(), $index);
     }
 }

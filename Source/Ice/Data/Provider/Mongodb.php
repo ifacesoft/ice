@@ -10,6 +10,11 @@ class Mongodb extends Data_Provider
     const DEFAULT_DATA_PROVIDER_KEY = 'Ice:Mongodb/default';
     const DEFAULT_KEY = 'instance';
 
+    protected $_options = [
+        'host' => 'localhost',
+        'port' => '27017'
+    ];
+
     /**
      * Return default data provider key
      *
@@ -170,7 +175,7 @@ class Mongodb extends Data_Provider
      */
     protected function connect(&$connection)
     {
-        $options = $this->getOptions(__CLASS__);
+        $options = $this->getOptions();
 
         try {
             $connection = new \MongoClient('mongodb://' . $options['host'] . ':' . $options['port']);

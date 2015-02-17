@@ -32,6 +32,11 @@ class Redis extends Data_Provider
     const DEFAULT_DATA_PROVIDER_KEY = 'Ice:Redis/default';
     const DEFAULT_KEY = 'instance';
 
+    protected $_options = [
+        'host' => 'localhost',
+        'port' => 6379
+    ];
+
     /**
      * Return default data provider key
      *
@@ -84,22 +89,6 @@ class Redis extends Data_Provider
         }
 
         return $this->getConnection()->set($this->getFullKey($key), $value, $ttl) ? $value : null;
-    }
-
-    /**
-     * Return connection options
-     *
-     * @param $class
-     * @return array
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    protected function getOptions($class)
-    {
-        return array_merge(['host' => 'localhost', 'port' => 6379], parent::getOptions($class));
     }
 
     /**

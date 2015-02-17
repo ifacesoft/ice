@@ -74,10 +74,6 @@ class Session extends Data_Provider
      */
     public function set($key, $value, $ttl = null)
     {
-        if ($ttl == -1) {
-            return $value;
-        }
-
         return $_SESSION[$key] = $value;
     }
 

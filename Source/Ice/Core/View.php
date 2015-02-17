@@ -29,7 +29,7 @@ use Ice\Helper\Object;
  * @version 0.0
  * @since 0.0
  */
-class View extends Container
+class View implements Cacheable
 {
     use Core;
 

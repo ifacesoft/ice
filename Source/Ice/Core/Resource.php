@@ -143,13 +143,25 @@ class Resource
                 $data[$message][$from] = $message;
             }
 
-            foreach (Api_Client_Yandex_Translate::getLangs() as $lang) {
-                if (String::startsWith($lang, $from)) {
-                    $to = substr($lang, strlen($from . '_'));
+            $requestConfig = Request::getConfig();
 
-                    if (!isset($data[$message][$to])) {
-                        $data[$message][$to] = Api_Client_Yandex_Translate::translate($message, $lang);
+            if ($requestConfig->get('multiLocale')) {
+                foreach (Api_Client_Yandex_Translate::getLangs($from) as $lang) {
+                    if (String::startsWith($lang, $from)) {
+                        $to = substr($lang, strlen($from . '_'));
+
+                        if (!isset($data[$message][$to])) {
+                            $data[$message][$to] = Api_Client_Yandex_Translate::translate($message, $lang);
+                        }
                     }
+                }
+            } else {
+                $locale = $requestConfig->get('locale');
+                if ($locale != $from) {
+                    $direction = $from . '_' . $locale;
+                    $data[$message][$locale] = in_array($direction, Api_Client_Yandex_Translate::getLangs($from))
+                        ? Api_Client_Yandex_Translate::translate($message, $direction)
+                        : $message;
                 }
             }
         } catch (\Exception $e) {

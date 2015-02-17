@@ -48,9 +48,13 @@ class Front extends Action
      *  ];
      */
     public static $config = [
-        'layout' => '',
-        'defaultViewRenderClassName' => 'Ice:Php',
-        'inputDataProviderKeys' => [Router::DEFAULT_DATA_PROVIDER_KEY],
+        'view' => [
+            'layout' => '',
+            'viewRenderClass' => 'Ice:Php'
+        ],
+        'input' => [
+            Router::DEFAULT_DATA_PROVIDER_KEY => ['routeName', 'method']
+        ]
     ];
 
     /**

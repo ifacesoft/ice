@@ -129,22 +129,22 @@ class Ice
                 $action = $input['actionClass'];
                 unset($input['actionClass']);
 
-                $view = $action::getInstance()->call($actionContext, $input);
+                $view = $action::create($input)->call($actionContext);
             } elseif (Request::isAjax()) {
-                $view = Front_Ajax::getInstance()->call($actionContext);
+                $view = Front_Ajax::create()->call($actionContext);
             } else {
-                $view = Front::getInstance()->call($actionContext);
+                $view = Front::create()->call($actionContext);
             }
 
             $actionContext->getResponse()->setContent($view);
         } catch (Redirect $e) {
             $actionContext->getResponse()->setRedirectUrl($e->getRedirectUrl());
         } catch (Http_Bad_Request $e) {
-            $actionContext->getResponse()->setContent(Http_Status::getInstance()->call($actionContext, ['code' => 400, 'exception' => $e]));
+            $actionContext->getResponse()->setContent(Http_Status::create(['code' => 400, 'exception' => $e])->call($actionContext));
         } catch (Http_Not_Found $e) {
-            $actionContext->getResponse()->setContent(Http_Status::getInstance()->call($actionContext, ['code' => 404, 'exception' => $e]));
+            $actionContext->getResponse()->setContent(Http_Status::create(['code' => 404, 'exception' => $e])->call($actionContext));
         } catch (\Exception $e) {
-            $actionContext->getResponse()->setContent(Http_Status::getInstance()->call($actionContext, ['code' => 500, 'exception' => $e]));
+            $actionContext->getResponse()->setContent(Http_Status::create(['code' => 500, 'exception' => $e])->call($actionContext));
         }
 
         $actionContext->getResponse()->send();

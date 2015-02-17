@@ -77,7 +77,7 @@ class Request
     {
         $config = Request::getConfig();
 
-        if (!$config->get('multilocale')) {
+        if (!$config->get('multiLocale')) {
             return $config->get('locale');
         }
 

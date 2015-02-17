@@ -47,7 +47,7 @@ class Model
         $moduleAlias = null;
         $tableNamePart = $tableName;
 
-        foreach (Core_Config::create(Core_Model::getClass())->gets('prefixes') as $prefix => $value) {
+        foreach (Core_Config::getInstance(Core_Model::getClass())->gets('prefixes') as $prefix => $value) {
             $prefix .= '_';
 
             if (String::startsWith($tableName, $prefix)) {
@@ -86,7 +86,7 @@ class Model
     {
         $prefix = strstr($tableName, '_', true);
 
-        if (!Core_Config::create(Core_Model::getClass())->get('prefixes/' . $prefix, false)) {
+        if (!Core_Config::getInstance(Core_Model::getClass())->get('prefixes/' . $prefix, false)) {
             return '';
         }
 

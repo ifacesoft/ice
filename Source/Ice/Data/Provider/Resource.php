@@ -14,6 +14,8 @@ class Resource extends Data_Provider
 
     private $_resourceKey = null;
 
+    protected $_options = null;
+
     /**
      * Return resource key
      *

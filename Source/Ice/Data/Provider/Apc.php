@@ -30,6 +30,8 @@ class Apc extends Data_Provider
     const DEFAULT_DATA_PROVIDER_KEY = 'Ice:Apc/default';
     const DEFAULT_KEY = 'instance';
 
+    protected $_options = null;
+
     /**
      * Return default data provider key
      *

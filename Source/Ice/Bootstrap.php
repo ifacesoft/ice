@@ -85,7 +85,9 @@ class Bootstrap
                 Session::init();
             }
         } catch (\Exception $e) {
-            die('Bootstrapping failed: ' . $e->getMessage());
+            echo '<span style="background-color: red; color:white; font-weight: bold;">Bootstrapping failed: ' . $e->getMessage() . '</span><br>';
+            echo nl2br($e->getTraceAsString());
+            die('Terminated. Bye-bye...' . "\n");
         }
 
         if (!Environment::isProduction()) {

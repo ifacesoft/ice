@@ -10,6 +10,7 @@
 namespace Ice\Core;
 
 use Ice\Core;
+use Ice\Data\Provider\Repository;
 use Ice\Helper\Config as Helper_Config;
 
 /**
@@ -23,11 +24,8 @@ use Ice\Helper\Config as Helper_Config;
  *
  * @package Ice
  * @subpackage Core
- *
- * @version 0.0
- * @since 0.0
  */
-class Environment extends Container
+class Environment
 {
     use Core;
 
@@ -40,92 +38,72 @@ class Environment extends Container
      *
      * @var array
      */
-    private $_params = null;
+    private $_environment = [];
 
     /**
      * Environment name (production|test|development)
      *
      * @var string
      */
-    private $_environment = null;
+    private $_name = null;
 
     /**
      * Protected constructor of environment object
      *
-     * @param $environment string Name of environment (production|test|development)
+     * @param $environmentName string Name of environment (production|test|development)
      *
+     * @param array $environment
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.5
      * @since 0.0
      */
-    protected function __construct($environment)
+    private function __construct($environmentName, $environment = [])
     {
-        $this->_environment = $environment;
+        $this->_name = $environmentName;
 
-        $settings = [];
+        if (!empty($environment)) {
+            $this->_environment = $environment;
+        }
 
-        foreach (Environment::getConfig()->gets() as $env => $data) {
-            if ($env == 'environments') {
+        foreach (Environment::getConfig()->gets() as $name => $environment) {
+            if ($name == 'environments') {
                 continue;
             }
 
-            $settings = array_merge_recursive($data, $settings);
-            if ($env == $environment) {
+            $this->_environment = array_merge_recursive($environment, $this->_environment);
+            if ($name == $environmentName) {
                 break;
             }
         }
-
-        $this->_params = $settings;
     }
 
-    public static function getInstance($key = null, $ttl = null)
+    /**
+     * Get instance of environment
+     *
+     * @param null $key
+     * @return Environment
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.0
+     */
+    public static function getInstance($key = null)
     {
         if (!$key) {
             $key = Environment::getDefaultKey();
         }
 
-        /** @var Data_Provider $dataProvider */
-        $dataProvider = Data_Provider::getInstance(Environment::getDefaultDataProviderKey());
+        /** @var Repository $dataProvider */
+        $dataProvider = Environment::getRepository();
 
         if ($_config = $dataProvider->get($key)) {
             return $_config;
         }
 
-        return $dataProvider->set($key, new Environment($key));
+        return $dataProvider->set($key, Environment::create($key));
     }
-
-    /**
-     * Return data provider
-     *
-     * @param string|null $postfix Specific data provider key ($data_provider_key . '_prefix')
-     * @return Data_Provider
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public static function getDataProvider($postfix = null)
-    {
-        return Data_Provider::getInstance(self::getDefaultDataProviderKey());
-    }
-
-    /**
-     * Return default data provider key
-     *
-     * @return string
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    protected static function getDefaultDataProviderKey()
-    {
-        return 'Ice:Registry/' . __CLASS__;
-    }
-
 
     /**
      * Check to current environment is development
@@ -139,7 +117,7 @@ class Environment extends Container
      */
     public static function isDevelopment()
     {
-        return self::getInstance()->getEnvironment() == self::DEVELOPMENT;
+        return self::getInstance()->getName() == self::DEVELOPMENT;
     }
 
     /**
@@ -154,7 +132,7 @@ class Environment extends Container
      */
     public static function isProduction()
     {
-        return Environment::getInstance()->getEnvironment() == self::PRODUCTION;
+        return Environment::getInstance()->getName() == self::PRODUCTION;
     }
 
     /**
@@ -195,7 +173,7 @@ class Environment extends Container
      * @version 0.0
      * @since 0.0
      */
-    protected static function create($environment)
+    public static function create($environment)
     {
         return new Environment($environment);
     }
@@ -279,7 +257,7 @@ class Environment extends Container
      */
     public function gets($key = null, $isRequired = true)
     {
-        return Helper_Config::gets($this->_params, $key, $isRequired);
+        return Helper_Config::gets($this->_environment, $key, $isRequired);
     }
 
     /**
@@ -292,8 +270,24 @@ class Environment extends Container
      * @version 0.0
      * @since 0.0
      */
-    public function getEnvironment()
+    public function getName()
     {
-        return $this->_environment;
+        return $this->_name;
+    }
+
+    /**
+     * Restore object
+     *
+     * @param array $data
+     * @return object
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
+     */
+    public static function __set_state(array $data)
+    {
+        return new self($data['_environmentName'], $data['_environment']);
     }
 }

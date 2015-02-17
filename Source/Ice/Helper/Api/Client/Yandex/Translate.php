@@ -77,7 +77,7 @@ class Api_Client_Yandex_Translate
      */
     public static function detect($text)
     {
-        $yaKey = Core_Config::create(__CLASS__)->get('translateKey');
+        $yaKey = Core_Config::getInstance(__CLASS__)->get('translateKey');
 
         if (empty($yaKey)) {
             throw new \Exception('Key is empty. See https://tech.yandex.ru/keys/get/?service=trnsl');
@@ -94,7 +94,7 @@ class Api_Client_Yandex_Translate
      * Перевод текста
      *
      * @param $text
-     * @param $lang
+     * @param $direction
      * @return mixed
      * @throws \Exception
      *
@@ -103,14 +103,14 @@ class Api_Client_Yandex_Translate
      * @version 0.4
      * @since 0.4
      */
-    public static function translate($text, $lang)
+    public static function translate($text, $direction)
     {
-        $yaKey = Core_Config::create(__CLASS__)->get('translateKey');
+        $yaKey = Core_Config::getInstance(__CLASS__)->get('translateKey');
 
         if (empty($yaKey)) {
             throw new \Exception('Key is empty. See https://tech.yandex.ru/keys/get/?service=trnsl');
         }
-        if ($translate = Json::decode(Http::getContents('https://translate.yandex.net/api/v1.5/tr.json/translate?key=' . $yaKey . '&text=' . $text . '&lang=' . $lang))['text'][0]) {
+        if ($translate = Json::decode(Http::getContents('https://translate.yandex.net/api/v1.5/tr.json/translate?key=' . $yaKey . '&text=' . $text . '&lang=' . $direction))['text'][0]) {
             return $translate;
         }
         throw new \Exception('Fail translate');
@@ -181,7 +181,7 @@ class Api_Client_Yandex_Translate
      * @version 0.4
      * @since 0.4
      */
-    public static function getLangs($locale = null)
+    public static function getLangs($locale)
     {
         $repository = Repository::getInstance(__CLASS__);
         $key = 'langs/' . $locale;
@@ -190,17 +190,15 @@ class Api_Client_Yandex_Translate
             return $langs;
         }
 
-        $yaKey = Core_Config::create(__CLASS__)->get('translateKey');
+        $yaKey = Core_Config::getInstance(__CLASS__)->get('translateKey');
 
         if (empty($yaKey)) {
             throw new \Exception('Key is empty. See https://tech.yandex.ru/keys/get/?service=trnsl');
         }
 
-        if (!$locale) {
-            $locale = Request::getConfig()->get('locale');
-        }
+        $url = 'https://translate.yandex.net/api/v1.5/tr.json/getLangs?key=' . $yaKey . '&ui=' . Request::getConfig()->get('locale');
 
-        $langs = Json::decode(Http::getContents('https://translate.yandex.net/api/v1.5/tr.json/getLangs?key=' . $yaKey . '&ui=' . $locale));
+        $langs = Json::decode(Http::getContents($url));
 
         $directions = [$langs['langs'][$locale] => $locale . '_' . $locale];
 

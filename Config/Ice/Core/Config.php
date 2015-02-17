@@ -55,7 +55,7 @@ return [
         'defaultViewRenderClassName' => 'Ice:Php'
     ],
     'Ice\Core\Request' => [
-        'multilocale' => 1,
+        'multiLocale' => 1,
         'locale' => 'en',
         'cors' => [
 //            'host' => [
