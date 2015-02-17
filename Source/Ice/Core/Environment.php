@@ -9,6 +9,7 @@
 
 namespace Ice\Core;
 
+use Ice;
 use Ice\Core;
 use Ice\Data\Provider\Repository;
 use Ice\Helper\Config as Helper_Config;
@@ -45,7 +46,7 @@ class Environment
      *
      * @var string
      */
-    private $_name = null;
+    private $_environmentName = null;
 
     /**
      * Protected constructor of environment object
@@ -58,51 +59,10 @@ class Environment
      * @version 0.5
      * @since 0.0
      */
-    private function __construct($environmentName, $environment = [])
+    private function __construct($environmentName, $environment)
     {
-        $this->_name = $environmentName;
-
-        if (!empty($environment)) {
+        $this->_environmentName = $environmentName;
             $this->_environment = $environment;
-        }
-
-        foreach (Environment::getConfig()->gets() as $name => $environment) {
-            if ($name == 'environments') {
-                continue;
-            }
-
-            $this->_environment = array_merge_recursive($environment, $this->_environment);
-            if ($name == $environmentName) {
-                break;
-            }
-        }
-    }
-
-    /**
-     * Get instance of environment
-     *
-     * @param null $key
-     * @return Environment
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since 0.0
-     */
-    public static function getInstance($key = null)
-    {
-        if (!$key) {
-            $key = Environment::getDefaultKey();
-        }
-
-        /** @var Repository $dataProvider */
-        $dataProvider = Environment::getRepository();
-
-        if ($_config = $dataProvider->get($key)) {
-            return $_config;
-        }
-
-        return $dataProvider->set($key, Environment::create($key));
     }
 
     /**
@@ -117,7 +77,7 @@ class Environment
      */
     public static function isDevelopment()
     {
-        return self::getInstance()->getName() == self::DEVELOPMENT;
+        return Ice::getEnvironment()->getEnvironmentName() == Environment::DEVELOPMENT;
     }
 
     /**
@@ -132,50 +92,35 @@ class Environment
      */
     public static function isProduction()
     {
-        return Environment::getInstance()->getName() == self::PRODUCTION;
-    }
-
-    /**
-     * Return default key of data provider
-     *
-     * @return string
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    protected static function getDefaultKey()
-    {
-        $host = Request::host();
-
-        foreach (Environment::getConfig()->gets('environments') as $hostPattern => $environment) {
-            $matches = [];
-            preg_match($hostPattern, $host, $matches);
-
-            if (!empty($matches)) {
-                return $environment;
-            }
-        }
-
-        return self::PRODUCTION;
+        return Ice::getEnvironment()->getEnvironmentName() == Environment::PRODUCTION;
     }
 
     /**
      * Create new instance of environment
      *
-     * @param string $environment Name of environment (production|test|devlepment)
-     *
+     * @param $environmentName
      * @return Environment
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.5
      * @since 0.0
      */
-    public static function create($environment)
+    public static function create($environmentName = Environment::PRODUCTION)
     {
-        return new Environment($environment);
+        $environment = [];
+
+        foreach (Environment::getConfig()->gets() as $name => $config) {
+            if ($name == 'environments') {
+                continue;
+            }
+
+            $environment = array_merge_recursive($config, $environment);
+            if ($name == $environmentName) {
+                break;
+            }
+        }
+
+        return new Environment($environmentName, $environment);
     }
 
     /**
@@ -270,9 +215,9 @@ class Environment
      * @version 0.0
      * @since 0.0
      */
-    public function getName()
+    public function getEnvironmentName()
     {
-        return $this->_name;
+        return $this->_environmentName;
     }
 
     /**
@@ -288,6 +233,6 @@ class Environment
      */
     public static function __set_state(array $data)
     {
-        return new self($data['_environmentName'], $data['_environment']);
+        return new Environment($data['_environmentName'], $data['_environment']);
     }
 }

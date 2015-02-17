@@ -11,6 +11,7 @@ namespace Ice\Core;
 
 use Ice;
 use Ice\Core;
+use Ice\Data\Provider\Cacher;
 use Ice\Helper\Emmet;
 use Ice\Helper\Object;
 
@@ -25,9 +26,6 @@ use Ice\Helper\Object;
  *
  * @package Ice
  * @subpackage Core
- *
- * @version 0.0
- * @since 0.0
  */
 class View implements Cacheable
 {
@@ -73,7 +71,7 @@ class View implements Cacheable
      * @version 0.0
      * @since 0.0
      */
-    protected static function create($viewKey)
+    public static function create($viewKey)
     {
         return new View($viewKey);
     }
@@ -292,4 +290,49 @@ class View implements Cacheable
         return $this->_viewData['actionClass'];
     }
 
+    /**
+     * Return view cacher
+     *
+     * @return Cacher
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
+     */
+    public static function getCacher()
+    {
+        return Cacher::getInstance(__CLASS__);
+    }
+
+    /**
+     * Validate cacheable object
+     *
+     * @param $value
+     * @return Cacheable
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since 0
+     */
+    public function validate($value)
+    {
+        // TODO: Implement validate() method.
+    }
+
+    /**
+     * Invalidate cacheable object
+     *
+     * @return Cacheable
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since 0
+     */
+    public function invalidate()
+    {
+        // TODO: Implement invalidate() method.
+    }
 }

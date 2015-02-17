@@ -9,7 +9,6 @@
 
 use Ice\Action\Front;
 use Ice\Action\Front_Ajax;
-use Ice\Action\Front_Cli;
 use Ice\Action\Http_Status;
 use Ice\Core;
 use Ice\Core\Action;
@@ -36,13 +35,18 @@ class Ice
     use Core;
 
     /**
+     * Environment
+     *
+     * @var Environment
+     */
+    private static $_environment = null;
+    /**
      * Ice application start time
      *
      * @access private
      * @var float
      */
     private $_startTime;
-
     /**
      * Main module name
      *
@@ -97,6 +101,38 @@ class Ice
     public static function create($moduleName)
     {
         return new Ice($moduleName);
+    }
+
+    /**
+     * @return Environment
+     */
+    public static function getEnvironment()
+    {
+        $environmentName = null;
+
+        if (Ice::isEnvironment()) {
+            return Ice::$_environment;
+        }
+
+        $host = Request::host();
+
+        foreach (Environment::getConfig(null, true, -1)->gets('environments') as $hostPattern => $name) {
+            $matches = [];
+            preg_match($hostPattern, $host, $matches);
+
+            if (!empty($matches)) {
+                $environmentName = $name;
+                break;
+            }
+        }
+
+        return Ice::$_environment = $environmentName
+            ? Environment::create($environmentName)
+            : Environment::create();
+    }
+
+    public static function isEnvironment() {
+        return Ice::$_environment;
     }
 
     /**

@@ -95,7 +95,7 @@ class Config
      * @version 0.5
      * @since 0.0
      */
-    public static function getInstance($class, $postfix = null, $isRequired = false, $ttl = 3600)
+    public static function getInstance($class, $postfix = null, $isRequired = false, $ttl = null)
     {
         $baseClass = Object::getBaseClass($class);
 
@@ -112,16 +112,16 @@ class Config
 
         $config = [];
 
-        if (Object::isClass($class) && !empty($class::$configDefaults)) {
-            $config = array_merge_recursive($class::$configDefaults, $config);
-        }
-
-        if (Object::isClass($class) && !empty($class::$config)) {
-            $config = array_merge_recursive($class::$config, $config);
-        }
-
-        if ($class != __CLASS__ && $iceConfig = self::getConfig()->gets($class, false)) {
-            $config = array_merge_recursive($iceConfig, $config);
+//        if (Object::isClass($class) && !empty($class::$configDefaults)) {
+//            $config = array_merge_recursive($class::$configDefaults, $config);
+//        }
+//
+//        if (Object::isClass($class) && !empty($class::$config)) {
+//            $config = array_merge_recursive($class::$config, $config);
+//        }
+//
+        if ($class != __CLASS__ && $coreConfig = self::getConfig()->gets($class, false)) {
+            $config = array_merge_recursive($coreConfig, $config);
         }
 
         if ($baseClass != $class) {

@@ -10,6 +10,7 @@
 namespace Ice\Core;
 
 use Ice\Core;
+use Ice\Data\Provider\Cacher;
 use Ice\Helper\Arrays;
 use Ice\Helper\Serializer;
 
@@ -25,10 +26,9 @@ use Ice\Helper\Serializer;
  * @package Ice
  * @subpackage Core
  */
-class Query_Result  implements Cacheable
+class Query_Result implements Cacheable
 {
     const ROWS = 'rows';
-    const QUERY = 'query';
     const NUM_ROWS = 'numRows';
     const AFFECTED_ROWS = 'affectedRows';
     const INSERT_ID = 'insertId';
@@ -42,7 +42,6 @@ class Query_Result  implements Cacheable
      */
     protected $_default = [
         Query_Result::ROWS => [],
-        Query_Result::QUERY => null,
         Query_Result::NUM_ROWS => 0,
         Query_Result::AFFECTED_ROWS => 0,
         Query_Result::INSERT_ID => null,
@@ -56,7 +55,10 @@ class Query_Result  implements Cacheable
      * @var array
      */
     private $_result = [];
-    private $_modelClass = null;
+    /**
+     * @var Query
+     */
+    private $_query = null;
 
     /**
      * Attached transformations
@@ -68,35 +70,39 @@ class Query_Result  implements Cacheable
     /**
      * Constructor of data object
      *
-     * @param $modelClass
+     * @param Query $query
      * @param array $result
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.4
+     * @version 0.5
      * @since 0.0
      */
-    private function __construct($modelClass, array $result)
+    private function __construct(Query $query, array $result)
     {
-        $this->_modelClass = $modelClass;
+        $this->_query = $query;
         $this->_result = Arrays::defaults($this->_default, $result);
     }
 
     /**
      * Return data from cache
      *
-     * @param $modelClass
+     * @param Query $query
      * @param array $result
      * @return Query_Result
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.2
      * @since 0.0
      */
-    public static function create($modelClass, array $result = [])
+    public static function create(Query $query, array $result = [])
     {
-        return new Query_Result($modelClass, $result);
+        return new Query_Result($query, $result);
+    }
+
+    public static function invalidateCache($invalidateTags)
+    {
+        Cache::invalidate(__CLASS__, $invalidateTags);
     }
 
     /**
@@ -183,7 +189,7 @@ class Query_Result  implements Cacheable
      */
     public function getModelClass()
     {
-        return $this->_modelClass;
+        return $this->_query->getModelClass();
     }
 
     /**
@@ -582,7 +588,7 @@ class Query_Result  implements Cacheable
      */
     public function getQuery()
     {
-        return $this->_result[Query_Result::QUERY];
+        return $this->_query;
     }
 
     /**
@@ -613,5 +619,37 @@ class Query_Result  implements Cacheable
     public function getQueryParams()
     {
         return $this->_result[Query_Result::QUERY_PARAMS];
+    }
+
+    /**
+     * Return query result cacher
+     *
+     * @return Cacher
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
+     */
+    public static function getCacher()
+    {
+        return Cacher::getInstance(__CLASS__);
+    }
+
+    /**
+     * @param $time
+     * @return Cacheable
+     */
+    public function validate($time)
+    {
+        return Cache::validateTimeTags($this, $this->getQuery()->getValidateTags(), $time);
+    }
+
+    /**
+     * @return Cacheable
+     */
+    public function invalidate()
+    {
+        return Cache::invalidateTimeTags($this, $this->getQuery()->getInvalidateTags());
     }
 }

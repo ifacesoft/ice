@@ -9,6 +9,7 @@
 
 namespace Ice\Action;
 
+use Ice;
 use Ice\Core\Action;
 use Ice\Core\Action_Context;
 use Ice\Core\Environment;
@@ -66,7 +67,7 @@ class Cache_Clear extends Action
     {
         $logger = Cache_Clear::getLogger();
 
-        foreach (Environment::getInstance()->gets('dataProviderKeys') as $class => $dataProviderKeys) {
+        foreach (Ice::getEnvironment()->gets('dataProviderKeys') as $class => $dataProviderKeys) {
             foreach ($dataProviderKeys as $key => $dataProviderKey) {
                 $class::getDataProvider($key)->flushAll();
 

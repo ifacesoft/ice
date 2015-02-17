@@ -9,7 +9,9 @@
 
 namespace Ice\Data\Provider;
 
+use Ice;
 use Ice\Core\Data_Provider;
+use Ice\Core\Environment;
 use Ice\Core\Exception;
 use Ice\Core\Logger;
 use Ice\Helper\Object;
@@ -105,7 +107,7 @@ class Repository extends Data_Provider
      * @version 0.0
      * @since 0.0
      */
-    public function set($key, $value, $ttl = -1)
+    public function set($key, $value, $ttl = 0)
     {
         return $this->getConnection()->set($key, $value, $ttl);
     }
@@ -199,11 +201,15 @@ class Repository extends Data_Provider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.5
      * @since 0.0
      */
     protected function connect(&$connection)
     {
+        if (!Ice::isEnvironment() || Environment::isDevelopment()) {
+            return $connection = Registry::getInstance($this->getKey(), $this->getIndex());
+        }
+
         /** @var Data_Provider $dataProviderClass */
         $dataProviderClass = function_exists('apc_store')
             ? Apc::getClass()

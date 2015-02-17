@@ -19,9 +19,6 @@ return [
             'ice' => 'Ice',
         ]
     ],
-    'Ice\Helper\Api_Client_Yandex_Translate' => [
-        'translateKey' => 'trnsl.1.1.20150207T134028Z.19bab9f8d9228706.89067e4f90535d4a934a39fbaf284d8af968c9a9'
-    ],
     'Ice\Core\Data_Source' => [
         'Ice\Data\Source\Mysqli' => [
             'default' => 'test',
@@ -35,20 +32,6 @@ return [
             '/localhost/' => 'development',
             '/.*/' => 'production'
         ]
-    ],
-    'Ice\View\Render\Cli' => [],
-    'Ice\View\Render\Json' => [],
-    'Ice\View\Render\Php' => [],
-    'Ice\View\Render\Replace' => [],
-    'Ice\View\Render\Smarty' => [
-        'dataProviderKey' => 'Ice:Registry/view_render',
-        'vendor' => 'smarty/smarty',
-        'templates_c' => 'smarty/templates_c/',
-        'plugins' => [ICE_DIR . 'Vendor/Smarty/plugins']
-    ],
-    'Ice\View\Render\Twig' => [
-        'vendor' => 'twig/twig',
-        'cache' => 'twig/cache/',
     ],
     'Ice\Core\View' => [
         'layout' => null,
@@ -64,6 +47,9 @@ return [
 //                'cookie' => 'true' // Allow cookie
 //            ]
         ]
+    ],
+    'Ice\Helper\Api_Client_Yandex_Translate' => [
+        'translateKey' => 'trnsl.1.1.20150207T134028Z.19bab9f8d9228706.89067e4f90535d4a934a39fbaf284d8af968c9a9'
     ],
     'defaults' => [
         'Ice\Core\Route' => [

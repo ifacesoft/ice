@@ -85,7 +85,7 @@ abstract class Data_Provider
         $this->_index = $index;
 
         if ($this->_options !== null && $key != Config::getClass() && $key != Environment::getClass()) {
-            foreach (Environment::getInstance()->gets(__CLASS__ . '/' . get_class($this) . '/' . $key, false) as $key => $value) {
+            foreach (Ice::getEnvironment()->gets(__CLASS__ . '/' . get_class($this) . '/' . $key, false) as $key => $value) {
                 $this->_options[$key] = is_array($value) ? reset($value) : $value;
             }
         }

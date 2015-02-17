@@ -38,7 +38,7 @@ abstract class Model_Factory extends Model_Defined
      * @version 0.0
      * @since 0.0
      */
-    public static function getDelegate($delegateName, $sourceName = null, $ttl = 3600)
+    public static function getDelegate($delegateName, $sourceName = null, $ttl = null)
     {
         /** @var Model $modelclass */
         $modelclass = get_called_class();

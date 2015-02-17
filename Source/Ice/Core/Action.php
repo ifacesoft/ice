@@ -67,7 +67,7 @@ abstract class Action
      *      ],
      *      'input' => [],
      *      'output' => [],
-     *      'ttl' => 3600
+     *      'ttl' => 3600,
      *      'roles' => []
      *  ];
      * ```
@@ -142,7 +142,7 @@ abstract class Action
      * @version 0.5
      * @since 0.5
      */
-    public function getCacher()
+    public static function getCacher()
     {
         return Cacher::getInstance(__CLASS__, self::getClass());
     }
@@ -235,14 +235,16 @@ abstract class Action
         }
 
         try {
-//            $config = $actionClass::getConfig();
-//
-//            $actionContext->initAction($actionClass, $this->_inputHash);
+            $config = $actionClass::getConfig();
 
-            $cacher = $this->getCacher();
+            Logger::debug($config);
 
-            if ($viewData = $cacher->get('view/' . $this->_inputHash)) {
-                return $this->flush(View::getInstance($viewData));
+            $actionContext->initAction($actionClass, $this->_inputHash);
+
+            $cacher = View::getCacher();
+
+            if ($view = $cacher->get($this->_inputHash)) {
+                return $view;
             }
 
             $actionContext->addAction($config->gets('afterActions', false));
@@ -270,13 +272,6 @@ abstract class Action
 
                 $isThread = in_array(Action_Thread::getClass(), class_parents($subActionClass));
 
-                /** @var Action $action */
-                $subAction = null;
-
-                if (!$isThread) {
-                    $subAction = $subActionClass::getInstance();
-                }
-
                 foreach ($actionData as $subActionKey => $subActionParams) {
                     if ($isThread) {
 //                        $actionContext->initAction($subActionClass, Hash::get($subActionParams, Hash::HASH_CRC32))->commit();
@@ -289,7 +284,7 @@ abstract class Action
                     $subView = null;
 
                     try {
-                        $subView = $subAction->call($actionContext, $subActionParams, $newLevel);
+                        $subView = $subActionClass::create($subActionParams)->call($actionContext, $newLevel);
                     } catch (Redirect $e) {
                         throw $e;
                     } catch (Http_Bad_Request $e) {
@@ -330,7 +325,7 @@ abstract class Action
                 $viewData['template'] = $input['template'];
             }
 
-            $cacher->set($this->_inputHash, $viewData);
+            $view = $cacher->set($this->_inputHash, $this->flush(View::create($viewData)));
 
             if (Request::isCli()) {
                 Action::getLogger()->info(['{$0}{$1} complete! [{$2} + {$3}]', [str_repeat("\t", $level), $actionClass::getClassName(), $finishTime, $finishTimeAfter]], Logger::MESSAGE);
@@ -340,7 +335,7 @@ abstract class Action
                 Logger::fb('action: ' . $actionClass . ' ' . Json::encode($input) . ' [' . $finishTime . ' ' . $finishTimeAfter . ']');
             }
 
-            return $this->flush(View::getInstance($viewData));
+            return $view;
         } catch (Redirect $e) {
             throw $e;
         } catch (Http_Bad_Request $e) {
@@ -420,7 +415,7 @@ abstract class Action
      *              ],
      *              'input' => [],
      *              'output' => [],
-     *              'ttl' => 3600
+     *              'ttl' => 3600,
      *              'roles' => []
      *          ],
      *          parent::config()

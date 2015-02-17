@@ -9,8 +9,6 @@
 
 namespace Ice\Core;
 
-use Ice;
-use Ice\Core;
 use Ice\Data\Provider\Repository;
 
 /**
@@ -28,25 +26,47 @@ class Cache
     const VALIDATE = 'validate';
     const INVALIDATE = 'invalidate';
 
-    private $_tags = null;
-    private $_time = null;
-    private $_object = null;
+    private $_value = null;
+    private $_cacheable = null;
 
-    private function __construct($object, $time)
+    /**
+     * Private constructor for cache object
+     *
+     * @param Cacheable $cacheable
+     * @param $value
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
+     */
+    private function __construct(Cacheable $cacheable, $value)
     {
-        $this->_tags = $object->getCacheTags;
-        $this->_time = $time;
-        $this->_object = $object;
+        $this->_value = $value;
+        $this->_cacheable = $cacheable;
     }
 
-    public static function create($object, $time) {
-        return new Cache($object, $time);
+    /**
+     * Create cache object
+     *
+     * @param $cacheable
+     * @param $time
+     * @return Cache
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
+     */
+    public static function create($cacheable, $time)
+    {
+        return new Cache($cacheable, $time);
     }
 
     /**
      * Validate cache
      *
-     * @return Cacheable
+     * @return Cacheable|null
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
@@ -55,9 +75,30 @@ class Cache
      */
     public function validate()
     {
-        $repository = Repository::getInstance(__CLASS__, get_class($this->_object));
+        return $this->_cacheable->validate($this->_value);
+    }
 
-        foreach ($this->getKeys($this->_tags[Cache::VALIDATE]) as $key) {
+    /**
+     * Validate time tags
+     *
+     * @param Cacheable $cacheable
+     * @param $cacheTime
+     * @param array $tags
+     * @return Cacheable|null
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
+     */
+    public static function validateTimeTags(Cacheable $cacheable, array $tags, $cacheTime) {
+        if (empty($tags)) {
+            return null;
+        }
+
+        $repository = Cache::getRepository($cacheable);
+
+        foreach (Cache::getKeys($cacheable) as $key) {
             $time = $repository->get($key);
 
             if (!$time) {
@@ -65,12 +106,12 @@ class Cache
                 $repository->set($key, $time);
             }
 
-            if ($time >= $this->_time) {
+            if ($time >= $cacheTime) {
                 return null;
             }
         }
 
-        return $this->_object;
+        return $cacheable;
     }
 
     /**
@@ -84,7 +125,7 @@ class Cache
      * @version 0.0
      * @since 0.0
      */
-    private function getKeys($tags)
+    public static function getKeys($tags)
     {
         $keys = [];
 
@@ -108,23 +149,40 @@ class Cache
     /**
      * Invalidation cache
      *
-     * @param $time
+     * @param Cacheable $cacheable
+     * @param array $invalidateTags
      * @return Cacheable
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.5
-     * @since 0.0
-     *
+     * @since 0.5
      */
-    public function invalidate($time)
+    public static function invalidateTimeTags(Cacheable $cacheable, array $invalidateTags)
     {
-        $repository = Repository::getInstance(__CLASS__, get_class($this->_object));
+        $repository = Cache::getRepository($cacheable);
 
-        foreach (self::getKeys($this->_tags[Cache::VALIDATE]) as $key) {
+        $time = time();
+
+        foreach (self::getKeys($invalidateTags) as $key) {
             $repository->set($key, $time);
         }
 
-        return $this->_object;
+        return $cacheable;
+    }
+
+    /**
+     * Return cache repository
+     *
+     * @param Cacheable $cacheable
+     * @return Repository
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
+     */
+    private static function getRepository(Cacheable $cacheable) {
+        return Repository::getInstance(__CLASS__, get_class($cacheable));
     }
 } 

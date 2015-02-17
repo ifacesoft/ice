@@ -9,7 +9,9 @@
 
 namespace Ice\Data\Provider;
 
+use Ice;
 use Ice\Core\Cache;
+use Ice\Core\Cacheable;
 use Ice\Core\Data_Provider;
 use Ice\Core\Environment;
 use Ice\Core\Exception;
@@ -67,7 +69,7 @@ class Cacher extends Data_Provider
      * Get data from data provider by key
      *
      * @param string $key
-     * @return mixed
+     * @return Cacheable
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
@@ -77,12 +79,8 @@ class Cacher extends Data_Provider
     public function get($key = null)
     {
         /** @var Cache $cache */
-        if ($cache = $this->getConnection()->get($key) && $object = $cache->validate()) {
-            if (!Environment::isProduction()) {
-                Cacher::getLogger()->log(['(cache) {$0}', $object], Logger::INFO);
-            }
-
-            return $object;
+        if ($cache = $this->getConnection()->get($key)) {
+            return $cache->validate();
         }
 
         return null;
@@ -127,18 +125,9 @@ class Cacher extends Data_Provider
             $ttl = $options['ttl'];
         }
 
-        $time = time();
+        $this->getConnection()->set($key, Cache::create($value, time()), $ttl);
 
-        $cache = Cache::create($value, $time);
-        $object = $cache->invalidate($time);
-
-        $this->getConnection()->set($key, $cache, $ttl);
-
-        if (!Environment::isProduction()) {
-            Cacher::getLogger()->log(['(new) {$0}', $object], Logger::SUCCESS);
-        }
-
-        return $object;
+        return $value;
     }
 
     /**
@@ -230,11 +219,15 @@ class Cacher extends Data_Provider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.5
      * @since 0.0
      */
     protected function connect(&$connection)
     {
+        if (!Ice::isEnvironment() || Environment::isDevelopment()) {
+            return $connection = Registry::getInstance($this->getKey(), $this->getIndex());
+        }
+
         /** @var Data_Provider $dataProviderClass */
         $dataProviderClass = class_exists('Redis', false)
             ? Redis::getClass()

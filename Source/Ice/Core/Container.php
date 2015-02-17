@@ -45,7 +45,7 @@ abstract class Container
             $postfix = strtolower(Object::getName(self::getClass()));
         }
 
-        return Environment::getInstance()->getProvider(self::getBaseClass(), $postfix);
+        return Ice::getEnvironment()->getProvider(self::getBaseClass(), $postfix);
     }
 
     public static function getClass($className = null)

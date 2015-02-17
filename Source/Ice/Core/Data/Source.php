@@ -12,7 +12,6 @@ namespace Ice\Core;
 use Ice;
 use Ice\Core;
 use Ice\Data\Source\Mysqli;
-use Ice\Helper\Arrays;
 
 /**
  * Class Data_Source
@@ -352,58 +351,40 @@ abstract class Data_Source extends Container
                 $queryType == Query_Builder::TYPE_CREATE ||
                 $queryType == Query_Builder::TYPE_DROP
             ) {
-                return Query_Result::create($query->getModelClass(), $this->$queryCommand($query));
+                return Query_Result::create($query, $this->$queryCommand($query));
             }
 
             switch ($queryType) {
                 case Query_Builder::TYPE_SELECT:
-                    $cacher = $query->getCacher();
+                    $cacher = Query_Result::getCacher();
                     $queryHash = $query->getFullHash();
 
                     if ($queryResult = $cacher->get($queryHash)) {
+                        Data_Source::getLogger()->log(['(cache) {$0} [$1]', [$queryResult, Logger::microtimeResult($startTime)]], Logger::INFO);
                         return $queryResult;
                     }
 
-                    $cacher->set($queryHash, Query_Result::create($query->getModelClass(), $this->$queryCommand($query)), $ttl);
+                    $queryResult = Query_Result::create($query, $this->$queryCommand($query));
+
+                    $cacher->set($queryHash, $queryResult, $ttl);
                     break;
 
                 case Query_Builder::TYPE_INSERT:
                 case Query_Builder::TYPE_UPDATE:
                 case Query_Builder::TYPE_DELETE:
-                    $queryResult = Query_Result::create($query->getModelClass(), $this->$queryCommand($query));
-
-                    $cache['data'] = $queryResult->getResult();
-                    $cache['queryBody'] = $queryResult->getQueryBody();
-                    $cache['queryParams'] = $queryResult->getQueryParams();
-                    Cacher::invalidate(__CLASS__, $query->getInvalidateTags());
-                    break;
+                    $queryResult = Query_Result::create($query, $this->$queryCommand($query))->invalidate();
+                    Data_Source::getLogger()->log(['(cache) {$0} [$1]', [$queryResult, Logger::microtimeResult($startTime)]], Logger::SUCCESS);
+                    return $queryResult;
 
                 default:
                     Data_Source::getLogger()->exception(['Unknown data source query statement type {$0}', $queryType], __FILE__, __LINE__, null, $query);
             }
         } catch (\Exception $e) {
-            Data_Source::getLogger()->log([
-                '(error) ' . $query->getModelClass() . ' - ' . '{$0} [{$1}] {$2}',
-                [
-                    print_r($cache['queryBody'], true),
-                    implode(', ', $cache['queryParams']),
-                    Logger::microtimeResult($startTime)
-                ]
-            ], Logger::DANGER);
-
+            Data_Source::getLogger()->log(['(error) {$0} [$1]', [$queryResult, Logger::microtimeResult($startTime)]], Logger::DANGER);
             Data_Source::getLogger()->exception('Data source execute query failed', __FILE__, __LINE__, $e, $query);
         }
 
-        Data_Source::getLogger()->log([
-            '(new) ' . $query->getModelClass() . ' - ' . '{$0} [{$1}] {$2}',
-            [
-                print_r($cache['queryBody'], true),
-                implode(', ', $cache['queryParams']),
-                Logger::microtimeResult($startTime)
-            ]
-        ]);
-
-        return $queryResult;
+        return null;
     }
 
     /**
@@ -477,21 +458,6 @@ abstract class Data_Source extends Container
     }
 
     /**
-     * Return current scheme
-     *
-     * @return string
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since 0.5
-     */
-    public function getScheme()
-    {
-        return $this->_scheme;
-    }
-
-    /**
      * Return current key
      *
      * @return string
@@ -504,5 +470,20 @@ abstract class Data_Source extends Container
     public function getKey()
     {
         return $this->_key;
+    }
+
+    /**
+     * Return current scheme
+     *
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
+     */
+    public function getScheme()
+    {
+        return $this->_scheme;
     }
 }

@@ -141,8 +141,12 @@ class Registry extends Data_Provider
      * @version 0.0
      * @since 0.0
      */
-    public function set($key, $value, $ttl = 0)
+    public function set($key, $value, $ttl = -1)
     {
+        if ($ttl == -1) {
+            return $value;
+        }
+
         if (is_array($key)) {
             foreach ($key as $k => $item) {
                 $this->set($key, $item, $ttl);

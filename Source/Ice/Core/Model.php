@@ -724,7 +724,7 @@ abstract class Model
      * @version 0.2
      * @since 0.0
      */
-    public static function getRows(array $pagination, $fieldNames = '*', $dataSourceKey = null, $ttl = 3600)
+    public static function getRows(array $pagination, $fieldNames = '*', $dataSourceKey = null, $ttl = null)
     {
         return self::query()
             ->setPaginator($pagination)
@@ -745,7 +745,7 @@ abstract class Model
      * @version 0.5
      * @since 0.0
      */
-    public static function getCollection($fieldNames, array $pagination = [1, 1000, 0], $dataSourceKey = null, $ttl = 3600)
+    public static function getCollection($fieldNames, array $pagination = [1, 1000, 0], $dataSourceKey = null, $ttl = null)
     {
         return self::query()
             ->setPaginator($pagination)
@@ -870,7 +870,7 @@ abstract class Model
      * @version 0.4
      * @since 0.0
      */
-    public static function getModelBy(array $fieldNameValues, $fieldNames, $dataSourceKey = null, $ttl = 3600)
+    public static function getModelBy(array $fieldNameValues, $fieldNames, $dataSourceKey = null, $ttl = null)
     {
         return self::query()
             ->eq($fieldNameValues)
@@ -892,7 +892,7 @@ abstract class Model
      * @version 0.2
      * @since 0.0
      */
-    public static function getModel($pk, $fieldNames, $dataSourceKey = null, $ttl = 3600)
+    public static function getModel($pk, $fieldNames, $dataSourceKey = null, $ttl = null)
     {
         return self::query()
             ->pk($pk)
@@ -915,7 +915,7 @@ abstract class Model
      * @version 0.2
      * @since 0.2
      */
-    public static function getRow($pk = [], $fieldNames = '*', $dataSourceKey = null, $ttl = 3600)
+    public static function getRow($pk = [], $fieldNames = '*', $dataSourceKey = null, $ttl = null)
     {
         return self::query()
             ->pk($pk)
@@ -1060,7 +1060,7 @@ abstract class Model
      * @version 0.2
      * @since 0.2
      */
-    public function find($fieldNames, $dataSourceKey = null, $ttl = 3600)
+    public function find($fieldNames, $dataSourceKey = null, $ttl = null)
     {
         /** @var Model $modelClass */
         $modelClass = get_class($this);
@@ -1337,7 +1337,7 @@ abstract class Model
      * @version 0.2
      * @since 0.0
      */
-    public function getLink($modelClass, $modelPk, $linkModelClass = null, $dataSourceKey = null, $ttl = 3600)
+    public function getLink($modelClass, $modelPk, $linkModelClass = null, $dataSourceKey = null, $ttl = null)
     {
         /** @var Model $selfClass */
         $selfClass = get_class($this);

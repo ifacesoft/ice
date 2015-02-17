@@ -325,33 +325,33 @@ class Query
     }
 
     /**
-     * Return query cacher
-     *
-     * @return Cacher
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since 0.5
-     */
-    public function getCacher()
-    {
-        return Cacher::getInstance(__CLASS__);
-    }
-
-    /**
-     * Return cache tags
+     * Return validate tags
      *
      * @return array
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.5
+     * @version 0.0
      * @since 0.0
      */
-    public function getCacheTags()
+    public function getValidateTags()
     {
-        return $this->_cacheTags;
+        return $this->_cacheTags[Cache::VALIDATE];
+    }
+
+    /**
+     * Return invalidate tags
+     *
+     * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
+     */
+    public function getInvalidateTags()
+    {
+        return $this->_cacheTags[Cache::INVALIDATE];
     }
 
     /**
@@ -384,7 +384,7 @@ class Query
      * @version 0.4
      * @since 0.4
      */
-    public function execute($ttl = 3600)
+    public function execute($ttl = null)
     {
         return $this->getDataSource()->execute($this, $ttl);
     }

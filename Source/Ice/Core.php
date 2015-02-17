@@ -13,11 +13,10 @@ use Ice;
 use Ice\Core\Code_Generator;
 use Ice\Core\Config;
 use Ice\Core\Data_Provider;
-use Ice\Core\Environment;
 use Ice\Core\Exception;
 use Ice\Core\Logger;
 use Ice\Core\Resource;
-use Ice\Data\Provider\Cache;
+use Ice\Data\Provider\Cacher;
 use Ice\Data\Provider\Registry;
 use Ice\Data\Provider\Repository;
 use Ice\Helper\Object;
@@ -105,17 +104,17 @@ trait Core
      * Return config of self class
      *
      * @param null $postfix
+     * @param bool $isRequired
+     * @param null $ttl
      * @return Config
-     * @throws Exception
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.5
      * @since 0.0
      */
-    public static function getConfig($postfix = null)
+    public static function getConfig($postfix = null, $isRequired = false, $ttl = null)
     {
-        return Config::getInstance(self::getClass(), $postfix);
+        return Config::getInstance(self::getClass(), $postfix, $isRequired, $ttl);
     }
 
     /**
@@ -135,7 +134,7 @@ trait Core
             $postfix = strtolower(self::getClassName());
         }
 
-        return Environment::getInstance()->getProvider(self::getBaseClass(), $postfix);
+        return Ice::getEnvironment()->getProvider(self::getBaseClass(), $postfix);
     }
 
     /**
@@ -243,5 +242,21 @@ trait Core
     public static function getRepository($index = 'default')
     {
         return Repository::getInstance(self::getClass(), $index);
+    }
+
+    /**
+     * Return cacher storage for class
+     *
+     * @param string $index
+     * @return Repository
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
+     */
+    public static function getCacher($index = 'default')
+    {
+        return Cacher::getInstance(self::getClass(), $index);
     }
 }

@@ -984,7 +984,7 @@ class Query_Builder
      * @version 0.2
      * @since 0.0
      */
-    public function select($fieldName, $fieldAlias = null, $modelClass = null, $tableAlias = null, $dataSourceKey = null, $ttl = 3600)
+    public function select($fieldName, $fieldAlias = null, $modelClass = null, $tableAlias = null, $dataSourceKey = null, $ttl = null)
     {
         $this->_queryType = Query_Builder::TYPE_SELECT;
 
@@ -1067,7 +1067,7 @@ class Query_Builder
      * @version 0.2
      * @since 0.0
      */
-    public function insert(array $data, $update = false, $dataSourceKey = null, $ttl = 3600)
+    public function insert(array $data, $update = false, $dataSourceKey = null, $ttl = null)
     {
         $this->_queryType = Query_Builder::TYPE_INSERT;
         $this->_sqlParts[Query_Builder::PART_VALUES]['_update'] = $update;
@@ -1144,7 +1144,7 @@ class Query_Builder
      * @version 0.2
      * @since 0.0
      */
-    public function update(array $data, $dataSource = null, $ttl = 3600)
+    public function update(array $data, $dataSource = null, $ttl = null)
     {
         $this->_queryType = Query_Builder::TYPE_UPDATE;
         return $this->affect($data, Query_Builder::PART_SET, $dataSource, $ttl);
@@ -1163,7 +1163,7 @@ class Query_Builder
      * @version 0.2
      * @since 0.0
      */
-    public function delete($pkValues = [], $dataSourceKey = null, $ttl = 3600)
+    public function delete($pkValues = [], $dataSourceKey = null, $ttl = null)
     {
         $this->_queryType = Query_Builder::TYPE_DELETE;
         $this->_sqlParts[Query_Builder::PART_WHERE]['_delete'] = $this->_modelClass;
@@ -1458,7 +1458,7 @@ class Query_Builder
      * @version 0.2
      * @since 0.2
      */
-    public function create($dataSourceKey = null, $ttl = 3600)
+    public function create($dataSourceKey = null, $ttl = null)
     {
         $modelClass = $this->_modelClass;
         $modelSchemeClass = Model_Scheme::getClass();
@@ -1484,7 +1484,7 @@ class Query_Builder
      * @version 0.2
      * @since 0.2
      */
-    public function drop($dataSourceKey = null, $ttl = 3600)
+    public function drop($dataSourceKey = null, $ttl = null)
     {
         $this->_queryType = Query_Builder::TYPE_DROP;
         $this->_sqlParts[self::PART_DROP]['_drop'] = $this->_modelClass;
