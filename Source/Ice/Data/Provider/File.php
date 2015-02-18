@@ -87,7 +87,7 @@ class File extends Data_Provider
 
         if ($ttl === null) {
             $options = $this->getOptions(__CLASS__);
-            $ttl = $options['ttl'];
+            $ttl = isset($options['ttl']) ? $options['ttl'] : 3600;
         }
 
         Helper_File::createData($this->getFileName($key), [$ttl, Hash::get($value, Hash::HASH_CRC32), $value]);

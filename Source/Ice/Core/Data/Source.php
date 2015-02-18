@@ -332,16 +332,6 @@ abstract class Data_Source extends Container
     {
         $startTime = Logger::microtime();
 
-        $queryResult = null;
-
-        $cache = [
-            'tags' => $query->getCacheTags(),
-            'time' => 0,
-            'data' => [],
-            'queryBody' => null,
-            'queryParams' => []
-        ];
-
         $queryCommand = 'execute' . ucfirst($query->getQueryType());
 
         try {

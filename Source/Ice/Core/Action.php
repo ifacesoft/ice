@@ -18,6 +18,7 @@ use Ice\Exception\Http_Bad_Request;
 use Ice\Exception\Http_Not_Found;
 use Ice\Exception\Redirect;
 use Ice\Helper\Json;
+use Ice\Helper\Php;
 
 /**
  * Class Action
@@ -112,7 +113,9 @@ abstract class Action
             return $config;
         }
 
-        $config = Config::create(self::getClass(), array_merge_recursive(Config::getInstance(self::getClass(), null, false, -1)->gets(), self::config()));
+        $actionClass = self::getClass();
+
+        $config = Config::create(self::getClass(), array_merge_recursive(Config::getInstance($actionClass, null, false, -1)->gets(), $actionClass::config()));
 
         return $repository->set('config', $config);
     }
@@ -167,6 +170,7 @@ abstract class Action
      *
      * @param array $input
      * @return Action
+     * @throws Redirect
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
@@ -191,18 +195,27 @@ abstract class Action
                         $input[$name] = $param['default'];
                     }
 
+                    if (isset($param['type'])) {
+                        $input[$name] = Php::castTo($param['type'], $input[$name]);
+                    }
+
                     if (isset($param['validators'])) {
-                        foreach ((array)$param['validators'] as $validatorKey => $validatorParams) {
-                            if (is_int($validatorKey)) {
-                                $validatorKey = $validatorParams;
+                        foreach ((array)$param['validators'] as $validatorClass => $validatorParams) {
+                            if (is_int($validatorClass)) {
+                                $validatorClass = $validatorParams;
                                 $validatorParams = null;
                             }
 
-                            Validator::getInstance($validatorKey)->validate($input[$name], $validatorParams);
+                            $validatorClass = Validator::getClass($validatorClass);
+                            $validatorClass::getInstance()->validate($input[$name], $validatorParams);
                         }
                     }
                 }
             }
+        }
+
+        if (isset($input['redirectUrl'])) {
+            throw new Redirect($input['redirectUrl']);
         }
 
         $actionClass = self::getClass();
@@ -227,6 +240,18 @@ abstract class Action
     {
         $startTime = Logger::microtime();
 
+        if (isset($this->_input['response'])) {
+            if (isset($this->_input['response']['contentType'])) {
+                $actionContext->getResponse()->setContentType($this->_input['response']['contentType']);
+            }
+
+            if (isset($this->_input['response']['statusCode'])) {
+                $actionContext->getResponse()->setStatusCode($this->_input['response']['statusCode']);
+            }
+
+            unset($this->_input['response']);
+        }
+
         /** @var Action $actionClass */
         $actionClass = get_class($this);
 
@@ -236,8 +261,6 @@ abstract class Action
 
         try {
             $config = $actionClass::getConfig();
-
-            Logger::debug($config);
 
             $actionContext->initAction($actionClass, $this->_inputHash);
 
@@ -321,8 +344,8 @@ abstract class Action
                 $viewData['defaultViewRenderClassName'] = $defaultViewRenderClassName;
             }
 
-            if (isset($input['template'])) {
-                $viewData['template'] = $input['template'];
+            if (isset($this->_input['template'])) {
+                $viewData['template'] = $this->_input['template'];
             }
 
             $view = $cacher->set($this->_inputHash, $this->flush(View::create($viewData)));
@@ -332,7 +355,7 @@ abstract class Action
             }
 
             if (Environment::isDevelopment()) {
-                Logger::fb('action: ' . $actionClass . ' ' . Json::encode($input) . ' [' . $finishTime . ' ' . $finishTimeAfter . ']');
+                Logger::fb('action: ' . $actionClass . ' ' . Json::encode($this->_input) . ' [' . $finishTime . ' ' . $finishTimeAfter . ']');
             }
 
             return $view;

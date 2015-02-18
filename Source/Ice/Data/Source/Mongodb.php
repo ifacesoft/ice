@@ -31,11 +31,7 @@ class Mongodb extends Data_Source
     {
         $data = [];
 
-        $queryTranslatorClass = $this->getQueryTranslatorClass();
-        $data[Query_Result::QUERY_BODY] = $queryTranslatorClass::getInstance()->translate($query->getBodyParts());
-        $data[Query_Result::QUERY_PARAMS] = $query->getBinds();
-
-        $statement = $this->getStatement($data[Query_Result::QUERY_BODY], $data[Query_Result::QUERY_PARAMS]);
+        $statement = $this->getStatement($query->getBody(), $query->getBinds());
 
         /** @var Model $modelClass */
         $modelClass = $query->getModelClass();
@@ -77,15 +73,13 @@ class Mongodb extends Data_Source
             Mongodb::getLogger()->exception(
                 [
                     '#' . $e->getCode() . ': {$0} - {$1} [{$2}]',
-                    [$e->getMessage(), print_r($data[Query_Result::QUERY_BODY], true), implode(', ', $data[Query_Result::QUERY_PARAMS])]
+                    [$e->getMessage(), print_r($query->getBody(), true), implode(', ', $query->getBinds())]
                 ],
                 __FILE__, __LINE__, $e
             );
         }
 
         $data[Query_Result::NUM_ROWS] = count($data[Query_Result::ROWS]);
-
-        $data[Query_Result::QUERY] = $query;
 
         return $data;
     }
@@ -104,11 +98,7 @@ class Mongodb extends Data_Source
     {
         $data = [];
 
-        $queryTranslatorClass = $this->getQueryTranslatorClass();
-        $data[Query_Result::QUERY_BODY] = $queryTranslatorClass::getInstance()->translate($query->getBodyParts());
-        $data[Query_Result::QUERY_PARAMS] = $query->getBinds();
-
-        $statement = $this->getStatement($data[Query_Result::QUERY_BODY], $data[Query_Result::QUERY_PARAMS]);
+        $statement = $this->getStatement($query->getBody(), $query->getBinds());
 
         /** @var Model $modelClass */
         $modelClass = $query->getModelClass();
@@ -137,7 +127,6 @@ class Mongodb extends Data_Source
         }
 
         $data[Query_Result::AFFECTED_ROWS] = count($statement['insert']['data']);
-        $data[Query_Result::QUERY] = $query;
 
         return $data;
     }
@@ -156,11 +145,7 @@ class Mongodb extends Data_Source
     {
         $data = [];
 
-        $queryTranslatorClass = $this->getQueryTranslatorClass();
-        $data[Query_Result::QUERY_BODY] = $queryTranslatorClass::getInstance()->translate($query->getBodyParts());
-        $data[Query_Result::QUERY_PARAMS] = $query->getBinds();
-
-        $statement = $this->getStatement($data[Query_Result::QUERY_BODY], $data[Query_Result::QUERY_PARAMS]);
+        $statement = $this->getStatement($query->getBody(), $query->getBinds());
 
         /** @var Model $modelClass */
         $modelClass = $query->getModelClass();
@@ -169,8 +154,6 @@ class Mongodb extends Data_Source
         $this->getConnection()->$tableName->update($statement['where']['data'], $statement['update']['data']);
 
         $data[Query_Result::AFFECTED_ROWS] = 1;
-
-        $data[Query_Result::QUERY] = $query;
 
         return $data;
     }
@@ -189,11 +172,7 @@ class Mongodb extends Data_Source
     {
         $data = [];
 
-        $queryTranslatorClass = $this->getQueryTranslatorClass();
-        $data[Query_Result::QUERY_BODY] = $queryTranslatorClass::getInstance()->translate($query->getBodyParts());
-        $data[Query_Result::QUERY_PARAMS] = $query->getBinds();
-
-        $statement = $this->getStatement($data[Query_Result::QUERY_BODY], $data[Query_Result::QUERY_PARAMS]);
+        $statement = $this->getStatement($query->getBody(), $query->getBinds());
 
         /** @var Model $modelClass */
         $modelClass = $query->getModelClass();
@@ -202,8 +181,6 @@ class Mongodb extends Data_Source
         $this->getConnection()->$tableName->remove($statement['where']['data']);
 
         $data[Query_Result::AFFECTED_ROWS] = 1;
-
-        $data[Query_Result::QUERY] = $query;
 
         return $data;
     }

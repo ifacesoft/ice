@@ -83,7 +83,7 @@ class Apc extends Data_Provider
 
         if ($ttl === null) {
             $options = $this->getOptions(__CLASS__);
-            $ttl = $options['ttl'];
+            $ttl = isset($options['ttl']) ? $options['ttl'] : 3600;
         }
 
         return apc_store($this->getFullKey($key), $value, $ttl) ? $value : null;

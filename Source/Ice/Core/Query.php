@@ -418,4 +418,10 @@ class Query
     {
         return $this->_bodyParts;
     }
+
+    public function getBody()
+    {
+        $queryTranslatorClass = $this->getDataSource()->getQueryTranslatorClass();
+        return $queryTranslatorClass::getInstance()->translate($this->getBodyParts());
+    }
 }

@@ -115,4 +115,8 @@ return [
         'tr' => 'Smarty: şablon dosyası \'Buz/Eylem//Status/500 Http.Yüklenemiyor Vuk\'',
         'uk' => 'Smarty: Unable to load template file \'лід/Action/Http/Status/500.tpl\'',
     ],
+    'Twig: View {$0} not found. Trying generate template {$1}...' => [
+        'en' => 'Twig: View {$0} not found. Trying generate template {$1}...',
+        'ru' => 'Twig: View {$0} not found. Trying generate template {$1}...',
+    ],
 ];

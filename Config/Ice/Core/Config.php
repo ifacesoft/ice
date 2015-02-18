@@ -57,7 +57,12 @@ return [
             'weight' => 0,
             'request' => [
                 'GET' => [
-                    'layout' => 'Ice:Layout_Main'
+                    'Ice:Layout_Main' => [
+                        'actions' => [
+                            ['title', 'Ice:Title', ['title' => 'Main page']],
+                            ['main', 'Ice:Index']
+                        ]
+                    ]
                 ]
             ]
         ],

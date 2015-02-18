@@ -53,11 +53,7 @@ class Mysqli extends Data_Source
     {
         $data = [];
 
-        $queryTranslatorClass = $this->getQueryTranslatorClass();
-        $data[Query_Result::QUERY_BODY] = $queryTranslatorClass::getInstance()->translate($query->getBodyParts());
-        $data[Query_Result::QUERY_PARAMS] = $query->getBinds();
-
-        $statement = $this->getStatement($data[Query_Result::QUERY_BODY], $data[Query_Result::QUERY_PARAMS]);
+        $statement = $this->getStatement($query->getBody(), $query->getBinds());
 
         if ($statement->execute() === false) {
             $errno = $statement->errno;
@@ -67,7 +63,7 @@ class Mysqli extends Data_Source
             Data_Source::getLogger()->exception(
                 [
                     '#' . $errno . ': {$0} - {$1} [{$2}]',
-                    [$error, print_r($data[Query_Result::QUERY_BODY], true), implode(', ', $data[Query_Result::QUERY_PARAMS])]
+                    [$error, print_r($query->getBody(), true), implode(', ', $query->getBinds())]
                 ],
                 __FILE__, __LINE__
             );
@@ -84,7 +80,7 @@ class Mysqli extends Data_Source
             Data_Source::getLogger()->exception(
                 [
                     '#' . $errno . ': {$0} - {$1} [{$2}]',
-                    [$error, print_r($data[Query_Result::QUERY_BODY], true), implode(', ', $data[Query_Result::QUERY_PARAMS])]
+                    [$error, print_r($query->getBody(), true), implode(', ', $query->getBinds())]
                 ],
                 __FILE__, __LINE__
             );
@@ -113,8 +109,6 @@ class Mysqli extends Data_Source
         } else {
             $query->setPagination($data[Query_Result::NUM_ROWS]);
         }
-
-        $data[Query_Result::QUERY] = $query;
 
         return $data;
     }
@@ -209,11 +203,7 @@ class Mysqli extends Data_Source
     {
         $data = [];
 
-        $queryTranslatorClass = $this->getQueryTranslatorClass();
-        $data[Query_Result::QUERY_BODY] = $queryTranslatorClass::getInstance()->translate($query->getBodyParts());
-        $data[Query_Result::QUERY_PARAMS] = $query->getBinds();
-
-        $statement = $this->getStatement($data[Query_Result::QUERY_BODY], $data[Query_Result::QUERY_PARAMS]);
+        $statement = $this->getStatement($query->getBody(), $query->getBinds());
 
         if ($statement->execute() === false) {
             $errno = $statement->errno;
@@ -223,7 +213,7 @@ class Mysqli extends Data_Source
             Data_Source::getLogger()->exception(
                 [
                     '#' . $errno . ': {$0} - {$1} [{$2}]',
-                    [$error, print_r($data[Query_Result::QUERY_BODY], true), implode(', ', $data[Query_Result::QUERY_PARAMS])]
+                    [$error, print_r($query->getBody(), true), implode(', ', $query->getBinds())]
                 ],
                 __FILE__, __LINE__
             );
@@ -257,8 +247,6 @@ class Mysqli extends Data_Source
 
         $statement->close();
 
-        $data[Query_Result::QUERY] = $query;
-
         return $data;
     }
 
@@ -277,11 +265,7 @@ class Mysqli extends Data_Source
     {
         $data = [];
 
-        $queryTranslatorClass = $this->getQueryTranslatorClass();
-        $data[Query_Result::QUERY_BODY] = $queryTranslatorClass::getInstance()->translate($query->getBodyParts());
-        $data[Query_Result::QUERY_PARAMS] = $query->getBinds();
-
-        $statement = $this->getStatement($data[Query_Result::QUERY_BODY], $data[Query_Result::QUERY_PARAMS]);
+        $statement = $this->getStatement($query->getBody(), $query->getBinds());
 
         if ($statement->execute() === false) {
             $errno = $statement->errno;
@@ -291,7 +275,7 @@ class Mysqli extends Data_Source
             Data_Source::getLogger()->exception(
                 [
                     '#' . $errno . ': {$0} - {$1} [{$2}]',
-                    [$error, print_r($data[Query_Result::QUERY_BODY], true), implode(', ', $data[Query_Result::QUERY_PARAMS])]
+                    [$error, print_r($query->getBody(), true), implode(', ', $query->getBinds())]
                 ],
                 __FILE__, __LINE__
             );
@@ -309,8 +293,6 @@ class Mysqli extends Data_Source
         $data[Query_Result::AFFECTED_ROWS] = $statement->affected_rows;
 
         $statement->close();
-
-        $data[Query_Result::QUERY] = $query;
 
         return $data;
     }
@@ -330,11 +312,7 @@ class Mysqli extends Data_Source
     {
         $data = [];
 
-        $queryTranslatorClass = $this->getQueryTranslatorClass();
-        $data[Query_Result::QUERY_BODY] = $queryTranslatorClass::getInstance()->translate($query->getBodyParts());
-        $data[Query_Result::QUERY_PARAMS] = $query->getBinds();
-
-        $statement = $this->getStatement($data[Query_Result::QUERY_BODY], $data[Query_Result::QUERY_PARAMS]);
+        $statement = $this->getStatement($query->getBody(), $query->getBinds());
 
         if ($statement->execute() === false) {
             $errno = $statement->errno;
@@ -344,7 +322,7 @@ class Mysqli extends Data_Source
             Data_Source::getLogger()->exception(
                 [
                     '#' . $errno . ': {$0} - {$1} [{$2}]',
-                    [$error, print_r($data[Query_Result::QUERY_BODY], true), implode(', ', $data[Query_Result::QUERY_PARAMS])]
+                    [$error, print_r($query->getBody(), true), implode(', ', $query->getBinds())]
                 ],
                 __FILE__, __LINE__
             );
@@ -353,8 +331,6 @@ class Mysqli extends Data_Source
         $data[Query_Result::AFFECTED_ROWS] = $statement->affected_rows;
 
         $statement->close();
-
-        $data[Query_Result::QUERY] = $query;
 
         return $data;
     }
@@ -521,11 +497,7 @@ class Mysqli extends Data_Source
     {
         $data = [];
 
-        $queryTranslatorClass = $this->getQueryTranslatorClass();
-        $data[Query_Result::QUERY_BODY] = $queryTranslatorClass::getInstance()->translate($query->getBodyParts());
-        $data[Query_Result::QUERY_PARAMS] = $query->getBinds();
-
-        $statement = $this->getStatement($data[Query_Result::QUERY_BODY], $data[Query_Result::QUERY_PARAMS]);
+        $statement = $this->getStatement($query->getBody(), $query->getBinds());
 
         if ($statement->execute() === false) {
             $errno = $statement->errno;
@@ -535,7 +507,7 @@ class Mysqli extends Data_Source
             Data_Source::getLogger()->exception(
                 [
                     '#' . $errno . ': {$0} - {$1} [{$2}]',
-                    [$error, print_r($data[Query_Result::QUERY_BODY], true), implode(', ', $data[Query_Result::QUERY_PARAMS])]
+                    [$error, print_r($query->getBody(), true), implode(', ', $query->getBinds())]
                 ],
                 __FILE__, __LINE__
             );
@@ -544,8 +516,6 @@ class Mysqli extends Data_Source
         $data[Query_Result::AFFECTED_ROWS] = $statement->affected_rows;
 
         $statement->close();
-
-        $data[Query_Result::QUERY] = $query;
 
         return $data;
     }
@@ -565,11 +535,7 @@ class Mysqli extends Data_Source
     {
         $data = [];
 
-        $queryTranslatorClass = $this->getQueryTranslatorClass();
-        $data[Query_Result::QUERY_BODY] = $queryTranslatorClass::getInstance()->translate($query->getBodyParts());
-        $data[Query_Result::QUERY_PARAMS] = $query->getBinds();
-
-        $statement = $this->getStatement($data[Query_Result::QUERY_BODY], $data[Query_Result::QUERY_PARAMS]);
+        $statement = $this->getStatement($query->getBody(), $query->getBinds());
 
         if ($statement->execute() === false) {
             $errno = $statement->errno;
@@ -579,7 +545,7 @@ class Mysqli extends Data_Source
             Data_Source::getLogger()->exception(
                 [
                     '#' . $errno . ': {$0} - {$1} [{$2}]',
-                    [$error, print_r($data[Query_Result::QUERY_BODY], true), implode(', ', $data[Query_Result::QUERY_PARAMS])]
+                    [$error, print_r($query->getBody(), true), implode(', ', $query->getBinds())]
                 ],
                 __FILE__, __LINE__
             );
@@ -588,8 +554,6 @@ class Mysqli extends Data_Source
         $data[Query_Result::AFFECTED_ROWS] = $statement->affected_rows;
 
         $statement->close();
-
-        $data[Query_Result::QUERY] = $query;
 
         return $data;
     }

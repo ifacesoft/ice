@@ -15,8 +15,6 @@ use Ice\Core\Cacheable;
 use Ice\Core\Data_Provider;
 use Ice\Core\Environment;
 use Ice\Core\Exception;
-use Ice\Core\Logger;
-use Ice\Core\Request;
 
 /**
  * Class String
@@ -122,7 +120,7 @@ class Cacher extends Data_Provider
 
         if ($ttl === null) {
             $options = $this->getOptions(__CLASS__);
-            $ttl = $options['ttl'];
+            $ttl = isset($options['ttl']) ? $options['ttl'] : 3600;
         }
 
         $this->getConnection()->set($key, Cache::create($value, time()), $ttl);

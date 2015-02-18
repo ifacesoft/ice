@@ -44,6 +44,6 @@ class Layout_Blank extends Layout
      */
     public static $config = [
         'defaultViewRenderClassName' => 'Ice:Php',
-        'layout' => ''
+        'template' => ''
     ];
 }

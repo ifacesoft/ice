@@ -17,8 +17,10 @@ use Ice\Core\Container;
 use Ice\Core\Environment;
 use Ice\Core\Logger;
 use Ice\Core\Request;
+use Ice\Core\Route;
 use Ice\Core\View;
 use Ice\Data\Provider\Cli;
+use Ice\Data\Provider\Router;
 use Ice\Exception\Http_Bad_Request;
 use Ice\Exception\Http_Not_Found;
 use Ice\Exception\Redirect;
@@ -152,8 +154,8 @@ class Ice
         $actionContext = Action_Context::create();
 
         try {
-            /** @var Action $action */
-            $action = null;
+            /** @var Action $actionClass */
+            $actionClass = null;
 
             /** @var View $view */
             $view = null;
@@ -162,14 +164,20 @@ class Ice
                 ini_set('memory_limit', '1024M');
 
                 $input = Cli::getInstance()->get();
-                $action = $input['actionClass'];
+                $actionClass = $input['actionClass'];
                 unset($input['actionClass']);
 
-                $view = $action::create($input)->call($actionContext);
+                $view = $actionClass::create($input)->call($actionContext);
             } elseif (Request::isAjax()) {
                 $view = Front_Ajax::create()->call($actionContext);
             } else {
-                $view = Front::create()->call($actionContext);
+                $router = Router::getInstance();
+                $route = Route::getInstance($router->get('routeName'));
+                $method = $route->gets('request/' . $router->get('method'));
+
+                list($actionClass, $input) = each($method);
+
+                $view = $actionClass::create($input)->call($actionContext);
             }
 
             $actionContext->getResponse()->setContent($view);

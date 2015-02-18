@@ -177,6 +177,18 @@ class Route extends Container
                 }
 
                 $route['pattern'] = Replace::getInstance()->fetch('#^' . $route['route'] . '$#', $patterns, View_Render::TEMPLATE_TYPE_STRING);
+
+                foreach ($route['request'] as &$request) {
+                    list($actionClass, $actionParams) = each($request);
+
+                    if(is_int($actionClass)) {
+                        $actionClass = $actionParams;
+                        $actionParams = [];
+                    }
+
+                    $request = [Action::getClass($actionClass) => $actionParams];
+                }
+
                 $routes[$routeName] = $route;
             }
         }
@@ -249,11 +261,10 @@ class Route extends Container
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @deprecated 0.4 todo: use directly array
      * @version 0.4
      * @since 0.4
      */
-    private function gets($key = null, $isRequired = true)
+    public function gets($key = null, $isRequired = true)
     {
         return Helper_Config::gets($this->_route, $key, $isRequired);
     }
@@ -359,37 +370,5 @@ class Route extends Container
     public function getActionClassNames($method)
     {
         return $this->gets('request/' . $method . '/actions');
-    }
-
-    /**
-     * Return response content type (html|pdf|png etc.)
-     *
-     * @param $method
-     * @return string
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since 0.4
-     */
-    public function getResponseContentType($method)
-    {
-        return $this->get('request/' . $method . '/response/contentType', false);
-    }
-
-    /**
-     * Return response status code (200|404|500 etc.)
-     *
-     * @param $method
-     * @return string
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since 0.4
-     */
-    public function getResponseStatusCode($method)
-    {
-        return $this->get('request/' . $method . '/response/statusCode', false);
     }
 }
