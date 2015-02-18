@@ -28,6 +28,8 @@ use Ice\Core\Validator;
  */
 class Pattern extends Validator
 {
+    const LETTERS_ONLY = '/^[a-z]+$/i';
+
     /**
      * Validate data by pattern
      *

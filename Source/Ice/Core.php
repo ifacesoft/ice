@@ -13,7 +13,6 @@ use Ice;
 use Ice\Core\Code_Generator;
 use Ice\Core\Config;
 use Ice\Core\Data_Provider;
-use Ice\Core\Exception;
 use Ice\Core\Logger;
 use Ice\Core\Resource;
 use Ice\Data\Provider\Cacher;

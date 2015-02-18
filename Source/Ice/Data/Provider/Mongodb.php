@@ -74,7 +74,7 @@ class Mongodb extends Data_Provider
      * @version 0.4
      * @since 0.4
      */
-    public function set($key, $value, $ttl = null)
+    public function set($key, $value = null, $ttl = null)
     {
         // TODO: Implement set() method.
     }

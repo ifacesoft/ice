@@ -14,37 +14,60 @@ use Ice\Data\Provider\Request;
 
 class Test extends Action
 {
-
     /**
-     *  public static $config = [
-     *      'afterActions' => [],          // actions
-     *      'layout' => null,               // Emmet style layout
-     *      'template' => null,             // Template of view
-     *      'output' => null,               // Output type: standard|file
-     *      'defaultViewRenderClassName' => null,  // Render class for view (example: Ice:Php)
-     *      'inputDefaults' => [],          // Default input data
-     *      'inputValidators' => [],        // Input data validators
-     *      'inputDataProviderKeys' => [],  // InputDataProviders keys
-     *      'outputDataProviderKeys' => [], // OutputDataProviders keys
-     *      'cacheDataProviderKey' => ''    // Cache data provider key
+     * Action config
+     *
+     * example:
+     * ```php
+     *  $config = [
+     *      'actions' => [
+     *          ['Ice:Title', ['title' => 'page title'], 'title'],
+     *          ['Ice:Another_Action, ['param' => 'value']
+     *      ],
+     *      'view' => [
+     *          'layout' => Emmet::PANEL_BODY,
+     *          'template' => _Custom,
+     *          'viewRenderClass' => Ice:Twig,
+     *      ],
+     *      'input' => [
+     *          Request::DEFAULT_DATA_PROVIDER_KEY => [
+     *              'paramFromGETorPOST => [
+     *                  'default' => 'defaultValue',
+     *                  'validators' => ['Ice:PATTERN => PATTERN::LETTERS_ONLY]
+     *                  'type' => 'string'
+     *              ]
+     *          ]
+     *      ],
+     *      'output' => ['Ice:Resource/Ice\Action\Index'],
+     *      'ttl' => 3600,
+     *      'roles' => []
      *  ];
+     * ```
+     * @return array
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since 0
      */
-    public static $config = [
-        'defaultViewRenderClassName' => 'Ice:Php',
-        'inputDataProviderKeys' => Request::DEFAULT_DATA_PROVIDER_KEY,
-        'afterActions' => [
-            '_NoView',
-            '_Smarty' => ['inputTestSmarty' => 'inputTestSmarty'],
-            '_Twig' => ['inputTestTwig' => 'inputTestTwig'],
-            '_Php' => [
-                ['inputTestPhp' => 'inputTestPhp1'],
-                ['inputTestPhp' => 'inputTestPhp2']
+    protected static function config()
+    {
+        return [
+            'view' => ['viewRenderClass' => 'Ice:Php'],
+            'input' => [
+                Request::DEFAULT_DATA_PROVIDER_KEY => [
+                    'test' => ['default' => 'test'],
+                ]
+            ],
+            'actions' => [
+                '_NoView',
+                ['_Smarty', ['inputTestSmarty' => 'inputTestSmarty']],
+                ['_Twig', ['inputTestTwig' => 'inputTestTwig']],
+                ['_Php', ['inputTestPhp' => 'inputTestPhp1'], 'firstPhp'],
+                ['_Php', ['inputTestPhp' => 'inputTestPhp2']]
             ]
-        ],
-        'inputDefaults' => [
-            'test' => 'test'
-        ]
-    ];
+        ];
+    }
 
     /** Run action
      *

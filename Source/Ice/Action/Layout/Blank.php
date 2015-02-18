@@ -29,21 +29,4 @@ use Ice\Core\Action;
  */
 class Layout_Blank extends Layout
 {
-    /**  public static $config = [
-     *      'afterActions' => [],          // actions
-     *      'layout' => null,               // Emmet style layout
-     *      'template' => null,             // Template of view
-     *      'output' => null,               // Output type: standard|file
-     *      'defaultViewRenderClassName' => null,  // Render class for view (example: Ice:Php)
-     *      'inputDefaults' => [],          // Default input data
-     *      'inputValidators' => [],        // Input data validators
-     *      'inputDataProviderKeys' => [],  // InputDataProviders keys
-     *      'outputDataProviderKeys' => [], // OutputDataProviders keys
-     *      'cacheDataProviderKey' => ''    // Cache data provider key
-     *  ];
-     */
-    public static $config = [
-        'defaultViewRenderClassName' => 'Ice:Php',
-        'template' => ''
-    ];
 }

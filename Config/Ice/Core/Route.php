@@ -5,9 +5,11 @@ return [
         'route' => '/',
         'request' => [
             'GET' => [
-                'actions' => [
-                    'title' => ['Ice:Title' => ['title' => 'Hello world']],
-                    'main' => 'Ice:Main'
+                'Ice:Layout_Main' => [
+                    'actions' => [
+                        ['Ice:Title', ['title' => 'Hello world'], 'title'],
+                        ['Ice:Main', [], 'main']
+                    ]
                 ]
             ]
         ]
@@ -16,9 +18,10 @@ return [
         'route' => '/test',
         'request' => [
             'GET' => [
-                'layout' => 'Ice:Layout_Test',
-                'actions' => [
-                    'testAction' => 'Ice:Test'
+                'Ice:Layout_Test' => [
+                    'actions' => [
+                        ['Ice:Test', [], 'testAction']
+                    ]
                 ]
             ]
         ]
@@ -29,20 +32,17 @@ return [
             'locale' => '([a-z]+)',
         ],
         'request' => [
-            'GET' => [
-                'blank' => 'Ice:Layout_Blank',
-                'actions' => [
-                    'content' => 'Ice:Locale'
-                ]
-            ]
+            'GET' => 'Ice:Locale'
         ]
     ],
     'ice_redirect' => [
         'route' => '/redirect',
         'request' => [
             'GET' => [
-                'response' => [
-                    'redirect' => 'ice_main'
+                'Ice:Layout_Blank' => [
+                    'response' => [
+                        'redirect' => 'ice_main'
+                    ]
                 ]
             ]
         ]

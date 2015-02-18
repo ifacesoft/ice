@@ -30,7 +30,7 @@ use Ice\Core\Exception;
  */
 class Cacher extends Data_Provider
 {
-    const DEFAULT_DATA_PROVIDER_KEY = 'Ice:Cache/default';
+    const DEFAULT_DATA_PROVIDER_KEY = 'Ice:Cacher/default';
     const DEFAULT_KEY = 'instance';
 
     /**
@@ -112,8 +112,16 @@ class Cacher extends Data_Provider
      * @version 0.0
      * @since 0.0
      */
-    public function set($key, $value, $ttl = null)
+    public function set($key, $value = null, $ttl = null)
     {
+        if (is_array($key) && $value === null) {
+            foreach ($key as $index => $value) {
+                $this->set($index, $value, $ttl);
+            }
+
+            return $key;
+        }
+
         if ($ttl == -1) {
             return $value;
         }

@@ -59,8 +59,8 @@ return [
                 'GET' => [
                     'Ice:Layout_Main' => [
                         'actions' => [
-                            ['title', 'Ice:Title', ['title' => 'Main page']],
-                            ['main', 'Ice:Index']
+                            ['Ice:Title', ['title' => 'Main page'], 'title'],
+                            ['Ice:Index', [], 'main']
                         ]
                     ]
                 ]

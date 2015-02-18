@@ -12,6 +12,7 @@ namespace Ice\Action;
 use Ice\Core\Action;
 use Ice\Core\Action_Context;
 use Ice\Core\Logger;
+use Ice\Data\Provider\Cli;
 use Ice\Helper\Console;
 use Ice\Helper\Directory;
 use Ice\Helper\File;
@@ -36,23 +37,142 @@ use Ice\Helper\Vcs;
  */
 class Module_Create extends Action
 {
-    /**  public static $config = [
-     *      'afterActions' => [],          // actions
-     *      'layout' => null,               // Emmet style layout
-     *      'template' => null,             // Template of view
-     *      'output' => null,               // Output type: standard|file
-     *      'defaultViewRenderClassName' => null,  // Render class for view (example: Ice:Php)
-     *      'inputDefaults' => [],          // Default input data
-     *      'inputValidators' => [],        // Input data validators
-     *      'inputDataProviderKeys' => [],  // InputDataProviders keys
-     *      'outputDataProviderKeys' => [], // OutputDataProviders keys
-     *      'cacheDataProviderKey' => ''    // Cache data provider key
+    /**
+     * Action config
+     *
+     * example:
+     * ```php
+     *  $config = [
+     *      'actions' => [
+     *          ['Ice:Title', ['title' => 'page title'], 'title'],
+     *          ['Ice:Another_Action, ['param' => 'value']
+     *      ],
+     *      'view' => [
+     *          'layout' => Emmet::PANEL_BODY,
+     *          'template' => _Custom,
+     *          'viewRenderClass' => Ice:Twig,
+     *      ],
+     *      'input' => [
+     *          Request::DEFAULT_DATA_PROVIDER_KEY => [
+     *              'paramFromGETorPOST => [
+     *                  'default' => 'defaultValue',
+     *                  'validators' => ['Ice:PATTERN => PATTERN::LETTERS_ONLY]
+     *                  'type' => 'string'
+     *              ]
+     *          ]
+     *      ],
+     *      'output' => ['Ice:Resource/Ice\Action\Index'],
+     *      'ttl' => 3600,
+     *      'roles' => []
      *  ];
+     * ```
+     * @return array
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since 0
      */
-    public static $config = [
-//        'afterActions' => 'Ice:Module_Update',
-        'defaultViewRenderClassName' => 'Ice:Php',
-    ];
+    protected static function config()
+    {
+        return [
+            'view' => ['viewRenderClass' => 'Ice:Php'],
+            'input' => [
+                Cli::DEFAULT_DATA_PROVIDER_KEY => [
+                    'name' => [
+                        'default' => function ($param) {
+                            return Console::getInteractive(__CLASS__, $param,
+                                [
+                                    'default' => 'MyProject',
+                                    'title' => 'Module name [{$0}]: ',
+                                    'validators' => ['Ice:Pattern' => '/^[a-z]+$/i']
+                                ]
+                            );
+                        }
+                    ],
+                    'alias' => [
+                        'default' => function ($param) {
+                            return Console::getInteractive(__CLASS__, $param,
+                                [
+                                    'default' => 'Mp',
+                                    'title' => 'Module alias (short module name, 2-5 letters) [{$0}]: ',
+                                    'validators' => ['Ice:Pattern' => '/^[a-z]+$/i']
+                                ]
+                            );
+                        }
+                    ],
+                    'scheme' => [
+                        'default' => function ($param) {
+                            return Console::getInteractive(__CLASS__, $param,
+                                [
+                                    'default' => 'test',
+                                    'title' => 'Scheme - database name(not empty and must be exists) [{$0}]: ',
+                                    'validators' => ['Ice:Pattern' => '/^[a-z]+$/i']
+                                ]
+                            );
+                        }
+                    ],
+                    'username' => [
+                        'default' => function ($param) {
+                            return Console::getInteractive(__CLASS__, $param,
+                                [
+                                    'default' => 'root',
+                                    'title' => 'Database username [{$0}]: ',
+                                    'validators' => ['Ice:Pattern' => '/^[a-z]+$/i']
+                                ]
+                            );
+                        }
+                    ],
+                    'password' => [
+                        'default' => function ($param) {
+                            return Console::getInteractive(__CLASS__, $param,
+                                [
+                                    'default' => '',
+                                    'title' => 'Database username password [{$0}]: ',
+                                    'validators' => ['Ice:Pattern' => '/^[a-z]+$/i']
+                                ]
+                            );
+                        }
+                    ],
+                    'viewRender' => [
+                        'default' => function ($param) {
+                            return Console::getInteractive(__CLASS__, $param,
+                                [
+                                    'default' => 'Smarty',
+                                    'title' => 'Default view render (Php|Smarty|Twig)  [{$0}]: ',
+                                    'validators' => ['Ice:Pattern' => '/^(Php|Smarty|Twig)$/i']
+                                ]
+                            );
+                        }
+                    ],
+                    'vcs' => [
+                        'default' => function ($param) {
+                            return Console::getInteractive(__CLASS__, $param,
+                                [
+                                    'default' => 'mercurial',
+                                    'title' => 'Default version control system (mercurial|git|subversion)  [{$0}]: ',
+                                    'validators' => ['Ice:Pattern' => '/^(mercurial|git|subversion)$/i']
+                                ]
+                            );
+                        }
+                    ],
+                    'isWeb' => [
+                        'default' => function ($param) {
+                            return Console::getInteractive(__CLASS__, $param,
+                                [
+                                    'default' => 'web',
+                                    'title' => 'Web project or ice module (web|module) [{$0}]: ',
+                                    'validators' => [
+                                        'Ice:Pattern' => ['params' => '/^(web|module)$/i', 'message' => 'Web or Module?']
+                                    ]
+                                ]
+                            );
+                        }
+                    ]
+                 ]
+            ]
+        ];
+    }
 
     /**
      * Run action
@@ -79,58 +199,31 @@ class Module_Create extends Action
 
         // create module dir
 
-        $isWeb = empty($input['isWeb'])
-            ? Console::getInteractive(
-                __CLASS__,
-                'isWeb',
-                [
-                    'default' => 'web',
-                    'title' => 'Web project or ice module (web|module) [{$0}]: ',
-                    'validators' => [
-                        'Ice:Pattern' => [
-                            'params' => '/^(web|module)$/i',
-                            'message' => 'Web or Module?'
-                        ]
-                    ]
-                ]
-            )
-            : $input['isWeb'];
-
         $config = [];
         $environment = [];
         $action = [];
         $route = [];
 
-        if ($isWeb == 'web') {
+        if ($input['isWeb'] == 'web') {
             $defaultLocale = 'en';
 
-            $isMultiLocale = Console::getInteractive(
-                __CLASS__,
-                'isMultilocale',
+            $isMultiLocale = Console::getInteractive(__CLASS__, 'isMultilocale',
                 [
                     'default' => 'true',
                     'title' => 'Multilocale project (true|false) [{$0}]: ',
                     'validators' => [
-                        'Ice:Pattern' => [
-                            'params' => '/^(true|false)$/i',
-                            'message' => 'True or false?'
-                        ]
+                        'Ice:Pattern' => ['params' => '/^(true|false)$/i', 'message' => 'True or false?']
                     ]
                 ]
             );
 
             if ($isMultiLocale == 'true') {
-                $defaultLocale = Console::getInteractive(
-                    __CLASS__,
-                    'defaultLocale',
+                $defaultLocale = Console::getInteractive(__CLASS__, 'defaultLocale',
                     [
                         'default' => 'en',
                         'title' => 'Set default locale (en|ru) [{$0}]: ',
                         'validators' => [
-                            'Ice:Pattern' => [
-                                'params' => '/^(en|ru)$/i',
-                                'message' => 'Only en and ru available'
-                            ]
+                            'Ice:Pattern' => ['params' => '/^(en|ru)$/i', 'message' => 'Only en and ru available']
                         ]
                     ]
                 );
@@ -238,9 +331,11 @@ class Module_Create extends Action
                     'route' => '/',
                     'request' => [
                         'GET' => [
-                            'actions' => [
-                                'title' => ['Ice:Title' => ['title' => $moduleAlias]],
-                                'main' => $moduleAlias . ':Index'
+                            'Ice:Layout_Main' => [
+                                'actions' => [
+                                    ['Ice:Title', ['title' => $moduleAlias], 'title'],
+                                    [$moduleAlias . ':Index', [], 'main']
+                                ]
                             ]
                         ]
                     ],
@@ -264,7 +359,7 @@ class Module_Create extends Action
 
         $moduleDir = Directory::get(ROOT_DIR . $moduleName);
 
-        if ($isWeb == 'web') {
+        if ($input['isWeb'] == 'web') {
             copy(ICE_DIR . 'cli', $moduleDir . 'cli');
             chmod($moduleDir . 'cli', 0755);
 

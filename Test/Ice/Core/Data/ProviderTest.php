@@ -33,14 +33,18 @@ class ProviderTest extends PHPUnit_Framework_TestCase
                 $dataProviderFile == 'Router.php' ||
                 $dataProviderFile == 'Mysqli.php' ||
                 $dataProviderFile == 'Mongodb.php' ||
-                $dataProviderFile == 'Cli.php'
+                $dataProviderFile == 'Cacher.php'
             ) {
                 continue;
             }
 
             $this->assertEquals($dataProvider->set('test', '8'), $dataProvider->get('test'));
 
-            if ($dataProviderFile == 'Resource.php') {
+            if ($dataProviderFile != 'Resource.php') {
+                $this->assertNull($dataProvider->get('dsadsaldlsadlsa'));
+            }
+
+            if ($dataProviderFile == 'Resource.php' || $dataProviderFile == 'Cli.php') {
                 continue;
             }
 

@@ -11,6 +11,7 @@ namespace Ice\Core;
 
 use Ice;
 use Ice\Core;
+use Ice\Helper\Validator as Helper_Validator;
 
 /**
  * Class Validator
@@ -80,38 +81,15 @@ abstract class Validator extends Container
     public static function validateByScheme(array $data, array $validateScheme)
     {
         foreach ($validateScheme as $param => $validators) {
-            foreach ((array)$validators as $validatorName => $params) {
+            foreach ((array)$validators as $validatorName => $validatorParams) {
                 if (is_int($validatorName)) {
-                    $validatorName = $params;
-                    $params = null;
+                    $validatorName = $validatorParams;
+                    $validatorParams = null;
                 }
 
-                $exceptionClass = null;
+                $value = isset($data[$param]) ? $data[$param]: null;
 
-                /** @var Validator $validatorClass */
-                $validatorClass = Validator::getClass($validatorName);
-
-                $value = isset($data[$param])
-                    ? $data[$param]
-                    : null;
-
-                if ($validatorClass::getInstance()->validate($value, $params)) {
-                    continue;
-                }
-
-                $validator = 'Validator:' . $validatorClass::getClassName() . ' -> ';
-
-                $message = empty($params) || !isset($params['message'])
-                    ? [$validator . 'param \'{$0}\' with value \'{$1}\' is not valid', [$param, print_r($value, true)]]
-                    : [$validator . $params['message'], [$param, print_r($value, true)]];
-
-                if (!$exceptionClass) {
-                    $exceptionClass = empty($params) || !isset($params['exception'])
-                        ? Exception::getClass('Ice:Not_Valid')
-                        : Exception::getClass($params['exception']);
-                }
-
-                throw new $exceptionClass($message);
+                Helper_Validator::validate($validatorName, $validatorParams, $param, $value);
             }
         }
 

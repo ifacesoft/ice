@@ -33,27 +33,55 @@ use Ice\Helper\Object;
  */
 class Front_Ajax extends Action
 {
-    /**  public static $config = [
-     *      'afterActions' => [],          // actions
-     *      'layout' => null,               // Emmet style layout
-     *      'template' => null,             // Template of view
-     *      'output' => null,               // Output type: standard|file
-     *      'defaultViewRenderClassName' => null,  // Render class for view (example: Ice:Php)
-     *      'inputDefaults' => [],          // Default input data
-     *      'inputValidators' => [],        // Input data validators
-     *      'inputDataProviderKeys' => [],  // InputDataProviders keys
-     *      'outputDataProviderKeys' => [], // OutputDataProviders keys
-     *      'cacheDataProviderKey' => ''    // Cache data provider key
+    /**
+     * Action config
+     *
+     * example:
+     * ```php
+     *  $config = [
+     *      'actions' => [
+     *          ['Ice:Title', ['title' => 'page title'], 'title'],
+     *          ['Ice:Another_Action, ['param' => 'value']
+     *      ],
+     *      'view' => [
+     *          'layout' => Emmet::PANEL_BODY,
+     *          'template' => _Custom,
+     *          'viewRenderClass' => Ice:Twig,
+     *      ],
+     *      'input' => [
+     *          Request::DEFAULT_DATA_PROVIDER_KEY => [
+     *              'paramFromGETorPOST => [
+     *                  'default' => 'defaultValue',
+     *                  'validators' => ['Ice:PATTERN => PATTERN::LETTERS_ONLY]
+     *                  'type' => 'string'
+     *              ]
+     *          ]
+     *      ],
+     *      'output' => ['Ice:Resource/Ice\Action\Index'],
+     *      'ttl' => 3600,
+     *      'roles' => []
      *  ];
+     * ```
+     * @return array
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since 0
      */
-    public static $config = [
-        'layout' => '',
-        'defaultViewRenderClassName' => 'Ice:Json',
-        'inputDataProviderKeys' => Request::DEFAULT_DATA_PROVIDER_KEY,
-        'inputValidators' => [
-            'call' => 'Ice:Not_Empty'
-        ]
-    ];
+    protected static function config()
+    {
+        return [
+            'view' => ['viewRenderClass' => 'Ice:Json', 'layout' => ''],
+            'input' => [
+                Request::DEFAULT_DATA_PROVIDER_KEY => [
+                    'call' => ['validators' => 'Ice:Not_Empty'],
+                    'params',
+                    'back'
+                ]
+            ]
+        ];
+    }
 
     /**
      * Run action

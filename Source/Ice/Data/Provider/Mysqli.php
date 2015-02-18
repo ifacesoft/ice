@@ -148,7 +148,7 @@ class Mysqli extends Data_Provider
      * @version 0.0
      * @since 0.0
      */
-    public function set($key, $value, $ttl = null)
+    public function set($key, $value = null, $ttl = null)
     {
         throw new \Exception('Implement set() method.');
     }

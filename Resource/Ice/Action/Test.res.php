@@ -28,4 +28,12 @@ return [
         'tr' => 'test',
         'uk' => 'тест',
     ],
+    'dsadsaldlsadlsa' => [
+        'es' => 'dsadsaldlsadlsa',
+        'be' => 'dsadsaldlsadlsa',
+        'de' => 'dsadsaldlsadlsa',
+        'en' => 'dsadsaldlsadlsa',
+        'ru' => 'dsadsaldlsadlsa',
+        'uk' => 'dsadsaldlsadlsa',
+    ],
 ];

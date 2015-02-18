@@ -12,7 +12,7 @@ namespace Ice\Helper;
 use Ice\Core;
 use Ice\Core\Logger as Core_Logger;
 use Ice\Core\Resource;
-use Ice\Core\Validator;
+use Ice\Core\Validator as Core_Validator;
 
 /**
  * Class Console
@@ -148,14 +148,14 @@ class Console
                     $params = null;
                 }
 
-                if (!Validator::getInstance($validatorName)->validate($line, $params)) {
+                if (!Core_Validator::getInstance($validatorName)->validate($line, $params)) {
                     $errors++;
 
                     $message = !empty($params) && isset($params['message'])
                         ? $params['message']
                         : 'param {$0} is not valid';
 
-                    Validator::getLogger()->info([$message, $param], Core_Logger::DANGER, true, false);
+                    Core_Validator::getLogger()->info([$message, $param], Core_Logger::DANGER, true, false);
                 }
             }
 

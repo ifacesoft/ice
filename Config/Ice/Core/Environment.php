@@ -58,7 +58,7 @@ return [
             ],
             'Ice\Core\Action' => [
                 'instance' => 'Ice:Repository/action',
-                'cache' => 'Ice:Cache/action'
+                'cache' => 'Ice:Repository/action'
             ],
             'Ice\Core\Route' => [
                 'instance' => 'Ice:Repository/route',
@@ -88,8 +88,8 @@ return [
             ],
             'Ice\Core\Query' => [
                 'instance' => 'Ice:Repository/query',
-                'sql' => 'Ice:Cache/query',
-                'query' => 'Ice:Cache/query',
+                'sql' => 'Ice:Repository/query',
+                'query' => 'Ice:Repository/query',
             ],
             'Ice\Core\Code_Generator' => [
                 'instance' => 'Ice:Repository/code_generator',
@@ -108,11 +108,11 @@ return [
                 'instance' => 'Ice:Repository/validator',
             ],
             'Ice\Core\Cache' => [
-                'tags' => 'Ice:Cache/cache',
+                'tags' => 'Ice:Repository/cache',
             ],
             'Ice\Core\View' => [
                 'instance' => 'Ice:Repository/view',
-                'view' => 'Ice:Cache/view',
+                'view' => 'Ice:Repository/view',
             ],
             'Ice\Core\Resource' => [
                 'instance' => 'Ice:Repository/resource'
@@ -121,7 +121,7 @@ return [
                 'instance' => 'Ice:Repository/module'
             ],
             'Ice\Core\Session' => [
-                'session' => 'Ice:Cache/session'
+                'session' => 'Ice:Repository/session'
             ]
         ],
     ],

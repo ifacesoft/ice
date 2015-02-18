@@ -12,6 +12,7 @@ namespace Ice\Data\Provider;
 use ArrayObject;
 use Ice\Core\Data_Provider;
 use Ice\Core\Exception;
+use Ice\Core\Logger;
 
 /**
  * Class Registry
@@ -141,17 +142,17 @@ class Registry extends Data_Provider
      * @version 0.0
      * @since 0.0
      */
-    public function set($key, $value, $ttl = -1)
+    public function set($key, $value = null, $ttl = 0)
     {
-        if ($ttl == -1) {
-            return $value;
-        }
-
-        if (is_array($key)) {
-            foreach ($key as $k => $item) {
-                $this->set($key, $item, $ttl);
+        if (is_array($key) && $value === null) {
+            foreach ($key as $index => $value) {
+                $this->set($index, $value, $ttl);
             }
 
+            return $key;
+        }
+
+        if ($ttl == -1) {
             return $value;
         }
 

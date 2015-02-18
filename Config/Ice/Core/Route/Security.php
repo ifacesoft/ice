@@ -5,9 +5,11 @@ return [
         'route' => '/login',
         'request' => [
             'GET' => [
-                'actions' => [
-                    'title' => ['Ice:Title' => ['title' => 'Login']],
-                    'main' => 'Ice:Security_Login'
+                'Ice:Layout_Main' => [
+                    'actions' => [
+                        ['Ice:Title', ['title' => 'Login'], 'title'],
+                        ['Ice:Security_Login', [], 'main']
+                    ]
                 ]
             ]
         ]
@@ -16,9 +18,11 @@ return [
         'route' => '/logout',
         'request' => [
             'GET' => [
-                'actions' => [
-                    'title' => ['Ice:Title' => ['title' => 'Logout']],
-                    'main' => 'Ice:Security_Logout'
+                'Ice:Layout_Main' => [
+                    'actions' => [
+                        ['Ice:Title', ['title' => 'Logout'], 'title'],
+                        ['Ice:Security_Logout', [], 'main']
+                    ]
                 ]
             ]
         ]
@@ -27,9 +31,11 @@ return [
         'route' => '/register',
         'request' => [
             'GET' => [
-                'actions' => [
-                    'title' => ['Ice:Title' => ['title' => 'Register']],
-                    'main' => 'Ice:Security_Register'
+                'Ice:Layout_Main' => [
+                    'actions' => [
+                        ['Ice:Title', ['title' => 'Register'], 'title'],
+                        ['Ice:Security_Register', [], 'main']
+                    ]
                 ]
             ]
         ]

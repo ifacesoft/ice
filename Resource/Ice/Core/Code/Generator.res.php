@@ -49,6 +49,7 @@ return [
     ],
     'Template {$0} {$1} already created' => [
         'en' => 'Template {$0} {$1} already created',
+        'ru' => 'Template {$0} {$1} already created',
     ],
     'Action {$0} already created' => [
         'ru' => 'Action {$0} already created',

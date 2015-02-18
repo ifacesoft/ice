@@ -32,37 +32,63 @@ use Ice\Helper\Arrays;
  */
 class Form_Model extends Action
 {
-    /**  public static $config = [
-     *      'afterActions' => [],          // actions
-     *      'layout' => null,               // Emmet style layout
-     *      'template' => null,             // Template of view
-     *      'output' => null,               // Output type: standard|file
-     *      'defaultViewRenderClassName' => null,  // Render class for view (example: Ice:Php)
-     *      'inputDefaults' => [],          // Default input data
-     *      'inputValidators' => [],        // Input data validators
-     *      'inputDataProviderKeys' => [],  // InputDataProviders keys
-     *      'outputDataProviderKeys' => [], // OutputDataProviders keys
-     *      'cacheDataProviderKey' => ''    // Cache data provider key
+    /**
+     * Action config
+     *
+     * example:
+     * ```php
+     *  $config = [
+     *      'actions' => [
+     *          ['Ice:Title', ['title' => 'page title'], 'title'],
+     *          ['Ice:Another_Action, ['param' => 'value']
+     *      ],
+     *      'view' => [
+     *          'layout' => Emmet::PANEL_BODY,
+     *          'template' => _Custom,
+     *          'viewRenderClass' => Ice:Twig,
+     *      ],
+     *      'input' => [
+     *          Request::DEFAULT_DATA_PROVIDER_KEY => [
+     *              'paramFromGETorPOST => [
+     *                  'default' => 'defaultValue',
+     *                  'validators' => ['Ice:PATTERN => PATTERN::LETTERS_ONLY]
+     *                  'type' => 'string'
+     *              ]
+     *          ]
+     *      ],
+     *      'output' => ['Ice:Resource/Ice\Action\Index'],
+     *      'ttl' => 3600,
+     *      'roles' => []
      *  ];
+     * ```
+     * @return array
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since 0
      */
-    public static $config = [
-        'defaultViewRenderClassName' => 'Ice:Smarty',
-        'inputValidators' => [
-            'submitTitle' => 'Ice:Not_Empty',
-            'modelClassName' => 'Ice:Not_Empty',
-            'pk' => 'Ice:Not_Null',
-            'formFilterFields' => 'Ice:Not_Empty'
-        ],
-        'inputDefaults' => [
-            'grouping' => 1,
-            'submitActionName' => 'Ice:Form_Submit',
-            'reRenderClosest' => 'Ice:Form_Model',
-            'reRenderActionNames' => [],
-            'redirect' => '',
-            'params' => []
-        ],
-//        'layout' => Emmet::PANEL_BODY
-    ];
+    protected static function config()
+    {
+        return [
+            'view' => ['viewRenderClass' => 'Ice:Smarty'],
+            'input' => [
+                'default' => [
+                    'submitTitle' => ['validators' => 'Ice:Not_Empty'],
+                    'modelClassName' => ['validators' => 'Ice:Not_Empty'],
+                    'pk' => ['validators' => 'Ice:Not_Null'],
+                    'formFilterFields' => ['validators' => 'Ice:Not_Empty'],
+                    'grouping' => ['default' => 1],
+                    'submitActionName' => ['default' => 'Ice:Form_Submit'],
+                    'reRenderClosest' => ['default' => 'Ice:Form_Model'],
+                    'reRenderActionNames' => ['default' => []],
+                    'redirect' => ['default' => ''],
+                    'params' => ['default' => []]
+
+                ]
+            ]
+        ];
+    }
 
     /**
      * Run action

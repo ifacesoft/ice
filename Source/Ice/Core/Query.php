@@ -11,7 +11,6 @@ namespace Ice\Core;
 
 use Ice;
 use Ice\Core;
-use Ice\Data\Provider\Cacher;
 use Ice\Helper\Json;
 
 /**

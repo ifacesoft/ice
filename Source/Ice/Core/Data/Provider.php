@@ -330,7 +330,7 @@ abstract class Data_Provider
      * @version 0
      * @since 0
      */
-    abstract public function set($key, $value, $ttl = null);
+    abstract public function set($key, $value = null, $ttl = null);
 
     /**
      * Delete from data provider by key

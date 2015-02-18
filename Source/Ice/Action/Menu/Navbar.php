@@ -15,32 +15,56 @@ use Ice\View\Render\Php;
  * @package Ice\Action;
  *
  * @author dp <denis.a.shestakov@gmail.com>
- *
- * @version 0.1
- * @since 0.1
  */
 class Menu_Navbar extends Action
 {
-    /**  public static $config = [
-     *      'afterActions' => [],          // actions
-     *      'layout' => null,               // Emmet style layout
-     *      'template' => null,             // Template of view
-     *      'output' => null,               // Output type: standard|file
-     *      'defaultViewRenderClassName' => null,  // Render class for view (example: Ice:Php)
-     *      'inputDefaults' => [],          // Default input data
-     *      'inputValidators' => [],        // Input data validators
-     *      'inputDataProviderKeys' => [],  // InputDataProviders keys
-     *      'outputDataProviderKeys' => [], // OutputDataProviders keys
-     *      'cacheDataProviderKey' => ''    // Cache data provider key
+    /**
+     * Action config
+     *
+     * example:
+     * ```php
+     *  $config = [
+     *      'actions' => [
+     *          ['Ice:Title', ['title' => 'page title'], 'title'],
+     *          ['Ice:Another_Action, ['param' => 'value']
+     *      ],
+     *      'view' => [
+     *          'layout' => Emmet::PANEL_BODY,
+     *          'template' => _Custom,
+     *          'viewRenderClass' => Ice:Twig,
+     *      ],
+     *      'input' => [
+     *          Request::DEFAULT_DATA_PROVIDER_KEY => [
+     *              'paramFromGETorPOST => [
+     *                  'default' => 'defaultValue',
+     *                  'validators' => ['Ice:PATTERN => PATTERN::LETTERS_ONLY]
+     *                  'type' => 'string'
+     *              ]
+     *          ]
+     *      ],
+     *      'output' => ['Ice:Resource/Ice\Action\Index'],
+     *      'ttl' => 3600,
+     *      'roles' => []
      *  ];
+     * ```
+     * @return array
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since 0
      */
-    public static $config = [
-        'defaultViewRenderClassName' => 'Ice:Php',
-        'inputValidators' => [
-            'menu' => 'Ice:Is_Menu'
-        ],
-        'layout' => 'div.Menu_Navbar.collapse.navbar-collapse'
-    ];
+    protected static function config()
+    {
+        return [
+            'view' => ['viewRenderClass' => 'Ice:Php', 'layout' => 'div.Menu_Navbar.collapse.navbar-collapse'],
+            'input' => [
+                'default' => [
+                    'menu' => ['validators' => 'Ice:Is_Menu']
+                ]
+            ]
+        ];
+    }
 
     /**
      * Run action

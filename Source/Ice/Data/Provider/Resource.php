@@ -128,8 +128,16 @@ class Resource extends Data_Provider
      * @version 0.5
      * @since 0.5
      */
-    public function set($key, $value, $ttl = null)
+    public function set($key, $value = null, $ttl = null)
     {
+        if (is_array($key) && $value === null) {
+            foreach ($key as $index => $value) {
+                $this->set($index, $value, $ttl);
+            }
+
+            return $key;
+        }
+
         return $this->getConnection()['resource'][$this->getResourceKey()]->set($key, $value);
     }
 

@@ -11,14 +11,13 @@ namespace Ice\Core;
 
 use Ice;
 use Ice\Core;
-use Ice\Data\Provider\Cacher;
 use Ice\Data\Provider\Registry;
 use Ice\Data\Provider\Repository;
 use Ice\Exception\Http_Bad_Request;
 use Ice\Exception\Http_Not_Found;
 use Ice\Exception\Redirect;
 use Ice\Helper\Json;
-use Ice\Helper\Php;
+use Ice\Helper\Action as Helper_Action;
 
 /**
  * Class Action
@@ -60,14 +59,25 @@ abstract class Action
      * example:
      * ```php
      *  $config = [
-     *      'actions' => [],
-     *      'view' => [
-     *          'layout' => null,
-     *          'template' => null,
-     *          'viewRenderClass' => null,
+     *      'actions' => [
+     *          ['Ice:Title', ['title' => 'page title'], 'title'],
+     *          ['Ice:Another_Action, ['param' => 'value']
      *      ],
-     *      'input' => [],
-     *      'output' => [],
+     *      'view' => [
+     *          'layout' => Emmet::PANEL_BODY,
+     *          'template' => _Custom,
+     *          'viewRenderClass' => Ice:Twig,
+     *      ],
+     *      'input' => [
+     *          Request::DEFAULT_DATA_PROVIDER_KEY => [
+     *              'paramFromGETorPOST => [
+     *                  'default' => 'defaultValue',
+     *                  'validators' => ['Ice:PATTERN => PATTERN::LETTERS_ONLY]
+     *                  'type' => 'string'
+     *              ]
+     *          ]
+     *      ],
+     *      'output' => ['Ice:Resource/Ice\Action\Index'],
      *      'ttl' => 3600,
      *      'roles' => []
      *  ];
@@ -81,18 +91,7 @@ abstract class Action
      */
     protected static function config()
     {
-        return [
-            'actions' => [],
-            'view' => [
-                'layout' => null,
-                'template' => null,
-                'viewRenderClass' => null,
-            ],
-            'input' => [],
-            'output' => [],
-            'ttl' => 3600,
-            'roles' => []
-        ];
+        return [];
     }
 
     /**
@@ -136,21 +135,6 @@ abstract class Action
     }
 
     /**
-     * Return action cacher
-     *
-     * @return Cacher
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since 0.5
-     */
-    public static function getCacher()
-    {
-        return Cacher::getInstance(__CLASS__, self::getClass());
-    }
-
-    /**
      * Return action registry
      *
      * @return Registry
@@ -168,7 +152,7 @@ abstract class Action
     /**
      * Get action object by name
      *
-     * @param array $input
+     * @param array $data
      * @return Action
      * @throws Redirect
      *
@@ -177,9 +161,24 @@ abstract class Action
      * @version 0.5
      * @since 0.0
      */
-    public static function create($input = [])
+    public static function create($data = [])
     {
-        foreach (self::getConfig()->gets('input') as $dataProviderKey => $params) {
+        $input = [];
+
+        foreach (self::getConfig()->gets('input', false) as $dataProviderKey => $params) {
+            if ($dataProviderKey == 'default') {
+                foreach ((array)$params as $name => $param) {
+                    if (is_int($name)) {
+                        $name = $param;
+                        $param = null;
+                    }
+
+                    $input[$name] = Helper_Action::getInputParam($name, isset($data[$name]) ? $data[$name] : null, $param);
+                }
+
+                continue;
+            }
+
             $dataProvider = Data_Provider::getInstance($dataProviderKey);
 
             foreach ((array)$params as $name => $param) {
@@ -188,29 +187,7 @@ abstract class Action
                     $param = null;
                 }
 
-                $input[$name] = $dataProvider->get($name);
-
-                if (is_array($param)) {
-                    if ($input[$name] === null && isset($param['default'])) {
-                        $input[$name] = $param['default'];
-                    }
-
-                    if (isset($param['type'])) {
-                        $input[$name] = Php::castTo($param['type'], $input[$name]);
-                    }
-
-                    if (isset($param['validators'])) {
-                        foreach ((array)$param['validators'] as $validatorClass => $validatorParams) {
-                            if (is_int($validatorClass)) {
-                                $validatorClass = $validatorParams;
-                                $validatorParams = null;
-                            }
-
-                            $validatorClass = Validator::getClass($validatorClass);
-                            $validatorClass::getInstance()->validate($input[$name], $validatorParams);
-                        }
-                    }
-                }
+                $input[$name] = Helper_Action::getInputParam($name, $dataProvider->get($name), $param);
             }
         }
 
@@ -262,13 +239,15 @@ abstract class Action
         try {
             $config = $actionClass::getConfig();
 
+//            Logger::debug($config);die();
+
             $actionContext->initAction($actionClass, $this->_inputHash);
 
             $cacher = View::getCacher();
 
-            if ($view = $cacher->get($this->_inputHash)) {
-                return $view;
-            }
+//            if ($view = $cacher->get($this->_inputHash)) {
+//                return $view;
+//            }
 
             $actionContext->addAction($config->gets('afterActions', false));
 
@@ -334,12 +313,12 @@ abstract class Action
 
             $viewData = $actionContext->getViewData();
 
-            $template = $config->get('template', false);
+            $template = $config->get('view/template', false);
             if (!empty($template)) {
                 $viewData['template'] = $template;
             }
 
-            $defaultViewRenderClassName = $config->get('defaultViewRenderClassName', false);
+            $defaultViewRenderClassName = $config->get('view/viewRenderClass', false);
             if (!empty($defaultViewRenderClassName)) {
                 $viewData['defaultViewRenderClassName'] = $defaultViewRenderClassName;
             }

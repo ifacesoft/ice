@@ -3,6 +3,7 @@
 namespace Ice\Core;
 
 use Ice\Action\Front;
+use Ice\Data\Provider\Router;
 use PHPUnit_Framework_TestCase;
 
 class ActionTest extends PHPUnit_Framework_TestCase
@@ -10,8 +11,14 @@ class ActionTest extends PHPUnit_Framework_TestCase
     public function testActionRun()
     {
         $_SERVER['REQUEST_URI'] = '/ice/test';
+        $router = Router::getInstance();
+        $route = Route::getInstance($router->get('routeName'));
+        $method = $route->gets('request/' . $router->get('method'));
 
-        $this->assertEquals(Front::getInstance()->call(Action_Context::create())->getContent(), 'Layout Test
+        /** @var Action $actionClass */
+        list($actionClass, $input) = each($method);
+
+        $this->assertEquals($actionClass::create($input)->call(Action_Context::create())->getContent(), 'Layout Test
 
 inputTestPhp1
 testPhpOk

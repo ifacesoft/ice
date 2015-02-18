@@ -70,18 +70,18 @@ class Cli extends Data_Provider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.5
      * @since 0.0
      */
     public function get($key = null)
     {
-        $connection = $this->getConnection();
+        $this->getConnection();
 
-        if (!$connection) {
-            return null;
+        if (!$key) {
+            return $_SERVER['argv'];
         }
 
-        return $key ? $connection[$key] : $connection;
+        return isset($_SERVER['argv'][$key]) ? $_SERVER['argv'][$key] : null;
     }
 
     /**
@@ -95,12 +95,22 @@ class Cli extends Data_Provider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.5
      * @since 0.0
      */
-    public function set($key, $value, $ttl = null)
+    public function set($key, $value = null, $ttl = null)
     {
-        throw new \Exception('Implement set() method.');
+        if (is_array($key) && $value === null) {
+            foreach ($key as $index => $value) {
+                $this->set($index, $value, $ttl);
+            }
+
+            return $key;
+        }
+
+        $this->getConnection();
+
+        return $_SERVER['argv'][$key] = $value;
     }
 
     /**
@@ -203,31 +213,36 @@ class Cli extends Data_Provider
 
         array_shift($_SERVER['argv']);
 
-        if (!isset($connection['actionClass'])) {
-            $connection['actionClass'] = Action::getClass(array_shift($_SERVER['argv']));
-        }
-
-        foreach ($_SERVER['argv'] as $arg) {
+        foreach ($_SERVER['argv'] as $key => $arg) {
             $param = explode('=', $arg);
 
-            if (isset($connection['actionClass']) && count($param) != 2) {
-                Cli::getLogger()->info('Invalid command line. Invalid params. Usage: ./cli Mp:Action_Name param=value', Logger::WARNING);
-                continue;
+            if (!isset($connection['actionClass'])) {
+                if (count($param) == 1) {
+                    $connection['actionClass'] = Action::getClass($arg);
+                    unset($_SERVER['argv'][$key]);
+                    continue;
+                }
+
+                if (count($param) == 2) {
+                    list($param, $value) = $param;
+
+                    if ($param == 'action') {
+                        $connection['actionClass'] = Action::getClass($value);
+                        unset($_SERVER['argv'][$key]);
+                        continue;
+                    }
+                }
             }
 
-            list($param, $value) = $param;
+            if (count($param) == 2) {
+                list($param, $value) = $param;
 
-//            if ($param == 'actionClass') {
-//                if (!strpos($value, ':')) {
-//                    try {
-//                        Loader::getFilePath($value, '.php', 'Source/');
-//                    } catch (File_Not_Found $e) {
-//                        $value = Module::getInstance()->getAlias() . ':' . $value;
-//                    }
-//                }
-//            }
+                $connection[$param] = $value;
+            } else {
+                Cli::getLogger()->info(['Invalid command line. Invalid params \'{$0}\'. Usage: ./cli Mp:Action_Name param=value', $arg], Logger::WARNING);
+            }
 
-            $connection[$param] = $value;
+            unset($_SERVER['argv'][$key]);
         }
 
         if (!isset($connection['actionClass'])) {
@@ -235,7 +250,9 @@ class Cli extends Data_Provider
             exit;
         }
 
-        return true;
+        $_SERVER['argv'] = $connection;
+
+        return $connection;
     }
 
     /**
