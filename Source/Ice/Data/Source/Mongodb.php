@@ -4,7 +4,6 @@ namespace Ice\Data\Source;
 
 use Ice\Core\Data_Provider;
 use Ice\Core\Data_Source;
-use Ice\Core\Logger;
 use Ice\Core\Model;
 use Ice\Core\Query;
 use Ice\Core\Query_Result;
@@ -203,9 +202,7 @@ class Mongodb extends Data_Source
 
         $this->getConnection()->$tableName;
 
-        $data[Query_Result::QUERY] = $query;
-
-        return $data;
+        return [];
     }
 
     /**
@@ -226,9 +223,7 @@ class Mongodb extends Data_Source
 
         $this->getConnection()->$tableName->drop();
 
-        $data[Query_Result::QUERY] = $query;
-
-        return $data;
+        return [];
     }
 
     /**

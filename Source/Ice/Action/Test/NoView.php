@@ -3,7 +3,6 @@ namespace Ice\Action;
 
 
 use Ice\Core\Action;
-use Ice\Core\Action_Context;
 
 class Test_NoView extends Action
 {
@@ -53,7 +52,6 @@ class Test_NoView extends Action
     /** Run action
      *
      * @param array $input
-     * @param Action_Context $actionContext
      * @return array
      *
      * @author anonymous <email>
@@ -61,7 +59,7 @@ class Test_NoView extends Action
      * @version 0
      * @since 0
      */
-    protected function run(array $input, Action_Context $actionContext)
+    protected function run(array $input)
     {
     }
 }

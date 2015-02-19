@@ -12,7 +12,6 @@ namespace Ice\Action;
 use CSSmin;
 use Ice;
 use Ice\Core\Action;
-use Ice\Core\Action_Context;
 use Ice\Core\Data_Provider;
 use Ice\Core\Loader;
 use Ice\Core\Module;
@@ -97,18 +96,22 @@ class Resources extends Action
                                         'css' => ['empty.css'],
                                         'isCopy' => false,
                                     ],
+                                    'vendor' => [
+                                        'path' => 'vendor/',
+                                        'js' => [],
+                                        'css' => [],
+                                        'isCopy' => false,
+                                    ],
+                                    'common' => [
+                                        'path' => '',
+                                        'js' => [],
+                                        'css' => ['css/flags.css', 'css/preloader.css'],
+                                        'isCopy' => false,
+                                    ],
                                     'module' => [
                                         'path' => 'Ice/',
                                         'js' => ['Helper/String.js'],
                                         'css' => [],
-                                        'isCopy' => false,
-                                    ],
-                                ],
-                                'Wi' => [
-                                    'module' => [
-                                        'path' => '',
-                                        'js' => [/*'js/javascript.js'*/],
-                                        'css' => ['css/style.css'],
                                         'isCopy' => false,
                                     ],
                                 ],
@@ -205,7 +208,6 @@ class Resources extends Action
      * Run action
      *
      * @param array $input
-     * @param Action_Context $actionContext
      * @return array
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -213,7 +215,7 @@ class Resources extends Action
      * @version 0.0
      * @since 0.0
      */
-    protected function run(array $input, Action_Context $actionContext)
+    protected function run(array $input)
     {
         $resources = [
             'js' => [],
@@ -242,7 +244,6 @@ class Resources extends Action
                     'css_replace' => []
                 ];
             }
-
 
             if (file_exists($imgSource = $modulePath . 'Resource/img')) {
                 Directory::copy($imgSource, Directory::get(RESOURCE_DIR . 'img'));
@@ -289,9 +290,7 @@ class Resources extends Action
                         $resources['js'][] = [
                             'source' => $source . ltrim($resource, '-'),
                             'resource' => $jsResource,
-                            'url' => $resourceItemPath
-                                ? '/resource/' . $res . $resourceKey . '.pack.js'
-                                : '/resource/' . $name . '/javascript.pack.js',
+                            'url' => '/resource/' . $res . $resourceKey . '.pack.js',
                             'pack' => $resource[0] != '-'
                         ];
                     }
@@ -302,9 +301,7 @@ class Resources extends Action
                         $resources['css'][] = [
                             'source' => $source . ltrim($resource, '-'),
                             'resource' => $cssResource,
-                            'url' => $resourceItemPath
-                                ? '/resource/' . $res . $resourceKey . '.pack.css'
-                                : '/resource/' . $name . '/style.pack.css',
+                            'url' => '/resource/' . $res . $resourceKey . '.pack.css',
                             'pack' => $resource[0] != '-',
                             'css_replace' => $css_replace
                         ];
@@ -326,7 +323,7 @@ class Resources extends Action
         $jsResource = Directory::get(RESOURCE_DIR . $jsRes) . $jsFile;
         $cssResource = Directory::get(RESOURCE_DIR . $cssRes) . $cssFile;
 
-        $callStack = $actionContext->getFullStack();
+        $callStack = Ice::getContext()->getFullStack();
 
         foreach (array_keys($callStack) as $actionClass) {
             if (file_exists($jsSource = Loader::getFilePath($actionClass, '.js', 'Resource/', false))) {
@@ -419,6 +416,8 @@ class Resources extends Action
         $handlers = [];
 
         $CSSmin = new CSSMin();
+
+//        Ice\Core\Logger::debug($resources['css']);
 
         foreach ($resources['js'] as $resource) {
             if (!isset($handlers[$resource['resource']])) {

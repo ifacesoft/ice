@@ -16,8 +16,8 @@ use Ice\Data\Provider\Repository;
 use Ice\Exception\Http_Bad_Request;
 use Ice\Exception\Http_Not_Found;
 use Ice\Exception\Redirect;
-use Ice\Helper\Json;
 use Ice\Helper\Action as Helper_Action;
+use Ice\Helper\Json;
 
 /**
  * Class Action
@@ -39,18 +39,33 @@ abstract class Action
     private $_inputHash = null;
 
     /**
+     * Child Actions
+     *
+     * Will be runned after current action
+     *
+     * @var array
+     */
+    private $_actions = [];
+    private $_template = null;
+
+    /**
      * Private constructor of action
      *
+     * @param array $input
+     * @param array $actions
+     *
+     * @param $template
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.5
      * @since 0.0
-     * @param array $input
      */
-    private function __construct(array $input)
+    private function __construct(array $input, array $actions, $template)
     {
         $this->_input = $input;
         $this->_inputHash = md5(Json::encode($input));
+        $this->_actions = $actions;
+        $this->_template = $template;
     }
 
     /**
@@ -163,6 +178,21 @@ abstract class Action
      */
     public static function create($data = [])
     {
+        if (isset($data['response'])) {
+            if (isset($data['response']['contentType'])) {
+                Ice::getResponse()->setContentType($data['response']['contentType']);
+            }
+
+            if (isset($data['response']['statusCode'])) {
+                Ice::getResponse()->setStatusCode($data['response']['statusCode']);
+            }
+
+            unset($data['response']);
+        }
+
+        $actions = isset($data['actions']) ? $data['actions'] : [];
+        $template = isset($data['template']) ? $data['template'] : null;
+
         $input = [];
 
         foreach (self::getConfig()->gets('input', false) as $dataProviderKey => $params) {
@@ -197,13 +227,12 @@ abstract class Action
 
         $actionClass = self::getClass();
 
-        return new $actionClass($input);
+        return new $actionClass($input, $actions, $template);
     }
 
     /**
      * Calling action
      *
-     * @param Action_Context $actionContext
      * @param int $level
      * @return View|null|string
      * @throws Redirect
@@ -213,21 +242,9 @@ abstract class Action
      * @version 0.0
      * @since 0.0
      */
-    public function call(Action_Context $actionContext, $level = 0)
+    public function call($level = 0)
     {
         $startTime = Logger::microtime();
-
-        if (isset($this->_input['response'])) {
-            if (isset($this->_input['response']['contentType'])) {
-                $actionContext->getResponse()->setContentType($this->_input['response']['contentType']);
-            }
-
-            if (isset($this->_input['response']['statusCode'])) {
-                $actionContext->getResponse()->setStatusCode($this->_input['response']['statusCode']);
-            }
-
-            unset($this->_input['response']);
-        }
 
         /** @var Action $actionClass */
         $actionClass = get_class($this);
@@ -239,7 +256,7 @@ abstract class Action
         try {
             $config = $actionClass::getConfig();
 
-//            Logger::debug($config);die();
+            $actionContext = Ice::getContext();
 
             $actionContext->initAction($actionClass, $this->_inputHash);
 
@@ -249,9 +266,32 @@ abstract class Action
 //                return $view;
 //            }
 
-            $actionContext->addAction($config->gets('afterActions', false));
+            $actions = $this->_actions;
+            $this->_actions = [];
+
+            $template = $config->get('view/template' , false);
+
+            if ($template !== null) {
+                $this->_template = $template;
+            }
 
             $params = $this->getParams($config->gets('outputDataProviderKeys', false), (array)$this->run($this->_input, $actionContext));
+
+            foreach ($actions as $key => $action) {
+                if (is_string($action)) {
+                    $action = [$key => $action];
+                }
+
+                $this->addAction($action);
+            }
+
+            foreach ($config->gets('actions', false) as $key => $action) {
+                if (is_string($action)) {
+                    $action = [$key => $action];
+                }
+
+                $this->addAction($action);
+            }
 
             $finishTime = Logger::microtimeResult($startTime, true);
 
@@ -262,31 +302,14 @@ abstract class Action
 
             $startTimeAfter = Logger::microtime();
 
-            foreach ($actionContext->getActions() as $subActionName => $actionData) {
-                if ($subActionName[0] == '_') {
-                    $subActionName = $actionClass . $subActionName;
-                }
-
+            foreach ($this->_actions as $subActionKey => $actionData) {
                 $newLevel = $level + 1;
 
-                /** @var Action $subActionClass */
-                $subActionClass = Action::getClass($subActionName);
-
-                $isThread = in_array(Action_Thread::getClass(), class_parents($subActionClass));
-
-                foreach ($actionData as $subActionKey => $subActionParams) {
-                    if ($isThread) {
-//                        $actionContext->initAction($subActionClass, Hash::get($subActionParams, Hash::HASH_CRC32))->commit();
-                        array_walk($subActionParams, function (&$value, $key) {
-                            return $value = $key . '=' . $value;
-                        });
-                        continue;
-                    }
-
+                foreach ($actionData as $subActionClass => $subActionParams) {
                     $subView = null;
 
                     try {
-                        $subView = $subActionClass::create($subActionParams)->call($actionContext, $newLevel);
+                        $subView = $subActionClass::create($subActionParams)->call($newLevel);
                     } catch (Redirect $e) {
                         throw $e;
                     } catch (Http_Bad_Request $e) {
@@ -294,11 +317,11 @@ abstract class Action
                     } catch (Http_Not_Found $e) {
                         throw $e;
                     } catch (\Exception $e) {
-                        $subView = self::getLogger()->error(['Calling subAction "{$0}" in action "{$1}" failed', [$subActionName, $actionClass]], __FILE__, __LINE__, $e);
+                        $subView = self::getLogger()->error(['Calling subAction "{$0}" in action "{$1}" failed', [$subActionClass, $actionClass]], __FILE__, __LINE__, $e);
                     }
 
                     if (is_int($subActionKey)) {
-                        $params[$subActionClass::getClassName()][$subActionKey] = $subView;
+                        $params[$subActionClass::getClassName()][] = $subView;
                     } else {
                         $params[$subActionKey] = $subView;
                     }
@@ -313,19 +336,14 @@ abstract class Action
 
             $viewData = $actionContext->getViewData();
 
-            $template = $config->get('view/template', false);
-            if (!empty($template)) {
-                $viewData['template'] = $template;
-            }
+            $viewData['template'] = $this->_template;
 
             $defaultViewRenderClassName = $config->get('view/viewRenderClass', false);
             if (!empty($defaultViewRenderClassName)) {
                 $viewData['defaultViewRenderClassName'] = $defaultViewRenderClassName;
             }
 
-            if (isset($this->_input['template'])) {
-                $viewData['template'] = $this->_input['template'];
-            }
+            $viewData['layout'] = $config->get('view/layout', false);
 
             $view = $cacher->set($this->_inputHash, $this->flush(View::create($viewData)));
 
@@ -427,7 +445,6 @@ abstract class Action
      * /** Run action
      *
      * @param array $input
-     * @param Action_Context $actionContext
      * @return array
      *
      * @author anonymous <email>
@@ -435,5 +452,57 @@ abstract class Action
      * @version 0
      * @since 0
      */
-    abstract protected function run(array $input, Action_Context $actionContext);
+    abstract protected function run(array $input);
+
+    /**
+     * Add child action
+     *
+     * @param $actionName
+     * @param array $params
+     * @param string|null $key
+     * @return Action
+     * @throws Exception
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.0
+     */
+    protected function addAction($actionName, array $params = [], $key = null)
+    {
+        if (empty($actionName)) {
+            return $this;
+        }
+
+        if (is_string($actionName)) {
+            $actionName = $actionName[0] == '_'
+                ? get_class($this) . $actionName
+                : Action::getClass($actionName);
+
+            if (!empty($key) && is_string($key)) {
+                $this->_actions[$key] = [$actionName => $params];
+            } else {
+                $this->_actions[] = [$actionName => $params];
+            }
+
+            return $this;
+        }
+
+        if (is_array($actionName)) {
+            list($key, $name) = each($actionName);
+
+            if (count($actionName) == 1) {
+                return $this->addAction($name, [], $key);
+            }
+
+            return $this->addAction($name, current($actionName), $key);
+        }
+
+        return $this;
+    }
+
+    protected function setTemplate($template)
+    {
+        $this->_template = $template;
+    }
 }

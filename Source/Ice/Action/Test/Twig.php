@@ -2,7 +2,6 @@
 namespace Ice\Action;
 
 use Ice\Core\Action;
-use Ice\Core\Action_Context;
 
 class Test_Twig extends Action
 {
@@ -45,14 +44,16 @@ class Test_Twig extends Action
     protected static function config()
     {
         return [
-            'view' => ['viewRenderClass' => 'Ice:Twig']
+            'view' => ['viewRenderClass' => 'Ice:Twig'],
+            'input' => [
+                'default' => ['inputTestTwig']
+            ]
         ];
     }
 
     /** Run action
      *
      * @param array $input
-     * @param Action_Context $actionContext
      * @return array
      *
      * @author anonymous <email>
@@ -60,7 +61,7 @@ class Test_Twig extends Action
      * @version 0
      * @since 0
      */
-    protected function run(array $input, Action_Context $actionContext)
+    protected function run(array $input)
     {
         return [
             'inputTestTwig' => $input['inputTestTwig'],

@@ -3,7 +3,6 @@ namespace Ice\Action;
 
 use Ice\Core;
 use Ice\Core\Action;
-use Ice\Core\Action_Context;
 use Ice\Core\Data as Core_Data;
 use Ice\Helper\Arrays;
 use Ice\Helper\Emmet;
@@ -75,7 +74,6 @@ class Data extends Action
      * Run action
      *
      * @param array $input
-     * @param Action_Context $actionContext
      * @return array
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -83,7 +81,7 @@ class Data extends Action
      * @version 0.2
      * @since 0.0
      */
-    protected function run(array $input, Action_Context $actionContext)
+    protected function run(array $input)
     {
         /** @var Core_Data $form */
         $data = $input['data'];

@@ -10,7 +10,6 @@
 namespace Ice\Action;
 
 use Ice\Core\Action;
-use Ice\Core\Action_Context;
 use Ice\Helper\Console;
 use Ice\Helper\Directory;
 
@@ -80,7 +79,6 @@ class Phpuml_Generate extends Action
     /** Run action
      *
      * @param array $input
-     * @param Action_Context $actionContext
      * @return array
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -88,7 +86,7 @@ class Phpuml_Generate extends Action
      * @version 0.2
      * @since 0.0
      */
-    protected function run(array $input, Action_Context $actionContext)
+    protected function run(array $input)
     {
         Console::run('cd ' . VENDOR_DIR . $input['vendor'] . ' && ' . $input['script'] . ' ' . $input['sourceDir'] . ' -o ' . Directory::get($input['umlDir']));
     }

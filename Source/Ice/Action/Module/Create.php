@@ -10,7 +10,6 @@
 namespace Ice\Action;
 
 use Ice\Core\Action;
-use Ice\Core\Action_Context;
 use Ice\Core\Logger;
 use Ice\Data\Provider\Cli;
 use Ice\Helper\Console;
@@ -169,7 +168,7 @@ class Module_Create extends Action
                             );
                         }
                     ]
-                 ]
+                ]
             ]
         ];
     }
@@ -178,7 +177,6 @@ class Module_Create extends Action
      * Run action
      *
      * @param array $input
-     * @param Action_Context $actionContext
      * @return array
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -186,14 +184,14 @@ class Module_Create extends Action
      * @version 0.0
      * @since 0.0
      */
-    protected function run(array $input, Action_Context $actionContext)
+    protected function run(array $input)
     {
         $moduleName = ucfirst($input['name']);
         $moduleAlias = ucfirst($input['alias']);
 
         if (file_exists(ROOT_DIR . $moduleName)) {
             Module_Create::getLogger()->info(['Module {$0} already exists', $moduleName], Logger::INFO, true, false);
-            $actionContext->setTemplate('');
+            $this->setTemplate('');
             return [];
         }
 
@@ -333,8 +331,8 @@ class Module_Create extends Action
                         'GET' => [
                             'Ice:Layout_Main' => [
                                 'actions' => [
-                                    ['Ice:Title', ['title' => $moduleAlias], 'title'],
-                                    [$moduleAlias . ':Index', [], 'main']
+                                    ['title' => 'Ice:Title', ['title' => $moduleAlias]],
+                                    'main' => $moduleAlias . ':Index'
                                 ]
                             ]
                         ]
@@ -381,7 +379,7 @@ class Module_Create extends Action
 
             Directory::get(ROOT_DIR . '_log/' . $moduleName);
         } else {
-            $actionContext->setTemplate('');
+            $this->setTemplate('');
         }
 
         copy(ICE_DIR . '.gitignore', $moduleDir . '.gitignore');

@@ -87,7 +87,7 @@ abstract class Validator extends Container
                     $validatorParams = null;
                 }
 
-                $value = isset($data[$param]) ? $data[$param]: null;
+                $value = isset($data[$param]) ? $data[$param] : null;
 
                 Helper_Validator::validate($validatorName, $validatorParams, $param, $value);
             }

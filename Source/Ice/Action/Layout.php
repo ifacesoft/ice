@@ -10,7 +10,6 @@
 namespace Ice\Action;
 
 use Ice\Core\Action;
-use Ice\Core\Action_Context;
 
 /**
  * Class Layout
@@ -77,7 +76,6 @@ abstract class Layout extends Action
      * Run action
      *
      * @param array $input
-     * @param Action_Context $actionContext
      * @return array
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -85,7 +83,7 @@ abstract class Layout extends Action
      * @version 0.0
      * @since 0.0
      */
-    protected function run(array $input, Action_Context $actionContext)
+    protected function run(array $input)
     {
         return ['moduleName' => basename(MODULE_DIR)];
     }

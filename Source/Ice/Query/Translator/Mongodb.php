@@ -412,7 +412,6 @@ class Mongodb extends Query_Translator
         $sql = '';
 
 
-
         $orders = [];
 
         foreach ($part as $modelClass => $item) {

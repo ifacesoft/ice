@@ -179,9 +179,15 @@ class Route extends Container
                 $route['pattern'] = Replace::getInstance()->fetch('#^' . $route['route'] . '$#', $patterns, View_Render::TEMPLATE_TYPE_STRING);
 
                 foreach ($route['request'] as &$request) {
-                    list($actionClass, $actionParams) = each($request);
+                    if (is_string($request)) {
+                        $actionClass = $request;
+                        $actionParams = [];
+                    } else {
+                        list($actionClass, $actionParams) = each($request);
+                    }
 
-                    if(is_int($actionClass)) {
+
+                    if (is_int($actionClass)) {
                         $actionClass = $actionParams;
                         $actionParams = [];
                     }

@@ -13,6 +13,14 @@
 <body>
 <div id="Layout_Main" class="container">
     <div id="iceMessages" class='notifications top-right'></div>
+    <div id="icePreloader">
+        <div id="blockG_1" class="preloaderBlock">
+        </div>
+        <div id="blockG_2" class="preloaderBlock">
+        </div>
+        <div id="blockG_3" class="preloaderBlock">
+        </div>
+    </div>
 
     <!--[if lt IE 7]>
     <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade

@@ -10,7 +10,6 @@
 namespace Ice\Action;
 
 use Ice\Core\Action;
-use Ice\Core\Action_Context;
 use Ice\Core\Form as Core_Form;
 use Ice\Core\Logger;
 
@@ -87,7 +86,6 @@ class Form_Submit extends Action
      * Run action
      *
      * @param array $input
-     * @param Action_Context $actionContext
      * @return array
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -95,7 +93,7 @@ class Form_Submit extends Action
      * @version 0.0
      * @since 0.0
      */
-    protected function run(array $input, Action_Context $actionContext)
+    protected function run(array $input)
     {
         /** @var Core_Form $formClass */
         $formClass = $input['formClass'];

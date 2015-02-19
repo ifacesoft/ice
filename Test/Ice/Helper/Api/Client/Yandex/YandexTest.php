@@ -1,7 +1,6 @@
 <?php namespace Ice\Helper;
 
 use Ice\Core\Config as Core_Config;
-use Ice\Core\Logger;
 use PHPUnit_Framework_TestCase;
 
 class Api_Client_Yandex_TranslateTest extends PHPUnit_Framework_TestCase
@@ -28,13 +27,15 @@ class Api_Client_Yandex_TranslateTest extends PHPUnit_Framework_TestCase
         }
     }
 
-    public function testGetLocales() {
+    public function testGetLocales()
+    {
         if (!empty(Core_Config::getInstance(Api_Client_Yandex_Translate::getClass())->get('translateKey'))) {
             $this->assertTrue(count(Api_Client_Yandex_Translate::getLocales('ru')) >= 33);
         }
     }
 
-    public function testGetFlags() {
+    public function testGetFlags()
+    {
         if (!empty(Core_Config::getInstance(Api_Client_Yandex_Translate::getClass())->get('translateKey'))) {
             $flags = Api_Client_Yandex_Translate::getLocales('ru');
             $this->assertTrue(count($flags) >= 33);

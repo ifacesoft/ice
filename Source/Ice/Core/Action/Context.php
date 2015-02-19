@@ -29,15 +29,6 @@ class Action_Context
     use Core;
 
     /**
-     * Child Actions
-     *
-     * Will be runned after current action
-     *
-     * @var array
-     */
-    private $_actions = [];
-
-    /**
      * Action call stack
      *
      * @var array
@@ -65,13 +56,6 @@ class Action_Context
      */
     private $_tempContent = null;
 
-    /**
-     * Response
-     *
-     * @var Response
-     */
-    private $_response = null;
-
     private function __construct()
     {
     }
@@ -79,67 +63,6 @@ class Action_Context
     public static function create()
     {
         return new Action_Context();
-    }
-
-    /**
-     * Add child action
-     *
-     * 'Ice:Title',
-     * 'title_template_var1' => 'Ice:Title',
-     * 'Ice:Title' => ['title' => 'text'],
-     * 'title_template_var2' => ['Ice:Title', ['title' => 'text']]
-     *
-     * @param $actionName
-     * @param array $params
-     * @param string|null $key
-     * @return Action_Context
-     * @throws Exception
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.2
-     * @since 0.0
-     */
-    public function addAction($actionName, array $params = [], $key = null)
-    {
-        if (empty($actionName)) {
-            return;
-        }
-
-        if (is_array($actionName)) {
-            foreach ($actionName as $actionKey => $actionData) {
-                if (is_numeric($actionKey)) {
-                    $this->addAction($actionData);
-                    continue;
-                }
-
-                if (!is_array($actionData)) {
-                    $this->addAction($actionData, [], $actionKey);
-                    continue;
-                }
-
-                if (is_numeric(each($actionData)['key'])) {
-                    foreach ($actionData as $data) {
-                        $this->addAction($actionKey, $data);
-                    }
-
-                    continue;
-                }
-
-                $this->addAction($actionKey, $actionData, $key);
-            }
-            return;
-        }
-
-        if (!isset($this->_actions[$actionName])) {
-            $this->_actions = array_merge([$actionName => []], $this->_actions);
-        }
-
-        if (is_string($key)) {
-            $this->_actions[$actionName][$key] = $params;
-        } else {
-            $this->_actions[$actionName][] = $params;
-        }
     }
 
     /**
@@ -155,36 +78,6 @@ class Action_Context
     public function setParams(array $params)
     {
         $this->_viewData[end($this->_stack)]['params'] = $params;
-    }
-
-    /**
-     * Set runtime template
-     *
-     * @param string $template
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function setTemplate($template)
-    {
-        $this->_viewData[end($this->_stack)]['template'] = $template;
-    }
-
-    /**
-     * Return child actions
-     *
-     * @return array
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function getActions()
-    {
-        return $this->_actions;
     }
 
     /**
@@ -221,13 +114,9 @@ class Action_Context
             /** @var Config $config */
             $config = $actionClass::getConfig();
 
-//            $this->_actions = $config->gets('afterActions', false);
-            $this->_actions = [];
-
             $this->_viewData[$inputHash] = [
                 'actionClass' => $actionClass,
                 'layout' => $config->get('layout', false),
-                'template' => $config->get('template', false),
                 'output' => $config->get('output', false),
                 'defaultViewRenderClassName' => $config->get('viewRenderClassName', false),
                 'params' => []
@@ -281,25 +170,6 @@ class Action_Context
     {
         $inputHash = array_pop($this->_stack);
         unset($this->_viewData[$inputHash]);
-    }
-
-    /**
-     * Return response by request
-     *
-     * @return Response
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since 0.4
-     */
-    public function getResponse()
-    {
-        if ($this->_response !== null) {
-            return $this->_response;
-        }
-
-        return $this->_response = Response::create();
     }
 
     /**

@@ -10,7 +10,6 @@
 namespace Ice\Action;
 
 use Ice\Core\Action;
-use Ice\Core\Action_Context;
 use Ice\Core\Data_Scheme;
 use Ice\Core\Exception;
 use Ice\Core\Model;
@@ -82,7 +81,6 @@ class Model_Defined_Sync extends Action
      * Run action
      *
      * @param array $input
-     * @param Action_Context $actionContext
      * @throws Exception
      * @return array
      *
@@ -91,7 +89,7 @@ class Model_Defined_Sync extends Action
      * @version 0.0
      * @since 0.0
      */
-    protected function run(array $input, Action_Context $actionContext)
+    protected function run(array $input)
     {
         /** @var Model[] $modelClasses */
         $modelClasses = array_keys(Data_Scheme::getInstance()->getModelClasses());

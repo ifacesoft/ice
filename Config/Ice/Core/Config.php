@@ -55,16 +55,7 @@ return [
         'Ice\Core\Route' => [
             'params' => [],
             'weight' => 0,
-            'request' => [
-                'GET' => [
-                    'Ice:Layout_Main' => [
-                        'actions' => [
-                            ['Ice:Title', ['title' => 'Main page'], 'title'],
-                            ['Ice:Index', [], 'main']
-                        ]
-                    ]
-                ]
-            ]
+            'request' => []
         ],
         'Ice\Core\Model_Scheme' => [
             'time' => Date::get(),

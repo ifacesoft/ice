@@ -2,7 +2,6 @@
 namespace Ice\Action;
 
 use Ice\Core\Action;
-use Ice\Core\Action_Context;
 use Ice\Core\Form_Security_Register;
 
 /**
@@ -70,14 +69,13 @@ class Security_Register extends Action
      * Run action
      *
      * @param array $input
-     * @param Action_Context $actionContext
      * @return array
      */
-    protected function run(array $input, Action_Context $actionContext)
+    protected function run(array $input)
     {
         $resource = Security_Register::getResource();
 
-        $actionContext->addAction(
+        $this->addAction(
             'Ice:Form', [
                 'form' => Form_Security_Register::getInstance($input['security']),
                 'submitTitle' => $resource->get('Register'),

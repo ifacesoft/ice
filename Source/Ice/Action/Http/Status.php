@@ -10,9 +10,7 @@
 namespace Ice\Action;
 
 use Ice\Core\Action;
-use Ice\Core\Action_Context;
 use Ice\Core\Environment;
-use Ice\Core\Logger;
 use Ice\Helper\Http;
 
 /**
@@ -86,7 +84,6 @@ class Http_Status extends Action
      * Run action
      *
      * @param array $input
-     * @param Action_Context $actionContext
      * @return array
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -94,14 +91,14 @@ class Http_Status extends Action
      * @version 0.0
      * @since 0.0
      */
-    protected function run(array $input, Action_Context $actionContext)
+    protected function run(array $input)
     {
         header(Http::getStatusCodeHeader($input['code']), true, $input['code']);
 
-        $actionContext->setTemplate('_' . $input['code']);
+        $this->setTemplate('_' . $input['code']);
 
         return isset($input['exception']) && !Environment::isProduction()
-            ? ['message' => $input['exception']->getMessage() , 'stackTrace' => nl2br($input['exception']->getTraceAsString())]
+            ? ['message' => $input['exception']->getMessage(), 'stackTrace' => nl2br($input['exception']->getTraceAsString())]
             : ['message' => '', 'stackTrace' => ''];
     }
 }

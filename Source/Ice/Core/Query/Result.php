@@ -652,4 +652,8 @@ class Query_Result implements Cacheable
     {
         return Cache::invalidateTimeTags($this, $this->getQuery()->getInvalidateTags());
     }
+
+    public function __toString() {
+        return print_r($this->getQuery()->getBody(), true)  . ' (' . implode(', ', $this->getQuery()->getBinds()) . ')';
+    }
 }

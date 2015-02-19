@@ -55,7 +55,7 @@ use Ice\Core\Action_Context;
     * @param Action_Context $actionContext
     * @return array
     */
-    protected function run(array $input, Action_Context $actionContext)
+    protected function run(array $input)
     {
     return ['errors' => 'Need implement run() method of action class <?= $actionName ?>.'];
     }

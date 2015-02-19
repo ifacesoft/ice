@@ -233,7 +233,8 @@ class Model_Scheme
      * @version 0.5
      * @since 0.5
      */
-    public function getDataTypeMapping() {
+    public function getDataTypeMapping()
+    {
         $repository = Model_Scheme::getRepository();
         $key = $this->getModelClass() . '/dataTypes';
 
@@ -262,7 +263,8 @@ class Model_Scheme
      * @version 0.5
      * @since 0.5
      */
-    public function getFormTypeMapping() {
+    public function getFormTypeMapping()
+    {
         $repository = Model_Scheme::getRepository();
         $key = $this->getModelClass() . '/formTypes';
 
@@ -291,7 +293,8 @@ class Model_Scheme
      * @version 0.5
      * @since 0.5
      */
-    public function getValidatorsMapping() {
+    public function getValidatorsMapping()
+    {
         $repository = Model_Scheme::getRepository();
         $key = $this->getModelClass() . '/validators';
 

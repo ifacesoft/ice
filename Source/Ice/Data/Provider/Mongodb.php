@@ -8,7 +8,7 @@ use Ice\Core\Exception;
 class Mongodb extends Data_Provider
 {
     const DEFAULT_DATA_PROVIDER_KEY = 'Ice:Mongodb/default';
-    const DEFAULT_KEY = 'instance';
+    const DEFAULT_KEY = 'default';
 
     protected $_options = [
         'host' => 'localhost',

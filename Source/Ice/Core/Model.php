@@ -986,7 +986,6 @@ abstract class Model
         $queryBuilder = self::query();
 
 
-
         return $queryBuilder->create($dataSourceKey);
     }
 

@@ -11,7 +11,6 @@ namespace Ice\Helper;
 
 use Ice\Core\Config as Core_Config;
 use Ice\Core\Exception;
-use Ice\Core\Logger;
 use Ice\Core\Model as Core_Model;
 use Ice\Core\Module;
 

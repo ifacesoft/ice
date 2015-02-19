@@ -64,21 +64,6 @@ class Cache
     }
 
     /**
-     * Validate cache
-     *
-     * @return Cacheable|null
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since 0.0
-     */
-    public function validate()
-    {
-        return $this->_cacheable->validate($this->_value);
-    }
-
-    /**
      * Validate time tags
      *
      * @param Cacheable $cacheable
@@ -91,7 +76,8 @@ class Cache
      * @version 0.5
      * @since 0.5
      */
-    public static function validateTimeTags(Cacheable $cacheable, array $tags, $cacheTime) {
+    public static function validateTimeTags(Cacheable $cacheable, array $tags, $cacheTime)
+    {
         if (empty($tags)) {
             return null;
         }
@@ -112,6 +98,22 @@ class Cache
         }
 
         return $cacheable;
+    }
+
+    /**
+     * Return cache repository
+     *
+     * @param Cacheable $cacheable
+     * @return Repository
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
+     */
+    private static function getRepository(Cacheable $cacheable)
+    {
+        return Repository::getInstance(__CLASS__, get_class($cacheable));
     }
 
     /**
@@ -172,17 +174,17 @@ class Cache
     }
 
     /**
-     * Return cache repository
+     * Validate cache
      *
-     * @param Cacheable $cacheable
-     * @return Repository
+     * @return Cacheable|null
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.5
-     * @since 0.5
+     * @since 0.0
      */
-    private static function getRepository(Cacheable $cacheable) {
-        return Repository::getInstance(__CLASS__, get_class($cacheable));
+    public function validate()
+    {
+        return $this->_cacheable->validate($this->_value);
     }
 } 

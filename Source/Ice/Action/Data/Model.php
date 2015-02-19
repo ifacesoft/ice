@@ -2,7 +2,6 @@
 namespace Ice\Action;
 
 use Ice\Core\Action;
-use Ice\Core\Action_Context;
 use Ice\Core\Model;
 use Ice\Helper\Arrays;
 
@@ -78,10 +77,9 @@ class Data_Model extends Action
      * Run action
      *
      * @param array $input
-     * @param Action_Context $actionContext
      * @return array
      */
-    protected function run(array $input, Action_Context $actionContext)
+    protected function run(array $input)
     {
         /** @var Model $modelClass */
         $modelClass = Model::getClass($input['modelClassName']);
@@ -97,7 +95,7 @@ class Data_Model extends Action
 
         $submitTitle = Data_Model::getResource()->get('Save') . ' ' . $modelClass::getTitle();
 
-        $actionContext->addAction(
+        $this->addAction(
             'Ice:Form_Model',
             [
                 'modelClassName' => $input['modelClassName'],
@@ -118,7 +116,7 @@ class Data_Model extends Action
             ->desc('/pk')
             ->select('*');
 
-        $actionContext->addAction(
+        $this->addAction(
             'Ice:Paginator', [
                 'data' => $queryResult,
                 'actionClassName' => 'Ice:Data_Model',
@@ -158,7 +156,7 @@ class Data_Model extends Action
             )
             ->bind($queryResult->getRows());
 
-        $actionContext->addAction('Ice:Data', ['data' => $data]);
+        $this->addAction('Ice:Data', ['data' => $data]);
 
         return [
             'actionClassName' => 'Ice:Data_Model'

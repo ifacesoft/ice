@@ -2,7 +2,6 @@
 namespace Ice\Action;
 
 use Ice\Core\Action;
-use Ice\Core\Action_Context;
 use Ice\Core\Form_Security_Login;
 
 /**
@@ -70,14 +69,13 @@ class Security_Login extends Action
      * Run action
      *
      * @param array $input
-     * @param Action_Context $actionContext
      * @return array
      */
-    protected function run(array $input, Action_Context $actionContext)
+    protected function run(array $input)
     {
         $resource = Security_Login::getResource();
 
-        $actionContext->addAction(
+        $this->addAction(
             'Ice:Form', [
                 'form' => Form_Security_Login::getInstance($input['security']),
                 'submitTitle' => $resource->get('Login'),

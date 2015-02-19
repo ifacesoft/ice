@@ -7,7 +7,6 @@
  * @license https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
-use Ice\Action\Front;
 use Ice\Action\Front_Ajax;
 use Ice\Action\Http_Status;
 use Ice\Core;
@@ -17,6 +16,7 @@ use Ice\Core\Container;
 use Ice\Core\Environment;
 use Ice\Core\Logger;
 use Ice\Core\Request;
+use Ice\Core\Response;
 use Ice\Core\Route;
 use Ice\Core\View;
 use Ice\Data\Provider\Cli;
@@ -42,6 +42,10 @@ class Ice
      * @var Environment
      */
     private static $_environment = null;
+
+    private static $_response = null;
+
+    private static $_context = null;
     /**
      * Ice application start time
      *
@@ -106,15 +110,60 @@ class Ice
     }
 
     /**
+     * Return application context
+     *
+     * @return Action_Context
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
+     */
+    public static function getContext()
+    {
+        if (Ice::$_context) {
+            return Ice::$_context;
+        }
+
+        return Ice::$_context = Action_Context::create();
+    }
+
+    /**
+     * Return http response
+     *
+     * @return Response
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
+     */
+    public static function getResponse()
+    {
+        if (Ice::$_response) {
+            return Ice::$_response;
+        }
+
+        return Ice::$_response = Response::create();
+    }
+
+    /**
+     * Return application environment
+     *
      * @return Environment
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
      */
     public static function getEnvironment()
     {
-        $environmentName = null;
-
         if (Ice::isEnvironment()) {
             return Ice::$_environment;
         }
+
+        $environmentName = null;
 
         $host = Request::host();
 
@@ -133,7 +182,8 @@ class Ice
             : Environment::create();
     }
 
-    public static function isEnvironment() {
+    public static function isEnvironment()
+    {
         return Ice::$_environment;
     }
 
@@ -151,8 +201,6 @@ class Ice
      */
     public function run()
     {
-        $actionContext = Action_Context::create();
-
         try {
             /** @var Action $actionClass */
             $actionClass = null;
@@ -167,9 +215,9 @@ class Ice
                 $actionClass = $input['actionClass'];
                 unset($input['actionClass']);
 
-                $view = $actionClass::create($input)->call($actionContext);
+                $view = $actionClass::create($input)->call();
             } elseif (Request::isAjax()) {
-                $view = Front_Ajax::create()->call($actionContext);
+                $view = Front_Ajax::create()->call();
             } else {
                 $router = Router::getInstance();
                 $route = Route::getInstance($router->get('routeName'));
@@ -177,21 +225,21 @@ class Ice
 
                 list($actionClass, $input) = each($method);
 
-                $view = $actionClass::create($input)->call($actionContext);
+                $view = $actionClass::create($input)->call();
             }
 
-            $actionContext->getResponse()->setContent($view);
+            Ice::getResponse()->setContent($view);
         } catch (Redirect $e) {
-            $actionContext->getResponse()->setRedirectUrl($e->getRedirectUrl());
+            Ice::getResponse()->setRedirectUrl($e->getRedirectUrl());
         } catch (Http_Bad_Request $e) {
-            $actionContext->getResponse()->setContent(Http_Status::create(['code' => 400, 'exception' => $e])->call($actionContext));
+            Ice::getResponse()->setContent(Http_Status::create(['code' => 400, 'exception' => $e])->call());
         } catch (Http_Not_Found $e) {
-            $actionContext->getResponse()->setContent(Http_Status::create(['code' => 404, 'exception' => $e])->call($actionContext));
+            Ice::getResponse()->setContent(Http_Status::create(['code' => 404, 'exception' => $e])->call());
         } catch (\Exception $e) {
-            $actionContext->getResponse()->setContent(Http_Status::create(['code' => 500, 'exception' => $e])->call($actionContext));
+            Ice::getResponse()->setContent(Http_Status::create(['code' => 500, 'exception' => $e])->call());
         }
 
-        $actionContext->getResponse()->send();
+        Ice::getResponse()->send();
 
         if (!Environment::isProduction()) {
             Logger::renderLog();

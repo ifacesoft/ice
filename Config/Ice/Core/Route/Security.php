@@ -7,8 +7,8 @@ return [
             'GET' => [
                 'Ice:Layout_Main' => [
                     'actions' => [
-                        ['Ice:Title', ['title' => 'Login'], 'title'],
-                        ['Ice:Security_Login', [], 'main']
+                        ['title' => 'Ice:Title', ['title' => 'Login']],
+                        'main' => 'Ice:Security_Login',
                     ]
                 ]
             ]
@@ -20,8 +20,8 @@ return [
             'GET' => [
                 'Ice:Layout_Main' => [
                     'actions' => [
-                        ['Ice:Title', ['title' => 'Logout'], 'title'],
-                        ['Ice:Security_Logout', [], 'main']
+                        ['title' => 'Ice:Title', ['title' => 'Logout']],
+                        'main' => 'Ice:Security_Logout'
                     ]
                 ]
             ]
@@ -33,8 +33,8 @@ return [
             'GET' => [
                 'Ice:Layout_Main' => [
                     'actions' => [
-                        ['Ice:Title', ['title' => 'Register'], 'title'],
-                        ['Ice:Security_Register', [], 'main']
+                        ['title' => 'Ice:Title', ['title' => 'Register']],
+                        'main' => 'Ice:Security_Register'
                     ]
                 ]
             ]

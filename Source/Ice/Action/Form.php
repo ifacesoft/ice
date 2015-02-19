@@ -10,7 +10,6 @@
 namespace Ice\Action;
 
 use Ice\Core\Action;
-use Ice\Core\Action_Context;
 use Ice\Core\Form as Core_Form;
 use Ice\Helper\Arrays;
 use Ice\Helper\Object;
@@ -93,7 +92,6 @@ class Form extends Action
      * Run action
      *
      * @param array $input
-     * @param Action_Context $actionContext
      * @return array
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -101,7 +99,7 @@ class Form extends Action
      * @version 0.1
      * @since 0.0
      */
-    protected function run(array $input, Action_Context $actionContext)
+    protected function run(array $input)
     {
         /** @var Core_Form $form */
         $form = $input['form'];

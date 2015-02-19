@@ -10,7 +10,6 @@
 namespace Ice\Action;
 
 use Ice\Core\Action;
-use Ice\Core\Action_Context;
 use Ice\Core\Logger;
 use Ice\Core\Model;
 
@@ -87,7 +86,6 @@ class Model_Delete extends Action
      * Run action
      *
      * @param array $input
-     * @param Action_Context $actionContext
      * @return array
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -95,7 +93,7 @@ class Model_Delete extends Action
      * @version 0.2
      * @since 0.0
      */
-    protected function run(array $input, Action_Context $actionContext)
+    protected function run(array $input)
     {
         $class = Model::getClass($input['modelClassName']);
 

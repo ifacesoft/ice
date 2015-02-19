@@ -18,7 +18,7 @@ class ActionTest extends PHPUnit_Framework_TestCase
         /** @var Action $actionClass */
         list($actionClass, $input) = each($method);
 
-        $this->assertEquals($actionClass::create($input)->call(Action_Context::create())->getContent(), 'Layout Test
+        $this->assertEquals($actionClass::create($input)->call()->getContent(), 'Layout Test
 
 inputTestPhp1
 testPhpOk

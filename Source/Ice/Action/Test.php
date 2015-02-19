@@ -9,7 +9,6 @@
 namespace Ice\Action;
 
 use Ice\Core\Action;
-use Ice\Core\Action_Context;
 use Ice\Data\Provider\Request;
 
 class Test extends Action
@@ -72,7 +71,6 @@ class Test extends Action
     /** Run action
      *
      * @param array $input
-     * @param Action_Context $actionContext
      * @return array
      *
      * @author anonymous <email>
@@ -80,7 +78,7 @@ class Test extends Action
      * @version 0
      * @since 0
      */
-    protected function run(array $input, Action_Context $actionContext)
+    protected function run(array $input)
     {
         return [
             'test' => $input['test'],

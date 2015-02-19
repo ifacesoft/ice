@@ -72,21 +72,21 @@ class Php
 
         switch ($type) {
             case 'integer':
-                return (int) $var;
+                return (int)$var;
             case 'string':
-                return (string) $var;
+                return (string)$var;
             case 'boolean':
-                return (bool) $var;
+                return (bool)$var;
             case 'array':
-                return (array) $var;
+                return (array)$var;
             case 'object':
-                return (object) $var;
+                return (object)$var;
             case 'float':
-                return (float) $var;
+                return (float)$var;
             case 'double':
-                return (double) $var;
+                return (double)$var;
             case 'real':
-                return (real) $var;
+                return (real)$var;
         }
 
         return $var;

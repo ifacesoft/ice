@@ -10,7 +10,6 @@
 namespace Ice\Action;
 
 use Ice\Core\Action;
-use Ice\Core\Action_Context;
 
 /**
  * Class Title
@@ -70,6 +69,15 @@ class Title extends Action
     {
         return [
             'view' => ['viewRenderClass' => 'Ice:Php', 'layout' => ''],
+            'input' => [
+                'default' => [
+                    'title' => [
+                        'converter' => function ($title) {
+                            return Title::getResource()->get($title);
+                        }
+                    ]
+                ]
+            ]
         ];
     }
 
@@ -77,7 +85,6 @@ class Title extends Action
      * Run action
      *
      * @param array $input
-     * @param Action_Context $actionContext
      * @return array
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -85,7 +92,7 @@ class Title extends Action
      * @version 0.0
      * @since 0.0
      */
-    protected function run(array $input, Action_Context $actionContext)
+    protected function run(array $input)
     {
         return $input;
     }

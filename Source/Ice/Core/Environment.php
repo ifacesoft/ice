@@ -11,7 +11,6 @@ namespace Ice\Core;
 
 use Ice;
 use Ice\Core;
-use Ice\Data\Provider\Repository;
 use Ice\Helper\Config as Helper_Config;
 
 /**
@@ -62,7 +61,7 @@ class Environment
     private function __construct($environmentName, $environment)
     {
         $this->_environmentName = $environmentName;
-            $this->_environment = $environment;
+        $this->_environment = $environment;
     }
 
     /**

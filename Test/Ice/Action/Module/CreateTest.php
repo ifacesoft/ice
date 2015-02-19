@@ -1,8 +1,6 @@
 <?php
 namespace Ice\Action;
 
-use Ice\Core\Action_Context;
-use Ice\Core\Logger;
 use Ice\Data\Provider\Cli;
 use PHPUnit_Framework_TestCase;
 
@@ -24,6 +22,6 @@ class Module_CreateTest extends PHPUnit_Framework_TestCase
 
         Cli::getInstance()->set($input);
 
-        Module_Create::create($input)->call(Action_Context::create());
+        Module_Create::create($input)->call();
     }
 }

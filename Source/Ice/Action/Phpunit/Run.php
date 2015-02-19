@@ -10,7 +10,6 @@
 namespace Ice\Action;
 
 use Ice\Core\Action;
-use Ice\Core\Action_Context;
 use Ice\Core\Module;
 use Ice\Helper\Console;
 
@@ -85,7 +84,6 @@ class Phpunit_Run extends Action
      * Run action
      *
      * @param array $input
-     * @param Action_Context $actionContext
      * @return array
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -93,7 +91,7 @@ class Phpunit_Run extends Action
      * @version 0.2
      * @since 0.0
      */
-    protected function run(array $input, Action_Context $actionContext)
+    protected function run(array $input)
     {
         $modulePath = Module::getInstance()->getPath();
 

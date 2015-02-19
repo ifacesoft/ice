@@ -8,6 +8,8 @@ var Ice = {
     _lastback: 0,
 
     call: function (action, params, callback, url) {
+        $('#icePreloader').show();
+
         var back = this._lastback++;
         Ice._callbacks [back] = callback;
         $.ajax({
@@ -32,9 +34,11 @@ var Ice = {
 
                 var callback = Ice._callbacks[data.back];
                 callback(data.result);
+                $('#icePreloader').hide();
             },
             error: function (data) {
                 console.error(data);
+                $('#icePreloader').hide();
             },
             dataType: 'json'
         });
@@ -93,5 +97,4 @@ var Ice = {
             $element.children().first().remove();
         });
     }
-
 };
