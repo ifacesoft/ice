@@ -189,7 +189,7 @@ class Query_Result implements Cacheable
      */
     public function getModelClass()
     {
-        return $this->_query->getModelClass();
+        return $this->getQuery()->getModelClass();
     }
 
     /**

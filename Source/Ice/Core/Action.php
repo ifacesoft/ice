@@ -300,7 +300,7 @@ abstract class Action
             $finishTime = Logger::microtimeResult($startTime, true);
 
             if ($content = $actionContext->getContent()) {
-                $actionContext->setContent(null);
+                Ice::getContext()->setContent(null);
                 return $content;
             }
 

@@ -124,8 +124,10 @@ class Mongodb extends Query_Translator
 
         $columnNames = [];
 
+        Logger::debug($part, $modelClass);
+
         foreach (Mapping::columnNames($modelClass, $part['fieldNames']) as $columnName) {
-            $columnNames[$columnName] = null;
+            $columnNames[$columnName][] = null;
         }
 
         return [
@@ -221,7 +223,7 @@ class Mongodb extends Query_Translator
                     ? $modelMapping[$fieldName]
                     : $fieldName;
 
-                $columnNames[$columnName] = $comparisonOperator == Query_Builder::SQL_COMPARISON_OPERATOR_EQUAL
+                $columnNames[$columnName][] = $comparisonOperator == Query_Builder::SQL_COMPARISON_OPERATOR_EQUAL
                     ? null
                     : Mongodb::$_operators[$comparisonOperator];
             }

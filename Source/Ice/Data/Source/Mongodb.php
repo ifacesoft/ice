@@ -48,8 +48,12 @@ class Mongodb extends Data_Source
             : [];
 
         try {
+            Logger::debug($filter, $statement['select']['columnNames']);
+
             /** @var MongoCursor $cursor */
-            $cursor = $query->getDataSource()->getConnection()->$tableName->find($filter, $statement['select']['columnNames']);
+            $cursor = $this->getConnection()->$tableName->find($filter, $statement['select']['columnNames']);
+
+            Logger::debug($this->getConnection()->$tableName->find()->getNext());
 
             if (isset($statement['order'])) {
                 $cursor = $cursor->sort($statement['order']['columnNames']);
@@ -104,11 +108,13 @@ class Mongodb extends Data_Source
         $modelClass = $query->getModelClass();
         $tableName = $modelClass::getTableName();
 
+        Logger::debug($statement['insert']['data']);
+
         try {
-            $query->getDataSource()->getConnection()->$tableName->batchInsert($statement['insert']['data']);
+            $this->getConnection()->$tableName->batchInsert($statement['insert']['data']);
         } catch (\Exception $e) {
             foreach ($statement['insert']['data'] as $doc) {
-                $query->getDataSource()->getConnection()->$tableName->update(['_id' => $doc['_id']], $doc, ['upsert' => true]);
+                $this->getConnection()->$tableName->update(['_id' => $doc['_id']], $doc, ['upsert' => true]);
             }
         }
 
@@ -315,39 +321,36 @@ class Mongodb extends Data_Source
             for ($i = 0; $i < $data['rowCount']; $i++) {
                 $row = [];
 
-                foreach ($data['columnNames'] as $columnName => $operator) {
-                    if (in_array($columnName, $pkColumnNames)) {
-//                        Logger::debugDie($statementType, $data['columnNames'], $pkColumnNames);
-
-                        $id = null;
-                        try {
-                            $id = array_shift($binds);
-                            if (!isset($row['_id'])) {
-                                $row['_id'] = new MongoId($id);
-                            } else {
-                                if (is_array($row['_id'])) {
-                                    $row['_id']['$in'][] = new MongoId($id);
+                foreach ($data['columnNames'] as $columnName => $array) {
+                    foreach ((array)$array as $operator) {
+                        if (in_array($columnName, $pkColumnNames)) {
+                            $id = null;
+                            try {
+                                $id = array_shift($binds);
+                                if (!isset($row['_id'])) {
+                                    $row['_id'] = new MongoId($id);
                                 } else {
-                                    $row['_id'] = ['$in' => [$row['_id'], new MongoId($id)]];
+                                    if (is_array($row['_id'])) {
+                                        $row['_id']['$in'][] = new MongoId($id);
+                                    } else {
+                                        $row['_id'] = ['$in' => [$row['_id'], new MongoId($id)]];
+                                    }
                                 }
+                            } catch (\MongoException $e) {
+                                Mongodb::getLogger()->exception('Build statement failed', __FILE__, __LINE__, $e, $id);
                             }
-                        } catch (\MongoException $e) {
-//                            Logger::debug($id);
-//                            debug_print_backtrace();
-//                            die();
-                            Mongodb::getLogger()->exception('Build statement failed', __FILE__, __LINE__, $e, $id);
+                        } else {
+                            $row[$columnName] = isset($operator)
+                                ? [$operator => array_shift($binds)]
+                                : array_shift($binds);
                         }
-                    } else {
-                        $row[$columnName] = isset($operator)
-                            ? [$operator => array_shift($binds)]
-                            : array_shift($binds);
                     }
-                }
 
-                if ($statementType == 'where' || $statementType == 'update') {
-                    $data['data'] = $row;
-                } else {
-                    $data['data'][] = $row;
+                    if ($statementType == 'where' || $statementType == 'update') {
+                        $data['data'] = $row;
+                    } else {
+                        $data['data'][] = $row;
+                    }
                 }
             }
 
@@ -356,7 +359,7 @@ class Mongodb extends Data_Source
         }
 
         if (!empty($binds)) {
-            Mongodb::getLogger()->exception('Bind params failure', __FILE__, __LINE__, null, $binds);
+            Mongodb::getLogger()->exception('Bind params failure', __FILE__, __LINE__, null, ['body' => $body, 'binds' => $binds]);
         }
 
         return $body;

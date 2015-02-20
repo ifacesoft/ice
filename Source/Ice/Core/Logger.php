@@ -356,6 +356,10 @@ class Logger
         /** @var Exception $exceptionClass */
         $exceptionClass = Object::getClass(Exception::getClass(), $exceptionClass);
 
+        if (is_array($errcontext) && isset($errcontext['e'])) {
+            unset($errcontext['e']);
+        }
+
         return new $exceptionClass($message, $errcontext, $e, $file, $line, $errno);
     }
 
