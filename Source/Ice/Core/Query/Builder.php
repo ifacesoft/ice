@@ -250,9 +250,7 @@ class Query_Builder
         if (isset($this->_sqlParts[Query_Builder::PART_WHERE][$modelClass])) {
             $this->_sqlParts[Query_Builder::PART_WHERE][$modelClass][1][] = $where;
         } else {
-            $this->_sqlParts[Query_Builder::PART_WHERE][$modelClass] = [
-                $tableAlias, [$where]
-            ];
+            $this->_sqlParts[Query_Builder::PART_WHERE][$modelClass] = [$tableAlias, [$where]];
         }
 
         $this->appendCacheTag($modelClass, $fieldName, true, false);

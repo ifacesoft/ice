@@ -4,6 +4,7 @@ namespace Ice\Data\Source;
 
 use Ice\Core\Data_Provider;
 use Ice\Core\Data_Source;
+use Ice\Core\Logger;
 use Ice\Core\Model;
 use Ice\Core\Query;
 use Ice\Core\Query_Result;
@@ -316,14 +317,25 @@ class Mongodb extends Data_Source
 
                 foreach ($data['columnNames'] as $columnName => $operator) {
                     if (in_array($columnName, $pkColumnNames)) {
-                        if (!isset($row['_id'])) {
-                            $row['_id'] = new MongoId(array_shift($binds));
-                        } else {
-                            if (is_array($row['_id'])) {
-                                $row['_id']['$in'][] = new MongoId(array_shift($binds));
+//                        Logger::debugDie($statementType, $data['columnNames'], $pkColumnNames);
+
+                        $id = null;
+                        try {
+                            $id = array_shift($binds);
+                            if (!isset($row['_id'])) {
+                                $row['_id'] = new MongoId($id);
                             } else {
-                                $row['_id'] = ['$in' => [$row['_id'], new MongoId(array_shift($binds))]];
+                                if (is_array($row['_id'])) {
+                                    $row['_id']['$in'][] = new MongoId($id);
+                                } else {
+                                    $row['_id'] = ['$in' => [$row['_id'], new MongoId($id)]];
+                                }
                             }
+                        } catch (\MongoException $e) {
+//                            Logger::debug($id);
+//                            debug_print_backtrace();
+//                            die();
+                            Mongodb::getLogger()->exception('Build statement failed', __FILE__, __LINE__, $e, $id);
                         }
                     } else {
                         $row[$columnName] = isset($operator)

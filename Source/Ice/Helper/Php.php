@@ -8,6 +8,7 @@
  */
 
 namespace Ice\Helper;
+use Ice\Core\Logger as Core_Logger;
 
 /**
  * Class Php
@@ -36,6 +37,7 @@ class Php
      */
     public static function varToPhpString($var)
     {
+        print_r($var);
         $string = '<?php' . "\n" . 'return ' . var_export($var, true) . ';';
         $string = str_replace('array (', '[', $string);
         $string = str_replace('(array(', '([', $string);

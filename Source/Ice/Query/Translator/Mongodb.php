@@ -78,7 +78,7 @@ class Mongodb extends Query_Translator
         $columnNames = [];
 
         foreach (Mapping::columnNames($modelClass, $part['fieldNames']) as $columnName) {
-            $columnNames[] = [$columnName => '$set'];
+            $columnNames['$set'] = $columnName;
         }
 
         return [
@@ -125,7 +125,7 @@ class Mongodb extends Query_Translator
         $columnNames = [];
 
         foreach (Mapping::columnNames($modelClass, $part['fieldNames']) as $columnName) {
-            $columnNames[] = $columnName;
+            $columnNames[$columnName] = null;
         }
 
         return [

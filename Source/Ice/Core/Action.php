@@ -217,6 +217,10 @@ abstract class Action
                     $param = null;
                 }
 
+                if (isset($input[$name])) {
+                    continue;
+                }
+
                 $input[$name] = Helper_Action::getInputParam($name, $dataProvider->get($name), $param);
             }
         }
@@ -269,7 +273,7 @@ abstract class Action
             $actions = $this->_actions;
             $this->_actions = [];
 
-            $template = $config->get('view/template' , false);
+            $template = $config->get('view/template', false);
 
             if ($template !== null) {
                 $this->_template = $template;

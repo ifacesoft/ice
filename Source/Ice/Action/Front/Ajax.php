@@ -10,6 +10,7 @@
 namespace Ice\Action;
 
 use Ice\Core\Action;
+use Ice\Core\Logger;
 use Ice\Core\View;
 use Ice\Data\Provider\Request;
 use Ice\Helper\Object;

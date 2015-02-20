@@ -161,7 +161,7 @@ class Mysqli extends Data_Source
             $values = array_merge($values, $binds);
 
             if (call_user_func_array(array($statement, 'bind_param'), $this->makeValuesReferenced($values)) === false) {
-                Mysqli::getLogger()->exception('Bind params failure', __FILE__, __LINE__, null, $types);
+                Mysqli::getLogger()->exception('Bind params failure', __FILE__, __LINE__, null, ['types' => $types, 'values' => $values, 'body' => $body, 'binds' => $binds]);
             }
         }
 
