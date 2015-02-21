@@ -124,8 +124,6 @@ class Mongodb extends Query_Translator
 
         $columnNames = [];
 
-        Logger::debug($part, $modelClass);
-
         foreach (Mapping::columnNames($modelClass, $part['fieldNames']) as $columnName) {
             $columnNames[$columnName][] = null;
         }

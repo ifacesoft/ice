@@ -236,18 +236,14 @@ class Cli extends Data_Provider
 
             if (count($param) == 2) {
                 list($param, $value) = $param;
-
-                $connection[$param] = $value;
             } else {
-                Cli::getLogger()->info(['Invalid command line. Invalid params \'{$0}\'. Usage: ./cli Mp:Action_Name param=value', $arg], Logger::WARNING);
+                $param = $arg;
+                $value = null;
             }
 
-            unset($_SERVER['argv'][$key]);
-        }
+            $connection[$param] = $value;
 
-        if (!isset($connection['actionClass'])) {
-            Cli::getLogger()->info('Invalid command line. Action not found. Usage: ./cli Mp:Action_Name param=value', Logger::WARNING);
-            exit;
+            unset($_SERVER['argv'][$key]);
         }
 
         $_SERVER['argv'] = $connection;

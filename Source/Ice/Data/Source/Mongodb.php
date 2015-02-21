@@ -18,6 +18,23 @@ class Mongodb extends Data_Source
     const QUERY_TRANSLATOR_CLASS = 'Ice\Query\Translator\Mongodb';
 
     /**
+     * Return instance of mongodb
+     *
+     * @param null $key
+     * @param null $ttl
+     * @return Mongodb
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.4
+     */
+    public static function getInstance($key = null, $ttl = null)
+    {
+        return parent::getInstance($key, $ttl);
+    }
+
+    /**
      * Execute query select to data source
      *
      * @param Query $query
@@ -48,12 +65,8 @@ class Mongodb extends Data_Source
             : [];
 
         try {
-            Logger::debug($filter, $statement['select']['columnNames']);
-
             /** @var MongoCursor $cursor */
             $cursor = $this->getConnection()->$tableName->find($filter, $statement['select']['columnNames']);
-
-            Logger::debug($this->getConnection()->$tableName->find()->getNext());
 
             if (isset($statement['order'])) {
                 $cursor = $cursor->sort($statement['order']['columnNames']);
@@ -89,6 +102,97 @@ class Mongodb extends Data_Source
     }
 
     /**
+     * Prepare query statement for query
+     *
+     * @param $body
+     * @param array $binds
+     * @return mixed
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.4
+     */
+    public function getStatement($body, array $binds)
+    {
+        foreach ($body as $statementType => &$data) {
+            if ($statementType == 'select' || $statementType == 'order' || $statementType == 'limit') {
+                continue;
+            }
+
+            /** @var Model $modelClass */
+            $modelClass = $data['modelClass'];
+
+            $pkColumnNames = $modelClass::getScheme()->getPkColumnNames();
+
+            $data['data'] = [];
+
+            if (!isset($data['rowCount'])) {
+                $data['rowCount'] = 1;
+            }
+
+            for ($i = 0; $i < $data['rowCount']; $i++) {
+                $row = [];
+
+                foreach ($data['columnNames'] as $columnName => $array) {
+                    foreach ((array)$array as $operator) {
+                        if (in_array($columnName, $pkColumnNames)) {
+                            $id = null;
+                            try {
+                                $id = array_shift($binds);
+                                if (!isset($row['_id'])) {
+                                    $row['_id'] = new MongoId($id);
+                                } else {
+                                    if (is_array($row['_id'])) {
+                                        $row['_id']['$in'][] = new MongoId($id);
+                                    } else {
+                                        $row['_id'] = ['$in' => [$row['_id'], new MongoId($id)]];
+                                    }
+                                }
+                            } catch (\MongoException $e) {
+                                Mongodb::getLogger()->exception('Build statement failed', __FILE__, __LINE__, $e, $id);
+                            }
+                        } else {
+                            $row[$columnName] = isset($operator)
+                                ? [$operator => array_shift($binds)]
+                                : array_shift($binds);
+                        }
+                    }
+                }
+
+                if ($statementType == 'where' || $statementType == 'update') {
+                    $data['data'] = $row;
+                } else {
+                    $data['data'][] = $row;
+                }
+            }
+
+            unset($data['rowCount']);
+            unset($data['columnNames']);
+        }
+
+        if (!empty($binds)) {
+            Mongodb::getLogger()->exception('Bind params failure', __FILE__, __LINE__, null, ['body' => $body, 'binds' => $binds]);
+        }
+
+        return $body;
+    }
+
+    /**
+     * Get connection instance
+     *
+     * @return \MongoDb
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.4
+     */
+    public function getConnection()
+    {
+        return $this->getSourceDataProvider()->getConnection()->selectDB($this->_scheme);
+    }
+
+    /**
      * Execute query insert to data source
      *
      * @param Query $query
@@ -107,8 +211,6 @@ class Mongodb extends Data_Source
         /** @var Model $modelClass */
         $modelClass = $query->getModelClass();
         $tableName = $modelClass::getTableName();
-
-        Logger::debug($statement['insert']['data']);
 
         try {
             $this->getConnection()->$tableName->batchInsert($statement['insert']['data']);
@@ -290,82 +392,6 @@ class Mongodb extends Data_Source
     }
 
     /**
-     * Prepare query statement for query
-     *
-     * @param $body
-     * @param array $binds
-     * @return mixed
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since 0.4
-     */
-    public function getStatement($body, array $binds)
-    {
-        foreach ($body as $statementType => &$data) {
-            if ($statementType == 'select' || $statementType == 'order' || $statementType == 'limit') {
-                continue;
-            }
-
-            /** @var Model $modelClass */
-            $modelClass = $data['modelClass'];
-
-            $pkColumnNames = $modelClass::getScheme()->getPkColumnNames();
-
-            $data['data'] = [];
-
-            if (!isset($data['rowCount'])) {
-                $data['rowCount'] = 1;
-            }
-
-            for ($i = 0; $i < $data['rowCount']; $i++) {
-                $row = [];
-
-                foreach ($data['columnNames'] as $columnName => $array) {
-                    foreach ((array)$array as $operator) {
-                        if (in_array($columnName, $pkColumnNames)) {
-                            $id = null;
-                            try {
-                                $id = array_shift($binds);
-                                if (!isset($row['_id'])) {
-                                    $row['_id'] = new MongoId($id);
-                                } else {
-                                    if (is_array($row['_id'])) {
-                                        $row['_id']['$in'][] = new MongoId($id);
-                                    } else {
-                                        $row['_id'] = ['$in' => [$row['_id'], new MongoId($id)]];
-                                    }
-                                }
-                            } catch (\MongoException $e) {
-                                Mongodb::getLogger()->exception('Build statement failed', __FILE__, __LINE__, $e, $id);
-                            }
-                        } else {
-                            $row[$columnName] = isset($operator)
-                                ? [$operator => array_shift($binds)]
-                                : array_shift($binds);
-                        }
-                    }
-
-                    if ($statementType == 'where' || $statementType == 'update') {
-                        $data['data'] = $row;
-                    } else {
-                        $data['data'][] = $row;
-                    }
-                }
-            }
-
-            unset($data['rowCount']);
-            unset($data['columnNames']);
-        }
-
-        if (!empty($binds)) {
-            Mongodb::getLogger()->exception('Bind params failure', __FILE__, __LINE__, null, ['body' => $body, 'binds' => $binds]);
-        }
-
-        return $body;
-    }
-
-    /**
      * Return data provider class
      *
      * @return Data_Provider
@@ -393,38 +419,6 @@ class Mongodb extends Data_Source
     public function getQueryTranslatorClass()
     {
         return Mongodb::QUERY_TRANSLATOR_CLASS;
-    }
-
-    /**
-     * Get connection instance
-     *
-     * @return \MongoDb
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since 0.4
-     */
-    public function getConnection()
-    {
-        return $this->getSourceDataProvider()->getConnection()->selectDB($this->_scheme);
-    }
-
-    /**
-     * Return instance of mongodb
-     *
-     * @param null $key
-     * @param null $ttl
-     * @return Mongodb
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since 0.4
-     */
-    public static function getInstance($key = null, $ttl = null)
-    {
-        return parent::getInstance($key, $ttl);
     }
 
     /**
