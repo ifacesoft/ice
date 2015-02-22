@@ -86,7 +86,7 @@ class Phpuml_Generate extends Action
      * @version 0.2
      * @since 0.0
      */
-    protected function run(array $input)
+    public function run(array $input)
     {
         Console::run('cd ' . VENDOR_DIR . $input['vendor'] . ' && ' . $input['script'] . ' ' . $input['sourceDir'] . ' -o ' . Directory::get($input['umlDir']));
     }

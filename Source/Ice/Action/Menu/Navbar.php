@@ -71,7 +71,7 @@ class Menu_Navbar extends Action
      * @param array $input
      * @return array
      */
-    protected function run(array $input)
+    public function run(array $input)
     {
         $result = $input['menu']->getItems();
 

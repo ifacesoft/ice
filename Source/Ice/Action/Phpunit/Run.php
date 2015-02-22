@@ -91,7 +91,7 @@ class Phpunit_Run extends Action
      * @version 0.2
      * @since 0.0
      */
-    protected function run(array $input)
+    public function run(array $input)
     {
         $modulePath = Module::getInstance()->getPath();
 

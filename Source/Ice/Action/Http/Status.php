@@ -91,7 +91,7 @@ class Http_Status extends Action
      * @version 0.0
      * @since 0.0
      */
-    protected function run(array $input)
+    public function run(array $input)
     {
         header(Http::getStatusCodeHeader($input['code']), true, $input['code']);
 

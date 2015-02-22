@@ -2,7 +2,7 @@
 
 namespace Ice\Core;
 
-use Ice\Action\Front;
+use Ice;
 use Ice\Data\Provider\Router;
 use PHPUnit_Framework_TestCase;
 
@@ -18,7 +18,7 @@ class ActionTest extends PHPUnit_Framework_TestCase
         /** @var Action $actionClass */
         list($actionClass, $input) = each($method);
 
-        $this->assertEquals($actionClass::create($input)->call()->getContent(), 'Layout Test
+        $this->assertEquals(Ice::getDispatcher()->dispatch($actionClass, $input)->getContent(), 'Layout Test
 
 inputTestPhp1
 testPhpOk

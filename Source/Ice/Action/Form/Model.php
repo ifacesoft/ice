@@ -100,7 +100,7 @@ class Form_Model extends Action
      * @version 0.2
      * @since 0.0
      */
-    protected function run(array $input)
+    public function run(array $input)
     {
         /** @var Model $modelClass */
         $modelClass = Model::getClass($input['modelClassName']);

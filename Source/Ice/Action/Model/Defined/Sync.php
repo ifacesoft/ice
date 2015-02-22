@@ -89,7 +89,7 @@ class Model_Defined_Sync extends Action
      * @version 0.0
      * @since 0.0
      */
-    protected function run(array $input)
+    public function run(array $input)
     {
         /** @var Model[] $modelClasses */
         $modelClasses = array_keys(Data_Scheme::getInstance()->getModelClasses());

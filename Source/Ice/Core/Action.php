@@ -16,7 +16,6 @@ use Ice\Data\Provider\Repository;
 use Ice\Exception\Http_Bad_Request;
 use Ice\Exception\Http_Not_Found;
 use Ice\Exception\Redirect;
-use Ice\Helper\Action as Helper_Action;
 use Ice\Helper\Json;
 
 /**
@@ -35,9 +34,6 @@ abstract class Action
 {
     use Core;
 
-    private $_input = [];
-    private $_inputHash = null;
-
     /**
      * Child Actions
      *
@@ -47,25 +43,55 @@ abstract class Action
      */
     private $_actions = [];
     private $_template = null;
+    private $_input = [];
+    private $_output = [];
+    private $_viewRenderClass = null;
+    private $_layout = null;
+    private $_ttl = null;
 
     /**
      * Private constructor of action
      *
-     * @param array $input
-     * @param array $actions
-     *
-     * @param $template
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.5
      * @since 0.0
      */
-    private function __construct(array $input, array $actions, $template)
+    private function __construct()
     {
-        $this->_input = $input;
-        $this->_inputHash = md5(Json::encode($input));
-        $this->_actions = $actions;
-        $this->_template = $template;
+    }
+
+    /**
+     * Return action registry
+     *
+     * @return Registry
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
+     */
+    public static function getRegistry()
+    {
+        return Registry::getInstance(__CLASS__, self::getClass());
+    }
+
+    /**
+     * Get action object by name
+     *
+     * @return Action
+     * @throws Redirect
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.0
+     */
+    public static function create()
+    {
+        $actionClass = self::getClass();
+
+        return new $actionClass();
     }
 
     /**
@@ -107,131 +133,6 @@ abstract class Action
     protected static function config()
     {
         return [];
-    }
-
-    /**
-     * Get action config
-     *
-     * @return Config
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since 0.5
-     */
-    public static function getConfig()
-    {
-        $repository = self::getRepository();
-
-        if ($config = $repository->get('config')) {
-            return $config;
-        }
-
-        $actionClass = self::getClass();
-
-        $config = Config::create(self::getClass(), array_merge_recursive(Config::getInstance($actionClass, null, false, -1)->gets(), $actionClass::config()));
-
-        return $repository->set('config', $config);
-    }
-
-    /**
-     * Return action repository
-     *
-     * @return Repository
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since 0.5
-     */
-    public static function getRepository()
-    {
-        return Repository::getInstance(__CLASS__, self::getClass());
-    }
-
-    /**
-     * Return action registry
-     *
-     * @return Registry
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since 0.5
-     */
-    public static function getRegistry()
-    {
-        return Registry::getInstance(__CLASS__, self::getClass());
-    }
-
-    /**
-     * Get action object by name
-     *
-     * @param array $data
-     * @return Action
-     * @throws Redirect
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since 0.0
-     */
-    public static function create($data = [])
-    {
-        if (isset($data['response'])) {
-            if (isset($data['response']['contentType'])) {
-                Ice::getResponse()->setContentType($data['response']['contentType']);
-            }
-
-            if (isset($data['response']['statusCode'])) {
-                Ice::getResponse()->setStatusCode($data['response']['statusCode']);
-            }
-
-            unset($data['response']);
-        }
-
-        $actions = isset($data['actions']) ? $data['actions'] : [];
-        $template = isset($data['template']) ? $data['template'] : null;
-
-        $input = [];
-
-        foreach (self::getConfig()->gets('input', false) as $dataProviderKey => $params) {
-            if ($dataProviderKey == 'default') {
-                foreach ((array)$params as $name => $param) {
-                    if (is_int($name)) {
-                        $name = $param;
-                        $param = null;
-                    }
-
-                    $input[$name] = Helper_Action::getInputParam($name, isset($data[$name]) ? $data[$name] : null, $param);
-                }
-
-                continue;
-            }
-
-            $dataProvider = Data_Provider::getInstance($dataProviderKey);
-
-            foreach ((array)$params as $name => $param) {
-                if (is_int($name)) {
-                    $name = $param;
-                    $param = null;
-                }
-
-                if (isset($input[$name])) {
-                    continue;
-                }
-
-                $input[$name] = Helper_Action::getInputParam($name, $dataProvider->get($name), $param);
-            }
-        }
-
-        if (isset($input['redirectUrl'])) {
-            throw new Redirect($input['redirectUrl']);
-        }
-
-        $actionClass = self::getClass();
-
-        return new $actionClass($input, $actions, $template);
     }
 
     /**
@@ -374,47 +275,43 @@ abstract class Action
     }
 
     /**
-     * Flush action context.
+     * Get action config
      *
-     * Modify view after flush
-     *
-     * @param View $view
-     * @return View
+     * @return Config
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
-     * @since 0.0
+     * @version 0.5
+     * @since 0.5
      */
-    public function flush(View $view)
+    public static function getConfig()
     {
-        return $view;
+        $repository = self::getRepository();
+
+        if ($config = $repository->get('config')) {
+            return $config;
+        }
+
+        $actionClass = self::getClass();
+
+        $config = Config::create(self::getClass(), array_merge_recursive(Config::getInstance($actionClass, null, false, -1)->gets(), $actionClass::config()));
+
+        return $repository->set('config', $config);
     }
 
     /**
-     * Receive params from input data providers
+     * Return action repository
      *
-     * @param $dataProviderKeys
-     * @param array $output
-     * @return array
+     * @return Repository
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
-     * @since 0.0
+     * @version 0.5
+     * @since 0.5
      */
-    public function getParams($dataProviderKeys, array $output)
+    public static function getRepository()
     {
-        $dataProviderKeys = (array)$dataProviderKeys;
-
-        /** @var Data_Provider $dataProvider */
-        $dataProvider = null;
-
-        foreach ($dataProviderKeys as $dataProviderKey) {
-            $output += (array)Data_Provider::getInstance($dataProviderKey)->get();
-        }
-
-        return $output;
+        return Repository::getInstance(__CLASS__, self::getClass());
     }
 
     /**
@@ -456,57 +353,122 @@ abstract class Action
      * @version 0
      * @since 0
      */
-    abstract protected function run(array $input);
+    abstract public function run(array $input);
 
-    /**
-     * Add child action
-     *
-     * @param $actionName
-     * @param array $params
-     * @param string|null $key
-     * @return Action
-     * @throws Exception
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since 0.0
-     */
-    protected function addAction($actionName, array $params = [], $key = null)
+    protected function addAction($action)
     {
-        if (empty($actionName)) {
-            return $this;
-        }
-
-        if (is_string($actionName)) {
-            $actionName = $actionName[0] == '_'
-                ? get_class($this) . $actionName
-                : Action::getClass($actionName);
-
-            if (!empty($key) && is_string($key)) {
-                $this->_actions[$key] = [$actionName => $params];
-            } else {
-                $this->_actions[] = [$actionName => $params];
-            }
-
-            return $this;
-        }
-
-        if (is_array($actionName)) {
-            list($key, $name) = each($actionName);
-
-            if (count($actionName) == 1) {
-                return $this->addAction($name, [], $key);
-            }
-
-            return $this->addAction($name, current($actionName), $key);
-        }
-
-        return $this;
+        $this->_actions[] = (array)$action;
     }
 
-    protected function setTemplate($template)
+    /**
+     * @return array
+     */
+    public function getActions()
+    {
+        return $this->_actions;
+    }
+
+    /**
+     * @param array $actions
+     */
+    public function setActions($actions)
+    {
+        $this->_actions = $actions;
+    }
+
+    /**
+     * @return null
+     */
+    public function getTemplate()
+    {
+        return $this->_template;
+    }
+
+    /**
+     * @param null $template
+     */
+    public function setTemplate($template)
     {
         $this->_template = $template;
+    }
+
+    /**
+     * @return array
+     */
+    public function getInput()
+    {
+        return $this->_input;
+    }
+
+    /**
+     * @param array $input
+     */
+    public function setInput($input)
+    {
+        $this->_input = $input;
+    }
+
+    /**
+     * @return array
+     */
+    public function getOutput()
+    {
+        return $this->_output;
+    }
+
+    /**
+     * @param array $output
+     */
+    public function setOutput($output)
+    {
+        $this->_output = $output;
+    }
+
+    /**
+     * @return null
+     */
+    public function getViewRenderClass()
+    {
+        return $this->_viewRenderClass;
+    }
+
+    /**
+     * @param null $viewRenderClass
+     */
+    public function setViewRenderClass($viewRenderClass)
+    {
+        $this->_viewRenderClass = $viewRenderClass;
+    }
+
+    /**
+     * @return null
+     */
+    public function getLayout()
+    {
+        return $this->_layout;
+    }
+
+    /**
+     * @param null $layout
+     */
+    public function setLayout($layout)
+    {
+        $this->_layout = $layout;
+    }
+
+    /**
+     * @return null
+     */
+    public function getTtl()
+    {
+        return $this->_ttl;
+    }
+
+    /**
+     * @param null $ttl
+     */
+    public function setTtl($ttl)
+    {
+        $this->_ttl = $ttl;
     }
 }

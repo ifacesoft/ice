@@ -69,7 +69,7 @@ class Security_Logout extends Action
      * @return array
      * @throws Redirect
      */
-    protected function run(array $input)
+    public function run(array $input)
     {
         session_destroy();
         throw new Redirect(Request::referer());

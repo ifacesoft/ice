@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1424514943">
-  <project timestamp="1424514943">
+<coverage generated="1424515259">
+  <project timestamp="1424515259">
     <file name="/usr/home/dp/PhpstormProjects/ice/Ice/Config/Ice/Core/Action.php">
       <line num="7" type="stmt" count="2"/>
       <line num="8" type="stmt" count="2"/>
@@ -1479,7 +1479,7 @@
       </file>
       <file name="/usr/home/dp/PhpstormProjects/ice/Ice/Source/Ice/Core/Data/Source.php">
         <class name="Data_Source" namespace="Ice\Core" fullPackage="Ice.Core" package="Ice" subpackage="Core">
-          <metrics methods="11" coveredmethods="5" conditionals="0" coveredconditionals="0" statements="62" coveredstatements="40" elements="73" coveredelements="45"/>
+          <metrics methods="11" coveredmethods="5" conditionals="0" coveredconditionals="0" statements="64" coveredstatements="41" elements="75" coveredelements="46"/>
         </class>
         <line num="59" type="method" name="__construct" crap="1" count="1"/>
         <line num="61" type="stmt" count="1"/>
@@ -1518,43 +1518,45 @@
         <line num="187" type="stmt" count="1"/>
         <line num="278" type="method" name="getConnection" crap="1" count="3"/>
         <line num="280" type="stmt" count="3"/>
-        <line num="331" type="method" name="execute" crap="27.74" count="3"/>
+        <line num="331" type="method" name="execute" crap="27.64" count="3"/>
         <line num="333" type="stmt" count="3"/>
         <line num="335" type="stmt" count="3"/>
-        <line num="338" type="stmt" count="3"/>
+        <line num="337" type="stmt" count="3"/>
         <line num="340" type="stmt" count="3"/>
-        <line num="341" type="stmt" count="3"/>
+        <line num="342" type="stmt" count="3"/>
         <line num="343" type="stmt" count="3"/>
-        <line num="344" type="stmt" count="3"/>
-        <line num="348" type="stmt" count="3"/>
-        <line num="349" type="stmt" count="0"/>
-        <line num="350" type="stmt" count="0"/>
+        <line num="345" type="stmt" count="3"/>
+        <line num="346" type="stmt" count="3"/>
+        <line num="350" type="stmt" count="3"/>
+        <line num="351" type="stmt" count="0"/>
         <line num="352" type="stmt" count="0"/>
-        <line num="353" type="stmt" count="0"/>
         <line num="354" type="stmt" count="0"/>
-        <line num="357" type="stmt" count="0"/>
+        <line num="355" type="stmt" count="0"/>
+        <line num="356" type="stmt" count="0"/>
         <line num="359" type="stmt" count="0"/>
         <line num="360" type="stmt" count="0"/>
-        <line num="362" type="stmt" count="3"/>
-        <line num="363" type="stmt" count="3"/>
+        <line num="361" type="stmt" count="0"/>
+        <line num="362" type="stmt" count="0"/>
         <line num="364" type="stmt" count="3"/>
         <line num="365" type="stmt" count="3"/>
         <line num="366" type="stmt" count="3"/>
         <line num="367" type="stmt" count="3"/>
-        <line num="369" type="stmt" count="0"/>
-        <line num="370" type="stmt" count="0"/>
+        <line num="368" type="stmt" count="3"/>
+        <line num="369" type="stmt" count="3"/>
         <line num="371" type="stmt" count="0"/>
         <line num="372" type="stmt" count="0"/>
         <line num="373" type="stmt" count="0"/>
         <line num="374" type="stmt" count="0"/>
-        <line num="377" type="stmt" count="0"/>
-        <line num="445" type="method" name="getDataSourceKey" crap="2" count="0"/>
-        <line num="447" type="stmt" count="0"/>
-        <line num="460" type="method" name="getKey" crap="2" count="0"/>
-        <line num="462" type="stmt" count="0"/>
-        <line num="475" type="method" name="getScheme" crap="2" count="0"/>
-        <line num="477" type="stmt" count="0"/>
-        <metrics loc="478" ncloc="177" classes="1" methods="11" coveredmethods="5" conditionals="0" coveredconditionals="0" statements="62" coveredstatements="40" elements="73" coveredelements="45"/>
+        <line num="375" type="stmt" count="0"/>
+        <line num="376" type="stmt" count="0"/>
+        <line num="379" type="stmt" count="0"/>
+        <line num="447" type="method" name="getDataSourceKey" crap="2" count="0"/>
+        <line num="449" type="stmt" count="0"/>
+        <line num="462" type="method" name="getKey" crap="2" count="0"/>
+        <line num="464" type="stmt" count="0"/>
+        <line num="477" type="method" name="getScheme" crap="2" count="0"/>
+        <line num="479" type="stmt" count="0"/>
+        <metrics loc="480" ncloc="179" classes="1" methods="11" coveredmethods="5" conditionals="0" coveredconditionals="0" statements="64" coveredstatements="41" elements="75" coveredelements="46"/>
       </file>
       <file name="/usr/home/dp/PhpstormProjects/ice/Ice/Source/Ice/Core/Environment.php">
         <class name="Environment" namespace="Ice\Core" fullPackage="Ice.Core" package="Ice" subpackage="Core">
@@ -11122,6 +11124,6 @@
     <file name="/usr/home/dp/PhpstormProjects/ice/_vendor/twig/twig/lib/Twig/TemplateInterface.php">
       <metrics loc="48" ncloc="15" classes="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
     </file>
-    <metrics files="122" loc="34709" ncloc="18239" classes="111" methods="1113" coveredmethods="339" conditionals="0" coveredconditionals="0" statements="9280" coveredstatements="3272" elements="10393" coveredelements="3611"/>
+    <metrics files="122" loc="34711" ncloc="18241" classes="111" methods="1113" coveredmethods="339" conditionals="0" coveredconditionals="0" statements="9282" coveredstatements="3273" elements="10395" coveredelements="3612"/>
   </project>
 </coverage>

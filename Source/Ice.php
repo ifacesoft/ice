@@ -13,6 +13,7 @@ use Ice\Core;
 use Ice\Core\Action;
 use Ice\Core\Action_Context;
 use Ice\Core\Container;
+use Ice\Core\Dispatcher;
 use Ice\Core\Environment;
 use Ice\Core\Logger;
 use Ice\Core\Request;
@@ -46,6 +47,8 @@ class Ice
     private static $_response = null;
 
     private static $_context = null;
+
+    private static $_dispatcher = null;
     /**
      * Ice application start time
      *
@@ -129,25 +132,6 @@ class Ice
     }
 
     /**
-     * Return http response
-     *
-     * @return Response
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since 0.5
-     */
-    public static function getResponse()
-    {
-        if (Ice::$_response) {
-            return Ice::$_response;
-        }
-
-        return Ice::$_response = Response::create();
-    }
-
-    /**
      * Return application environment
      *
      * @return Environment
@@ -215,9 +199,9 @@ class Ice
                 $actionClass = $input['actionClass'];
                 unset($input['actionClass']);
 
-                $view = $actionClass::create($input)->call();
+                $view = Ice::getDispatcher()->dispatch($actionClass, $input);
             } elseif (Request::isAjax()) {
-                $view = Front_Ajax::create()->call();
+                $view = Ice::getDispatcher()->dispatch(Front_Ajax::getClass());
             } else {
                 $router = Router::getInstance();
                 $route = Route::getInstance($router->get('routeName'));
@@ -225,18 +209,21 @@ class Ice
 
                 list($actionClass, $input) = each($method);
 
-                $view = $actionClass::create($input)->call();
+                $view = Ice::getDispatcher()->dispatch($actionClass, $input);
             }
 
             Ice::getResponse()->setContent($view);
         } catch (Redirect $e) {
             Ice::getResponse()->setRedirectUrl($e->getRedirectUrl());
         } catch (Http_Bad_Request $e) {
-            Ice::getResponse()->setContent(Http_Status::create(['code' => 400, 'exception' => $e])->call());
+            $view = Ice::getDispatcher()->dispatch(Http_Status::getClass(), ['code' => 400, 'exception' => $e]);
+            Ice::getResponse()->setContent($view);
         } catch (Http_Not_Found $e) {
-            Ice::getResponse()->setContent(Http_Status::create(['code' => 404, 'exception' => $e])->call());
+            $view = Ice::getDispatcher()->dispatch(Http_Status::getClass(), ['code' => 404, 'exception' => $e]);
+            Ice::getResponse()->setContent($view);
         } catch (\Exception $e) {
-            Ice::getResponse()->setContent(Http_Status::create(['code' => 500, 'exception' => $e])->call());
+            $view = Ice::getDispatcher()->dispatch(Http_Status::getClass(), ['code' => 500, 'exception' => $e]);
+            Ice::getResponse()->setContent($view);
         }
 
         Ice::getResponse()->send();
@@ -251,5 +238,36 @@ class Ice
         if (!Request::isCli() && function_exists('fastcgi_finish_request')) {
             fastcgi_finish_request();
         }
+    }
+
+    /**
+     * @return Dispatcher
+     */
+    public static function getDispatcher()
+    {
+        if (Ice::$_dispatcher) {
+            return Ice::$_dispatcher;
+        }
+
+        return Ice::$_dispatcher = Dispatcher::create();
+    }
+
+    /**
+     * Return http response
+     *
+     * @return Response
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
+     */
+    public static function getResponse()
+    {
+        if (Ice::$_response) {
+            return Ice::$_response;
+        }
+
+        return Ice::$_response = Response::create();
     }
 }

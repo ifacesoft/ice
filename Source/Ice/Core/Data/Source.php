@@ -332,6 +332,8 @@ abstract class Data_Source extends Container
     {
         $startTime = Logger::microtime();
 
+        $queryResult = null;
+
         $queryCommand = 'execute' . ucfirst($query->getQueryType());
 
         try {
@@ -355,7 +357,7 @@ abstract class Data_Source extends Container
                     }
 
                     $queryResult = Query_Result::create($query, $this->$queryCommand($query));
-
+                    Data_Source::getLogger()->log(['(new) {$0} [$1]', [$queryResult, Logger::microtimeResult($startTime)]], Logger::SUCCESS);
                     $cacher->set($queryHash, $queryResult, $ttl);
                     break;
 
@@ -363,7 +365,7 @@ abstract class Data_Source extends Container
                 case Query_Builder::TYPE_UPDATE:
                 case Query_Builder::TYPE_DELETE:
                     $queryResult = Query_Result::create($query, $this->$queryCommand($query))->invalidate();
-                    Data_Source::getLogger()->log(['(cache) {$0} [$1]', [$queryResult, Logger::microtimeResult($startTime)]], Logger::SUCCESS);
+                    Data_Source::getLogger()->log(['(new) {$0} [$1]', [$queryResult, Logger::microtimeResult($startTime)]], Logger::SUCCESS);
                     return $queryResult;
 
                 default:

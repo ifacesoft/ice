@@ -93,7 +93,7 @@ class Paginator extends Action
      * @version 0.0
      * @since 0.0
      */
-    protected function run(array $input)
+    public function run(array $input)
     {
         /** @var Query_Result $data */
         $data = $input['data'];

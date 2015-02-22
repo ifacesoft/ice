@@ -79,7 +79,7 @@ class Data_Model extends Action
      * @param array $input
      * @return array
      */
-    protected function run(array $input)
+    public function run(array $input)
     {
         /** @var Model $modelClass */
         $modelClass = Model::getClass($input['modelClassName']);

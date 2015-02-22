@@ -67,7 +67,7 @@ class Orm_Scheme_Update extends Action
      * @version 0.5
      * @since 0.5
      */
-    protected function run(array $input)
+    public function run(array $input)
     {
         $output = [];
 

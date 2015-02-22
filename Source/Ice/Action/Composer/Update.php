@@ -83,7 +83,7 @@ class Composer_Update extends Action
      * @version 0.0
      * @since 0.0
      */
-    protected function run(array $input)
+    public function run(array $input)
     {
         passthru('cd ' . ICE_DIR . ' && php composer.phar self-update && php composer.phar update');
     }

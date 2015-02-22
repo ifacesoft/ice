@@ -31,12 +31,10 @@ class View implements Cacheable
 {
     use Core;
 
-    /**
-     * View data (template, view render class etc.
-     *
-     * @var array
-     */
-    private $_viewData = [];
+    private $_viewRenderClass = null;
+    private $_template = null;
+    private $_layout = null;
+    private $_params = [];
 
     /**
      * Rendered view
@@ -45,35 +43,27 @@ class View implements Cacheable
      */
     private $_result = null;
 
-    /**
-     * Private constructor for core view
-     *
-     * @param array $viewData
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    private function __construct(array $viewData)
+    function __construct($viewRenderClass, $template, $layout, $params)
     {
-        $this->_viewData = $viewData;
+        $this->_viewRenderClass = $viewRenderClass;
+        $this->_template = $template;
+        $this->_layout = $layout;
+        $this->_params = $params;
     }
 
     /**
      * Return new instance of view
      *
-     * @param $viewKey
+     * @param Action $action
      * @return View
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.5
      * @since 0.0
      */
-    public static function create($viewKey)
+    public static function create(Action $action)
     {
-        return new View($viewKey);
+        return new View($action->getViewRenderClass(), $action->getTemplate(), $action->getLayout(), $action->getOutput());
     }
 
     /**
@@ -100,21 +90,13 @@ class View implements Cacheable
             return $this->_result = '';
         }
 
-        $hash = crc32(serialize($this->_viewData));
-
-        $dataProvider = View::getDataProvider();
-
-        if ($this->_result = $dataProvider->get($hash)) {
-            return $this->_result;
-        }
-
         /** @var View_Render $viewRenderClass */
         $viewRenderClass = $this->getViewRenderClass();
 
         array_unshift(View_Render::$templates, $template);
 
         try {
-            $this->_result = $viewRenderClass::getInstance()->fetch($template, $this->_viewData['params']);
+            $this->_result = $viewRenderClass::getInstance()->fetch($template, $this->_params);
 
             $layout = $this->getLayout();
 
@@ -131,8 +113,6 @@ class View implements Cacheable
             if (Environment::isDevelopment()) {
                 Logger::fb('view: ' . $template . ' (' . $viewRenderClass . ') [' . Logger::microtimeResult($startTime) . ']');
             }
-
-            $dataProvider->set($hash, $this->_result);
         } catch (\Exception $e) {
             $this->_result = $this->getLogger()->error(['Fetch template "{$0}" failed', $template], __FILE__, __LINE__, $e);
         }
@@ -154,21 +134,21 @@ class View implements Cacheable
      */
     public function getTemplate()
     {
-        if ($this->_viewData['template'] === '') {
-            return $this->_viewData['template'];
+        if ($this->_template === '') {
+            return $this->_template;
         }
 
         $actionClass = $this->_viewData['actionClass'];
 
-        if ($this->_viewData['template'] === null) {
-            $this->_viewData['template'] = $actionClass;
+        if ($this->_template === null) {
+            $this->_template = $actionClass;
         }
 
-        if ($this->_viewData['template'][0] == '_') {
-            $this->_viewData['template'] = $actionClass . $this->_viewData['template'];
+        if ($this->_template[0] == '_') {
+            $this->_template = $actionClass . $this->_template;
         }
 
-        return $this->_viewData['template'];
+        return $this->_template;
     }
 
     /**

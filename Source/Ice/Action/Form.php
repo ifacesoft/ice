@@ -99,7 +99,7 @@ class Form extends Action
      * @version 0.1
      * @since 0.0
      */
-    protected function run(array $input)
+    public function run(array $input)
     {
         /** @var Core_Form $form */
         $form = $input['form'];

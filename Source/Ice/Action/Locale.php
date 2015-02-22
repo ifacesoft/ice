@@ -67,7 +67,7 @@ class Locale extends Action
      * @version 0
      * @since 0
      */
-    protected function run(array $input)
+    public function run(array $input)
     {
         if (in_array($input['locale'], Api_Client_Yandex_Translate::getLocales())) {
             $_SESSION['locale'] = $input['locale'];

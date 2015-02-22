@@ -61,7 +61,7 @@ class Test_Twig extends Action
      * @version 0
      * @since 0
      */
-    protected function run(array $input)
+    public function run(array $input)
     {
         return [
             'inputTestTwig' => $input['inputTestTwig'],
