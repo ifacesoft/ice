@@ -29,25 +29,11 @@ class Action_Context
     use Core;
 
     /**
-     * Action call stack
-     *
-     * @var array
-     */
-    private $_stack = [];
-
-    /**
      * Action full stack
      *
      * @var array
      */
     private $_fullStack = [];
-
-    /**
-     * Received view data after run action
-     *
-     * @var array
-     */
-    private $_viewData = [];
 
     /**
      * String temp content current action
@@ -63,21 +49,6 @@ class Action_Context
     public static function create()
     {
         return new Action_Context();
-    }
-
-    /**
-     * Assign data to view
-     *
-     * @param array $params
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function setParams(array $params)
-    {
-        $this->_viewData[end($this->_stack)]['params'] = $params;
     }
 
     /**
@@ -106,41 +77,11 @@ class Action_Context
         if ($this->_fullStack[$actionClass][$hash] < 5) {
             $this->_fullStack[$actionClass][$hash]++;
 
-            $inputHash = $actionClass . '/' . $hash;
-
-            array_push($this->_stack, $inputHash);
-
-            /** @var Action $actionClass */
-            /** @var Config $config */
-            $config = $actionClass::getConfig();
-
-            $this->_viewData[$inputHash] = [
-                'actionClass' => $actionClass,
-                'layout' => $config->get('layout', false),
-                'output' => $config->get('output', false),
-                'defaultViewRenderClassName' => $config->get('viewRenderClassName', false),
-                'params' => []
-            ];
-
             return $this;
         }
 
         Action::getLogger()->exception(['Action {$0} with input hash {$1} already runned ({$2}). May by found infinite loop.', [$actionClass, $hash, $this->_fullStack[$actionClass][$hash]]], __FILE__, __LINE__, null, $this->_fullStack);
-    }
-
-    /**
-     * Return resulted view data
-     *
-     * @return array
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function getViewData()
-    {
-        return $this->_viewData[end($this->_stack)];
+        return $this;
     }
 
     /**
@@ -156,20 +97,6 @@ class Action_Context
     public function getFullStack()
     {
         return $this->_fullStack;
-    }
-
-    /**
-     * Pop action name from call stack
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function commit()
-    {
-        $inputHash = array_pop($this->_stack);
-        unset($this->_viewData[$inputHash]);
     }
 
     /**

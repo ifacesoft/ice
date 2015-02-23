@@ -72,10 +72,8 @@ class Http_Status extends Action
         return [
             'view' => ['viewRenderClass' => 'Ice:Php'],
             'input' => [
-                'default' => [
-                    'code' => ['default' => 500],
-                    'exception'
-                ]
+                'code' => ['default' => 500],
+                'exception'
             ]
         ];
     }

@@ -10,9 +10,7 @@
 namespace Ice\Action;
 
 use Ice\Core\Action;
-use Ice\Core\Logger;
 use Ice\Core\View;
-use Ice\Data\Provider\Request;
 use Ice\Helper\Object;
 
 /**
@@ -74,10 +72,15 @@ class Front_Ajax extends Action
         return [
             'view' => ['viewRenderClass' => 'Ice:Json', 'layout' => ''],
             'input' => [
-                Request::DEFAULT_DATA_PROVIDER_KEY => [
-                    'call' => ['validators' => 'Ice:Not_Empty'],
-                    'params',
-                    'back'
+                'call' => [
+                    'providers' => 'request',
+                    'validators' => 'Ice:Not_Empty'
+                ],
+                'params' => [
+                    'providers' => 'request',
+                ],
+                'back' => [
+                    'providers' => 'request',
                 ]
             ]
         ];

@@ -325,7 +325,7 @@ class Logger
             fwrite(STDOUT, $message . "\n");
             return $message;
         } else {
-            return self::addLog($message);
+            return Logger::addLog($message);
         }
     }
 

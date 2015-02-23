@@ -72,19 +72,16 @@ class Form_Model extends Action
         return [
             'view' => ['viewRenderClass' => 'Ice:Smarty'],
             'input' => [
-                'default' => [
-                    'submitTitle' => ['validators' => 'Ice:Not_Empty'],
-                    'modelClassName' => ['validators' => 'Ice:Not_Empty'],
-                    'pk' => ['validators' => 'Ice:Not_Null'],
-                    'formFilterFields' => ['validators' => 'Ice:Not_Empty'],
-                    'grouping' => ['default' => 1],
-                    'submitActionName' => ['default' => 'Ice:Form_Submit'],
-                    'reRenderClosest' => ['default' => 'Ice:Form_Model'],
-                    'reRenderActionNames' => ['default' => []],
-                    'redirect' => ['default' => ''],
-                    'params' => ['default' => []]
-
-                ]
+                'submitTitle' => ['validators' => 'Ice:Not_Empty'],
+                'modelClassName' => ['validators' => 'Ice:Not_Empty'],
+                'pk' => ['validators' => 'Ice:Not_Null'],
+                'formFilterFields' => ['validators' => 'Ice:Not_Empty'],
+                'grouping' => ['default' => 1],
+                'submitActionName' => ['default' => 'Ice:Form_Submit'],
+                'reRenderClosest' => ['default' => 'Ice:Form_Model'],
+                'reRenderActionNames' => ['default' => []],
+                'redirect' => ['default' => ''],
+                'params' => ['default' => []]
             ]
         ];
     }

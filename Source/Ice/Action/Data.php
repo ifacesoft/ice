@@ -63,9 +63,7 @@ class Data extends Action
         return [
             'view' => ['viewRenderClass' => 'Ice:Php', 'layout' => Emmet::PANEL_BODY],
             'input' => [
-                'default' => [
-                    'data' => ['validators' => 'Ice:Is_Data']
-                ]
+                'data' => ['validators' => 'Ice:Is_Data']
             ]
         ];
     }

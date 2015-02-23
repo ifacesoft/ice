@@ -47,9 +47,7 @@ class Orm_Scheme_Update extends Action
         return [
             'view' => ['template' => ''],
             'input' => [
-                'default' => [
-                    'force' => ['default' => 0]
-                ]
+                'force' => ['default' => 0]
             ]
         ];
     }

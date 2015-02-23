@@ -72,12 +72,10 @@ class Form_Submit extends Action
         return [
             'view' => ['template' => ''],
             'input' => [
-                'default' => [
-                    'formClass' => ['validators' => 'Ice:Not_Empty'],
-                    'formKey' => ['validators' => 'Ice:Not_Empty'],
-                    'filterFields' => ['default' => ''],
-                    'redirect' => ['default' => '']
-                ]
+                'formClass' => ['validators' => 'Ice:Not_Empty'],
+                'formKey' => ['validators' => 'Ice:Not_Empty'],
+                'filterFields' => ['default' => ''],
+                'redirect' => ['default' => '']
             ]
         ];
     }

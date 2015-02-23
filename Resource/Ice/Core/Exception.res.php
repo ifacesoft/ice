@@ -155,4 +155,8 @@ return [
     '' => [
         'ru' => null,
     ],
+    'Validator:Is_Menu -> param \'{$0}\' with value \'{$1}\' is not valid' => [
+        'en' => 'Validator:Is_Menu -> param \'{$0}\' with value \'{$1}\' is not valid',
+        'ru' => 'Validator:Is_Menu -> param \'{$0}\' with value \'{$1}\' is not valid',
+    ],
 ];

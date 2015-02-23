@@ -72,12 +72,10 @@ class Paginator extends Action
         return [
             'view' => ['viewRenderClass' => 'Ice:Php'],
             'input' => [
-                'default' => [
-                    'fastStep' => ['default' => 5],
-                    'params' => ['default' => []],
-                    'data' => ['validators' => 'Ice:Is_Query_Result'],
-                    'actionClassName' => ['validators' => 'Ice:Not_Null']
-                ]
+                'fastStep' => ['default' => 5],
+                'params' => ['default' => []],
+                'data' => ['validators' => 'Ice:Is_Query_Result'],
+                'actionClassName' => ['validators' => 'Ice:Not_Null']
             ]
         ];
     }

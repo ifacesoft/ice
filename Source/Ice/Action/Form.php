@@ -74,16 +74,14 @@ class Form extends Action
         return [
             'view' => ['viewRenderClass' => 'Ice:Php', 'layout' => 'div.Form>div.panel.panel-default>div.panel-body'],
             'input' => [
-                'default' => [
-                    'form' => ['validators' => 'Ice:Is_Form'],
-                    'submitTitle' => ['validators' => 'Ice:Not_Empty'],
-                    'grouping' => ['default' => 1],
-                    'submitActionName' => ['default' => 'Ice:Form_Submit'],
-                    'redirect' => ['default' => ''],
-                    'params' => ['default' => []],
-                    'reRenderClosest' => ['default' => ''],
-                    'reRenderActionNames' => ['default' => []]
-                ]
+                'form' => ['validators' => 'Ice:Is_Form'],
+                'submitTitle' => ['validators' => 'Ice:Not_Empty'],
+                'grouping' => ['default' => 1],
+                'submitActionName' => ['default' => 'Ice:Form_Submit'],
+                'redirect' => ['default' => ''],
+                'params' => ['default' => []],
+                'reRenderClosest' => ['default' => ''],
+                'reRenderActionNames' => ['default' => []]
             ]
         ];
     }

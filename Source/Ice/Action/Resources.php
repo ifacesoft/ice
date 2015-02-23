@@ -15,7 +15,6 @@ use Ice\Core\Action;
 use Ice\Core\Data_Provider;
 use Ice\Core\Loader;
 use Ice\Core\Module;
-use Ice\Data\Provider\Router;
 use Ice\Helper\Arrays;
 use Ice\Helper\Directory;
 use JSMin;
@@ -38,113 +37,6 @@ use JSMin;
  */
 class Resources extends Action
 {
-    /**
-     * Action config
-     *
-     * example:
-     * ```php
-     *  $config = [
-     *      'actions' => [
-     *          ['Ice:Title', ['title' => 'page title'], 'title'],
-     *          ['Ice:Another_Action, ['param' => 'value']
-     *      ],
-     *      'view' => [
-     *          'layout' => Emmet::PANEL_BODY,
-     *          'template' => _Custom,
-     *          'viewRenderClass' => Ice:Twig,
-     *      ],
-     *      'input' => [
-     *          Request::DEFAULT_DATA_PROVIDER_KEY => [
-     *              'paramFromGETorPOST => [
-     *                  'default' => 'defaultValue',
-     *                  'validators' => ['Ice:PATTERN => PATTERN::LETTERS_ONLY]
-     *                  'type' => 'string'
-     *              ]
-     *          ]
-     *      ],
-     *      'output' => ['Ice:Resource/Ice\Action\Index'],
-     *      'ttl' => 3600,
-     *      'roles' => []
-     *  ];
-     * ```
-     * @return array
-     *
-     * @author anonymous <email>
-     *
-     * @version 0
-     * @since 0
-     */
-    protected static function config()
-    {
-        return [
-            'view' => ['viewRenderClass' => 'Ice:Php', 'layout' => ''],
-            'input' => [
-                'default' => [
-                    'resources' => [
-                        'default' => [
-                            'modules' => [
-                                'Ice' => [
-                                    'vendor_js' => [
-                                        'path' => 'js/vendor/',
-                                        'js' => ['-modernizr-2.8.3.min.js'],
-                                        'css' => [],
-                                        'isCopy' => false,
-                                    ],
-                                    'vendor_css' => [
-                                        'path' => 'css/vendor/',
-                                        'js' => [],
-                                        'css' => ['empty.css'],
-                                        'isCopy' => false,
-                                    ],
-                                    'vendor' => [
-                                        'path' => 'vendor/',
-                                        'js' => [],
-                                        'css' => [],
-                                        'isCopy' => false,
-                                    ],
-                                    'common' => [
-                                        'path' => '',
-                                        'js' => [],
-                                        'css' => ['css/flags.css', 'css/preloader.css'],
-                                        'isCopy' => false,
-                                    ],
-                                    'module' => [
-                                        'path' => 'Ice/',
-                                        'js' => ['Helper/String.js'],
-                                        'css' => [],
-                                        'isCopy' => false,
-                                    ],
-                                ],
-                            ],
-                            'vendors' => [
-                                'jquery/jquery-ui' => [
-                                    'jquery' => [
-                                        'path' => '/',
-                                        'js' => ['external/jquery/jquery.js', '-jquery-ui.min.js'],
-                                        'css' => ['-jquery-ui.min.css', '-jquery-ui.structure.min.css', '-jquery-ui.theme.min.css'],
-                                        'isCopy' => true,
-                                    ],
-                                ],
-                                'twbs/bootstrap' => [
-                                    'bootstrap' => [
-                                        'path' => 'dist/',
-                                        'js' => ['-js/bootstrap.min.js'],
-                                        'css' => ['-css/bootstrap.min.css', '-css/bootstrap-theme.min.css'],
-                                        'isCopy' => true,
-                                        'css_replace' => ['url(../', 'url('],
-                                    ],
-                                ],
-                            ],
-                        ],
-                    ],
-                    'js' => ['default' => []],
-                    'css' => ['default' => []],
-                ],
-                Router::DEFAULT_DATA_PROVIDER_KEY => 'routeName'
-            ]
-        ];
-    }
-
     /**
      * Runtime append js resource
      *
@@ -202,6 +94,113 @@ class Resources extends Action
     public static function appendCss($resource)
     {
         self::append('css', $resource);
+    }
+
+    /**
+     * Action config
+     *
+     * example:
+     * ```php
+     *  $config = [
+     *      'actions' => [
+     *          ['Ice:Title', ['title' => 'page title'], 'title'],
+     *          ['Ice:Another_Action, ['param' => 'value']
+     *      ],
+     *      'view' => [
+     *          'layout' => Emmet::PANEL_BODY,
+     *          'template' => _Custom,
+     *          'viewRenderClass' => Ice:Twig,
+     *      ],
+     *      'input' => [
+     *          Request::DEFAULT_DATA_PROVIDER_KEY => [
+     *              'paramFromGETorPOST => [
+     *                  'default' => 'defaultValue',
+     *                  'validators' => ['Ice:PATTERN => PATTERN::LETTERS_ONLY]
+     *                  'type' => 'string'
+     *              ]
+     *          ]
+     *      ],
+     *      'output' => ['Ice:Resource/Ice\Action\Index'],
+     *      'ttl' => 3600,
+     *      'roles' => []
+     *  ];
+     * ```
+     * @return array
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since 0
+     */
+    protected static function config()
+    {
+        return [
+            'view' => ['viewRenderClass' => 'Ice:Php', 'layout' => ''],
+            'input' => [
+                'resources' => [
+                    'default' => [
+                        'modules' => [
+                            'Ice' => [
+                                'vendor_js' => [
+                                    'path' => 'js/vendor/',
+                                    'js' => ['-modernizr-2.8.3.min.js'],
+                                    'css' => [],
+                                    'isCopy' => false,
+                                ],
+                                'vendor_css' => [
+                                    'path' => 'css/vendor/',
+                                    'js' => [],
+                                    'css' => ['empty.css'],
+                                    'isCopy' => false,
+                                ],
+                                'vendor' => [
+                                    'path' => 'vendor/',
+                                    'js' => [],
+                                    'css' => [],
+                                    'isCopy' => false,
+                                ],
+                                'common' => [
+                                    'path' => '',
+                                    'js' => [],
+                                    'css' => ['css/flags.css', 'css/preloader.css'],
+                                    'isCopy' => false,
+                                ],
+                                'module' => [
+                                    'path' => 'Ice/',
+                                    'js' => ['Helper/String.js'],
+                                    'css' => [],
+                                    'isCopy' => false,
+                                ],
+                            ],
+                        ],
+                        'vendors' => [
+                            'jquery/jquery-ui' => [
+                                'jquery' => [
+                                    'path' => '/',
+                                    'js' => ['external/jquery/jquery.js', '-jquery-ui.min.js'],
+                                    'css' => ['-jquery-ui.min.css', '-jquery-ui.structure.min.css', '-jquery-ui.theme.min.css'],
+                                    'isCopy' => true,
+                                ],
+                            ],
+                            'twbs/bootstrap' => [
+                                'bootstrap' => [
+                                    'path' => 'dist/',
+                                    'js' => ['-js/bootstrap.min.js'],
+                                    'css' => ['-css/bootstrap.min.css', '-css/bootstrap-theme.min.css'],
+                                    'isCopy' => true,
+                                    'css_replace' => ['url(../', 'url('],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                'js' => ['default' => []],
+                'css' => ['default' => []],
+                'routeName' => [
+                    'providers' => 'router'
+                ]
+            ]
+        ];
     }
 
     /**

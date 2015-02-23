@@ -119,4 +119,16 @@ return [
         'en' => 'Twig: View {$0} not found. Trying generate template {$1}...',
         'ru' => 'Twig: View {$0} not found. Trying generate template {$1}...',
     ],
+    'Smarty: Unable to load template file \'Ice/Action/Title.tpl\'' => [
+        'en' => 'Smarty: Unable to load template file \'Ice/Action/Title.tpl\'',
+        'ru' => 'Smarty: Unable to load template file \'Ice/Action/Title.tpl\'',
+    ],
+    'Smarty: Unable to load template file \'Ice/Action/Menu/Navbar.tpl\'' => [
+        'en' => 'Smarty: Unable to load template file \'Ice/Action/Menu/Navbar.tpl\'',
+        'ru' => 'Smarty: Unable to load template file \'Ice/Action/Menu/Navbar.tpl\'',
+    ],
+    'Smarty: Unable to load template file \'Ice/Action/Resources.tpl\'' => [
+        'en' => 'Smarty: Unable to load template file \'Ice/Action/Resources.tpl\'',
+        'ru' => 'Smarty: Unable to load template file \'Ice/Action/Resources.tpl\'',
+    ],
 ];

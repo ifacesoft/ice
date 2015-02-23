@@ -11,12 +11,18 @@ namespace Ice\Core;
 
 use Ice;
 use Ice\Core;
+use Ice\Data\Provider\Cli as Data_Provider_Cli;
 use Ice\Data\Provider\Registry;
 use Ice\Data\Provider\Repository;
+use Ice\Data\Provider\Request as Data_Provider_Request;
+use Ice\Data\Provider\Router as Data_Provider_Router;
+use Ice\Data\Provider\Session as Data_Provider_Session;
 use Ice\Exception\Http_Bad_Request;
 use Ice\Exception\Http_Not_Found;
 use Ice\Exception\Redirect;
 use Ice\Helper\Json;
+use Ice\Helper\Php;
+use Ice\Helper\Validator as Helper_Validator;
 
 /**
  * Class Action
@@ -95,6 +101,140 @@ abstract class Action
     }
 
     /**
+     * @param array $data
+     * @return array
+     * @throws Redirect
+     */
+    public static function getInput(array $data = [])
+    {
+        $dataProviderKeyMap = [
+            'request' => Data_Provider_Request::DEFAULT_DATA_PROVIDER_KEY,
+            'router' => Data_Provider_Router::DEFAULT_DATA_PROVIDER_KEY,
+            'session' => Data_Provider_Session::DEFAULT_DATA_PROVIDER_KEY,
+            'cli' => Data_Provider_Cli::DEFAULT_DATA_PROVIDER_KEY,
+        ];
+
+        $input = [];
+        foreach (self::getConfig()->gets('input', false) as $name => $param) {
+            if (is_int($name)) {
+                $name = $param;
+                $param = [];
+            }
+
+            $dataProviderKeys = isset($param['providers'])
+                ? (array)$param['providers']
+                : ['default'];
+
+            foreach ($dataProviderKeys as $dataProviderKey) {
+                if (isset($input[$name])) {
+                    continue;
+                }
+
+                if (isset($dataProviderKeyMap[$dataProviderKey])) {
+                    $dataProviderKey = $dataProviderKeyMap[$dataProviderKey];
+                }
+
+                $input[$name] = $dataProviderKey == 'default'
+                    ? (isset($data[$name]) ? $data[$name] : null)
+                    : Data_Provider::getInstance($dataProviderKey)->get($name);
+            }
+
+            $input[$name] = Action::getInputParam($name, $input[$name], $param);
+        }
+
+        if (isset($input['redirectUrl'])) {
+            throw new Redirect($input['redirectUrl']);
+        }
+
+        return $input;
+    }
+
+    /**
+     * Get action config
+     *
+     * @return Config
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
+     */
+    public static function getConfig()
+    {
+        $repository = self::getRepository();
+
+        if ($config = $repository->get('config')) {
+            return $config;
+        }
+
+        $actionClass = self::getClass();
+
+        $config = Config::create($actionClass, array_merge_recursive($actionClass::config(), Config::getInstance($actionClass, null, false, -1)->gets()));
+
+        return $repository->set('config', $config);
+    }
+
+    /**
+     * Return action repository
+     *
+     * @return Repository
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
+     */
+    public static function getRepository()
+    {
+        return Repository::getInstance(__CLASS__, self::getClass());
+    }
+
+    /**
+     * Return valid input value
+     *
+     * @param $name
+     * @param $value
+     * @param $param
+     * @return mixed
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
+     */
+    public static function getInputParam($name, $value, $param)
+    {
+        if (empty($param)) {
+            return $value;
+        }
+
+        if ($value === null && isset($param['default'])) {
+            $value = $param['default'];
+        }
+
+        if (isset($param['type'])) {
+            $value = Php::castTo($param['type'], $value);
+        }
+
+        if (isset($param['validators'])) {
+            foreach ((array)$param['validators'] as $validatorClass => $validatorParams) {
+                if (is_int($validatorClass)) {
+                    $validatorClass = $validatorParams;
+                    $validatorParams = null;
+                }
+
+                Helper_Validator::validate($validatorClass, $validatorParams, $name, $value);
+            }
+        }
+
+        if (isset($param['converter']) && is_callable($param['converter'])) {
+            $value = $param['converter']($value);
+        }
+
+        return $value;
+    }
+
+    /**
      * Action config
      *
      * example:
@@ -133,185 +273,6 @@ abstract class Action
     protected static function config()
     {
         return [];
-    }
-
-    /**
-     * Calling action
-     *
-     * @param int $level
-     * @return View|null|string
-     * @throws Redirect
-     * @throws \Exception
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function call($level = 0)
-    {
-        $startTime = Logger::microtime();
-
-        /** @var Action $actionClass */
-        $actionClass = get_class($this);
-
-        if (Request::isCli()) {
-            Action::getLogger()->info(['{$0}call: {$1}...', [str_repeat("\t", $level), $actionClass]], Logger::MESSAGE);
-        }
-
-        try {
-            $config = $actionClass::getConfig();
-
-            $actionContext = Ice::getContext();
-
-            $actionContext->initAction($actionClass, $this->_inputHash);
-
-            $cacher = View::getCacher();
-
-//            if ($view = $cacher->get($this->_inputHash)) {
-//                return $view;
-//            }
-
-            $actions = $this->_actions;
-            $this->_actions = [];
-
-            $template = $config->get('view/template', false);
-
-            if ($template !== null) {
-                $this->_template = $template;
-            }
-
-            $params = $this->getParams($config->gets('outputDataProviderKeys', false), (array)$this->run($this->_input, $actionContext));
-
-            foreach ($actions as $key => $action) {
-                if (is_string($action)) {
-                    $action = [$key => $action];
-                }
-
-                $this->addAction($action);
-            }
-
-            foreach ($config->gets('actions', false) as $key => $action) {
-                if (is_string($action)) {
-                    $action = [$key => $action];
-                }
-
-                $this->addAction($action);
-            }
-
-            $finishTime = Logger::microtimeResult($startTime, true);
-
-            if ($content = $actionContext->getContent()) {
-                Ice::getContext()->setContent(null);
-                return $content;
-            }
-
-            $startTimeAfter = Logger::microtime();
-
-            foreach ($this->_actions as $subActionKey => $actionData) {
-                $newLevel = $level + 1;
-
-                foreach ($actionData as $subActionClass => $subActionParams) {
-                    $subView = null;
-
-                    try {
-                        $subView = $subActionClass::create($subActionParams)->call($newLevel);
-                    } catch (Redirect $e) {
-                        throw $e;
-                    } catch (Http_Bad_Request $e) {
-                        throw $e;
-                    } catch (Http_Not_Found $e) {
-                        throw $e;
-                    } catch (\Exception $e) {
-                        $subView = self::getLogger()->error(['Calling subAction "{$0}" in action "{$1}" failed', [$subActionClass, $actionClass]], __FILE__, __LINE__, $e);
-                    }
-
-                    if (is_int($subActionKey)) {
-                        $params[$subActionClass::getClassName()][] = $subView;
-                    } else {
-                        $params[$subActionKey] = $subView;
-                    }
-
-                    $actionContext->commit();
-                }
-            }
-
-            $finishTimeAfter = Logger::microtimeResult($startTimeAfter);
-
-            $actionContext->setParams($params);
-
-            $viewData = $actionContext->getViewData();
-
-            $viewData['template'] = $this->_template;
-
-            $defaultViewRenderClassName = $config->get('view/viewRenderClass', false);
-            if (!empty($defaultViewRenderClassName)) {
-                $viewData['defaultViewRenderClassName'] = $defaultViewRenderClassName;
-            }
-
-            $viewData['layout'] = $config->get('view/layout', false);
-
-            $view = $cacher->set($this->_inputHash, $this->flush(View::create($viewData)));
-
-            if (Request::isCli()) {
-                Action::getLogger()->info(['{$0}{$1} complete! [{$2} + {$3}]', [str_repeat("\t", $level), $actionClass::getClassName(), $finishTime, $finishTimeAfter]], Logger::MESSAGE);
-            }
-
-            if (Environment::isDevelopment()) {
-                Logger::fb('action: ' . $actionClass . ' ' . Json::encode($this->_input) . ' [' . $finishTime . ' ' . $finishTimeAfter . ']');
-            }
-
-            return $view;
-        } catch (Redirect $e) {
-            throw $e;
-        } catch (Http_Bad_Request $e) {
-            throw $e;
-        } catch (Http_Not_Found $e) {
-            throw $e;
-        } catch (\Exception $e) {
-            Action::getLogger()->exception(['Calling action "{$0}" failed', $actionClass], __FILE__, __LINE__, $e);
-        }
-
-        return '';
-    }
-
-    /**
-     * Get action config
-     *
-     * @return Config
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since 0.5
-     */
-    public static function getConfig()
-    {
-        $repository = self::getRepository();
-
-        if ($config = $repository->get('config')) {
-            return $config;
-        }
-
-        $actionClass = self::getClass();
-
-        $config = Config::create(self::getClass(), array_merge_recursive(Config::getInstance($actionClass, null, false, -1)->gets(), $actionClass::config()));
-
-        return $repository->set('config', $config);
-    }
-
-    /**
-     * Return action repository
-     *
-     * @return Repository
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since 0.5
-     */
-    public static function getRepository()
-    {
-        return Repository::getInstance(__CLASS__, self::getClass());
     }
 
     /**
@@ -357,7 +318,7 @@ abstract class Action
 
     protected function addAction($action)
     {
-        $this->_actions[] = (array)$action;
+        $this->_actions[] = $action;
     }
 
     /**
@@ -365,15 +326,37 @@ abstract class Action
      */
     public function getActions()
     {
-        return $this->_actions;
-    }
+        $actions = [];
 
-    /**
-     * @param array $actions
-     */
-    public function setActions($actions)
-    {
-        $this->_actions = $actions;
+        /** @var Action $actionClass */
+        $actionClass = get_class($this);
+
+        foreach (array_merge($this->_actions, $actionClass::getConfig()->gets('actions', false)) as $key => $action) {
+            $params = [];
+
+            if (is_string($action)) {
+                $action = [$key => $action];
+            }
+
+            list($key, $class) = each($action);
+
+            if (count($action) > 1) {
+                $params = current($action);
+            }
+
+            $class = $class[0] == '_'
+                ? get_class($this) . $class
+                : Action::getClass($class);
+
+            if (!empty($key) && is_string($key)) {
+                $actions[$key] = [$class => $params];
+            } else {
+                $actions[] = [$class => $params];
+            }
+
+        }
+
+        return $actions;
     }
 
     /**
@@ -385,27 +368,116 @@ abstract class Action
     }
 
     /**
-     * @param null $template
+     * Set view template
+     *
+     * @param string $template
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
      */
-    public function setTemplate($template)
+    protected function setTemplate($template)
     {
+        /** @var Action $actionClass */
+        $actionClass = get_class($this);
+
+        if ($template === null) {
+            $template = $actionClass::getConfig()->get('view/template', false);
+
+            if ($template === null) {
+                $this->_template = $actionClass;
+                return;
+            }
+        }
+
+        if ($template === '') {
+            $this->_template = $template;
+            return;
+        }
+
+        if ($template[0] == '_') {
+            $this->_template = $actionClass . $template;
+            return;
+        }
+
         $this->_template = $template;
     }
 
     /**
-     * @return array
-     */
-    public function getInput()
-    {
-        return $this->_input;
-    }
-
-    /**
+     * Init input params
+     *
      * @param array $input
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
      */
     public function setInput($input)
     {
+        $this->initActions($input);
+        $this->initTemplate($input);
+        $this->initViewRenderClass($input);
+        $this->initLayout($input);
+        $this->initTtl($input);
+
         $this->_input = $input;
+    }
+
+    private function initActions(&$input)
+    {
+        if (isset($input['actions'])) {
+            foreach ((array)$input['actions'] as $key => $action) {
+                if (is_string($action)) {
+                    $action = [$key => $action];
+                }
+
+                $this->addAction($action);
+            }
+
+            unset($input['actions']);
+        }
+    }
+
+    private function initTemplate(&$input)
+    {
+        if (isset($input['template'])) {
+            $this->setTemplate($input['template']);
+            unset($input['template']);
+        } else {
+            $this->setTemplate(null);
+        }
+    }
+
+    private function initViewRenderClass(&$input)
+    {
+        if (isset($input['viewRenderClass'])) {
+            $this->setViewRenderClass($input['viewRenderClass']);
+            unset($input['viewRenderClass']);
+        } else {
+            $this->setViewRenderClass(null);
+        }
+    }
+
+    private function initLayout(&$input)
+    {
+        if (isset($input['layout'])) {
+            $this->setLayout($input['layout']);
+            unset($input['layout']);
+        } else {
+            $this->setLayout(null);
+        }
+    }
+
+    private function initTtl(&$input)
+    {
+        if (isset($input['ttl'])) {
+            $this->setTtl($input['ttl']);
+            unset($input['ttl']);
+        } else {
+            $this->setTtl(null);
+        }
     }
 
     /**
@@ -421,6 +493,12 @@ abstract class Action
      */
     public function setOutput($output)
     {
+        foreach (self::getConfig()->gets('output', false) as $name => $dataProviderKey) {
+            if (!isset($output[$name])) {
+                $output[$name] = Data_Provider::getInstance($dataProviderKey)->get($name);
+            }
+        }
+
         $this->_output = $output;
     }
 
@@ -433,11 +511,24 @@ abstract class Action
     }
 
     /**
-     * @param null $viewRenderClass
+     * Set view render class
+     *
+     * @param string $viewRenderClass
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
      */
-    public function setViewRenderClass($viewRenderClass)
+    protected function setViewRenderClass($viewRenderClass)
     {
-        $this->_viewRenderClass = $viewRenderClass;
+        if (!$viewRenderClass) {
+            /** @var Action $actionClass */
+            $actionClass = get_class($this);
+            $viewRenderClass = $actionClass::getConfig()->get('view/viewRenderClass', false);
+        }
+
+        $this->_viewRenderClass = View_Render::getClass($viewRenderClass);
     }
 
     /**
@@ -449,10 +540,39 @@ abstract class Action
     }
 
     /**
-     * @param null $layout
+     * Set emmet view layout
+     *
+     * @param string $layout
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
      */
-    public function setLayout($layout)
+    protected function setLayout($layout)
     {
+        /** @var Action $actionClass */
+        $actionClass = get_class($this);
+
+        if ($layout === null) {
+            $layout = $actionClass::getConfig()->get('view/layout', false);
+
+            if ($layout === null) {
+                $this->_layout = 'div.' . $actionClass::getClassName();
+                return;
+            }
+        }
+
+        if ($layout === '') {
+            $this->_layout = $layout;
+            return;
+        }
+
+        if ($layout[0] == '_') {
+            $this->_layout = 'div.' . $actionClass::getClassName() . $layout;
+            return;
+        }
+
         $this->_layout = $layout;
     }
 
@@ -465,10 +585,23 @@ abstract class Action
     }
 
     /**
-     * @param null $ttl
+     * Set action result cache ttl
+     *
+     * @param integer $ttl
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
      */
-    public function setTtl($ttl)
+    protected function setTtl($ttl)
     {
+        if ($ttl === null) {
+            /** @var Action $actionClass */
+            $actionClass = get_class($this);
+            $ttl = $actionClass::getConfig()->get('ttl', false);
+        }
+
         $this->_ttl = $ttl;
     }
 }

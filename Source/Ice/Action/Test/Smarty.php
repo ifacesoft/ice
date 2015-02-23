@@ -46,9 +46,7 @@ class Test_Smarty extends Action
     {
         return [
             'view' => ['viewRenderClass' => 'Ice:Smarty'],
-            'input' => [
-                'default' => ['inputTestSmarty']
-            ]
+            'input' => 'inputTestSmarty'
         ];
     }
 

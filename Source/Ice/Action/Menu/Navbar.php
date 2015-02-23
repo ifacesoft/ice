@@ -58,9 +58,7 @@ class Menu_Navbar extends Action
         return [
             'view' => ['viewRenderClass' => 'Ice:Php', 'layout' => 'div.Menu_Navbar.collapse.navbar-collapse'],
             'input' => [
-                'default' => [
-                    'menu' => ['validators' => 'Ice:Is_Menu']
-                ]
+                'menu' => ['validators' => 'Ice:Is_Menu']
             ]
         ];
     }

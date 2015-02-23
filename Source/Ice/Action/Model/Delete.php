@@ -74,10 +74,8 @@ class Model_Delete extends Action
         return [
             'view' => ['template' => ''],
             'input' => [
-                'default' => [
-                    'modelClassName' => ['validators' => 'Ice:Not_Empty'],
-                    'pk' => ['validators' => 'Ice:Numeric_Positive']
-                ]
+                'modelClassName' => ['validators' => 'Ice:Not_Empty'],
+                'pk' => ['validators' => 'Ice:Numeric_Positive']
             ]
         ];
     }

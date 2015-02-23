@@ -58,17 +58,15 @@ class Data_Model extends Action
         return [
             'view' => ['viewRenderClass' => 'Ice:Smarty'],
             'input' => [
-                'default' => [
-                    'modelClassName' => ['validators' => 'Ice:Not_Empty'],
-                    'formFilterFields' => ['validators' => 'Ice:Not_Empty'],
-                    'dataFilterFields' => ['validators' => 'Ice:Not_Empty'],
-                    'page' => ['default' => 1],
-                    'limit' => ['default' => 10],
-                    'submitActionName' => ['default' => 'Ice:Form_Submit'],
-                    'reRenderClosest' => ['default' => 'Ice:Data_Model'],
-                    'reRenderActionNames' => ['default' => []],
-                    'grouping' => ['default' => 0],
-                ]
+                'modelClassName' => ['validators' => 'Ice:Not_Empty'],
+                'formFilterFields' => ['validators' => 'Ice:Not_Empty'],
+                'dataFilterFields' => ['validators' => 'Ice:Not_Empty'],
+                'page' => ['default' => 1],
+                'limit' => ['default' => 10],
+                'submitActionName' => ['default' => 'Ice:Form_Submit'],
+                'reRenderClosest' => ['default' => 'Ice:Data_Model'],
+                'reRenderActionNames' => ['default' => []],
+                'grouping' => ['default' => 0],
             ]
         ];
     }

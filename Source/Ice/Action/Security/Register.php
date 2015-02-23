@@ -57,10 +57,8 @@ class Security_Register extends Action
         return [
             'view' => ['viewRenderClass' => 'Ice:Php'],
             'input' => [
-                'default' => [
-                    'security' => ['default' => 'Login_Password'],
-                    'redirect' => ['default' => '/ice/security/login']
-                ]
+                'security' => ['default' => 'Login_Password'],
+                'redirect' => ['default' => '/ice/security/login']
             ]
         ];
     }

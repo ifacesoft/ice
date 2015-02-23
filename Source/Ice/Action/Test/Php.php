@@ -45,9 +45,7 @@ class Test_Php extends Action
     {
         return [
             'view' => ['viewRenderClass' => 'Ice:Php'],
-            'input' => [
-                'default' => ['inputTestPhp']
-            ]
+            'input' => 'inputTestPhp'
         ];
     }
 

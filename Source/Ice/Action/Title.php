@@ -10,6 +10,7 @@
 namespace Ice\Action;
 
 use Ice\Core\Action;
+use Ice\Core\Logger;
 
 /**
  * Class Title
@@ -70,12 +71,10 @@ class Title extends Action
         return [
             'view' => ['viewRenderClass' => 'Ice:Php', 'layout' => ''],
             'input' => [
-                'default' => [
-                    'title' => [
-                        'converter' => function ($title) {
-                            return Title::getResource()->get($title);
-                        }
-                    ]
+                'title' => [
+                    'converter' => function ($title) {
+                        return Title::getResource()->get($title);
+                    }
                 ]
             ]
         ];

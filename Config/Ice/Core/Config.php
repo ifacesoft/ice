@@ -33,10 +33,6 @@ return [
             '/.*/' => 'production'
         ]
     ],
-    'Ice\Core\View' => [
-        'layout' => null,
-        'defaultViewRenderClassName' => 'Ice:Php'
-    ],
     'Ice\Core\Request' => [
         'multiLocale' => 1,
         'locale' => 'en',

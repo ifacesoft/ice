@@ -11,7 +11,6 @@ namespace Ice\Action;
 
 use Ice\Core\Action;
 use Ice\Core\Logger;
-use Ice\Data\Provider\Cli;
 use Ice\Helper\Console;
 use Ice\Helper\Directory;
 use Ice\Helper\File;
@@ -77,97 +76,103 @@ class Module_Create extends Action
         return [
             'view' => ['viewRenderClass' => 'Ice:Php'],
             'input' => [
-                Cli::DEFAULT_DATA_PROVIDER_KEY => [
-                    'name' => [
-                        'default' => function ($param) {
-                            return Console::getInteractive(__CLASS__, $param,
-                                [
-                                    'default' => 'MyProject',
-                                    'title' => 'Module name [{$0}]: ',
-                                    'validators' => ['Ice:Pattern' => '/^[a-z]+$/i']
+                'name' => [
+                    'providers' => 'cli',
+                    'default' => function ($param) {
+                        return Console::getInteractive(__CLASS__, $param,
+                            [
+                                'default' => 'MyProject',
+                                'title' => 'Module name [{$0}]: ',
+                                'validators' => ['Ice:Pattern' => '/^[a-z]+$/i']
+                            ]
+                        );
+                    }
+                ],
+                'alias' => [
+                    'providers' => 'cli',
+                    'default' => function ($param) {
+                        return Console::getInteractive(__CLASS__, $param,
+                            [
+                                'default' => 'Mp',
+                                'title' => 'Module alias (short module name, 2-5 letters) [{$0}]: ',
+                                'validators' => ['Ice:Pattern' => '/^[a-z]+$/i']
+                            ]
+                        );
+                    }
+                ],
+                'scheme' => [
+                    'providers' => 'cli',
+                    'default' => function ($param) {
+                        return Console::getInteractive(__CLASS__, $param,
+                            [
+                                'default' => 'test',
+                                'title' => 'Scheme - database name(not empty and must be exists) [{$0}]: ',
+                                'validators' => ['Ice:Pattern' => '/^[a-z]+$/i']
+                            ]
+                        );
+                    }
+                ],
+                'username' => [
+                    'providers' => 'cli',
+                    'default' => function ($param) {
+                        return Console::getInteractive(__CLASS__, $param,
+                            [
+                                'default' => 'root',
+                                'title' => 'Database username [{$0}]: ',
+                                'validators' => ['Ice:Pattern' => '/^[a-z]+$/i']
+                            ]
+                        );
+                    }
+                ],
+                'password' => [
+                    'providers' => 'cli',
+                    'default' => function ($param) {
+                        return Console::getInteractive(__CLASS__, $param,
+                            [
+                                'default' => '',
+                                'title' => 'Database username password [{$0}]: ',
+                                'validators' => ['Ice:Pattern' => '/^[a-z]+$/i']
+                            ]
+                        );
+                    }
+                ],
+                'viewRender' => [
+                    'providers' => 'cli',
+                    'default' => function ($param) {
+                        return Console::getInteractive(__CLASS__, $param,
+                            [
+                                'default' => 'Smarty',
+                                'title' => 'Default view render (Php|Smarty|Twig)  [{$0}]: ',
+                                'validators' => ['Ice:Pattern' => '/^(Php|Smarty|Twig)$/i']
+                            ]
+                        );
+                    }
+                ],
+                'vcs' => [
+                    'providers' => 'cli',
+                    'default' => function ($param) {
+                        return Console::getInteractive(__CLASS__, $param,
+                            [
+                                'default' => 'mercurial',
+                                'title' => 'Default version control system (mercurial|git|subversion)  [{$0}]: ',
+                                'validators' => ['Ice:Pattern' => '/^(mercurial|git|subversion)$/i']
+                            ]
+                        );
+                    }
+                ],
+                'isWeb' => [
+                    'providers' => 'cli',
+                    'default' => function ($param) {
+                        return Console::getInteractive(__CLASS__, $param,
+                            [
+                                'default' => 'web',
+                                'title' => 'Web project or ice module (web|module) [{$0}]: ',
+                                'validators' => [
+                                    'Ice:Pattern' => ['params' => '/^(web|module)$/i', 'message' => 'Web or Module?']
                                 ]
-                            );
-                        }
-                    ],
-                    'alias' => [
-                        'default' => function ($param) {
-                            return Console::getInteractive(__CLASS__, $param,
-                                [
-                                    'default' => 'Mp',
-                                    'title' => 'Module alias (short module name, 2-5 letters) [{$0}]: ',
-                                    'validators' => ['Ice:Pattern' => '/^[a-z]+$/i']
-                                ]
-                            );
-                        }
-                    ],
-                    'scheme' => [
-                        'default' => function ($param) {
-                            return Console::getInteractive(__CLASS__, $param,
-                                [
-                                    'default' => 'test',
-                                    'title' => 'Scheme - database name(not empty and must be exists) [{$0}]: ',
-                                    'validators' => ['Ice:Pattern' => '/^[a-z]+$/i']
-                                ]
-                            );
-                        }
-                    ],
-                    'username' => [
-                        'default' => function ($param) {
-                            return Console::getInteractive(__CLASS__, $param,
-                                [
-                                    'default' => 'root',
-                                    'title' => 'Database username [{$0}]: ',
-                                    'validators' => ['Ice:Pattern' => '/^[a-z]+$/i']
-                                ]
-                            );
-                        }
-                    ],
-                    'password' => [
-                        'default' => function ($param) {
-                            return Console::getInteractive(__CLASS__, $param,
-                                [
-                                    'default' => '',
-                                    'title' => 'Database username password [{$0}]: ',
-                                    'validators' => ['Ice:Pattern' => '/^[a-z]+$/i']
-                                ]
-                            );
-                        }
-                    ],
-                    'viewRender' => [
-                        'default' => function ($param) {
-                            return Console::getInteractive(__CLASS__, $param,
-                                [
-                                    'default' => 'Smarty',
-                                    'title' => 'Default view render (Php|Smarty|Twig)  [{$0}]: ',
-                                    'validators' => ['Ice:Pattern' => '/^(Php|Smarty|Twig)$/i']
-                                ]
-                            );
-                        }
-                    ],
-                    'vcs' => [
-                        'default' => function ($param) {
-                            return Console::getInteractive(__CLASS__, $param,
-                                [
-                                    'default' => 'mercurial',
-                                    'title' => 'Default version control system (mercurial|git|subversion)  [{$0}]: ',
-                                    'validators' => ['Ice:Pattern' => '/^(mercurial|git|subversion)$/i']
-                                ]
-                            );
-                        }
-                    ],
-                    'isWeb' => [
-                        'default' => function ($param) {
-                            return Console::getInteractive(__CLASS__, $param,
-                                [
-                                    'default' => 'web',
-                                    'title' => 'Web project or ice module (web|module) [{$0}]: ',
-                                    'validators' => [
-                                        'Ice:Pattern' => ['params' => '/^(web|module)$/i', 'message' => 'Web or Module?']
-                                    ]
-                                ]
-                            );
-                        }
-                    ]
+                            ]
+                        );
+                    }
                 ]
             ]
         ];
@@ -244,10 +249,6 @@ class Module_Create extends Action
                 'Ice\Core\Request' => [
                     'multiLocale' => $isMultiLocale,
                     'locale' => $defaultLocale,
-                ],
-                'Ice\Core\View' => [
-                    'layout' => null,
-                    'defaultViewRenderClassName' => 'Ice:' . $input['viewRender']
                 ],
                 'Ice\Core\Environment' => [
                     'environments' => [

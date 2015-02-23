@@ -129,25 +129,11 @@ class View implements Cacheable
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.5
      * @since 0.0
      */
     public function getTemplate()
     {
-        if ($this->_template === '') {
-            return $this->_template;
-        }
-
-        $actionClass = $this->_viewData['actionClass'];
-
-        if ($this->_template === null) {
-            $this->_template = $actionClass;
-        }
-
-        if ($this->_template[0] == '_') {
-            $this->_template = $actionClass . $this->_template;
-        }
-
         return $this->_template;
     }
 
@@ -158,16 +144,12 @@ class View implements Cacheable
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.2
+     * @version 0.5
      * @since 0.0
      */
     public function getViewRenderClass()
     {
-        $viewRenderClassName = isset($this->_viewData['defaultViewRenderClassName'])
-            ? $this->_viewData['defaultViewRenderClassName']
-            : View::getConfig()->get('defaultViewRenderClassName');
-
-        return Object::getClass(View_Render::getClass(), $viewRenderClassName);
+        return $this->_viewRenderClass;
     }
 
     /**
@@ -182,30 +164,7 @@ class View implements Cacheable
      */
     public function getLayout()
     {
-        $postfix = '';
-
-        if (!empty($this->_viewData['layout'])) {
-            if (!ctype_alpha($this->_viewData['layout'][0])) {
-                $postfix = $this->_viewData['layout'];
-                $this->_viewData['layout'] = null;
-            } else {
-                return $this->_viewData['layout'] . '{{$view}}';
-            }
-        }
-
-        $actionClass = $this->_viewData['actionClass'];
-
-        if (Request::isCli() || View::getConfig()->get('defaultLayoutView', false) === '') {
-            $this->_viewData['layout'] = '';
-        }
-
-        if ($this->_viewData['layout'] === '') {
-            return $this->_viewData['layout'];
-        }
-
-        $this->_viewData['layout'] = 'div.' . Object::getName($actionClass) . $postfix;
-
-        return $this->_viewData['layout'] . '{{$view}}';
+       return $this->_layout;
     }
 
     /**

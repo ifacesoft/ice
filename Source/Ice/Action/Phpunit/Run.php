@@ -72,10 +72,8 @@ class Phpunit_Run extends Action
         return [
             'view' => ['template' => ''],
             'input' => [
-                'default' => [
-                    'vendor' => ['default' => 'phpunit/phpunit'],
-                    'script' => ['default' => 'phpunit']
-                ]
+                'vendor' => ['default' => 'phpunit/phpunit'],
+                'script' => ['default' => 'phpunit']
             ]
         ];
     }

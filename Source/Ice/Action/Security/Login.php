@@ -57,10 +57,8 @@ class Security_Login extends Action
         return [
             'view' => ['viewRenderClass' => 'Ice:Php'],
             'input' => [
-                'default' => [
-                    'security' => ['default' => 'Login_Password'],
-                    'redirect' => ['default' => '/']
-                ]
+                'security' => ['default' => 'Login_Password'],
+                'redirect' => ['default' => '/']
             ]
         ];
     }

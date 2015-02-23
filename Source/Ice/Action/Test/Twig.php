@@ -45,9 +45,7 @@ class Test_Twig extends Action
     {
         return [
             'view' => ['viewRenderClass' => 'Ice:Twig'],
-            'input' => [
-                'default' => ['inputTestTwig']
-            ]
+            'input' => 'inputTestTwig'
         ];
     }
 
