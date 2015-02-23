@@ -12,6 +12,7 @@ namespace Ice\Core;
 use Ice;
 use Ice\Core;
 use Ice\Data\Provider\Cli as Data_Provider_Cli;
+use Ice\Data\Provider\File;
 use Ice\Data\Provider\Registry;
 use Ice\Data\Provider\Repository;
 use Ice\Data\Provider\Request as Data_Provider_Request;
@@ -48,12 +49,27 @@ abstract class Action implements Cacheable
      * @var array
      */
     private $_actions = [];
-    private $_template = null;
+
+    /**
+     * Input params
+     *
+     * @var array
+     */
     private $_input = [];
-    private $_output = [];
-    private $_viewRenderClass = null;
-    private $_layout = null;
+
+    /**
+     * Cache ttl
+     *
+     * @var null
+     */
     private $_ttl = null;
+
+    /**
+     * Action view
+     *
+     * @var View
+     */
+    private $_view = null;
 
     /**
      * Private constructor of action
@@ -83,21 +99,138 @@ abstract class Action implements Cacheable
     }
 
     /**
-     * Get action object by name
+     * Restore object
      *
-     * @return Action
-     * @throws Redirect
+     * @param array $data
+     * @return object
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.5
-     * @since 0.0
+     * @since 0.5
      */
-    public static function create()
+    public static function __set_state(array $data)
     {
+        $class = self::getClass();
+
+        $object = new $class();
+
+        foreach ($data as $fieldName => $fieldValue) {
+            $object->$fieldName = $fieldValue;
+        }
+
+        return $object;
+    }
+
+    public static function call(array $input = [], $level = 0)
+    {
+        $startTime = Logger::microtime();
+
+        /** @var Action $actionClass */
         $actionClass = self::getClass();
 
-        return new $actionClass();
+        if (Request::isCli()) {
+            Action::getLogger()->info(['{$0}call: {$1}...', [str_repeat("\t", $level), $actionClass]], Logger::MESSAGE);
+        }
+
+        Action::checkResponse($input);
+
+        $input = $actionClass::getInput($input);
+
+        $actionCacher = Action::getCacher();
+
+        if ($actionClass::getConfig()->get('ttl', false) == 3600) {
+            $actionCacher = File::getInstance($actionClass);
+        }
+
+        $hash = crc32(Json::encode($input));
+        $actionHash = $actionClass . '/' . $hash;
+
+        $actionContext = Ice::getContext()->initAction($actionClass, $hash);
+
+        /** @var Action $action */
+        $action = $actionCacher->get($actionHash);
+
+        if (!$action) {
+            $action = $actionClass::create();
+
+            $action->setInput($input);
+
+            $output = (array)$action->run($input);
+
+            $finishTime = Logger::microtimeResult($startTime, true);
+
+//            if ($content = $actionContext->getContent()) {
+//                Ice::getContext()->setContent(null);
+//                return $content;
+//            }
+
+            $startTimeAfter = Logger::microtime();
+
+            foreach ($action->getActions() as $actionKey => $actionData) {
+                if (empty($actionData) || count($actionData) > 2) {
+                    Action::getLogger()->exception(['Wrong param count ({$0}) in action {$1}', [count($actionData), $actionClass]], __FILE__, __LINE__, null, $actionData);
+                }
+
+                $newLevel = $level + 1;
+
+                /** @var Action $subActionClass */
+                list($subActionClass, $subActionParams) = each($actionData);
+
+                $subView = null;
+
+                try {
+                    $subView = $subActionClass::call($subActionParams, $newLevel);
+                } catch (Redirect $e) {
+                    throw $e;
+                } catch (Http_Bad_Request $e) {
+                    throw $e;
+                } catch (Http_Not_Found $e) {
+                    throw $e;
+                } catch (\Exception $e) {
+                    $subView = Action::getLogger()->error(['Calling subAction "{$0}" in action "{$1}" failed', [$subActionClass, $actionClass]], __FILE__, __LINE__, $e);
+                }
+
+                if (is_int($actionKey)) {
+                    $output[$subActionClass::getClassName()][] = $subView;
+                } else {
+                    $output[$actionKey] = $subView;
+                }
+            }
+
+            $finishTimeAfter = Logger::microtimeResult($startTimeAfter);
+
+            $action->setOutput($output);
+
+            $action->getView()->render();
+
+            $actionCacher->set($actionHash, $action, $action->getTtl());
+
+            if (Request::isCli()) {
+                Action::getLogger()->info(['{$0}{$1} complete! [{$2} + {$3}]', [str_repeat("\t", $level), $actionClass::getClassName(), $finishTime, $finishTimeAfter]], Logger::MESSAGE);
+            }
+
+            if (Environment::isDevelopment()) {
+                Logger::fb('action: ' . $actionClass . ' ' . Json::encode($input) . ' [' . $finishTime . ' ' . $finishTimeAfter . ']');
+            }
+        }
+
+        return $action->getView();
+    }
+
+    private static function checkResponse(&$input)
+    {
+        if (isset($input['response'])) {
+            if (isset($input['response']['contentType'])) {
+                Ice::getResponse()->setContentType($input['response']['contentType']);
+            }
+
+            if (isset($input['response']['statusCode'])) {
+                Ice::getResponse()->setStatusCode($input['response']['statusCode']);
+            }
+
+            unset($input['response']);
+        }
     }
 
     /**
@@ -167,6 +300,7 @@ abstract class Action implements Cacheable
             return $config;
         }
 
+        /** @var Action $actionClass */
         $actionClass = self::getClass();
 
         $config = Config::create($actionClass, array_merge_recursive($actionClass::config(), Config::getInstance($actionClass, null, false, -1)->gets()));
@@ -235,44 +369,96 @@ abstract class Action implements Cacheable
     }
 
     /**
-     * Action config
+     * Get action object by name
      *
-     * example:
-     * ```php
-     *  $config = [
-     *      'actions' => [
-     *          ['Ice:Title', ['title' => 'page title'], 'title'],
-     *          ['Ice:Another_Action, ['param' => 'value']
-     *      ],
-     *      'view' => [
-     *          'layout' => Emmet::PANEL_BODY,
-     *          'template' => _Custom,
-     *          'viewRenderClass' => Ice:Twig,
-     *      ],
-     *      'input' => [
-     *          Request::DEFAULT_DATA_PROVIDER_KEY => [
-     *              'paramFromGETorPOST => [
-     *                  'default' => 'defaultValue',
-     *                  'validators' => ['Ice:PATTERN => PATTERN::LETTERS_ONLY]
-     *                  'type' => 'string'
-     *              ]
-     *          ]
-     *      ],
-     *      'output' => ['Ice:Resource/Ice\Action\Index'],
-     *      'ttl' => 3600,
-     *      'roles' => []
-     *  ];
-     * ```
-     * @return array
+     * @return Action
+     * @throws Redirect
      *
-     * @author anonymous <email>
+     * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0
-     * @since 0
+     * @version 0.5
+     * @since 0.0
      */
-    protected static function config()
+    public static function create()
     {
-        return [];
+        $actionClass = self::getClass();
+
+        return new $actionClass();
+    }
+
+    /**
+     * Init input params
+     *
+     * @param array $input
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
+     */
+    public function setInput($input)
+    {
+        $this->initActions($input);
+        $this->initView($input);
+        $this->initTtl($input);
+
+        $this->_input = $input;
+    }
+
+    private function initActions(&$input)
+    {
+        if (isset($input['actions'])) {
+            foreach ((array)$input['actions'] as $key => $action) {
+                if (is_string($action)) {
+                    $action = [$key => $action];
+                }
+
+                $this->addAction($action);
+            }
+
+            unset($input['actions']);
+        }
+    }
+
+    protected function addAction(array $action)
+    {
+        $this->_actions[] = $action;
+    }
+
+    private function initView(&$input)
+    {
+        $view = $this->getView();
+
+        if (isset($input['template'])) {
+            $view->setTemplate($input['template']);
+            unset($input['template']);
+        } else {
+            $view->setTemplate(null);
+        }
+
+        if (isset($input['viewRenderClass'])) {
+            $view->setViewRenderClass($input['viewRenderClass']);
+            unset($input['viewRenderClass']);
+        } else {
+            $view->setViewRenderClass(null);
+        }
+
+        if (isset($input['layout'])) {
+            $view->setLayout($input['layout']);
+            unset($input['layout']);
+        } else {
+            $view->setLayout(null);
+        }
+    }
+
+    private function initTtl(&$input)
+    {
+        if (isset($input['ttl'])) {
+            $this->setTtl($input['ttl']);
+            unset($input['ttl']);
+        } else {
+            $this->setTtl(null);
+        }
     }
 
     /**
@@ -316,11 +502,6 @@ abstract class Action implements Cacheable
      */
     abstract public function run(array $input);
 
-    protected function addAction(array $action)
-    {
-        $this->_actions[] = $action;
-    }
-
     /**
      * @return array
      */
@@ -360,135 +541,6 @@ abstract class Action implements Cacheable
     }
 
     /**
-     * @return null
-     */
-    public function getTemplate()
-    {
-        return $this->_template;
-    }
-
-    /**
-     * Set view template
-     *
-     * @param string $template
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since 0.5
-     */
-    protected function setTemplate($template)
-    {
-        /** @var Action $actionClass */
-        $actionClass = get_class($this);
-
-        if ($template === null) {
-            $template = $actionClass::getConfig()->get('view/template', false);
-
-            if ($template === null) {
-                $this->_template = $actionClass;
-                return;
-            }
-        }
-
-        if ($template === '') {
-            $this->_template = $template;
-            return;
-        }
-
-        if ($template[0] == '_') {
-            $this->_template = $actionClass . $template;
-            return;
-        }
-
-        $this->_template = $template;
-    }
-
-    /**
-     * Init input params
-     *
-     * @param array $input
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since 0.5
-     */
-    public function setInput($input)
-    {
-        $this->initActions($input);
-        $this->initTemplate($input);
-        $this->initViewRenderClass($input);
-        $this->initLayout($input);
-        $this->initTtl($input);
-
-        $this->_input = $input;
-    }
-
-    private function initActions(&$input)
-    {
-        if (isset($input['actions'])) {
-            foreach ((array)$input['actions'] as $key => $action) {
-                if (is_string($action)) {
-                    $action = [$key => $action];
-                }
-
-                $this->addAction($action);
-            }
-
-            unset($input['actions']);
-        }
-    }
-
-    private function initTemplate(&$input)
-    {
-        if (isset($input['template'])) {
-            $this->setTemplate($input['template']);
-            unset($input['template']);
-        } else {
-            $this->setTemplate(null);
-        }
-    }
-
-    private function initViewRenderClass(&$input)
-    {
-        if (isset($input['viewRenderClass'])) {
-            $this->setViewRenderClass($input['viewRenderClass']);
-            unset($input['viewRenderClass']);
-        } else {
-            $this->setViewRenderClass(null);
-        }
-    }
-
-    private function initLayout(&$input)
-    {
-        if (isset($input['layout'])) {
-            $this->setLayout($input['layout']);
-            unset($input['layout']);
-        } else {
-            $this->setLayout(null);
-        }
-    }
-
-    private function initTtl(&$input)
-    {
-        if (isset($input['ttl'])) {
-            $this->setTtl($input['ttl']);
-            unset($input['ttl']);
-        } else {
-            $this->setTtl(null);
-        }
-    }
-
-    /**
-     * @return array
-     */
-    public function getOutput()
-    {
-        return $this->_output;
-    }
-
-    /**
      * @param array $output
      */
     public function setOutput($output)
@@ -499,81 +551,19 @@ abstract class Action implements Cacheable
             }
         }
 
-        $this->_output = $output;
+        $this->getView()->setData($output);
     }
 
     /**
-     * @return null
+     * @return View
      */
-    public function getViewRenderClass()
+    public function getView()
     {
-        return $this->_viewRenderClass;
-    }
-
-    /**
-     * Set view render class
-     *
-     * @param string $viewRenderClass
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since 0.5
-     */
-    protected function setViewRenderClass($viewRenderClass)
-    {
-        if (!$viewRenderClass) {
-            /** @var Action $actionClass */
-            $actionClass = get_class($this);
-            $viewRenderClass = $actionClass::getConfig()->get('view/viewRenderClass', false);
+        if ($this->_view) {
+            return $this->_view;
         }
 
-        $this->_viewRenderClass = View_Render::getClass($viewRenderClass);
-    }
-
-    /**
-     * @return null
-     */
-    public function getLayout()
-    {
-        return $this->_layout;
-    }
-
-    /**
-     * Set emmet view layout
-     *
-     * @param string $layout
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since 0.5
-     */
-    protected function setLayout($layout)
-    {
-        /** @var Action $actionClass */
-        $actionClass = get_class($this);
-
-        if ($layout === null) {
-            $layout = $actionClass::getConfig()->get('view/layout', false);
-
-            if ($layout === null) {
-                $this->_layout = 'div.' . $actionClass::getClassName();
-                return;
-            }
-        }
-
-        if ($layout === '') {
-            $this->_layout = $layout;
-            return;
-        }
-
-        if ($layout[0] == '_') {
-            $this->_layout = 'div.' . $actionClass::getClassName() . $layout;
-            return;
-        }
-
-        $this->_layout = $layout;
+        return $this->_view = View::create(get_class($this));
     }
 
     /**
@@ -605,6 +595,46 @@ abstract class Action implements Cacheable
         $this->_ttl = $ttl;
     }
 
+    /**
+     * Action config
+     *
+     * example:
+     * ```php
+     *  $config = [
+     *      'actions' => [
+     *          ['Ice:Title', ['title' => 'page title'], 'title'],
+     *          ['Ice:Another_Action, ['param' => 'value']
+     *      ],
+     *      'view' => [
+     *          'layout' => Emmet::PANEL_BODY,
+     *          'template' => _Custom,
+     *          'viewRenderClass' => Ice:Twig,
+     *      ],
+     *      'input' => [
+     *          Request::DEFAULT_DATA_PROVIDER_KEY => [
+     *              'paramFromGETorPOST => [
+     *                  'default' => 'defaultValue',
+     *                  'validators' => ['Ice:PATTERN => PATTERN::LETTERS_ONLY]
+     *                  'type' => 'string'
+     *              ]
+     *          ]
+     *      ],
+     *      'output' => ['Ice:Resource/Ice\Action\Index'],
+     *      'ttl' => 3600,
+     *      'roles' => []
+     *  ];
+     * ```
+     * @return array
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since 0
+     */
+    protected static function config()
+    {
+        return [];
+    }
 
     /**
      * Validate cacheable object
@@ -635,29 +665,5 @@ abstract class Action implements Cacheable
     public function invalidate()
     {
         return $this;
-    }
-
-    /**
-     * Restore object
-     *
-     * @param array $data
-     * @return object
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since 0.5
-     */
-    public static function __set_state(array $data)
-    {
-        $class = self::getClass();
-
-        $object = new $class();
-
-        foreach ($data as $fieldName => $fieldValue) {
-            $object->$fieldName = $fieldValue;
-        }
-
-        return $object;
     }
 }

@@ -13,7 +13,6 @@ use Ice;
 use Ice\Core;
 use Ice\Data\Provider\Cacher;
 use Ice\Helper\Emmet;
-use Ice\Helper\Object;
 
 /**
  * Class View
@@ -31,202 +30,70 @@ class View implements Cacheable
 {
     use Core;
 
-    private $_viewRenderClass = null;
-    private $_template = null;
-    private $_layout = null;
-    private $_params = [];
+    /**
+     * Action class
+     *
+     * @var Action
+     */
+    private $_actionClass = null;
 
     /**
-     * Rendered view
+     * View render class
+     *
+     * @var View_Render
+     */
+    private $_viewRenderClass = null;
+
+    /**
+     * View template
      *
      * @var string
      */
-    private $_result = null;
+    private $_template = null;
 
-    function __construct($viewRenderClass, $template, $layout, $params)
+    /**
+     * View layout
+     *
+     * @var string
+     */
+    private $_layout = null;
+
+    /**
+     * View render result
+     *
+     * @var string
+     */
+    private $_result = [
+        'actionName' => '',
+        'data' => [],
+        'error' => '',
+        'success' => '',
+        'redirect' => '',
+        'content' => ''
+    ];
+
+    /**
+     * @param Action $actionClass
+     */
+    private function __construct($actionClass)
     {
-        $this->_viewRenderClass = $viewRenderClass;
-        $this->_template = $template;
-        $this->_layout = $layout;
-        $this->_params = $params;
+        $this->_actionClass = $actionClass;
+        $this->_result['actionName'] = $actionClass::getClassName();
     }
 
     /**
      * Return new instance of view
      *
-     * @param Action $action
+     * @param $actionClass
      * @return View
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.5
      * @since 0.0
      */
-    public static function create(Action $action)
+    public static function create($actionClass)
     {
-        return new View($action->getViewRenderClass(), $action->getTemplate(), $action->getLayout(), $action->getOutput());
-    }
-
-    /**
-     * Render view
-     *
-     * @return string
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function getContent()
-    {
-        $startTime = Logger::microtime();
-
-        if ($this->_result != null) {
-            return $this->_result;
-        }
-
-        $template = $this->getTemplate();
-
-        if (empty($template)) {
-            return $this->_result = '';
-        }
-
-        /** @var View_Render $viewRenderClass */
-        $viewRenderClass = $this->getViewRenderClass();
-
-        array_unshift(View_Render::$templates, $template);
-
-        try {
-            $this->_result = $viewRenderClass::getInstance()->fetch($template, $this->_params);
-
-            $layout = $this->getLayout();
-
-            if (!empty($layout)) {
-                $emmetedResult = Emmet::translate($layout. '{{$view}}', ['view' => $this->_result]);
-
-                if (empty($emmetedResult)) {
-                    $this->_result = $this->getLogger()->error(['Defined emmet layout string "{$0}" is corrupt', $this->getLayout()], __FILE__, __LINE__);
-                }
-
-                $this->_result = $emmetedResult;
-            }
-
-            if (Environment::isDevelopment()) {
-                Logger::fb('view: ' . $template . ' (' . $viewRenderClass . ') [' . Logger::microtimeResult($startTime) . ']');
-            }
-        } catch (\Exception $e) {
-            $this->_result = $this->getLogger()->error(['Fetch template "{$0}" failed', $template], __FILE__, __LINE__, $e);
-        }
-
-        array_shift(View_Render::$templates);
-
-        return $this->_result;
-    }
-
-    /**
-     * Return view template name
-     *
-     * @return string
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since 0.0
-     */
-    public function getTemplate()
-    {
-        return $this->_template;
-    }
-
-    /**
-     * Return view render class
-     *
-     * @return View_Render
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since 0.0
-     */
-    public function getViewRenderClass()
-    {
-        return $this->_viewRenderClass;
-    }
-
-    /**
-     * Return emmet style layout
-     *
-     * @return string
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function getLayout()
-    {
-       return $this->_layout;
-    }
-
-    /**
-     * Assign params
-     *
-     * @param $params
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function setParams($params)
-    {
-        $this->_viewData['params'] = $params;
-    }
-
-    /**
-     * Return assigned params
-     *
-     * @return array
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function getParams()
-    {
-        return $this->_viewData['params'];
-    }
-
-    /**
-     * Magic render view
-     *
-     * @see View::getContent()
-     *
-     * @return string
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    function __toString()
-    {
-        return $this->getContent();
-    }
-
-    /**
-     * Return action class of view
-     *
-     * @return Action
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function getActionClass()
-    {
-        return $this->_viewData['actionClass'];
+        return new View($actionClass);
     }
 
     /**
@@ -245,37 +112,6 @@ class View implements Cacheable
     }
 
     /**
-     * Validate cacheable object
-     *
-     * @param $value
-     * @return Cacheable
-     *
-     * @author anonymous <email>
-     *
-     * @version 0
-     * @since 0
-     */
-    public function validate($value)
-    {
-        // TODO: Implement validate() method.
-    }
-
-    /**
-     * Invalidate cacheable object
-     *
-     * @return Cacheable
-     *
-     * @author anonymous <email>
-     *
-     * @version 0
-     * @since 0
-     */
-    public function invalidate()
-    {
-        // TODO: Implement invalidate() method.
-    }
-
-    /**
      * Restore object
      *
      * @param array $data
@@ -290,12 +126,195 @@ class View implements Cacheable
     {
         $class = self::getClass();
 
-        $object = new $class(null, null, null, null);
+        $object = new $class($data['_actionClass']);
 
         foreach ($data as $fieldName => $fieldValue) {
             $object->$fieldName = $fieldValue;
         }
 
         return $object;
+    }
+
+    /**
+     * Magic render view
+     *
+     * @see View::getContent()
+     *
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.0
+     */
+    function __toString()
+    {
+        return $this->getContent();
+    }
+
+    public function getContent()
+    {
+        return $this->getResult()['content'];
+    }
+
+    /**
+     * @return string
+     */
+    public function getResult()
+    {
+        return $this->_result;
+    }
+
+    /**
+     * Validate cacheable object
+     *
+     * @param $value
+     * @return Cacheable
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since 0
+     */
+    public function validate($value)
+    {
+        return $this;
+    }
+
+    /**
+     * Invalidate cacheable object
+     *
+     * @return Cacheable
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since 0
+     */
+    public function invalidate()
+    {
+        return $this;
+    }
+
+    public function render()
+    {
+        $startTime = Logger::microtime();
+
+        if (empty($this->_template)) {
+            return;
+        }
+
+        $viewRenderClass = $this->_viewRenderClass;
+
+        array_unshift(View_Render::$templates, $this->_template);
+
+        try {
+            $this->_result['content'] = $viewRenderClass::getInstance()->fetch($this->_template, $this->_result['data']);
+
+
+            if (!empty($this->_layout)) {
+                $emmetedResult = Emmet::translate($this->_layout . '{{$view}}', ['view' => $this->_result['content']]);
+
+                if (empty($emmetedResult)) {
+                    $this->_result['content'] = $this->getLogger()->error(['Defined emmet layout string "{$0}" is corrupt', $this->_layout], __FILE__, __LINE__);
+                }
+
+                $this->_result['content'] = $emmetedResult;
+            }
+
+            if (Environment::isDevelopment()) {
+                Logger::fb('view: ' . $this->_template . ' (' . $viewRenderClass . ') [' . Logger::microtimeResult($startTime) . ']');
+            }
+            array_shift(View_Render::$templates);
+        } catch (\Exception $e) {
+            $this->_result['content'] = $this->getLogger()->error(['Fetch template "{$0}" failed', $this->_template], __FILE__, __LINE__, $e);
+
+            array_shift(View_Render::$templates);
+        }
+    }
+
+    /**
+     * @param string $template
+     */
+    public function setTemplate($template)
+    {
+        $actionClass = $this->_actionClass;
+
+        if ($template === null) {
+            $template = $actionClass::getConfig()->get('view/template', false);
+
+            if ($template === null) {
+                $this->_template = $actionClass;
+                return;
+            }
+        }
+
+        if ($template === '') {
+            $this->_template = $template;
+            return;
+        }
+
+        if ($template[0] == '_') {
+            $this->_template = $actionClass . $template;
+            return;
+        }
+
+        $this->_template = $template;
+    }
+
+    /**
+     * @param View_Render $viewRenderClass
+     */
+    public function setViewRenderClass($viewRenderClass)
+    {
+        if (!$viewRenderClass) {
+            $actionClass = $this->_actionClass;
+            $viewRenderClass = $actionClass::getConfig()->get('view/viewRenderClass', false);
+        }
+
+        $this->_viewRenderClass = View_Render::getClass($viewRenderClass);
+    }
+
+    /**
+     * @param string $layout
+     */
+    public function setLayout($layout)
+    {
+        $actionClass = $this->_actionClass;
+
+        if ($layout === null) {
+            $layout = $actionClass::getConfig()->get('view/layout', false);
+
+            if ($layout === null) {
+                $this->_layout = 'div.' . $this->getActionName();
+                return;
+            }
+        }
+
+        if ($layout === '') {
+            $this->_layout = $layout;
+            return;
+        }
+
+        if ($layout[0] == '_') {
+            $this->_layout = 'div.' . $this->getActionName() . $layout;
+            return;
+        }
+
+        $this->_layout = $layout;
+    }
+
+    public function setData($output)
+    {
+        $this->_result['data'] = $output;
+    }
+
+    public function getData()
+    {
+        return $this->getResult()['data'];
+    }
+
+    public function getActionName() {
+        return $this->getResult()['actionName'];
     }
 }

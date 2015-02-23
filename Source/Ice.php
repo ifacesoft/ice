@@ -13,7 +13,6 @@ use Ice\Core;
 use Ice\Core\Action;
 use Ice\Core\Action_Context;
 use Ice\Core\Container;
-use Ice\Core\Dispatcher;
 use Ice\Core\Environment;
 use Ice\Core\Logger;
 use Ice\Core\Request;
@@ -48,7 +47,6 @@ class Ice
 
     private static $_context = null;
 
-    private static $_dispatcher = null;
     /**
      * Ice application start time
      *
@@ -199,9 +197,10 @@ class Ice
                 $actionClass = $input['actionClass'];
                 unset($input['actionClass']);
 
-                $view = Ice::getDispatcher()->dispatch($actionClass, $input);
+                $view = $actionClass::call($input);
             } elseif (Request::isAjax()) {
-                $view = Ice::getDispatcher()->dispatch(Front_Ajax::getClass());
+                $actionClass = Front_Ajax::getClass();
+                $view = $actionClass::call();
             } else {
                 $router = Router::getInstance();
                 $route = Route::getInstance($router->get('routeName'));
@@ -209,20 +208,23 @@ class Ice
 
                 list($actionClass, $input) = each($method);
 
-                $view = Ice::getDispatcher()->dispatch($actionClass, $input);
+                $view = $actionClass::call($input);
             }
 
             Ice::getResponse()->setContent($view);
         } catch (Redirect $e) {
             Ice::getResponse()->setRedirectUrl($e->getRedirectUrl());
         } catch (Http_Bad_Request $e) {
-            $view = Ice::getDispatcher()->dispatch(Http_Status::getClass(), ['code' => 400, 'exception' => $e]);
+            $actionClass = Http_Status::getClass();
+            $view = $actionClass::call(['code' => 400, 'exception' => $e]);
             Ice::getResponse()->setContent($view);
         } catch (Http_Not_Found $e) {
-            $view = Ice::getDispatcher()->dispatch(Http_Status::getClass(), ['code' => 404, 'exception' => $e]);
+            $actionClass = Http_Status::getClass();
+            $view = $actionClass::call(['code' => 404, 'exception' => $e]);
             Ice::getResponse()->setContent($view);
         } catch (\Exception $e) {
-            $view = Ice::getDispatcher()->dispatch(Http_Status::getClass(), ['code' => 500, 'exception' => $e]);
+            $actionClass = Http_Status::getClass();
+            $view = $actionClass::call(['code' => 500, 'exception' => $e]);
             Ice::getResponse()->setContent($view);
         }
 
@@ -238,18 +240,6 @@ class Ice
         if (!Request::isCli() && function_exists('fastcgi_finish_request')) {
             fastcgi_finish_request();
         }
-    }
-
-    /**
-     * @return Dispatcher
-     */
-    public static function getDispatcher()
-    {
-        if (Ice::$_dispatcher) {
-            return Ice::$_dispatcher;
-        }
-
-        return Ice::$_dispatcher = Dispatcher::create();
     }
 
     /**
