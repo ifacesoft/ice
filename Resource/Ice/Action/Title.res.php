@@ -7,4 +7,8 @@ return [
         'en' => 'Blog',
         'ru' => 'Blog',
     ],
+    'Cabinet' => [
+        'en' => 'Cabinet',
+        'ru' => 'Cabinet',
+    ],
 ];

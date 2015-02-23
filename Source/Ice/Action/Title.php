@@ -70,13 +70,7 @@ class Title extends Action
     {
         return [
             'view' => ['viewRenderClass' => 'Ice:Php', 'layout' => ''],
-            'input' => [
-                'title' => [
-                    'converter' => function ($title) {
-                        return Title::getResource()->get($title);
-                    }
-                ]
-            ]
+            'input' => 'title'
         ];
     }
 

@@ -9,6 +9,7 @@
 
 namespace Ice\Core;
 
+use Ice\Core;
 use Ice\Data\Provider\Repository;
 
 /**
@@ -23,6 +24,8 @@ use Ice\Data\Provider\Repository;
  */
 class Cache
 {
+    use Core;
+
     const VALIDATE = 'validate';
     const INVALIDATE = 'invalidate';
 
@@ -111,7 +114,7 @@ class Cache
      * @version 0.5
      * @since 0.5
      */
-    private static function getRepository(Cacheable $cacheable)
+    public static function getRepository(Cacheable $cacheable)
     {
         return Repository::getInstance(__CLASS__, get_class($cacheable));
     }
@@ -186,5 +189,29 @@ class Cache
     public function validate()
     {
         return $this->_cacheable->validate($this->_value);
+    }
+
+    /**
+     * Restore object
+     *
+     * @param array $data
+     * @return object
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
+     */
+    public static function __set_state(array $data)
+    {
+        $class = self::getClass();
+
+        $object = new $class();
+
+        foreach ($data as $fieldName => $fieldValue) {
+            $object->$fieldName = $fieldValue;
+        }
+
+        return $object;
     }
 } 

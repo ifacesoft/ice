@@ -199,7 +199,8 @@ class Resources extends Action
                 'routeName' => [
                     'providers' => 'router'
                 ]
-            ]
+            ],
+            'ttl' => 3600
         ];
     }
 

@@ -108,7 +108,7 @@ class Form_Model extends Action
             $form->bind($modelClass::getRow($input['pk'], '*'));
         }
 
-        $this->addAction(
+        $this->addAction([
             'Ice:Form',
             [
                 'form' => $form,
@@ -120,7 +120,7 @@ class Form_Model extends Action
                 'redirect' => $input['redirect'],
                 'params' => $input['params']
             ]
-        );
+        ]);
 
         $input['formFilterFields'] = Arrays::toJsArrayString($input['formFilterFields']);
         $input['params'] = Arrays::toJsObjectString($input['params']);

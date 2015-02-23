@@ -93,7 +93,7 @@ class Data_Model extends Action
 
         $submitTitle = Data_Model::getResource()->get('Save') . ' ' . $modelClass::getTitle();
 
-        $this->addAction(
+        $this->addAction([
             'Ice:Form_Model',
             [
                 'modelClassName' => $input['modelClassName'],
@@ -107,20 +107,20 @@ class Data_Model extends Action
                 'template' => '_Modal',
                 'params' => $params
             ]
-        );
+        ]);
 
         $queryResult = $modelClass::query()
             ->setPaginator([$input['page'], $input['limit']])
             ->desc('/pk')
             ->select('*');
 
-        $this->addAction(
+        $this->addAction([
             'Ice:Paginator', [
                 'data' => $queryResult,
                 'actionClassName' => 'Ice:Data_Model',
                 'params' => $params
             ]
-        );
+        ]);
 
         $pkName = $modelClass::getPkFieldName();
 
@@ -154,7 +154,7 @@ class Data_Model extends Action
             )
             ->bind($queryResult->getRows());
 
-        $this->addAction('Ice:Data', ['data' => $data]);
+        $this->addAction(['Ice:Data', ['data' => $data]]);
 
         return [
             'actionClassName' => 'Ice:Data_Model'

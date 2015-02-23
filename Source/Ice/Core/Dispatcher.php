@@ -4,6 +4,7 @@ namespace Ice\Core;
 
 use Ice;
 use Ice\Core;
+use Ice\Data\Provider\File;
 use Ice\Exception\Http_Bad_Request;
 use Ice\Exception\Http_Not_Found;
 use Ice\Exception\Redirect;
@@ -46,14 +47,19 @@ class Dispatcher
         $input = $actionClass::getInput($input);
 
         $actionCacher = Action::getCacher();
+
+        if ($actionClass::getConfig()->get('ttl', false) == 3600) {
+            $actionCacher = File::getInstance($actionClass);
+        }
+
         $hash = crc32(Json::encode($input));
         $actionHash = $actionClass . '/' . $hash;
 
         $actionContext = Ice::getContext()->initAction($actionClass, $hash);
 
         /** @var Action $action */
-//        $action = $actionCacher->get($actionHash);
-        $action = null;
+        $action = $actionCacher->get($actionHash);
+
         if (!$action) {
             $action = $actionClass::create();
 
@@ -72,7 +78,7 @@ class Dispatcher
 
             foreach ($action->getActions() as $actionKey => $actionData) {
                 if (empty($actionData) || count($actionData) > 2) {
-                    Dispatcher::getLogger()->exception(['Wrong param count ({$0})', count($actionData)], __FILE__, __LINE__, null, $actionData);
+                    Dispatcher::getLogger()->exception(['Wrong param count ({$0}) in action {$1}', [count($actionData), $actionClass]], __FILE__, __LINE__, null, $actionData);
                 }
 
                 $newLevel = $level + 1;
@@ -105,7 +111,7 @@ class Dispatcher
 
             $action->setOutput($output);
 
-//            $actionCacher->set($actionHash, $action, $action->getTtl());
+            $actionCacher->set($actionHash, $action, $action->getTtl());
 
             if (Request::isCli()) {
                 Action::getLogger()->info(['{$0}{$1} complete! [{$2} + {$3}]', [str_repeat("\t", $level), $actionClass::getClassName(), $finishTime, $finishTimeAfter]], Logger::MESSAGE);
@@ -151,16 +157,16 @@ class Dispatcher
 
     private function getView(Action $action)
     {
-//        $viewCacher = View::getCacher();
+        $viewCacher = View::getCacher();
         $viewHash = $action->getTemplate() . '/' . md5(Json::encode($action->getOutput()));
 
         /** @var View $view */
-//        $view = $viewCacher->get($viewHash);
-        $view = null;
+        $view = $viewCacher->get($viewHash);
+
         if (!$view) {
             $view = View::create($action);
 
-//            $viewCacher->set($viewHash, $view, $action->getTtl());
+            $viewCacher->set($viewHash, $view, $action->getTtl());
         }
 
         return $view;

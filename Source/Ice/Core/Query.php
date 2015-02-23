@@ -152,7 +152,9 @@ class Query
      */
     public static function __set_state(array $data)
     {
-        $object = new self();
+        $class = self::getClass();
+
+        $object = new $class();
 
         foreach ($data as $fieldName => $fieldValue) {
             $object->$fieldName = $fieldValue;

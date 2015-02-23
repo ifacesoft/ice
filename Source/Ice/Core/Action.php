@@ -36,7 +36,7 @@ use Ice\Helper\Validator as Helper_Validator;
  * @package Ice
  * @subpackage Core
  */
-abstract class Action
+abstract class Action implements Cacheable
 {
     use Core;
 
@@ -227,9 +227,9 @@ abstract class Action
             }
         }
 
-        if (isset($param['converter']) && is_callable($param['converter'])) {
-            $value = $param['converter']($value);
-        }
+//        if (isset($param['converter']) && is_callable($param['converter'])) {
+//            $value = $param['converter']($value);
+//        }
 
         return $value;
     }
@@ -316,7 +316,7 @@ abstract class Action
      */
     abstract public function run(array $input);
 
-    protected function addAction($action)
+    protected function addAction(array $action)
     {
         $this->_actions[] = $action;
     }
@@ -603,5 +603,61 @@ abstract class Action
         }
 
         $this->_ttl = $ttl;
+    }
+
+
+    /**
+     * Validate cacheable object
+     *
+     * @param $value
+     * @return Cacheable
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since 0
+     */
+    public function validate($value)
+    {
+        return $this;
+    }
+
+    /**
+     * Invalidate cacheable object
+     *
+     * @return Cacheable
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since 0
+     */
+    public function invalidate()
+    {
+        return $this;
+    }
+
+    /**
+     * Restore object
+     *
+     * @param array $data
+     * @return object
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
+     */
+    public static function __set_state(array $data)
+    {
+        $class = self::getClass();
+
+        $object = new $class();
+
+        foreach ($data as $fieldName => $fieldValue) {
+            $object->$fieldName = $fieldValue;
+        }
+
+        return $object;
     }
 }

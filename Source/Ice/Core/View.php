@@ -101,7 +101,7 @@ class View implements Cacheable
             $layout = $this->getLayout();
 
             if (!empty($layout)) {
-                $emmetedResult = Emmet::translate($this->getLayout(), ['view' => $this->_result]);
+                $emmetedResult = Emmet::translate($layout. '{{$view}}', ['view' => $this->_result]);
 
                 if (empty($emmetedResult)) {
                     $this->_result = $this->getLogger()->error(['Defined emmet layout string "{$0}" is corrupt', $this->getLayout()], __FILE__, __LINE__);
@@ -273,5 +273,29 @@ class View implements Cacheable
     public function invalidate()
     {
         // TODO: Implement invalidate() method.
+    }
+
+    /**
+     * Restore object
+     *
+     * @param array $data
+     * @return object
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
+     */
+    public static function __set_state(array $data)
+    {
+        $class = self::getClass();
+
+        $object = new $class(null, null, null, null);
+
+        foreach ($data as $fieldName => $fieldValue) {
+            $object->$fieldName = $fieldValue;
+        }
+
+        return $object;
     }
 }

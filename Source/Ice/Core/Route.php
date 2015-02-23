@@ -377,4 +377,20 @@ class Route extends Container
     {
         return $this->gets('request/' . $method . '/actions');
     }
+
+    /**
+     * Restore object
+     *
+     * @param array $data
+     * @return object
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
+     */
+    public static function __set_state(array $data)
+    {
+        return new self($data['_routeName'], $data['_route']);
+    }
 }
