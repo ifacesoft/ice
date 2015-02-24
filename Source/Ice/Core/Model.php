@@ -184,6 +184,20 @@ abstract class Model
     }
 
     /**
+     * Return scheme of table in data source: 'columnNames => (types, defaults, comments)')
+     *
+     * @return Model_Scheme
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.0
+     */
+    public static function getScheme()
+    {
+        return Model_Scheme::create(self::getClass());
+    }
+
+    /**
      * Method set value of model field
      *
      * example usage:
@@ -386,17 +400,41 @@ abstract class Model
     }
 
     /**
-     * Return scheme of table in data source: 'columnNames => (types, defaults, comments)')
+     * Get dataSource for current model class
      *
-     * @return Model_Scheme
+     * @return Data_Source
+     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.5
      * @since 0.0
      */
-    public static function getScheme()
+    public function getDataSource()
     {
-        return Model_Scheme::create(self::getClass());
+        /** @var Model $modelClass */
+        $modelClass = get_class($this);
+        $parentModelName = get_parent_class($modelClass);
+
+        if ($parentModelName == Model_Defined::getClass() || $parentModelName == Model_Factory::getClass()) {
+            return Data_Source::getInstance(Object::getName($parentModelName) . ':model/' . $modelClass);
+        }
+
+        return Data_Source::getInstance($modelClass::getDataSourceKey());
+    }
+
+    /**
+     * Return data source key
+     *
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
+     */
+    public static function getDataSourceKey()
+    {
+        return self::getScheme()->getDataSourceKey();
     }
 
     /**
@@ -637,81 +675,6 @@ abstract class Model
     }
 
     /**
-     * Get dataSource for current model class
-     *
-     * @return Data_Source
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since 0.0
-     */
-    public function getDataSource()
-    {
-        /** @var Model $modelClass */
-        $modelClass = get_class($this);
-        $parentModelName = get_parent_class($modelClass);
-
-        if ($parentModelName == Model_Defined::getClass() || $parentModelName == Model_Factory::getClass()) {
-            return Data_Source::getInstance(Object::getName($parentModelName) . ':model/' . $modelClass);
-        }
-
-        return Data_Source::getInstance($modelClass::getDataSourceKey());
-    }
-
-    /**
-     * Return full field names
-     *
-     * @param array $fields
-     * @throws Exception
-     * @return array
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since 0.0
-     */
-    public static function getFieldNames($fields = [])
-    {
-        $modelClass = self::getClass();
-
-        $fieldNames = array_keys($modelClass::getScheme()->getFieldMapping());
-
-        if (empty($fields) || $fields = '*') {
-            return $fieldNames;
-        }
-
-        $fields = (array)$fields;
-
-        foreach ($fields as &$fieldName) {
-            $fieldName = $modelClass::getFieldName($fieldName);
-
-            if (in_array($fieldName, $fieldNames)) {
-                continue;
-            }
-
-            if (in_array($fieldName . '__json', $fieldNames)) {
-                $fieldName = $fieldName . '__json';
-                continue;
-            }
-
-            if (in_array($fieldName . '__fk', $fieldNames)) {
-                $fieldName = $fieldName . '__fk';
-                continue;
-            }
-
-            if (in_array($fieldName . '__geo', $fieldNames)) {
-                $fieldName = $fieldName . '__geo';
-                continue;
-            }
-
-            Model::getLogger()->exception(['Поле "{$0}" не найдено в модели "{$1}"', [$fieldName, self::getClass()]], __FILE__, __LINE__);
-        }
-
-        return $fields;
-    }
-
-    /**
      * Return all rows for self model class
      *
      * @param array $pagination
@@ -773,11 +736,6 @@ abstract class Model
         return self::getResource()->get($tableName);
     }
 
-    public static function getTablePrefix()
-    {
-        return Helper_Model::getTablePrefix(self::getTableName());
-    }
-
     /**
      * Return table name of self model class
      *
@@ -790,6 +748,11 @@ abstract class Model
     public static function getTableName()
     {
         return self::getScheme()->getTableName();
+    }
+
+    public static function getTablePrefix()
+    {
+        return Helper_Model::getTablePrefix(self::getTableName());
     }
 
     /**
@@ -1098,6 +1061,58 @@ abstract class Model
     }
 
     /**
+     * Return full field names
+     *
+     * @param array $fields
+     * @throws Exception
+     * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.0
+     */
+    public static function getFieldNames($fields = [])
+    {
+        $modelClass = self::getClass();
+
+        $fieldNames = array_keys($modelClass::getScheme()->getFieldMapping());
+
+        if (empty($fields) || $fields = '*') {
+            return $fieldNames;
+        }
+
+        $fields = (array)$fields;
+
+        foreach ($fields as &$fieldName) {
+            $fieldName = $modelClass::getFieldName($fieldName);
+
+            if (in_array($fieldName, $fieldNames)) {
+                continue;
+            }
+
+            if (in_array($fieldName . '__json', $fieldNames)) {
+                $fieldName = $fieldName . '__json';
+                continue;
+            }
+
+            if (in_array($fieldName . '__fk', $fieldNames)) {
+                $fieldName = $fieldName . '__fk';
+                continue;
+            }
+
+            if (in_array($fieldName . '__geo', $fieldNames)) {
+                $fieldName = $fieldName . '__geo';
+                continue;
+            }
+
+            Model::getLogger()->exception(['Поле "{$0}" не найдено в модели "{$1}"', [$fieldName, self::getClass()]], __FILE__, __LINE__);
+        }
+
+        return $fields;
+    }
+
+    /**
      * Clear all affected values and return current model
      *
      * @return Model
@@ -1360,20 +1375,5 @@ abstract class Model
             ])
             ->select('*', null, null, null, $dataSourceKey, $ttl)
             ->getModel();
-    }
-
-    /**
-     * Return data source key
-     *
-     * @return string
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since 0.5
-     */
-    public static function getDataSourceKey()
-    {
-        return self::getScheme()->getDataSourceKey();
     }
 }

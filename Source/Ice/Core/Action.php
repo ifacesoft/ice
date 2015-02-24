@@ -247,8 +247,10 @@ abstract class Action implements Cacheable
             'cli' => Data_Provider_Cli::DEFAULT_DATA_PROVIDER_KEY,
         ];
 
+        $params = array_merge(self::getConfig()->gets('input', false), ['actions', 'template']);
+
         $input = [];
-        foreach (self::getConfig()->gets('input', false) as $name => $param) {
+        foreach ($params as $name => $param) {
             if (is_int($name)) {
                 $name = $param;
                 $param = [];
@@ -321,6 +323,47 @@ abstract class Action implements Cacheable
     public static function getRepository()
     {
         return Repository::getInstance(__CLASS__, self::getClass());
+    }
+
+    /**
+     * Action config
+     *
+     * example:
+     * ```php
+     *  $config = [
+     *      'actions' => [
+     *          ['Ice:Title', ['title' => 'page title'], 'title'],
+     *          ['Ice:Another_Action, ['param' => 'value']
+     *      ],
+     *      'view' => [
+     *          'layout' => Emmet::PANEL_BODY,
+     *          'template' => _Custom,
+     *          'viewRenderClass' => Ice:Twig,
+     *      ],
+     *      'input' => [
+     *          Request::DEFAULT_DATA_PROVIDER_KEY => [
+     *              'paramFromGETorPOST => [
+     *                  'default' => 'defaultValue',
+     *                  'validators' => ['Ice:PATTERN => PATTERN::LETTERS_ONLY]
+     *                  'type' => 'string'
+     *              ]
+     *          ]
+     *      ],
+     *      'output' => ['Ice:Resource/Ice\Action\Index'],
+     *      'ttl' => 3600,
+     *      'roles' => []
+     *  ];
+     * ```
+     * @return array
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since 0
+     */
+    protected static function config()
+    {
+        return [];
     }
 
     /**
@@ -451,6 +494,18 @@ abstract class Action implements Cacheable
         }
     }
 
+    /**
+     * @return View
+     */
+    public function getView()
+    {
+        if ($this->_view) {
+            return $this->_view;
+        }
+
+        return $this->_view = View::create(get_class($this));
+    }
+
     private function initTtl(&$input)
     {
         if (isset($input['ttl'])) {
@@ -555,18 +610,6 @@ abstract class Action implements Cacheable
     }
 
     /**
-     * @return View
-     */
-    public function getView()
-    {
-        if ($this->_view) {
-            return $this->_view;
-        }
-
-        return $this->_view = View::create(get_class($this));
-    }
-
-    /**
      * @return null
      */
     public function getTtl()
@@ -593,47 +636,6 @@ abstract class Action implements Cacheable
         }
 
         $this->_ttl = $ttl;
-    }
-
-    /**
-     * Action config
-     *
-     * example:
-     * ```php
-     *  $config = [
-     *      'actions' => [
-     *          ['Ice:Title', ['title' => 'page title'], 'title'],
-     *          ['Ice:Another_Action, ['param' => 'value']
-     *      ],
-     *      'view' => [
-     *          'layout' => Emmet::PANEL_BODY,
-     *          'template' => _Custom,
-     *          'viewRenderClass' => Ice:Twig,
-     *      ],
-     *      'input' => [
-     *          Request::DEFAULT_DATA_PROVIDER_KEY => [
-     *              'paramFromGETorPOST => [
-     *                  'default' => 'defaultValue',
-     *                  'validators' => ['Ice:PATTERN => PATTERN::LETTERS_ONLY]
-     *                  'type' => 'string'
-     *              ]
-     *          ]
-     *      ],
-     *      'output' => ['Ice:Resource/Ice\Action\Index'],
-     *      'ttl' => 3600,
-     *      'roles' => []
-     *  ];
-     * ```
-     * @return array
-     *
-     * @author anonymous <email>
-     *
-     * @version 0
-     * @since 0
-     */
-    protected static function config()
-    {
-        return [];
     }
 
     /**

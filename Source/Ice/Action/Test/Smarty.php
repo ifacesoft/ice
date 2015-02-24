@@ -45,7 +45,7 @@ class Test_Smarty extends Action
     protected static function config()
     {
         return [
-            'view' => ['viewRenderClass' => 'Ice:Smarty'],
+            'view' => ['viewRenderClass' => 'Ice:Smarty', 'layout' => ''],
             'input' => 'inputTestSmarty'
         ];
     }

@@ -44,7 +44,7 @@ class Test_Twig extends Action
     protected static function config()
     {
         return [
-            'view' => ['viewRenderClass' => 'Ice:Twig'],
+            'view' => ['viewRenderClass' => 'Ice:Twig', 'layout' => ''],
             'input' => 'inputTestTwig'
         ];
     }

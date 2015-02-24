@@ -44,7 +44,7 @@ class Test_Php extends Action
     protected static function config()
     {
         return [
-            'view' => ['viewRenderClass' => 'Ice:Php'],
+            'view' => ['viewRenderClass' => 'Ice:Php', 'layout' => ''],
             'input' => 'inputTestPhp'
         ];
     }

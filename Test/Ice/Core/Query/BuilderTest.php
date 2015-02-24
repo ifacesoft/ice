@@ -3,7 +3,6 @@
 namespace Ice\Core;
 
 use Ice\Model\Test;
-use Ice\Model\User;
 use PHPUnit_Framework_TestCase;
 
 class BuilderTest extends PHPUnit_Framework_TestCase
@@ -25,30 +24,37 @@ class BuilderTest extends PHPUnit_Framework_TestCase
             'test_pk' => 1
         ]);
 
-        User::createTable();
-
-        $user1 = User::create([
-            'user_name' => 'test name',
-            '/phone' => '00000000000',
-            '/email' => 'qw@er.ty',
-            'surname' => 'test'
+        $user1 = Test::create([
+            'test_name' => 'name2',
         ])->save();
 
-        $user1->save(['surname' => 'test surname']);
+        $this->assertEquals($user1->get(), [
+            'test_pk' => 2,
+            'test_name' => 'name2',
+            'name2' => null
+        ]);
+
+        $user1->save(['name2' => 'test2']);
+
+        $this->assertEquals($user1->get(), [
+            'test_pk' => 2,
+            'test_name' => 'name2',
+            'name2' => 'test2',
+        ]);
 
         $this->assertNotNull($user1);
-        $this->assertTrue($user1 instanceof User);
+        $this->assertTrue($user1 instanceof Test);
 
-        $user2 = User::create(['surname' => 'test surname'])
-            ->find(['/name', '/phone', '/email']);
+        $user2 = Test::create(['name2' => 'test2'])
+            ->find(['/name']);
 
         $this->assertNotNull($user2);
-        $this->assertTrue($user2 instanceof User);
+        $this->assertTrue($user2 instanceof Test);
         $this->assertEquals($user1, $user2);
 
         $user2->remove();
 
-        $user3 = User::getModel(1, '/pk');
+        $user3 = Test::getModel(2, '/pk');
 
         $this->assertNull($user3);
     }
