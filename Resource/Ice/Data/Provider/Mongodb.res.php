@@ -5,6 +5,7 @@ return [
     ],
     'mongodb - Failed to connect to: localhost:27017: Connection refused' => [
         'en' => 'mongodb - Failed to connect to: localhost:27017: Connection refused',
+        'ru' => 'mongodb - Failed to connect to: localhost:27017: Connection refused',
     ],
     'mongodb - Failed to connect to: localhost:27017: Previous connection attempts failed, server blacklisted' => [
         'en' => 'mongodb - Failed to connect to: localhost:27017: Previous connection attempts failed, server blacklisted',

@@ -104,16 +104,16 @@ class Response
                 return;
             }
 
-            header('Location: ' . $this->_redirectUrl, false, $this->_statusCode);
+            Http::setHeader('Location: ' . $this->_redirectUrl, false, $this->_statusCode);
             return;
         }
 
         if ($this->_contentType) {
-            header(Http::getContentTypeHeader($this->_contentType), true, $this->_statusCode);
+            Http::setHeader(Http::getContentTypeHeader($this->_contentType), true, $this->_statusCode);
         }
 
         if ($this->_statusCode) {
-            header(Http::getStatusCodeHeader($this->_statusCode), true, $this->_statusCode);
+            Http::setHeader(Http::getStatusCodeHeader($this->_statusCode), true, $this->_statusCode);
         }
 
         echo $this->_content;

@@ -183,6 +183,7 @@ abstract class Data_Source extends Container
 
         list($key, $scheme) = explode('.', $key);
 
+
         $dataSourceClass = self::getClass();
         return new $dataSourceClass($key, $scheme);
     }

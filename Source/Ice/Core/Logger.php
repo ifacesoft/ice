@@ -14,6 +14,7 @@ use Ice\Core;
 use Ice\Helper\Console;
 use Ice\Helper\Directory;
 use Ice\Helper\File;
+use Ice\Helper\Http;
 use Ice\Helper\Logger as Helper_Logger;
 use Ice\Helper\Object;
 use Ice\Helper\Php;
@@ -169,10 +170,7 @@ class Logger
     public static function shutdownHandler()
     {
         if ($error = error_get_last()) {
-            if (!headers_sent()) {
-                header('HTTP/1.0 500 Internal Server Error');
-            }
-
+            Http::setHeader(Http::getStatusCodeHeader(500), true, 500);
             self::errorHandler($error['type'], $error['message'], $error['file'], $error['line'], debug_backtrace());
             self::renderLog();
         }

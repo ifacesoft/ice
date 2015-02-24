@@ -91,9 +91,9 @@ class Http_Status extends Action
      */
     public function run(array $input)
     {
-        header(Http::getStatusCodeHeader($input['code']), true, $input['code']);
+        Http::setHeader(Http::getStatusCodeHeader($input['code']), true, $input['code']);
 
-        $this->setTemplate('_' . $input['code']);
+        $this->getView()->setTemplate('_' . $input['code']);
 
         return isset($input['exception']) && !Environment::isProduction()
             ? ['message' => $input['exception']->getMessage(), 'stackTrace' => nl2br($input['exception']->getTraceAsString())]

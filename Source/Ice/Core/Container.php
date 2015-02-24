@@ -103,7 +103,7 @@ abstract class Container
             }
         }
 
-        if (is_string($key) && String::startsWith($key, 'default')) {
+        if ($key == 'default'/*is_string($key) && String::startsWith($key, 'default')*/) {
             $key = $class::getDefaultKey();
         }
 

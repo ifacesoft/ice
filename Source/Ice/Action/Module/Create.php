@@ -196,7 +196,7 @@ class Module_Create extends Action
 
         if (file_exists(ROOT_DIR . $moduleName)) {
             Module_Create::getLogger()->info(['Module {$0} already exists', $moduleName], Logger::INFO, true, false);
-            $this->setTemplate('');
+            $this->getView()->setTemplate('');
             return [];
         }
 
@@ -380,7 +380,7 @@ class Module_Create extends Action
 
             Directory::get(ROOT_DIR . '_log/' . $moduleName);
         } else {
-            $this->setTemplate('');
+            $this->getView()->setTemplate('');
         }
 
         copy(ICE_DIR . '.gitignore', $moduleDir . '.gitignore');

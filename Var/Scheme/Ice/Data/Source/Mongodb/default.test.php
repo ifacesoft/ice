@@ -1,7 +1,7 @@
 <?php
 return [
-    'time' => '2015-02-15 21:37:26',
-    'revision' => '02152137',
+    'time' => '2015-02-24 10:00:26',
+    'revision' => '02241000',
     'tables' => [
         'ice_test' => [
             'engine' => 'MongoDB',

@@ -388,7 +388,15 @@ class Mongodb extends Data_Source
      */
     public function getIndexes($tableName)
     {
-        // TODO: Implement getIndexes() method.
+        return [
+            'PRIMARY KEY' => [
+                'PRIMARY' => [
+                    1 => 'id',
+                ]
+            ],
+            'FOREIGN KEY' => [],
+            'UNIQUE' => []
+        ];
     }
 
     /**

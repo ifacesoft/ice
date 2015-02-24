@@ -12,6 +12,7 @@ namespace Ice\Core;
 use Ice;
 use Ice\Core;
 use Ice\Data\Provider\Request as Data_Provider_Request;
+use Ice\Helper\Http;
 use Locale;
 
 /**
@@ -259,12 +260,12 @@ class Request
         $cors = Request::getConfig()->gets('cors');
 
         if (isset($_SERVER['HTTP_ORIGIN']) && isset($cors[$_SERVER['HTTP_ORIGIN']])) {
-            header('Access-Control-Allow-Origin: ' . $_SERVER['HTTP_ORIGIN']);
+            Http::setHeader('Access-Control-Allow-Origin: ' . $_SERVER['HTTP_ORIGIN']);
             if (!empty($cors[$_SERVER['HTTP_ORIGIN']]['cookie'])) {
-                header('Access-Control-Allow-Credentials: true');
+                Http::setHeader('Access-Control-Allow-Credentials: true');
             }
-            header('Access-Control-Allow-Methods: ' . implode(', ', $cors[$_SERVER['HTTP_ORIGIN']]['methods']));
-            header('Access-Control-Allow-Headers: ' . implode(', ', $cors[$_SERVER['HTTP_ORIGIN']]['headers']));
+            Http::setHeader('Access-Control-Allow-Methods: ' . implode(', ', $cors[$_SERVER['HTTP_ORIGIN']]['methods']));
+            Http::setHeader('Access-Control-Allow-Headers: ' . implode(', ', $cors[$_SERVER['HTTP_ORIGIN']]['headers']));
         }
     }
 

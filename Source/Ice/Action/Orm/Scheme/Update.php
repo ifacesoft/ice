@@ -3,6 +3,7 @@
 use Ice\Core\Action;
 use Ice\Core\Data_Scheme;
 use Ice\Core\Data_Source;
+use Ice\Core\Logger;
 
 class Orm_Scheme_Update extends Action
 {
