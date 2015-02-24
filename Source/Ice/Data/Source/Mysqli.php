@@ -94,6 +94,10 @@ class Mysqli extends Data_Source
         $data[Query_Result::NUM_ROWS] = $result->num_rows;
 
         while ($row = $result->fetch_assoc()) {
+            foreach ($query->getAfterSelectTriggers() as list($method, $params)) {
+                $row = $modelClass::$method($row, $params);
+            }
+
             $data[Query_Result::ROWS][implode('_', array_intersect_key($row, array_flip($pkFieldNames)))] = $row;
         }
 

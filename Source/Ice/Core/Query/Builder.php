@@ -119,6 +119,17 @@ class Query_Builder
         self::PART_LIMIT => []
     ];
 
+    private $_triggers = [
+        'beforeSelect' => [],
+        'afterSelect' => [],
+        'beforeInsert' => [],
+        'afterInsert' => [],
+        'beforeUpdate' => [],
+        'afterUpdate' => [],
+        'beforeDelete' => [],
+        'afterDelete' => [],
+    ];
+
     /**
      * Query binds
      *
@@ -260,6 +271,21 @@ class Query_Builder
         return $this;
     }
 
+    public function getModelClassTableAlias($modelClass, $tableAlias)
+    {
+        $modelClass = !$modelClass
+            ? $this->getModelClass()
+            : Model::getClass($modelClass);
+
+        if (!$tableAlias) {
+            $tableAlias = $modelClass;
+        }
+
+        $tableAlias = Object::getName($tableAlias);
+
+        return [$modelClass, $tableAlias];
+    }
+
     /**
      * Return model class for query
      *
@@ -273,21 +299,6 @@ class Query_Builder
     public function getModelClass()
     {
         return $this->_modelClass;
-    }
-
-    /**
-     * Return table alias for model class for query
-     *
-     * @return Model
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function getTableAlias()
-    {
-        return $this->_tableAlias;
     }
 
     /**
@@ -317,6 +328,21 @@ class Query_Builder
                 }
             }
         }
+    }
+
+    /**
+     * Return table alias for model class for query
+     *
+     * @return Model
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
+     */
+    public function getTableAlias()
+    {
+        return $this->_tableAlias;
     }
 
     /**
@@ -1004,7 +1030,7 @@ class Query_Builder
      */
     public function getQuery($dataSourceKey = null)
     {
-        return Query::create([$dataSourceKey, $this->_queryType, $this->_sqlParts, $this->_modelClass, $this->_cacheTags])
+        return Query::create([$dataSourceKey, $this->_queryType, $this->_sqlParts, $this->_modelClass, $this->_cacheTags, $this->_triggers])
             ->bind($this->_bindParts);
     }
 
@@ -1252,21 +1278,6 @@ class Query_Builder
         return $this->order($fieldName, Query_Builder::SQL_ORDERING_ASC, $modelClass, $tableAlias);
     }
 
-    public function getModelClassTableAlias($modelClass, $tableAlias)
-    {
-        $modelClass = !$modelClass
-            ? $this->getModelClass()
-            : Model::getClass($modelClass);
-
-        if (!$tableAlias) {
-            $tableAlias = $modelClass;
-        }
-
-        $tableAlias = Object::getName($tableAlias);
-
-        return [$modelClass, $tableAlias];
-    }
-
     /**
      * Ordering
      *
@@ -1418,6 +1429,32 @@ class Query_Builder
     }
 
     /**
+     * Execute query create table
+     *
+     * @param string|null $dataSourceKey
+     * @param int $ttl
+     * @return Query_Result
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.2
+     * @since 0.2
+     */
+    public function create($dataSourceKey = null, $ttl = null)
+    {
+        $modelClass = $this->_modelClass;
+        $modelSchemeClass = Model_Scheme::getClass();
+
+        foreach ($modelClass::getScheme()->getFields() as $field) {
+            $fieldScheme = $field[$modelSchemeClass];
+            $this->column($fieldScheme['columnName'], $fieldScheme);
+        }
+
+        $this->_queryType = Query_Builder::TYPE_CREATE;
+        return $this->getQuery($dataSourceKey)->execute($ttl);
+    }
+
+    /**
      * Set column part for create or alter table
      *
      * @param $name
@@ -1442,32 +1479,6 @@ class Query_Builder
             $this->_sqlParts[Query_Builder::PART_CREATE][$modelClass] = [$name => $scheme];
         }
         return $this;
-    }
-
-    /**
-     * Execute query create table
-     *
-     * @param string|null $dataSourceKey
-     * @param int $ttl
-     * @return Query_Result
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.2
-     * @since 0.2
-     */
-    public function create($dataSourceKey = null, $ttl = null)
-    {
-        $modelClass = $this->_modelClass;
-        $modelSchemeClass = Model_Scheme::getClass();
-
-        foreach ($modelClass::getScheme()->getFields() as $field) {
-            $fieldScheme = $field[$modelSchemeClass];
-            $this->column($fieldScheme['columnName'], $fieldScheme);
-        }
-
-        $this->_queryType = Query_Builder::TYPE_CREATE;
-        return $this->getQuery($dataSourceKey)->execute($ttl);
     }
 
     /**
@@ -1529,5 +1540,50 @@ class Query_Builder
             $modelClass,
             $tableAlias
         );
+    }
+
+    public function afterSelect($method, $params = null)
+    {
+        return $this->addTrigger('afterSelect', $method, $params);
+    }
+
+    public function beforeSelect($method, $params = null)
+    {
+        return $this->addTrigger('beforeSelect', $method, $params);
+    }
+
+    public function afterInsert($method, $params = null)
+    {
+        return $this->addTrigger('afterInsert', $method, $params);
+    }
+
+    public function beforeInsert($method, $params = null)
+    {
+        return $this->addTrigger('beforeInsert', $method, $params);
+    }
+
+    public function afterUpdate($method, $params = null)
+    {
+        return $this->addTrigger('afterUpdate', $method, $params);
+    }
+
+    public function beforeUpdate($method, $params = null)
+    {
+        return $this->addTrigger('beforeUpdate', $method, $params);
+    }
+
+    public function afterDelete($method, $params = null)
+    {
+        return $this->addTrigger('afterDelete', $method, $params);
+    }
+
+    public function beforeDelete($method, $params = null)
+    {
+        return $this->addTrigger('beforeDelete', $method, $params);
+    }
+
+    private function addTrigger($type, $method, $params) {
+        $this->_triggers[$type][] = [$method, $params];
+        return $this;
     }
 }

@@ -1064,15 +1064,13 @@ abstract class Model
         /** @var Model $modelClass */
         $modelClass = get_class($this);
 
-        if ($fieldNames == '*') {
-            $fieldNames = $modelClass::getFieldNames();
-        }
-
         $affected = $this->getAffected();
+
+        $selectFields = array_merge($modelClass::getFieldNames($fieldNames), array_keys($affected));
 
         $row = $modelClass::query()
             ->eq($affected)
-            ->select(array_merge($fieldNames, array_keys($affected)), null, null, null, $dataSourceKey, $ttl)
+            ->select($selectFields, null, null, null, $dataSourceKey, $ttl)
             ->getRow();
 
         if (!$row) {

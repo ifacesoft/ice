@@ -12,6 +12,7 @@ namespace Ice\Core;
 use Ice;
 use Ice\Core;
 use Ice\Data\Source\Mysqli;
+use Ice\Helper\Memory;
 
 /**
  * Class Data_Source
@@ -353,12 +354,12 @@ abstract class Data_Source extends Container
                     $queryHash = $query->getFullHash();
 
                     if ($queryResult = $cacher->get($queryHash)) {
-                        Data_Source::getLogger()->log(['(cache) {$0} [$1]', [$queryResult, Logger::microtimeResult($startTime)]], Logger::INFO);
+                        Data_Source::getLogger()->log(['(cache) {$0} [{$1}]', [$queryResult, Logger::microtimeResult($startTime) . ' | ' . Memory::memoryGetUsagePeak()]], Logger::INFO);
                         return $queryResult;
                     }
 
                     $queryResult = Query_Result::create($query, $this->$queryCommand($query));
-                    Data_Source::getLogger()->log(['(new) {$0} [$1]', [$queryResult, Logger::microtimeResult($startTime)]], Logger::SUCCESS);
+                    Data_Source::getLogger()->log(['(new) {$0} [{$1}]', [$queryResult, Logger::microtimeResult($startTime) . ' | ' . Memory::memoryGetUsagePeak()]], Logger::SUCCESS);
                     $cacher->set($queryHash, $queryResult, $ttl);
                     break;
 
@@ -366,14 +367,14 @@ abstract class Data_Source extends Container
                 case Query_Builder::TYPE_UPDATE:
                 case Query_Builder::TYPE_DELETE:
                     $queryResult = Query_Result::create($query, $this->$queryCommand($query))->invalidate();
-                    Data_Source::getLogger()->log(['(new) {$0} [$1]', [$queryResult, Logger::microtimeResult($startTime)]], Logger::SUCCESS);
+                    Data_Source::getLogger()->log(['(new) {$0} [{$1}]', [$queryResult, Logger::microtimeResult($startTime) . ' | ' . Memory::memoryGetUsagePeak()]], Logger::SUCCESS);
                     return $queryResult;
 
                 default:
                     Data_Source::getLogger()->exception(['Unknown data source query statement type {$0}', $queryType], __FILE__, __LINE__, null, $query);
             }
         } catch (\Exception $e) {
-            Data_Source::getLogger()->log(['(error) {$0} [$1]', [$queryResult, Logger::microtimeResult($startTime)]], Logger::DANGER);
+            Data_Source::getLogger()->log(['(error) {$0} [{$1}]', [$queryResult, Logger::microtimeResult($startTime) . ' | ' . Memory::memoryGetUsagePeak()]], Logger::DANGER);
             Data_Source::getLogger()->exception('Data source execute query failed', __FILE__, __LINE__, $e, $query);
         }
 

@@ -223,9 +223,13 @@ class Ice
             $view = $actionClass::call(['code' => 404, 'exception' => $e]);
             Ice::getResponse()->setContent($view);
         } catch (\Exception $e) {
-            $actionClass = Http_Status::getClass();
-            $view = $actionClass::call(['code' => 500, 'exception' => $e]);
-            Ice::getResponse()->setContent($view);
+            if (Request::isCli()) {
+                Ice::getLogger()->error('Application failed', __FILE__, __LINE__, $e);
+            } else {
+                $actionClass = Http_Status::getClass();
+                $view = $actionClass::call(['code' => 500, 'exception' => $e]);
+                Ice::getResponse()->setContent($view);
+            }
         }
 
         Ice::getResponse()->send();

@@ -93,6 +93,7 @@ class Query
      * @var array
      */
     private $_pagination = null;
+    private $_triggers;
 
     /**
      * Private constructor of query builder. Create: Query::create()->...
@@ -124,7 +125,7 @@ class Query
         $query = new Query();
         $query->_hash = md5(Json::encode($key));
 
-        list($dataSourceKey, $queryType, $sqlParts, $modelClass, $cacheTags) = $key;
+        list($dataSourceKey, $queryType, $sqlParts, $modelClass, $cacheTags, $triggers) = $key;
 
         if (!$dataSourceKey) {
             $dataSourceKey = $modelClass::getDataSourceKey();
@@ -135,6 +136,7 @@ class Query
         $query->_modelClass = $modelClass;
         $query->_cacheTags = $cacheTags;
         $query->_bodyParts = $sqlParts;
+        $query->_triggers = $triggers;
 
         return $query;
     }
@@ -424,5 +426,10 @@ class Query
     {
         $queryTranslatorClass = $this->getDataSource()->getQueryTranslatorClass();
         return $queryTranslatorClass::getInstance()->translate($this->getBodyParts());
+    }
+
+    public function getAfterSelectTriggers()
+    {
+        return $this->_triggers['afterSelect'];
     }
 }
