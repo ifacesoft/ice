@@ -121,4 +121,8 @@ return [
         'tr' => 'test',
         'uk' => 'тест',
     ],
+    'Calling subAction "{$0}" in action "{$1}" failed' => [
+        'en' => 'Calling subAction "{$0}" in action "{$1}" failed',
+        'ru' => 'Calling subAction "{$0}" in action "{$1}" failed',
+    ],
 ];
