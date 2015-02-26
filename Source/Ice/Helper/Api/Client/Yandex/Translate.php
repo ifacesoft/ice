@@ -3,6 +3,7 @@
 namespace Ice\Helper;
 
 use Ice\Core\Config as Core_Config;
+use Ice\Core\Logger;
 use Ice\Core\Request;
 use Ice\Data\Provider\Repository;
 
@@ -83,11 +84,11 @@ class Api_Client_Yandex_Translate
             throw new \Exception('Key is empty. See https://tech.yandex.ru/keys/get/?service=trnsl');
         }
 
-        if ($detct = Json::decode(Http::getContents('https://translate.yandex.net/api/v1.5/tr.json/detect?key=' . $yaKey . '&text=' . $text))['lang']) {
-            return $detct;
+        if ($detect = Json::decode(Http::getContents('https://translate.yandex.net/api/v1.5/tr.json/detect?key=' . $yaKey . '&text=' . $text))['lang']) {
+            return $detect;
         }
 
-        throw new \Exception('Fail detect');
+        return $locale = Request::getConfig()->get('locale');
     }
 
     /**
@@ -110,9 +111,11 @@ class Api_Client_Yandex_Translate
         if (empty($yaKey)) {
             throw new \Exception('Key is empty. See https://tech.yandex.ru/keys/get/?service=trnsl');
         }
+
         if ($translate = Json::decode(Http::getContents('https://translate.yandex.net/api/v1.5/tr.json/translate?key=' . $yaKey . '&text=' . $text . '&lang=' . $direction))['text'][0]) {
             return $translate;
         }
+
         throw new \Exception('Fail translate');
     }
 

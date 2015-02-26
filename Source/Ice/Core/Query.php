@@ -182,7 +182,7 @@ class Query
 
         if (!empty($limit)) {
             list($limit, $offset) = $limit;
-            $this->_pagination = [$offset / $limit + 1, $limit, $foundRows];
+            $this->_pagination = [$offset ? $offset / $limit + 1 : 1, $limit, $foundRows];
         }
     }
 
