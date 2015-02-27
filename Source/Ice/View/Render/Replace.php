@@ -74,8 +74,10 @@ class Replace extends View_Render
             array_map(
                 function ($var) {
                     return '{$' . $var . '}';
-                }, array_keys($data)
-            ), array_values($data),
+                },
+                array_keys($data)
+            ),
+            array_values($data),
             $template
         );
     }
