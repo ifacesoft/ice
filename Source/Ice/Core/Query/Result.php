@@ -240,36 +240,6 @@ class Query_Result implements Cacheable
     }
 
     /**
-     * Return target model class of data
-     *
-     * @return Model
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since 0.0
-     */
-    public function getModelClass()
-    {
-        return $this->getQuery()->getModelClass();
-    }
-
-    /**
-     * Get collection from data
-     *
-     * @return Model_Collection
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since 0.0
-     */
-    public function getModelCollection()
-    {
-        return Model_Collection::create($this->getModelClass(), $this->getRows(), $this->getQuery());
-    }
-
-    /**
      * Get value from data
      *
      * @desc Результат запроса - единственное значение.
@@ -639,21 +609,6 @@ class Query_Result implements Cacheable
     }
 
     /**
-     * Return query of query result
-     *
-     * @return Query
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.2
-     * @since 0.2
-     */
-    public function getQuery()
-    {
-        return $this->_query;
-    }
-
-    /**
      * Return query body
      *
      * @return string|array
@@ -684,21 +639,6 @@ class Query_Result implements Cacheable
     }
 
     /**
-     * Return query result cacher
-     *
-     * @return Cacher
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since 0.5
-     */
-    public static function getCacher()
-    {
-        return Cacher::getInstance(__CLASS__);
-    }
-
-    /**
      * @param $time
      * @return Cacheable
      */
@@ -715,11 +655,12 @@ class Query_Result implements Cacheable
         return Cache::invalidateTimeTags($this, $this->getQuery()->getInvalidateTags());
     }
 
-    public function __toString() {
+    public function __toString()
+    {
         $string = '';
 
         try {
-            $string = print_r($this->getQuery()->getBody(), true)  . ' (' . implode(', ', $this->getQuery()->getBinds()) . ')';
+            $string = print_r($this->getQuery()->getBody(), true) . ' (' . implode(', ', $this->getQuery()->getBinds()) . ')';
         } catch (\Exception $e) {
             Query_Result::getLogger()->error('fail', __FILE__, __LINE__, $e);
         }
