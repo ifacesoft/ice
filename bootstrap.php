@@ -15,7 +15,11 @@ if (!defined('MODULE_DIR')) {
 $bootstrapPath = MODULE_DIR . '../Ice/Source/Ice/Bootstrap.php';
 
 if (!file_exists($bootstrapPath)) {
-    die("\033[01;31mIce bootstrap not found! (" . $bootstrapPath . ")\033[0m\n");
+    $bootstrapPath = MODULE_DIR . 'Source/Ice/Bootstrap.php';
+
+    if (!file_exists($bootstrapPath)) {
+        die("\033[01;31mIce bootstrap not found! (" . $bootstrapPath . ")\033[0m\n");
+    }
 }
 
 require_once $bootstrapPath;

@@ -108,6 +108,66 @@ class Query_Result implements Cacheable
     }
 
     /**
+     * Return query result cacher
+     *
+     * @return Cacher
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
+     */
+    public static function getCacher()
+    {
+        return Cacher::getInstance(__CLASS__);
+    }
+
+    /**
+     * Get collection from data
+     *
+     * @return Model_Collection
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.0
+     */
+    public function getModelCollection()
+    {
+        return Model_Collection::create($this->getModelClass(), $this->getRows(), $this->getQuery());
+    }
+
+    /**
+     * Return target model class of data
+     *
+     * @return Model
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.0
+     */
+    public function getModelClass()
+    {
+        return $this->getQuery()->getModelClass();
+    }
+
+    /**
+     * Return query of query result
+     *
+     * @return Query
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.2
+     * @since 0.2
+     */
+    public function getQuery()
+    {
+        return $this->_query;
+    }
+
+    /**
      * Return all rows from data as array
      *
      * @return array
