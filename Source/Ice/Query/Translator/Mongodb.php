@@ -515,15 +515,7 @@ class Mongodb extends Query_Translator
      */
     protected function translateCreate(array $part)
     {
-        if (empty($part)) {
-            return [];
-        } else {
-            Logger::debug($part);
-            throw new \Exception('Not implemented');
-        }
-
-
-        $sql = '';
+        $sql = [];
 
         if (empty($part)) {
             return $sql;
@@ -534,24 +526,11 @@ class Mongodb extends Query_Translator
         /** @var Model $modelClass */
         $modelClass = $scheme['key'];
 
-        array_walk(
-            $scheme['value'],
-            function (&$scheme, $columnName) {
-                $scheme = $columnName . ' ' .
-                    strtoupper($scheme['type']) . ' ' .
-                    (empty($scheme['extra']) ? '' : strtoupper($scheme['extra']) . ' ') .
-                    ($scheme['extra'] ? 'PRIMARY KEY ' : '') .
-                    (empty($scheme['default']) ? '' : 'DEFAULT ' . $scheme['default'] . ' ') .
-                    (empty($scheme['nullable']) ? 'NULL' : 'NOT NULL');
-            }
-        );
-
-        $sql .= "\n" . self::SQL_STATEMENT_CREATE . ' `' . $modelClass::getTableName() . '`' .
-            "\n" . '(' .
-            "\n\t" . implode(',' . "\n\t", $scheme['value']) .
-            "\n" . ') ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;';
-
-        return $sql;
+        return [
+            'create' => [
+                'modelClass' => $modelClass,
+            ]
+        ];
     }
 
     /**
@@ -575,13 +554,13 @@ class Mongodb extends Query_Translator
 
         if (empty($part)) {
             return [];
-        } else {
-            Logger::debug($part);
-            throw new \Exception('Not implemented');
         }
 
-
-        return "\n" . self::SQL_STATEMENT_DROP . ' `' . $modelClass::getTableName() . '`';
+        return [
+            'drop' => [
+                'modelClass' => $modelClass,
+            ]
+        ];
     }
 
     /**

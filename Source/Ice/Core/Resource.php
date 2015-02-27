@@ -158,13 +158,14 @@ class Resource
             } else {
                 $locale = $requestConfig->get('locale');
                 if ($locale != $from) {
-                    $direction = $from . '_' . $locale;
+                    $direction = $from . '-' . $locale;
                     $data[$message][$locale] = in_array($direction, Api_Client_Yandex_Translate::getLangs($from))
                         ? Api_Client_Yandex_Translate::translate($message, $direction)
                         : $message;
                 }
             }
         } catch (\Exception $e) {
+            Resource::getLogger()->exception('error', __FILE__, __LINE__, $e);
             $data[$message][Request::locale()] = $message;
         }
 

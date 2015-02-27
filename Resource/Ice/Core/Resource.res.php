@@ -102,4 +102,8 @@ return [
     'Method get not be array' => [
         'ru' => 'Method get not be array',
     ],
+    'error' => [
+        'en' => 'error',
+        'ru' => 'ошибка',
+    ],
 ];

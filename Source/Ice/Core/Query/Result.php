@@ -28,6 +28,8 @@ use Ice\Helper\Serializer;
  */
 class Query_Result implements Cacheable
 {
+    use Core;
+
     const ROWS = 'rows';
     const NUM_ROWS = 'numRows';
     const AFFECTED_ROWS = 'affectedRows';
@@ -654,6 +656,14 @@ class Query_Result implements Cacheable
     }
 
     public function __toString() {
-        return print_r($this->getQuery()->getBody(), true)  . ' (' . implode(', ', $this->getQuery()->getBinds()) . ')';
+        $string = '';
+
+        try {
+            $string = print_r($this->getQuery()->getBody(), true)  . ' (' . implode(', ', $this->getQuery()->getBinds()) . ')';
+        } catch (\Exception $e) {
+            Query_Result::getLogger()->error('fail', __FILE__, __LINE__, $e);
+        }
+
+        return $string;
     }
 }

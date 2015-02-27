@@ -96,6 +96,10 @@ class Mysqli extends Data_Source
         while ($row = $result->fetch_assoc()) {
             foreach ($query->getAfterSelectTriggers() as list($method, $params)) {
                 $row = $modelClass::$method($row, $params);
+
+                if (!$row) {
+                    Mysqli::getLogger()->exception(['Trigger(method) {$0} of model {$1} must return row. Fix it.', [$method, $modelClass]], __FILE__, __LINE__);
+                }
             }
 
             $data[Query_Result::ROWS][implode('_', array_intersect_key($row, array_flip($pkFieldNames)))] = $row;

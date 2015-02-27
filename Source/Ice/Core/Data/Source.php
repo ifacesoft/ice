@@ -345,7 +345,9 @@ abstract class Data_Source extends Container
                 $queryType == Query_Builder::TYPE_CREATE ||
                 $queryType == Query_Builder::TYPE_DROP
             ) {
-                return Query_Result::create($query, $this->$queryCommand($query));
+                $queryResult = Query_Result::create($query, $this->$queryCommand($query));
+                Data_Source::getLogger()->log(['(not cache) {$0} [{$1}]', [$queryResult, Logger::microtimeResult($startTime) . ' | ' . Memory::memoryGetUsagePeak()]], Logger::INFO);
+                return $queryResult;
             }
 
             switch ($queryType) {
