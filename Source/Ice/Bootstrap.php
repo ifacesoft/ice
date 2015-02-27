@@ -45,7 +45,7 @@ class Bootstrap
 
         define('ICE_DIR', dirname(dirname(__DIR__)) . '/');
 
-        define('ROOT_DIR', dirname(ICE_DIR) . '/');
+        define('ROOT_DIR', dirname(MODULE_DIR) . '/');
 
         define('ICE_SOURCE_DIR', ICE_DIR . 'Source/');
         define('ICE_RESOURCE_DIR', ICE_DIR . 'Resource/');
@@ -58,7 +58,12 @@ class Bootstrap
         define('DOWNLOAD_DIR', ROOT_DIR . '_download/' . $moduleName . '/');
         define('RESOURCE_DIR', ROOT_DIR . '_resource/' . $moduleName . '/resource/');
         define('STORAGE_DIR', ROOT_DIR . '_storage/' . $moduleName . '/');
-        define('VENDOR_DIR', ROOT_DIR . '_vendor/');
+
+        if (file_exists(ROOT_DIR . '_vendor/')) {
+            define('VENDOR_DIR', ROOT_DIR . '_vendor/');
+        } else {
+            define('VENDOR_DIR', ROOT_DIR . 'vendor/');
+        }
 
         setlocale(LC_ALL, 'en_US.UTF-8');
         setlocale(LC_NUMERIC, 'C');
