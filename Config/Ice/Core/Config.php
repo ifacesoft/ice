@@ -15,8 +15,10 @@ use Ice\Helper\Date;
 
 return [
     'Ice\Core\Model' => [
-        'prefixes' => [
-            'ice' => 'Ice',
+        'schemeColumnPlugins' => [
+            'Ice\Core\Form',
+            'Ice\Core\Validator',
+            'Ice\Core\Data',
         ]
     ],
     'Ice\Core\Data_Source' => [

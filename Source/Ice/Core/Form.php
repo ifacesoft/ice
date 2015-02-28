@@ -9,6 +9,7 @@
 
 namespace Ice\Core;
 
+use Ice\Form\Model as Form_Model;
 use Ice\Core;
 use Ice\Helper\Arrays;
 
@@ -541,4 +542,11 @@ abstract class Form extends Container
      * @since 0.0
      */
     abstract public function submit();
+
+    public static function schemeColumnPlugin($columnName, $table)
+    {
+        return isset(Form_Model::$typeMap[$table['columns'][$columnName]['scheme']['dataType']])
+            ? Form_Model::$typeMap[$table['columns'][$columnName]['scheme']['dataType']]
+            : 'text';
+    }
 }

@@ -285,6 +285,7 @@ abstract class Data_Source extends Container
     /**
      * Get data Scheme from data source
      *
+     * @param Module $module
      * @return array
      *
      * @author anonymous <email>
@@ -292,7 +293,7 @@ abstract class Data_Source extends Container
      * @version 0
      * @since 0
      */
-    public abstract function getTables();
+    public abstract function getTables(Module $module);
 
     /**
      * Get table scheme from source

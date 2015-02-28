@@ -115,33 +115,33 @@ class Model_Scheme
         $foreignKeys = $this->getFkColumnNames();
 
         foreach ($diffColumns['added'] as $columnName => $column) {
-            $fieldName = strtolower($columnName);
+//            $fieldName = strtolower($columnName);
 
             $column['columnName'] = $columnName;
             $column['is_primary'] = false;
             $column['is_foreign'] = false;
 
-            if (in_array($columnName, $foreignKeys)) {
-                $column['is_foreign'] = true;
-                if (substr($fieldName, -4, 4) != '__fk') {
-                    $fieldName = String::trim($fieldName, ['__id', '_id', 'id'], String::TRIM_TYPE_RIGHT) . '__fk';
-                }
-            } else if (in_array($columnName, $primaryKeys)) {
-                $column['is_primary'] = true;
-                if (substr($fieldName, -3, 3) != '_pk') {
-                    $fieldName = strtolower(Object::getName($modelClass));
-                    do { // some primary fields
-                        $fieldName .= '_pk';
-                    } while (isset($modelMapping[$fieldName]));
-                }
-            }
+//            if (in_array($columnName, $foreignKeys)) {
+//                $column['is_foreign'] = true;
+//                if (substr($fieldName, -4, 4) != '__fk') {
+//                    $fieldName = String::trim($fieldName, ['__id', '_id', 'id'], String::TRIM_TYPE_RIGHT) . '__fk';
+//                }
+//            } else if (in_array($columnName, $primaryKeys)) {
+//                $column['is_primary'] = true;
+//                if (substr($fieldName, -3, 3) != '_pk') {
+//                    $fieldName = strtolower(Object::getName($modelClass));
+//                    do { // some primary fields
+//                        $fieldName .= '_pk';
+//                    } while (isset($modelMapping[$fieldName]));
+//                }
+//            }
 
             $fieldType = isset(Form_Model::$typeMap[$column['dataType']]) ? Form_Model::$typeMap[$column['dataType']] : 'text';
 
             $validators = [];
 
             switch ($fieldType) {
-                case 'text':
+                case 'Text':
                 case 'textarea':
                     $validators['Ice:Length_Max'] = (int)$column['length'];
                     break;

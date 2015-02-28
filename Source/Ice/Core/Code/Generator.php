@@ -43,16 +43,14 @@ abstract class Code_Generator extends Container
      */
     protected static function create($key)
     {
-        /** @var Core $key */
-        $baseClass = $key::getBaseClass();
+        /** @var Code_Generator $class */
+        $class = self::getClass();
 
-        $className = $baseClass == $key
-            ? $key::getClassName()
-            : $baseClass::getClassName() . '_' . $key::getClassName();
+        if ($class == __CLASS__) {
+            $class = 'Ice\Code\Generator\\' . $key;
+        }
 
-        $key = 'Ice\Code\Generator\\' . $className;
-
-        return new $key();
+        return new $class($key);
     }
 
     /**

@@ -12,12 +12,17 @@ namespace Ice\Data\Source;
 use Ice\Core\Data_Provider;
 use Ice\Core\Data_Source;
 use Ice\Core\Exception;
+use Ice\Core\Logger;
 use Ice\Core\Model;
+use Ice\Core\Module;
 use Ice\Core\Query;
 use Ice\Core\Query_Builder;
 use Ice\Core\Query_Result;
 use Ice\Core\Query_Translator;
 use Ice\Helper\Arrays;
+use Ice\Helper\Json;
+use Ice\Helper\String;
+use Ice\Helper\Model as Helper_Model;
 use mysqli_result;
 use mysqli_stmt;
 
@@ -418,14 +423,14 @@ class Mysqli extends Data_Source
     /**
      * Get data Scheme from data source
      *
+     * @param Module $module
      * @return array
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
      * @since 0.0
      */
-    public function getTables()
+    public function getTables(Module $module)
     {
         $tables = [];
 
@@ -433,11 +438,46 @@ class Mysqli extends Data_Source
         $dataProvider->setScheme('information_schema');
 
         foreach ($dataProvider->get('TABLES:TABLE_SCHEMA/' . $this->_scheme) as $table) {
-            $tables[$table['TABLE_NAME']] = [
-                'engine' => $table['ENGINE'],
-                'charset' => $table['TABLE_COLLATION'],
-                'comment' => $table['TABLE_COMMENT']
-            ];
+            if (String::startsWith($table['TABLE_NAME'], array_keys($module->getTablePrefixes()))) {
+                $tables[$table['TABLE_NAME']] = [];
+
+                $data = &$tables[$table['TABLE_NAME']];
+
+                $data = [
+                    'revision' => date('mdHi') . '_' . String::getRandomString(2),
+                    'dataSourceKey' => $module->getType() == 'module' ? null : $this->getDataSourceKey(),
+                    'scheme' => [],
+                    'schemeHash' => crc32(Json::encode([])),
+                    'columns' => [],
+                ];
+
+                $dataScheme = &$data['scheme'];
+                $dataScheme = [
+                    'tableName' => $table['TABLE_NAME'],
+                    'engine' => $table['ENGINE'],
+                    'charset' => $table['TABLE_COLLATION'],
+                    'comment' => $table['TABLE_COMMENT']
+                ];
+                $data['schemeHash'] = crc32(Json::encode($dataScheme));
+
+                $data['indexes'] = $this->getIndexes($table['TABLE_NAME']);
+                $data['indexesHash'] = crc32(Json::encode($data['indexes']));
+
+                $columns = &$data['columns'];
+                foreach ($this->getColumns($table['TABLE_NAME']) as $columnName => $column) {
+                    $columns[$columnName]['scheme'] = $column;
+                    $columns[$columnName]['schemeHash'] = crc32(Json::encode($columns[$columnName]['scheme']));
+
+                    $columns[$columnName]['fieldName'] =
+                        Helper_Model::getFieldNameByColumnName($columnName, $data);
+
+                    foreach (Model::getConfig()->gets('schemeColumnPlugins') as $columnPluginClass) {
+                        $columns[$columnName][$columnPluginClass] =
+                            $columnPluginClass::schemeColumnPlugin($columnName, $data);
+                    }
+                }
+//                Model::getCodeGenerator()->generate($data, 1);
+            }
         }
 
         return $tables;

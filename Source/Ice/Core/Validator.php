@@ -192,4 +192,22 @@ abstract class Validator extends Container
     {
         return self::getClass() . '/default';
     }
+
+    public static function schemeColumnPlugin($columnName, $table) {
+        $validators = [];
+
+        switch ($table['columns'][$columnName][Form::getClass()]) {
+            case 'Text':
+            case 'Textarea':
+                $validators['Ice:Length_Max'] = (int)$table['columns'][$columnName]['scheme']['length'];
+                break;
+            default:
+        }
+
+        if ($table['columns'][$columnName]['scheme']['nullable'] === false && !in_array($columnName, $table['indexes']['PRIMARY KEY']['PRIMARY'])) {
+            $validators[] = 'Ice:Not_Null';
+        }
+
+        return $validators;
+    }
 }

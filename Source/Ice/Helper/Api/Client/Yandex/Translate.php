@@ -3,7 +3,6 @@
 namespace Ice\Helper;
 
 use Ice\Core\Config as Core_Config;
-use Ice\Core\Logger;
 use Ice\Core\Request;
 use Ice\Data\Provider\Repository;
 

@@ -18,15 +18,15 @@ class Test extends Model
     protected static function config()
     {
         return [
-		    'revision' => '02281735_nX',
+		    'revision' => '02281744_Z4',
 		    'dataSourceKey' => null,
 		    'scheme' => [
 		        'tableName' => 'ice_test',
 		        'engine' => 'InnoDB',
 		        'charset' => 'utf8_general_ci',
-		        'comment' => 'dsdsd',
+		        'comment' => 'dsdsddsdddsdsd',
 		    ],
-		    'schemeHash' => 360356730,
+		    'schemeHash' => 3201865154,
 		    'columns' => [
 		        'id' => [
 		            'scheme' => [
@@ -48,19 +48,19 @@ class Test extends Model
 		        'test_name' => [
 		            'scheme' => [
 		                'extra' => '',
-		                'type' => 'varchar(50)',
+		                'type' => 'varchar(55)',
 		                'dataType' => 'varchar',
-		                'length' => '50',
+		                'length' => '55',
 		                'characterSet' => 'utf8',
 		                'nullable' => false,
 		                'default' => null,
 		                'comment' => '',
 		            ],
-		            'schemeHash' => 1203205037,
+		            'schemeHash' => 3375163257,
 		            'fieldName' => 'test_name',
 		            'Ice\\Core\\Form' => 'Text',
 		            'Ice\\Core\\Validator' => [
-		                'Ice:Length_Max' => 50,
+		                'Ice:Length_Max' => 55,
 		                0 => 'Ice:Not_Null',
 		            ],
 		            'Ice\\Core\\Data' => 'text',
@@ -68,19 +68,19 @@ class Test extends Model
 		        'name2' => [
 		            'scheme' => [
 		                'extra' => '',
-		                'type' => 'varchar(55)',
+		                'type' => 'varchar(60)',
 		                'dataType' => 'varchar',
-		                'length' => '55',
+		                'length' => '60',
 		                'characterSet' => 'utf8',
 		                'nullable' => true,
 		                'default' => null,
 		                'comment' => '',
 		            ],
-		            'schemeHash' => 3963330067,
+		            'schemeHash' => 3006676930,
 		            'fieldName' => 'name2',
 		            'Ice\\Core\\Form' => 'Text',
 		            'Ice\\Core\\Validator' => [
-		                'Ice:Length_Max' => 55,
+		                'Ice:Length_Max' => 60,
 		            ],
 		            'Ice\\Core\\Data' => 'text',
 		        ],

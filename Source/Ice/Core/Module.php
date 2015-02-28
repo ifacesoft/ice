@@ -213,6 +213,30 @@ class Module
     }
 
     /**
+     * Return table prefixes for module
+     *
+     * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
+     */
+    public function getTablePrefixes()
+    {
+
+        if (!isset($this->_module[Model::getClass()]) || !isset($this->_module[Model::getClass()]['prefixes'])) {
+            return [];
+        }
+
+        return $this->_module[Model::getClass()]['prefixes'];
+    }
+
+    public function getType() {
+        return $this->_module['type'];
+    }
+
+    /**
      * Return main module path
      *
      * @return string

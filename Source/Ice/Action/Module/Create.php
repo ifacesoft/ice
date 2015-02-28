@@ -233,11 +233,6 @@ class Module_Create extends Action
             }
 
             $config = [
-                'Ice\Core\Model' => [
-                    'prefixes' => [
-                        strtolower($moduleAlias) => $moduleAlias,
-                    ]
-                ],
                 'Ice\Helper\Api_Client_Yandex_Translate' => [
                     'translateKey' => ''
                 ],
@@ -347,10 +342,16 @@ class Module_Create extends Action
             'alias' => $moduleAlias,
             'module' => [
                 'name' => $moduleName,
+                'type' => $input['isWeb'] == 'web' ? 'web' : 'module',
                 'url' => '',
                 'authors' => get_current_user() . ' <email>',
                 'vcs' => $input['vcs'],
                 'source' => '',
+                'Ice\Core\Model' => [
+                    'prefixes' => [
+                        strtolower($moduleAlias) => $moduleAlias,
+                    ]
+                ],
             ],
             'modules' => []
         ];

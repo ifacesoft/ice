@@ -73,6 +73,8 @@ class Orm_Scheme_Update extends Action
         foreach (Data_Source::getConfig()->gets() as $dataSourceClass => $config) {
             foreach ($config as $key => $schemes) {
                 foreach ((array)$schemes as $scheme) {
+                    $schemeKey = $dataSourceClass . '/' . $key . '.' . $scheme;
+                    Orm_Scheme_Update::getLogger()->info(['Updating scheme ({$0})', $schemeKey]);
                     $output[$key . '.' . $scheme] =
                         Data_Scheme::create($dataSourceClass . '/' . $key . '.' . $scheme)->update($input['force']);
                 }

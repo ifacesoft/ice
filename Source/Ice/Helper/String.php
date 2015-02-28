@@ -71,7 +71,8 @@ class String
      * Check starts with string
      *
      * @param $haystack
-     * @param $needle
+     * @param $needles
+     * @param string $type
      * @return bool
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -79,10 +80,24 @@ class String
      * @version 0.5
      * @since 0.5
      */
-    public static function startsWith($haystack, $needle)
+    public static function startsWith($haystack, $needles, $type = 'or')
     {
-        $length = strlen($needle);
-        return (substr($haystack, 0, $length) === $needle);
+        $isStartWith = false;
+
+        foreach ((array)$needles as $needle) {
+            $length = strlen($needle);
+            $isStartWith = substr($haystack, 0, $length) === $needle;
+
+            if ($type == 'or' && $isStartWith == true) {
+                return $isStartWith;
+            }
+
+            if ($type == 'and' && $isStartWith == false) {
+                return $isStartWith;
+            }
+        }
+
+        return $isStartWith;
     }
 
     /**

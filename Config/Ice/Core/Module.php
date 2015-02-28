@@ -14,10 +14,16 @@ return [
     'alias' => 'Ice',
     'module' => [
         'name' => 'Ice Php Framework',
+        'type' => 'module',
         'url' => 'http://iceframework.net',
         'authors' => 'dp <denis.a.shestakov@gmail.com>',
         'vcs' => 'git',
         'source' => 'https://github.com/ifacesoft/Ice.git',
+        'Ice\Core\Model' => [
+            'prefixes' => [
+                'ice_' => 'Ice',
+            ]
+        ],
     ],
     'modules' => []
 ];

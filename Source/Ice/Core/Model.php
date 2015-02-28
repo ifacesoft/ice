@@ -716,6 +716,37 @@ abstract class Model
             ->getModelCollection();
     }
 
+    protected static function config()
+    {
+        return [];
+    }
+
+    /**
+     * Get action config
+     *
+     * @return Config
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
+     */
+    public static function getConfig()
+    {
+        $repository = self::getRepository();
+
+        if ($config = $repository->get('config')) {
+            return $config;
+        }
+
+        /** @var Model $modelClass */
+        $modelClass = self::getClass();
+
+        $config = Config::create($modelClass, array_merge_recursive($modelClass::config(), Config::getInstance($modelClass, null, false, -1)->gets()));
+
+        return $repository->set('config', $config);
+    }
+
     /**
      * Return localized title of table
      *

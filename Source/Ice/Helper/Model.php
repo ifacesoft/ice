@@ -33,34 +33,31 @@ class Model
      * Return model class by known table name
      *
      * @param $tableName
+     * @param null $moduleAlias
      * @return Core_Model
-     * @throws Exception
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.1
      * @since 0.0
      */
-    public static function getModelClassByTableName($tableName)
+    public static function getModelClassByTableName($tableName, $moduleAlias = null)
     {
-        $moduleAlias = null;
+        $alias = null;
         $tableNamePart = $tableName;
 
-        foreach (Core_Config::getInstance(Core_Model::getClass())->gets('prefixes') as $prefix => $value) {
-            $prefix .= '_';
-
+        foreach (Module::getInstance($moduleAlias)->getTablePrefixes() as $prefix => $value) {
             if (String::startsWith($tableName, $prefix)) {
-                $moduleAlias = $value;
+                $alias = $value;
                 $tableNamePart = substr($tableName, strlen($prefix));
                 break;
             }
         }
 
-        if (!$moduleAlias) {
-            $moduleAlias = Module::getInstance()->getAlias();
+        if (!$alias) {
+            $alias = Module::getInstance()->getAlias();
         }
 
-        $modelName = $moduleAlias . '\Model\\';
+        $modelName = $alias . '\Model\\';
 
         foreach (explode('_', preg_replace('/_{2,}/', '_', $tableNamePart)) as $modelNamePart) {
             $modelName .= ucfirst($modelNamePart) . '_';
@@ -90,5 +87,30 @@ class Model
         }
 
         return $prefix;
+    }
+
+    public static function getFieldNameByColumnName($columnName, $table)
+    {
+        $fieldName = strtolower($columnName);
+
+        $primaryKeys = $table['indexes']['PRIMARY KEY']['PRIMARY'];
+        $foreignKeys = Arrays::column($table['indexes']['FOREIGN KEY'], 0, '');
+
+        if (in_array($columnName, $foreignKeys)) {
+            $column['is_foreign'] = true;
+            if (substr($fieldName, -4, 4) != '__fk') {
+                $fieldName = String::trim($fieldName, ['__id', '_id', 'id'], String::TRIM_TYPE_RIGHT) . '__fk';
+            }
+        } else if (in_array($columnName, $primaryKeys)) {
+            $column['is_primary'] = true;
+            if (substr($fieldName, -3, 3) != '_pk') {
+                $fieldName = strtolower(Object::getName(Model::getModelClassByTableName($table['scheme']['tableName'])));
+                do { // some primary fields
+                    $fieldName .= '_pk';
+                } while (isset($modelMapping[$fieldName]));
+            }
+        }
+
+        return $fieldName;
     }
 }

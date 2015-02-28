@@ -58,7 +58,7 @@ class Logger
         $output['errcontext'] = $errcontext;
 
         Core_Logger::fb($output['message'] . ' ' . $output['errPoint'], 'ERROR');
-        if (!empty($errcontext) && Memory::getVarSize($errcontext) < 3500) {
+        if (!empty($errcontext)/* && Memory::getVarSize($errcontext) < 3500*/) {
             Core_Logger::fb($errcontext, 'INFO');
         }
         Core_Logger::fb($exception, 'WARN');

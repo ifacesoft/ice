@@ -178,5 +178,7 @@ abstract class Data extends Container
         return $this->_filterFields;
     }
 
-
+    public static function schemeColumnPlugin($columnName, $table) {
+        return 'text';
+    }
 }
