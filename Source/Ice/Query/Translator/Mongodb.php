@@ -515,10 +515,8 @@ class Mongodb extends Query_Translator
      */
     protected function translateCreate(array $part)
     {
-        $sql = [];
-
         if (empty($part)) {
-            return $sql;
+            return [];
         }
 
         $scheme = each($part);
@@ -549,10 +547,6 @@ class Mongodb extends Query_Translator
         $modelClass = array_shift($part);
 
         if (empty($modelClass)) {
-            return [];
-        }
-
-        if (empty($part)) {
             return [];
         }
 
