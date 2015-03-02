@@ -310,20 +310,38 @@ class Data_Scheme
                 Data_Scheme::getLogger()->info(['Updated indexes of table {$0}: {$1}', [$tableName, Json::encode(array_diff($table['indexes'], $tableIndexes))]]);
                 $tableIndexes = $table['indexes'];
                 $tableIndexesHash = $table['indexesHash'];
-
                 $updated = true;
             }
 
+            $dataSchemeColumns = $dataSchemeTables[$tableName]['columns'];
+
             foreach ($table['columns'] as $columnName => $column) {
+                if (!isset($dataSchemeTables[$tableName]['columns'][$columnName])) {
+                    $dataSchemeTables[$tableName]['columns'][$columnName] = [
+                        'scheme' => $column['scheme'],
+                        'schemeHash' => $column['schemeHash']
+                    ];
+                    Data_Scheme::getLogger()->info(['Created new column {$0} for table {$1}', [$columnName, $tableName]]);
+                    $updated = true;
+                    continue;
+                }
+
                 $columnSchemeHash = &$dataSchemeTables[$tableName]['columns'][$columnName]['schemeHash'];
                 $columnScheme = &$dataSchemeTables[$tableName]['columns'][$columnName]['scheme'];
 
                 if ($column['schemeHash'] != $columnSchemeHash) {
-                    Data_Scheme::getLogger()->info(['Updated column scheme {$0} of table {$1}: {$2}', [$tableName, $columnName, Json::encode(array_diff($column['scheme'], $columnScheme))]]);
+                    Data_Scheme::getLogger()->info(['Updated column {$0} for table {$1}: {$2}', [$columnName, $tableName, Json::encode(array_diff($column['scheme'], $columnScheme))]]);
                     $columnScheme = $column['scheme'];
                     $columnSchemeHash = $column['schemeHash'];
                     $updated = true;
                 }
+
+                unset($dataSchemeColumns[$columnName]);
+            }
+
+            foreach ($dataSchemeColumns as $columnName => $column) {
+                Data_Scheme::getLogger()->info(['Drop column {$0} for table {$1}', [$columnName, $tableName]]);
+                unset($dataSchemeTables[$tableName]['columns'][$columnName]);
             }
 
             if ($updated) {
@@ -331,7 +349,6 @@ class Data_Scheme
             }
 
             unset($dataSchemeTables[$tableName]);
-
         }
 
         foreach ($dataSchemeTables as $tableName => $table) {

@@ -7,6 +7,7 @@ use Ice\Core\Model;
  *
  * @property mixed test_pk
  * @property mixed test_name
+ * @property mixed wert
  * @property mixed name2
  *
  * @see Ice\Core\Model
@@ -18,7 +19,7 @@ class Test extends Model
     protected static function config()
     {
         return [
-		    'revision' => '02281744_Z4',
+		    'revision' => '03021545_uk',
 		    'dataSourceKey' => null,
 		    'scheme' => [
 		        'tableName' => 'ice_test',
@@ -48,19 +49,39 @@ class Test extends Model
 		        'test_name' => [
 		            'scheme' => [
 		                'extra' => '',
-		                'type' => 'varchar(55)',
+		                'type' => 'varchar(52)',
 		                'dataType' => 'varchar',
-		                'length' => '55',
+		                'length' => '52',
 		                'characterSet' => 'utf8',
 		                'nullable' => false,
 		                'default' => null,
 		                'comment' => '',
 		            ],
-		            'schemeHash' => 3375163257,
+		            'schemeHash' => 336823333,
 		            'fieldName' => 'test_name',
 		            'Ice\\Core\\Form' => 'Text',
 		            'Ice\\Core\\Validator' => [
-		                'Ice:Length_Max' => 55,
+		                'Ice:Length_Max' => 52,
+		                0 => 'Ice:Not_Null',
+		            ],
+		            'Ice\\Core\\Data' => 'text',
+		        ],
+		        'wert' => [
+		            'scheme' => [
+		                'extra' => '',
+		                'type' => 'varchar(52)',
+		                'dataType' => 'varchar',
+		                'length' => '52',
+		                'characterSet' => 'utf8',
+		                'nullable' => false,
+		                'default' => null,
+		                'comment' => '',
+		            ],
+		            'schemeHash' => 336823333,
+		            'fieldName' => 'wert',
+		            'Ice\\Core\\Form' => 'Text',
+		            'Ice\\Core\\Validator' => [
+		                'Ice:Length_Max' => 52,
 		                0 => 'Ice:Not_Null',
 		            ],
 		            'Ice\\Core\\Data' => 'text',
