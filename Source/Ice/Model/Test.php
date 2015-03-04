@@ -18,7 +18,7 @@ class Test extends Model
     protected static function config()
     {
         return [
-		    'revision' => '03041525_n5',
+		    'revision' => '03041527_wr',
 		    'dataSourceKey' => null,
 		    'scheme' => [
 		        'tableName' => 'ice_test',
@@ -68,19 +68,19 @@ class Test extends Model
 		        'name2' => [
 		            'scheme' => [
 		                'extra' => '',
-		                'type' => 'varchar(60)',
+		                'type' => 'varchar(65)',
 		                'dataType' => 'varchar',
-		                'length' => '60',
+		                'length' => '65',
 		                'characterSet' => 'utf8',
 		                'nullable' => true,
 		                'default' => null,
 		                'comment' => '',
 		            ],
-		            'schemeHash' => 3006676930,
+		            'schemeHash' => 2521633375,
 		            'fieldName' => 'name2',
 		            'Ice\Core\Form' => 'Text',
 		            'Ice\Core\Validator' => [
-		                'Ice:Length_Max' => 60,
+		                'Ice:Length_Max' => 65,
 		            ],
 		            'Ice\Core\Data' => 'text',
 		        ],
