@@ -7,7 +7,6 @@ use Ice\Core\Model;
  *
  * @property mixed test_pk
  * @property mixed test_name
- * @property mixed wert
  * @property mixed name2
  *
  * @see Ice\Core\Model
@@ -19,7 +18,7 @@ class Test extends Model
     protected static function config()
     {
         return [
-		    'revision' => '03021545_uk',
+		    'revision' => '03041525_n5',
 		    'dataSourceKey' => null,
 		    'scheme' => [
 		        'tableName' => 'ice_test',
@@ -42,9 +41,9 @@ class Test extends Model
 		            ],
 		            'schemeHash' => 708064701,
 		            'fieldName' => 'test_pk',
-		            'Ice\\Core\\Form' => 'Number',
-		            'Ice\\Core\\Validator' => [],
-		            'Ice\\Core\\Data' => 'text',
+		            'Ice\Core\Form' => 'Number',
+		            'Ice\Core\Validator' => [],
+		            'Ice\Core\Data' => 'text',
 		        ],
 		        'test_name' => [
 		            'scheme' => [
@@ -59,32 +58,12 @@ class Test extends Model
 		            ],
 		            'schemeHash' => 336823333,
 		            'fieldName' => 'test_name',
-		            'Ice\\Core\\Form' => 'Text',
-		            'Ice\\Core\\Validator' => [
+		            'Ice\Core\Form' => 'Text',
+		            'Ice\Core\Validator' => [
 		                'Ice:Length_Max' => 52,
 		                0 => 'Ice:Not_Null',
 		            ],
-		            'Ice\\Core\\Data' => 'text',
-		        ],
-		        'wert' => [
-		            'scheme' => [
-		                'extra' => '',
-		                'type' => 'varchar(52)',
-		                'dataType' => 'varchar',
-		                'length' => '52',
-		                'characterSet' => 'utf8',
-		                'nullable' => false,
-		                'default' => null,
-		                'comment' => '',
-		            ],
-		            'schemeHash' => 336823333,
-		            'fieldName' => 'wert',
-		            'Ice\\Core\\Form' => 'Text',
-		            'Ice\\Core\\Validator' => [
-		                'Ice:Length_Max' => 52,
-		                0 => 'Ice:Not_Null',
-		            ],
-		            'Ice\\Core\\Data' => 'text',
+		            'Ice\Core\Data' => 'text',
 		        ],
 		        'name2' => [
 		            'scheme' => [
@@ -99,11 +78,11 @@ class Test extends Model
 		            ],
 		            'schemeHash' => 3006676930,
 		            'fieldName' => 'name2',
-		            'Ice\\Core\\Form' => 'Text',
-		            'Ice\\Core\\Validator' => [
+		            'Ice\Core\Form' => 'Text',
+		            'Ice\Core\Validator' => [
 		                'Ice:Length_Max' => 60,
 		            ],
-		            'Ice\\Core\\Data' => 'text',
+		            'Ice\Core\Data' => 'text',
 		        ],
 		    ],
 		    'indexes' => [
@@ -118,4 +97,8 @@ class Test extends Model
 		    'indexesHash' => 3780610860,
 		];
     }
+
+	public static function test() {
+		return true;
+	}
 }
