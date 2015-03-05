@@ -272,7 +272,7 @@ return [
         'nl' => 'Drop regeling van de tabel {$0}: {$1}',
         'no' => 'Slipp ordningen av tabellen {$0}: {$1}',
         'pt' => 'Queda de esquema da tabela {$0}: {$1}',
-        'ru' => 'Падение схема таблицы {$0}: {$1}',
+        'ru' => 'Удаление таблицы {$0}: {$1}',
         'sk' => 'Drop schémy, tabuľky {$0}: {$1}',
         'sl' => 'Padec shema tabela {$0}: {$1}',
         'sq' => 'Drop skemën e tabela {$0}: {$1}',
@@ -391,5 +391,13 @@ return [
         'sv' => 'Släpp kolumnen {$0} i tabell {$1}',
         'tr' => 'Tablo {$1}için sütun {$0} bırak ',
         'uk' => 'Drop column {$0} в таблиці {$1}',
+    ],
+    'Create new scheme of table {$0}' => [
+        'en' => 'Create new scheme of table {$0}',
+        'ru' => 'Создать новую схему таблицы {$0}',
+    ],
+    'Drop scheme of table {$0}' => [
+        'en' => 'Drop scheme of table {$0}',
+        'ru' => 'Удаление таблицы {$0}',
     ],
 ];

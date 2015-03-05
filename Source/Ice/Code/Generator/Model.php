@@ -9,6 +9,7 @@
 
 namespace Ice\Code\Generator;
 
+use Ice\Class_Generator;
 use Ice\Core\Code_Generator;
 use Ice\Core\Loader;
 use Ice\Core\Logger;
@@ -62,6 +63,11 @@ class Model extends Code_Generator
 
         if (!$force && $isFileExists) {
             Code_Generator::getLogger()->info(['Model {$0} already created', $modelClass]);
+            return;
+        }
+
+        if ($isFileExists) {
+            Class_Generator::create($modelClass, Core_Model::getClass())->generate($data);
             return;
         }
 

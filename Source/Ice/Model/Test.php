@@ -18,7 +18,7 @@ class Test extends Model
     protected static function config()
     {
         return [
-		    'revision' => '03041527_wr',
+		    'revision' => '03041528_a1',
 		    'dataSourceKey' => null,
 		    'scheme' => [
 		        'tableName' => 'ice_test',

@@ -11,11 +11,7 @@ namespace Ice\Core;
 
 use Ice;
 use Ice\Core;
-use Ice\Helper\Arrays;
-use Ice\Helper\Date;
-use Ice\Helper\File;
 use Ice\Helper\Json;
-use Ice\Helper\Model as Helper_Model;
 use Ice\Helper\Php;
 use Ice\Helper\String;
 use RecursiveDirectoryIterator;
@@ -160,6 +156,8 @@ class Data_Scheme
             return $this->_tables;
         }
 
+        $this->_tables = [];
+
         $sourceDir = MODULE_DIR . 'Source/';
 
         $Directory = new RecursiveDirectoryIterator($sourceDir . $module->getAlias() . '/Model');
@@ -174,8 +172,11 @@ class Data_Scheme
             $modelClass = str_replace('/', '\\', substr($modelPath, strlen($sourceDir), -4 - strlen($modelName))) . $modelName;
 
             $config = $modelClass::getConfig()->gets();
-            $config['modelPath'] = substr($modelPath, strlen($sourceDir));
-            $this->_tables[$config['scheme']['tableName']] = $config;
+
+            if (String::startsWith($config['scheme']['tableName'], array_keys($module->getTablePrefixes()))) {
+                $config['modelPath'] = substr($modelPath, strlen($sourceDir));
+                $this->_tables[$config['scheme']['tableName']] = $config;
+            }
         }
 
         return $this->_tables;
@@ -342,6 +343,7 @@ class Data_Scheme
             foreach ($dataSchemeColumns as $columnName => $column) {
                 Data_Scheme::getLogger()->info(['Drop column {$0} for table {$1}', [$columnName, $tableName]]);
                 unset($dataSchemeTables[$tableName]['columns'][$columnName]);
+                $updated = true;
             }
 
             if ($updated) {
@@ -355,65 +357,6 @@ class Data_Scheme
             Data_Scheme::getLogger()->info(['Drop scheme of table {$0}', $tableName]);
             unlink(MODULE_DIR . 'Source/' . $table['modelPath']);
         }
-
-        die();
-        $schemeData = [
-            'time' => Date::get(),
-            'revision' => date('mdHi')
-        ];
-
-        $diffTables = Arrays::diff($dataSchemeTables, $dataSourceTables);
-
-        $tables = [
-            'updated' => [],
-            'notChanged' => []
-        ];
-
-        foreach ($diffTables['added'] as $tableName => $table) {
-            $table['modelClass'] = Helper_Model::getModelClassByTableName($tableName);
-
-            $modelScheme = Model_Scheme::create($table['modelClass'])
-                ->update($dataSource->getDataSourceKey(), $tableName, $force);
-
-            $table['revision'] = $modelScheme->getRevision();
-            $tables['updated'][$tableName] = $table;
-        }
-
-        foreach ($diffTables['other'] as $tableName => $table) {
-            $table['modelClass'] = Helper_Model::getModelClassByTableName($tableName);
-
-            $modelScheme = Model_Scheme::create($table['modelClass']);
-
-            $diffColumns = Arrays::diff($modelScheme->getColumnMapping(), $dataSource->getColumns($tableName));
-
-            if (empty($diffColumns['added']) && empty($diffColumns['deleted'])) {
-                $tables['notChanged'][$tableName] = $dataSchemeTables[$tableName];
-                continue;
-            }
-
-            $table['revision'] = $modelScheme->getRevision();
-            $tables['updated'][$tableName] = $table;
-        }
-
-        if (empty($diffTables['deleted']) && empty($tables['updated']) && !$force) {
-            return $schemeData;
-        }
-
-        $schemeData['tables'] = array_merge($tables['updated'], $tables['notChanged']);
-        unset($tables);
-
-        ksort($schemeData['tables']);
-
-
-        $dataSchemeFile = Loader::getFilePath($this->getDataSourceKey(), '.php', 'Var/Scheme/', false, true);
-
-        $prevDataSchemeFile = Loader::getFilePath($this->getDataSourceKey() . '/' . $this->getRevision(), '.php', 'Var/Scheme/', false, true);
-
-        File::move($dataSchemeFile, $prevDataSchemeFile);
-
-        Data_Scheme::getLogger()->info(['Update scheme for tables: {$0}', Php::varToPhpString(array_keys($schemeData['tables']))], Logger::SUCCESS, true);
-
-        return File::createData($dataSchemeFile, $schemeData);
     }
 //
 //    public function getTableName($modelClass)

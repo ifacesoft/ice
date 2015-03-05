@@ -29,8 +29,8 @@ class Php
      * Pretty formatting php data (array)
      *
      * @param $var
+     * @param bool $withPhpTag
      * @return mixed|string
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0

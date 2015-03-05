@@ -21,7 +21,7 @@ return [
         'source' => 'https://github.com/ifacesoft/Ice.git',
         'Ice\Core\Model' => [
             'prefixes' => [
-                'ice_' => 'Ice',
+                'default' => ['ice_']
             ]
         ],
     ],
