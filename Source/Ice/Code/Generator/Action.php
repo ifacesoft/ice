@@ -45,9 +45,9 @@ class Action extends Code_Generator
      * @version 0.0
      * @since 0.0
      */
-    public function generate($data, $force = false)
+    public function generate($class, $data, $force = false)
     {
-        $class = Object::getClass(Action::getClass(), $data);
+//        $class = Object::getClass(Action::getClass(), $data);
         $namespace = Object::getNamespace(Action::getClass(), $class);
 
         $path = $namespace ? 'Source/' : 'Source/Class/';

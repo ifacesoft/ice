@@ -11,6 +11,7 @@ namespace Ice\Core;
 
 use Ice;
 use Ice\Core;
+use Ice\Helper\Directory;
 use Ice\Helper\Json;
 use Ice\Helper\Php;
 use Ice\Helper\String;
@@ -160,7 +161,7 @@ class Data_Scheme
 
         $sourceDir = MODULE_DIR . 'Source/';
 
-        $Directory = new RecursiveDirectoryIterator($sourceDir . $module->getAlias() . '/Model');
+        $Directory = new RecursiveDirectoryIterator(Directory::get($sourceDir . $module->getAlias() . '/Model'));
         $Iterator = new RecursiveIteratorIterator($Directory);
         $Regex = new RegexIterator($Iterator, '/^.+\.php$/i', RecursiveRegexIterator::GET_MATCH);
 
@@ -173,7 +174,8 @@ class Data_Scheme
 
             $config = $modelClass::getConfig()->gets();
 
-            if (String::startsWith($config['scheme']['tableName'], array_keys($module->getTablePrefixes()))) {
+            if ($module->checkTableByPrefix($config['scheme']['tableName'], $this->getScheme())) {
+                $config['modelClass'] = $modelClass;
                 $config['modelPath'] = substr($modelPath, strlen($sourceDir));
                 $this->_tables[$config['scheme']['tableName']] = $config;
             }
@@ -286,7 +288,7 @@ class Data_Scheme
 
         foreach ($dataSource->getTables($module) as $tableName => $table) {
             if (!isset($dataSchemeTables[$tableName])) {
-                Model::getCodeGenerator()->generate($table, $force);
+                Model::getCodeGenerator()->generate($module->getModelClass($tableName, $dataSource->getScheme()), $table, $force);
                 Data_Scheme::getLogger()->info(['Create new scheme of table {$0}', $tableName]);
                 continue;
             }
@@ -347,7 +349,7 @@ class Data_Scheme
             }
 
             if ($updated) {
-                Model::getCodeGenerator()->generate($table, $force);
+                Model::getCodeGenerator()->generate($dataSchemeTables[$tableName]['modelClass'], $table, $force);
             }
 
             unset($dataSchemeTables[$tableName]);
@@ -357,6 +359,11 @@ class Data_Scheme
             Data_Scheme::getLogger()->info(['Drop scheme of table {$0}', $tableName]);
             unlink(MODULE_DIR . 'Source/' . $table['modelPath']);
         }
+    }
+
+    public function getScheme()
+    {
+        return substr($this->_dataSourceKey, strpos($this->_dataSourceKey, '.') + 1);
     }
 //
 //    public function getTableName($modelClass)

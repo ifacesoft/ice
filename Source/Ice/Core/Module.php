@@ -12,6 +12,7 @@ namespace Ice\Core;
 use Ice;
 use Ice\Core;
 use Ice\Helper\File;
+use Ice\Helper\String;
 
 /**
  * Class Module
@@ -222,17 +223,36 @@ class Module
      * @version 0.5
      * @since 0.5
      */
-    public function getTablePrefixes()
+    public function getTablePrefixes($scheme = null)
     {
 
         if (!isset($this->_module[Model::getClass()]) || !isset($this->_module[Model::getClass()]['prefixes'])) {
-            return [];
+            Module::getLogger()->exception(
+                'Model prefixes not found. Add in module config or so: ',
+                __FILE__,
+                __LINE__,
+                null,
+                [
+                    'Ice\Core\Model' => [
+                        'prefixes' => [
+                            'default' => ['alias_'],
+                        ]
+                    ]
+                ]
+            );
         }
 
-        return $this->_module[Model::getClass()]['prefixes'];
+        if (!$scheme) {
+            return $this->_module[Model::getClass()]['prefixes'];
+        }
+
+        return isset($this->_module[Model::getClass()]['prefixes'][$scheme])
+            ? $this->_module[Model::getClass()]['prefixes'][$scheme]
+            : [];
     }
 
-    public function getType() {
+    public function getType()
+    {
         return $this->_module['type'];
     }
 
@@ -280,5 +300,70 @@ class Module
     {
         $aliases = self::getAliases();
         return reset($aliases);
+    }
+
+    /**
+     * Check table belongs to module
+     *
+     * @param $tableName
+     * @param $scheme
+     * @return bool
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
+     */
+    public function checkTableByPrefix($tableName, $scheme)
+    {
+        if (!isset($this->getTablePrefixes()[$scheme])) {
+            return false;
+        }
+
+        return String::startsWith($tableName, $this->getTablePrefixes()[$scheme]);
+    }
+
+    public function getModelClass($tableName, $scheme)
+    {
+        if (!isset($this->getTablePrefixes()[$scheme])) {
+            Module::getLogger()->exception(
+                [
+                    'Table with name {$0} in scheme {$1} not belongs to module {$2}. Check module config (model prefixes)',
+                    [$tableName, $scheme, $this->getName()]
+                ],
+                __FILE__,
+                __LINE__,
+                null,
+                $this->_module
+            );
+        }
+
+        $alias = null;
+        $tableNamePart = $tableName;
+
+        foreach ($this->getTablePrefixes()[$scheme] as $prefix) {
+            if (String::startsWith($tableName, $prefix)) {
+                $alias = $this->getAlias();
+                $tableNamePart = substr($tableName, strlen($prefix));
+                break;
+            }
+        }
+
+        if (!$alias) {
+            $alias = Module::getInstance()->getAlias();
+        }
+
+        $modelName = $alias . '\Model\\';
+
+        foreach (explode('_', preg_replace('/_{2,}/', '_', $tableNamePart)) as $modelNamePart) {
+            $modelName .= ucfirst($modelNamePart) . '_';
+        }
+
+        return rtrim($modelName, '_');
+    }
+
+    public function getName()
+    {
+        return $this->_module['name'];
     }
 }
