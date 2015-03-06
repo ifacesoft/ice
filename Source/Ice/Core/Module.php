@@ -216,7 +216,7 @@ class Module
     /**
      * Return table prefixes for module
      *
-     * @param null $dataSourceKey
+     * @param $dataSourceKey
      * @return array
      * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
@@ -224,31 +224,19 @@ class Module
      * @version 0.5
      * @since 0.5
      */
-    public function getModelPrefixes($dataSourceKey = null)
+    public function getDataSourcePrefixes($dataSourceKey)
     {
-        if (!isset($this->_module[Model::getClass()]) || !isset($this->_module[Model::getClass()]['dataSources'])) {
+        if (!isset($this->_module[Data_Source::getClass()]) || !isset($this->_module[Data_Source::getClass()][$dataSourceKey])) {
             Module::getLogger()->exception(
-                'Model prefixes not found. Add in module config or so: ',
+                ['Data source prefixes for data source {$0} not found.', $dataSourceKey],
                 __FILE__,
                 __LINE__,
                 null,
-                [
-                    'Ice\Core\Model' => [
-                        'dataSources' => [
-                            'default' => ['alias_'],
-                        ]
-                    ]
-                ]
+                $this->_module
             );
         }
 
-        if (!$dataSourceKey) {
-            return $this->_module[Model::getClass()]['dataSources'];
-        }
-
-        return isset($this->_module[Model::getClass()]['dataSources'][$dataSourceKey])
-            ? $this->_module[Model::getClass()]['dataSources'][$dataSourceKey]
-            : [];
+        return (array)$this->_module[Data_Source::getClass()][$dataSourceKey];
     }
 
     public function getType()
@@ -308,7 +296,6 @@ class Module
      * @param $tableName
      * @param $dataSourceKey
      * @return bool
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.5
@@ -316,32 +303,15 @@ class Module
      */
     public function checkTableByPrefix($tableName, $dataSourceKey)
     {
-        if (empty($this->getModelPrefixes($dataSourceKey))) {
-            return false;
-        }
-
-        return String::startsWith($tableName, $this->getModelPrefixes($dataSourceKey));
+        return String::startsWith($tableName, $this->getDataSourcePrefixes($dataSourceKey));
     }
 
     public function getModelClass($tableName, $dataSourceKey)
     {
-        if (empty($this->getModelPrefixes($dataSourceKey))) {
-            Module::getLogger()->exception(
-                [
-                    'Table with name {$0} in scheme {$1} not belongs to module {$2}. Check module config (model prefixes)',
-                    [$tableName, $dataSourceKey, $this->getName()]
-                ],
-                __FILE__,
-                __LINE__,
-                null,
-                $this->_module
-            );
-        }
-
         $alias = null;
         $tableNamePart = $tableName;
 
-        foreach ($this->getModelPrefixes($dataSourceKey) as $prefix) {
+        foreach ($this->getDataSourcePrefixes($dataSourceKey) as $prefix) {
             if (String::startsWith($tableName, $prefix)) {
                 $alias = $this->getAlias();
                 $tableNamePart = substr($tableName, strlen($prefix));
@@ -365,5 +335,31 @@ class Module
     public function getName()
     {
         return $this->_module['name'];
+    }
+
+    public function getDataSourceTables()
+    {
+        $tables = [];
+
+        foreach ($this->getDataSourceKeys() as $dataSourceKey) {
+            $tables[$dataSourceKey] = Data_Source::getInstance($dataSourceKey)->getTables($this);
+        }
+
+        return $tables;
+    }
+
+    public function getDataSourceKeys()
+    {
+        if (!isset($this->_module[Data_Source::getClass()])) {
+            Module::getLogger()->exception(
+                'Data source keys not found.',
+                __FILE__,
+                __LINE__,
+                null,
+                $this->_module
+            );
+        }
+
+        return array_keys((array)$this->_module[Data_Source::getClass()]);
     }
 }

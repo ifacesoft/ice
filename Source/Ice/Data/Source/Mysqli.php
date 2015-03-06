@@ -469,11 +469,10 @@ class Mysqli extends Data_Source
                     $columns[$columnName]['schemeHash'] = crc32(Json::encode($columns[$columnName]['scheme']));
 
                     $columns[$columnName]['fieldName'] =
-                        Helper_Model::getFieldNameByColumnName($columnName, $data, $module->getModelPrefixes($this->getDataSourceKey()));
+                        Helper_Model::getFieldNameByColumnName($columnName, $data, $module->getDataSourcePrefixes($this->getDataSourceKey()));
 
                     foreach (Model::getConfig()->gets('schemeColumnPlugins') as $columnPluginClass) {
-                        $columns[$columnName][$columnPluginClass] =
-                            $columnPluginClass::schemeColumnPlugin($columnName, $data);
+                        $columns[$columnName][$columnPluginClass] = $columnPluginClass::schemeColumnPlugin($columnName, $data);
                     }
                 }
 //                Model::getCodeGenerator()->generate($data, 1);

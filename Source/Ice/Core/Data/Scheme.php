@@ -43,17 +43,16 @@ class Data_Scheme
      */
     private $_dataSourceKey = null;
 
-    private $_tables = null;
+    private static $_tables = null;
 
     /**
      * Private constructor of dat scheme
-     *
-     * @param $dataSourceKey
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
      * @since 0.0
+     * @param $dataSourceKey
      */
     private function __construct($dataSourceKey)
     {
@@ -62,10 +61,8 @@ class Data_Scheme
 
     /**
      * Create new instance of data scheme
-     *
      * @param $dataSourceKey
      * @return Data_Scheme
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
@@ -75,89 +72,24 @@ class Data_Scheme
     {
         return new Data_Scheme($dataSourceKey);
     }
-//
-//    /**
-//     * Return default scheme name
-//     *
-//     * @return string
-//     *
-//     * @author dp <denis.a.shestakov@gmail.com>
-//     *
-//     * @version 0.0
-//     * @since 0.0
-//     */
-//    protected static function getDefaultKey()
-//    {
-//        $schemes = array_keys(Data_Source::getConfig()->gets());
-//        return reset($schemes);
-//    }
-//
-//    /**
-//     * Return map tables short scheme
-//     *
-//     * @return array
-//     *
-//     * @author dp <denis.a.shestakov@gmail.com>
-//     *
-//     * @version 0.0
-//     * @since 0.0
-//     */
-//    public function getTableNames()
-//    {
-//        return $this->_dataScheme['tables'];
-//    }
-//
-//    /**
-//     * Return map of model classes and their table names
-//     *
-//     * @return Model[]
-//     *
-//     * @author dp <denis.a.shestakov@gmail.com>
-//     *
-//     * @version 0.0
-//     * @since 0.0
-//     */
-//    public function getModelClasses()
-//    {
-//        if ($this->_modelClasses !== null) {
-//            return $this->_modelClasses;
-//        }
-//
-//        return $this->_modelClasses = array_flip(Arrays::column($this->getTableNames(), 'modelClass'));
-//    }
-//
-//    /**
-//     * Return current scheme name
-//     *
-//     * @return string
-//     *
-//     * @author dp <denis.a.shestakov@gmail.com>
-//     *
-//     * @version 0.0
-//     * @since 0.0
-//     */
-//    public function getName()
-//    {
-//        return $this->_dataScheme['scheme'];
-//    }
 
     /**
      * Return tables
      *
+     * @param Module $module
      * @return array
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.5
      * @since 0.5
      */
-    public function getTables(Module $module)
+    public static function getTables(Module $module)
     {
-        if ($this->_tables !== null) {
-            return $this->_tables;
+        if (self::$_tables !== null) {
+            return self::$_tables;
         }
 
-        $this->_tables = [];
+        self::$_tables = [];
 
         $sourceDir = MODULE_DIR . 'Source/';
 
@@ -174,220 +106,102 @@ class Data_Scheme
 
             $config = $modelClass::getConfig()->gets();
 
-            if ($module->checkTableByPrefix($config['scheme']['tableName'], $this->getKey() . '.' . $this->getScheme())) {
-                $config['modelClass'] = $modelClass;
-                $config['modelPath'] = substr($modelPath, strlen($sourceDir));
-                $this->_tables[$config['scheme']['tableName']] = $config;
-            }
+            $config['modelClass'] = $modelClass;
+            $config['modelPath'] = substr($modelPath, strlen($sourceDir));
+            self::$_tables[$config['dataSourceKey']][$config['scheme']['tableName']] = $config;
         }
 
-        return $this->_tables;
+        return self::$_tables;
     }
 
-    /**
-     * Return data scheme (source) key
-     *
-     * @return string
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since 0.5
-     */
-    public function getDataSourceKey()
+    public static function update(Module $module, $force = false)
     {
-        return $this->_dataSourceKey;
-    }
-//
-//    /**
-//     * Return data scheme revision
-//     *
-//     * @return string
-//     *
-//     * @author dp <denis.a.shestakov@gmail.com>
-//     *
-//     * @version 0.5
-//     * @since 0.5
-//     */
-//    public function getRevision()
-//    {
-//        return $this->_dataScheme['revision'];
-//    }
-//
-//    /**
-//     * Return data scheme
-//     *
-//     * @return array
-//     *
-//     * @author dp <denis.a.shestakov@gmail.com>
-//     *
-//     * @version 0.5
-//     * @since 0.5
-//     */
-//    public function getDataScheme()
-//    {
-//        return $this->_dataScheme;
-//    }
-//
-//    /**
-//     * Return model scheme by table name
-//     *
-//     * @param $tableName
-//     * @return Model_Scheme
-//     *
-//     * @author dp <denis.a.shestakov@gmail.com>
-//     *
-//     * @version 0.5
-//     * @since 0.5
-//     */
-//    public function getModelScheme($tableName)
-//    {
-//        return Model_Scheme::create($this->getModelClass($tableName));
-//    }
-//
-//    /**
-//     * Return model class by table name
-//     *
-//     * @param $tableName
-//     * @return Model
-//     *
-//     * @author dp <denis.a.shestakov@gmail.com>
-//     *
-//     * @version 0.5
-//     * @since 0.5
-//     */
-//    public function getModelClass($tableName)
-//    {
-//        return isset($this->getTables()[$tableName])
-//            ? $this->getTables()[$tableName]['modelClass']
-//            : Helper_Model::getModelClassByTableName($tableName);
-//    }
+        $dataSchemeTables = Data_Scheme::getTables($module);
 
-    /**
-     * Return data source
-     *
-     * @return Data_Source
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since 0.5
-     */
-    public function getDataSource()
-    {
-        return Data_Source::getInstance($this->getDataSourceKey());
-    }
+        foreach ($module->getDataSourceTables() as $dataSourceKey => $tables) {
+            Data_Scheme::getLogger()->info(['Checking models from data source {$0}', $dataSourceKey]);
 
-    public function update($force = false)
-    {
-        $dataSource = $this->getDataSource();
+            $schemeTables = &$dataSchemeTables[$dataSourceKey];
 
-        $module = Module::getInstance();
-
-        $dataSchemeTables = $this->getTables($module);
-
-        foreach ($dataSource->getTables($module) as $tableName => $table) {
-            if (!isset($dataSchemeTables[$tableName])) {
-                $modelClass = $module->getModelClass($tableName, $dataSource->getDataSourceKey());
-                Model::getCodeGenerator()->generate($modelClass, $table, $force);
-                Data_Scheme::getLogger()->info(['Create model {$0}', $modelClass]);
-                continue;
-            }
-
-            $temp = $table;
-            $updated = false;
-
-            $tableSchemeHash = &$dataSchemeTables[$tableName]['schemeHash'];
-            $tableScheme = &$dataSchemeTables[$tableName]['scheme'];
-
-            if ($table['schemeHash'] != $tableSchemeHash) {
-                Data_Scheme::getLogger()->info(['Update scheme for model {$0}: {$1}', [$dataSchemeTables[$tableName]['modelClass'], Json::encode(array_diff($table['scheme'], $tableScheme))]]);
-                $tableScheme = $table['scheme'];
-                $tableSchemeHash = $table['schemeHash'];
-                $updated = true;
-            }
-
-            $tableIndexesHash = &$dataSchemeTables[$tableName]['indexesHash'];
-            $tableIndexes = &$dataSchemeTables[$tableName]['indexes'];
-
-            if ($table['indexesHash'] != $tableIndexesHash) {
-                Data_Scheme::getLogger()->info(['Update indexes for model {$0}: {$1}', [$dataSchemeTables[$tableName]['modelClass'], Json::encode(array_diff($table['indexes'], $tableIndexes))]]);
-                $tableIndexes = $table['indexes'];
-                $tableIndexesHash = $table['indexesHash'];
-                $updated = true;
-            }
-
-            $dataSchemeColumns = $dataSchemeTables[$tableName]['columns'];
-
-            foreach ($table['columns'] as $columnName => $column) {
-                if (!isset($dataSchemeTables[$tableName]['columns'][$columnName])) {
-                    $dataSchemeTables[$tableName]['columns'][$columnName] = [
-                        'scheme' => $column['scheme'],
-                        'schemeHash' => $column['schemeHash']
-                    ];
-                    Data_Scheme::getLogger()->info(['Create field {$0} for model {$1}', [$column['fieldName'], $dataSchemeTables[$tableName]['modelClass']]]);
-                    $updated = true;
+            foreach ($tables as $tableName => $table) {
+                if (!isset($schemeTables[$tableName])) {
+                    $modelClass = $module->getModelClass($tableName, $dataSourceKey);
+                    Model::getCodeGenerator()->generate($modelClass, $table, $force);
+                    Data_Scheme::getLogger()->info(['Create model {$0}', $modelClass]);
                     continue;
                 }
 
-                $columnSchemeHash = &$dataSchemeTables[$tableName]['columns'][$columnName]['schemeHash'];
-                $columnScheme = &$dataSchemeTables[$tableName]['columns'][$columnName]['scheme'];
+                $temp = $table;
+                $updated = false;
 
-                if ($column['schemeHash'] != $columnSchemeHash) {
-                    Data_Scheme::getLogger()->info(['Update field {$0} for model {$1}: {$2}', [$column['fieldName'], $dataSchemeTables[$tableName]['modelClass'], Json::encode(array_diff($column['scheme'], $columnScheme))]]);
-                    $columnScheme = $column['scheme'];
-                    $columnSchemeHash = $column['schemeHash'];
+                $tableSchemeHash = &$schemeTables[$tableName]['schemeHash'];
+                $tableScheme = &$schemeTables[$tableName]['scheme'];
+
+                if ($table['schemeHash'] != $tableSchemeHash) {
+                    Data_Scheme::getLogger()->info(['Update scheme for model {$0}: {$1}', [$schemeTables[$tableName]['modelClass'], Json::encode(array_diff($table['scheme'], $tableScheme))]]);
+                    $tableScheme = $table['scheme'];
+                    $tableSchemeHash = $table['schemeHash'];
                     $updated = true;
                 }
 
-                unset($dataSchemeColumns[$columnName]);
-            }
+                $tableIndexesHash = &$schemeTables[$tableName]['indexesHash'];
+                $tableIndexes = &$schemeTables[$tableName]['indexes'];
 
-            foreach ($dataSchemeColumns as $columnName => $column) {
-                Data_Scheme::getLogger()->info(['Remove field {$0} for model {$1}', [$column['fieldName'], $dataSchemeTables[$tableName]['modelClass']]]);
-                unset($dataSchemeTables[$tableName]['columns'][$columnName]);
-                $updated = true;
-            }
+                if ($table['indexesHash'] != $tableIndexesHash) {
+                    Data_Scheme::getLogger()->info(['Update indexes for model {$0}: {$1}', [$schemeTables[$tableName]['modelClass'], Json::encode(array_diff($table['indexes'], $tableIndexes))]]);
+                    $tableIndexes = $table['indexes'];
+                    $tableIndexesHash = $table['indexesHash'];
+                    $updated = true;
+                }
 
-            if ($updated) {
-                Model::getCodeGenerator()->generate($dataSchemeTables[$tableName]['modelClass'], $table, $force);
-            }
+                $dataSchemeColumns = $schemeTables[$tableName]['columns'];
 
-            unset($dataSchemeTables[$tableName]);
+                foreach ($table['columns'] as $columnName => $column) {
+                    if (!isset($schemeTables[$tableName]['columns'][$columnName])) {
+                        $schemeTables[$tableName]['columns'][$columnName] = [
+                            'scheme' => $column['scheme'],
+                            'schemeHash' => $column['schemeHash']
+                        ];
+                        Data_Scheme::getLogger()->info(['Create field {$0} for model {$1}', [$column['fieldName'], $schemeTables[$tableName]['modelClass']]]);
+                        $updated = true;
+                        continue;
+                    }
+
+                    $columnSchemeHash = &$schemeTables[$tableName]['columns'][$columnName]['schemeHash'];
+                    $columnScheme = &$schemeTables[$tableName]['columns'][$columnName]['scheme'];
+
+                    if ($column['schemeHash'] != $columnSchemeHash) {
+                        Data_Scheme::getLogger()->info(['Update field {$0} for model {$1}: {$2}', [$column['fieldName'], $schemeTables[$tableName]['modelClass'], Json::encode(array_diff($column['scheme'], $columnScheme))]]);
+                        $columnScheme = $column['scheme'];
+                        $columnSchemeHash = $column['schemeHash'];
+                        $updated = true;
+                    }
+
+                    unset($dataSchemeColumns[$columnName]);
+                }
+
+                foreach ($dataSchemeColumns as $columnName => $column) {
+                    Data_Scheme::getLogger()->info(['Remove field {$0} for model {$1}', [$column['fieldName'], $schemeTables[$tableName]['modelClass']]]);
+                    unset($schemeTables[$tableName]['columns'][$columnName]);
+                    $updated = true;
+                }
+
+                if ($updated) {
+                    Model::getCodeGenerator()->generate($schemeTables[$tableName]['modelClass'], $table, $force);
+                }
+
+                unset($schemeTables[$tableName]);
+            }
         }
 
-        foreach ($dataSchemeTables as $tableName => $table) {
-            Data_Scheme::getLogger()->info(['Remove model {$0}', $dataSchemeTables[$tableName]['modelClass']]);
-            unlink(MODULE_DIR . 'Source/' . $table['modelPath']);
+        foreach ($dataSchemeTables as $dataSourceKey => $schemeTables) {
+            if (!empty($schemeTables)) {
+                Data_Scheme::getLogger()->info(['Removing models from data source {$0}', $dataSourceKey]);
+                foreach ($schemeTables as $tableName => $table) {
+                    Data_Scheme::getLogger()->info(['Remove model {$0}', $schemeTables[$tableName]['modelClass']]);
+                    unlink(MODULE_DIR . 'Source/' . $table['modelPath']);
+                }
+            }
         }
     }
-
-    public function getScheme()
-    {
-        return substr($this->_dataSourceKey, strpos($this->_dataSourceKey, '.') + 1);
-    }
-
-    public function getKey()
-    {
-        return strstr(substr($this->_dataSourceKey, strpos($this->_dataSourceKey, '/') + 1), '.', true);
-    }
-//
-//    public function getTableName($modelClass)
-//    {
-//        foreach ($this->getTables() as $tableName => $table) {
-//            if ($table['modelClass'] == $modelClass) {
-//                return $tableName;
-//            }
-//        }
-//
-//        Data_Scheme::getLogger()->exception(
-//            [
-//                'Table name not found for class {$0} in data scheme {$1}',
-//                [$modelClass, $this->getDataSourceKey()]
-//            ],
-//            __FILE__, __LINE__, null, null, -1, 'Ice:Data_Scheme_Error'
-//        );
-//
-//        return null;
-//    }
 }

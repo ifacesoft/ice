@@ -416,4 +416,16 @@ return [
         'en' => 'Remove field {$0} for model {$1}',
         'ru' => 'Удалить поле {$0} для модели {$1}',
     ],
+    'Remove model {$0}' => [
+        'en' => 'Remove model {$0}',
+        'ru' => 'Удалить модель {$0}',
+    ],
+    'Checking models from data source {$0}' => [
+        'en' => 'Checking models from data source {$0}',
+        'ru' => 'Проверка моделей из источника данных {$0}',
+    ],
+    'Removing models from data source {$0}' => [
+        'en' => 'Removing models from data source {$0}',
+        'ru' => 'Удаление моделей из источника данных {$0}',
+    ],
 ];

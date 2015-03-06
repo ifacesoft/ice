@@ -70,10 +70,6 @@ class Orm_Scheme_Update extends Action
      */
     public function run(array $input)
     {
-        foreach (Module::getInstance()->getModelPrefixes() as $dataSourceKey => $prefixes) {
-            if ($dataSourceKey != 'Ice\Data\Source\Mysqli/default.binardi_stat') continue;
-            Orm_Scheme_Update::getLogger()->info(['Updating scheme ({$0})', $dataSourceKey]);
-            Data_Scheme::create($dataSourceKey)->update($input['force']);
-        }
+        Data_Scheme::update(Module::getInstance(), $input['force']);
     }
 }
