@@ -48,12 +48,18 @@ class Class_Generator
 
         $code = file_get_contents($filePath);
 
-        $start = 'protected static function config\(\)\n    \{\n        ';
-        $finish = '\n    \}';
+        $start = 'protected static function config\(\)\n    \{\n        return \[';
+        $finish = '\];\n    \}';
 
+//        $matches = [];
+//
+//        preg_match('/' . $start . '(.+)' . $finish . '/s', $code, $matches);
+//
+//
+//        Logger::debug($matches);
         $code = preg_replace(
             '/' . $start . '(.+)' . $finish . '/s',
-            str_replace(['\n', '\\'], ["\n", ''], $start) . 'return ' . str_replace("\n", "\n\t\t", Php::varToPhpString($data, false)) . str_replace(['\n', '\\'], ["\n", ''], $finish),
+            str_replace(['\n', '\\', '['], ["\n", ''], $start) . str_replace("\n", "\n\t\t", Php::varToPhpString($data, false)) . str_replace(['\n', '\\', '];'], ["\n", ''], $finish),
             $code,
             1
         );

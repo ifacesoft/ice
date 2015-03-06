@@ -438,7 +438,7 @@ class Mysqli extends Data_Source
         $dataProvider->setScheme('information_schema');
 
         foreach ($dataProvider->get('TABLES:TABLE_SCHEMA/' . $this->_scheme) as $table) {
-            if ($module->checkTableByPrefix($table['TABLE_NAME'], $this->getScheme())) {
+            if ($module->checkTableByPrefix($table['TABLE_NAME'], $this->getKey() . '.' . $this->getScheme())) {
                 $tables[$table['TABLE_NAME']] = [];
 
                 $data = &$tables[$table['TABLE_NAME']];
@@ -469,7 +469,7 @@ class Mysqli extends Data_Source
                     $columns[$columnName]['schemeHash'] = crc32(Json::encode($columns[$columnName]['scheme']));
 
                     $columns[$columnName]['fieldName'] =
-                        Helper_Model::getFieldNameByColumnName($columnName, $data, $module->getTablePrefixes($this->getScheme()));
+                        Helper_Model::getFieldNameByColumnName($columnName, $data, $module->getTablePrefixes($this->getKey() . '.' . $this->getScheme()));
 
                     foreach (Model::getConfig()->gets('schemeColumnPlugins') as $columnPluginClass) {
                         $columns[$columnName][$columnPluginClass] =

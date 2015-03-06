@@ -400,4 +400,12 @@ return [
         'en' => 'Drop scheme of table {$0}',
         'ru' => 'Удаление таблицы {$0}',
     ],
+    'Create model {$0}' => [
+        'en' => 'Create model {$0}',
+        'ru' => 'Создать модель {$0}',
+    ],
+    'Create field {$0} for model {$1}' => [
+        'en' => 'Create field {$0} for model {$1}',
+        'ru' => 'Создать поле {$0} для модели {$1}',
+    ],
 ];

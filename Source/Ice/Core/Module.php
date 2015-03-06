@@ -306,7 +306,7 @@ class Module
      * Check table belongs to module
      *
      * @param $tableName
-     * @param $scheme
+     * @param $keyScheme
      * @return bool
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -314,22 +314,22 @@ class Module
      * @version 0.5
      * @since 0.5
      */
-    public function checkTableByPrefix($tableName, $scheme)
+    public function checkTableByPrefix($tableName, $keyScheme)
     {
-        if (!isset($this->getTablePrefixes()[$scheme])) {
+        if (!isset($this->getTablePrefixes()[$keyScheme])) {
             return false;
         }
 
-        return String::startsWith($tableName, $this->getTablePrefixes()[$scheme]);
+        return String::startsWith($tableName, $this->getTablePrefixes()[$keyScheme]);
     }
 
-    public function getModelClass($tableName, $scheme)
+    public function getModelClass($tableName, $keyScheme)
     {
-        if (!isset($this->getTablePrefixes()[$scheme])) {
+        if (!isset($this->getTablePrefixes()[$keyScheme])) {
             Module::getLogger()->exception(
                 [
                     'Table with name {$0} in scheme {$1} not belongs to module {$2}. Check module config (model prefixes)',
-                    [$tableName, $scheme, $this->getName()]
+                    [$tableName, $keyScheme, $this->getName()]
                 ],
                 __FILE__,
                 __LINE__,
@@ -341,7 +341,7 @@ class Module
         $alias = null;
         $tableNamePart = $tableName;
 
-        foreach ($this->getTablePrefixes()[$scheme] as $prefix) {
+        foreach ($this->getTablePrefixes()[$keyScheme] as $prefix) {
             if (String::startsWith($tableName, $prefix)) {
                 $alias = $this->getAlias();
                 $tableNamePart = substr($tableName, strlen($prefix));

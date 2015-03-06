@@ -174,7 +174,7 @@ class Data_Scheme
 
             $config = $modelClass::getConfig()->gets();
 
-            if ($module->checkTableByPrefix($config['scheme']['tableName'], $this->getScheme())) {
+            if ($module->checkTableByPrefix($config['scheme']['tableName'], $this->getKey() . '.' . $this->getScheme())) {
                 $config['modelClass'] = $modelClass;
                 $config['modelPath'] = substr($modelPath, strlen($sourceDir));
                 $this->_tables[$config['scheme']['tableName']] = $config;
@@ -288,8 +288,9 @@ class Data_Scheme
 
         foreach ($dataSource->getTables($module) as $tableName => $table) {
             if (!isset($dataSchemeTables[$tableName])) {
-                Model::getCodeGenerator()->generate($module->getModelClass($tableName, $dataSource->getScheme()), $table, $force);
-                Data_Scheme::getLogger()->info(['Create new scheme of table {$0}', $tableName]);
+                $modelClass = $module->getModelClass($tableName, $dataSource->getKey() . '.'  . $dataSource->getScheme());
+                Model::getCodeGenerator()->generate($modelClass, $table, $force);
+                Data_Scheme::getLogger()->info(['Create model {$0}', $modelClass]);
                 continue;
             }
 
@@ -300,7 +301,7 @@ class Data_Scheme
             $tableScheme = &$dataSchemeTables[$tableName]['scheme'];
 
             if ($table['schemeHash'] != $tableSchemeHash) {
-                Data_Scheme::getLogger()->info(['Updated scheme of table {$0}: {$1}', [$tableName, Json::encode(array_diff($table['scheme'], $tableScheme))]]);
+                Data_Scheme::getLogger()->info(['Update scheme for model {$0}: {$1}', [$dataSchemeTables[$tableName]['modelClass'], Json::encode(array_diff($table['scheme'], $tableScheme))]]);
                 $tableScheme = $table['scheme'];
                 $tableSchemeHash = $table['schemeHash'];
                 $updated = true;
@@ -310,7 +311,7 @@ class Data_Scheme
             $tableIndexes = &$dataSchemeTables[$tableName]['indexes'];
 
             if ($table['indexesHash'] != $tableIndexesHash) {
-                Data_Scheme::getLogger()->info(['Updated indexes of table {$0}: {$1}', [$tableName, Json::encode(array_diff($table['indexes'], $tableIndexes))]]);
+                Data_Scheme::getLogger()->info(['Update indexes for model {$0}: {$1}', [$dataSchemeTables[$tableName]['modelClass'], Json::encode(array_diff($table['indexes'], $tableIndexes))]]);
                 $tableIndexes = $table['indexes'];
                 $tableIndexesHash = $table['indexesHash'];
                 $updated = true;
@@ -324,7 +325,7 @@ class Data_Scheme
                         'scheme' => $column['scheme'],
                         'schemeHash' => $column['schemeHash']
                     ];
-                    Data_Scheme::getLogger()->info(['Created new column {$0} for table {$1}', [$columnName, $tableName]]);
+                    Data_Scheme::getLogger()->info(['Create field {$0} for model {$1}', [$column['fieldName'], $dataSchemeTables[$tableName]['modelClass']]]);
                     $updated = true;
                     continue;
                 }
@@ -333,7 +334,7 @@ class Data_Scheme
                 $columnScheme = &$dataSchemeTables[$tableName]['columns'][$columnName]['scheme'];
 
                 if ($column['schemeHash'] != $columnSchemeHash) {
-                    Data_Scheme::getLogger()->info(['Updated column {$0} for table {$1}: {$2}', [$columnName, $tableName, Json::encode(array_diff($column['scheme'], $columnScheme))]]);
+                    Data_Scheme::getLogger()->info(['Update field {$0} for model {$1}: {$2}', [$column['fieldName'], $dataSchemeTables[$tableName]['modelClass'], Json::encode(array_diff($column['scheme'], $columnScheme))]]);
                     $columnScheme = $column['scheme'];
                     $columnSchemeHash = $column['schemeHash'];
                     $updated = true;
@@ -343,7 +344,7 @@ class Data_Scheme
             }
 
             foreach ($dataSchemeColumns as $columnName => $column) {
-                Data_Scheme::getLogger()->info(['Drop column {$0} for table {$1}', [$columnName, $tableName]]);
+                Data_Scheme::getLogger()->info(['Remove field {$0} for model {$1}', [$column['fieldName'], $dataSchemeTables[$tableName]['modelClass']]]);
                 unset($dataSchemeTables[$tableName]['columns'][$columnName]);
                 $updated = true;
             }
@@ -356,7 +357,7 @@ class Data_Scheme
         }
 
         foreach ($dataSchemeTables as $tableName => $table) {
-            Data_Scheme::getLogger()->info(['Drop scheme of table {$0}', $tableName]);
+            Data_Scheme::getLogger()->info(['Remove model {$0}', $dataSchemeTables[$tableName]['modelClass']]);
             unlink(MODULE_DIR . 'Source/' . $table['modelPath']);
         }
     }
@@ -364,6 +365,11 @@ class Data_Scheme
     public function getScheme()
     {
         return substr($this->_dataSourceKey, strpos($this->_dataSourceKey, '.') + 1);
+    }
+
+    public function getKey()
+    {
+        return strstr(substr($this->_dataSourceKey, strpos($this->_dataSourceKey, '/') + 1), '.', true);
     }
 //
 //    public function getTableName($modelClass)
