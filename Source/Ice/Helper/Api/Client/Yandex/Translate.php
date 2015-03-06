@@ -115,7 +115,7 @@ class Api_Client_Yandex_Translate
             return $translate;
         }
 
-        throw new \Exception('Fail translate');
+        return $text;
     }
 
     /**

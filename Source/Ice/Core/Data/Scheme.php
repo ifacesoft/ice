@@ -288,7 +288,7 @@ class Data_Scheme
 
         foreach ($dataSource->getTables($module) as $tableName => $table) {
             if (!isset($dataSchemeTables[$tableName])) {
-                $modelClass = $module->getModelClass($tableName, $dataSource->getKey() . '.'  . $dataSource->getScheme());
+                $modelClass = $module->getModelClass($tableName, $dataSource->getDataSourceKey());
                 Model::getCodeGenerator()->generate($modelClass, $table, $force);
                 Data_Scheme::getLogger()->info(['Create model {$0}', $modelClass]);
                 continue;

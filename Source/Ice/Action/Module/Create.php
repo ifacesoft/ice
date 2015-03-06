@@ -236,11 +236,6 @@ class Module_Create extends Action
                 'Ice\Helper\Api_Client_Yandex_Translate' => [
                     'translateKey' => ''
                 ],
-                'Ice\Core\Data_Source' => [
-                    'Ice\Data\Source\Mysqli' => [
-                        'default' => $input['scheme'],
-                    ],
-                ],
                 'Ice\Core\Request' => [
                     'multiLocale' => $isMultiLocale,
                     'locale' => $defaultLocale,
@@ -348,8 +343,8 @@ class Module_Create extends Action
                 'vcs' => $input['vcs'],
                 'source' => '',
                 'Ice\Core\Model' => [
-                    'prefixes' => [
-                        strtolower($moduleAlias) => $moduleAlias,
+                    'dataSources' => [
+                        'Ice:Mysql/default' => [strtolower($moduleAlias) . '_', ''],
                     ]
                 ],
             ],

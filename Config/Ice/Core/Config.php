@@ -21,14 +21,6 @@ return [
             'Ice\Core\Data',
         ]
     ],
-    'Ice\Core\Data_Source' => [
-        'Ice\Data\Source\Mysqli' => [
-            'default' => 'test',
-        ],
-        'Ice\Data\Source\Mongodb' => [
-            'default' => 'test',
-        ],
-    ],
     'Ice\Core\Environment' => [
         'environments' => [
             '/localhost/' => 'development',

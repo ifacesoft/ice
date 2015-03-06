@@ -20,8 +20,9 @@ return [
         'vcs' => 'git',
         'source' => 'https://github.com/ifacesoft/Ice.git',
         'Ice\Core\Model' => [
-            'prefixes' => [
-                'default.test' => ['ice_'],
+            'dataSources' => [
+                'Ice\Data\Source\Mysqli/default.test' => ['ice_'],
+                'Ice\Data\Source\Mongodb/default.test' => ['ice_'],
             ]
         ],
     ],

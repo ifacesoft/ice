@@ -408,4 +408,12 @@ return [
         'en' => 'Create field {$0} for model {$1}',
         'ru' => 'Создать поле {$0} для модели {$1}',
     ],
+    'Update indexes for model {$0}: {$1}' => [
+        'en' => 'Update indexes for model {$0}: {$1}',
+        'ru' => 'Обновление индексов для модели {$0}: {$1}',
+    ],
+    'Remove field {$0} for model {$1}' => [
+        'en' => 'Remove field {$0} for model {$1}',
+        'ru' => 'Удалить поле {$0} для модели {$1}',
+    ],
 ];

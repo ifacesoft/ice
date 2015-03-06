@@ -216,17 +216,17 @@ class Module
     /**
      * Return table prefixes for module
      *
+     * @param null $dataSourceKey
      * @return array
-     *
+     * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.5
      * @since 0.5
      */
-    public function getTablePrefixes($scheme = null)
+    public function getModelPrefixes($dataSourceKey = null)
     {
-
-        if (!isset($this->_module[Model::getClass()]) || !isset($this->_module[Model::getClass()]['prefixes'])) {
+        if (!isset($this->_module[Model::getClass()]) || !isset($this->_module[Model::getClass()]['dataSources'])) {
             Module::getLogger()->exception(
                 'Model prefixes not found. Add in module config or so: ',
                 __FILE__,
@@ -234,7 +234,7 @@ class Module
                 null,
                 [
                     'Ice\Core\Model' => [
-                        'prefixes' => [
+                        'dataSources' => [
                             'default' => ['alias_'],
                         ]
                     ]
@@ -242,12 +242,12 @@ class Module
             );
         }
 
-        if (!$scheme) {
-            return $this->_module[Model::getClass()]['prefixes'];
+        if (!$dataSourceKey) {
+            return $this->_module[Model::getClass()]['dataSources'];
         }
 
-        return isset($this->_module[Model::getClass()]['prefixes'][$scheme])
-            ? $this->_module[Model::getClass()]['prefixes'][$scheme]
+        return isset($this->_module[Model::getClass()]['dataSources'][$dataSourceKey])
+            ? $this->_module[Model::getClass()]['dataSources'][$dataSourceKey]
             : [];
     }
 
@@ -306,7 +306,7 @@ class Module
      * Check table belongs to module
      *
      * @param $tableName
-     * @param $keyScheme
+     * @param $dataSourceKey
      * @return bool
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -314,22 +314,22 @@ class Module
      * @version 0.5
      * @since 0.5
      */
-    public function checkTableByPrefix($tableName, $keyScheme)
+    public function checkTableByPrefix($tableName, $dataSourceKey)
     {
-        if (!isset($this->getTablePrefixes()[$keyScheme])) {
+        if (empty($this->getModelPrefixes($dataSourceKey))) {
             return false;
         }
 
-        return String::startsWith($tableName, $this->getTablePrefixes()[$keyScheme]);
+        return String::startsWith($tableName, $this->getModelPrefixes($dataSourceKey));
     }
 
-    public function getModelClass($tableName, $keyScheme)
+    public function getModelClass($tableName, $dataSourceKey)
     {
-        if (!isset($this->getTablePrefixes()[$keyScheme])) {
+        if (empty($this->getModelPrefixes($dataSourceKey))) {
             Module::getLogger()->exception(
                 [
                     'Table with name {$0} in scheme {$1} not belongs to module {$2}. Check module config (model prefixes)',
-                    [$tableName, $keyScheme, $this->getName()]
+                    [$tableName, $dataSourceKey, $this->getName()]
                 ],
                 __FILE__,
                 __LINE__,
@@ -341,7 +341,7 @@ class Module
         $alias = null;
         $tableNamePart = $tableName;
 
-        foreach ($this->getTablePrefixes()[$keyScheme] as $prefix) {
+        foreach ($this->getModelPrefixes($dataSourceKey) as $prefix) {
             if (String::startsWith($tableName, $prefix)) {
                 $alias = $this->getAlias();
                 $tableNamePart = substr($tableName, strlen($prefix));
