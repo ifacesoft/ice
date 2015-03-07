@@ -123,7 +123,7 @@ class Mongodb extends Data_Source
             /** @var Model $modelClass */
             $modelClass = $data['modelClass'];
 
-            $pkColumnNames = $modelClass::getScheme()->getPkColumnNames();
+            $pkColumnNames = $modelClass::getPkColumnNames();
 
             $data['data'] = [];
 

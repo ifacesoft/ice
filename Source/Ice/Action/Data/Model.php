@@ -2,6 +2,7 @@
 namespace Ice\Action;
 
 use Ice\Core\Action;
+use Ice\Core\Logger;
 use Ice\Core\Model;
 use Ice\Helper\Arrays;
 

@@ -11,6 +11,7 @@ namespace Ice\Form;
 
 use Ice\Core\Form;
 use Ice\Core\Model as Core_Model;
+use Ice\Core\Validator;
 
 /**
  * Class Model
@@ -68,11 +69,11 @@ class Model extends Form
 
         $this->_modelClass = Model::getClass($modelClass);
 
-        $validateScheme = $modelClass::getValidateScheme();
+        $validateScheme = $modelClass::getPlugin(Validator::getClass());
 
         $pkFieldNames = $modelClass::getPkFieldNames();
 
-        foreach ($modelClass::getFormFieldTypes() as $fieldName => $fieldType) {
+        foreach ($modelClass::getPlugin(Form::getClass()) as $fieldName => $fieldType) {
             $this->$fieldType(
                 $fieldName,
                 $modelClass::getFieldTitle($fieldName),

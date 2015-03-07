@@ -28,7 +28,7 @@ use Ice\Helper\Emmet;
  */
 class View implements Cacheable
 {
-    use Core;
+    use Cache_Stored;
 
     /**
      * Action class
@@ -73,18 +73,19 @@ class View implements Cacheable
     ];
 
     /**
-     * @param Action $actionClass
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.0
      */
-    private function __construct($actionClass)
+    private function __construct()
     {
-        $this->_actionClass = $actionClass;
-        $this->_result['actionName'] = $actionClass::getClassName();
     }
 
     /**
      * Return new instance of view
      *
-     * @param $actionClass
+     * @param Action $actionClass
      * @return View
      * @author dp <denis.a.shestakov@gmail.com>
      *
@@ -93,7 +94,12 @@ class View implements Cacheable
      */
     public static function create($actionClass)
     {
-        return new View($actionClass);
+        $view = new View();
+
+        $view->_actionClass = $actionClass;
+        $view->_result['actionName'] = $actionClass::getClassName();
+
+        return $view;
     }
 
     /**
@@ -109,30 +115,6 @@ class View implements Cacheable
     public static function getCacher()
     {
         return Cacher::getInstance(__CLASS__);
-    }
-
-    /**
-     * Restore object
-     *
-     * @param array $data
-     * @return object
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since 0.5
-     */
-    public static function __set_state(array $data)
-    {
-        $class = self::getClass();
-
-        $object = new $class($data['_actionClass']);
-
-        foreach ($data as $fieldName => $fieldValue) {
-            $object->$fieldName = $fieldValue;
-        }
-
-        return $object;
     }
 
     /**
@@ -211,6 +193,12 @@ class View implements Cacheable
         try {
             $this->_result['content'] = $viewRenderClass::getInstance()->fetch($this->_template, $this->_result['data']);
 
+//            if  (isset($this->_result['data']['data'])) {
+//                $this->setData($this->_result['data']['data']);
+//            } else {
+//                $this->setData([]);
+//            }
+
             if (!empty($this->_layout)) {
                 $emmetedResult = Emmet::translate($this->_layout . '{{$view}}', ['view' => $this->_result['content']]);
 
@@ -224,6 +212,7 @@ class View implements Cacheable
             if (Environment::isDevelopment()) {
                 Logger::fb('view: ' . $this->_template . ' (' . $viewRenderClass . ') [' . Logger::microtimeResult($startTime) . ']');
             }
+
             array_shift(View_Render::$templates);
         } catch (\Exception $e) {
             $this->_result['content'] = $this->getLogger()->error(['Fetch template "{$0}" failed', $this->_template], __FILE__, __LINE__, $e);

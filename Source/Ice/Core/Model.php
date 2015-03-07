@@ -103,9 +103,7 @@ abstract class Model
         $modelClass = self::getClass();
         $lowercaseModelName = strtolower(self::getClassName());
 
-        $fields = $modelClass::getScheme()->getFieldMapping();
-
-        foreach ($fields as $fieldName => $columnName) {
+        foreach ($modelClass::getFieldColumnMap() as $fieldName => $columnName) {
             $this->_row[$fieldName] = null;
 
             if (empty($row)) {
@@ -181,20 +179,6 @@ abstract class Model
         }
 
         return $modelClass;
-    }
-
-    /**
-     * Return scheme of table in data source: 'columnNames => (types, defaults, comments)')
-     *
-     * @return Model_Scheme
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since 0.0
-     */
-    public static function getScheme()
-    {
-        return Model_Scheme::create(self::getClass());
     }
 
     /**
@@ -386,17 +370,43 @@ abstract class Model
         /** @var Model $modelClass */
         $modelClass = get_class($this);
 
-        $FieldColumnMapping = $modelClass::getScheme()->getFieldMapping();
+        $FieldColumnMapping = $modelClass::getFieldColumnMap();
 
         if (!isset($FieldColumnMapping[$fieldName])) {
             return false;
         }
 
-        $columnName = $FieldColumnMapping[$fieldName];
+        return in_array($FieldColumnMapping[$fieldName], $modelClass::getPkColumnNames());
+    }
 
-        $pkColumnNames = $modelClass::getScheme($this->getDataSource())->getPkColumnNames();
+    /**
+     * Return primary key columns
+     *
+     * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since 0.4
+     */
+    public static function getPkColumnNames()
+    {
+        return self::getIndexes()['PRIMARY KEY']['PRIMARY'];
+    }
 
-        return in_array($columnName, $pkColumnNames);
+    /**
+     * Return indexes
+     *
+     * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.0
+     */
+    public static function getIndexes()
+    {
+        return self::getConfig()->gets('indexes');
     }
 
     /**
@@ -434,7 +444,7 @@ abstract class Model
      */
     public static function getDataSourceKey()
     {
-        return self::getScheme()->getDataSourceKey();
+        return self::getConfig()->get('dataSourceKey');
     }
 
     /**
@@ -454,10 +464,11 @@ abstract class Model
             /** @var Model $modelClass */
             $modelClass = get_class($this);
 
-            if ($modelClass::getScheme()->getFieldScheme($fieldName)['default'] !== null) {
+            $columnName = $modelClass::getFieldColumnMap()[$fieldName];
+
+            if ($modelClass::getConfig()->get('columns/' . $columnName . '/scheme/default') !== null) {
                 return;
             }
-
         }
 
         $this->_affected[$fieldName] = $fieldValue;
@@ -574,7 +585,7 @@ abstract class Model
             // TODO: Пока лениво подгружаем
             // many-to-one
             $foreignKeyName = strtolower($modelName) . '__fk';
-            if (array_key_exists($foreignKeyName, $fieldName::getScheme()->getFieldMapping())) {
+            if (array_key_exists($foreignKeyName, $fieldName::getFieldColumnMap())) {
                 $this->_fk[$fieldName] = $fieldName::query()
                     ->eq([$foreignKeyName => $this->getPk()])
                     ->select('*')
@@ -632,46 +643,28 @@ abstract class Model
     /**
      * Return model validate scheme
      *
+     * @param $pluginClass
      * @return array
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.5
      * @since 0.0
      */
-    public static function getValidateScheme()
+    public static function getPlugin($pluginClass)
     {
-        return self::getScheme()->getValidatorsMapping();
-    }
+        $repository = self::getRepository('plugins');
 
-    /**
-     * Return form field types
-     *
-     * @return array
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since 0.0
-     */
-    public static function getFormFieldTypes()
-    {
-        return self::getScheme()->getFormTypeMapping();
-    }
+        if ($data = $repository->get($pluginClass)) {
+            return $data;
+        }
 
-    /**
-     * Return data field types
-     *
-     * @return array
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since 0.2
-     */
-    public static function getDataFieldTypes()
-    {
-        return self::getScheme()->getDataTypeMapping();
+        $data = [];
+
+        foreach (self::getConfig()->gets('columns') as $column) {
+            $data[$column['fieldName']] = $column[$pluginClass];
+        }
+
+        return $repository->set($pluginClass, $data);
     }
 
     /**
@@ -778,7 +771,7 @@ abstract class Model
      */
     public static function getTableName()
     {
-        return self::getScheme()->getTableName();
+        return self::getConfig()->get('scheme/tableName');
     }
 
     public static function getTablePrefix()
@@ -952,15 +945,15 @@ abstract class Model
             return $pkFieldNames;
         }
 
-        $fieldNames = array_flip(self::getScheme()->getFieldMapping());
+        $columnFieldMappings = self::getColumnFieldMap();
 
         return self::getRegistry()->set(
             'pkFieldNames',
             array_map(
-                function ($columnName) use ($fieldNames) {
-                    return $fieldNames[$columnName];
+                function ($columnName) use ($columnFieldMappings) {
+                    return $columnFieldMappings[$columnName];
                 },
-                self::getScheme()->getPkColumnNames()
+                self::getPkColumnNames()
             )
         );
     }
@@ -996,6 +989,33 @@ abstract class Model
     public static function dropTable($dataSourceKey = null)
     {
         return self::query()->drop($dataSourceKey);
+    }
+
+    public static function getFieldColumnMap()
+    {
+        $modelClass = self::getClass();
+        $repository = $modelClass::getRepository('mapping');
+        $key = 'fieldColumnMap';
+
+        return $repository->set($key, array_flip($modelClass::getColumnFieldMap()));
+    }
+
+    public static function getColumnFieldMap()
+    {
+        $modelClass = self::getClass();
+        $repository = $modelClass::getRepository('mapping');
+        $key = 'columnFieldMap';
+
+        if ($columnFieldMapping = $repository->get($key)) {
+            return $columnFieldMapping;
+        }
+
+        $columns = [];
+        foreach ($modelClass::getConfig()->gets('columns') as $columnName => $column) {
+            $columns[$columnName] = $column['fieldName'];
+        }
+
+        return $repository->set($key, $columns);
     }
 
     /**
@@ -1107,7 +1127,7 @@ abstract class Model
     {
         $modelClass = self::getClass();
 
-        $fieldNames = array_keys($modelClass::getScheme()->getFieldMapping());
+        $fieldNames = array_values($modelClass::getColumnFieldMap());
 
         if (empty($fields) || $fields = '*') {
             return $fieldNames;

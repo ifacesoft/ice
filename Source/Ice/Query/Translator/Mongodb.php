@@ -205,20 +205,21 @@ class Mongodb extends Query_Translator
             return $sql;
         }
 
+        /** @var Model $modelClass */
         list($modelClass, $items) = each($part);
 
         list($tableAlias, $fieldNames) = $items;
 
         $columnNames = [];
 
-        $modelMapping = $modelClass::getScheme()->getFieldMapping();
+        $fieldColumnMap = $modelClass::getFieldColumnMap();
 
         foreach ($fieldNames as $fieldNameArr) {
             list($logicalOperator, $fieldName, $comparisonOperator, $count) = $fieldNameArr;
 
             for ($i = 0; $i < $count; $i++) {
-                $columnName = isset($modelMapping[$fieldName])
-                    ? $modelMapping[$fieldName]
+                $columnName = isset($fieldColumnMap[$fieldName])
+                    ? $fieldColumnMap[$fieldName]
                     : $fieldName;
 
                 $columnNames[$columnName][] = $comparisonOperator == Query_Builder::SQL_COMPARISON_OPERATOR_EQUAL
@@ -390,16 +391,17 @@ class Mongodb extends Query_Translator
             return [];
         }
 
+        /** @var Model $modelClass */
         list($modelClass, $items) = each($part);
 
         list($tableAlias, $fieldNames) = $items;
 
         $columnNames = [];
 
-        $modelMapping = $modelClass::getScheme()->getFieldMapping();
+        $fieldColumnMap = $modelClass::getFieldColumnMap();
 
         foreach ($fieldNames as $fieldName => $ordering) {
-            $columnNames[$modelMapping[$fieldName]] = self::$_orderings[$ordering];
+            $columnNames[$fieldColumnMap[$fieldName]] = self::$_orderings[$ordering];
         }
 
         return [
@@ -408,26 +410,6 @@ class Mongodb extends Query_Translator
                 'columnNames' => $columnNames,
             ]
         ];
-
-        $sql = '';
-
-
-        $orders = [];
-
-        foreach ($part as $modelClass => $item) {
-            list($tableAlias, $fieldNames) = $item;
-
-            $fields = $modelClass::getScheme()->getFieldMapping();
-
-            foreach ($fieldNames as $fieldName => $ascending) {
-                $orders[] = $tableAlias . '.' . $fields[$fieldName] . ' ' . $ascending;
-            }
-        }
-
-        $sql .= "\n" . 'ORDER BY ' .
-            "\n\t" . implode(',' . "\n\t", $orders);
-
-        return $sql;
     }
 
     /**
@@ -462,7 +444,7 @@ class Mongodb extends Query_Translator
         foreach ($part as $modelClass => $items) {
             list(, $fieldNames) = $items;
 
-            $fields = $modelClass::getScheme()->getFieldMapping();
+            $fields = $modelClass::getFieldColumnMap();
 
             foreach ($fieldNames as $fieldName) {
                 $groups[] = $fields[$fieldName];

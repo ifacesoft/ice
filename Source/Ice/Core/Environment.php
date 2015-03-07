@@ -27,7 +27,7 @@ use Ice\Helper\Config as Helper_Config;
  */
 class Environment
 {
-    use Core;
+    use Cache_Stored;
 
     const PRODUCTION = 'production';
     const TEST = 'test';
@@ -217,21 +217,5 @@ class Environment
     public function getEnvironmentName()
     {
         return $this->_environmentName;
-    }
-
-    /**
-     * Restore object
-     *
-     * @param array $data
-     * @return object
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since 0.5
-     */
-    public static function __set_state(array $data)
-    {
-        return new Environment($data['_environmentName'], $data['_environment']);
     }
 }

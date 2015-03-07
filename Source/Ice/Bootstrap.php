@@ -74,6 +74,7 @@ class Bootstrap
             $loader = require VENDOR_DIR . 'autoload.php';
 
             require_once ICE_SOURCE_DIR . 'Ice.php';
+            require_once ICE_SOURCE_DIR . 'Ice/Core/Cache/Stored.php';
             require_once ICE_SOURCE_DIR . 'Ice/Core/Data/Provider.php';
 
             Loader::load('Ice\Core\Logger');

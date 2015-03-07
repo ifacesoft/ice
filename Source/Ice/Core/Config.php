@@ -31,7 +31,7 @@ use Ice\Helper\Object;
  */
 class Config
 {
-    use Core;
+    use Cache_Stored;
 
     /**
      * Config params
@@ -50,25 +50,20 @@ class Config
     /**
      * Constructor of config object
      *
-     * @param array $config
-     * @param $configName
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.5
      * @since 0.0
      */
-    protected function __construct($configName, array $config)
+    protected function __construct()
     {
-        $this->_configName = $configName;
-        $this->_config = $config;
     }
 
     /**
      * Return new Config
      *
      * @param $configName
-     * @param array $config
+     * @param array $configData
      * @return Config
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -76,9 +71,14 @@ class Config
      * @version 0.5
      * @since 0.5
      */
-    public static function create($configName, array $config)
+    public static function create($configName, array $configData)
     {
-        return new Config($configName, $config);
+        $config = new Config();
+
+        $config->_configName = $configName;
+        $config->_config = $configData;
+
+        return $config;
     }
 
     /**
@@ -315,21 +315,5 @@ class Config
     {
         File::createData(Loader::getFilePath($this->getConfigName(), '.php', 'Config/', false, true), $this->_config);
         return $this;
-    }
-
-    /**
-     * Restore object
-     *
-     * @param array $data
-     * @return object
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since 0.5
-     */
-    public static function __set_state(array $data)
-    {
-        return new self($data['_configName'], $data['_config']);
     }
 }

@@ -575,11 +575,11 @@ class Logger
     public function log($message, $type = Logger::SUCCESS)
     {
         if (!Environment::isProduction()) {
-            if (Request::isCli()) {
+//            if (Request::isCli()) {
                 $this->info(Helper_Resource::getMessage($message), $type, false);
-            } else {
-                Logger::fb($message);
-            }
+//            } else {
+//                Logger::fb($message);
+//            }
         }
     }
 }

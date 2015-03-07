@@ -31,7 +31,7 @@ use Ice\Helper\Memory;
  */
 abstract class Data_Source extends Container
 {
-    use Core;
+    use Cache_Stored;
 
     /**
      * Data source scheme

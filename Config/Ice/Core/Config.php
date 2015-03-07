@@ -46,13 +46,6 @@ return [
             'params' => [],
             'weight' => 0,
             'request' => []
-        ],
-        'Ice\Core\Model_Scheme' => [
-            'time' => Date::get(),
-            'revision' => date('00000000'),
-            'tableName' => null,
-            'dataSourceKey' => null,
-            'fields' => [],
         ]
     ]
 ];
