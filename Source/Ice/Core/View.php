@@ -211,7 +211,6 @@ class View implements Cacheable
         try {
             $this->_result['content'] = $viewRenderClass::getInstance()->fetch($this->_template, $this->_result['data']);
 
-
             if (!empty($this->_layout)) {
                 $emmetedResult = Emmet::translate($this->_layout . '{{$view}}', ['view' => $this->_result['content']]);
 

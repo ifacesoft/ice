@@ -342,11 +342,9 @@ class Module_Create extends Action
                 'authors' => get_current_user() . ' <email>',
                 'vcs' => $input['vcs'],
                 'source' => '',
-                'Ice\Core\Model' => [
-                    'dataSources' => [
-                        'Ice:Mysql/default' => [strtolower($moduleAlias) . '_', ''],
-                    ]
-                ],
+                'Ice\Core\Data_Source' => [
+                    'Ice:Mysql/default' => [strtolower($moduleAlias) . '_', ''],
+                ]
             ],
             'modules' => []
         ];
