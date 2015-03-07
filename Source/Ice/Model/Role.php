@@ -17,8 +17,8 @@ class Role extends Model
     protected static function config()
     {
         return [
-		    'revision' => '02281701_TK',
-		    'dataSourceKey' => null,
+		    'revision' => '03071316_HX',
+		    'dataSourceKey' => 'Ice\\Data\\Source\\Mysqli/default.test',
 		    'scheme' => [
 		        'tableName' => 'ice_role',
 		        'engine' => 'InnoDB',

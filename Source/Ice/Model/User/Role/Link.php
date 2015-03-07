@@ -17,8 +17,8 @@ class User_Role_Link extends Model
     protected static function config()
     {
         return [
-		    'revision' => '02281701_Yk',
-		    'dataSourceKey' => null,
+		    'revision' => '03071316_IL',
+		    'dataSourceKey' => 'Ice\\Data\\Source\\Mysqli/default.test',
 		    'scheme' => [
 		        'tableName' => 'ice_user_role_link',
 		        'engine' => 'InnoDB',

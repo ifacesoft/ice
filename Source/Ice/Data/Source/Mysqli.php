@@ -445,7 +445,7 @@ class Mysqli extends Data_Source
 
                 $data = [
                     'revision' => date('mdHi') . '_' . String::getRandomString(2),
-                    'dataSourceKey' => $module->getType() == 'module' ? null : $this->getDataSourceKey(),
+                    'dataSourceKey' => /*$module->getType() == 'module' ? null : */$this->getDataSourceKey(),
                     'scheme' => [],
                     'schemeHash' => crc32(Json::encode([])),
                     'columns' => [],

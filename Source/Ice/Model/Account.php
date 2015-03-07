@@ -20,8 +20,8 @@ class Account extends Model
     protected static function config()
     {
         return [
-		    'revision' => '02281701_Rd',
-		    'dataSourceKey' => null,
+		    'revision' => '03071316_6O',
+		    'dataSourceKey' => 'Ice\\Data\\Source\\Mysqli/default.test',
 		    'scheme' => [
 		        'tableName' => 'ice_account',
 		        'engine' => 'InnoDB',

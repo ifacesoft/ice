@@ -23,8 +23,8 @@ class User extends Model
     protected static function config()
     {
         return [
-		    'revision' => '02281701_4T',
-		    'dataSourceKey' => null,
+		    'revision' => '03071316_Dy',
+		    'dataSourceKey' => 'Ice\\Data\\Source\\Mysqli/default.test',
 		    'scheme' => [
 		        'tableName' => 'ice_user',
 		        'engine' => 'InnoDB',

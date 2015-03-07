@@ -18,8 +18,8 @@ class Test extends Model
     protected static function config()
     {
         return [
-		    'revision' => '03041528_a1',
-		    'dataSourceKey' => null,
+		    'revision' => '03071316_L4',
+		    'dataSourceKey' => 'Ice\\Data\\Source\\Mysqli/default.test',
 		    'scheme' => [
 		        'tableName' => 'ice_test',
 		        'engine' => 'InnoDB',
@@ -41,9 +41,9 @@ class Test extends Model
 		            ],
 		            'schemeHash' => 708064701,
 		            'fieldName' => 'test_pk',
-		            'Ice\Core\Form' => 'Number',
-		            'Ice\Core\Validator' => [],
-		            'Ice\Core\Data' => 'text',
+		            'Ice\\Core\\Form' => 'Number',
+		            'Ice\\Core\\Validator' => [],
+		            'Ice\\Core\\Data' => 'text',
 		        ],
 		        'test_name' => [
 		            'scheme' => [
@@ -58,12 +58,12 @@ class Test extends Model
 		            ],
 		            'schemeHash' => 336823333,
 		            'fieldName' => 'test_name',
-		            'Ice\Core\Form' => 'Text',
-		            'Ice\Core\Validator' => [
+		            'Ice\\Core\\Form' => 'Text',
+		            'Ice\\Core\\Validator' => [
 		                'Ice:Length_Max' => 52,
 		                0 => 'Ice:Not_Null',
 		            ],
-		            'Ice\Core\Data' => 'text',
+		            'Ice\\Core\\Data' => 'text',
 		        ],
 		        'name2' => [
 		            'scheme' => [
@@ -78,11 +78,11 @@ class Test extends Model
 		            ],
 		            'schemeHash' => 2521633375,
 		            'fieldName' => 'name2',
-		            'Ice\Core\Form' => 'Text',
-		            'Ice\Core\Validator' => [
+		            'Ice\\Core\\Form' => 'Text',
+		            'Ice\\Core\\Validator' => [
 		                'Ice:Length_Max' => 65,
 		            ],
-		            'Ice\Core\Data' => 'text',
+		            'Ice\\Core\\Data' => 'text',
 		        ],
 		    ],
 		    'indexes' => [
@@ -97,8 +97,4 @@ class Test extends Model
 		    'indexesHash' => 3780610860,
 		];
     }
-
-	public static function test() {
-		return true;
-	}
 }
