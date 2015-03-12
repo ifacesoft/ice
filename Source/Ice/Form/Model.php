@@ -132,6 +132,6 @@ class Model extends Form
     public function submit()
     {
         $modelClass = $this->getKey();
-        $modelClass::create()->save($this->validate(), null, true);
+        $modelClass::create($this->validate())->save(true);
     }
 }

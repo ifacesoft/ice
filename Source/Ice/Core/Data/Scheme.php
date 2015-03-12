@@ -148,7 +148,7 @@ class Data_Scheme
                 $tableIndexes = &$schemeTables[$tableName]['indexes'];
 
                 if ($table['indexesHash'] != $tableIndexesHash) {
-                    Data_Scheme::getLogger()->info(['Update indexes for model {$0}: {$1}', [$schemeTables[$tableName]['modelClass'], Json::encode(array_diff($table['indexes'], $tableIndexes))]]);
+                    Data_Scheme::getLogger()->info(['Update indexes for model {$0}: {$1}', [$schemeTables[$tableName]['modelClass'], Json::encode($table['indexes'])]]);
                     $tableIndexes = $table['indexes'];
                     $tableIndexesHash = $table['indexesHash'];
                     $updated = true;

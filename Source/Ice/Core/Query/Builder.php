@@ -266,7 +266,9 @@ class Query_Builder
 
         $this->appendCacheTag($modelClass, $fieldName, true, false);
 
-        $this->_bindParts[Query_Builder::PART_WHERE][] = (array)$value;
+        $this->_bindParts[Query_Builder::PART_WHERE][] = $value == null
+            ? [null]
+            : (array)$value;
 
         return $this;
     }
@@ -1581,7 +1583,8 @@ class Query_Builder
         return $this->addTrigger('beforeDelete', $method, $params);
     }
 
-    private function addTrigger($type, $method, $params) {
+    private function addTrigger($type, $method, $params)
+    {
         $this->_triggers[$type][] = [$method, $params];
         return $this;
     }

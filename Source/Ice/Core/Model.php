@@ -62,6 +62,7 @@ abstract class Model
 
     /**
      * Extended fields for geo data
+     * @todo оставлю здесь, чтобы не потерять https://github.com/mjaschen/phpgeo и http://geocoder-php.org/Geocoder/
      *
      * @var array
      */
@@ -1180,28 +1181,43 @@ abstract class Model
     }
 
     /**
-     * Execute insert or update model data
-     *
-     * @param string|null $dataSourceKey
-     * @return Model|null
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @deprecated 0.4 Use ->save($dataSourceKey, true);
-     * @version 0.1
-     * @since 0.0
+     * @param Model $modelClass
+     * @param $affected
+     * @param $isSmart
+     * @param $dataSourceKey
      */
-    public function insertOrUpdate($dataSourceKey = null)
-    {
-        return $this->save([], $dataSourceKey, true);
+    private function insert($modelClass, $affected, $isSmart, $dataSourceKey) {
+        $this->beforeInsert();
+
+        $insertId = $modelClass::query()
+            ->insert($affected, $isSmart, $dataSourceKey)
+            ->getInsertId();
+
+        $this->set(reset($insertId));
+
+        $this->afterInsert();
+    }
+
+    /**
+     * @param Model $modelClass
+     * @param $affected
+     * @param $dataSourceKey
+     */
+    private function update($modelClass, $affected, $dataSourceKey) {
+        $this->beforeUpdate();
+
+        $modelClass::query()
+            ->pk($this->getPk())
+            ->update($affected, $dataSourceKey);
+
+        $this->afterUpdate();
     }
 
     /**
      * Insert or update model
      *
-     * @param array $fields
      * @param string|null $dataSourceKey
-     * @param bool $update
+     * @param bool $isSmart
      * @return Model
      * @throws Exception
      *
@@ -1210,36 +1226,36 @@ abstract class Model
      * @version 0.4
      * @since 0.4
      */
-    public function save(array $fields = [], $dataSourceKey = null, $update = false)
+    public function save($isSmart = false, $dataSourceKey = null)
     {
         /** @var Model $modelClass */
         $modelClass = get_class($this);
 
-        $this->set($fields);
-
         $pk = $this->getPk();
         $affected = $this->getAffected();
 
-        if (empty($pk) || $pk == $affected || $update) {
-            $this->beforeInsert();
+        $isSetPk = !empty($pk) && $pk == array_intersect_key($affected, array_flip($modelClass::getPkFieldNames()));
 
-            $insertId = $modelClass::query()
-                ->insert($affected, $update, $dataSourceKey)
-                ->getInsertId();
+        if (!$isSmart) {
+            if ($isSetPk) {
+                $this->update($modelClass, $affected, $dataSourceKey);
+            } else {
+                $this->insert($modelClass, $affected, false, $dataSourceKey);
+            }
 
-            $this->set(reset($insertId));
-
-            $this->afterInsert();
-        } else {
-            $this->beforeUpdate();
-
-            $modelClass::query()
-                ->pk($this->getPk())
-                ->update($affected, $dataSourceKey);
-
-            $this->afterUpdate();
+            return $this->clearAffected();
         }
 
+        if (!$isSetPk)  {
+            if ($this->find('/pk')) {
+                return $this;
+            }
+
+            $this->insert($modelClass, $affected, false, $dataSourceKey);
+            return $this->clearAffected();
+        }
+
+        $this->insert($modelClass, $affected, true, $dataSourceKey);
         return $this->clearAffected();
     }
 

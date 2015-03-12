@@ -431,9 +431,11 @@ class Logger
             $var = stripslashes(Php::varToPhpString($arg));
 
             if (!Request::isAjax()) {
-                echo Request::isCli()
-                    ? fwrite(STDOUT, Console::getText($var, Console::C_CYAN) . "\n")
-                    : '<div class="alert alert-' . self::INFO . '">' . str_replace('<span style="color: #0000BB">&lt;?php&nbsp;</span>', '', highlight_string('<?php // Debug value:' . "\n" . $var . "\n", true)) . '</div>';
+                if (Request::isCli()) {
+                    fwrite(STDOUT, Console::getText($var, Console::C_CYAN) . "\n");
+                } else {
+                    echo '<div class="alert alert-' . self::INFO . '">' . str_replace('<span style="color: #0000BB">&lt;?php&nbsp;</span>', '', highlight_string('<?php // Debug value:' . "\n" . $var . "\n", true)) . '</div>';
+                }
 
                 $logFile = Directory::get(LOG_DIR) . date('Y-m-d') . '/DEBUG.log';
                 File::createData($logFile, $var, false, FILE_APPEND);

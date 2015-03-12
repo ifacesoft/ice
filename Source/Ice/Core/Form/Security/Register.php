@@ -52,6 +52,6 @@ abstract class Form_Security_Register extends Form
 
         $accountRow['user'] = User::create()->save();
 
-        Account::create()->save($accountRow);
+        Account::create($accountRow)->save();
     }
 }

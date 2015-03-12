@@ -53,7 +53,7 @@ class Config
         $params = $config;
 
         foreach (explode('/', $key) as $keyPart) {
-            if (!isset($params[$keyPart])) {
+            if (!array_key_exists($keyPart, $params)) {
                 return false;
             }
 

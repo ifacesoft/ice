@@ -34,7 +34,7 @@ class BuilderTest extends PHPUnit_Framework_TestCase
             'name2' => null
         ]);
 
-        $user1->save(['name2' => 'test2']);
+        $user1->set(['name2' => 'test2'])->save();
 
         $this->assertEquals($user1->get(), [
             'test_pk' => 2,

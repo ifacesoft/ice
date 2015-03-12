@@ -377,6 +377,8 @@ abstract class Data_Source extends Container
             }
         } catch (\Exception $e) {
             Data_Source::getLogger()->log(['(error) {$0} [{$1}]', [$queryResult, Logger::microtimeResult($startTime) . ' | ' . Memory::memoryGetUsagePeak()]], Logger::DANGER);
+            Logger::debug($query->getBody(), $query->getBinds());
+
             Data_Source::getLogger()->exception('Data source execute query failed', __FILE__, __LINE__, $e, $query);
         }
 
