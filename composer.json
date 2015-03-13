@@ -18,26 +18,10 @@
   "autoload": {
     "psr-4": {"Ice\\": "Source/Ice/"}
   },
-  "repositories": [
-    {
-      "type": "package",
-      "package": {
-        "name": "jquery/jquery-ui",
-        "version": "1.11.1",
-        "dist": {
-          "url": "http://jqueryui.com/resources/download/jquery-ui-1.11.1.zip",
-          "type": "zip"
-        }
-      }
-    }
-  ],
   "require": {
     "php": ">=5.5.0",
     "smarty/smarty": "3.1.19",
     "twig/twig": "1.16.1",
-    "twbs/bootstrap": "3.3.1",
-    "jquery/jquery-ui": "1.11.1",
-    "mrclay/minify": "dev-master"
   },
   "require-dev": {
     "firephp/firephp-core": "dev-master",
