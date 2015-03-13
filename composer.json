@@ -29,17 +29,6 @@
           "type": "zip"
         }
       }
-    },
-    {
-      "type": "package",
-      "package": {
-        "name": "mailru/fileapi",
-        "version": "2.0.10",
-        "dist": {
-          "url": "https://github.com/mailru/FileAPI/archive/master.zip",
-          "type": "zip"
-        }
-      }
     }
   ],
   "require": {
@@ -49,8 +38,7 @@
     "twbs/bootstrap": "3.3.1",
     "jquery/jquery-ui": "1.11.1",
     "mrclay/minify": "dev-master",
-    "facebook/xhprof": "dev-master",
-    "mailru/fileapi": "2.0.10"
+    "facebook/xhprof": "dev-master"
   },
   "require-dev": {
     "firephp/firephp-core": "dev-master",
