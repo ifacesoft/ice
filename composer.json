@@ -1,9 +1,10 @@
 {
   "name": "ifacesoft/ice",
-  "type": "library",
   "description": "Ice Open Source PHP Framework",
-  "keywords": ["ice", "framework", "orm"],
   "homepage": "http://iceframework.net",
+  "type": "library",
+  "keywords": ["ice", "framework", "orm"],
+  "minimum-stability": "dev",
   "license": "BSD ICE",
   "authors": [
     {
@@ -21,6 +22,17 @@
     {
       "type": "package",
       "package": {
+        "name": "jquery/jquery-ui",
+        "version": "1.11.1",
+        "dist": {
+          "url": "http://jqueryui.com/resources/download/jquery-ui-1.11.1.zip",
+          "type": "zip"
+        }
+      }
+    },
+    {
+      "type": "package",
+      "package": {
         "name": "mailru/fileapi",
         "version": "2.0.10",
         "dist": {
@@ -35,7 +47,8 @@
     "smarty/smarty": "3.1.19",
     "twig/twig": "1.16.1",
     "twbs/bootstrap": "3.3.1",
-    "mrclay/minify": "2.2.1",
+    "jquery/jquery-ui": "1.11.1",
+    "mrclay/minify": "dev-master",
     "firephp/firephp-core": "dev-master",
     "facebook/xhprof": "dev-master",
     "mailru/fileapi": "2.0.10",
