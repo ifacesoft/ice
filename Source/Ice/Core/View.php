@@ -209,7 +209,7 @@ class View implements Cacheable
                 $this->_result['content'] = $emmetedResult;
             }
 
-            if (Environment::isDevelopment()) {
+            if (Environment::getInstance()->isDevelopment()) {
                 Logger::fb('view: ' . $this->_template . ' (' . $viewRenderClass . ') [' . Logger::microtimeResult($startTime) . ']');
             }
 

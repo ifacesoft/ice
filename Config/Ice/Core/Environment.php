@@ -16,26 +16,8 @@ return [
                 ],
             ],
             'Ice\Data\Provider\File' => [
-                'cache' => [
-                    'path' => CACHE_DIR
-                ],
                 'session' => [
                     'ttl' => 60 * 60 * 24
-                ],
-                'route' => [
-                    'path' => CACHE_DIR
-                ],
-                'routes' => [
-                    'path' => CACHE_DIR
-                ],
-                'view' => [
-                    'path' => CACHE_DIR
-                ],
-                'tags' => [
-                    'path' => CACHE_DIR
-                ],
-                'query' => [
-                    'path' => CACHE_DIR
                 ],
             ],
             'Ice\Data\Provider\Mysqli' => [

@@ -230,11 +230,13 @@ class Cacher extends Data_Provider
      */
     protected function connect(&$connection)
     {
-        if (!Ice::isEnvironment() || Environment::isDevelopment()) {
+        $environment = Environment::getInstance();
+
+        if (!$environment || $environment->isDevelopment()) {
             return $connection = Registry::getInstance($this->getKey(), $this->getIndex());
         }
 
-        if (!Environment::isProduction()) {
+        if (!$environment->isProduction()) {
             return $connection = File::getInstance($this->getKey(), $this->getIndex());
         }
 

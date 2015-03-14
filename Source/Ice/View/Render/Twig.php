@@ -76,7 +76,7 @@ class Twig extends View_Render
         }
 
         $loader = new \Twig_Loader_Filesystem($templateDirs);
-        $this->_fileTwig = new \Twig_Environment($loader, ['cache' => CACHE_DIR . $config->get('cache')]);
+        $this->_fileTwig = new \Twig_Environment($loader, ['cache' =>Module::getInstance()->getCacheDir() . $config->get('cache')]);
         $this->_stringTwig = new \Twig_Environment(new \Twig_Loader_String());
     }
 
@@ -102,7 +102,7 @@ class Twig extends View_Render
                 ? $this->_stringTwig->render($template, $data)
                 : $this->_fileTwig->render(str_replace(['_', '\\'], '/', $template) . Twig::TEMPLATE_EXTENTION, $data);
         } catch (\Exception $e) {
-            if (Environment::isDevelopment()) {
+            if (Environment::getInstance()->isDevelopment()) {
                 View::getLogger()->info([Twig::getClassName() . ': View {$0} not found. Trying generate template {$1}...', [$template, Twig::getClassName()]], Logger::WARNING);
 
                 return $this->_stringTwig->render(Twig::getCodeGenerator()->generate($template), $data);

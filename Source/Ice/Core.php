@@ -13,6 +13,7 @@ use Ice;
 use Ice\Core\Code_Generator;
 use Ice\Core\Config;
 use Ice\Core\Data_Provider;
+use Ice\Core\Environment;
 use Ice\Core\Logger;
 use Ice\Core\Resource;
 use Ice\Data\Provider\Cacher;
@@ -133,7 +134,7 @@ trait Core
             $postfix = strtolower(self::getClassName());
         }
 
-        return Ice::getEnvironment()->getProvider(self::getBaseClass(), $postfix);
+        return Environment::getInstance()->getProvider(self::getBaseClass(), $postfix);
     }
 
     /**

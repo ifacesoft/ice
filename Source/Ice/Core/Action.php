@@ -180,7 +180,7 @@ abstract class Action implements Cacheable
 
             $finishTimeAfter = Logger::microtimeResult($startTimeAfter);
 
-            if (Environment::isDevelopment()) {
+            if (Environment::getInstance()->isDevelopment()) {
                 Logger::fb('action: ' . $actionClass . ' ' . Json::encode($input) . ' [' . $finishTime . ' ' . $finishTimeAfter . ']');
             }
 

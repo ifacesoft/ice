@@ -33,6 +33,8 @@ class Environment
     const TEST = 'test';
     const DEVELOPMENT = 'development';
 
+    private static $_instance = null;
+
     /**
      * Environment config params
      *
@@ -64,19 +66,39 @@ class Environment
         $this->_environment = $environment;
     }
 
+    public static function init() {
+        $environmentName = null;
+
+        $host = Request::host();
+
+        foreach (Environment::getConfig(null, true, -1)->gets('environments') as $hostPattern => $name) {
+            $matches = [];
+            preg_match($hostPattern, $host, $matches);
+
+            if (!empty($matches)) {
+                $environmentName = $name;
+                break;
+            }
+        }
+
+        return Environment::$_instance = $environmentName
+            ? Environment::create($environmentName)
+            : Environment::create();
+    }
+
     /**
-     * Check to current environment is development
+     * Return application environment
      *
-     * @return bool
+     * @return Environment
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
-     * @since 0.0
+     * @version 0.5
+     * @since 0.5
      */
-    public static function isDevelopment()
+    public static function getInstance()
     {
-        return Ice::getEnvironment()->getEnvironmentName() == Environment::DEVELOPMENT;
+            return Environment::$_instance;
     }
 
     /**
@@ -89,9 +111,24 @@ class Environment
      * @version 0.0
      * @since 0.0
      */
-    public static function isProduction()
+    public function isDevelopment()
     {
-        return Ice::getEnvironment()->getEnvironmentName() == Environment::PRODUCTION;
+        return Environment::getInstance()->getEnvironmentName() == Environment::DEVELOPMENT;
+    }
+
+    /**
+     * Check to current environment is development
+     *
+     * @return bool
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
+     */
+    public function isProduction()
+    {
+        return Environment::getInstance()->getEnvironmentName() == Environment::PRODUCTION;
     }
 
     /**

@@ -1,4 +1,5 @@
 <?php
+use Ice\Core\Module;
 use Ice\Helper\Console;
 
 ?>
@@ -75,16 +76,16 @@ deny  all;
     ServerName <?= strtolower($moduleName) . '.local' ?>
     ServerAlias <?= strtolower($moduleName) . '.global' ?> <?= strtolower($moduleName) . '.test' ?>
 
-    DocumentRoot <?= ROOT_DIR ?><?= $moduleName ?>/Web
+    DocumentRoot <?= Module::getInstance()->getPath() ?>Web
     DirectoryIndex index.php
 
-    Alias /resource/ <?= RESOURCE_DIR ?>
+    Alias /resource/ <?= Module::getInstance()->getCompiledResourceDir() ?>
 
 
-    CustomLog <?= LOG_DIR ?>access.log combined
-    ErrorLog <?= LOG_DIR ?>error.log
+    CustomLog <?= Module::getInstance()->getLogDir() ?>access.log combined
+    ErrorLog <?= Module::getInstance()->getLogDir() ?>error.log
 
-    <Directory <?= ROOT_DIR ?>>
+    <Directory <?= dirname(Module::getInstance()->getPath()) ?>>
         AllowOverride All
         Order allow,deny
         Allow from All

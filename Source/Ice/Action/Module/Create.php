@@ -11,6 +11,7 @@ namespace Ice\Action;
 
 use Ice\Core\Action;
 use Ice\Core\Logger;
+use Ice\Core\Module;
 use Ice\Helper\Console;
 use Ice\Helper\Directory;
 use Ice\Helper\File;
@@ -352,17 +353,19 @@ class Module_Create extends Action
 
         $moduleDir = Directory::get(ROOT_DIR . $moduleName);
 
+        $iceModule = Module::getInstance('Ice');
+
         if ($input['isWeb'] == 'web') {
-            copy(ICE_DIR . 'cli', $moduleDir . 'cli');
+            copy($iceModule->getPath() . 'cli', $moduleDir . 'cli');
             chmod($moduleDir . 'cli', 0755);
 
-            copy(ICE_DIR . 'app.php', $moduleDir . 'app.php');
+            copy($iceModule->getPath() . 'app.php', $moduleDir . 'app.php');
 
-            Directory::copy(ICE_RESOURCE_DIR . '/web', $moduleDir . 'Web');
+            Directory::copy(Module::getInstance('Ice')->getResourceDir() . '/web', $moduleDir . 'Web');
 
-            copy(ICE_DIR . 'composer.phar', $moduleDir . 'composer.phar');
+            copy($iceModule->getPath() . 'composer.phar', $moduleDir . 'composer.phar');
 
-            $composer = Json::decode(file_get_contents(ICE_DIR . 'composer.json'));
+            $composer = Json::decode(file_get_contents($iceModule->getPath() . 'composer.json'));
 
             $composer['name'] = $moduleName;
             $composer['description'] = $moduleName;
@@ -377,8 +380,8 @@ class Module_Create extends Action
             $this->getView()->setTemplate('');
         }
 
-        copy(ICE_DIR . '.gitignore', $moduleDir . '.gitignore');
-        copy(ICE_DIR . '.hgignore', $moduleDir . '.hgignore');
+        copy($iceModule->getPath() . '.gitignore', $moduleDir . '.gitignore');
+        copy($iceModule->getPath() . '.hgignore', $moduleDir . '.hgignore');
 
         File::createData($moduleDir . 'Config/Ice/Core/Config.php', $config);
         File::createData($moduleDir . 'Config/Ice/Core/Environment.php', $environment);

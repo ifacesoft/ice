@@ -68,7 +68,7 @@ class Smarty extends View_Render
         }
 
         $this->_smarty->setTemplateDir($templateDirs);
-        $this->_smarty->setCompileDir(CACHE_DIR . $config->get('templates_c'));
+        $this->_smarty->setCompileDir(Module::getInstance()->getCacheDir() . $config->get('templates_c'));
         $this->_smarty->addPluginsDir($config->gets('plugins', false));
 //        $this->_smarty->setCacheDir('/web/www.example.com/smarty/cache');
 //        $this->_smarty->setConfigDir('/web/www.example.com/smarty/configs');
@@ -103,7 +103,7 @@ class Smarty extends View_Render
 //        try {
 //            $smartyTemplate->display();
 //        } catch (\Exception $e) {
-//            if (Environment::isDevelopment()) {
+//            if (Environment::getInstance()->isDevelopment()) {
 //                View::getLogger()->info([Smarty::getClassName() . ': View {$0} not found. Trying generate template {$1}...', [$template, Smarty::getClassName()]], Logger::WARNING);
 //
 //                /** @var \Smarty_Internal_Template $smartyTemplate */
@@ -149,7 +149,7 @@ class Smarty extends View_Render
         try {
             return $smartyTemplate->fetch();
         } catch (\Exception $e) {
-            if (Environment::isDevelopment()) {
+            if (Environment::getInstance()->isDevelopment()) {
                 View::getLogger()->info(Smarty::getClassName() . ': ' . $e->getMessage(), Logger::WARNING);
                 View::getLogger()->info(['View {$0} not found. Trying generate template {$1}...', [$template, Smarty::getClassName()]], Logger::WARNING);
 

@@ -25,9 +25,6 @@ use Ice\Helper\String;
  *
  * @package Ice
  * @subpackage Core
- *
- * @version 0.0
- * @since 0.0
  */
 class Module
 {
@@ -111,12 +108,28 @@ class Module
         return Module::$_instance[$moduleAlias] = new Module($moduleAlias, self::get($moduleAlias));
     }
 
+    public static function init()
+    {
+        if (self::$_modules !== null) {
+            return;
+        }
+
+        self::$_modules = [];
+
+        Module::loadConfig('', '', self::$_modules, MODULE_CONFIG_PATH);
+
+//            $iceModuleConfig = File::loadData(ICE_DIR . 'Config/Ice/Core/Module.php')['module'];
+//            $iceModuleConfig['path'] = ICE_DIR;
+//            $iceModuleConfig['context'] = '/ice';
+//
+//            self::$_modules['Ice'] = $iceModuleConfig;
+    }
+
     /**
      * Get module by module alias
      *
      * @param string $moduleAlias
      * @return array
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
@@ -124,15 +137,8 @@ class Module
      */
     public static function get($moduleAlias = null)
     {
-        if (self::$_modules === null) {
-            self::$_modules = [];
-            Module::loadConfig(MODULE_DIR, '', self::$_modules);
-
-            $iceModuleConfig = File::loadData(ICE_DIR . 'Config/Ice/Core/Module.php')['module'];
-            $iceModuleConfig['path'] = ICE_DIR;
-            $iceModuleConfig['context'] = '/ice';
-
-            self::$_modules['Ice'] = $iceModuleConfig;
+        if ($moduleAlias && !isset(self::$_modules[$moduleAlias])) {
+            Module::getLogger()->exception(['Module alias {$0} not found in module config files', $moduleAlias], __FILE__, __LINE__);
         }
 
         return empty($moduleAlias) ? self::$_modules : self::$_modules[$moduleAlias];
@@ -141,8 +147,9 @@ class Module
     /**
      * Load module configs
      *
-     * @param $moduleDir
-     * @param $context
+     * @param $vendor
+     * @param string $configFilePath
+     * @param string $context
      * @param array $modules
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -150,9 +157,13 @@ class Module
      * @version 0.2
      * @since 0.0
      */
-    private static function loadConfig($moduleDir, $context = '/', array &$modules = [])
+    private static function loadConfig($vendor, $context, array &$modules = [], $configFilePath = 'Config/Ice/Core/Module.php')
     {
-        $configPath = $moduleDir . 'Config/Ice/Core/Module.php';
+        $moduleDir = $vendor
+            ? VENDOR_DIR . $vendor . '/'
+            : MODULE_DIR;
+
+        $configPath = $moduleDir . $configFilePath;
 
         $moduleConfig = File::loadData($configPath);
 
@@ -171,8 +182,8 @@ class Module
 
         $modules[$moduleConfig['alias']] = $moduleConfig['module'];
 
-        foreach ($moduleConfig['modules'] as $moduleDir => $context) {
-            Module::loadConfig($moduleDir, $context, $modules);
+        foreach ($moduleConfig['vendors'] as $vendor => $context) {
+            Module::loadConfig($vendor, $context, $modules);
         }
     }
 
@@ -361,5 +372,40 @@ class Module
         }
 
         return array_keys((array)$this->_module[Data_Source::getClass()]);
+    }
+
+    public function getLogDir()
+    {
+        return realpath($this->getPath() . $this->_module['logDir']) . '/';
+    }
+
+    public function getSourceDir()
+    {
+        return realpath($this->getPath() . $this->_module['sourceDir']) . '/';
+    }
+
+    public function getResourceDir()
+    {
+        return realpath($this->getPath() . $this->_module['resourceDir']) . '/';
+    }
+
+    public function getCompiledResourceDir()
+    {
+        return realpath($this->getPath() . $this->_module['compiledResourceDir']) . '/';
+    }
+
+    public function getCacheDir()
+    {
+        return realpath($this->getPath() . $this->_module['cacheDir']) . '/';
+    }
+
+    public function getUploadDir()
+    {
+        return realpath($this->getPath() . $this->_module['uploadDir']) . '/';
+    }
+
+    public function getDownloadDir()
+    {
+        return realpath($this->getPath() . $this->_module['downloadDir']) . '/';
     }
 }
