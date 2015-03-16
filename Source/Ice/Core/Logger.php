@@ -9,6 +9,7 @@
 
 namespace Ice\Core;
 
+use FirePHP;
 use Ice;
 use Ice\Core;
 use Ice\Helper\Console;
@@ -154,7 +155,7 @@ class Logger
 
         ini_set('xdebug.var_display_max_depth', -1);
         ini_set('xdebug.profiler_enable', 1);
-        ini_set('xdebug.profiler_output_dir', ROOT_DIR . 'xdebug');
+        ini_set('xdebug.profiler_output_dir', Module::getInstance()->getLogDir() . 'xdebug');
 
         ob_start();
     }
@@ -260,8 +261,11 @@ class Logger
 
     public static function fb($value, $type = 'LOG')
     {
-        if (!Request::isCli() && !headers_sent() && function_exists('fb')) {
-            fb($value, $type);
+        if (!Request::isCli() && !headers_sent()) {
+            $instance = FirePHP::getInstance(true);
+
+            $args = func_get_args();
+            return call_user_func_array(array($instance, 'fb'), $args);
         }
     }
 
@@ -578,7 +582,7 @@ class Logger
     {
         if (!Environment::getInstance()->isProduction()) {
 //            if (Request::isCli()) {
-                $this->info(Helper_Resource::getMessage($message), $type, false);
+            $this->info(Helper_Resource::getMessage($message), $type, false);
 //            } else {
 //                Logger::fb($message);
 //            }

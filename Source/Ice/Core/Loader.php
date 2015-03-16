@@ -42,6 +42,7 @@ class Loader
      */
     private static $_loader = null;
 
+    private static $_forceLoading = null;
     /**
      * Load class
      *
@@ -79,12 +80,12 @@ class Loader
                 return true;
             }
 
-            if ($isRequired) {
+            if (!self::$_forceLoading && $isRequired) {
                 Loader::getLogger()->exception(['File {$0} exists, but class {$1} not found', [$fileName, $class]], __FILE__, __LINE__);
             }
         }
 
-        if ($isRequired) {
+        if (!self::$_forceLoading && $isRequired) {
             Loader::getLogger()->exception(['Class {$0} not found', $class], __FILE__, __LINE__, null);
         }
 
@@ -162,7 +163,11 @@ class Loader
                     $fullStackPathes[] = $fileName;
                     $matchedPathes[] = $fileName;
                 } else {
-                    Loader::getLogger()->exception(['Files for {$0} not found', $class], __FILE__, __LINE__, null, $fullStackPathes, -1, 'Ice:File_Not_Found');
+                    if (self::$_forceLoading) {
+                        return null;
+                    } else {
+                        Loader::getLogger()->exception(['Files for {$0} not found', $class], __FILE__, __LINE__, null, $fullStackPathes, -1, 'Ice:File_Not_Found');
+                    }
                 }
             }
         }
@@ -200,9 +205,10 @@ class Loader
         }
     }
 
-    public static function init($loader)
+    public static function init($loader, $forceLoading = false)
     {
         self::$_loader = $loader;
+        self::$_forceLoading = $forceLoading;
 
         spl_autoload_unregister([$loader, 'loadClass']);
 

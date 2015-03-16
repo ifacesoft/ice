@@ -41,8 +41,9 @@ class Bootstrap
      * @version 0.2
      * @since 0.0
      * @param ClassLoader $loader
+     * @param bool $force
      */
-    public static function init(ClassLoader $loader)
+    public static function init(ClassLoader $loader, $force = false)
     {
         $startTime = microtime(true);
 
@@ -60,7 +61,7 @@ class Bootstrap
 
             Environment::init();
             Logger::init();
-            Loader::init($loader);
+            Loader::init($loader, $force);
             Request::init();
 
             if (Request::isOptions()) {
