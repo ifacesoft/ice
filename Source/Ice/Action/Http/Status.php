@@ -95,7 +95,7 @@ class Http_Status extends Action
 
         $this->getView()->setTemplate('_' . $input['code']);
 
-        return isset($input['exception']) && !Environment::isProduction()
+        return isset($input['exception']) && !Environment::getInstance()->isProduction()
             ? ['message' => $input['exception']->getMessage(), 'stackTrace' => nl2br($input['exception']->getTraceAsString())]
             : ['message' => '', 'stackTrace' => ''];
     }

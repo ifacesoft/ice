@@ -80,9 +80,7 @@ class Resource extends Data_Provider
      */
     public function get($key = null)
     {
-        return $key
-            ? $this->getConnection()['resource'][$this->getResourceKey()]->get($key)
-            : $this->getConnection();
+        return $key ? $this->getConnection()[$key] : $this->getConnection();
     }
 
     /**
@@ -130,15 +128,16 @@ class Resource extends Data_Provider
      */
     public function set($key, $value = null, $ttl = null)
     {
-        if (is_array($key) && $value === null) {
-            foreach ($key as $index => $value) {
-                $this->set($index, $value, $ttl);
-            }
-
-            return $key;
-        }
-
-        return $this->getConnection()['resource'][$this->getResourceKey()]->set($key, $value);
+//        if (is_array($key) && $value === null) {
+//            foreach ($key as $index => $value) {
+//                $this->set($index, $value, $ttl);
+//            }
+//
+//            return $key;
+//        }
+//
+//        return $this->getConnection()['resource'][$this->getResourceKey()]->set($key, $value);
+        // TODO: Implement set() method.
     }
 
     /**

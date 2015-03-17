@@ -30,7 +30,7 @@ use Ice\Helper\Validator as Helper_Validator;
  */
 abstract class Validator extends Container
 {
-    use Core;
+    use Stored;
 
     const DEFAULT_KEY = 'instance';
 
@@ -193,7 +193,8 @@ abstract class Validator extends Container
         return self::getClass() . '/default';
     }
 
-    public static function schemeColumnPlugin($columnName, $table) {
+    public static function schemeColumnPlugin($columnName, $table)
+    {
         $validators = [];
 
         switch ($table['columns'][$columnName][Form::getClass()]) {

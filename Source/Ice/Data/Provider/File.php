@@ -11,6 +11,8 @@ namespace Ice\Data\Provider;
 
 use Ice\Core\Data_Provider;
 use Ice\Core\Exception;
+use Ice\Core\Logger;
+use Ice\Core\Module;
 use Ice\Helper\Directory;
 use Ice\Helper\File as Helper_File;
 use Ice\Helper\Hash;
@@ -31,10 +33,6 @@ class File extends Data_Provider
 {
     const DEFAULT_DATA_PROVIDER_KEY = 'Ice:File/default';
     const DEFAULT_KEY = 'instance';
-
-    protected $_options = [
-        'path' => STORAGE_DIR
-    ];
 
     /**
      * Return default data provider key
@@ -261,7 +259,7 @@ class File extends Data_Provider
         $options = $this->getOptions(__CLASS__);
 
         if (!isset($options['path'])) {
-            Data_Provider::getLogger()->exception(['Require param {$0} in environment config {$1}', ['path', Data_Provider::getClass() . '/' . get_class($this) . '/' . $this->getIndex()]], __FILE__, __LINE__);
+            $options['path'] = Module::getInstance()->get('cacheDir');
         }
 
         $connection = $options['path'];

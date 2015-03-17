@@ -31,7 +31,7 @@ use Ice\Helper\Memory;
  */
 abstract class Data_Source extends Container
 {
-    use Core;
+    use Stored;
 
     /**
      * Data source scheme
@@ -61,7 +61,7 @@ abstract class Data_Source extends Container
     {
         $this->_key = $key;
         $this->_scheme = $scheme;
-        $this->getSourceDataProvider()->setScheme($this->_scheme);
+        $this->getSourceDataProvider()->setScheme($scheme);
     }
 
     /**
@@ -183,7 +183,6 @@ abstract class Data_Source extends Container
         }
 
         list($key, $scheme) = explode('.', $key);
-
 
         $dataSourceClass = self::getClass();
         return new $dataSourceClass($key, $scheme);

@@ -29,79 +29,31 @@ use Ice\Core\Module;
  */
 class Model
 {
-    /**
-     * Return model class by known table name
-     *
-     * @param $tableName
-     * @param null $moduleAlias
-     * @return Core_Model
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since 0.0
-     */
-    public static function getModelClassByTableName($tableName, $moduleAlias = null)
-    {
-        $alias = null;
-        $tableNamePart = $tableName;
+//
+//    /**
+//     * Return table prefix
+//     *
+//     * @param $tableName
+//     * @return string
+//     * @throws Exception
+//     *
+//     * @author dp <denis.a.shestakov@gmail.com>
+//     *
+//     * @version 0.0
+//     * @since 0.0
+//     */
+//    public static function getTablePrefix($tableName)
+//    {
+//        $prefix = strstr($tableName, '_', true);
+//
+//        if (!Core_Config::getInstance(Core_Model::getClass())->get('prefixes/' . $prefix, false)) {
+//            return '';
+//        }
+//
+//        return $prefix;
+//    }
 
-        foreach (Module::getInstance($moduleAlias)->getTablePrefixes() as $prefix => $value) {
-            if (String::startsWith($tableName, $prefix)) {
-                $alias = $value;
-                $tableNamePart = substr($tableName, strlen($prefix));
-                break;
-            }
-        }
-
-        if (!$alias) {
-            $alias = Module::getInstance()->getAlias();
-        }
-
-        $modelName = $alias . '\Model\\';
-
-        foreach (explode('_', preg_replace('/_{2,}/', '_', $tableNamePart)) as $modelNamePart) {
-            $modelName .= ucfirst($modelNamePart) . '_';
-        }
-
-        return rtrim($modelName, '_');
-    }
-
-    /**
-     * Return table prefix
-     *
-     * @param $tableName
-     * @return string
-     * @throws Exception
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public static function getTablePrefix($tableName)
-    {
-        $prefix = strstr($tableName, '_', true);
-
-        if (!Core_Config::getInstance(Core_Model::getClass())->get('prefixes/' . $prefix, false)) {
-            return '';
-        }
-
-        return $prefix;
-    }
-
-    /**
-     * Return field name by column name
-     *
-     * @param $columnName
-     * @param $table
-     * @return string
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since 0.5
-     */
-    public static function getFieldNameByColumnName($columnName, $table)
+    public static function getFieldNameByColumnName($columnName, array $table, array $tablePrefixes)
     {
         $fieldName = strtolower($columnName);
 
@@ -116,7 +68,7 @@ class Model
         } else if (in_array($columnName, $primaryKeys)) {
             $column['is_primary'] = true;
             if (substr($fieldName, -3, 3) != '_pk') {
-                $fieldName = strtolower(Object::getName(Model::getModelClassByTableName($table['scheme']['tableName'])));
+                $fieldName = str_replace($tablePrefixes, '', $table['scheme']['tableName']);
                 do { // some primary fields
                     $fieldName .= '_pk';
                 } while (isset($modelMapping[$fieldName]));

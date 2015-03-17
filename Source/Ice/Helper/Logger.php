@@ -11,6 +11,7 @@ namespace Ice\Helper;
 
 use Ice\Core\Exception;
 use Ice\Core\Logger as Core_Logger;
+use Ice\Core\Module;
 use Ice\Core\Request;
 use Ice\Core\View_Render;
 use Ice\View\Render\Php as View_Render_Php;
@@ -145,7 +146,7 @@ class Logger
         $output['errcontext'] = $errcontext;
         $output['stackTrace'] = $exception->getTraceAsString();
 
-        $logFile = Directory::get(LOG_DIR) . date('Y-m-d') . '/' . Core_Logger::$errorCodes[$exception->getCode()] . '.log';
+        $logFile = Directory::get(Module::getInstance()->get('logDir') . date('Y-m-d')) . Core_Logger::$errorCodes[$exception->getCode()] . '.log';
 
         File::createData($logFile, View_Render_Php::getInstance()->fetch(Core_Logger::getClass() . '/File', $output), false, FILE_APPEND);
     }

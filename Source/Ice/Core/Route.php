@@ -31,7 +31,7 @@ use Ice\View\Render\Replace;
  */
 class Route extends Container
 {
-    use Core;
+    use Stored;
 
     /**
      * Route name
@@ -49,18 +49,13 @@ class Route extends Container
     /**
      * Private constructor of route
      *
-     * @param $routeName
-     * @param $route
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.5
      * @since 0.0
      */
-    private function __construct($routeName, $route)
+    private function __construct()
     {
-        $this->_routeName = $routeName;
-        $this->_route = $route;
     }
 
     /**
@@ -79,10 +74,15 @@ class Route extends Container
         $routes = self::getRoutes();
 
         if (!isset($routes[$name])) {
-            throw new Http_Not_Found(['Creating route by name \'{$0}\' failed', $name]);
+            throw new Http_Not_Found(['Route {$0} not found', $name]);
         }
 
-        return new Route($name, $routes[$name]);
+        $route = new Route();
+
+        $route->_routeName = $name;
+        $route->_route = $routes[$name];
+
+        return $route;
     }
 
     /**
@@ -105,7 +105,7 @@ class Route extends Container
 
         $routeFilePathes = [];
 
-        foreach (Module::get() as $moduleConfig) {
+        foreach (Module::getInstance() as $moduleConfig) {
             $routeFilePathes[$moduleConfig['context']] = $moduleConfig['path'] . 'Config/Ice/Core/Route.php';
         }
 
@@ -142,7 +142,7 @@ class Route extends Container
 
                     $class = 'Ice\Core\\' . substr(strstr($routeFilePath, '.php', true), strrpos($routeFilePath, '/') + 1);
 
-                    foreach (Loader::getFilePath($class . '' . $routeName, '.php', 'Config/', true, false, false, true) as $configFilePath) {
+                    foreach (Loader::getFilePath($class . '' . $routeName, '.php', Module::CONFIG_DIR, true, false, false, true) as $configFilePath) {
                         $configFilePathes[$context . $route] = $configFilePath;
                     }
 
@@ -376,21 +376,5 @@ class Route extends Container
     public function getActionClassNames($method)
     {
         return $this->gets('request/' . $method . '/actions');
-    }
-
-    /**
-     * Restore object
-     *
-     * @param array $data
-     * @return object
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since 0.5
-     */
-    public static function __set_state(array $data)
-    {
-        return new self($data['_routeName'], $data['_route']);
     }
 }

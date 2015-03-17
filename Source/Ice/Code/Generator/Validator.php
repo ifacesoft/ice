@@ -12,6 +12,7 @@ namespace Ice\Code\Generator;
 use Ice\Core\Code_Generator;
 use Ice\Core\Loader;
 use Ice\Core\Logger;
+use Ice\Core\Module;
 use Ice\Core\Validator as Core_Validator;
 use Ice\Helper\File;
 use Ice\Helper\Object;
@@ -37,6 +38,7 @@ class Validator extends Code_Generator
     /**
      * Generate code and other
      *
+     * @param $class
      * @param array $data Sended data requered for generate
      * @param bool $force Force if already generate
      * @return mixed
@@ -46,12 +48,16 @@ class Validator extends Code_Generator
      * @version 0.0
      * @since 0.0
      */
-    public function generate($data, $force = false)
+    public function generate($class, $data, $force = false)
     {
-        $class = Object::getClass(Core_Validator::getClass(), $data);
+//        $class = Object::getClass(Core_Validator::getClass(), $data);
         $namespace = Object::getNamespace(Core_Validator::getClass(), $class);
 
-        $path = $namespace ? 'Source/' : 'Source/Class/';
+        $path = Module::SOURCE_DIR;
+
+        if ($namespace) {
+            $path .= 'Class/';
+        }
 
         $filePath = Loader::getFilePath($class, '.php', $path, false, true, true);
 

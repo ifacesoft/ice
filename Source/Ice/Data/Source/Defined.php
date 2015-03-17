@@ -54,8 +54,8 @@ class Defined extends Data_Source
 
         $pkName = $modelClass::getFieldName('/pk');
 
-        $fieldNames = $modelClass::getScheme()->getFieldMapping();
-        $flippedFieldNames = array_flip($fieldNames);
+        $fieldColumnMap = $modelClass::getFieldColumnMap();
+        $flippedFieldNames = array_flip($fieldColumnMap);
 
         $definedRows = [];
         foreach ($rows as $pk => &$row) {
@@ -67,7 +67,7 @@ class Defined extends Data_Source
                     $definedRow[$fieldName] = $fieldValue;
                 }
             }
-            $definedRow[$fieldNames[$pkName]] = $pk;
+            $definedRow[$fieldColumnMap[$pkName]] = $pk;
             $definedRows[] = $definedRow;
         }
         $rows = &$definedRows;

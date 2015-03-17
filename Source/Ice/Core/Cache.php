@@ -24,7 +24,7 @@ use Ice\Data\Provider\Repository;
  */
 class Cache
 {
-    use Core;
+    use Stored;
 
     const VALIDATE = 'validate';
     const INVALIDATE = 'invalidate';
@@ -190,28 +190,4 @@ class Cache
     {
         return $this->_cacheable->validate($this->_value);
     }
-
-    /**
-     * Restore object
-     *
-     * @param array $data
-     * @return object
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since 0.5
-     */
-    public static function __set_state(array $data)
-    {
-        $class = self::getClass();
-
-        $object = new $class();
-
-        foreach ($data as $fieldName => $fieldValue) {
-            $object->$fieldName = $fieldValue;
-        }
-
-        return $object;
-    }
-} 
+}

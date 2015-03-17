@@ -438,14 +438,14 @@ class Mysqli extends Data_Source
         $dataProvider->setScheme('information_schema');
 
         foreach ($dataProvider->get('TABLES:TABLE_SCHEMA/' . $this->_scheme) as $table) {
-            if (String::startsWith($table['TABLE_NAME'], array_keys($module->getTablePrefixes()))) {
+            if ($module->checkTableByPrefix($table['TABLE_NAME'], $this->getDataSourceKey())) {
                 $tables[$table['TABLE_NAME']] = [];
 
                 $data = &$tables[$table['TABLE_NAME']];
 
                 $data = [
-                    'revision' => date('mdHi') . '_' . String::getRandomString(2),
-                    'dataSourceKey' => $module->getType() == 'module' ? null : $this->getDataSourceKey(),
+                    'revision' => date('mdHi') . '_' . strtolower(String::getRandomString(2)),
+                    'dataSourceKey' => $this->getDataSourceKey(),
                     'scheme' => [],
                     'schemeHash' => crc32(Json::encode([])),
                     'columns' => [],
@@ -469,11 +469,10 @@ class Mysqli extends Data_Source
                     $columns[$columnName]['schemeHash'] = crc32(Json::encode($columns[$columnName]['scheme']));
 
                     $columns[$columnName]['fieldName'] =
-                        Helper_Model::getFieldNameByColumnName($columnName, $data);
+                        Helper_Model::getFieldNameByColumnName($columnName, $data, $module->getDataSourcePrefixes($this->getDataSourceKey()));
 
                     foreach (Model::getConfig()->gets('schemeColumnPlugins') as $columnPluginClass) {
-                        $columns[$columnName][$columnPluginClass] =
-                            $columnPluginClass::schemeColumnPlugin($columnName, $data);
+                        $columns[$columnName][$columnPluginClass] = $columnPluginClass::schemeColumnPlugin($columnName, $data);
                     }
                 }
 //                Model::getCodeGenerator()->generate($data, 1);

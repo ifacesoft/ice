@@ -71,7 +71,7 @@ class Directory
     public static function get($path)
     {
         if (file_exists($path)) {
-            return rtrim($path, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+            return realpath($path) . DIRECTORY_SEPARATOR;
         }
 
         $dir = Directory::get(dirname($path));
@@ -83,7 +83,7 @@ class Directory
             chgrp($path, filegroup($dir));
         }
 
-        return rtrim($path, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+        return realpath($path) . DIRECTORY_SEPARATOR;
     }
 
     /**

@@ -1,4 +1,5 @@
 <?php
+use Ice\Core\Module;
 use Ice\Helper\Console;
 
 ?>
@@ -58,8 +59,8 @@ fastcgi_param  SCRIPT_FILENAME  $document_root$fastcgi_script_name;
 include        fastcgi_params;
 
 fastcgi_buffer_size 128k;
-fastcgi_buffers 4 256k;
-fastcgi_busy_buffers_size 512k;
+fastcgi_buffers 16 64k;
+fastcgi_busy_buffers_size 256k;
 }
 
 location ~ /\. {
@@ -75,16 +76,16 @@ deny  all;
     ServerName <?= strtolower($moduleName) . '.local' ?>
     ServerAlias <?= strtolower($moduleName) . '.global' ?> <?= strtolower($moduleName) . '.test' ?>
 
-    DocumentRoot <?= ROOT_DIR ?><?= $moduleName ?>/Web
+    DocumentRoot <?= Module::getInstance()->get('path') ?>Web
     DirectoryIndex index.php
 
-    Alias /resource/ <?= RESOURCE_DIR ?>
+    Alias /resource/ <?= Module::getInstance()->get('compiledResourceDir') ?>
 
 
-    CustomLog <?= LOG_DIR ?>access.log combined
-    ErrorLog <?= LOG_DIR ?>error.log
+    CustomLog <?= Module::getInstance()->get('logDir') ?>access.log combined
+    ErrorLog <?= Module::getInstance()->get('logDir') ?>error.log
 
-    <Directory <?= ROOT_DIR ?>>
+    <Directory <?= dirname(Module::getInstance()->get('path')) ?>>
         AllowOverride All
         Order allow,deny
         Allow from All

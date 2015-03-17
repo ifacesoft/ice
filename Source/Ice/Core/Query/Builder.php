@@ -266,7 +266,9 @@ class Query_Builder
 
         $this->appendCacheTag($modelClass, $fieldName, true, false);
 
-        $this->_bindParts[Query_Builder::PART_WHERE][] = (array)$value;
+        $this->_bindParts[Query_Builder::PART_WHERE][] = $value == null
+            ? [null]
+            : (array)$value;
 
         return $this;
     }
@@ -316,10 +318,10 @@ class Query_Builder
      */
     private function appendCacheTag($modelClass, $fieldNames, $isValidate, $isInvalidate)
     {
-        $fields = $modelClass::getScheme()->getFieldMapping();
+        $columnFieldMapping = $modelClass::getColumnFieldMap();
 
         foreach ((array)$fieldNames as $fieldName) {
-            if (array_key_exists($fieldName, $fields)) {
+            if (in_array($fieldName, $columnFieldMapping)) {
                 if ($isValidate) {
                     $this->_cacheTags[Cache::VALIDATE][$modelClass][$fieldName] = true;
                 }
@@ -798,11 +800,11 @@ class Query_Builder
             $modelClass = $this->getModelClass();
         }
 
-        $modelFields = $modelClass::getScheme()->getFieldMapping();
+        $columnFieldMapping = $modelClass::getColumnFieldMap();
         $fieldValue = $modelClass::getFieldName($value);
 
         /** check ability use pattern from field in base */
-        return array_key_exists($fieldValue, $modelFields)
+        return in_array($fieldValue, $columnFieldMapping)
             ? $this->where($sqlLogical, $fieldValue, Query_Builder::SQL_COMPARISON_KEYWORD_RLIKE_REVERSE, $fieldName, $modelClass, $tableAlias)
             : $this->where($sqlLogical, $modelClass::getFieldName($fieldName), Query_Builder::SQL_COMPARISON_KEYWORD_RLIKE, $value, $modelClass, $tableAlias);
     }
@@ -844,6 +846,7 @@ class Query_Builder
      */
     private function join($joinType, $modelClass, $tableAlias = null, $condition = null)
     {
+        /** @var Model $modelClass */
         list($modelClass, $tableAlias) = $this->getModelClassTableAlias($modelClass, $tableAlias);
 
         $currentJoin = [
@@ -854,8 +857,8 @@ class Query_Builder
 
         if (!$condition) {
             $modelName = Object::getName($modelClass);
-            $fields = $modelClass::getScheme()->getFieldMapping();
-            $fieldNamesOnly = array_keys($fields);
+            $fieldColumnMap = $modelClass::getFieldColumnMap();
+            $fieldNamesOnly = array_keys($fieldColumnMap);
 
             $joins = [['class' => $this->getModelClass(), 'alias' => Object::getName($this->getModelClass())]];
 
@@ -870,7 +873,7 @@ class Query_Builder
                 $joinModelClass = $join['class'];
                 $joinTableAlias = $join['alias'];
 
-                $joinFieldNames = $joinModelClass::getScheme()->getFieldMapping();
+                $joinFieldNames = $joinModelClass::getFieldColumnMap();
                 $joinFieldNamesOnly = array_keys($joinFieldNames);
 
                 $joinModelName = Object::getName($joinModelClass);
@@ -879,7 +882,7 @@ class Query_Builder
                 $joinModelNamePk = strtolower($joinModelName) . '_pk';
 
                 if (in_array($joinModelNameFk, $fieldNamesOnly)) {
-                    $condition = $tableAlias . '.' . $fields[$joinModelNameFk] . ' = ' .
+                    $condition = $tableAlias . '.' . $fieldColumnMap[$joinModelNameFk] . ' = ' .
                         $joinTableAlias . '.' . $joinFieldNames[$joinModelNamePk];
                     break;
                 }
@@ -888,7 +891,7 @@ class Query_Builder
                 $modelNamePk = strtolower($modelName) . '_pk';
 
                 if (in_array($modelNameFk, $joinFieldNamesOnly)) {
-                    $condition = $tableAlias . '.' . $fields[$modelNamePk] . ' = ' .
+                    $condition = $tableAlias . '.' . $fieldColumnMap[$modelNamePk] . ' = ' .
                         $joinTableAlias . '.' . $joinFieldNames[$modelNameFk];
                     break;
                 }
@@ -1443,11 +1446,9 @@ class Query_Builder
     public function create($dataSourceKey = null, $ttl = null)
     {
         $modelClass = $this->_modelClass;
-        $modelSchemeClass = Model_Scheme::getClass();
 
-        foreach ($modelClass::getScheme()->getFields() as $field) {
-            $fieldScheme = $field[$modelSchemeClass];
-            $this->column($fieldScheme['columnName'], $fieldScheme);
+        foreach ($modelClass::getConfig()->gets('columns') as $columnName => $column) {
+            $this->column($columnName, $column['scheme']);
         }
 
         $this->_queryType = Query_Builder::TYPE_CREATE;
@@ -1582,7 +1583,8 @@ class Query_Builder
         return $this->addTrigger('beforeDelete', $method, $params);
     }
 
-    private function addTrigger($type, $method, $params) {
+    private function addTrigger($type, $method, $params)
+    {
         $this->_triggers[$type][] = [$method, $params];
         return $this;
     }

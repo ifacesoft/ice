@@ -103,7 +103,7 @@ class Model_CollectionTest extends PHPUnit_Framework_TestCase
                         ]
                     );
 
-                    $testCollection->add(Test::create()->save($modelRow, $dataSourceKey));
+                    $testCollection->add(Test::create($modelRow)->save(null, $dataSourceKey));
 
                     $forthPk = Test::getCollection('*', [1, 1000, 0], $dataSourceKey)->last()->getPk();
 
@@ -196,7 +196,7 @@ class Model_CollectionTest extends PHPUnit_Framework_TestCase
                     $this->assertEquals($testCollection->get(reset($forthPk)), Test::getModel(reset($forthPk), '*', $dataSourceKey));
 
                     foreach ($testCollection as $test) {
-                        $test->save(['/name' => ''], $dataSourceKey);
+                        $test->set(['/name' => ''])->save(null, $dataSourceKey);
                     }
                     $testCollection->reload(); // todo: научить чтобы без релоада работало
                     $this->assertEquals($testCollection->column('test_name'), [$id2 => '', reset($forthPk) => '', $id5 => '']);

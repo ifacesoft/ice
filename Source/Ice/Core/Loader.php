@@ -12,6 +12,7 @@ namespace Ice\Core;
 use Composer\Autoload\ClassLoader;
 use Ice;
 use Ice\Core;
+use Ice\Data\Provider\Repository;
 use Ice\Exception\File_Not_Found;
 use Ice\Helper\Object;
 
@@ -42,6 +43,12 @@ class Loader
      */
     private static $_loader = null;
 
+    private static $_forceLoading = null;
+
+    /**
+     * @var Repository
+     */
+    private static $_repository = null;
     /**
      * Load class
      *
@@ -60,31 +67,28 @@ class Loader
             return true;
         }
 
-        /** @var Data_Provider $dataProvider */
-        $dataProvider = Loader::getDataProvider();
-
-        $fileName = $dataProvider->get($class);
+        $fileName = self::$_repository->get($class);
         if ($fileName) {
             require_once $fileName;
             return true;
         }
 
-        $fileName = self::getFilePath($class, '.php', 'Source/', $isRequired);
+        $fileName = self::getFilePath($class, '.php', Module::SOURCE_DIR, $isRequired);
 
         if (file_exists($fileName)) {
             require_once $fileName;
 
             if (class_exists($class, false) || interface_exists($class, false) || trait_exists($class, false)) {
-                $dataProvider->set($class, $fileName);
+                self::$_repository->set($class, $fileName);
                 return true;
             }
 
-            if ($isRequired) {
+            if (!self::$_forceLoading && $isRequired) {
                 Loader::getLogger()->exception(['File {$0} exists, but class {$1} not found', [$fileName, $class]], __FILE__, __LINE__);
             }
         }
 
-        if ($isRequired) {
+        if (!self::$_forceLoading && $isRequired) {
             Loader::getLogger()->exception(['Class {$0} not found', $class], __FILE__, __LINE__, null);
         }
 
@@ -124,19 +128,21 @@ class Loader
         $fullStackPathes = [];
         $matchedPathes = [];
 
-        $modulePathes = Module::getPathes();
+            $modules = $isOnlyFirst
+            ? [Module::getInstance(Object::getModuleAlias($class))]
+            : Module::getAll();
 
-        if ($isOnlyFirst) {
-            $modulePathes = [$modulePathes[Object::getModuleAlias($class)]];
-        }
+        foreach ($modules as $module) {
+            $typePathes = $module->gets($path, false);
 
-        foreach ($modulePathes as $modulePath) {
-            $typePathes = [$path];
+            if (empty($typePathes)) {
+                $typePathes = [$path];
+            }
 
             $filePath = str_replace(['_', '\\'], '/', $class);
 
             foreach ($typePathes as $typePath) {
-                $fileName = $modulePath . $typePath . $filePath . $ext;
+                $fileName = $typePath . $filePath . $ext;
 
                 $fullStackPathes[] = $fileName;
 
@@ -154,7 +160,7 @@ class Loader
 
         if ($isRequired) {
             if (!$allMatchedPathes || empty($matchedPathes)) {
-                if ($fileName = self::$_loader->findFile($class)) {
+                if (self::$_loader && $fileName = self::$_loader->findFile($class)) {
                     if (!$allMatchedPathes) {
                         return $fileName;
                     }
@@ -162,7 +168,11 @@ class Loader
                     $fullStackPathes[] = $fileName;
                     $matchedPathes[] = $fileName;
                 } else {
-                    Loader::getLogger()->exception(['Files for {$0} not found', $class], __FILE__, __LINE__, null, $fullStackPathes, -1, 'Ice:File_Not_Found');
+                    if (self::$_forceLoading) {
+                        return null;
+                    } else {
+                        Loader::getLogger()->exception(['Files for {$0} not found', $class], __FILE__, __LINE__, null, $fullStackPathes, -1, 'Ice:File_Not_Found');
+                    }
                 }
             }
         }
@@ -200,9 +210,12 @@ class Loader
         }
     }
 
-    public static function init($loader)
+    public static function init(ClassLoader $loader, $forceLoading = false)
     {
         self::$_loader = $loader;
+        self::$_forceLoading = $forceLoading;
+
+        self::$_repository = Loader::getRepository();
 
         spl_autoload_unregister([$loader, 'loadClass']);
 

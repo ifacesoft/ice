@@ -6,14 +6,13 @@ use Ice\Core;
 
 abstract class Menu extends Container
 {
-    use Core;
+    use Stored;
 
     private $items = [];
-    private $key = null;
+    private $_key = null;
 
-    private function __construct($key)
+    private function __construct()
     {
-        $this->key = $key;
     }
 
     /**
@@ -52,7 +51,11 @@ abstract class Menu extends Container
             $class = 'Ice\Menu\\' . $key;
         }
 
-        return new $class($key);
+        $menu = new $class();
+
+        $menu->_key = $key;
+
+        return $menu;
     }
 
     /**
@@ -97,29 +100,5 @@ abstract class Menu extends Container
             ];
         }
         return $this;
-    }
-
-    /**
-     * Restore object
-     *
-     * @param array $data
-     * @return object
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since 0.5
-     */
-    public static function __set_state(array $data)
-    {
-        $class = self::getClass();
-
-        $object = new $class(null);
-
-        foreach ($data as $fieldName => $fieldValue) {
-            $object->$fieldName = $fieldValue;
-        }
-
-        return $object;
     }
 }

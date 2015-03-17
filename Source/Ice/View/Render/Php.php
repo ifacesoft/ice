@@ -13,6 +13,7 @@ use Ice\Core\Action;
 use Ice\Core\Environment;
 use Ice\Core\Loader;
 use Ice\Core\Logger;
+use Ice\Core\Module;
 use Ice\Core\View;
 use Ice\Core\View_Render;
 
@@ -61,10 +62,10 @@ class Php extends View_Render
 //     */
 //    public function display($template, array $data = [], $templateType = View_Render::TEMPLATE_TYPE_FILE)
 //    {
-//        $templateFilePath = Loader::getFilePath($template, self::TEMPLATE_EXTENTION, 'Resource/', false);
+//        $templateFilePath = Loader::getFilePath($template, self::TEMPLATE_EXTENTION, Module::RESOURCE_DIR, false);
 //
 //        if (!file_exists($templateFilePath)) {
-//            if (Environment::isDevelopment()) {
+//            if (Environment::getInstance()->isDevelopment()) {
 //                View::getLogger()->info([Php::getClassName() . ': View {$0} not found. Trying generate template {$1}...', [$template, Php::getClassName()]], Logger::WARNING);
 //
 //                echo Php::getCodeGenerator()->generate($template);
@@ -94,10 +95,10 @@ class Php extends View_Render
      */
     public function fetch($template, array $data = [], $templateType = View_Render::TEMPLATE_TYPE_FILE)
     {
-        $templateFilePath = Loader::getFilePath($template, Php::TEMPLATE_EXTENTION, 'Resource/', false);
+        $templateFilePath = Loader::getFilePath($template, Php::TEMPLATE_EXTENTION, Module::RESOURCE_DIR, false);
 
         if (!file_exists($templateFilePath)) {
-            if (Environment::isDevelopment()) {
+            if (Environment::getInstance()->isDevelopment()) {
                 View::getLogger()->info([Php::getClassName() . ': View {$0} not found. Trying generate template {$1}...', [$template, Php::getClassName()]], Logger::WARNING);
 
                 return Php::getCodeGenerator()->generate($template);

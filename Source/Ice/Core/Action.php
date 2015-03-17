@@ -39,7 +39,7 @@ use Ice\Helper\Validator as Helper_Validator;
  */
 abstract class Action implements Cacheable
 {
-    use Core;
+    use Stored;
 
     /**
      * Child Actions
@@ -96,30 +96,6 @@ abstract class Action implements Cacheable
     public static function getRegistry()
     {
         return Registry::getInstance(__CLASS__, self::getClass());
-    }
-
-    /**
-     * Restore object
-     *
-     * @param array $data
-     * @return object
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since 0.5
-     */
-    public static function __set_state(array $data)
-    {
-        $class = self::getClass();
-
-        $object = new $class();
-
-        foreach ($data as $fieldName => $fieldValue) {
-            $object->$fieldName = $fieldValue;
-        }
-
-        return $object;
     }
 
     public static function call(array $input = [], $level = 0)
@@ -180,7 +156,7 @@ abstract class Action implements Cacheable
                 $subView = null;
 
                 try {
-                    $subView = $subActionClass::call($subActionParams, $newLevel);
+                    $subView = $subActionClass::call($subActionParams, $newLevel)->getContent();
                 } catch (Redirect $e) {
                     throw $e;
                 } catch (Http_Bad_Request $e) {
@@ -192,6 +168,10 @@ abstract class Action implements Cacheable
                 }
 
                 if (is_int($actionKey)) {
+                    if (!isset($output[$subActionClass::getClassName()])) {
+                        $output[$subActionClass::getClassName()] = [];
+                    }
+
                     $output[$subActionClass::getClassName()][] = $subView;
                 } else {
                     $output[$actionKey] = $subView;
@@ -199,6 +179,10 @@ abstract class Action implements Cacheable
             }
 
             $finishTimeAfter = Logger::microtimeResult($startTimeAfter);
+
+            if (Environment::getInstance()->isDevelopment()) {
+                Logger::fb('action: ' . $actionClass . ' ' . Json::encode($input) . ' [' . $finishTime . ' ' . $finishTimeAfter . ']');
+            }
 
             $action->setOutput($output);
 
@@ -208,10 +192,6 @@ abstract class Action implements Cacheable
 
             if (Request::isCli()) {
                 Action::getLogger()->info(['{$0}{$1} complete! [{$2} + {$3}]', [str_repeat("\t", $level), $actionClass::getClassName(), $finishTime, $finishTimeAfter]], Logger::MESSAGE);
-            }
-
-            if (Environment::isDevelopment()) {
-                Logger::fb('action: ' . $actionClass . ' ' . Json::encode($input) . ' [' . $finishTime . ' ' . $finishTimeAfter . ']');
             }
         }
 

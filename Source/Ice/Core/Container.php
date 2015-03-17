@@ -45,7 +45,7 @@ abstract class Container
             $postfix = strtolower(Object::getName(self::getClass()));
         }
 
-        return Ice::getEnvironment()->getProvider(self::getBaseClass(), $postfix);
+        return Environment::getInstance()->getProvider(self::getBaseClass(), $postfix);
     }
 
     public static function getClass($className = null)
@@ -134,7 +134,7 @@ abstract class Container
                 Container::getLogger()->exception(['Code generator for {$0} not found', $key], __FILE__, __LINE__, $e);
             }
 
-            if (Environment::isDevelopment()) {
+            if (Environment::getInstance()->isDevelopment()) {
                 Code_Generator::getLogger()->warning(['File {$0} not found. Trying generate {$1}...', [$key, $baseClass]], __FILE__, __LINE__, $e);
                 $baseClass::getCodeGenerator()->generate($key);
                 $object = $class::create($key, '');

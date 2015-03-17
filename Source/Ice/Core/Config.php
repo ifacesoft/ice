@@ -31,7 +31,7 @@ use Ice\Helper\Object;
  */
 class Config
 {
-    use Core;
+    use Stored;
 
     /**
      * Config params
@@ -50,25 +50,20 @@ class Config
     /**
      * Constructor of config object
      *
-     * @param array $config
-     * @param $configName
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.5
      * @since 0.0
      */
-    protected function __construct($configName, array $config)
+    protected function __construct()
     {
-        $this->_configName = $configName;
-        $this->_config = $config;
     }
 
     /**
      * Return new Config
      *
      * @param $configName
-     * @param array $config
+     * @param array $configData
      * @return Config
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -76,9 +71,16 @@ class Config
      * @version 0.5
      * @since 0.5
      */
-    public static function create($configName, array $config)
+    public static function create($configName, array $configData)
     {
-        return new Config($configName, $config);
+        $configClass = self::getClass();
+
+        $config = new $configClass();
+
+        $config->_configName = $configName;
+        $config->_config = $configData;
+
+        return $config;
     }
 
     /**
@@ -125,7 +127,7 @@ class Config
         }
 
         if ($baseClass != $class) {
-            foreach (array_reverse(Loader::getFilePath($baseClass, '.php', 'Config/', false, false, false, true)) as $configFilePath) {
+            foreach (array_reverse(Loader::getFilePath($baseClass, '.php', Module::CONFIG_DIR, false, false, false, true)) as $configFilePath) {
                 $configFromFile = File::loadData($configFilePath);
                 if (!is_array($configFromFile)) {
                     Config::getLogger()->exception(['Не валидный файл конфиг: {$0}', $configFilePath], __FILE__, __LINE__);
@@ -137,7 +139,7 @@ class Config
         }
 
         try {
-            foreach (array_reverse(Loader::getFilePath($class, '.php', 'Config/', $isRequired, false, false, true)) as $configFilePath) {
+            foreach (array_reverse(Loader::getFilePath($class, '.php', Module::CONFIG_DIR, $isRequired, false, false, true)) as $configFilePath) {
                 $configFromFile = File::loadData($configFilePath);
                 if (!is_array($configFromFile)) {
                     Config::getLogger()->exception(['Не валидный файл конфиг: {$0}', $configFilePath], __FILE__, __LINE__);
@@ -150,21 +152,6 @@ class Config
 
         return $repository->set($class, Config::create($class, $config), $ttl);
     }
-
-//    /**
-//     * Retuurn default data provider key
-//     *
-//     * @return string
-//     *
-//     * @author dp <denis.a.shestakov@gmail.com>
-//     *
-//     * @version 0.0
-//     * @since 0.0
-//     */
-//    protected static function getDefaultDataProviderKey()
-//    {
-//        return 'Ice:Registry/' . __CLASS__;
-//    }
 
     /**
      * Get config param values
@@ -294,7 +281,7 @@ class Config
     public function backup($revision)
     {
         File::move(
-            Loader::getFilePath($this->getConfigName(), '.php', 'Config/', false, true),
+            Loader::getFilePath($this->getConfigName(), '.php', Module::CONFIG_DIR, false, true),
             Loader::getFilePath($this->getConfigName() . '/' . $revision, '.php', 'Var/Backup/Config/', false, true)
         );
 
@@ -313,23 +300,7 @@ class Config
      */
     public function save()
     {
-        File::createData(Loader::getFilePath($this->getConfigName(), '.php', 'Config/', false, true), $this->_config);
+        File::createData(Loader::getFilePath($this->getConfigName(), '.php', Module::CONFIG_DIR, false, true), $this->_config);
         return $this;
-    }
-
-    /**
-     * Restore object
-     *
-     * @param array $data
-     * @return object
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since 0.5
-     */
-    public static function __set_state(array $data)
-    {
-        return new self($data['_configName'], $data['_config']);
     }
 }

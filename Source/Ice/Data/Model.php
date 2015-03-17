@@ -29,7 +29,7 @@ class Model extends Data
 
         $this->_modelClass = Model::getClass($modelClass);
 
-        foreach ($modelClass::getDataFieldTypes() as $fieldName => $columnType) {
+        foreach ($modelClass::getPlugin(Data::getClass()) as $fieldName => $columnType) {
             $this->$columnType(
                 $fieldName,
                 $modelClass::getFieldTitle($fieldName)

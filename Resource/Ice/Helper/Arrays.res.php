@@ -2,7 +2,7 @@
 return [
     'array_column() expects parameter 1 to be array, null given' => [
         'en' => 'array_column() expects parameter 1 to be array, null given',
-        'be' => 'array_column() чакае параметр 1 to be array, null given',
+        'be' => 'array_column() чакае параметр 1, каб быць масіў, нуль дадзена',
         'ca' => 'array_column() espera que el paràmetre 1 a ser matriu, null donat',
         'cs' => 'array_column() očekává, že parametr 1 jako pole, null',
         'da' => 'array_column() forventer parameter 1 være matrix, null givet',
@@ -20,12 +20,12 @@ return [
         'nl' => 'array_column() verwacht dat parameter 1 te matrix, null gegeven',
         'no' => 'array_column() forventer parameter 1 å være matrise, null gitt',
         'pt' => 'array_column() expects parameter 1 para ser matriz, null dado',
-        'ru' => 'array_column() ожидает параметр 1 to be array, null given',
+        'ru' => 'array_column() ожидает параметр 1, чтобы быть массив, нуль дано',
         'sk' => 'array_column() očakáva, že parameter 1 pole null vzhľadom',
         'sl' => 'array_column() pričakuje, parameter 1, da se matrika, NIČ dal',
-        'sq' => 'array_column() pret parametër 1 të jetë grup, null dhënë',
+        'sq' => 'array_column() pret parametër 1 të jetë grup, i PAVLEFSHËM të dhënë',
         'sv' => 'array_column() räknar parametern 1 vara matris, null ges',
         'tr' => '() array_column dizi, BOŞ verilecek parametre 1 bekliyor ',
-        'uk' => 'array_column() очікує параметр 1 to be array, null given',
+        'uk' => 'array_column() очікує параметр 1, щоб бути масив, нуль дається',
     ],
 ];

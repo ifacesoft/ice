@@ -36,13 +36,6 @@ class Ice
 {
     use Core;
 
-    /**
-     * Environment
-     *
-     * @var Environment
-     */
-    private static $_environment = null;
-
     private static $_response = null;
 
     private static $_context = null;
@@ -130,46 +123,6 @@ class Ice
     }
 
     /**
-     * Return application environment
-     *
-     * @return Environment
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since 0.5
-     */
-    public static function getEnvironment()
-    {
-        if (Ice::isEnvironment()) {
-            return Ice::$_environment;
-        }
-
-        $environmentName = null;
-
-        $host = Request::host();
-
-        foreach (Environment::getConfig(null, true, -1)->gets('environments') as $hostPattern => $name) {
-            $matches = [];
-            preg_match($hostPattern, $host, $matches);
-
-            if (!empty($matches)) {
-                $environmentName = $name;
-                break;
-            }
-        }
-
-        return Ice::$_environment = $environmentName
-            ? Environment::create($environmentName)
-            : Environment::create();
-    }
-
-    public static function isEnvironment()
-    {
-        return Ice::$_environment;
-    }
-
-    /**
      * Run executing actions
      *
      * Hierarchical call of actions
@@ -224,7 +177,7 @@ class Ice
             Ice::getResponse()->setContent($view);
         } catch (\Exception $e) {
             if (Request::isCli()) {
-                Ice::getLogger()->error('Application failed', __FILE__, __LINE__, $e);
+                Ice::getLogger()->error('Application failure', __FILE__, __LINE__, $e);
             } else {
                 $actionClass = Http_Status::getClass();
                 $view = $actionClass::call(['code' => 500, 'exception' => $e]);
@@ -234,7 +187,7 @@ class Ice
 
         Ice::getResponse()->send();
 
-        if (!Environment::isProduction()) {
+        if (!Environment::getInstance()->isProduction()) {
             Logger::renderLog();
             Logger::fb('application time: ' . Logger::getUsefulWork(true) . ' | ' .
                 'idle time: ' . Logger::microtimeResult($this->_startTime + Logger::getUsefulWork()) . ' | ' .

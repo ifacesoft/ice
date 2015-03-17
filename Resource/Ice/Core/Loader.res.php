@@ -36,5 +36,6 @@ return [
     ],
     'File {$0} exists, but class {$1} not found' => [
         'en' => 'File {$0} exists, but class {$1} not found',
+        'ru' => 'Файл {$0} существует, но класс {$1} не найден',
     ],
 ];

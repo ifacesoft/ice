@@ -147,14 +147,14 @@ class Logger
     {
         error_reporting(E_ALL | E_STRICT);
 
-        ini_set('display_errors', !Environment::isProduction());
+        ini_set('display_errors', !Environment::getInstance()->isProduction());
 
         set_error_handler('Ice\Core\Logger::errorHandler');
         register_shutdown_function('Ice\Core\Logger::shutdownHandler');
 
         ini_set('xdebug.var_display_max_depth', -1);
         ini_set('xdebug.profiler_enable', 1);
-        ini_set('xdebug.profiler_output_dir', ROOT_DIR . 'xdebug');
+        ini_set('xdebug.profiler_output_dir', Module::getInstance()->get('logDir') . 'xdebug');
 
         ob_start();
     }
@@ -243,7 +243,7 @@ class Logger
             $message = $class::getResource()->get($message, $params);
         }
 
-        $logFile = Directory::get(LOG_DIR) . date('Y-m-d') . '/INFO.log';
+        $logFile = Directory::get(Module::getInstance()->get('logDir')) . date('Y-m-d') . '/INFO.log';
         File::createData($logFile, $message . "\n", false, FILE_APPEND);
 
         Logger::fb($message, 'INFO');
@@ -260,7 +260,7 @@ class Logger
 
     public static function fb($value, $type = 'LOG')
     {
-        if (!Request::isCli() && !headers_sent()) {
+        if (!Request::isCli() && !headers_sent() && function_exists('fb')) {
             fb($value, $type);
         }
     }
@@ -334,10 +334,10 @@ class Logger
      * @param $file
      * @param $line
      * @param \Exception $e
-     * @param null $errcontext
+     * @param array|null $errcontext
      * @param int $errno
+     * @param string $exceptionClass
      * @return Exception
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
@@ -431,11 +431,13 @@ class Logger
             $var = stripslashes(Php::varToPhpString($arg));
 
             if (!Request::isAjax()) {
-                echo Request::isCli()
-                    ? fwrite(STDOUT, Console::getText($var, Console::C_CYAN) . "\n")
-                    : '<div class="alert alert-' . self::INFO . '">' . str_replace('<span style="color: #0000BB">&lt;?php&nbsp;</span>', '', highlight_string('<?php // Debug value:' . "\n" . $var . "\n", true)) . '</div>';
+                if (Request::isCli()) {
+                    fwrite(STDOUT, Console::getText($var, Console::C_CYAN) . "\n");
+                } else {
+                    echo '<div class="alert alert-' . self::INFO . '">' . str_replace('<span style="color: #0000BB">&lt;?php&nbsp;</span>', '', highlight_string('<?php // Debug value:' . "\n" . $var . "\n", true)) . '</div>';
+                }
 
-                $logFile = Directory::get(LOG_DIR) . date('Y-m-d') . '/DEBUG.log';
+                $logFile = Directory::get(Module::getInstance()->get('logDir')) . date('Y-m-d') . '/DEBUG.log';
                 File::createData($logFile, $var, false, FILE_APPEND);
             }
 
@@ -574,12 +576,12 @@ class Logger
      */
     public function log($message, $type = Logger::SUCCESS)
     {
-        if (!Environment::isProduction()) {
-            if (Request::isCli()) {
+        if (!Environment::getInstance()->isProduction()) {
+//            if (Request::isCli()) {
                 $this->info(Helper_Resource::getMessage($message), $type, false);
-            } else {
-                Logger::fb($message);
-            }
+//            } else {
+//                Logger::fb($message);
+//            }
         }
     }
 }

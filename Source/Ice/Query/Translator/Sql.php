@@ -115,7 +115,7 @@ class Sql extends Query_Translator
             return $sql;
         }
 
-        $modelMapping = $modelClass::getScheme()->getFieldMapping();
+        $fieldColumnMap = $modelClass::getFieldColumnMap();
 
         $sql .= "\n\t" . '(`' . implode('`,`', Mapping::columnNames($modelClass, $part['fieldNames'])) . '`)';
         $sql .= "\n" . self::SQL_CLAUSE_VALUES;
@@ -128,12 +128,18 @@ class Sql extends Query_Translator
             $sql .= str_repeat(',' . $values, $part['rowCount'] - 1);
         }
 
+        $fieldNames = array_diff($part['fieldNames'], $modelClass::getPkFieldNames());
+
+        if (empty($fieldNames)) {
+            $fieldNames = $part['fieldNames'];
+        }
+
         if ($update) {
             $sql .= "\n" . self::ON_DUPLICATE_KEY_UPDATE;
-            $sql .= implode(',', array_map(function ($fieldName) use ($modelMapping) {
-                $columnName = $modelMapping[$fieldName];
+            $sql .= implode(',', array_map(function ($fieldName) use ($fieldColumnMap) {
+                $columnName = $fieldColumnMap[$fieldName];
                 return "\n\t" . '`' . $columnName . '`=' . self::SQL_CLAUSE_VALUES . '(`' . $columnName . '`)';
-            }, $part['fieldNames']));
+            }, $fieldNames));
         }
 
         return $sql;
@@ -163,17 +169,17 @@ class Sql extends Query_Translator
 
         switch ($comparisonOperator) {
             case Query_Builder::SQL_COMPARISON_OPERATOR_EQUAL:
-                return '`' . $fieldName . '` ' . Query_Builder::SQL_COMPARISON_OPERATOR_EQUAL . ' ?';
+                return $tableAlias . '.' . '`' . $fieldName . '` ' . Query_Builder::SQL_COMPARISON_OPERATOR_EQUAL . ' ?';
             case Query_Builder::SQL_COMPARISON_OPERATOR_GREATER:
-                return '`' . $fieldName . '` ' . Query_Builder::SQL_COMPARISON_OPERATOR_GREATER . ' ?';
+                return $tableAlias . '.' . '`' . $fieldName . '` ' . Query_Builder::SQL_COMPARISON_OPERATOR_GREATER . ' ?';
             case Query_Builder::SQL_COMPARISON_OPERATOR_LESS:
-                return '`' . $fieldName . '` ' . Query_Builder::SQL_COMPARISON_OPERATOR_LESS . ' ?';
+                return $tableAlias . '.' . '`' . $fieldName . '` ' . Query_Builder::SQL_COMPARISON_OPERATOR_LESS . ' ?';
             case Query_Builder::SQL_COMPARISON_OPERATOR_GREATER_OR_EQUAL:
-                return '`' . $fieldName . '` ' . Query_Builder::SQL_COMPARISON_OPERATOR_GREATER_OR_EQUAL . ' ?';
+                return $tableAlias . '.' . '`' . $fieldName . '` ' . Query_Builder::SQL_COMPARISON_OPERATOR_GREATER_OR_EQUAL . ' ?';
             case Query_Builder::SQL_COMPARISON_OPERATOR_LESS_OR_EQUAL:
-                return '`' . $fieldName . '` ' . Query_Builder::SQL_COMPARISON_OPERATOR_LESS_OR_EQUAL . ' ?';
+                return $tableAlias . '.' . '`' . $fieldName . '` ' . Query_Builder::SQL_COMPARISON_OPERATOR_LESS_OR_EQUAL . ' ?';
             case Query_Builder::SQL_COMPARISON_KEYWORD_REGEXP:
-                return '`' . $fieldName . '` ' . Query_Builder::SQL_COMPARISON_KEYWORD_REGEXP . ' ?';
+                return $tableAlias . '.' . '`' . $fieldName . '` ' . Query_Builder::SQL_COMPARISON_KEYWORD_REGEXP . ' ?';
             case Query_Builder::SQL_COMPARISON_OPERATOR_NOT_EQUAL:
                 return $tableAlias . '.' . $fieldName . ' ' . Query_Builder::SQL_COMPARISON_OPERATOR_NOT_EQUAL . ' ?';
             case Query_Builder::SQL_COMPARISON_KEYWORD_IN:
@@ -192,6 +198,7 @@ class Sql extends Query_Translator
                 Sql::getLogger()->exception(['Unknown comparison operator "{$0}"', $comparisonOperator], __FILE__, __LINE__);
         }
 
+        return '';
     }
 
     /**
@@ -227,6 +234,10 @@ class Sql extends Query_Translator
 
         $sql = '';
 
+        /**
+         * @var Model $modelClass
+         * @var array $items
+         */
         foreach ($part as $modelClass => $items) {
             list($tableAlias, $fieldNames) = $items;
 
@@ -236,7 +247,7 @@ class Sql extends Query_Translator
                 $sql .= $sql
                     ? ' ' . $logicalOperator . "\n\t"
                     : "\n" . self::SQL_CLAUSE_WHERE . "\n\t";
-                $sql .= $this->buildWhere($modelClass::getScheme()->getFieldMapping(), $fieldName, $comparisonOperator, $tableAlias, $count);
+                $sql .= $this->buildWhere($modelClass::getFieldColumnMap(), $fieldName, $comparisonOperator, $tableAlias, $count);
             }
         }
 
@@ -273,13 +284,13 @@ class Sql extends Query_Translator
         foreach ($part as $modelClass => $items) {
             list($tableAlias, $fieldNames) = $items;
 
-            $modelMapping = $modelClass::getScheme()->getFieldMapping();
+            $fieldColumnMap = $modelClass::getFieldColumnMap();
 
             foreach ($fieldNames as $fieldName => &$fieldAlias) {
                 $isSpatial = (boolean)strpos($fieldName, '__geo');
 
-                if (isset($modelMapping[$fieldName])) {
-                    $fieldName = $modelMapping[$fieldName];
+                if (isset($fieldColumnMap[$fieldName])) {
+                    $fieldName = $fieldColumnMap[$fieldName];
 
                     if ($isSpatial) {
                         $fieldAlias = 'asText(' . $tableAlias . '.' . $fieldName . ')' . ' AS `' . $fieldAlias . '`';
@@ -360,13 +371,17 @@ class Sql extends Query_Translator
 
         $orders = [];
 
+        /**
+         * @var Model $modelClass
+         * @var array $item
+         */
         foreach ($part as $modelClass => $item) {
             list($tableAlias, $fieldNames) = $item;
 
-            $fields = $modelClass::getScheme()->getFieldMapping();
+            $fieldColumnMap = $modelClass::getFieldColumnMap();
 
             foreach ($fieldNames as $fieldName => $ascending) {
-                $orders[] = $tableAlias . '.' . $fields[$fieldName] . ' ' . $ascending;
+                $orders[] = $tableAlias . '.' . $fieldColumnMap[$fieldName] . ' ' . $ascending;
             }
         }
 
@@ -397,13 +412,17 @@ class Sql extends Query_Translator
 
         $groups = [];
 
+        /**
+         * @var Model $modelClass
+         * @var array $items
+         */
         foreach ($part as $modelClass => $items) {
             list(, $fieldNames) = $items;
 
-            $fields = $modelClass::getScheme()->getFieldMapping();
+            $fieldColumnMap = $modelClass::getFieldColumnMap();
 
             foreach ($fieldNames as $fieldName) {
-                $groups[] = $fields[$fieldName];
+                $groups[] = $fieldColumnMap[$fieldName];
             }
         }
 

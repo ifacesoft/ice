@@ -15,4 +15,11 @@ return [
     'Implementation {$0} is required for {$1}' => [
         'ru' => 'Implementation {$0} is required for {$1}',
     ],
+    'mysql - #1044: {$0}' => [
+        'en' => 'mysql - #1044: {$0}',
+        'ru' => 'mysql - #1044: {$0}',
+    ],
+    'mysql - #1046: {$0}' => [
+        'en' => 'mysql - #1046: {$0}',
+    ],
 ];

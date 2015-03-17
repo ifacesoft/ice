@@ -9,10 +9,12 @@
 
 namespace Ice\Code\Generator;
 
+use Ice\Class_Generator;
 use Ice\Core\Code_Generator;
 use Ice\Core\Loader;
 use Ice\Core\Logger;
 use Ice\Core\Model as Core_Model;
+use Ice\Core\Module;
 use Ice\Helper\Arrays;
 use Ice\Helper\File;
 use Ice\Helper\Object;
@@ -37,6 +39,7 @@ class Model extends Code_Generator
     /**
      * Generate code and other
      *
+     * @param $class
      * @param array $data Sended data requered for generate
      * @param bool $force Force if already generate
      * @return mixed
@@ -46,29 +49,36 @@ class Model extends Code_Generator
      * @version 0.5
      * @since 0.0
      */
-    public function generate($data, $force = false)
+    public function generate($class, $data, $force = false)
     {
-        $modelClass = Helper_Model::getModelClassByTableName($data['scheme']['tableName']);
-
-        $namespace = Object::getNamespace(Core_Model::getClass(), $modelClass);
+        $namespace = Object::getNamespace(Core_Model::getClass(), $class);
 
         $fieldNames = Arrays::column($data['columns'], 'fieldName');
 
-        $path = $namespace ? 'Source/' : 'Source/Model/';
+        $path = Module::SOURCE_DIR;
 
-        $filePath = Loader::getFilePath($modelClass, '.php', $path, false, true, true);
+        if ($namespace) {
+            $path .= 'Model/';
+        }
+
+        $filePath = Loader::getFilePath($class, '.php', $path, false, true, true);
 
         $isFileExists = file_exists($filePath);
 
         if (!$force && $isFileExists) {
-            Code_Generator::getLogger()->info(['Model {$0} already created', $modelClass]);
+            Code_Generator::getLogger()->info(['Model {$0} already created', $class]);
+            return;
+        }
+
+        if ($isFileExists) {
+            Class_Generator::create($class, Core_Model::getClass())->generate($data);
             return;
         }
 
         $data = [
             'fields' => $fieldNames,
             'namespace' => rtrim($namespace, '\\'),
-            'modelName' => Object::getName($modelClass),
+            'modelName' => Object::getName($class),
             'config' => str_replace("\n", "\n\t\t", Helper_Php::varToPhpString($data, false))
         ];
 
@@ -81,9 +91,9 @@ class Model extends Code_Generator
             : 'Model {$0} created';
 
         if ($isFileExists) {
-            Code_Generator::getLogger()->info([$message, $modelClass], Logger::SUCCESS);
+            Code_Generator::getLogger()->info([$message, $class], Logger::SUCCESS);
         }
 
-        Loader::load($modelClass);
+        Loader::load($class);
     }
 }

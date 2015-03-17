@@ -222,10 +222,12 @@ class Resources extends Action
             'css' => []
         ];
 
-        foreach (Module::getAliases() as $name) {
-            $modulePath = Module::getInstance($name)->getPath();
-            $jsResource = RESOURCE_DIR . $name . '/javascript.pack.js';
-            $cssResource = RESOURCE_DIR . $name . '/style.pack.css';
+        $compiledResourceDir = Module::getInstance()->get('compiledResourceDir');
+        
+        foreach (array_keys(Module::getAll()) as $name) {
+            $modulePath = Module::getInstance($name)->get('path');
+            $jsResource = $compiledResourceDir . $name . '/javascript.pack.js';
+            $cssResource = $compiledResourceDir . $name . '/style.pack.css';
 
             if (file_exists($jsSource = $modulePath . 'Resource/js/javascript.js')) {
                 $resources['js'][] = [
@@ -246,19 +248,19 @@ class Resources extends Action
             }
 
             if (file_exists($imgSource = $modulePath . 'Resource/img')) {
-                Directory::copy($imgSource, Directory::get(RESOURCE_DIR . 'img'));
+                Directory::copy($imgSource, Directory::get($compiledResourceDir . 'img'));
             }
             if (file_exists($fontSource = $modulePath . 'Resource/font')) {
-                Directory::copy($fontSource, Directory::get(RESOURCE_DIR . 'font'));
+                Directory::copy($fontSource, Directory::get($compiledResourceDir . 'font'));
             }
             if (file_exists($apiSource = $modulePath . 'Resource/api')) {
-                Directory::copy($apiSource, Directory::get(RESOURCE_DIR . 'api'));
+                Directory::copy($apiSource, Directory::get($compiledResourceDir . 'api'));
             }
             if (file_exists($umlSource = $modulePath . 'Resource/uml')) {
-                Directory::copy($umlSource, Directory::get(RESOURCE_DIR . 'uml'));
+                Directory::copy($umlSource, Directory::get($compiledResourceDir . 'uml'));
             }
             if (file_exists($docSource = $modulePath . 'Resource/doc')) {
-                Directory::copy($docSource, Directory::get(RESOURCE_DIR . 'doc'));
+                Directory::copy($docSource, Directory::get($compiledResourceDir . 'doc'));
             }
         }
 
@@ -266,7 +268,7 @@ class Resources extends Action
             foreach ($config as $name => $configResources) {
                 foreach ($configResources as $resourceKey => $resourceItem) {
                     $source = $from == 'modules' // else from vendors
-                        ? Module::getInstance($name)->getPath() . 'Resource/'
+                        ? Module::getInstance($name)->get('path') . 'Resource/'
                         : VENDOR_DIR . $name . '/';
 
                     $res = $from == 'modules' // else from vendors
@@ -280,11 +282,11 @@ class Resources extends Action
                     $source .= $resourceItemPath;
 
                     if ($resourceItem['isCopy']) {
-                        Directory::copy($source, Directory::get(RESOURCE_DIR . $res));
+                        Directory::copy($source, Directory::get($compiledResourceDir . $res));
                     }
 
-                    $jsResource = RESOURCE_DIR . $res . $resourceKey . '.pack.js';
-                    $cssResource = RESOURCE_DIR . $res . $resourceKey . '.pack.css';
+                    $jsResource = $compiledResourceDir . $res . $resourceKey . '.pack.js';
+                    $cssResource = $compiledResourceDir . $res . $resourceKey . '.pack.css';
 
                     foreach ($resourceItem['js'] as $resource) {
                         $resources['js'][] = [
@@ -320,13 +322,13 @@ class Resources extends Action
         $jsRes = $moduleAlias . '/js/';
         $cssRes = $moduleAlias . '/css/';
 
-        $jsResource = Directory::get(RESOURCE_DIR . $jsRes) . $jsFile;
-        $cssResource = Directory::get(RESOURCE_DIR . $cssRes) . $cssFile;
+        $jsResource = Directory::get($compiledResourceDir . $jsRes) . $jsFile;
+        $cssResource = Directory::get($compiledResourceDir . $cssRes) . $cssFile;
 
         $callStack = Ice::getContext()->getFullStack();
 
         foreach (array_keys($callStack) as $actionClass) {
-            if (file_exists($jsSource = Loader::getFilePath($actionClass, '.js', 'Resource/', false))) {
+            if (file_exists($jsSource = Loader::getFilePath($actionClass, '.js', MODULE::RESOURCE_DIR, false))) {
                 $resources['js'][] = [
                     'source' => $jsSource,
                     'resource' => $jsResource,
@@ -334,7 +336,7 @@ class Resources extends Action
                     'pack' => true
                 ];
             }
-            if (file_exists($cssSource = Loader::getFilePath($actionClass, '.css', 'Resource/', false))) {
+            if (file_exists($cssSource = Loader::getFilePath($actionClass, '.css', MODULE::RESOURCE_DIR, false))) {
                 $resources['css'][] = [
                     'source' => $cssSource,
                     'resource' => $cssResource,
@@ -348,8 +350,8 @@ class Resources extends Action
         $jsFile = 'custom.pack.js';
         $cssFile = 'custom.pack.css';
 
-        $jsResource = Directory::get(RESOURCE_DIR . $jsRes) . $jsFile;
-        $cssResource = Directory::get(RESOURCE_DIR . $cssRes) . $cssFile;
+        $jsResource = Directory::get($compiledResourceDir . $jsRes) . $jsFile;
+        $cssResource = Directory::get($compiledResourceDir . $cssRes) . $cssFile;
 
         if (!empty($input['js'])) {
             foreach ($input['js'] as $resource) {

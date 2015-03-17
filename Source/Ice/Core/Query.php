@@ -27,7 +27,7 @@ use Ice\Helper\Json;
  */
 class Query
 {
-    use Core;
+    use Stored;
 
     /**
      * Target model class
@@ -139,30 +139,6 @@ class Query
         $query->_triggers = $triggers;
 
         return $query;
-    }
-
-    /**
-     * Restore object
-     *
-     * @param array $data
-     * @return object
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since 0.5
-     */
-    public static function __set_state(array $data)
-    {
-        $class = self::getClass();
-
-        $object = new $class();
-
-        foreach ($data as $fieldName => $fieldValue) {
-            $object->$fieldName = $fieldValue;
-        }
-
-        return $object;
     }
 
     /**

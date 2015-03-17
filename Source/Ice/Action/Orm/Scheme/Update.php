@@ -4,6 +4,8 @@ use Ice\Core\Action;
 use Ice\Core\Data_Scheme;
 use Ice\Core\Data_Source;
 use Ice\Core\Logger;
+use Ice\Core\Module;
+use Ice\Data\Provider\Mongodb;
 
 class Orm_Scheme_Update extends Action
 {
@@ -68,19 +70,6 @@ class Orm_Scheme_Update extends Action
      */
     public function run(array $input)
     {
-        $output = [];
-
-        foreach (Data_Source::getConfig()->gets() as $dataSourceClass => $config) {
-            foreach ($config as $key => $schemes) {
-                foreach ((array)$schemes as $scheme) {
-                    $schemeKey = $dataSourceClass . '/' . $key . '.' . $scheme;
-                    Orm_Scheme_Update::getLogger()->info(['Updating scheme ({$0})', $schemeKey]);
-                    $output[$key . '.' . $scheme] =
-                        Data_Scheme::create($dataSourceClass . '/' . $key . '.' . $scheme)->update($input['force']);
-                }
-            }
-        }
-
-        return $output;
+        Data_Scheme::update(Module::getInstance(), $input['force']);
     }
 }

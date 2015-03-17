@@ -190,11 +190,6 @@ class Model_Scheme
         return $dataProvider->set($modelClass, new Model_Scheme($modelClass));
     }
 
-    public function getFieldScheme($fieldName)
-    {
-        return $this->getFields()[$fieldName][__CLASS__];
-    }
-
     /**
      * Return columns with their column schemes
      *
@@ -281,66 +276,6 @@ class Model_Scheme
         }
 
         return $repository->set($key, $formTypes);
-    }
-
-    /**
-     * Return validators mapping
-     *
-     * @return array
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since 0.5
-     */
-    public function getValidatorsMapping()
-    {
-        $repository = Model_Scheme::getRepository();
-        $key = $this->getModelClass() . '/validators';
-
-        if ($validators = $repository->get($key)) {
-            return $validators;
-        }
-
-        $validators = [];
-
-        $dataClass = Validator::getClass();
-
-        foreach ($this->_modelSchemeConfig->gets('fields') as $fieldName => $fieldScheme) {
-            $validators[$fieldName] = $fieldScheme[$dataClass];
-        }
-
-        return $repository->set($key, $validators);
-    }
-
-    /**
-     * Return indexes
-     *
-     * @return array
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since 0.0
-     */
-    public function getIndexes()
-    {
-        return $this->_modelSchemeConfig->gets('indexes');
-    }
-
-    /**
-     * Return primary key columns
-     *
-     * @return array
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since 0.4
-     */
-    public function getPkColumnNames()
-    {
-        return $this->getIndexes()['PRIMARY KEY']['PRIMARY'];
     }
 
     /**
