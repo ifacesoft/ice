@@ -51,9 +51,7 @@ class Action extends Code_Generator
 //        $class = Object::getClass(Action::getClass(), $data);
         $namespace = Object::getNamespace(Action::getClass(), $class);
 
-        $module = Module::getInstance(Object::getModuleAlias($this->_class));
-
-        $path = $module->get(Module::SOURCE_DIR);
+        $path = Module::SOURCE_DIR;
 
         if ($namespace) {
             $path .= 'Class/';

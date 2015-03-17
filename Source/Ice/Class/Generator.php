@@ -45,9 +45,7 @@ class Class_Generator
     {
         $namespace = Object::getNamespace($this->_baseClass, $this->_class);
 
-        $module = Module::getInstance(Object::getModuleAlias($this->_class));
-
-        $path = $module->get(Module::SOURCE_DIR);
+        $path = Module::SOURCE_DIR;
 
         if ($namespace) {
             $path .= 'Model/';

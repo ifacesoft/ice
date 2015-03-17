@@ -55,9 +55,7 @@ class Model extends Code_Generator
 
         $fieldNames = Arrays::column($data['columns'], 'fieldName');
 
-        $module = Module::getInstance(Object::getModuleAlias($class));
-
-        $path = $module->get(Module::SOURCE_DIR);
+        $path = Module::SOURCE_DIR;
 
         if ($namespace) {
             $path .= 'Model/';
