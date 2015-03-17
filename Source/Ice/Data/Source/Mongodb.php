@@ -10,6 +10,8 @@ use Ice\Core\Module;
 use Ice\Core\Query;
 use Ice\Core\Query_Result;
 use Ice\Core\Query_Translator;
+use Ice\Helper\Json;
+use Ice\Helper\String;
 use MongoCursor;
 use MongoId;
 
@@ -343,7 +345,7 @@ class Mongodb extends Data_Source
      * @return array
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.5
+     * @version 0.6
      * @since 0.4
      */
     public function getTables(Module $module)
@@ -351,11 +353,32 @@ class Mongodb extends Data_Source
         $tables = [];
 
         foreach ($this->getConnection()->getCollectionNames() as $name) {
-            $tables[$name] = [
+            $tables[$name] = [];
+
+            $data = &$tables[$name];
+
+            $data = [
+                'revision' => date('mdHi') . '_' . strtolower(String::getRandomString(2)),
+                'dataSourceKey' => $this->getDataSourceKey(),
+                'scheme' => [],
+                'schemeHash' => crc32(Json::encode([])),
+                'columns' => [],
+            ];
+
+            $dataScheme = &$data['scheme'];
+            $dataScheme = [
+                'tableName' => $name,
                 'engine' => 'MongoDB',
                 'charset' => 'utf-8',
                 'comment' => $name
             ];
+            $data['schemeHash'] = crc32(Json::encode($dataScheme));
+
+            $data['indexes'] = [];
+            $data['indexesHash'] = crc32(Json::encode($data['indexes']));
+
+            $data['columns'] = [];
+            $data['columnsHash'] = crc32(Json::encode($data['columns']));
         }
 
         return $tables;

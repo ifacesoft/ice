@@ -12,6 +12,7 @@ namespace Ice\Core;
 use Composer\Autoload\ClassLoader;
 use Ice;
 use Ice\Core;
+use Ice\Data\Provider\Repository;
 use Ice\Exception\File_Not_Found;
 use Ice\Helper\Object;
 
@@ -43,6 +44,11 @@ class Loader
     private static $_loader = null;
 
     private static $_forceLoading = null;
+
+    /**
+     * @var Repository
+     */
+    private static $_repository = null;
     /**
      * Load class
      *
@@ -61,10 +67,7 @@ class Loader
             return true;
         }
 
-        /** @var Data_Provider $dataProvider */
-        $dataProvider = Loader::getDataProvider();
-
-        $fileName = $dataProvider->get($class);
+        $fileName = self::$_repository->get($class);
         if ($fileName) {
             require_once $fileName;
             return true;
@@ -76,7 +79,7 @@ class Loader
             require_once $fileName;
 
             if (class_exists($class, false) || interface_exists($class, false) || trait_exists($class, false)) {
-                $dataProvider->set($class, $fileName);
+                self::$_repository->set($class, $fileName);
                 return true;
             }
 
@@ -211,6 +214,8 @@ class Loader
     {
         self::$_loader = $loader;
         self::$_forceLoading = $forceLoading;
+
+        self::$_repository = Loader::getRepository();
 
         spl_autoload_unregister([$loader, 'loadClass']);
 

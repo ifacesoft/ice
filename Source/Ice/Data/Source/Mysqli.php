@@ -444,8 +444,8 @@ class Mysqli extends Data_Source
                 $data = &$tables[$table['TABLE_NAME']];
 
                 $data = [
-                    'revision' => date('mdHi') . '_' . String::getRandomString(2),
-                    'dataSourceKey' => /*$module->get('type') == 'module' ? null : */$this->getDataSourceKey(),
+                    'revision' => date('mdHi') . '_' . strtolower(String::getRandomString(2)),
+                    'dataSourceKey' => $this->getDataSourceKey(),
                     'scheme' => [],
                     'schemeHash' => crc32(Json::encode([])),
                     'columns' => [],

@@ -112,7 +112,7 @@ class Resource
         $locale = Request::locale();
 
         if (!isset($resource[$message]) || !isset($resource[$message][$locale])) {
-            $resource = $class::getResource();
+            $resource = Resource::create($class);
             $resource->set(rtrim($message, ';'));
             $resource = $resource->_resource;
         }

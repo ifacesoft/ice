@@ -84,7 +84,8 @@ class Module extends Config
      * @version 0.6
      * @since 0.0
      */
-    public static function getAll() {
+    public static function getAll()
+    {
         if (self::$_modules === null) {
             self::$_modules = [];
 
@@ -169,7 +170,8 @@ class Module extends Config
      */
     public function getDataSourcePrefixes($dataSourceKey)
     {
-        return $this->gets(Data_Source::getClass() . '/' . $dataSourceKey);
+        $dataSources = $this->getDataSources();
+        return (array)$dataSources[$dataSourceKey];
     }
 
     /**
@@ -214,6 +216,11 @@ class Module extends Config
         return rtrim($modelName, '_');
     }
 
+    public function getDataSources()
+    {
+        return $this->gets(Data_Source::getClass());
+    }
+
     public function getDataSourceTables()
     {
         $tables = [];
@@ -227,6 +234,11 @@ class Module extends Config
 
     public function getDataSourceKeys()
     {
-        return array_keys($this->gets(Data_Source::getClass()));
+        return array_keys($this->getDataSources());
+    }
+
+    public function getAlias()
+    {
+        return $this->getConfigName();
     }
 }

@@ -75,6 +75,8 @@ class Serializer
             return $serializer;
         }
 
+        return self::SERIALIZER_JSON;
+
         return function_exists('igbinary_serialize')
             ? self::SERIALIZER_IGBINARY
             : self::SERIALIZER_DEFAULT;
