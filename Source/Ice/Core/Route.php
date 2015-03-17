@@ -31,7 +31,7 @@ use Ice\View\Render\Replace;
  */
 class Route extends Container
 {
-    use Cache_Stored;
+    use Stored;
 
     /**
      * Route name
@@ -105,7 +105,7 @@ class Route extends Container
 
         $routeFilePathes = [];
 
-        foreach (Module::get() as $moduleConfig) {
+        foreach (Module::getInstance() as $moduleConfig) {
             $routeFilePathes[$moduleConfig['context']] = $moduleConfig['path'] . 'Config/Ice/Core/Route.php';
         }
 
@@ -142,7 +142,7 @@ class Route extends Container
 
                     $class = 'Ice\Core\\' . substr(strstr($routeFilePath, '.php', true), strrpos($routeFilePath, '/') + 1);
 
-                    foreach (Loader::getFilePath($class . '' . $routeName, '.php', 'Config/', true, false, false, true) as $configFilePath) {
+                    foreach (Loader::getFilePath($class . '' . $routeName, '.php', Module::CONFIG_DIR, true, false, false, true) as $configFilePath) {
                         $configFilePathes[$context . $route] = $configFilePath;
                     }
 

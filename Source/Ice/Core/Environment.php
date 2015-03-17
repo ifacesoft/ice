@@ -25,10 +25,8 @@ use Ice\Helper\Config as Helper_Config;
  * @package Ice
  * @subpackage Core
  */
-class Environment
+class Environment extends Config
 {
-    use Cache_Stored;
-
     const PRODUCTION = 'production';
     const TEST = 'test';
     const DEVELOPMENT = 'development';
@@ -36,38 +34,24 @@ class Environment
     private static $_instance = null;
 
     /**
-     * Environment config params
+     * Return application environment
      *
-     * @var array
-     */
-    private $_environment = [];
-
-    /**
-     * Environment name (production|test|development)
+     * @param string $environmentName
+     * @param null $postfix
+     * @param bool $isRequired
+     * @param null $ttl
+     * @return Environment
      *
-     * @var string
-     */
-    private $_environmentName = null;
-
-    /**
-     * Protected constructor of environment object
-     *
-     * @param $environmentName string Name of environment (production|test|development)
-     *
-     * @param array $environment
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.5
-     * @since 0.0
+     * @since 0.5
      */
-    private function __construct($environmentName, $environment)
+    public static function getInstance($environmentName = Environment::PRODUCTION, $postfix = null, $isRequired = false, $ttl = null)
     {
-        $this->_environmentName = $environmentName;
-        $this->_environment = $environment;
-    }
-
-    public static function init() {
-        $environmentName = null;
+        if (Environment::$_instance !== null) {
+            return Environment::$_instance;
+        }
 
         $host = Request::host();
 
@@ -81,24 +65,20 @@ class Environment
             }
         }
 
-        return Environment::$_instance = $environmentName
-            ? Environment::create($environmentName)
-            : Environment::create();
-    }
+        $environment = [];
 
-    /**
-     * Return application environment
-     *
-     * @return Environment
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since 0.5
-     */
-    public static function getInstance()
-    {
-            return Environment::$_instance;
+        foreach (Environment::getConfig()->gets() as $name => $config) {
+            if ($name == 'environments') {
+                continue;
+            }
+
+            $environment = array_merge_recursive($config, $environment);
+            if ($name == $environmentName) {
+                break;
+            }
+        }
+
+        return Environment::$_instance = Environment::create($environmentName, $environment);
     }
 
     /**
@@ -113,7 +93,7 @@ class Environment
      */
     public function isDevelopment()
     {
-        return Environment::getInstance()->getEnvironmentName() == Environment::DEVELOPMENT;
+        return $this->getConfigName() == Environment::DEVELOPMENT;
     }
 
     /**
@@ -128,35 +108,7 @@ class Environment
      */
     public function isProduction()
     {
-        return Environment::getInstance()->getEnvironmentName() == Environment::PRODUCTION;
-    }
-
-    /**
-     * Create new instance of environment
-     *
-     * @param $environmentName
-     * @return Environment
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since 0.0
-     */
-    public static function create($environmentName = Environment::PRODUCTION)
-    {
-        $environment = [];
-
-        foreach (Environment::getConfig()->gets() as $name => $config) {
-            if ($name == 'environments') {
-                continue;
-            }
-
-            $environment = array_merge_recursive($config, $environment);
-            if ($name == $environmentName) {
-                break;
-            }
-        }
-
-        return new Environment($environmentName, $environment);
+        return $this->getConfigName() == Environment::PRODUCTION;
     }
 
     /**
@@ -202,57 +154,5 @@ class Environment
         return is_array($dataProviderKey)
             ? reset($dataProviderKey)
             : $dataProviderKey;
-    }
-
-    /**
-     * Environment config param value (one (first) value)
-     *
-     * @param string|null $key
-     * @param bool $isRequired
-     * @throws Exception
-     * @return string
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since 0.0
-     */
-    public function get($key = null, $isRequired = true)
-    {
-        $params = $this->gets($key, $isRequired);
-
-        return empty($params) ? null : reset($params);
-    }
-
-    /**
-     * Environment config param values
-     *
-     * @param string|null $key
-     * @param bool $isRequired
-     * @return array
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since 0.0
-     */
-    public function gets($key = null, $isRequired = true)
-    {
-        return Helper_Config::gets($this->_environment, $key, $isRequired);
-    }
-
-    /**
-     * Return current environment name
-     *
-     * @return string
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function getEnvironmentName()
-    {
-        return $this->_environmentName;
     }
 }

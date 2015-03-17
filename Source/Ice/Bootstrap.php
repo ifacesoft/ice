@@ -53,15 +53,11 @@ class Bootstrap
         date_default_timezone_set('UTC');
 
         try {
-            Module::init();
+            require_once Module::getInstance('Ice')->get('sourceDir') . 'Ice/Core/Data/Provider.php';
+            require_once Module::getInstance('Ice')->get('sourceDir') . 'Ice/Core/View/Render.php';
 
-            require_once Module::getInstance('Ice')->getSourceDir() . 'Ice/Core/Cache/Stored.php';
-            require_once Module::getInstance('Ice')->getSourceDir() . 'Ice/Core/Data/Provider.php';
-            require_once Module::getInstance('Ice')->getSourceDir() . 'Ice/Core/View/Render.php';
-
-            Environment::init();
-            Logger::init();
             Loader::init($loader, $force);
+            Logger::init();
             Request::init();
 
             if (Request::isOptions()) {

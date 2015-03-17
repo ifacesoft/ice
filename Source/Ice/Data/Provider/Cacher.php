@@ -230,15 +230,15 @@ class Cacher extends Data_Provider
      */
     protected function connect(&$connection)
     {
-        $environment = Environment::getInstance();
-
-        if (!$environment || $environment->isDevelopment()) {
-            return $connection = Registry::getInstance($this->getKey(), $this->getIndex());
-        }
-
-        if (!$environment->isProduction()) {
-            return $connection = File::getInstance($this->getKey(), $this->getIndex());
-        }
+//        $environment = Environment::getInstance();
+//
+//        if (!$environment || $environment->isDevelopment()) {
+//            return $connection = Registry::getInstance($this->getKey(), $this->getIndex());
+//        }
+//
+//        if (!$environment->isProduction()) {
+//            return $connection = File::getInstance($this->getKey(), $this->getIndex());
+//        }
 
         /** @var Data_Provider $dataProviderClass */
         $dataProviderClass = class_exists('Redis', false)

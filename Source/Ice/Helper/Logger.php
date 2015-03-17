@@ -146,7 +146,7 @@ class Logger
         $output['errcontext'] = $errcontext;
         $output['stackTrace'] = $exception->getTraceAsString();
 
-        $logFile = Directory::get(Module::getInstance()->getLogDir()) . date('Y-m-d') . '/' . Core_Logger::$errorCodes[$exception->getCode()] . '.log';
+        $logFile = Directory::get(Module::getInstance()->get('logDir') . date('Y-m-d')) . Core_Logger::$errorCodes[$exception->getCode()] . '.log';
 
         File::createData($logFile, View_Render_Php::getInstance()->fetch(Core_Logger::getClass() . '/File', $output), false, FILE_APPEND);
     }

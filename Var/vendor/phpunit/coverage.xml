@@ -1289,7 +1289,7 @@
         <metrics loc="192" ncloc="95" classes="1" methods="7" coveredmethods="5" conditionals="0" coveredconditionals="0" statements="37" coveredstatements="23" elements="44" coveredelements="28"/>
       </file>
       <file name="/home/dp/PhpstormProjects/ifs/Ice/Source/Ice/Core/Cache/Stored.php">
-        <class name="Cache_Stored" namespace="Ice\Core" fullPackage="Cache">
+        <class name="Stored" namespace="Ice\Core" fullPackage="Cache">
           <metrics methods="1" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="6" coveredstatements="0" elements="7" coveredelements="0"/>
         </class>
         <line num="22" type="method" name="__set_state" crap="6" count="0"/>

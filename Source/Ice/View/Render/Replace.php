@@ -11,6 +11,7 @@ namespace Ice\View\Render;
 
 use Ice\Core\Action;
 use Ice\Core\Loader;
+use Ice\Core\Module;
 use Ice\Core\View_Render;
 
 /**
@@ -63,7 +64,7 @@ class Replace extends View_Render
 
         if ($templateType == View_Render::TEMPLATE_TYPE_FILE) {
             $template = str_replace(['_', '\\'], '/', $template);
-            $template = file_get_contents(Loader::getFilePath($template, self::TEMPLATE_EXTENTION, 'Resource/'));
+            $template = file_get_contents(Loader::getFilePath($template, self::TEMPLATE_EXTENTION, Module::RESOURCE_DIR));
         }
 
         if (empty($data)) {

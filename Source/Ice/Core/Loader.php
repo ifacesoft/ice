@@ -70,7 +70,7 @@ class Loader
             return true;
         }
 
-        $fileName = self::getFilePath($class, '.php', 'Source/', $isRequired);
+        $fileName = self::getFilePath($class, '.php', Module::SOURCE_DIR, $isRequired);
 
         if (file_exists($fileName)) {
             require_once $fileName;
@@ -125,19 +125,21 @@ class Loader
         $fullStackPathes = [];
         $matchedPathes = [];
 
-        $modulePathes = Module::getPathes();
+            $modules = $isOnlyFirst
+            ? [Module::getInstance(Object::getModuleAlias($class))]
+            : Module::getAll();
 
-        if ($isOnlyFirst) {
-            $modulePathes = [$modulePathes[Object::getModuleAlias($class)]];
-        }
+        foreach ($modules as $module) {
+            $typePathes = $module->gets($path, false);
 
-        foreach ($modulePathes as $modulePath) {
-            $typePathes = [$path];
+            if (empty($typePathes)) {
+                $typePathes = [$path];
+            }
 
             $filePath = str_replace(['_', '\\'], '/', $class);
 
             foreach ($typePathes as $typePath) {
-                $fileName = $modulePath . $typePath . $filePath . $ext;
+                $fileName = $typePath . $filePath . $ext;
 
                 $fullStackPathes[] = $fileName;
 
@@ -155,7 +157,7 @@ class Loader
 
         if ($isRequired) {
             if (!$allMatchedPathes || empty($matchedPathes)) {
-                if ($fileName = self::$_loader->findFile($class)) {
+                if (self::$_loader && $fileName = self::$_loader->findFile($class)) {
                     if (!$allMatchedPathes) {
                         return $fileName;
                     }
@@ -205,7 +207,7 @@ class Loader
         }
     }
 
-    public static function init($loader, $forceLoading = false)
+    public static function init(ClassLoader $loader, $forceLoading = false)
     {
         self::$_loader = $loader;
         self::$_forceLoading = $forceLoading;

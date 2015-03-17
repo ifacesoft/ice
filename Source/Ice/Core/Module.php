@@ -11,6 +11,7 @@ namespace Ice\Core;
 
 use Ice;
 use Ice\Core;
+use Ice\Helper\Directory;
 use Ice\Helper\File;
 use Ice\Helper\String;
 
@@ -26,11 +27,18 @@ use Ice\Helper\String;
  * @package Ice
  * @subpackage Core
  */
-class Module
+class Module extends Config
 {
-    use Core;
-
-    private static $_instance = null;
+    const CONFIG_DIR = 'configDir';
+    const SOURCE_DIR = 'sourceDir';
+    const RESOURCE_DIR = 'resourceDir';
+    const RESOURCE_JS_DIR = 'resourceJsDir';
+    const RESOURCE_CSS_DIR = 'resourceCssDir';
+    const LOG_DIR = 'logDir';
+    const CACHE_DIR = 'cacheDir';
+    const UPLOAD_DIR = 'uploadDir';
+    const DOWNLOAD_DIR = 'downloadDir';
+    const COMPILED_RESOURCE_DIR = 'compiledResourceDir';
 
     /**
      * All available modules
@@ -40,188 +48,116 @@ class Module
     private static $_modules = null;
 
     /**
-     * All module aliases
-     *
-     * @var array
-     */
-    private static $_aliases = null;
-
-    /**
-     * All module pathes
-     *
-     * @var array
-     */
-    private static $_pathes = null;
-
-    /**
-     * Main module alias
-     *
-     * @var string
-     */
-    private $_moduleAlias = null;
-
-    /**
-     * Main module
-     *
-     * @var Module
-     */
-    private $_module = null;
-
-    /**
-     * Private constructor of module
-     *
-     * @param $moduleAlias
-     * @param $module
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    private function __construct($moduleAlias, $module)
-    {
-        $this->_moduleAlias = $moduleAlias;
-        $this->_module = $module;
-    }
-
-    /**
-     * Create new instance of module
-     *
-     * @param $moduleAlias
-     * @return Module
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since 0.0
-     */
-    public static function getInstance($moduleAlias = null)
-    {
-        if (!$moduleAlias) {
-            $moduleAlias = Module::getDefaultKey();
-        }
-
-        if (isset(Module::$_instance[$moduleAlias])) {
-            return Module::$_instance[$moduleAlias];
-        }
-
-        return Module::$_instance[$moduleAlias] = new Module($moduleAlias, self::get($moduleAlias));
-    }
-
-    public static function init()
-    {
-        if (self::$_modules !== null) {
-            return;
-        }
-
-        self::$_modules = [];
-
-        Module::loadConfig('', '', self::$_modules, MODULE_CONFIG_PATH);
-
-//            $iceModuleConfig = File::loadData(ICE_DIR . 'Config/Ice/Core/Module.php')['module'];
-//            $iceModuleConfig['path'] = ICE_DIR;
-//            $iceModuleConfig['context'] = '/ice';
-//
-//            self::$_modules['Ice'] = $iceModuleConfig;
-    }
-
-    /**
-     * Get module by module alias
+     * Get module instance by module alias
      *
      * @param string $moduleAlias
-     * @return array
+     * @param null $postfix
+     * @param bool $isRequired
+     * @param null $ttl
+     * @return Module
+     * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.6
      * @since 0.0
      */
-    public static function get($moduleAlias = null)
+    public static function getInstance($moduleAlias = null, $postfix = null, $isRequired = false, $ttl = null)
     {
-        if ($moduleAlias && !isset(self::$_modules[$moduleAlias])) {
+        $modules = Module::getAll();
+
+        if (!$moduleAlias) {
+            return reset($modules);
+        }
+
+        if (!isset($modules[$moduleAlias])) {
             Module::getLogger()->exception(['Module alias {$0} not found in module config files', $moduleAlias], __FILE__, __LINE__);
         }
 
-        return empty($moduleAlias) ? self::$_modules : self::$_modules[$moduleAlias];
+        return $modules[$moduleAlias];
+    }
+
+    /**
+     * Return array of Modules
+     *
+     * @return Module[]
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.6
+     * @since 0.0
+     */
+    public static function getAll() {
+        if (self::$_modules === null) {
+            self::$_modules = [];
+
+            Module::loadConfig('', '', self::$_modules, MODULE_CONFIG_PATH);
+        }
+
+        return self::$_modules;
     }
 
     /**
      * Load module configs
      *
      * @param $vendor
-     * @param string $configFilePath
      * @param string $context
      * @param array $modules
      *
+     * @param string $configFilePath
+     * @throws \ErrorException
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.2
+     * @version 0.6
      * @since 0.0
      */
     private static function loadConfig($vendor, $context, array &$modules = [], $configFilePath = 'Config/Ice/Core/Module.php')
     {
-        $moduleDir = $vendor
+        $modulePath = $vendor
             ? VENDOR_DIR . $vendor . '/'
             : MODULE_DIR;
 
-        $configPath = $moduleDir . $configFilePath;
+        $configPath = $modulePath . $configFilePath;
 
         $moduleConfig = File::loadData($configPath);
 
         if (!$moduleConfig) {
-            return;
+            throw new \ErrorException('Module loading failed. File ' . $configPath . ' not found');
         }
 
-        $moduleConfig['module']['path'] = $moduleDir;
-        $moduleConfig['module']['context'] = $context;
+        $module = $moduleConfig['module'];
+
+        $module['path'] = $modulePath;
+
+        $dirs = [
+            MODULE::CONFIG_DIR,
+            MODULE::SOURCE_DIR,
+            MODULE::RESOURCE_DIR,
+            MODULE::RESOURCE_JS_DIR,
+            MODULE::RESOURCE_CSS_DIR,
+            MODULE::LOG_DIR,
+            MODULE::CACHE_DIR,
+            MODULE::UPLOAD_DIR,
+            MODULE::DOWNLOAD_DIR,
+            MODULE::COMPILED_RESOURCE_DIR
+        ];
+
+        foreach ($dirs as $dir) {
+            $module[$dir] = Directory::get($modulePath . $module[$dir]);
+        }
+
+        $module['context'] = $context;
 
         if (isset($modules[$moduleConfig['alias']])) {
             unset($modules[$moduleConfig['alias']]);
-            $modules[$moduleConfig['alias']] = $moduleConfig['module'];
+            $modules[$moduleConfig['alias']] = Module::create($moduleConfig['alias'], $module);
             return;
         }
 
-        $modules[$moduleConfig['alias']] = $moduleConfig['module'];
+        $modules[$moduleConfig['alias']] = Module::create($moduleConfig['alias'], $module);
 
         foreach ($moduleConfig['vendors'] as $vendor => $context) {
             Module::loadConfig($vendor, $context, $modules);
         }
-    }
-
-    /**
-     * Return module aliases
-     *
-     * @return array
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public static function getAliases()
-    {
-        return self::$_aliases === null
-            ? self::$_aliases = array_keys(self::get())
-            : self::$_aliases;
-    }
-
-    /**
-     * Return module pathes
-     *
-     * @return array
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public static function getPathes()
-    {
-        return self::$_pathes === null
-            ? self::$_pathes = array_map(
-                function ($module) {
-                    return is_array($module['path']) ? reset($module['path']) : $module['path'];
-                }, Module::get())
-            : self::$_pathes;
     }
 
     /**
@@ -232,73 +168,12 @@ class Module
      * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.5
+     * @version 0.6
      * @since 0.5
      */
     public function getDataSourcePrefixes($dataSourceKey)
     {
-        if (!isset($this->_module[Data_Source::getClass()]) || !isset($this->_module[Data_Source::getClass()][$dataSourceKey])) {
-            Module::getLogger()->exception(
-                ['Data source prefixes for data source {$0} not found.', $dataSourceKey],
-                __FILE__,
-                __LINE__,
-                null,
-                $this->_module
-            );
-        }
-
-        return (array)$this->_module[Data_Source::getClass()][$dataSourceKey];
-    }
-
-    public function getType()
-    {
-        return $this->_module['type'];
-    }
-
-    /**
-     * Return main module path
-     *
-     * @return string
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function getPath()
-    {
-        return is_array($this->_module['path']) ? reset($this->_module['path']) : $this->_module['path'];
-    }
-
-    /**
-     * Return main module path
-     *
-     * @return string
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function getAlias()
-    {
-        return $this->_moduleAlias;
-    }
-
-    /**
-     * Return default module alias key
-     *
-     * @return mixed
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    protected static function getDefaultKey()
-    {
-        $aliases = self::getAliases();
-        return reset($aliases);
+        return $this->gets(Data_Source::getClass() . '/' . $dataSourceKey);
     }
 
     /**
@@ -343,11 +218,6 @@ class Module
         return rtrim($modelName, '_');
     }
 
-    public function getName()
-    {
-        return $this->_module['name'];
-    }
-
     public function getDataSourceTables()
     {
         $tables = [];
@@ -361,51 +231,6 @@ class Module
 
     public function getDataSourceKeys()
     {
-        if (!isset($this->_module[Data_Source::getClass()])) {
-            Module::getLogger()->exception(
-                'Data source keys not found.',
-                __FILE__,
-                __LINE__,
-                null,
-                $this->_module
-            );
-        }
-
-        return array_keys((array)$this->_module[Data_Source::getClass()]);
-    }
-
-    public function getLogDir()
-    {
-        return realpath($this->getPath() . $this->_module['logDir']) . '/';
-    }
-
-    public function getSourceDir()
-    {
-        return realpath($this->getPath() . $this->_module['sourceDir']) . '/';
-    }
-
-    public function getResourceDir()
-    {
-        return realpath($this->getPath() . $this->_module['resourceDir']) . '/';
-    }
-
-    public function getCompiledResourceDir()
-    {
-        return realpath($this->getPath() . $this->_module['compiledResourceDir']) . '/';
-    }
-
-    public function getCacheDir()
-    {
-        return realpath($this->getPath() . $this->_module['cacheDir']) . '/';
-    }
-
-    public function getUploadDir()
-    {
-        return realpath($this->getPath() . $this->_module['uploadDir']) . '/';
-    }
-
-    public function getDownloadDir()
-    {
-        return realpath($this->getPath() . $this->_module['downloadDir']) . '/';
+        return array_keys($this->gets(Data_Source::getClass()));
     }
 }

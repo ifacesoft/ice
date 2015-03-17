@@ -258,7 +258,8 @@ class File extends Data_Provider
         $options = $this->getOptions(__CLASS__);
 
         if (!isset($options['path'])) {
-            $options['path'] = Module::getInstance()->getCacheDir();        }
+            $options['path'] = Module::getInstance()->get('cacheDir');
+        }
 
         $connection = $options['path'];
         return (bool)$connection;

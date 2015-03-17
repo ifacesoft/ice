@@ -13,6 +13,7 @@ use Ice\Core\Action;
 use Ice\Core\Environment;
 use Ice\Core\Loader;
 use Ice\Core\Logger;
+use Ice\Core\Module;
 use Ice\Core\View;
 use Ice\Core\View_Render;
 
@@ -61,7 +62,7 @@ class Php extends View_Render
 //     */
 //    public function display($template, array $data = [], $templateType = View_Render::TEMPLATE_TYPE_FILE)
 //    {
-//        $templateFilePath = Loader::getFilePath($template, self::TEMPLATE_EXTENTION, 'Resource/', false);
+//        $templateFilePath = Loader::getFilePath($template, self::TEMPLATE_EXTENTION, Module::RESOURCE_DIR, false);
 //
 //        if (!file_exists($templateFilePath)) {
 //            if (Environment::getInstance()->isDevelopment()) {
@@ -94,7 +95,7 @@ class Php extends View_Render
      */
     public function fetch($template, array $data = [], $templateType = View_Render::TEMPLATE_TYPE_FILE)
     {
-        $templateFilePath = Loader::getFilePath($template, Php::TEMPLATE_EXTENTION, 'Resource/', false);
+        $templateFilePath = Loader::getFilePath($template, Php::TEMPLATE_EXTENTION, Module::RESOURCE_DIR, false);
 
         if (!file_exists($templateFilePath)) {
             if (Environment::getInstance()->isDevelopment()) {

@@ -27,7 +27,7 @@ use Ice\Helper\Json;
  */
 class Query
 {
-    use Cache_Stored;
+    use Stored;
 
     /**
      * Target model class

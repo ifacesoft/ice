@@ -3,8 +3,8 @@
   "description": "Ice Open Source PHP Framework",
   "homepage": "http://iceframework.net",
   "type": "library",
-  "keywords": ["ice", "framework", "orm", "http", "web", "database", "mysql", "mongodb"],
-  "minimum-stability": "dev",
+  "keywords": ["ice", "framework", "orm", "http", "web", "database", "mysql", "mongodb", "iceframework", "ifacesoft"],
+  "minimum-stability": "stable",
   "license": "BSD ICE",
   "authors": [
     {
@@ -19,7 +19,9 @@
     "psr-4": {"Ice\\": "Source/Ice/"}
   },
   "require": {
-    "php": ">=5.5.0"
+    "php": ">=5.5.0",
+    "twig/twig": "1.*",
+    "smarty/smarty": "3.1.*"
   },
   "require-dev": {
     "firephp/firephp-core": "dev-master",

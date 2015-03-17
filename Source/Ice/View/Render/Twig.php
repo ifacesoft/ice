@@ -71,12 +71,12 @@ class Twig extends View_Render
 
         $templateDirs = [];
 
-        foreach (Module::get() as $module) {
+        foreach (Module::getInstance() as $module) {
             $templateDirs[] = $module['path'] . 'Resource';
         }
 
         $loader = new \Twig_Loader_Filesystem($templateDirs);
-        $this->_fileTwig = new \Twig_Environment($loader, ['cache' =>Module::getInstance()->getCacheDir() . $config->get('cache')]);
+        $this->_fileTwig = new \Twig_Environment($loader, ['cache' =>Module::getInstance()->get('cacheDir') . $config->get('cache')]);
         $this->_stringTwig = new \Twig_Environment(new \Twig_Loader_String());
     }
 

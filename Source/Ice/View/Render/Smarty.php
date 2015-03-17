@@ -63,12 +63,12 @@ class Smarty extends View_Render
 
         $templateDirs = [];
 
-        foreach (Module::get() as $module) {
+        foreach (Module::getInstance() as $module) {
             $templateDirs[] = $module['path'] . 'Resource';
         }
 
         $this->_smarty->setTemplateDir($templateDirs);
-        $this->_smarty->setCompileDir(Module::getInstance()->getCacheDir() . $config->get('templates_c'));
+        $this->_smarty->setCompileDir(Module::getInstance()->get('cacheDir') . $config->get('templates_c'));
         $this->_smarty->addPluginsDir($config->gets('plugins', false));
 //        $this->_smarty->setCacheDir('/web/www.example.com/smarty/cache');
 //        $this->_smarty->setConfigDir('/web/www.example.com/smarty/configs');

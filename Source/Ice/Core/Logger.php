@@ -9,7 +9,6 @@
 
 namespace Ice\Core;
 
-use FirePHP;
 use Ice;
 use Ice\Core;
 use Ice\Helper\Console;
@@ -155,7 +154,7 @@ class Logger
 
         ini_set('xdebug.var_display_max_depth', -1);
         ini_set('xdebug.profiler_enable', 1);
-        ini_set('xdebug.profiler_output_dir', Module::getInstance()->getLogDir() . 'xdebug');
+        ini_set('xdebug.profiler_output_dir', Module::getInstance()->get('logDir') . 'xdebug');
 
         ob_start();
     }
@@ -244,7 +243,7 @@ class Logger
             $message = $class::getResource()->get($message, $params);
         }
 
-        $logFile = Directory::get(Module::getInstance()->getLogDir()) . date('Y-m-d') . '/INFO.log';
+        $logFile = Directory::get(Module::getInstance()->get('logDir')) . date('Y-m-d') . '/INFO.log';
         File::createData($logFile, $message . "\n", false, FILE_APPEND);
 
         Logger::fb($message, 'INFO');
@@ -261,11 +260,8 @@ class Logger
 
     public static function fb($value, $type = 'LOG')
     {
-        if (!Request::isCli() && !headers_sent()) {
-            $instance = FirePHP::getInstance(true);
-
-            $args = func_get_args();
-            return call_user_func_array(array($instance, 'fb'), $args);
+        if (!Request::isCli() && !headers_sent() && function_exists('fb')) {
+            fb($value, $type);
         }
     }
 
@@ -441,7 +437,7 @@ class Logger
                     echo '<div class="alert alert-' . self::INFO . '">' . str_replace('<span style="color: #0000BB">&lt;?php&nbsp;</span>', '', highlight_string('<?php // Debug value:' . "\n" . $var . "\n", true)) . '</div>';
                 }
 
-                $logFile = Directory::get(Module::getInstance()->getLogDir()) . date('Y-m-d') . '/DEBUG.log';
+                $logFile = Directory::get(Module::getInstance()->get('logDir')) . date('Y-m-d') . '/DEBUG.log';
                 File::createData($logFile, $var, false, FILE_APPEND);
             }
 
@@ -582,7 +578,7 @@ class Logger
     {
         if (!Environment::getInstance()->isProduction()) {
 //            if (Request::isCli()) {
-            $this->info(Helper_Resource::getMessage($message), $type, false);
+                $this->info(Helper_Resource::getMessage($message), $type, false);
 //            } else {
 //                Logger::fb($message);
 //            }

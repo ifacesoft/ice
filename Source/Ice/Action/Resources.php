@@ -222,10 +222,10 @@ class Resources extends Action
             'css' => []
         ];
 
-        $compiledResourceDir = Module::getInstance()->getCompiledResourceDir();
+        $compiledResourceDir = Module::getInstance()->get('compiledResourceDir');
         
-        foreach (Module::getAliases() as $name) {
-            $modulePath = Module::getInstance($name)->getPath();
+        foreach (array_keys(Module::getAll()) as $name) {
+            $modulePath = Module::getInstance($name)->get('path');
             $jsResource = $compiledResourceDir . $name . '/javascript.pack.js';
             $cssResource = $compiledResourceDir . $name . '/style.pack.css';
 
@@ -268,7 +268,7 @@ class Resources extends Action
             foreach ($config as $name => $configResources) {
                 foreach ($configResources as $resourceKey => $resourceItem) {
                     $source = $from == 'modules' // else from vendors
-                        ? Module::getInstance($name)->getPath() . 'Resource/'
+                        ? Module::getInstance($name)->get('path') . 'Resource/'
                         : VENDOR_DIR . $name . '/';
 
                     $res = $from == 'modules' // else from vendors
@@ -328,7 +328,7 @@ class Resources extends Action
         $callStack = Ice::getContext()->getFullStack();
 
         foreach (array_keys($callStack) as $actionClass) {
-            if (file_exists($jsSource = Loader::getFilePath($actionClass, '.js', 'Resource/', false))) {
+            if (file_exists($jsSource = Loader::getFilePath($actionClass, '.js', MODULE::RESOURCE_DIR, false))) {
                 $resources['js'][] = [
                     'source' => $jsSource,
                     'resource' => $jsResource,
@@ -336,7 +336,7 @@ class Resources extends Action
                     'pack' => true
                 ];
             }
-            if (file_exists($cssSource = Loader::getFilePath($actionClass, '.css', 'Resource/', false))) {
+            if (file_exists($cssSource = Loader::getFilePath($actionClass, '.css', MODULE::RESOURCE_DIR, false))) {
                 $resources['css'][] = [
                     'source' => $cssSource,
                     'resource' => $cssResource,
@@ -357,7 +357,7 @@ class Resources extends Action
             foreach ($input['js'] as $resource) {
                 $resources['js'][] =
                     [
-                        'source' => Loader::getFilePath($resource, '.js', 'Resource/js/'),
+                        'source' => Loader::getFilePath($resource, '.js', MODULE::RESOURCE_JS_DIR),
                         'resource' => $jsResource,
                         'url' => '/resource/' . $jsRes . $jsFile,
                         'pack' => true
@@ -368,7 +368,7 @@ class Resources extends Action
             foreach ($input['css'] as $resource) {
                 $resources['css'][] =
                     [
-                        'source' => Loader::getFilePath($resource, '.css', 'Resource/css/'),
+                        'source' => Loader::getFilePath($resource, '.css', MODULE::RESOURCE_CSS_DIR),
                         'resource' => $cssResource,
                         'url' => '/resource/' . $cssRes . $cssFile,
                         'pack' => true,

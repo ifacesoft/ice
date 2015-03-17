@@ -30,7 +30,7 @@ use Ice\Helper\Validator as Helper_Validator;
  */
 abstract class Validator extends Container
 {
-    use Cache_Stored;
+    use Stored;
 
     const DEFAULT_KEY = 'instance';
 

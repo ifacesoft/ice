@@ -39,7 +39,7 @@ use Ice\Helper\Validator as Helper_Validator;
  */
 abstract class Action implements Cacheable
 {
-    use Cache_Stored;
+    use Stored;
 
     /**
      * Child Actions

@@ -29,7 +29,7 @@ use Ice\Core;
  */
 abstract class View_Render extends Container
 {
-    use Cache_Stored;
+    use Stored;
 
     const DEFAULT_KEY = 'instance';
     const TEMPLATE_TYPE_FILE = 'file';

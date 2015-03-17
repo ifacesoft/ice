@@ -28,7 +28,7 @@ use Ice\Helper\Emmet;
  */
 class View implements Cacheable
 {
-    use Cache_Stored;
+    use Stored;
 
     /**
      * Action class

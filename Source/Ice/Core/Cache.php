@@ -24,7 +24,7 @@ use Ice\Data\Provider\Repository;
  */
 class Cache
 {
-    use Cache_Stored;
+    use Stored;
 
     const VALIDATE = 'validate';
     const INVALIDATE = 'invalidate';

@@ -91,9 +91,11 @@ class Phpunit_Run extends Action
      */
     public function run(array $input)
     {
-        $modulePath = Module::getInstance()->getPath();
+        $modulePath = Module::getInstance()->get('path');
 
-        foreach (Module::getPathes() as $path) {
+        foreach (Module::getAll() as $module) {
+            $path = $module->get('path');
+
             $command = VENDOR_DIR . $input['vendor'] . '/' . $input['script'] .
                 ' --configuration ' . $path . 'Config/vendor/phpunit.xml' .
                 ' --bootstrap ' . $path . 'bootstrap.php';

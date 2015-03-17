@@ -78,7 +78,7 @@ class Resource
      */
     public static function create($class)
     {
-        $resourceFile = Loader::getFilePath($class, '.res.php', 'Resource/', false);
+        $resourceFile = Loader::getFilePath($class, '.res.php', Module::RESOURCE_DIR, false);
 
         return $resourceFile
             ? new Resource($class, File::loadData($resourceFile))
@@ -126,7 +126,7 @@ class Resource
 
     public function set($message)
     {
-        $resourceFile = Loader::getFilePath($this->_class, '.res.php', 'Resource/', false, true, true);
+        $resourceFile = Loader::getFilePath($this->_class, '.res.php', Module::RESOURCE_DIR, false, true, true);
 
         $data = file_exists($resourceFile)
             ? File::loadData($resourceFile)

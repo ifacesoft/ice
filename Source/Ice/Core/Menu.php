@@ -6,7 +6,7 @@ use Ice\Core;
 
 abstract class Menu extends Container
 {
-    use Cache_Stored;
+    use Stored;
 
     private $items = [];
     private $_key = null;

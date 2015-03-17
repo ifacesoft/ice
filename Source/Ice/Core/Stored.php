@@ -4,7 +4,7 @@ namespace Ice\Core;
 
 use Ice\Core;
 
-trait Cache_Stored
+trait Stored
 {
     use Core;
 
