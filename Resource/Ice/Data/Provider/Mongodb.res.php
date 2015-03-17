@@ -1,12 +1,5 @@
 <?php
 return [
-    'mongodb - Failed to connect to: :0: php_network_getaddresses: getaddrinfo failed: Name or service not known' => [
-        'en' => 'mongodb - Failed to connect to: :0: php_network_getaddresses: getaddrinfo failed: Name or service not known',
-    ],
-    'mongodb - Failed to connect to: localhost:27017: Connection refused' => [
-        'en' => 'mongodb - Failed to connect to: localhost:27017: Connection refused',
-        'ru' => 'mongodb - Failed to connect to: localhost:27017: Connection refused',
-    ],
     'mongodb - Failed to connect to: localhost:27017: Previous connection attempts failed, server blacklisted' => [
         'en' => 'mongodb - Failed to connect to: localhost:27017: Previous connection attempts failed, server blacklisted',
         'be' => 'mongodb - памылка падлучэння да localhost:27017: папярэднія спробы падлучэнні не атрымалася, сервер у чорным спісе',

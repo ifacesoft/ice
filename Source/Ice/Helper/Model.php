@@ -37,7 +37,7 @@ class Model
      * @return Core_Model
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.1
+     * @version 0.5
      * @since 0.0
      */
     public static function getModelClassByTableName($tableName, $moduleAlias = null)
@@ -89,6 +89,18 @@ class Model
         return $prefix;
     }
 
+    /**
+     * Return field name by column name
+     *
+     * @param $columnName
+     * @param $table
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
+     */
     public static function getFieldNameByColumnName($columnName, $table)
     {
         $fieldName = strtolower($columnName);

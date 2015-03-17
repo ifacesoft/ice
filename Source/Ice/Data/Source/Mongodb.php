@@ -6,6 +6,7 @@ use Ice\Core\Data_Provider;
 use Ice\Core\Data_Source;
 use Ice\Core\Logger;
 use Ice\Core\Model;
+use Ice\Core\Module;
 use Ice\Core\Query;
 use Ice\Core\Query_Result;
 use Ice\Core\Query_Translator;
@@ -338,13 +339,14 @@ class Mongodb extends Data_Source
     /**
      * Get data Scheme from data source
      *
+     * @param Module $module
      * @return array
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.5
      * @since 0.4
      */
-    public function getTables()
+    public function getTables(Module $module)
     {
         $tables = [];
 

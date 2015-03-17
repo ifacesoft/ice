@@ -24,38 +24,38 @@ class BuilderTest extends PHPUnit_Framework_TestCase
             'test_pk' => 1
         ]);
 
-        $user1 = Test::create([
+        $test1 = Test::create([
             'test_name' => 'name2',
         ])->save();
 
-        $this->assertEquals($user1->get(), [
+        $this->assertEquals($test1->get(), [
             'test_pk' => 2,
             'test_name' => 'name2',
             'name2' => null
         ]);
 
-        $user1->save(['name2' => 'test2']);
+        $test1->save(['name2' => 'test2']);
 
-        $this->assertEquals($user1->get(), [
+        $this->assertEquals($test1->get(), [
             'test_pk' => 2,
             'test_name' => 'name2',
             'name2' => 'test2',
         ]);
 
-        $this->assertNotNull($user1);
-        $this->assertTrue($user1 instanceof Test);
+        $this->assertNotNull($test1);
+        $this->assertTrue($test1 instanceof Test);
 
-        $user2 = Test::create(['name2' => 'test2'])
+        $test2 = Test::create(['name2' => 'test2'])
             ->find(['/name']);
 
-        $this->assertNotNull($user2);
-        $this->assertTrue($user2 instanceof Test);
-        $this->assertEquals($user1, $user2);
+        $this->assertNotNull($test2);
+        $this->assertTrue($test2 instanceof Test);
+        $this->assertEquals($test1, $test2);
 
-        $user2->remove();
+        $test2->remove();
 
-        $user3 = Test::getModel(2, '/pk');
+        $test3 = Test::getModel(2, '/pk');
 
-        $this->assertNull($user3);
+        $this->assertNull($test3);
     }
 }
