@@ -32,8 +32,6 @@ class Module extends Config
     const CONFIG_DIR = 'configDir';
     const SOURCE_DIR = 'sourceDir';
     const RESOURCE_DIR = 'resourceDir';
-    const RESOURCE_JS_DIR = 'resourceJsDir';
-    const RESOURCE_CSS_DIR = 'resourceCssDir';
     const LOG_DIR = 'logDir';
     const CACHE_DIR = 'cacheDir';
     const UPLOAD_DIR = 'uploadDir';
@@ -132,8 +130,6 @@ class Module extends Config
             MODULE::CONFIG_DIR,
             MODULE::SOURCE_DIR,
             MODULE::RESOURCE_DIR,
-            MODULE::RESOURCE_JS_DIR,
-            MODULE::RESOURCE_CSS_DIR,
             MODULE::LOG_DIR,
             MODULE::CACHE_DIR,
             MODULE::UPLOAD_DIR,

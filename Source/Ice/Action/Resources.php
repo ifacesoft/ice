@@ -357,7 +357,7 @@ class Resources extends Action
             foreach ($input['js'] as $resource) {
                 $resources['js'][] =
                     [
-                        'source' => Loader::getFilePath($resource, '.js', MODULE::RESOURCE_JS_DIR),
+                        'source' => Loader::getFilePath($resource, '.js', 'Resource/js/'),
                         'resource' => $jsResource,
                         'url' => '/resource/' . $jsRes . $jsFile,
                         'pack' => true
@@ -368,7 +368,7 @@ class Resources extends Action
             foreach ($input['css'] as $resource) {
                 $resources['css'][] =
                     [
-                        'source' => Loader::getFilePath($resource, '.css', MODULE::RESOURCE_CSS_DIR),
+                        'source' => Loader::getFilePath($resource, '.css', 'Resource/css/'),
                         'resource' => $cssResource,
                         'url' => '/resource/' . $cssRes . $cssFile,
                         'pack' => true,

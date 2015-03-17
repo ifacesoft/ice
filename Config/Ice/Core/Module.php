@@ -27,8 +27,6 @@ return [
         'configDir' => 'Config/',
         'sourceDir' => 'Source/',
         'resourceDir' => 'Resource/',
-        'resourceJsDir' => 'Resource/js/',
-        'resourceCssDir' => 'Resource/css/',
         'logDir' => '../_log/Ice/',
         'cacheDir' => '../_cache/Ice/',
         'uploadDir' => '../_upload/Ice/',

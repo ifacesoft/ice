@@ -1,10 +1,15 @@
 <?php
 use Ice\Bootstrap;
 
-define('MODULE_DIR', __DIR__ . '/');
-define('MODULE_CONFIG_PATH', 'Config/Ice/Core/Module.php');
-define('VENDOR_DIR', realpath('../_vendor/Ice') . '/');
+if (!defined('ICE_BOOTSTRAP')) {
 
-$loader = require VENDOR_DIR . 'autoload.php';
+    define('MODULE_DIR', __DIR__ . '/');
+    define('MODULE_CONFIG_PATH', 'Config/Ice/Core/Module.php');
+    define('VENDOR_DIR', realpath('../_vendor/Ice') . '/');
 
-Bootstrap::init($loader);
+    $loader = require VENDOR_DIR . 'autoload.php';
+
+    Bootstrap::init($loader);
+
+    define('ICE_BOOTSTRAP', true);
+}
