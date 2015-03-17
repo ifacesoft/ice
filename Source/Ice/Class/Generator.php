@@ -4,6 +4,7 @@ namespace Ice;
 
 use Ice\Core\Loader;
 use Ice\Core\Logger;
+use Ice\Core\Module;
 use Ice\Helper\Object;
 use Ice\Helper\Php;
 
@@ -43,7 +44,15 @@ class Class_Generator
     public function generate($data)
     {
         $namespace = Object::getNamespace($this->_baseClass, $this->_class);
-        $path = $namespace ? 'Source/' : 'Source/Model/';
+
+        $module = Module::getInstance(Object::getModuleAlias($this->_class));
+
+        $path = $module->get(Module::SOURCE_DIR);
+
+        if ($namespace) {
+            $path .= 'Model/';
+        }
+
         $filePath = $filePath = Loader::getFilePath($this->_class, '.php', $path, false, true, true);
 
         $code = file_get_contents($filePath);

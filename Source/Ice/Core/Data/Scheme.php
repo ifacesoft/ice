@@ -91,7 +91,7 @@ class Data_Scheme
 
         self::$_tables = [];
 
-        $sourceDir = MODULE_DIR . 'Source/';
+        $sourceDir = $module->get(Module::SOURCE_DIR);
 
         $Directory = new RecursiveDirectoryIterator(Directory::get($sourceDir . $module->getAlias() . '/Model'));
         $Iterator = new RecursiveIteratorIterator($Directory);
@@ -199,7 +199,7 @@ class Data_Scheme
                 Data_Scheme::getLogger()->info(['Removing models from data source {$0}', $dataSourceKey]);
                 foreach ($schemeTables as $tableName => $table) {
                     Data_Scheme::getLogger()->info(['Remove model {$0}', $schemeTables[$tableName]['modelClass']]);
-                    unlink(MODULE_DIR . 'Source/' . $table['modelPath']);
+                    unlink($module->get(Module::SOURCE_DIR) . $table['modelPath']);
                 }
             }
         }

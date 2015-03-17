@@ -12,6 +12,7 @@ namespace Ice\Code\Generator;
 use Ice\Core\Code_Generator;
 use Ice\Core\Loader;
 use Ice\Core\Logger;
+use Ice\Core\Module;
 use Ice\Helper\File;
 use Ice\Helper\Object;
 use Ice\View\Render\Php;
@@ -50,7 +51,13 @@ class Action extends Code_Generator
 //        $class = Object::getClass(Action::getClass(), $data);
         $namespace = Object::getNamespace(Action::getClass(), $class);
 
-        $path = $namespace ? 'Source/' : 'Source/Class/';
+        $module = Module::getInstance(Object::getModuleAlias($this->_class));
+
+        $path = $module->get(Module::SOURCE_DIR);
+
+        if ($namespace) {
+            $path .= 'Class/';
+        }
 
         $filePath = Loader::getFilePath($class, '.php', $path, false, true, true);
 

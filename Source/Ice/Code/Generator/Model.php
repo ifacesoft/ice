@@ -14,6 +14,7 @@ use Ice\Core\Code_Generator;
 use Ice\Core\Loader;
 use Ice\Core\Logger;
 use Ice\Core\Model as Core_Model;
+use Ice\Core\Module;
 use Ice\Helper\Arrays;
 use Ice\Helper\File;
 use Ice\Helper\Object;
@@ -54,7 +55,13 @@ class Model extends Code_Generator
 
         $fieldNames = Arrays::column($data['columns'], 'fieldName');
 
-        $path = $namespace ? 'Source/' : 'Source/Model/';
+        $module = Module::getInstance(Object::getModuleAlias($class));
+
+        $path = $module->get(Module::SOURCE_DIR);
+
+        if ($namespace) {
+            $path .= 'Model/';
+        }
 
         $filePath = Loader::getFilePath($class, '.php', $path, false, true, true);
 

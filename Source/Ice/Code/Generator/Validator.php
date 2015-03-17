@@ -12,6 +12,7 @@ namespace Ice\Code\Generator;
 use Ice\Core\Code_Generator;
 use Ice\Core\Loader;
 use Ice\Core\Logger;
+use Ice\Core\Module;
 use Ice\Core\Validator as Core_Validator;
 use Ice\Helper\File;
 use Ice\Helper\Object;
@@ -52,7 +53,13 @@ class Validator extends Code_Generator
 //        $class = Object::getClass(Core_Validator::getClass(), $data);
         $namespace = Object::getNamespace(Core_Validator::getClass(), $class);
 
-        $path = $namespace ? 'Source/' : 'Source/Class/';
+        $module = Module::getInstance(Object::getModuleAlias($class));
+
+        $path = $module->get(Module::SOURCE_DIR);
+
+        if ($namespace) {
+            $path .= 'Class/';
+        }
 
         $filePath = Loader::getFilePath($class, '.php', $path, false, true, true);
 
