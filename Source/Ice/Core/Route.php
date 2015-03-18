@@ -105,8 +105,8 @@ class Route extends Container
 
         $routeFilePathes = [];
 
-        foreach (Module::getInstance() as $moduleConfig) {
-            $routeFilePathes[$moduleConfig['context']] = $moduleConfig['path'] . 'Config/Ice/Core/Route.php';
+        foreach (Module::getAll() as $module) {
+            $routeFilePathes[$module->get('context')] = $module->get(Module::CONFIG_DIR) . 'Ice/Core/Route.php';
         }
 
         return $dataProvider->set('routes', self::getRouteFileData($routeFilePathes));
