@@ -9,8 +9,6 @@
 
 namespace Ice\Helper;
 
-use Ice\Core\Logger as Core_Logger;
-
 /**
  * Class Php
  *
@@ -97,14 +95,14 @@ class Php
         return $var;
     }
 
-    public static function file_get_php_classes($filepath) {
-        $php_code = file_get_contents($filepath);
-        $classes = Php::get_php_classes($php_code);
-        return $classes;
+    public static function getClassNamesFromFile($filePath) {
+        $phpString = file_get_contents($filePath);
+        $classNames = Php::getClassNamesFromPhpString($phpString);
+        return $classNames;
     }
 
-    public static function get_php_classes($php_code) {
-        $classes = array();
+    public static function getClassNamesFromPhpString($php_code) {
+        $classNames = array();
         $tokens = token_get_all($php_code);
         $count = count($tokens);
         for ($i = 2; $i < $count; $i++) {
@@ -113,9 +111,9 @@ class Php
                 && $tokens[$i][0] == T_STRING) {
 
                 $class_name = $tokens[$i][1];
-                $classes[] = $class_name;
+                $classNames[] = $class_name;
             }
         }
-        return $classes;
+        return $classNames;
     }
 }

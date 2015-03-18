@@ -51,7 +51,7 @@ class Mysqli extends Data_Source
      * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.4
+     * @version 0.5
      * @since 0.0
      */
     public function executeSelect(Query $query)
@@ -427,7 +427,7 @@ class Mysqli extends Data_Source
      * @return array
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.5
      * @since 0.0
      */
     public function getTables(Module $module)

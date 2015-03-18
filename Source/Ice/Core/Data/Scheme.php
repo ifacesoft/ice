@@ -99,7 +99,7 @@ class Data_Scheme
 
         foreach ($Regex as $filePathes) {
             $modelPath = reset($filePathes);
-            $classNames = Php::file_get_php_classes($modelPath);
+            $classNames = Php::getClassNamesFromFile($modelPath);
             $modelName = reset($classNames);
 
             $modelClass = str_replace('/', '\\', substr($modelPath, strlen($sourceDir), -4 - strlen($modelName))) . $modelName;
