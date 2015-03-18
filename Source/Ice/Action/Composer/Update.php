@@ -10,6 +10,8 @@
 namespace Ice\Action;
 
 use Ice\Core\Action;
+use Ice\Core\Logger;
+use Ice\Helper\Console;
 
 /**
  * Class Composer_Update
@@ -85,6 +87,11 @@ class Composer_Update extends Action
      */
     public function run(array $input)
     {
-        passthru('cd ' . ICE_DIR . ' && php composer.phar self-update && php composer.phar update');
+        Console::run([
+            'cd ' . MODULE_DIR,
+            'php composer.phar self-update',
+            'php composer.phar clear-cache',
+            'php composer.phar update'
+        ]);
     }
 }

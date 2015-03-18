@@ -53,11 +53,13 @@ class Validator extends Code_Generator
 //        $class = Object::getClass(Core_Validator::getClass(), $data);
         $namespace = Object::getNamespace(Core_Validator::getClass(), $class);
 
-        $path = Module::SOURCE_DIR;
+        $module = Module::getInstance(Object::getModuleAlias($class));
 
-        if ($namespace) {
-            $path .= 'Class/';
-        }
+        $path = $module->get(Module::SOURCE_DIR);
+
+//        if ($namespace) {
+//            $path .= 'Class/';
+//        }
 
         $filePath = $path . str_replace(['\\', '_'], '/', $class) . '.php';
 

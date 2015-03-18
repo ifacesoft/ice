@@ -125,8 +125,8 @@ abstract class Action implements Cacheable
         $actionContext = Ice::getContext()->initAction($actionClass, $hash);
 
         /** @var Action $action */
-        $action = $actionCacher->get($actionHash);
-
+//        $action = $actionCacher->get($actionHash);
+        $action = null;
         if (!$action) {
             $action = $actionClass::create();
 

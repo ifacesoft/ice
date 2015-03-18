@@ -51,11 +51,13 @@ class Action extends Code_Generator
 //        $class = Object::getClass(Action::getClass(), $data);
         $namespace = Object::getNamespace(Action::getClass(), $class);
 
-        $path = Module::SOURCE_DIR;
+        $module = Module::getInstance(Object::getModuleAlias($class));
 
-        if ($namespace) {
-            $path .= 'Class/';
-        }
+        $path = $module->get(Module::SOURCE_DIR);
+
+//        if ($namespace) {
+//            $path .= 'Class/';
+//        }
 
         $filePath = $path . str_replace(['\\', '_'], '/', $class) . '.php';
 

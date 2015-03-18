@@ -178,16 +178,22 @@ class Console
 
     public static function run($commands, $toDevNull = false)
     {
+        $commandString = '';
+
         foreach ((array)$commands as $command) {
-            if ($toDevNull) {
-                $command .= ' > /dev/null 2>&1';
-            }
-
-            if (Request::isCli()) {
-                fwrite(STDOUT, Console::getText($command, Console::C_GREEN_B) . "\n");
-            };
-
-            passthru($command);
+            $commandString .= $command . ' && ';
         }
+
+        $commandString = substr($commandString, 0, -4);
+
+        if ($toDevNull) {
+            $commandString .= ' > /dev/null 2>&1';
+        }
+
+        if (Request::isCli()) {
+            fwrite(STDOUT, Console::getText($commandString, Console::C_GREEN_B) . "\n");
+        };
+
+        passthru($commandString);
     }
 }

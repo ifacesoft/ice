@@ -45,11 +45,13 @@ class Class_Generator
     {
         $namespace = Object::getNamespace($this->_baseClass, $this->_class);
 
-        $path = Module::SOURCE_DIR;
+        $module = Module::getInstance(Object::getModuleAlias($this->_class));
 
-        if ($namespace) {
-            $path .= 'Model/';
-        }
+        $path = $module->get(Module::SOURCE_DIR);
+
+//        if ($namespace) {
+//            $path .= 'Model/';
+//        }
 
         $filePath = $path . str_replace(['\\', '_'], '/', $this->_class) . '.php';
 

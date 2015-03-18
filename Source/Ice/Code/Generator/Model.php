@@ -55,11 +55,13 @@ class Model extends Code_Generator
 
         $fieldNames = Arrays::column($data['columns'], 'fieldName');
 
-        $path = Module::SOURCE_DIR;
+        $module = Module::getInstance(Object::getModuleAlias($class));
 
-        if ($namespace) {
-            $path .= 'Model/';
-        }
+        $path = $module->get(Module::SOURCE_DIR);
+
+//        if ($namespace) {
+//            $path .= 'Model/';
+//        }
 
         $filePath = $path . str_replace(['\\', '_'], '/', $class) . '.php';
 
