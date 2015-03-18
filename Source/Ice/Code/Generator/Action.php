@@ -57,7 +57,7 @@ class Action extends Code_Generator
             $path .= 'Class/';
         }
 
-        $filePath = Loader::getFilePath($class, '.php', $path, false, true, true);
+        $filePath = $path . str_replace(['\\', '_'], '/', $class) . '.php';
 
         $isFileExists = file_exists($filePath);
 

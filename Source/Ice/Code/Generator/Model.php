@@ -61,7 +61,7 @@ class Model extends Code_Generator
             $path .= 'Model/';
         }
 
-        $filePath = Loader::getFilePath($class, '.php', $path, false, true, true);
+        $filePath = $path . str_replace(['\\', '_'], '/', $class) . '.php';
 
         $isFileExists = file_exists($filePath);
 

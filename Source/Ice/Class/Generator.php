@@ -51,7 +51,7 @@ class Class_Generator
             $path .= 'Model/';
         }
 
-        $filePath = $filePath = Loader::getFilePath($this->_class, '.php', $path, false, true, true);
+        $filePath = $path . str_replace(['\\', '_'], '/', $this->_class) . '.php';
 
         $code = file_get_contents($filePath);
 
