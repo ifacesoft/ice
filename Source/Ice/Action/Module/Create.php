@@ -344,7 +344,7 @@ class Module_Create extends Action
                 'vcs' => $input['vcs'],
                 'source' => '',
                 'Ice\Core\Data_Source' => [
-                    'Ice:Mysql/default' => [strtolower($moduleAlias) . '_', ''],
+                    'Ice:Mysql/default' => [strtolower($moduleAlias) . '_', 'ice_', ''],
                 ]
             ],
             'modules' => []
