@@ -63,8 +63,8 @@ class Smarty extends View_Render
 
         $templateDirs = [];
 
-        foreach (Module::getInstance() as $module) {
-            $templateDirs[] = $module['path'] . 'Resource';
+        foreach (Module::getAll() as $module) {
+            $templateDirs[] = $module->get(Module::RESOURCE_DIR);
         }
 
         $this->_smarty->setTemplateDir($templateDirs);
