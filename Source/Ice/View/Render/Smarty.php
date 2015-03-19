@@ -55,16 +55,16 @@ class Smarty extends View_Render
     {
         $config = Smarty::getConfig();
 
-        require_once VENDOR_DIR . $config->get('vendor') . '/libs/Smarty.class.php';
+//        require_once VENDOR_DIR . $config->get('vendor') . '/libs/Smarty.class.php';
 
         $this->_smarty = new \Smarty();
 
-        Loader::register('\smartyAutoload');
+//        Loader::register('\smartyAutoload');
 
         $templateDirs = [];
 
-        foreach (Module::getInstance() as $module) {
-            $templateDirs[] = $module['path'] . 'Resource';
+        foreach (Module::getAll() as $module) {
+            $templateDirs[] = $module->get(Module::RESOURCE_DIR);
         }
 
         $this->_smarty->setTemplateDir($templateDirs);

@@ -19,7 +19,7 @@
     "psr-4": {"Ice\\": "Source/Ice/"}
   },
   "require": {
-    "php": ">=5.5.0",
+    "php": ">=5.5",
     "twig/twig": "1.*",
     "smarty/smarty": "3.1.*"
   },
