@@ -15,6 +15,7 @@ use Ice\Core\Model;
 use Ice\Core\Query_Builder;
 use Ice\Core\Query_Translator;
 use Ice\Helper\Mapping;
+use Ice\Helper\Object;
 
 /**
  * Class Sql
@@ -70,10 +71,18 @@ class Sql extends Query_Translator
             return $this->translateValues($part);
         }
 
+        // @todo tableAlias должен приходить из $part
+        $tableAlias = $modelClass::getClassName();
+
+        $fieldColumnMap = $modelClass::getFieldColumnMap();
+
         $sql = "\n" . self::SQL_STATEMENT_UPDATE .
-            "\n\t" . $modelClass::getTableName();
+            "\n\t" . $modelClass::getTableName() . ' ' . $tableAlias . '';
         $sql .= "\n" . self::SQL_CLAUSE_SET;
-        $sql .= "\n\t" . '`' . implode('`=?,`', Mapping::columnNames($modelClass, $part['fieldNames'])) . '`=?';
+        $sql .= implode(',', array_map(function ($fieldName) use ($fieldColumnMap, $tableAlias) {
+            $columnName = $fieldColumnMap[$fieldName];
+            return "\n\t" . $tableAlias . '.`' . $columnName . '` = ?';
+        }, $part['fieldNames']));
 
         return $sql;
     }
@@ -224,7 +233,7 @@ class Sql extends Query_Translator
             $tableAlias = reset($part)[0];
 
             $delete = "\n" . self::SQL_STATEMENT_DELETE . ' ' . self::SQL_CLAUSE_FROM .
-                "\n\t" . '`' . $tableAlias . '` USING ' . $deleteClass::getTableName() . ' AS  `' . $tableAlias . '`';
+                "\n\t" . '`' . $tableAlias . '` USING ' . $deleteClass::getTableName() . ' AS `' . $tableAlias . '`';
             $sql .= $delete;
         }
 

@@ -10,7 +10,7 @@ class ActionTest extends PHPUnit_Framework_TestCase
 {
     public function testActionRun()
     {
-        $_SERVER['REQUEST_URI'] = '/ice/test';
+        $_SERVER['REQUEST_URI'] = '/test';
         $router = Router::getInstance();
         $route = Route::getInstance($router->get('routeName'));
         $method = $route->gets('request/' . $router->get('method'));

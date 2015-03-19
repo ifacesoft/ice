@@ -12,6 +12,7 @@ namespace Ice\Data\Provider;
 use Ice\Core\Config;
 use Ice\Core\Data_Provider;
 use Ice\Core\Exception;
+use Ice\Core\Logger;
 use Ice\Core\Request as Core_Request;
 use Ice\Core\Route;
 use Ice\Exception\Http_Forbidden;
@@ -236,7 +237,7 @@ class Router extends Data_Provider
         $foundRoutes = [];
 
         foreach (Route::getRoutes() as $routeName => $route) {
-//            Router::getLogger()->debug($routeName . ': ' . $url . ' || ' . $route['pattern'] . ' || ' . (int) preg_match($route['pattern'], $url));
+//            Logger::debug($routeName . ': ' . $url . ' || ' . $route['pattern'] . ' || ' . (int) preg_match($route['pattern'], $url));
 
             if (!preg_match($route['pattern'], $url)) {
                 continue;
