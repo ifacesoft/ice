@@ -188,7 +188,7 @@ class Query_Builder
      * @version 0.0
      * @since 0.0
      */
-    public static function getInstance($modelClass, $tableAlias = null)
+    public static function create($modelClass, $tableAlias = null)
     {
         return new Query_Builder($modelClass, $tableAlias);
     }
@@ -197,25 +197,22 @@ class Query_Builder
      * Set in query part where expression 'IS NOT NULL'
      *
      * @param $fieldName
-     * @param null $modelClass
-     * @param null $tableAlias
+     * @param array $modelTableData
      * @param string $sqlLogical
      * @return Query_Builder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.6
      * @since 0.0
      */
-    public function notNull($fieldName, $modelClass = null, $tableAlias = null, $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
+    public function notNull($fieldName, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
     {
         return $this->where(
             $sqlLogical,
-            $fieldName,
+            [$fieldName => null],
             Query_Builder::SQL_COMPARISON_KEYWORD_IS_NOT_NULL,
-            null,
-            $modelClass,
-            $tableAlias
+            $modelTableData
         );
     }
 
@@ -237,44 +234,74 @@ class Query_Builder
      *      ];
      * ```
      * @param $sqlLogical
-     * @param $fieldName
+     * @param array $fieldNameValues
      * @param $sqlComparison
-     * @param null $value
-     * @param $modelClass
-     * @param $tableAlias
-     * @throws Exception
+     * @param array|string $modelTableData Key -> modelClass, value -> tableAlias
      * @return Query_Builder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.6
      * @since 0.0
      */
-    private function where($sqlLogical, $fieldName, $sqlComparison, $value = null, $modelClass = null, $tableAlias = null)
+    private function where($sqlLogical, array $fieldNameValues, $sqlComparison, $modelTableData = [])
     {
-        list($modelClass, $tableAlias) = $this->getModelClassTableAlias($modelClass, $tableAlias);
+        /** @var Model $modelClass */
+        list($modelClass, $tableAlias) = $this->getModelClassTableAlias($modelTableData);
 
-        $fieldName = $modelClass::getFieldName($fieldName);
+        foreach ($fieldNameValues as $fieldName => $value) {
+            $fieldName = $modelClass::getFieldName($fieldName);
 
-        $where = [$sqlLogical, $fieldName, $sqlComparison, count((array)$value)];
+            if ($value instanceof Model) {
+                $value = $value->getPk();
+                $fieldName .= '__fk';
+            }
 
-        if (isset($this->_sqlParts[Query_Builder::PART_WHERE][$modelClass])) {
-            $this->_sqlParts[Query_Builder::PART_WHERE][$modelClass][1][] = $where;
-        } else {
-            $this->_sqlParts[Query_Builder::PART_WHERE][$modelClass] = [$tableAlias, [$where]];
+            $where = [$sqlLogical, $fieldName, $sqlComparison, count((array)$value)];
+
+            if (isset($this->_sqlParts[Query_Builder::PART_WHERE][$modelClass])) {
+                $this->_sqlParts[Query_Builder::PART_WHERE][$modelClass][1][] = $where;
+            } else {
+                $this->_sqlParts[Query_Builder::PART_WHERE][$modelClass] = [$tableAlias, [$where]];
+            }
+
+            $this->appendCacheTag($modelClass, $fieldName, true, false);
+
+            $this->_bindParts[Query_Builder::PART_WHERE][] = $value == null
+                ? [null]
+                : (array)$value;
         }
-
-        $this->appendCacheTag($modelClass, $fieldName, true, false);
-
-        $this->_bindParts[Query_Builder::PART_WHERE][] = $value == null
-            ? [null]
-            : (array)$value;
 
         return $this;
     }
 
-    public function getModelClassTableAlias($modelClass, $tableAlias)
+    /**
+     * Check for model class and table alias
+     *
+     * @param $modelTableData
+     * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.6
+     * @since 0.6
+     */
+    public function getModelClassTableAlias($modelTableData)
     {
+        if (empty($modelTableData)) {
+            $modelClass = null;
+            $tableAlias = null;
+        } else {
+            $modelTableData = (array)$modelTableData;
+
+            list($modelClass, $tableAlias) = each($modelTableData);
+
+            if (is_int($modelClass)) {
+                $modelClass = $tableAlias;
+                $tableAlias = null;
+            }
+        }
+
         $modelClass = !$modelClass
             ? $this->getModelClass()
             : Model::getClass($modelClass);
@@ -283,9 +310,7 @@ class Query_Builder
             $tableAlias = $modelClass;
         }
 
-        $tableAlias = Object::getName($tableAlias);
-
-        return [$modelClass, $tableAlias];
+        return [$modelClass, Object::getName($tableAlias)];
     }
 
     /**
@@ -351,25 +376,22 @@ class Query_Builder
      * Set in query part where expression 'IS NULL'
      *
      * @param $fieldName
-     * @param null $modelClass
-     * @param null $tableAlias
+     * @param array $modelTableData
      * @param string $sqlLogical
      * @return Query_Builder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.6
      * @since 0.0
      */
-    public function isNull($fieldName, $modelClass = null, $tableAlias = null, $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
+    public function isNull($fieldName, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
     {
         return $this->where(
             $sqlLogical,
-            $fieldName,
+            [$fieldName => null],
             Query_Builder::SQL_COMPARISON_KEYWORD_IS_NULL,
-            null,
-            $modelClass,
-            $tableAlias
+            $modelTableData
         );
     }
 
@@ -377,240 +399,205 @@ class Query_Builder
      * Set in query part where expression '= ?' for primary key column
      *
      * @param $pk
-     * @param null $modelClass
-     * @param null $tableAlias
+     * @param $modelTableData
      * @param string $sqlLogical
-     * @throws Exception
      * @return Query_Builder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.2
+     * @version 0.6
      * @since 0.0
      */
-    public function pk($pk, $modelClass = null, $tableAlias = null, $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
+    public function pk($pk, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
     {
         if (empty($pk)) {
-            return $this;
+            Logger::getInstance(__CLASS__)->exception('Primary key value mast be not empty', __FILE__, __LINE__, null, $this);
         }
 
-        if (!is_array($pk)) {
-            if (!$modelClass) {
-                $modelClass = $this->getModelClass();
+        $eq = [];
+
+        /** @var Model $modelClass */
+        $modelClass = $this->getModelClassTableAlias($modelTableData)[0];
+
+        $pkFieldNames = $modelClass::getPkFieldNames();
+
+        foreach ((array)$pk as $pkName => $pkValue) {
+            if (empty($pkFieldNames)) {
+                break;
             }
 
-            $pkFieldNames = $modelClass::getPkFieldNames();
-            $pk = [reset($pkFieldNames) => $pk];
+            if (($key = array_search($pkName, $pkFieldNames)) !== false) {
+                unset($pkFieldNames[$key]);
+                $eq[$pkName] = $pkValue;
+                continue;
+            }
+
+            if (is_int($pkName)) {
+                $eq[array_shift($pkFieldNames)] = $pkValue;
+            }
         }
 
-        return $this->eq($pk, $modelClass, $tableAlias, $sqlLogical);
+        return $this->eq($eq, $modelTableData, $sqlLogical);
     }
 
     /**
      * Set in query part where expression '= ?'
      *
      * @param array $fieldNameValues
-     * @param null $modelClass
-     * @param null $tableAlias
+     * @param array $modelTableData
      * @param string $sqlLogical
      * @return Query_Builder
+     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.2
+     * @version 0.6
      * @since 0.0
      */
-    public function eq(array $fieldNameValues, $modelClass = null, $tableAlias = null, $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
+    public function eq(array $fieldNameValues, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
     {
-        foreach ($fieldNameValues as $fieldName => $value) {
-            if (is_array($value)) {
-                return $this->in($fieldName, $value, $modelClass, $tableAlias, $sqlLogical);
-            }
-
-            if ($value instanceof Model) {
-                $value = $value->getPk();
-                $fieldName .= '__fk';
-            }
-
-            $this->where(
-                $sqlLogical,
-                $fieldName,
-                Query_Builder::SQL_COMPARISON_OPERATOR_EQUAL,
-                $value,
-                $modelClass,
-                $tableAlias
-            );
-        }
-
-        return $this;
+        return $this->where(
+            $sqlLogical,
+            $fieldNameValues,
+            Query_Builder::SQL_COMPARISON_OPERATOR_EQUAL,
+            $modelTableData
+        );
     }
 
     /**
      * Set in query part where expression 'in (?)'
      *
-     * @param $fieldName
-     * @param array $value
-     * @param null $modelClass
-     * @param null $tableAlias
+     * @param array $fieldNameValues
+     * @param array $modelTableData
      * @param string $sqlLogical
      * @return Query_Builder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.2
+     * @version 0.6
      * @since 0.0
      */
-    public function in($fieldName, array $value, $modelClass = null, $tableAlias = null, $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
+    public function in(array $fieldNameValues, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
     {
-        if (empty($value)) {
-            return $this;
-        }
-
-        if (count($value) == 1) {
-            return $this->eq([$fieldName => reset($value)], $modelClass, $tableAlias, $sqlLogical);
-        }
-
         return $this->where(
             $sqlLogical,
-            $fieldName,
+            $fieldNameValues,
             Query_Builder::SQL_COMPARISON_KEYWORD_IN,
-            $value,
-            $modelClass,
-            $tableAlias
+            $modelTableData
         );
     }
 
     /**
      * Set in query part where expression '>= ?'
      *
-     * @param $fieldName
-     * @param $value
-     * @param null $modelClass
-     * @param null $tableAlias
+     * @param array $fieldNameValues
+     * @param array $modelTableData
      * @param string $sqlLogical
      * @return Query_Builder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.6
      * @since 0.0
      */
-    public function ge($fieldName, $value, $modelClass = null, $tableAlias = null, $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
+    public function ge(array $fieldNameValues, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
     {
         return $this->where(
             $sqlLogical,
-            $fieldName,
+            $fieldNameValues,
             Query_Builder::SQL_COMPARISON_OPERATOR_GREATER_OR_EQUAL,
-            $value,
-            $modelClass,
-            $tableAlias
+            $modelTableData
         );
     }
 
     /**
      * Set in query part where expression 'REGEXP ?'
      *
-     * @param $fieldName
-     * @param $value
-     * @param null $modelClass
-     * @param null $tableAlias
+     * @param array $fieldNameValues
+     * @param array $modelTableData
      * @param string $sqlLogical
      * @return Query_Builder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.4
+     * @version 0.6
      * @since 0.4
      */
-    public function regex($fieldName, $value, $modelClass = null, $tableAlias = null, $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
+    public function regex(array $fieldNameValues, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
     {
         return $this->where(
             $sqlLogical,
-            $fieldName,
+            $fieldNameValues,
             Query_Builder::SQL_COMPARISON_KEYWORD_REGEXP,
-            $value,
-            $modelClass,
-            $tableAlias
+            $modelTableData
         );
     }
 
     /**
      * Set in query part where expression '<= ?'
      *
-     * @param $fieldName
-     * @param $value
-     * @param null $modelClass
-     * @param null $tableAlias
+     * @param array $fieldNameValues
+     * @param array $modelTableData
      * @param string $sqlLogical
      * @return Query_Builder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.6
      * @since 0.0
      */
-    public function le($fieldName, $value, $modelClass = null, $tableAlias = null, $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
+    public function le(array $fieldNameValues, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
     {
         return $this->where(
             $sqlLogical,
-            $fieldName,
+            $fieldNameValues,
             Query_Builder::SQL_COMPARISON_OPERATOR_LESS_OR_EQUAL,
-            $value,
-            $modelClass,
-            $tableAlias
+            $modelTableData
         );
     }
 
     /**
      * Set in query part where expression '> ?'
      *
-     * @param $fieldName
-     * @param $value
-     * @param null $modelClass
-     * @param null $tableAlias
+     * @param array $fieldNameValues
+     * @param array $modelTableData
      * @param string $sqlLogical
      * @return Query_Builder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.6
      * @since 0.0
      */
-    public function gt($fieldName, $value, $modelClass = null, $tableAlias = null, $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
+    public function gt(array $fieldNameValues, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
     {
         return $this->where(
             $sqlLogical,
-            $fieldName,
+            $fieldNameValues,
             Query_Builder::SQL_COMPARISON_OPERATOR_GREATER,
-            $value,
-            $modelClass,
-            $tableAlias
+            $modelTableData
         );
     }
 
     /**
      * Set in query part where expression '< ?'
      *
-     * @param $fieldName
-     * @param $value
-     * @param null $modelClass
-     * @param null $tableAlias
+     * @param array $fieldNameValues
+     * @param array $modelTableData
      * @param string $sqlLogical
      * @return Query_Builder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.6
      * @since 0.0
      */
-    public function lt($fieldName, $value, $modelClass = null, $tableAlias = null, $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
+    public function lt(array $fieldNameValues, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
     {
         return $this->where(
             $sqlLogical,
-            $fieldName,
+            $fieldNameValues,
             Query_Builder::SQL_COMPARISON_OPERATOR_LESS,
-            $value,
-            $modelClass,
-            $tableAlias
+            $modelTableData
         );
     }
 
@@ -618,99 +605,81 @@ class Query_Builder
      * Set in query part where expression '= ""'
      *
      * @param $fieldName
-     * @param null $modelClass
-     * @param null $tableAlias
+     * @param array $modelTableData
      * @param string $sqlLogical
      * @return Query_Builder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.2
+     * @version 0.6
      * @since 0.0
      */
-    public function isEmpty($fieldName, $modelClass = null, $tableAlias = null, $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
+    public function isEmpty($fieldName, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
     {
-        return $this->eq([$fieldName => ''], $modelClass, $tableAlias, $sqlLogical);
+        return $this->eq([$fieldName => ''], $modelTableData, $sqlLogical);
     }
 
     /**
      * Set in query part where expression '<> ""'
      *
      * @param $fieldName
-     * @param null $modelClass
-     * @param null $tableAlias
+     * @param array $modelTableData
      * @param string $sqlLogical
      * @return Query_Builder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.6
      * @since 0.0
      */
-    public function notEmpty($fieldName, $modelClass = null, $tableAlias = null, $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
+    public function notEmpty($fieldName, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
     {
-        return $this->ne($fieldName, '', $modelClass, $tableAlias, $sqlLogical);
+        return $this->ne([$fieldName => ''], $modelTableData, $sqlLogical);
     }
 
     /**
      * Set in query part where expression '<> ?'
      *
-     * @param $fieldName
-     * @param $value
-     * @param null $modelClass
-     * @param null $tableAlias
+     * @param array $fieldNameValues
+     * @param array $modelTableData
      * @param string $sqlLogical
      * @return Query_Builder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.6
      * @since 0.0
      */
-    public function ne($fieldName, $value, $modelClass = null, $tableAlias = null, $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
+    public function ne(array $fieldNameValues, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
     {
         return $this->where(
             $sqlLogical,
-            $fieldName,
+            $fieldNameValues,
             Query_Builder::SQL_COMPARISON_OPERATOR_NOT_EQUAL,
-            $value,
-            $modelClass,
-            $tableAlias
+            $modelTableData
         );
     }
 
     /**
      * Set in query part where expression 'not in (?)'
      *
-     * @param $fieldName
-     * @param array $value
-     * @param null $modelClass
-     * @param null $tableAlias
+     * @param array $fieldNameValues
+     * @param array $modelTableData
      * @param string $sqlLogical
      * @return Query_Builder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.2
+     * @version 0.6
      * @since 0.0
      */
-    public function notIn($fieldName, array $value, $modelClass = null, $tableAlias = null, $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
+    public function notIn(array $fieldNameValues, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
     {
-        if (empty($value)) {
-            return $this;
-        }
-
-        if (count($value) == 1) {
-            return $this->eq([$fieldName => reset($value)], $modelClass, $tableAlias, $sqlLogical);
-        }
-
         return $this->where(
             $sqlLogical,
-            $fieldName,
+            $fieldNameValues,
             Query_Builder::SQL_COMPARISON_KEYWORD_NOT_IN,
-            $value,
-            $modelClass,
-            $tableAlias
+            $modelTableData
         );
     }
 
@@ -718,64 +687,58 @@ class Query_Builder
      * Set in query part where expression '== 1' is boolean true(1)
      *
      * @param $fieldName
-     * @param null $modelClass
-     * @param null $tableAlias
+     * @param array $modelTableData
      * @param string $sqlLogical
      * @return Query_Builder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.2
+     * @version 0.6
      * @since 0.0
      */
-    public function is($fieldName, $modelClass = null, $tableAlias = null, $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
+    public function is($fieldName, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
     {
-        return $this->eq([$fieldName => 1], $modelClass, $tableAlias, $sqlLogical);
+        return $this->eq([$fieldName => 1], $modelTableData, $sqlLogical);
     }
 
     /**
      * Set in query part where expression '== 0' is boolean false(0)
      *
      * @param $fieldName
-     * @param null $modelClass
-     * @param null $tableAlias
+     * @param array $modelTableData
      * @param string $sqlLogical
      * @return Query_Builder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.2
+     * @version 0.6
      * @since 0.0
      */
-    public function not($fieldName, $modelClass = null, $tableAlias = null, $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
+    public function not($fieldName, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
     {
-        return $this->eq([$fieldName => 0], $modelClass, $tableAlias, $sqlLogical);
+        return $this->eq([$fieldName => 0], $modelTableData, $sqlLogical);
     }
 
     /**
      * Set in query part where expression 'like ?'
      *
-     * @param $fieldName
-     * @param $value
-     * @param null $modelClass
-     * @param null $tableAlias
+     * @param array $fieldNameValues
+     * @param array $modelTableData
      * @param string $sqlLogical
      * @return Query_Builder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.6
      * @since 0.0
      */
-    public function like($fieldName, $value, $modelClass = null, $tableAlias = null, $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
+    public function like(array $fieldNameValues, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
     {
         return $this->where(
             $sqlLogical,
-            $fieldName,
+            $fieldNameValues,
             Query_Builder::SQL_COMPARISON_KEYWORD_LIKE,
-            $value,
-            $modelClass,
-            $tableAlias
+            $modelTableData
         );
     }
 
@@ -784,70 +747,66 @@ class Query_Builder
      *
      * @param $fieldName
      * @param $value
-     * @param null $modelClass
-     * @param null $tableAlias
+     * @param array $modelTableData
      * @param string $sqlLogical
      * @return Query_Builder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.6
      * @since 0.0
      */
-    public function rlike($fieldName, $value, $modelClass = null, $tableAlias = null, $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
+    public function rlike($fieldName, $value, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
     {
-        if (!$modelClass) {
-            $modelClass = $this->getModelClass();
-        }
+        /** @var Model $modelClass */
+        $modelClass = $this->getModelClassTableAlias($modelTableData)[0];
 
         $columnFieldMapping = $modelClass::getColumnFieldMap();
         $fieldValue = $modelClass::getFieldName($value);
 
         /** check ability use pattern from field in base */
         return in_array($fieldValue, $columnFieldMapping)
-            ? $this->where($sqlLogical, $fieldValue, Query_Builder::SQL_COMPARISON_KEYWORD_RLIKE_REVERSE, $fieldName, $modelClass, $tableAlias)
-            : $this->where($sqlLogical, $modelClass::getFieldName($fieldName), Query_Builder::SQL_COMPARISON_KEYWORD_RLIKE, $value, $modelClass, $tableAlias);
+            ? $this->where($sqlLogical, [$fieldValue => $fieldName] , Query_Builder::SQL_COMPARISON_KEYWORD_RLIKE_REVERSE, $modelTableData)
+            : $this->where($sqlLogical, [$fieldName => $value], Query_Builder::SQL_COMPARISON_KEYWORD_RLIKE, $modelTableData);
     }
 
     /**
      * Set inner join query part
      *
-     * @param $modelClass
-     * @param $fieldNames
-     * @param null $tableAlias
+     * @param $modelTableData
+     * @param string $fieldNames
      * @param null $condition
      * @return Query_Builder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.2
+     * @version 0.6
      * @since 0.0
      */
-    public function inner($modelClass, $fieldNames, $tableAlias = null, $condition = null)
+    public function inner($modelTableData, $fieldNames = '/pk', $condition = null)
     {
-        return $this->_select($fieldNames, null, $modelClass, $tableAlias)
-            ->join(Query_Builder::SQL_CLAUSE_INNER_JOIN, $modelClass, $tableAlias, $condition);
+        return $this->_select($fieldNames, null, $modelTableData)
+            ->join(Query_Builder::SQL_CLAUSE_INNER_JOIN, $modelTableData, $condition);
     }
 
     /**
      * Set  *join query part
      *
      * @param $joinType
-     * @param Model $modelClass
-     * @param null $tableAlias
+     * @param array|string $modelTableData Key -> modelClass, value -> tableAlias
      * @param null $condition
      * @return Query_Builder
      * @throws Exception
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.6
      * @since 0.0
      */
-    private function join($joinType, $modelClass, $tableAlias = null, $condition = null)
+    private function join($joinType, $modelTableData, $condition = null)
     {
         /** @var Model $modelClass */
-        list($modelClass, $tableAlias) = $this->getModelClassTableAlias($modelClass, $tableAlias);
+        list($modelClass, $tableAlias) = $this->getModelClassTableAlias($modelTableData);
 
         $currentJoin = [
             'type' => $joinType,
@@ -914,19 +873,18 @@ class Query_Builder
      *
      * @param $fieldName
      * @param $fieldAlias
-     * @param $modelClass
-     * @param $tableAlias
+     * @param array|string $modelTableData Key -> modelClass, value -> tableAlias
      * @return $this
-     * @throws Exception
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.2
+     * @version 0.6
      * @since 0.2
      */
-    private function _select($fieldName, $fieldAlias, $modelClass, $tableAlias)
+    private function _select($fieldName, $fieldAlias, $modelTableData)
     {
-        list($modelClass, $tableAlias) = $this->getModelClassTableAlias($modelClass, $tableAlias);
+        /** @var Model $modelClass */
+        list($modelClass, $tableAlias) = $this->getModelClassTableAlias($modelTableData);
 
         if (!isset($this->_sqlParts[self::PART_SELECT][$modelClass])) {
             $pkFieldNames = $modelClass::getPkFieldNames();
@@ -943,9 +901,9 @@ class Query_Builder
         if (is_array($fieldName)) {
             foreach ($fieldName as $field => $fieldAlias) {
                 if (is_numeric($field)) {
-                    $this->_select($fieldAlias, null, $modelClass, $tableAlias);
+                    $this->_select($fieldAlias, null, $modelTableData);
                 } else {
-                    $this->_select($field, $fieldAlias, $modelClass, $tableAlias);
+                    $this->_select($field, $fieldAlias, $modelTableData);
                 }
             }
 
@@ -954,7 +912,7 @@ class Query_Builder
             $fieldName = explode(',', $fieldName);
 
             if (count($fieldName) > 1) {
-                $this->_select($fieldName, null, $modelClass, $tableAlias);
+                $this->_select($fieldName, null, $modelTableData);
 
                 return $this;
             } else {
@@ -1000,22 +958,21 @@ class Query_Builder
      *
      * @param mixed $fieldName
      * @param null $fieldAlias
-     * @param null $modelClass
-     * @param null $tableAlias
+     * @param array $modelTableData
      * @param string|null $dataSourceKey
      * @param int $ttl
      * @return Query_Result
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.2
+     * @version 0.6
      * @since 0.0
      */
-    public function select($fieldName, $fieldAlias = null, $modelClass = null, $tableAlias = null, $dataSourceKey = null, $ttl = null)
+    public function select($fieldName, $fieldAlias = null, $modelTableData = [], $dataSourceKey = null, $ttl = null)
     {
         $this->_queryType = Query_Builder::TYPE_SELECT;
 
-        $this->_select($fieldName, $fieldAlias, $modelClass, $tableAlias);
+        $this->_select($fieldName, $fieldAlias, $modelTableData);
 
         return $this->getQuery($dataSourceKey)->execute($ttl);
     }
@@ -1040,21 +997,20 @@ class Query_Builder
     /**
      * Set inner join query part
      *
-     * @param $modelClass
-     * @param $fieldNames
-     * @param null $tableAlias
+     * @param $modelTableData
+     * @param string $fieldNames
      * @param null $condition
      * @return Query_Builder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.2
+     * @version 0.6
      * @since 0.0
      */
-    public function left($modelClass, $fieldNames, $tableAlias = null, $condition = null)
+    public function left($modelTableData, $fieldNames = '/pk', $condition = null)
     {
-        return $this->_select($fieldNames, null, $modelClass, $tableAlias)
-            ->join(Query_Builder::SQL_CLAUSE_LEFT_JOIN, $modelClass, $tableAlias, $condition);
+        return $this->_select($fieldNames, null, $modelTableData)
+            ->join(Query_Builder::SQL_CLAUSE_LEFT_JOIN, $modelTableData, $condition);
     }
 
     /**
@@ -1075,7 +1031,6 @@ class Query_Builder
      * ```
      *  example:
      * ```php
-     *      ->values('name', 'Petya')
      *      ->values(['name' => 'Petya', 'surname' => 'Vasechkin'])
      *      ->values([
      *                  ['name' => 'Petya', 'surname' => 'Vasechkin'],
@@ -1211,24 +1166,23 @@ class Query_Builder
      * ```
      *
      * @param array $value
-     * @param Model $modelClass
-     * @param string $tableAlias
+     * @param array $modelTableData
      * @param string $sqlLogical
      * @return Query_Builder
      * @throws Exception
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.2
+     * @version 0.6
      * @since 0.0
      */
-    public function inPk(array $value, $modelClass = null, $tableAlias = null, $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
+    public function inPk(array $value, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
     {
-        if (empty($value)) {
-            Logger::getInstance(__CLASS__)->exception('Primary key is empty', __FILE__, __LINE__);
-        }
+        /** @var Model $modelClass */
+        $modelClass = $this->getModelClassTableAlias($modelTableData)[0];
 
-        return $this->in('/pk', $value, $modelClass, $tableAlias, $sqlLogical);
+        $pkFieldNames = $modelClass::getPkFieldNames();
+
+        return $this->in([reset($pkFieldNames) => $value], $modelTableData, $sqlLogical);
     }
 
     /**
@@ -1236,19 +1190,18 @@ class Query_Builder
      *
      * @param string $fieldName
      * @param null $fieldAlias
-     * @param null $modelClass
-     * @param null $tableAlias
+     * @param array $modelTableData
      * @return Query_Builder
+     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.2
+     * @version 0.6
      * @since 0.0
      */
-    public function count($fieldName = '/pk', $fieldAlias = null, $modelClass = null, $tableAlias = null)
+    public function count($fieldName = '/pk', $fieldAlias = null, $modelTableData = [])
     {
-        if (!$modelClass) {
-            $modelClass = $this->getModelClass();
-        }
+        /** @var Model $modelClass */
+        $modelClass = $this->getModelClassTableAlias($modelTableData)[0];
 
         $fieldName = $modelClass::getFieldName($fieldName);
 
@@ -1258,7 +1211,7 @@ class Query_Builder
 
         $this->appendCacheTag($modelClass, $fieldName, true, false);
 
-        $this->_select('count(' . $fieldName . ')', $fieldAlias, $modelClass, $tableAlias);
+        $this->_select('count(' . $fieldName . ')', $fieldAlias, $modelTableData);
 
         return $this;
     }
@@ -1267,18 +1220,17 @@ class Query_Builder
      * Ascending ordering
      *
      * @param $fieldName
-     * @param null $modelClass
-     * @param null $tableAlias
+     * @param array $modelTableData
      * @return Query_Builder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.2
+     * @version 0.6
      * @since 0.0
      */
-    public function asc($fieldName, $modelClass = null, $tableAlias = null)
+    public function asc($fieldName, $modelTableData = [])
     {
-        return $this->order($fieldName, Query_Builder::SQL_ORDERING_ASC, $modelClass, $tableAlias);
+        return $this->order($fieldName, Query_Builder::SQL_ORDERING_ASC, $modelTableData);
     }
 
     /**
@@ -1286,26 +1238,26 @@ class Query_Builder
      *
      * @param $fieldName
      * @param $isAscending
-     * @param $modelClass
-     * @param $tableAlias
+     * @param array|string $modelTableData Key -> modelClass, value -> tableAlias
      * @return Query_Builder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.6
      * @since 0.0
      */
-    private function order($fieldName, $isAscending, $modelClass = null, $tableAlias = null)
+    private function order($fieldName, $isAscending, $modelTableData = [])
     {
         if (is_array($fieldName)) {
             foreach ($fieldName as $name) {
-                $this->order($name, $isAscending, $modelClass, $tableAlias);
+                $this->order($name, $isAscending, $modelTableData);
             }
 
             return $this;
         }
 
-        list($modelClass, $tableAlias) = $this->getModelClassTableAlias($modelClass, $tableAlias);
+        /** @var Model $modelClass */
+        list($modelClass, $tableAlias) = $this->getModelClassTableAlias($modelTableData);
 
         $fieldName = $modelClass::getFieldName($fieldName);
 
@@ -1326,26 +1278,26 @@ class Query_Builder
      * grouping by
      *
      * @param $fieldName
-     * @param Model $modelClass
-     * @param null $tableAlias
+     * @param array|string $modelTableData Key -> modelClass, value -> tableAlias
      * @return $this
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.6
      * @since 0.0
      */
-    public function group($fieldName, $modelClass = null, $tableAlias = null)
+    public function group($fieldName, $modelTableData = [])
     {
         if (is_array($fieldName)) {
             foreach ($fieldName as $name) {
-                $this->order($name, $modelClass, $tableAlias);
+                $this->group($name, $modelTableData);
             }
 
             return $this;
         }
 
-        list($modelClass, $tableAlias) = $this->getModelClassTableAlias($modelClass, $tableAlias);
+        /** @var Model $modelClass */
+        list($modelClass, $tableAlias) = $this->getModelClassTableAlias($modelTableData);
 
         $fieldName = $modelClass::getFieldName($fieldName);
 
@@ -1364,18 +1316,17 @@ class Query_Builder
      * Descending ordering
      *
      * @param $fieldName
-     * @param null $modelClass
-     * @param null $tableAlias
+     * @param array $modelTableData
      * @return Query_Builder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.6
      * @since 0.0
      */
-    public function desc($fieldName, $modelClass = null, $tableAlias = null)
+    public function desc($fieldName, $modelTableData = [])
     {
-        return $this->order($fieldName, Query_Builder::SQL_ORDERING_DESC, $modelClass, $tableAlias);
+        return $this->order($fieldName, Query_Builder::SQL_ORDERING_DESC, $modelTableData);
     }
 
     /**
@@ -1443,7 +1394,7 @@ class Query_Builder
      * @version 0.2
      * @since 0.2
      */
-    public function create($dataSourceKey = null, $ttl = null)
+    public function createTable($dataSourceKey = null, $ttl = null)
     {
         $modelClass = $this->_modelClass;
 
@@ -1519,27 +1470,23 @@ class Query_Builder
     /**
      * Set in query part where expression for search
      *
-     * @param $fieldName
-     * @param $value
-     * @param null $modelClass
-     * @param null $tableAlias
+     * @param array $fieldNameValues
+     * @param array $modelTableData
      * @param string $sqlLogical
      * @return Query_Builder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.6
      * @since 0.0
      */
-    public function search($fieldName, $value, $modelClass = null, $tableAlias = null, $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
+    public function search(array $fieldNameValues, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
     {
         return $this->where(
             $sqlLogical,
-            $fieldName,
+            $fieldNameValues,
             Query_Builder::SEARCH_KEYWORD,
-            $value,
-            $modelClass,
-            $tableAlias
+            $modelTableData
         );
     }
 

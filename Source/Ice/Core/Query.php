@@ -408,4 +408,13 @@ class Query
     {
         return $this->_triggers['afterSelect'];
     }
+
+    /**
+     * @param $modelClass
+     * @param $tableAlias
+     * @return Query_Builder
+     */
+    public static function getBuilder($modelClass, $tableAlias = null) {
+        return Query_Builder::create($modelClass, $tableAlias);
+    }
 }

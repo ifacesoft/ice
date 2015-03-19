@@ -1,6 +1,6 @@
 <?php
 
-namespace Ice\Data;
+namespace Ice\Ui_Data;
 
 use Ice\Core\Data;
 use Ice\Core\Model as Core_Model;

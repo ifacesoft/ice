@@ -59,8 +59,8 @@ fastcgi_param  SCRIPT_FILENAME  $document_root$fastcgi_script_name;
 include        fastcgi_params;
 
 fastcgi_buffer_size 128k;
-fastcgi_buffers 16 64k;
-fastcgi_busy_buffers_size 256k;
+fastcgi_buffers 4 256k;
+fastcgi_busy_buffers_size 512k;
 }
 
 location ~ /\. {

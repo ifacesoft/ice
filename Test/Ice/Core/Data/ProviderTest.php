@@ -11,13 +11,14 @@ namespace Ice\Core\Data;
 
 use Ice\Core\Data_Provider;
 use Ice\Core\Logger;
+use Ice\Core\Module;
 use PHPUnit_Framework_TestCase;
 
 class ProviderTest extends PHPUnit_Framework_TestCase
 {
     public function testProviders()
     {
-        foreach (scandir(ICE_DIR . 'Source/Ice/Data/Provider', 1) as $dataProviderFile) {
+        foreach (scandir(Module::getInstance('Ice')->get(Module::SOURCE_DIR) . 'Ice/Data/Provider', 1) as $dataProviderFile) {
             if ($dataProviderFile == '..' || $dataProviderFile == '.' || $dataProviderFile == 'Apc.php') {
                 continue;
             }
@@ -33,7 +34,8 @@ class ProviderTest extends PHPUnit_Framework_TestCase
                 $dataProviderFile == 'Router.php' ||
                 $dataProviderFile == 'Mysqli.php' ||
                 $dataProviderFile == 'Mongodb.php' ||
-                $dataProviderFile == 'Cacher.php'
+                $dataProviderFile == 'Cacher.php' ||
+                $dataProviderFile == 'Apc.php'
             ) {
                 continue;
             }

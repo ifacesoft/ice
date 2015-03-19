@@ -3,6 +3,7 @@
 namespace Ice\Form\Security\Login;
 
 use Ice\Core\Form_Security_Login;
+use Ice\Core\Query;
 use Ice\Model\Account;
 use Ice\Model\User_Role_Link;
 
@@ -37,10 +38,10 @@ class Login_Password extends Form_Security_Login
      */
     public function submit()
     {
-        foreach (Account::query()->eq(['login' => $this->getValues()['login']])->select(['password', 'user__fk'])->getRows() as $accountRow) {
+        foreach (Query::getBuilder(Account::getClass())->eq(['login' => $this->getValues()['login']])->select(['password', 'user__fk'])->getRows() as $accountRow) {
             if (password_verify($this->validate()['password'], $accountRow['password'])) {
                 $_SESSION['userPk'] = $accountRow['user__fk'];
-                $_SESSION['roleNames'] = User_Role_Link::query()
+                $_SESSION['roleNames'] = Query::getBuilder(User_Role_Link::getClass())
                     ->inner('Ice:Role', 'role_name')
                     ->eq(['user__fk' => $accountRow['user__fk']])
                     ->select('role_name')->getColumn();

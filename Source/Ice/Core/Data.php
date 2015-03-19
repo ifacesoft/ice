@@ -28,7 +28,7 @@ abstract class Data extends Container
     /**
      * Return instance of Data
      *
-     * @param null $key
+     * @param string $key
      * @param null $ttl
      * @return Data
      * @author dp <denis.a.shestakov@gmail.com>
@@ -36,7 +36,7 @@ abstract class Data extends Container
      * @version 0.2
      * @since 0.2
      */
-    public static function getInstance($key = null, $ttl = null)
+    public static function getInstance($key = 'Simple', $ttl = null)
     {
         return parent::getInstance($key, $ttl);
     }
@@ -58,7 +58,7 @@ abstract class Data extends Container
         $class = self::getClass();
 
         if ($class == __CLASS__) {
-            $class = 'Ice\Data\\' . $key;
+            $class = 'Ice\Ui_Data\\' . $key;
         }
 
         return new $class($key);

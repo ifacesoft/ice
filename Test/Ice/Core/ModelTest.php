@@ -27,8 +27,8 @@ class ModelTest extends PHPUnit_Framework_TestCase
             }
 
             // INIT
-            Test::query()->drop($dataSourceKey);
-            Test::query()->create($dataSourceKey);
+            Query::getBuilder(Test::getClass())->drop($dataSourceKey);
+            Query::getBuilder(Test::getClass())->createTable($dataSourceKey);
 
             $test1 = Test::create([
                 '/name' => 'name',

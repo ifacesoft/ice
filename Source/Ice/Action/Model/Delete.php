@@ -12,6 +12,7 @@ namespace Ice\Action;
 use Ice\Core\Action;
 use Ice\Core\Logger;
 use Ice\Core\Model;
+use Ice\Core\Query;
 
 /**
  * Class Model_Delete
@@ -93,9 +94,7 @@ class Model_Delete extends Action
      */
     public function run(array $input)
     {
-        $class = Model::getClass($input['modelClassName']);
-
-        return $class::query()->delete($input['pk'])->getAffectedRows()
+        return Query::getBuilder(Model::getClass($input['modelClassName']))->delete($input['pk'])->getAffectedRows()
             ? ['success' => Model_Delete::getLogger()->info('Delete successfully', Logger::SUCCESS)]
             : ['error' => Model_Delete::getLogger()->info('Delete failed', Logger::DANGER)];
     }

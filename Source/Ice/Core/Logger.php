@@ -9,6 +9,7 @@
 
 namespace Ice\Core;
 
+use FirePHP;
 use Ice;
 use Ice\Core;
 use Ice\Helper\Console;
@@ -16,6 +17,7 @@ use Ice\Helper\Directory;
 use Ice\Helper\File;
 use Ice\Helper\Http;
 use Ice\Helper\Logger as Helper_Logger;
+use Ice\Helper\Memory;
 use Ice\Helper\Object;
 use Ice\Helper\Php;
 use Ice\Helper\Resource as Helper_Resource;
@@ -258,10 +260,23 @@ class Logger
         }
     }
 
-    public static function fb($value, $type = 'LOG')
+    /**
+     *
+     * @param $value
+     * @param string $type (LOG|INFO|WARN|ERROR|DUMP|TRACE|EXCEPTION|TABLE|GROUP_START|GROUP_END)
+     * @param string $label
+     * @param array $options
+     */
+    public static function fb($value, $type = 'LOG', $label = '', $options = [])
     {
-        if (!Request::isCli() && !headers_sent() && function_exists('fb')) {
-            fb($value, $type);
+        if (!Request::isCli() && !headers_sent() && Loader::load('FirePHP', false)) {
+            $varSize = Memory::getVarSize($value);
+
+            if ($varSize > 65536) {
+                $value = 'Very big data: ' . $varSize . ' bytes';
+            }
+
+            FirePHP::getInstance(true)->fb($value, $label, $type, $options);
         }
     }
 
@@ -441,7 +456,7 @@ class Logger
                 File::createData($logFile, $var, false, FILE_APPEND);
             }
 
-            Logger::fb($arg, 'DEBUG');
+            Logger::fb($arg, 'DUMP');
         }
     }
 
@@ -578,7 +593,7 @@ class Logger
     {
         if (!Environment::getInstance()->isProduction()) {
 //            if (Request::isCli()) {
-                $this->info(Helper_Resource::getMessage($message), $type, false);
+            $this->info(Helper_Resource::getMessage($message), $type, false);
 //            } else {
 //                Logger::fb($message);
 //            }

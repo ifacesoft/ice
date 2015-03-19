@@ -40,10 +40,7 @@ abstract class Model_Factory extends Model_Defined
      */
     public static function getDelegate($delegateName, $sourceName = null, $ttl = null)
     {
-        /** @var Model $modelclass */
-        $modelclass = get_called_class();
-
-        return $modelclass::query()
+        return Query::getBuilder(self::getClass())
             ->eq(['/delegate_name' => $delegateName])
             ->is('/active')
             ->select('/delegate_name')

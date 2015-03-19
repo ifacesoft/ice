@@ -27,6 +27,6 @@ class Module_CreateTest extends PHPUnit_Framework_TestCase
         /** @var Action $actionClass */
         $actionClass = Module_Create::getClass();
 
-        $actionClass::call($input);
+//        $actionClass::call($input);
     }
 }

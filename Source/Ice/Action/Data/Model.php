@@ -4,6 +4,7 @@ namespace Ice\Action;
 use Ice\Core\Action;
 use Ice\Core\Logger;
 use Ice\Core\Model;
+use Ice\Core\Query;
 use Ice\Helper\Arrays;
 
 /**
@@ -110,7 +111,7 @@ class Data_Model extends Action
             ]
         ]);
 
-        $queryResult = $modelClass::query()
+        $queryResult = Query::getBuilder($modelClass)
             ->setPaginator([$input['page'], $input['limit']])
             ->desc('/pk')
             ->select('*');

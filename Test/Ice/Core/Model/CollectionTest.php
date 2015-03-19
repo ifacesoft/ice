@@ -17,8 +17,8 @@ class Model_CollectionTest extends PHPUnit_Framework_TestCase
 
                     Logger::getInstance(__CLASS__)->info('test ' . __CLASS__ . ' ' . $dataSourceKey . '...', null, false);
 
-                    Test::query()->drop($dataSourceKey);
-                    Test::query()->create($dataSourceKey);
+                    Query::getBuilder(Test::getClass())->drop($dataSourceKey);
+                    Query::getBuilder(Test::getClass())->createTable($dataSourceKey);
 
                     switch ($dataSourceClass) {
                         case Mongodb::getClass():
@@ -175,7 +175,7 @@ class Model_CollectionTest extends PHPUnit_Framework_TestCase
                         $testCollection->getRows()
                     );
 
-                    Test::query()->inPk([reset($firstId), $id3, $id6])->select('/name', null, null, null, $dataSourceKey)->getModelCollection()->remove($dataSourceKey);
+                    Query::getBuilder(Test::getClass())->inPk([reset($firstId), $id3, $id6])->select('/name', null, null, null, $dataSourceKey)->getModelCollection()->remove($dataSourceKey);
 
                     $this->assertNotEquals($testCollection->getRows(), Test::getCollection('*', [1, 1000, 0], $dataSourceKey)->getRows());
 

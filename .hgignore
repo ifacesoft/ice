@@ -8,7 +8,7 @@ syntax: regexp
 ^/.git
 ^/.hg
 
-^composer\.lock$
+^/.idea
 
 ^Resource/api
 ^Resource/uml

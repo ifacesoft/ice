@@ -587,7 +587,7 @@ abstract class Model
             // many-to-one
             $foreignKeyName = strtolower($modelName) . '__fk';
             if (array_key_exists($foreignKeyName, $fieldName::getFieldColumnMap())) {
-                $this->_fk[$fieldName] = $fieldName::query()
+                $this->_fk[$fieldName] = Query::getBuilder($fieldName)
                     ->eq([$foreignKeyName => $this->getPk()])
                     ->select('*')
                     ->getModelCollection();
@@ -623,22 +623,6 @@ abstract class Model
         }
 
         return new $modelClass($row);
-    }
-
-    /**
-     * Return queryBuilder
-     *
-     * @param null $tableAlias
-     * @return Query_Builder
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public static function  query($tableAlias = null)
-    {
-        return Query_Builder::getInstance(self::getClass(), $tableAlias);
     }
 
     /**
@@ -683,9 +667,9 @@ abstract class Model
      */
     public static function getRows(array $pagination, $fieldNames = '*', $dataSourceKey = null, $ttl = null)
     {
-        return self::query()
+        return Query::getBuilder(self::getClass())
             ->setPaginator($pagination)
-            ->select($fieldNames, null, null, null, $dataSourceKey, $ttl)
+            ->select($fieldNames, null, [], $dataSourceKey, $ttl)
             ->getRows();
     }
 
@@ -704,9 +688,9 @@ abstract class Model
      */
     public static function getCollection($fieldNames, array $pagination = [1, 1000, 0], $dataSourceKey = null, $ttl = null)
     {
-        return self::query()
+        return Query::getBuilder(self::getClass())
             ->setPaginator($pagination)
-            ->select($fieldNames, null, null, null, $dataSourceKey, $ttl)
+            ->select($fieldNames, null, [], $dataSourceKey, $ttl)
             ->getModelCollection();
     }
 
@@ -860,10 +844,10 @@ abstract class Model
      */
     public static function getModelBy(array $fieldNameValues, $fieldNames, $dataSourceKey = null, $ttl = null)
     {
-        return self::query()
+        return Query::getBuilder(self::getClass())
             ->eq($fieldNameValues)
             ->limit(1)
-            ->select($fieldNames, null, null, null, $dataSourceKey, $ttl)
+            ->select($fieldNames, null, [], $dataSourceKey, $ttl)
             ->getModel();
     }
 
@@ -882,10 +866,10 @@ abstract class Model
      */
     public static function getModel($pk, $fieldNames, $dataSourceKey = null, $ttl = null)
     {
-        return self::query()
+        return Query::getBuilder(self::getClass())
             ->pk($pk)
             ->limit(1)
-            ->select($fieldNames, null, null, null, $dataSourceKey, $ttl)
+            ->select($fieldNames, null, [], $dataSourceKey, $ttl)
             ->getModel();
     }
 
@@ -905,9 +889,9 @@ abstract class Model
      */
     public static function getRow($pk = [], $fieldNames = '*', $dataSourceKey = null, $ttl = null)
     {
-        return self::query()
+        return Query::getBuilder(self::getClass())
             ->pk($pk)
-            ->select($fieldNames, null, null, null, $dataSourceKey, $ttl)
+            ->select($fieldNames, null, [], $dataSourceKey, $ttl)
             ->getRow($pk);
     }
 
@@ -966,15 +950,12 @@ abstract class Model
      * @return Query_Result
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.2
+     * @version 0.6
      * @since 0.2
      */
     public static function createTable($dataSourceKey = null)
     {
-        $queryBuilder = self::query();
-
-
-        return $queryBuilder->create($dataSourceKey);
+        return Query::getBuilder(self::getClass())->createTable($dataSourceKey);
     }
 
     /**
@@ -984,12 +965,12 @@ abstract class Model
      * @return Query_Result
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.2
+     * @version 0.6
      * @since 0.2
      */
     public static function dropTable($dataSourceKey = null)
     {
-        return self::query()->drop($dataSourceKey);
+        return Query::getBuilder(self::getClass())->drop($dataSourceKey);
     }
 
     public static function getFieldColumnMap()
@@ -1083,9 +1064,9 @@ abstract class Model
 
         $selectFields = array_merge($modelClass::getFieldNames($fieldNames), array_keys($affected));
 
-        $row = $modelClass::query()
+        $row = Query::getBuilder($modelClass)
             ->eq($affected)
-            ->select($selectFields, null, null, null, $dataSourceKey, $ttl)
+            ->select($selectFields, null, [], $dataSourceKey, $ttl)
             ->getRow();
 
         if (!$row) {
@@ -1189,7 +1170,7 @@ abstract class Model
     private function insert($modelClass, $affected, $isSmart, $dataSourceKey) {
         $this->beforeInsert();
 
-        $insertId = $modelClass::query()
+        $insertId = Query::getBuilder($modelClass)
             ->insert($affected, $isSmart, $dataSourceKey)
             ->getInsertId();
 
@@ -1206,7 +1187,7 @@ abstract class Model
     private function update($modelClass, $affected, $dataSourceKey) {
         $this->beforeUpdate();
 
-        $modelClass::query()
+        Query::getBuilder($modelClass)
             ->pk($this->getPk())
             ->update($affected, $dataSourceKey);
 
@@ -1320,12 +1301,9 @@ abstract class Model
      */
     public function remove($dataSourceKey = null)
     {
-        /** @var Model $modelClass */
-        $modelClass = get_class($this);
-
         $this->beforeDelete();
 
-        $modelClass::query()->delete($this->getPk(), $dataSourceKey);
+        Query::getBuilder(get_class($this))->delete($this->getPk(), $dataSourceKey);
 
         $this->afterDelete();
 
@@ -1435,12 +1413,26 @@ abstract class Model
                 : $namespace . $className . '_' . $selfClassName . '_Link';
         }
 
-        return $linkModelClass::query()
+        return Query::getBuilder($linkModelClass)
             ->eq([
                 strtolower($selfClassName) . '__fk' => $this->getPk(),
                 strtolower($className) . '__fk' => $modelPk
             ])
             ->select('*', null, null, null, $dataSourceKey, $ttl)
             ->getModel();
+    }
+
+    public function getQueryBuilder($modelTableData, $fieldNames = '/pk') {
+        $selfModelClass = get_class($this);
+
+//        $queryBuilder = Query::getBuilder($selfModelClass, $tableAlias)->pk($this->getPk());
+
+//        if ($modelClass) {
+//            $modelClass = Model::getClass($modelClass);
+//        }
+//
+//        if ($selfModelClass != $modelClass) {
+//            $queryBuilder->inner($modelTableData, $fieldNames);
+//        }
     }
 }
