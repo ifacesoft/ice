@@ -62,12 +62,12 @@ class Twig extends View_Render
     {
         $config = Twig::getConfig();
 
-        $twigPath = VENDOR_DIR . $config->get('vendor') . '/lib/';
+//        $twigPath = VENDOR_DIR . $config->get('vendor') . '/lib/';
+//
+//        require_once $twigPath . 'Twig/Environment.php';
+//        require_once $twigPath . 'Twig/Autoloader.php';
 
-        require_once $twigPath . 'Twig/Environment.php';
-        require_once $twigPath . 'Twig/Autoloader.php';
-
-        Loader::register('Twig_Autoloader::autoload');
+//        Loader::register('Twig_Autoloader::autoload');
 
         $templateDirs = [];
 

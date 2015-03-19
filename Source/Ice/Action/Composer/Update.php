@@ -91,7 +91,7 @@ class Composer_Update extends Action
             'cd ' . MODULE_DIR,
             'php composer.phar self-update',
             'php composer.phar clear-cache',
-            'php composer.phar update'
+            'php composer.phar update --prefer-source'
         ]);
     }
 }
