@@ -1,6 +1,5 @@
-[Ice](http://iceframework.net) [![Build Status](https://travis-ci.org/ifacesoft/Ice.svg)](https://travis-ci.org/ifacesoft/Ice)
+[![Logo](http://iceframework.net/resource/img/logo/ice1.jpg)](http://iceframework.net) [Ice](http://iceframework.net) (iceframework.net) 
 ===
-
 [![Build Status](https://scrutinizer-ci.com/g/ifacesoft/Ice/badges/build.png?b=master)](https://scrutinizer-ci.com/g/ifacesoft/Ice/build-status/master)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/ifacesoft/Ice/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/ifacesoft/Ice/?branch=master)
 [![Code Coverage](https://scrutinizer-ci.com/g/ifacesoft/Ice/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/ifacesoft/Ice/?branch=master)
@@ -14,6 +13,9 @@ Ice is a general purpose PHP-framework.
 You may fully rely on Ice while developing complex web-applications.
 Ice key features are the built-in cache support of the main components,
 flexible configuration and the ability to easily extend existing functionality.
+
+
+
 
 History
 =======
