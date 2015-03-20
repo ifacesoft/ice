@@ -4,6 +4,7 @@ namespace Ice\Data\Provider;
 
 use Ice\Core\Data_Provider;
 use Ice\Core\Exception;
+use Ice\Core\Logger;
 use Ice\Core\Resource as Core_Resource;
 use Ice\Helper\Object;
 

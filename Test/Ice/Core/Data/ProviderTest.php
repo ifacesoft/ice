@@ -35,6 +35,7 @@ class ProviderTest extends PHPUnit_Framework_TestCase
                 $dataProviderFile == 'Mysqli.php' ||
                 $dataProviderFile == 'Mongodb.php' ||
                 $dataProviderFile == 'Cacher.php' ||
+                $dataProviderFile == 'Resource.php' ||
                 $dataProviderFile == 'Apc.php'
             ) {
                 continue;
