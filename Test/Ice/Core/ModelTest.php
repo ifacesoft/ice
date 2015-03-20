@@ -68,6 +68,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
             if ($dataSourceKey == 'Ice\Data\Source\Mongodb/default.test') {
                 continue;
             }
+
             // @todo убрать ресет + 'test_pk' => '/pk'
             $pk = $test4->getPk();
             Test::create([
