@@ -11,6 +11,7 @@ namespace Ice\Action;
 
 use Ice\Core\Action;
 use Ice\Core\Logger;
+use Ice\Core\Module;
 use Ice\Helper\Console;
 
 /**
@@ -70,7 +71,11 @@ class Composer_Update extends Action
     protected static function config()
     {
         return [
-            'view' => ['template' => '']
+            'view' => ['template' => ''],
+            'input' => [
+                'vendor' => ['default' => 'ifacesoft/composer'],
+                'command' => ['default' => '/bin/composer']
+            ]
         ];
     }
 
@@ -87,11 +92,12 @@ class Composer_Update extends Action
      */
     public function run(array $input)
     {
+        $command = VENDOR_DIR . $input['vendor'] . $input['command'];
+
         Console::run([
             'cd ' . MODULE_DIR,
-            'php composer.phar self-update',
-            'php composer.phar clear-cache',
-            'php composer.phar update --prefer-source'
+            'php ' . $command . ' clear-cache',
+            'php ' . $command . ' update --prefer-source'
         ]);
     }
 }

@@ -181,10 +181,10 @@ class Console
         $commandString = '';
 
         foreach ((array)$commands as $command) {
-            $commandString .= $command . ' && ';
+            $commandString .= $command . ' && \\' . "\n";
         }
 
-        $commandString = substr($commandString, 0, -4);
+        $commandString = substr($commandString, 0, -5);
 
         if ($toDevNull) {
             $commandString .= ' > /dev/null 2>&1';
