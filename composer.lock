@@ -4,27 +4,27 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "e4df4fe4dd052ad990e7eabb83c8bed0",
+    "hash": "a3272464fcc09c808b16b4e3641fc8a2",
     "packages": [
         {
             "name": "ifacesoft/composer",
-            "version": "dev-master",
+            "version": "0.0.x-dev",
             "source": {
                 "type": "git",
                 "url": "https://github.com/dp-ifacesoft/composer.git",
-                "reference": "705df9b5fcbd9a2ab8ab65369c3c864d48782c25"
+                "reference": "da5d86ba4db5161c2a336266f99522b71721acbe"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dp-ifacesoft/composer/zipball/705df9b5fcbd9a2ab8ab65369c3c864d48782c25",
-                "reference": "705df9b5fcbd9a2ab8ab65369c3c864d48782c25",
+                "url": "https://api.github.com/repos/dp-ifacesoft/composer/zipball/da5d86ba4db5161c2a336266f99522b71721acbe",
+                "reference": "da5d86ba4db5161c2a336266f99522b71721acbe",
                 "shasum": ""
             },
             "require": {
                 "justinrainbow/json-schema": "~1.3",
                 "php": ">=5.3.2",
                 "seld/jsonlint": "~1.0",
-                "symfony/console": "~2.5",
+                "symfony/console": "~2.6",
                 "symfony/finder": "~2.2",
                 "symfony/process": "~2.1"
             },
@@ -72,7 +72,7 @@
                 "dependency",
                 "package"
             ],
-            "time": "2015-03-20 08:53:50"
+            "time": "2015-03-21 12:49:17"
         },
         {
             "name": "justinrainbow/json-schema",
