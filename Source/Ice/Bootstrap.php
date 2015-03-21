@@ -10,7 +10,6 @@
 namespace Ice;
 
 use Composer\Autoload\ClassLoader;
-use Ice\Core\Environment;
 use Ice\Core\Loader;
 use Ice\Core\Logger;
 use Ice\Core\Module;
@@ -26,9 +25,6 @@ use Ice\Core\Session;
  * @author dp <denis.a.shestakov@gmail.com>
  *
  * @package Ice
- *
- * @version 0.0
- * @since 0.0
  */
 class Bootstrap
 {
@@ -72,12 +68,13 @@ class Bootstrap
             die('Terminated. Bye-bye...' . "\n");
         }
 
-
         Profiler::setTiming(__CLASS__, $startTime);
     }
 }
 
 if (!defined('ICE_BOOTSTRAP')) {
+    define('ICE_BOOTSTRAP', true);
+
     define('MODULE_DIR', php_sapi_name() == 'cli' ? getcwd() . '/' : dirname(dirname($_SERVER['PHP_SELF'])));
     define('MODULE_CONFIG_PATH', 'Config/Ice/Core/Module.php');
     define('VENDOR', basename(dirname(MODULE_DIR)) . '/' . basename(MODULE_DIR));
@@ -107,6 +104,4 @@ if (!defined('ICE_BOOTSTRAP')) {
     }
 
     Bootstrap::init($loader);
-
-    define('ICE_BOOTSTRAP', true);
 }
