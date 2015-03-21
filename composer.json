@@ -18,14 +18,12 @@
   "autoload": {
     "psr-4": {"Ice\\": "Source/Ice/"},
     "files": [
-      "Source/Ice/Bootstrap.php"
     ]
   },
   "require": {
     "php": ">=5.5",
     "twig/twig": "1.*",
-    "smarty/smarty": "3.1.*",
-    "ifacesoft/composer": "0.0.*@dev"
+    "smarty/smarty": "3.1.*"
   },
   "require-dev": {
     "firephp/firephp-core": "dev-master",
