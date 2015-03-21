@@ -15,6 +15,7 @@ use Ice\Core\Action_Context;
 use Ice\Core\Container;
 use Ice\Core\Environment;
 use Ice\Core\Logger;
+use Ice\Core\Profiler;
 use Ice\Core\Request;
 use Ice\Core\Response;
 use Ice\Core\Route;
@@ -47,28 +48,18 @@ class Ice
      * @var float
      */
     private $_startTime;
-    /**
-     * Main module name
-     *
-     * @access private
-     * @var string
-     */
-    private $_moduleName = null;
 
     /**
      * Private constructor
-     *
-     * @param $moduleName string main module name
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
      * @since 0.0
      */
-    private function __construct($moduleName)
+    private function __construct()
     {
         $this->_startTime = microtime(true);
-        $this->_moduleName = $moduleName;
     }
 
     /**
@@ -90,7 +81,6 @@ class Ice
     /**
      * Create new instance of Ice application
      *
-     * @param $moduleName string main module name
      * @return Ice
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -98,9 +88,9 @@ class Ice
      * @version 0.0
      * @since 0.0
      */
-    public static function create($moduleName)
+    public static function create()
     {
-        return new Ice($moduleName);
+        return new Ice();
     }
 
     /**
@@ -189,6 +179,7 @@ class Ice
 
         if (!Environment::getInstance()->isProduction()) {
             Logger::renderLog();
+            Profiler::getReport();
             Logger::fb('application time: ' . Logger::getUsefulWork(true) . ' | ' .
                 'idle time: ' . Logger::microtimeResult($this->_startTime + Logger::getUsefulWork()) . ' | ' .
                 Memory::memoryGetUsagePeak(), 'INFO');

@@ -10,6 +10,4 @@
  * @since 0.0
  */
 
-require_once 'bootstrap.php';
-
-Ice::create(dirname(MODULE_DIR))->run();
+Ice::create()->run();

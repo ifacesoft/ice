@@ -15,6 +15,7 @@ use Ice\Core\Environment;
 use Ice\Core\Loader;
 use Ice\Core\Logger;
 use Ice\Core\Module;
+use Ice\Core\Profiler;
 use Ice\Core\Request;
 use Ice\Core\Session;
 use Ice\Helper\Memory;
@@ -73,8 +74,7 @@ class Bootstrap
             die('Terminated. Bye-bye...' . "\n");
         }
 
-        if (!Environment::getInstance()->isProduction()) {
-            Logger::fb('bootstrapping time: ' . Logger::microtimeResult($startTime) . ' | ' . Memory::memoryGetUsagePeak(), 'INFO');
-        }
+
+            Profiler::setTiming(__CLASS__, Logger::microtimeResult($startTime));
     }
 }

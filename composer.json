@@ -16,13 +16,16 @@
     "vendor-dir": "../_vendor/"
   },
   "autoload": {
-    "psr-4": {"Ice\\": "Source/Ice/"}
+    "psr-4": {"Ice\\": "Source/Ice/"},
+    "files": [
+      "bootstrap.php"
+    ]
   },
   "require": {
     "php": ">=5.5",
     "twig/twig": "1.*",
     "smarty/smarty": "3.1.*",
-    "ifacesoft/composer": "dev-master"
+    "ifacesoft/composer": "0.0.*@dev"
   },
   "require-dev": {
     "firephp/firephp-core": "dev-master",
