@@ -9,7 +9,6 @@
 
 namespace Ice\Action;
 
-use Ice;
 use Ice\Core\Action;
 use Ice\Core\Environment;
 use Ice\Core\Logger;

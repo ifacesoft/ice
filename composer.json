@@ -13,12 +13,12 @@
     }
   ],
   "config": {
-    "vendor-dir": "../_vendor/"
+    "vendor-dir": "../../"
   },
   "autoload": {
     "psr-4": {"Ice\\": "Source/Ice/"},
     "files": [
-      "bootstrap.php"
+      "Source/Ice/Bootstrap.php"
     ]
   },
   "require": {

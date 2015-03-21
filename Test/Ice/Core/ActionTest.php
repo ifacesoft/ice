@@ -2,7 +2,6 @@
 
 namespace Ice\Core;
 
-use Ice;
 use Ice\Data\Provider\Router;
 use PHPUnit_Framework_TestCase;
 

@@ -9,7 +9,7 @@
 
 namespace Ice\Core;
 
-use Ice;
+use Ice\App;
 use Ice\Core;
 use Ice\Data\Provider\Cli as Data_Provider_Cli;
 use Ice\Data\Provider\File;
@@ -100,7 +100,8 @@ abstract class Action implements Cacheable
 
     public static function call(array $input = [], $level = 0)
     {
-        $startTime = Logger::microtime();
+        $startTime = Profiler::getMicrotime();
+        $startMemory = Profiler::getMemoryGetUsage();
 
         /** @var Action $actionClass */
         $actionClass = self::getClass();
@@ -122,7 +123,7 @@ abstract class Action implements Cacheable
         $hash = crc32(Json::encode($input));
         $actionHash = $actionClass . '/' . $hash;
 
-        $actionContext = Ice::getContext()->initAction($actionClass, $hash);
+        $actionContext = App::getContext()->initAction($actionClass, $hash);
 
         /** @var Action $action */
 //        $action = $actionCacher->get($actionHash);
@@ -134,14 +135,16 @@ abstract class Action implements Cacheable
 
             $output = (array)$action->run($input);
 
-            $finishTime = Logger::microtimeResult($startTime, true);
+            Profiler::setTiming('Action ' . $actionClass, $startTime);
+            Profiler::setMemoryUsages('Action ' . $actionClass, $startMemory);
 
 //            if ($content = $actionContext->getContent()) {
-//                Ice::getContext()->setContent(null);
+//                App::getContext()->setContent(null);
 //                return $content;
 //            }
 
-            $startTimeAfter = Logger::microtime();
+            $startTimeAfter = Profiler::getMicrotime();
+            $startMemoryAfter = Profiler::getMemoryGetUsage();
 
             foreach ($action->getActions() as $actionKey => $actionData) {
                 if (empty($actionData) || count($actionData) > 2) {
@@ -178,11 +181,8 @@ abstract class Action implements Cacheable
                 }
             }
 
-            $finishTimeAfter = Logger::microtimeResult($startTimeAfter);
-
-            if (Environment::getInstance()->isDevelopment()) {
-                Logger::fb('action: ' . $actionClass . ' ' . Json::encode($input) . ' [' . $finishTime . ' ' . $finishTimeAfter . ']');
-            }
+            Profiler::setTiming('Action ' . $actionClass . ' (childs)', $startTimeAfter);
+            Profiler::setMemoryUsages('Action ' . $actionClass . ' (childs)', $startMemoryAfter);
 
             $action->setOutput($output);
 
@@ -191,7 +191,7 @@ abstract class Action implements Cacheable
             $actionCacher->set($actionHash, $action, $action->getTtl());
 
             if (Request::isCli()) {
-                Action::getLogger()->info(['{$0}{$1} complete! [{$2} + {$3}]', [str_repeat("\t", $level), $actionClass::getClassName(), $finishTime, $finishTimeAfter]], Logger::MESSAGE);
+                Action::getLogger()->info(['{$0}{$1} complete!', [str_repeat("\t", $level), $actionClass::getClassName()]], Logger::MESSAGE);
             }
         }
 
@@ -202,11 +202,11 @@ abstract class Action implements Cacheable
     {
         if (isset($input['response'])) {
             if (isset($input['response']['contentType'])) {
-                Ice::getResponse()->setContentType($input['response']['contentType']);
+                App::getResponse()->setContentType($input['response']['contentType']);
             }
 
             if (isset($input['response']['statusCode'])) {
-                Ice::getResponse()->setStatusCode($input['response']['statusCode']);
+                App::getResponse()->setStatusCode($input['response']['statusCode']);
             }
 
             unset($input['response']);

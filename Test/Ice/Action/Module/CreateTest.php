@@ -1,7 +1,6 @@
 <?php
 namespace Ice\Action;
 
-use Ice;
 use Ice\Core\Action;
 use Ice\Data\Provider\Cli;
 use PHPUnit_Framework_TestCase;

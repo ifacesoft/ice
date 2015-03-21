@@ -10,7 +10,6 @@
 namespace Ice\Core;
 
 use Composer\Autoload\ClassLoader;
-use Ice;
 use Ice\Core;
 use Ice\Data\Provider\Repository;
 use Ice\Exception\File_Not_Found;

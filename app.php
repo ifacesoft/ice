@@ -10,4 +10,6 @@
  * @since 0.0
  */
 
-Ice::create()->run();
+require_once __DIR__ . '/Source/Ice/Bootstrap.php';
+
+\Ice\App::run();

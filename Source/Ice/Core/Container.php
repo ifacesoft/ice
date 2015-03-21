@@ -9,12 +9,10 @@
 
 namespace Ice\Core;
 
-use Ice;
 use Ice\Core;
 use Ice\Exception\File_Not_Found;
 use Ice\Helper\Json;
 use Ice\Helper\Object;
-use Ice\Helper\String;
 
 /**
  * Class Container

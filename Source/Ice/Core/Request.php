@@ -9,7 +9,6 @@
 
 namespace Ice\Core;
 
-use Ice;
 use Ice\Core;
 use Ice\Data\Provider\Request as Data_Provider_Request;
 use Ice\Helper\Http;

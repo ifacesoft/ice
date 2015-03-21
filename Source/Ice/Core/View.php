@@ -9,7 +9,6 @@
 
 namespace Ice\Core;
 
-use Ice;
 use Ice\Core;
 use Ice\Data\Provider\Cacher;
 use Ice\Helper\Emmet;
@@ -180,7 +179,8 @@ class View implements Cacheable
 
     public function render()
     {
-        $startTime = Logger::microtime();
+        $startTime = Profiler::getMicrotime();
+        $startMemory = Profiler::getMemoryGetUsage();
 
         if (empty($this->_template)) {
             return;
@@ -209,8 +209,11 @@ class View implements Cacheable
                 $this->_result['content'] = $emmetedResult;
             }
 
+            Profiler::setTiming('View '. $this->_template, $startTime);
+            Profiler::setMemoryUsages('View '. $this->_template, $startMemory);
+
             if (Environment::getInstance()->isDevelopment()) {
-                Logger::fb('view: ' . $this->_template . ' (' . $viewRenderClass . ') [' . Logger::microtimeResult($startTime) . ']');
+                Logger::fb('view: ' . $this->_template . ' (' . $viewRenderClass . ')');
             }
 
             array_shift(View_Render::$templates);

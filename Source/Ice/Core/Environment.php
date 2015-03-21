@@ -9,9 +9,7 @@
 
 namespace Ice\Core;
 
-use Ice;
 use Ice\Core;
-use Ice\Helper\Config as Helper_Config;
 
 /**
  * Class Environment

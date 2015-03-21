@@ -9,7 +9,6 @@
 
 namespace Ice;
 
-use Ice;
 use Ice\Core\Code_Generator;
 use Ice\Core\Config;
 use Ice\Core\Data_Provider;

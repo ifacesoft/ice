@@ -10,7 +10,7 @@
 namespace Ice\Action;
 
 use CSSmin;
-use Ice;
+use Ice\App;
 use Ice\Core\Action;
 use Ice\Core\Data_Provider;
 use Ice\Core\Loader;
@@ -325,7 +325,7 @@ class Resources extends Action
         $jsResource = Directory::get($compiledResourceDir . $jsRes) . $jsFile;
         $cssResource = Directory::get($compiledResourceDir . $cssRes) . $cssFile;
 
-        $callStack = Ice::getContext()->getFullStack();
+        $callStack = App::getContext()->getFullStack();
 
         foreach (array_keys($callStack) as $actionClass) {
             if (file_exists($jsSource = Loader::getFilePath($actionClass, '.js', MODULE::RESOURCE_DIR, false))) {

@@ -9,7 +9,7 @@
 
 namespace Ice\Core;
 
-use Ice;
+use Ice\Core;
 use Ice\Helper\Object;
 
 /**
@@ -27,7 +27,7 @@ use Ice\Helper\Object;
  */
 abstract class Data_Provider
 {
-    use Ice\Core;
+    use Core;
 
     const PREFIX_KEY_DELIMETER = '/_';
 
