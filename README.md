@@ -15,8 +15,6 @@ Ice key features are the built-in cache support of the main components,
 flexible configuration and the ability to easily extend existing functionality.
 
 
-
-
 History
 =======
 
