@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "a3272464fcc09c808b16b4e3641fc8a2",
+    "hash": "e8714132d488e1231303d01596af08ee",
     "packages": [
         {
             "name": "ifacesoft/composer",
@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/dp-ifacesoft/composer.git",
-                "reference": "da5d86ba4db5161c2a336266f99522b71721acbe"
+                "reference": "13ccd9bb1e1f81fb8bf47fea92bdfeecf502a098"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dp-ifacesoft/composer/zipball/da5d86ba4db5161c2a336266f99522b71721acbe",
-                "reference": "da5d86ba4db5161c2a336266f99522b71721acbe",
+                "url": "https://api.github.com/repos/dp-ifacesoft/composer/zipball/13ccd9bb1e1f81fb8bf47fea92bdfeecf502a098",
+                "reference": "13ccd9bb1e1f81fb8bf47fea92bdfeecf502a098",
                 "shasum": ""
             },
             "require": {
@@ -72,7 +72,7 @@
                 "dependency",
                 "package"
             ],
-            "time": "2015-03-21 12:49:17"
+            "time": "2015-03-21 17:20:44"
         },
         {
             "name": "justinrainbow/json-schema",

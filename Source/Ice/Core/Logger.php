@@ -10,14 +10,13 @@
 namespace Ice\Core;
 
 use FirePHP;
-use Ice;
 use Ice\Core;
 use Ice\Helper\Console;
 use Ice\Helper\Directory;
 use Ice\Helper\File;
 use Ice\Helper\Http;
 use Ice\Helper\Logger as Helper_Logger;
-use Ice\Helper\Memory;
+use Ice\Helper\Profiler as Helper_Profiler;
 use Ice\Helper\Object;
 use Ice\Helper\Php;
 use Ice\Helper\Resource as Helper_Resource;
@@ -105,15 +104,6 @@ class Logger
      * @var array
      */
     private static $log = [];
-
-
-    /**
-     * Useful work of application: sql, actions, etc
-     *
-     * @var float
-     */
-    private static $_usefulWork = 0;
-
 
     /**
      * Target Logger
@@ -270,7 +260,7 @@ class Logger
     public static function fb($value, $type = 'LOG', $label = '', $options = [])
     {
         if (!Request::isCli() && !headers_sent() && Loader::load('FirePHP', false)) {
-            $varSize = Memory::getVarSize($value);
+            $varSize = Helper_Profiler::getVarSize($value);
 
             if ($varSize > 65536) {
                 $value = 'Very big data: ' . $varSize . ' bytes';
@@ -471,48 +461,6 @@ class Logger
     public static function clearLog()
     {
         self::$log = [];
-    }
-
-    /**
-     * Return current float microtime
-     *
-     * @return float
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public static function microtime()
-    {
-        return microtime(true);
-    }
-
-    /**
-     * Return delta time
-     *
-     * @param float $start Start time point
-     * @param bool $usefulWork
-     * @return float
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public static function microtimeResult($start, $usefulWork = false)
-    {
-        $time = microtime(true) - $start;
-
-        if ($usefulWork) {
-            Logger::$_usefulWork += $time;
-        }
-
-        return round($time, 5) * 1000 . ' ms';
-    }
-
-    public static function getUsefulWork($pretty = false)
-    {
-        return $pretty ? round(Logger::$_usefulWork, 5) * 1000 . ' ms' : Logger::$_usefulWork;
     }
 
     /**

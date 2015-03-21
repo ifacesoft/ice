@@ -9,12 +9,10 @@
 
 namespace Ice\Core;
 
-use Ice;
 use Ice\Core;
 use Ice\Helper\Directory;
 use Ice\Helper\Json;
 use Ice\Helper\Php;
-use Ice\Helper\String;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use RecursiveRegexIterator;

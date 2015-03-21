@@ -9,15 +9,12 @@
 
 namespace Ice\Core;
 
-use Ice;
 use Ice\Core;
 use Ice\Exception\Config_Not_Found;
 use Ice\Exception\Model_Scheme_Error;
 use Ice\Form\Model as Form_Model;
 use Ice\Helper\Arrays;
 use Ice\Helper\Date;
-use Ice\Helper\Object;
-use Ice\Helper\String;
 
 /**
  * Class Model_Scheme

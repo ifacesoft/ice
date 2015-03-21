@@ -9,7 +9,6 @@
 
 namespace Ice\Core;
 
-use Ice;
 use Ice\Core;
 use Ice\Helper\Directory;
 use Ice\Helper\File;

@@ -9,7 +9,6 @@
 
 namespace Ice\Core;
 
-use Ice;
 use Ice\Core;
 use Ice\Helper\Validator as Helper_Validator;
 

@@ -8,7 +8,6 @@
  */
 namespace Ice\Core;
 
-use Ice;
 use Ice\Core;
 use Ice\Exception\File_Not_Found;
 use Ice\Helper\Api_Client_Yandex_Translate;

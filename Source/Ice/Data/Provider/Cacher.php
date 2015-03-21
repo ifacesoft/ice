@@ -9,11 +9,9 @@
 
 namespace Ice\Data\Provider;
 
-use Ice;
 use Ice\Core\Cache;
 use Ice\Core\Cacheable;
 use Ice\Core\Data_Provider;
-use Ice\Core\Environment;
 use Ice\Core\Exception;
 
 /**

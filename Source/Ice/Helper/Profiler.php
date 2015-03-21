@@ -18,11 +18,8 @@ namespace Ice\Helper;
  *
  * @package Ice
  * @subpackage Helper
- *
- * @version 0.0
- * @since 0.0
  */
-class Memory
+class Profiler
 {
     /**
      * Return memory size of variable
@@ -43,24 +40,35 @@ class Memory
     }
 
     /**
-     * Return info about current memory usage and peak memory usage
+     * Get pretty time in milliseconds
      *
+     * @param $time
      * @return string
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
-     * @since 0.0
+     * @version 0.6
+     * @since 0.6
      */
-    public static function memoryGetUsagePeak()
+    public static function getPrettyTime($time)
     {
-        $unit = array('B', 'KB', 'MB', 'GB', 'TB', 'PB');
+        return round($time, 5) * 1000 . ' ms';
+    }
 
-        $size = memory_get_usage(true);
-        $memoryUsage = @round($size / pow(1024, ($i = floor(log($size, 1024)))), 2) . ' ' . $unit[$i];
-
-        $size = memory_get_peak_usage(true);
-        $peakUsage = @round($size / pow(1024, ($i = floor(log($size, 1024)))), 2) . ' ' . $unit[$i];
-        return 'memory_usage: ' . $memoryUsage . ' (peak: ' . $peakUsage . ')';
+    /**
+     * Get pretty memory in any units
+     *
+     * @param $memory
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.6
+     * @since 0.6
+     */
+    public static function getPrettyMemory($memory)
+    {
+        static $unit = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
+        return round($memory / pow(1024, ($i = floor(log($memory, 1024)))), 2) . ' ' . $unit[$i];
     }
 } 

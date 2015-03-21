@@ -9,7 +9,6 @@
 
 namespace Ice\Core;
 
-use Ice;
 use Ice\Core;
 use Ice\Data\Provider\Router;
 use Ice\Exception\Http_Not_Found;
