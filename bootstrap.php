@@ -38,11 +38,12 @@ if (!defined('ICE_BOOTSTRAP')) {
         $loader = require VENDOR_DIR . 'autoload.php';
     }
 
+    $startTime = \Ice\Core\Profiler::getMicrotime();
+
     require_once ICE_DIR . 'Source/Ice/Core/Data/Provider.php';
     require_once ICE_DIR . 'Source/Ice/Core/View/Render.php';
     require_once ICE_DIR . 'Source/Ice/Helper/Api/Client/Yandex/Translate.php';
 
-    var_dump(\Ice\Core\Bootstrap::getInstance(BOOTSTRAP_CLASS));
-
     \Ice\Core\Bootstrap::getInstance(BOOTSTRAP_CLASS)->init($loader);
+    \Ice\Core\Profiler::setTiming(__CLASS__, $startTime);
 }

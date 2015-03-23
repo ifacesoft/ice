@@ -61,8 +61,6 @@ class Bootstrap extends Container
      */
     public function init(ClassLoader $loader, $force = false)
     {
-        $startTime = Profiler::getMicrotime();
-
         setlocale(LC_ALL, 'en_US.UTF-8');
         setlocale(LC_NUMERIC, 'C');
 
@@ -85,8 +83,6 @@ class Bootstrap extends Container
             echo nl2br($e->getTraceAsString());
             die('Terminated. Bye-bye...' . "\n");
         }
-
-        Profiler::setTiming(__CLASS__, $startTime);
     }
 
     /**
