@@ -92,8 +92,15 @@ abstract class Container
         if ($class == $baseClass) {
             if (!$key) {
                 return $baseClass::getInstance($class::getDefaultClassKey(), $ttl);
-            } else if (is_string($key) && strpos($key, '/')) {
-                list($class, $key) = explode('/', $key);
+            } else if (is_string($key)) {
+                $parts = explode('/', $key);
+
+                if (count($parts) == 1) {
+                    $class = reset($parts);
+                    $key = 'default';
+                } else {
+                    list($class, $key) = explode('/', $key);
+                }
 
                 $class = Object::getClass($baseClass, $class);
 

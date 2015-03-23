@@ -7,9 +7,10 @@
  * @license https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
-namespace Ice;
+namespace Ice\Core;
 
 use Composer\Autoload\ClassLoader;
+use Ice\Core;
 use Ice\Core\Loader;
 use Ice\Core\Logger;
 use Ice\Core\Module;
@@ -26,8 +27,28 @@ use Ice\Core\Session;
  *
  * @package Ice
  */
-class Bootstrap
+class Bootstrap extends Container
 {
+    use Core;
+
+    private $_moduleConfigPath = null;
+
+    /**
+     * Bootstrap constructor.
+     * @param $moduleConfigPath
+     */
+    private function __construct($moduleConfigPath)
+    {
+        $this->_moduleConfigPath = $moduleConfigPath;
+    }
+
+    protected static function create($key)
+    {
+        $class = self::getClass();
+
+        return new $class($key);
+    }
+
     /**
      * Initialization requered parameters, constants and includes core files
      *
@@ -38,7 +59,7 @@ class Bootstrap
      * @param ClassLoader $loader
      * @param bool $force
      */
-    public static function init(ClassLoader $loader, $force = false)
+    public function init(ClassLoader $loader, $force = false)
     {
         $startTime = Profiler::getMicrotime();
 
@@ -48,9 +69,6 @@ class Bootstrap
         date_default_timezone_set('UTC');
 
         try {
-            require_once Module::getInstance('Ice')->get('sourceDir') . 'Ice/Core/Data/Provider.php';
-            require_once Module::getInstance('Ice')->get('sourceDir') . 'Ice/Core/View/Render.php';
-
             Loader::init($loader, $force);
             Logger::init();
             Request::init();
@@ -70,38 +88,12 @@ class Bootstrap
 
         Profiler::setTiming(__CLASS__, $startTime);
     }
-}
 
-if (!defined('ICE_BOOTSTRAP')) {
-    define('ICE_BOOTSTRAP', true);
-
-    define('MODULE_DIR', php_sapi_name() == 'cli' ? getcwd() . '/' : dirname(dirname($_SERVER['PHP_SELF'])));
-    define('MODULE_CONFIG_PATH', 'Config/Ice/Core/Module.php');
-    define('VENDOR', basename(dirname(MODULE_DIR)) . '/' . basename(MODULE_DIR));
-    define('VENDOR_DIR', strstr(MODULE_DIR, VENDOR, true));
-
-    $autoloadPath = VENDOR_DIR . 'composer/' . VENDOR . '/autoload_real.php';
-
-    if (file_exists($autoloadPath)) {
-        require_once $autoloadPath;
-        $classNames = array();
-        $tokens = token_get_all(file_get_contents($autoloadPath));
-        $count = count($tokens);
-        for ($i = 2; $i < $count; $i++) {
-            if ($tokens[$i - 2][0] == T_CLASS
-                && $tokens[$i - 1][0] == T_WHITESPACE
-                && $tokens[$i][0] == T_STRING
-            ) {
-
-                $class_name = $tokens[$i][1];
-                $classNames[] = $class_name;
-            }
-        }
-        $autoloadClass = reset($classNames);
-        $loader = $autoloadClass::getLoader();
-    } else {
-        $loader = require VENDOR_DIR . 'autoload.php';
+    /**
+     * @return string
+     */
+    public function getModuleConfigPath()
+    {
+        return $this->_moduleConfigPath;
     }
-
-    Bootstrap::init($loader);
 }
