@@ -10,8 +10,6 @@
  * @since 0.0
  */
 
-define('ICE_DIR', __DIR__ . '/');
-
-require_once ICE_DIR . 'Source/Ice/Bootstrap.php';
+require_once __DIR__ . '/bootstrap.php';
 
 \Ice\App::run();

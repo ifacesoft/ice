@@ -73,7 +73,7 @@ class Composer_Update extends Action
         return [
             'view' => ['template' => ''],
             'input' => [
-                'vendor' => ['default' => 'ifacesoft/composer'],
+                'vendor' => ['default' => 'composer/composer'],
                 'command' => ['default' => '/bin/composer']
             ]
         ];

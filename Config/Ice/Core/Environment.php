@@ -32,8 +32,8 @@ return [
             ]
         ],
         'dataProviderKeys' => [
-            'Ice' => [
-                'instance' => 'Ice:Repository/ice',
+            'Ice\Core\Bootstrap' => [
+                'instance' => 'Ice:Registry/bootstrap',
             ],
             'Ice\Core\Loader' => [
                 'loader' => 'Ice:Repository/loader',
@@ -120,8 +120,8 @@ return [
     ],
     'development' => [
         'dataProviderKeys' => [
-            'Ice' => [
-                'instance' => 'Ice:Registry/ice',
+            'Ice\Core\Bootstrap' => [
+                'instance' => 'Ice:Registry/bootstrap',
             ],
             'Ice\Core\Loader' => [
                 'loader' => 'Ice:Registry/loader',
