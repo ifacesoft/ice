@@ -4,7 +4,6 @@
   "homepage": "http://iceframework.net",
   "type": "library",
   "keywords": ["ice", "framework", "orm", "http", "web", "database", "mysql", "mongodb", "iceframework", "ifacesoft"],
-  "minimum-stability": "stable",
   "license": "BSD ICE",
   "authors": [
     {
