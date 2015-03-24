@@ -484,4 +484,20 @@ return [
         'tr' => 'Güncelleme alan {$0} modeli {$1}: {$2}',
         'uk' => 'Оновлення поля {$0} для моделі {$1}: {$2}',
     ],
+    'Update references for model {$0}: {$1}' => [
+        'en' => 'Update references for model {$0}: {$1}',
+        'ru' => 'Обновление ссылок для модели {$0}: {$1}',
+    ],
+    'Update OneToMany references for model {$0}: {$1}' => [
+        'en' => 'Update OneToMany references for model {$0}: {$1}',
+        'ru' => 'Обновление OneToMany ссылки для модели {$0}: {$1}',
+    ],
+    'Update ManyToOne references for model {$0}: {$1}' => [
+        'en' => 'Update ManyToOne references for model {$0}: {$1}',
+        'ru' => 'Обновление ManyToOne ссылки для модели {$0}: {$1}',
+    ],
+    'Update ManyToMany references for model {$0}: {$1}' => [
+        'en' => 'Update ManyToMany references for model {$0}: {$1}',
+        'ru' => 'Обновление ManyToMany ссылки для модели {$0}: {$1}',
+    ],
 ];

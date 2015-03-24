@@ -11,6 +11,7 @@ namespace Ice\Data\Source;
 
 use Ice\Core\Data_Provider;
 use Ice\Core\Data_Source;
+use Ice\Core\Debuger;
 use Ice\Core\Exception;
 use Ice\Core\Logger;
 use Ice\Core\Model;
@@ -437,19 +438,26 @@ class Mysqli extends Data_Source
         $dataProvider = $this->getSourceDataProvider();
         $dataProvider->setScheme('information_schema');
 
+        $tableDefault = [
+            'dataSourceKey' => $this->getDataSourceKey(),
+            'scheme' => [],
+            'columns' => [],
+            'oneToMany' => [],
+            'manyToOne' => [],
+            'manyToMany' => [],
+            'indexes' => [],
+            'references' => []
+        ];
+
         foreach ($dataProvider->get('TABLES:TABLE_SCHEMA/' . $this->_scheme) as $table) {
             if ($module->checkTableByPrefix($table['TABLE_NAME'], $this->getDataSourceKey())) {
-                $tables[$table['TABLE_NAME']] = [];
+                if (!isset($tables[$table['TABLE_NAME']])) {
+                    $tables[$table['TABLE_NAME']] = $tableDefault;
+                }
 
                 $data = &$tables[$table['TABLE_NAME']];
 
-                $data = [
-                    'revision' => date('mdHi') . '_' . strtolower(String::getRandomString(2)),
-                    'dataSourceKey' => $this->getDataSourceKey(),
-                    'scheme' => [],
-                    'schemeHash' => crc32(Json::encode([])),
-                    'columns' => [],
-                ];
+                $data['revision'] = date('mdHi') . '_' . strtolower(String::getRandomString(2));
 
                 $dataScheme = &$data['scheme'];
                 $dataScheme = [
@@ -462,6 +470,39 @@ class Mysqli extends Data_Source
 
                 $data['indexes'] = $this->getIndexes($table['TABLE_NAME']);
                 $data['indexesHash'] = crc32(Json::encode($data['indexes']));
+
+                $data['references'] = $this->getReferences($table['TABLE_NAME']);
+                $data['referencesHash'] = crc32(Json::encode($data['references']));
+
+                foreach ($data['references'] as $tableName => $reference) {
+                    foreach ($data['indexes']['FOREIGN KEY'] as $indexes) {
+                        foreach ($indexes as $constraintName => $columnNames) {
+                            if ($constraintName != $reference['constraintName']) {
+                                continue;
+                            }
+
+                            $data['oneToMany'][$tableName] = $columnNames;
+
+                            if (!isset($tables[$tableName])) {
+                                $tables[$tableName] = $tableDefault;
+                            }
+
+                            $tables[$tableName]['manyToOne'][$table['TABLE_NAME']] = $columnNames;
+
+                            break;
+                        }
+                    }
+                }
+
+                if (count($data['references'])) {
+                    foreach ($data['references'] as $tableName1 => $reference1) {
+                        foreach ($data['references'] as $tableName2 => $reference2) {
+                            if ($tableName1 != $tableName2) {
+                                $tables[$tableName1]['manyToMany'][] = $tableName2;
+                            }
+                        }
+                    }
+                }
 
                 $columns = &$data['columns'];
                 foreach ($this->getColumns($table['TABLE_NAME']) as $columnName => $column) {
@@ -674,5 +715,34 @@ class Mysqli extends Data_Source
     {
         $this->getConnection()->rollback();
         $this->getConnection()->autocommit(true);
+    }
+
+    /**
+     * Get table references from source
+     *
+     * @param $tableName
+     * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.6
+     * @since 0.6
+     */
+    public function getReferences($tableName)
+    {
+        $dataProvider = $this->getSourceDataProvider();
+        $dataProvider->setScheme('information_schema');
+
+        $references = [];
+
+        foreach ($dataProvider->get(['REFERENTIAL_CONSTRAINTS:CONSTRAINT_SCHEMA/' . $this->_scheme, 'CONSTRAINTS:TABLE_NAME/' . $tableName]) as $reference) {
+            $references[$reference['REFERENCED_TABLE_NAME']] = [
+                'constraintName' => $reference['CONSTRAINT_NAME'],
+                'onUpdate' => $reference['UPDATE_RULE'],
+                'onDelete' => $reference['DELETE_RULE'],
+            ];
+        }
+
+        return $references;
     }
 }

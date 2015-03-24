@@ -178,7 +178,7 @@ trait Core
      */
     public static function getCodeGenerator()
     {
-        return Code_Generator::getInstance(self::getClassName());
+        return Code_Generator::getInstance(self::getModuleAlias() . ':' . self::getClassName());
     }
 
     /**
