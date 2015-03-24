@@ -419,7 +419,7 @@ class Resources extends Action
 
         $CSSmin = new CSSMin();
 
-//        Ice\Core\Logger::debug($resources['css']);
+//        Debuger::dump($resources['css']);
 
         foreach ($resources['js'] as $resource) {
             if (!isset($handlers[$resource['resource']])) {

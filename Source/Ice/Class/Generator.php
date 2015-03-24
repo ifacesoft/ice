@@ -65,7 +65,7 @@ class Class_Generator
 //        preg_match('/' . $start . '(.+)' . $finish . '/s', $code, $matches);
 //
 //
-//        Logger::debug($matches);
+//        Debuger::dump($matches);
         $code = preg_replace(
             '/' . $start . '(.+)' . $finish . '/s',
             str_replace(['\n', '\\', '['], ["\n", ''], $start) . str_replace("\n", "\n\t\t", Php::varToPhpString($data, false)) . str_replace(['\n', '\\', '];'], ["\n", ''], $finish),

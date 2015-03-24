@@ -94,7 +94,7 @@ class Mysqli extends Data_Source
         /** @var Model $modelClass */
         $modelClass = $query->getModelClass();
 
-        $pkFieldNames = $modelClass::getPkFieldNames();
+        $pkFieldNames = $modelClass::getScheme()->getPkFieldNames();
 
         $data[Query_Result::NUM_ROWS] = $result->num_rows;
 
@@ -234,7 +234,7 @@ class Mysqli extends Data_Source
 
         /** @var Model $modelClass */
         $modelClass = $query->getModelClass();
-        $pkFieldNames = $modelClass::getPkFieldNames();
+        $pkFieldNames = $modelClass::getScheme()->getPkFieldNames();
 
         $pkFieldName = count($pkFieldNames) == 1 ? reset($pkFieldNames) : null;
 
@@ -296,7 +296,7 @@ class Mysqli extends Data_Source
 
         /** @var Model $modelclass */
         $modelclass = $query->getModelClass();
-        $pkFieldNames = $modelclass::getPkFieldNames();
+        $pkFieldNames = $modelclass::getScheme()->getPkFieldNames();
 
         foreach ($query->getBindParts()[Query_Builder::PART_SET] as $row) {
             $insertKey = implode('_', array_intersect_key($row, array_flip($pkFieldNames)));

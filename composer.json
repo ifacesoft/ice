@@ -19,11 +19,11 @@
     "files": [
     ]
   },
+  "minimum-stability": "stable",
   "require": {
-    "php": ">=5.5",
+    "php": ">=5.4.0",
     "twig/twig": "1.*",
-    "smarty/smarty": "3.1.*",
-    "composer/composer": "1.0.*@dev"
+    "smarty/smarty": "3.1.*"
   },
   "require-dev": {
     "firephp/firephp-core": "dev-master",
@@ -33,6 +33,7 @@
     "phpunit/phpunit-selenium": "1.4.*",
     "phpunit/phpunit-story": "1.0.*",
     "ocramius/instantiator": "1.1.*",
-    "facebook/xhprof": "dev-master"
+    "facebook/xhprof": "dev-master",
+    "composer/composer": "dev-master"
   }
 }

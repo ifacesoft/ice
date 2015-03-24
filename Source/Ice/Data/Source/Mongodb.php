@@ -57,7 +57,7 @@ class Mongodb extends Data_Source
         $modelClass = $query->getModelClass();
         $tableName = $modelClass::getTableName();
 
-        $pkFieldNames = $modelClass::getPkFieldNames();
+        $pkFieldNames = $modelClass::getScheme()->getPkFieldNames();
 
         $pkFieldName = count($pkFieldNames) == 1 ? reset($pkFieldNames) : null;
 
@@ -223,7 +223,7 @@ class Mongodb extends Data_Source
             }
         }
 
-        $pkFieldNames = $modelClass::getPkFieldNames();
+        $pkFieldNames = $modelClass::getScheme()->getPkFieldNames();
 
         $pkFieldName = count($pkFieldNames) == 1 ? reset($pkFieldNames) : null;
 

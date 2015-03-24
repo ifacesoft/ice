@@ -168,13 +168,6 @@ class Logger
         }
 
         session_write_close();
-
-        if (Request::isAjax()) {
-            Logger::fb('Terminated. Bye-bye...');
-            exit;
-        } else {
-            die('Terminated. Bye-bye...' . "\n");
-        }
     }
 
     /**
@@ -238,7 +231,7 @@ class Logger
         $logFile = Directory::get(Module::getInstance()->get('logDir')) . date('Y-m-d') . '/INFO.log';
         File::createData($logFile, $message . "\n", false, FILE_APPEND);
 
-        Logger::fb($message, 'INFO');
+        Logger::fb($message, 'info', 'INFO');
 
         if (Request::isCli()) {
             $message = Console::getText(' ' . $message . ' ', Console::C_BLACK, self::$consoleColors[$type]) . "\n";
@@ -257,12 +250,12 @@ class Logger
      * @param string $label
      * @param array $options
      */
-    public static function fb($value, $type = 'LOG', $label = '', $options = [])
+    public static function fb($value, $label = null, $type = 'LOG', $options = [])
     {
         if (!Request::isCli() && !headers_sent() && Loader::load('FirePHP', false)) {
             $varSize = Helper_Profiler::getVarSize($value);
 
-            if ($varSize > 65536) {
+            if ($varSize > pow(2, 18)) {
                 $value = 'Very big data: ' . $varSize . ' bytes';
             }
 
@@ -398,59 +391,6 @@ class Logger
     }
 
     /**
-     * Debug variables with die application
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public static function debugDie()
-    {
-        foreach (func_get_args() as $arg) {
-            self::debug($arg);
-        }
-
-        if (!Request::isAjax()) {
-            echo '<pre>';
-            debug_print_backtrace();
-            echo '</pre>';
-        }
-
-        exit;
-    }
-
-    /**
-     * Debug variables
-     *
-     * @param $arg
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public static function debug($arg)
-    {
-        foreach (func_get_args() as $arg) {
-            $var = stripslashes(Php::varToPhpString($arg));
-
-            if (!Request::isAjax()) {
-                if (Request::isCli()) {
-                    fwrite(STDOUT, Console::getText($var, Console::C_CYAN) . "\n");
-                } else {
-                    echo '<div class="alert alert-' . self::INFO . '">' . str_replace('<span style="color: #0000BB">&lt;?php&nbsp;</span>', '', highlight_string('<?php // Debug value:' . "\n" . $var . "\n", true)) . '</div>';
-                }
-
-                $logFile = Directory::get(Module::getInstance()->get('logDir')) . date('Y-m-d') . '/DEBUG.log';
-                File::createData($logFile, $var, false, FILE_APPEND);
-            }
-
-            Logger::fb($arg, 'DUMP');
-        }
-    }
-
-    /**
      * Clear all stored logs
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -543,7 +483,7 @@ class Logger
 //            if (Request::isCli()) {
             $this->info(Helper_Resource::getMessage($message), $type, false);
 //            } else {
-//                Logger::fb($message);
+//                Logger::fb($message, 'log', 'LOG');
 //            }
         }
     }

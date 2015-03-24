@@ -237,7 +237,7 @@ class Router extends Data_Provider
         $foundRoutes = [];
 
         foreach (Route::getRoutes() as $routeName => $route) {
-//            Logger::debug($routeName . ': ' . $url . ' || ' . $route['pattern'] . ' || ' . (int) preg_match($route['pattern'], $url));
+//            Debuger::dump($routeName . ': ' . $url . ' || ' . $route['pattern'] . ' || ' . (int) preg_match($route['pattern'], $url));
 
             if (!preg_match($route['pattern'], $url)) {
                 continue;

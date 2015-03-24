@@ -331,7 +331,7 @@ class Query_Builder
     /**
      * Append cache validate or invalidate tags for this query builder
      *
-     * @param $modelClass Model
+     * @param Model $modelClass
      * @param $fieldNames
      * @param $isValidate
      * @param $isInvalidate boolean
@@ -343,7 +343,7 @@ class Query_Builder
      */
     private function appendCacheTag($modelClass, $fieldNames, $isValidate, $isInvalidate)
     {
-        $columnFieldMapping = $modelClass::getColumnFieldMap();
+        $columnFieldMapping = $modelClass::getScheme()->getColumnFieldMap();
 
         foreach ((array)$fieldNames as $fieldName) {
             if (in_array($fieldName, $columnFieldMapping)) {
@@ -419,21 +419,21 @@ class Query_Builder
         /** @var Model $modelClass */
         $modelClass = $this->getModelClassTableAlias($modelTableData)[0];
 
-        $pkFieldNames = $modelClass::getPkFieldNames();
+        $pkFieldNames = $modelClass::getScheme()->getPkFieldNames();
 
         foreach ((array)$pk as $pkName => $pkValue) {
             if (empty($pkFieldNames)) {
                 break;
             }
 
-            if (($key = array_search($pkName, $pkFieldNames)) !== false) {
-                unset($pkFieldNames[$key]);
-                $eq[$pkName] = $pkValue;
+            if (is_int($pkName)) {
+                $eq[array_shift($pkFieldNames)] = $pkValue;
                 continue;
             }
 
-            if (is_int($pkName)) {
-                $eq[array_shift($pkFieldNames)] = $pkValue;
+            if (($key = array_search($pkName, $pkFieldNames)) !== false) {
+                unset($pkFieldNames[$key]);
+                $eq[$pkName] = $pkValue;
             }
         }
 
@@ -761,7 +761,7 @@ class Query_Builder
         /** @var Model $modelClass */
         $modelClass = $this->getModelClassTableAlias($modelTableData)[0];
 
-        $columnFieldMapping = $modelClass::getColumnFieldMap();
+        $columnFieldMapping = $modelClass::getScheme()->getColumnFieldMap();
         $fieldValue = $modelClass::getFieldName($value);
 
         /** check ability use pattern from field in base */
@@ -816,7 +816,7 @@ class Query_Builder
 
         if (!$condition) {
             $modelName = Object::getName($modelClass);
-            $fieldColumnMap = $modelClass::getFieldColumnMap();
+            $fieldColumnMap = $modelClass::getScheme()->getFieldColumnMap();
             $fieldNamesOnly = array_keys($fieldColumnMap);
 
             $joins = [['class' => $this->getModelClass(), 'alias' => Object::getName($this->getModelClass())]];
@@ -832,7 +832,7 @@ class Query_Builder
                 $joinModelClass = $join['class'];
                 $joinTableAlias = $join['alias'];
 
-                $joinFieldNames = $joinModelClass::getFieldColumnMap();
+                $joinFieldNames = $joinModelClass::getScheme()->getFieldColumnMap();
                 $joinFieldNamesOnly = array_keys($joinFieldNames);
 
                 $joinModelName = Object::getName($joinModelClass);
@@ -887,7 +887,7 @@ class Query_Builder
         list($modelClass, $tableAlias) = $this->getModelClassTableAlias($modelTableData);
 
         if (!isset($this->_sqlParts[self::PART_SELECT][$modelClass])) {
-            $pkFieldNames = $modelClass::getPkFieldNames();
+            $pkFieldNames = $modelClass::getScheme()->getPkFieldNames();
 
             $this->_sqlParts[self::PART_SELECT][$modelClass] = [
                 $tableAlias, array_combine($pkFieldNames, $pkFieldNames)
@@ -895,7 +895,7 @@ class Query_Builder
         }
 
         if ($fieldName == '*') {
-            $fieldName = $modelClass::getFieldNames();
+            $fieldName = $modelClass::getScheme()->getFieldNames();
         }
 
         if (is_array($fieldName)) {
@@ -927,7 +927,7 @@ class Query_Builder
         }
 
         if (!isset($this->_sqlParts[self::PART_SELECT][$modelClass])) {
-            $pkNames = $modelClass::getPkFieldNames();
+            $pkNames = $modelClass::getScheme()->getPkFieldNames();
 
             $this->_sqlParts[self::PART_SELECT][$modelClass] = [
                 $tableAlias, array_combine($pkNames, $pkNames)
@@ -1180,7 +1180,7 @@ class Query_Builder
         /** @var Model $modelClass */
         $modelClass = $this->getModelClassTableAlias($modelTableData)[0];
 
-        $pkFieldNames = $modelClass::getPkFieldNames();
+        $pkFieldNames = $modelClass::getScheme()->getPkFieldNames();
 
         return $this->in([reset($pkFieldNames) => $value], $modelTableData, $sqlLogical);
     }
