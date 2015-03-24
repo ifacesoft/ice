@@ -492,4 +492,21 @@ class Mongodb extends Data_Source
     {
         // TODO: Implement rollbackTransaction() method.
     }
+
+
+    /**
+     * Get table references from source
+     *
+     * @param $tableName
+     * @return array
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since 0
+     */
+    public function getReferences($tableName)
+    {
+        return [];
+    }
 }

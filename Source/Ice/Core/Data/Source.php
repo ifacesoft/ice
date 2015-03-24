@@ -318,6 +318,19 @@ abstract class Data_Source extends Container
     public abstract function getIndexes($tableName);
 
     /**
+     * Get table references from source
+     *
+     * @param $tableName
+     * @return array
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since 0
+     */
+    public abstract function getReferences($tableName);
+
+    /**
      * @param Query $query
      * @param $ttl
      * @return Query_Result

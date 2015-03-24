@@ -28,4 +28,8 @@ return [
         'tr' => 'mongodb - bağlantı kurulamadı:: 27017 localhost: Önceki bağlantı girişimleri, sunucu kara listeye başarısız',
         'uk' => 'mongodb - збій підключення до localhost:27017: попередні спроби підключення не вдалася, сервер в чорному списку',
     ],
+    'mongodb - Failed to connect to: localhost:27017: Connection refused' => [
+        'en' => 'mongodb - Failed to connect to: localhost:27017: Connection refused',
+        'ru' => 'в mongodb - не удалось подключиться к: имя localhost:27017: в подключении отказано',
+    ],
 ];
