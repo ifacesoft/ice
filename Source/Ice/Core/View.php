@@ -213,7 +213,7 @@ class View implements Cacheable
             Profiler::setMemoryUsages('View '. $this->_template, $startMemory);
 
             if (Environment::getInstance()->isDevelopment()) {
-                Logger::fb('view: ' . $this->_template . ' (' . $viewRenderClass . ')');
+                Logger::fb($this->_template . ' (' . $viewRenderClass . ')', 'view', 'INFO');
             }
 
             array_shift(View_Render::$templates);

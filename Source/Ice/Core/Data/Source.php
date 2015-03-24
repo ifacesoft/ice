@@ -344,7 +344,7 @@ abstract class Data_Source extends Container
             ) {
                 $queryResult = Query_Result::create($query, $this->$queryCommand($query));
                 Profiler::setMemoryUsages($queryResult, $startTime);
-                Data_Source::getLogger()->log(['(not cache) {$0}]', $queryResult], Logger::INFO);
+                Data_Source::getLogger()->log(['(not cache) {$0}]', $queryResult->__toString()], Logger::INFO);
                 return $queryResult;
             }
 
@@ -355,13 +355,13 @@ abstract class Data_Source extends Container
 
                     if ($queryResult = $cacher->get($queryHash)) {
                         Profiler::setMemoryUsages($queryResult, $startTime);
-                        Data_Source::getLogger()->log(['(cache) {$0}]', $queryResult], Logger::INFO);
+                        Data_Source::getLogger()->log(['(cache) {$0}]', $queryResult->__toString()], Logger::INFO);
                         return $queryResult;
                     }
 
                     $queryResult = Query_Result::create($query, $this->$queryCommand($query));
                     Profiler::setMemoryUsages($queryResult, $startTime);
-                    Data_Source::getLogger()->log(['(new) {$0}]', $queryResult], Logger::SUCCESS);
+                    Data_Source::getLogger()->log(['(new) {$0}]', $queryResult->__toString()], Logger::SUCCESS);
                     $cacher->set($queryHash, $queryResult, $ttl);
                     break;
 
@@ -378,7 +378,7 @@ abstract class Data_Source extends Container
             }
         } catch (\Exception $e) {
             Profiler::setMemoryUsages($queryResult, $startTime);
-            Data_Source::getLogger()->log(['(error) {$0}]', $queryResult], Logger::DANGER);
+            Data_Source::getLogger()->log(['(error) {$0}]', $queryResult->__toString()], Logger::DANGER);
             Data_Source::getLogger()->log(print_r($query->getBody(), true) . ' (' .  print_r($query->getBinds(), true) . ')', Logger::DANGER);
             Data_Source::getLogger()->log($e->getMessage(), Logger::DANGER);
             Data_Source::getLogger()->exception('Data source execute query failed', __FILE__, __LINE__, $e, $query);

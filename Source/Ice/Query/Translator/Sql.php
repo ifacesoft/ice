@@ -74,7 +74,7 @@ class Sql extends Query_Translator
         // @todo tableAlias должен приходить из $part
         $tableAlias = $modelClass::getClassName();
 
-        $fieldColumnMap = $modelClass::getFieldColumnMap();
+        $fieldColumnMap = $modelClass::getScheme()->getFieldColumnMap();
 
         $sql = "\n" . self::SQL_STATEMENT_UPDATE .
             "\n\t" . $modelClass::getTableName() . ' ' . $tableAlias . '';
@@ -124,7 +124,7 @@ class Sql extends Query_Translator
             return $sql;
         }
 
-        $fieldColumnMap = $modelClass::getFieldColumnMap();
+        $fieldColumnMap = $modelClass::getScheme()->getFieldColumnMap();
 
         $sql .= "\n\t" . '(`' . implode('`,`', Mapping::columnNames($modelClass, $part['fieldNames'])) . '`)';
         $sql .= "\n" . self::SQL_CLAUSE_VALUES;
@@ -137,7 +137,7 @@ class Sql extends Query_Translator
             $sql .= str_repeat(',' . $values, $part['rowCount'] - 1);
         }
 
-        $fieldNames = array_diff($part['fieldNames'], $modelClass::getPkFieldNames());
+        $fieldNames = array_diff($part['fieldNames'], $modelClass::getScheme()->getPkFieldNames());
 
         if (empty($fieldNames)) {
             $fieldNames = $part['fieldNames'];
@@ -256,7 +256,7 @@ class Sql extends Query_Translator
                 $sql .= $sql
                     ? ' ' . $logicalOperator . "\n\t"
                     : "\n" . self::SQL_CLAUSE_WHERE . "\n\t";
-                $sql .= $this->buildWhere($modelClass::getFieldColumnMap(), $fieldName, $comparisonOperator, $tableAlias, $count);
+                $sql .= $this->buildWhere($modelClass::getScheme()->getFieldColumnMap(), $fieldName, $comparisonOperator, $tableAlias, $count);
             }
         }
 
@@ -293,7 +293,7 @@ class Sql extends Query_Translator
         foreach ($part as $modelClass => $items) {
             list($tableAlias, $fieldNames) = $items;
 
-            $fieldColumnMap = $modelClass::getFieldColumnMap();
+            $fieldColumnMap = $modelClass::getScheme()->getFieldColumnMap();
 
             foreach ($fieldNames as $fieldName => &$fieldAlias) {
                 $isSpatial = (boolean)strpos($fieldName, '__geo');
@@ -387,7 +387,7 @@ class Sql extends Query_Translator
         foreach ($part as $modelClass => $item) {
             list($tableAlias, $fieldNames) = $item;
 
-            $fieldColumnMap = $modelClass::getFieldColumnMap();
+            $fieldColumnMap = $modelClass::getScheme()->getFieldColumnMap();
 
             foreach ($fieldNames as $fieldName => $ascending) {
                 $orders[] = $tableAlias . '.' . $fieldColumnMap[$fieldName] . ' ' . $ascending;
@@ -428,7 +428,7 @@ class Sql extends Query_Translator
         foreach ($part as $modelClass => $items) {
             list(, $fieldNames) = $items;
 
-            $fieldColumnMap = $modelClass::getFieldColumnMap();
+            $fieldColumnMap = $modelClass::getScheme()->getFieldColumnMap();
 
             foreach ($fieldNames as $fieldName) {
                 $groups[] = $fieldColumnMap[$fieldName];

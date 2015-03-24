@@ -30,6 +30,10 @@ class Profiler
      */
     public static function setTiming($name, $startTime)
     {
+        if (is_object($name)) {
+            $name = $name->__toString();
+        }
+
         return Profiler::$_profiler[$name][Profiler::TIME] = Profiler::getMicrotimeResult($startTime);
     }
 
@@ -47,6 +51,10 @@ class Profiler
      */
     public static function setMemoryUsages($name, $startMemory)
     {
+       if (is_object($name)) {
+           $name = $name->__toString();
+       }
+
         return Profiler::$_profiler[$name][Profiler::MEMORY] = Profiler::getMicrotimeResult($startMemory);
     }
 
@@ -134,7 +142,7 @@ class Profiler
 
             $message .= ' (memory peak: ' . Helper_Profiler::getPrettyMemory(memory_get_peak_usage(true));
 
-            Logger::fb($message, 'INFO');
+            Logger::fb($message, 'profiler', 'INFO');
         }
     }
 }

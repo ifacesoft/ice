@@ -58,11 +58,12 @@ class Logger
         $output['errPoint'] = '(' . $exception->getFile() . ':' . $exception->getLine() . ')';
         $output['errcontext'] = $errcontext;
 
-        Core_Logger::fb($output['message'] . ' ' . $output['errPoint'], 'ERROR');
+        Core_Logger::fb($output['message'] . ' ' . $output['errPoint'], 'error', 'ERROR');
         if (!empty($errcontext)/* && Memory::getVarSize($errcontext) < 3500*/) {
-            Core_Logger::fb($errcontext, 'INFO');
+            Core_Logger::fb($errcontext, 'error', 'INFO');
         }
-        Core_Logger::fb($exception, 'WARN');
+//            Core_Logger::fb($exception);
+            Core_Logger::fb(explode("\n", $exception->getTraceAsString()), 'error', 'WARN');
     }
 
     /**

@@ -10,7 +10,7 @@
 namespace Ice\Core;
 
 use Ice\Core;
-use Ice\Data\Model as Data_Model;
+use Ice\Ui_Data\Model as Data_Model;
 use Ice\Form\Model as Form_Model;
 use Ice\Helper\Json;
 use Ice\Helper\Model as Helper_Model;
@@ -104,7 +104,9 @@ abstract class Model
         $modelClass = self::getClass();
         $lowercaseModelName = strtolower(self::getClassName());
 
-        foreach ($modelClass::getFieldColumnMap() as $fieldName => $columnName) {
+        $modelScheme = $modelClass::getScheme();
+
+        foreach ($modelScheme->getFieldColumnMap() as $fieldName => $columnName) {
             $this->_row[$fieldName] = null;
 
             if (empty($row)) {
@@ -308,6 +310,8 @@ abstract class Model
             ],
             __FILE__, __LINE__, null, $fieldValue
         );
+
+        return $this;
     }
 
     /**
@@ -371,43 +375,34 @@ abstract class Model
         /** @var Model $modelClass */
         $modelClass = get_class($this);
 
-        $FieldColumnMapping = $modelClass::getFieldColumnMap();
+        $modelScheme = $modelClass::getScheme();
+
+        $FieldColumnMapping = $modelScheme->getFieldColumnMap();
 
         if (!isset($FieldColumnMapping[$fieldName])) {
             return false;
         }
 
-        return in_array($FieldColumnMapping[$fieldName], $modelClass::getPkColumnNames());
+        return in_array($FieldColumnMapping[$fieldName], $modelScheme->getPkColumnNames());
     }
 
     /**
-     * Return primary key columns
-     *
-     * @return array
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since 0.4
+     * @return Model_Scheme
      */
-    public static function getPkColumnNames()
+    public static function getScheme()
     {
-        return self::getIndexes()['PRIMARY KEY']['PRIMARY'];
-    }
+        $repository = self::getRepository();
+        $key = 'scheme';
+        if ($scheme = $repository->get($key)) {
+            return $scheme;
+        }
 
-    /**
-     * Return indexes
-     *
-     * @return array
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since 0.0
-     */
-    public static function getIndexes()
-    {
-        return self::getConfig()->gets('indexes');
+        /** @var Model $modelClass */
+        $modelClass = self::getClass();
+
+        $scheme = Model_Scheme::create($modelClass, array_merge_recursive($modelClass::config(), Config::getInstance($modelClass, null, false, -1)->gets()));
+
+        return $repository->set($key, $scheme);
     }
 
     /**
@@ -465,7 +460,7 @@ abstract class Model
             /** @var Model $modelClass */
             $modelClass = get_class($this);
 
-            $columnName = $modelClass::getFieldColumnMap()[$fieldName];
+            $columnName = $modelClass::getScheme()->getFieldColumnMap()[$fieldName];
 
             if ($modelClass::getConfig()->get('columns/' . $columnName . '/scheme/default') !== null) {
                 return;
@@ -586,7 +581,7 @@ abstract class Model
             // TODO: Пока лениво подгружаем
             // many-to-one
             $foreignKeyName = strtolower($modelName) . '__fk';
-            if (array_key_exists($foreignKeyName, $fieldName::getFieldColumnMap())) {
+            if (array_key_exists($foreignKeyName, $fieldName::getScheme()->getFieldColumnMap())) {
                 $this->_fk[$fieldName] = Query::getBuilder($fieldName)
                     ->eq([$foreignKeyName => $this->getPk()])
                     ->select('*')
@@ -711,18 +706,7 @@ abstract class Model
      */
     public static function getConfig()
     {
-        $repository = self::getRepository();
-
-        if ($config = $repository->get('config')) {
-            return $config;
-        }
-
-        /** @var Model $modelClass */
-        $modelClass = self::getClass();
-
-        $config = Config::create($modelClass, array_merge_recursive($modelClass::config(), Config::getInstance($modelClass, null, false, -1)->gets()));
-
-        return $repository->set('config', $config);
+        return self::getScheme();
     }
 
     /**
@@ -911,36 +895,7 @@ abstract class Model
     {
         $modelClass = self::getClass();
 
-        return implode('__', $modelClass::getPkFieldNames());
-    }
-
-    /**
-     * Return all primary key names if them more then one
-     *
-     * @return mixed
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.1
-     * @since 0.1
-     */
-    public static function getPkFieldNames()
-    {
-        if ($pkFieldNames = self::getRegistry()->get('pkFieldNames')) {
-            return $pkFieldNames;
-        }
-
-        $columnFieldMappings = self::getColumnFieldMap();
-
-        return self::getRegistry()->set(
-            'pkFieldNames',
-            array_map(
-                function ($columnName) use ($columnFieldMappings) {
-                    return $columnFieldMappings[$columnName];
-                },
-                self::getPkColumnNames()
-            )
-        );
+        return implode('__', $modelClass::getScheme()->getPkFieldNames());
     }
 
     /**
@@ -971,33 +926,6 @@ abstract class Model
     public static function dropTable($dataSourceKey = null)
     {
         return Query::getBuilder(self::getClass())->drop($dataSourceKey);
-    }
-
-    public static function getFieldColumnMap()
-    {
-        $modelClass = self::getClass();
-        $repository = $modelClass::getRepository('mapping');
-        $key = 'fieldColumnMap';
-
-        return $repository->set($key, array_flip($modelClass::getColumnFieldMap()));
-    }
-
-    public static function getColumnFieldMap()
-    {
-        $modelClass = self::getClass();
-        $repository = $modelClass::getRepository('mapping');
-        $key = 'columnFieldMap';
-
-        if ($columnFieldMapping = $repository->get($key)) {
-            return $columnFieldMapping;
-        }
-
-        $columns = [];
-        foreach ($modelClass::getConfig()->gets('columns') as $columnName => $column) {
-            $columns[$columnName] = $column['fieldName'];
-        }
-
-        return $repository->set($key, $columns);
     }
 
     /**
@@ -1062,7 +990,7 @@ abstract class Model
 
         $affected = $this->getAffected();
 
-        $selectFields = array_merge($modelClass::getFieldNames($fieldNames), array_keys($affected));
+        $selectFields = array_merge($modelClass::getScheme()->getFieldNames($fieldNames), array_keys($affected));
 
         $row = Query::getBuilder($modelClass)
             ->eq($affected)
@@ -1094,58 +1022,6 @@ abstract class Model
     }
 
     /**
-     * Return full field names
-     *
-     * @param array $fields
-     * @throws Exception
-     * @return array
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since 0.0
-     */
-    public static function getFieldNames($fields = [])
-    {
-        $modelClass = self::getClass();
-
-        $fieldNames = array_values($modelClass::getColumnFieldMap());
-
-        if (empty($fields) || $fields = '*') {
-            return $fieldNames;
-        }
-
-        $fields = (array)$fields;
-
-        foreach ($fields as &$fieldName) {
-            $fieldName = $modelClass::getFieldName($fieldName);
-
-            if (in_array($fieldName, $fieldNames)) {
-                continue;
-            }
-
-            if (in_array($fieldName . '__json', $fieldNames)) {
-                $fieldName = $fieldName . '__json';
-                continue;
-            }
-
-            if (in_array($fieldName . '__fk', $fieldNames)) {
-                $fieldName = $fieldName . '__fk';
-                continue;
-            }
-
-            if (in_array($fieldName . '__geo', $fieldNames)) {
-                $fieldName = $fieldName . '__geo';
-                continue;
-            }
-
-            Model::getLogger()->exception(['Поле "{$0}" не найдено в модели "{$1}"', [$fieldName, self::getClass()]], __FILE__, __LINE__);
-        }
-
-        return $fields;
-    }
-
-    /**
      * Clear all affected values and return current model
      *
      * @return Model
@@ -1167,7 +1043,8 @@ abstract class Model
      * @param $isSmart
      * @param $dataSourceKey
      */
-    private function insert($modelClass, $affected, $isSmart, $dataSourceKey) {
+    private function insert($modelClass, $affected, $isSmart, $dataSourceKey)
+    {
         $this->beforeInsert();
 
         $insertId = Query::getBuilder($modelClass)
@@ -1184,7 +1061,8 @@ abstract class Model
      * @param $affected
      * @param $dataSourceKey
      */
-    private function update($modelClass, $affected, $dataSourceKey) {
+    private function update($modelClass, $affected, $dataSourceKey)
+    {
         $this->beforeUpdate();
 
         Query::getBuilder($modelClass)
@@ -1215,7 +1093,7 @@ abstract class Model
         $pk = $this->getPk();
         $affected = $this->getAffected();
 
-        $isSetPk = !empty($pk) && $pk == array_intersect_key($affected, array_flip($modelClass::getPkFieldNames()));
+        $isSetPk = !empty($pk) && $pk == array_intersect_key($affected, array_flip($modelClass::getScheme()->getPkFieldNames()));
 
         if (!$isSmart) {
             if ($isSetPk) {
@@ -1227,7 +1105,7 @@ abstract class Model
             return $this->clearAffected();
         }
 
-        if (!$isSetPk)  {
+        if (!$isSetPk) {
             if ($this->find('/pk')) {
                 return $this;
             }
@@ -1422,17 +1300,20 @@ abstract class Model
             ->getModel();
     }
 
-    public function getQueryBuilder($modelTableData, $fieldNames = '/pk') {
+    public function createQueryBuilder($modelTableData = null, $fieldNames = '/pk')
+    {
         $selfModelClass = get_class($this);
 
-//        $queryBuilder = Query::getBuilder($selfModelClass, $tableAlias)->pk($this->getPk());
+        $queryBuilder = Query::getBuilder($selfModelClass)->pk($this->getPk());
 
-//        if ($modelClass) {
-//            $modelClass = Model::getClass($modelClass);
-//        }
-//
-//        if ($selfModelClass != $modelClass) {
-//            $queryBuilder->inner($modelTableData, $fieldNames);
-//        }
+        if ($modelTableData) {
+            list($modelClass, $tableAlias) = $queryBuilder->getModelClassTableAlias($modelTableData);
+
+            if ($selfModelClass != $modelClass) {
+                $queryBuilder->inner([$modelClass => $tableAlias], $fieldNames);
+            }
+        }
+
+        return $queryBuilder;
     }
 }

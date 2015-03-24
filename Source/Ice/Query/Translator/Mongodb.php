@@ -9,6 +9,7 @@
 
 namespace Ice\Query\Translator;
 
+use Ice\Core\Debuger;
 use Ice\Core\Exception;
 use Ice\Core\Logger;
 use Ice\Core\Model;
@@ -212,7 +213,7 @@ class Mongodb extends Query_Translator
 
         $columnNames = [];
 
-        $fieldColumnMap = $modelClass::getFieldColumnMap();
+        $fieldColumnMap = $modelClass::getScheme()->getFieldColumnMap();
 
         foreach ($fieldNames as $fieldNameArr) {
             list($logicalOperator, $fieldName, $comparisonOperator, $count) = $fieldNameArr;
@@ -351,7 +352,7 @@ class Mongodb extends Query_Translator
         if (empty($part)) {
             return [];
         } else {
-            Logger::debug($part);
+            Debuger::dump($part);
             throw new \Exception('Not implemented');
         }
 
@@ -398,7 +399,7 @@ class Mongodb extends Query_Translator
 
         $columnNames = [];
 
-        $fieldColumnMap = $modelClass::getFieldColumnMap();
+        $fieldColumnMap = $modelClass::getScheme()->getFieldColumnMap();
 
         foreach ($fieldNames as $fieldName => $ordering) {
             $columnNames[$fieldColumnMap[$fieldName]] = self::$_orderings[$ordering];
@@ -428,7 +429,7 @@ class Mongodb extends Query_Translator
         if (empty($part)) {
             return [];
         } else {
-            Logger::debug($part);
+            Debuger::dump($part);
             throw new \Exception('Not implemented');
         }
 
@@ -441,10 +442,14 @@ class Mongodb extends Query_Translator
 
         $groups = [];
 
+        /**
+         * @var Model $modelClass
+         * @var array $items
+         */
         foreach ($part as $modelClass => $items) {
             list(, $fieldNames) = $items;
 
-            $fields = $modelClass::getFieldColumnMap();
+            $fields = $modelClass::getScheme()->getFieldColumnMap();
 
             foreach ($fieldNames as $fieldName) {
                 $groups[] = $fields[$fieldName];

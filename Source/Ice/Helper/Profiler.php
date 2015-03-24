@@ -35,7 +35,7 @@ class Profiler
     public static function getVarSize($var)
     {
         $start_memory = memory_get_usage();
-        $tmp = unserialize(serialize($var));
+        $tmp = Json::decode(Json::encode($var));
         return memory_get_usage() - $start_memory;
     }
 

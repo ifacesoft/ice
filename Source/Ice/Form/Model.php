@@ -71,7 +71,7 @@ class Model extends Form
 
         $validateScheme = $modelClass::getPlugin(Validator::getClass());
 
-        $pkFieldNames = $modelClass::getPkFieldNames();
+        $pkFieldNames = $modelClass::getScheme()->getPkFieldNames();
 
         foreach ($modelClass::getPlugin(Form::getClass()) as $fieldName => $fieldType) {
             $this->$fieldType(
