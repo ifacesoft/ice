@@ -498,7 +498,7 @@ class Mysqli extends Data_Source
                     foreach ($data['references'] as $tableName1 => $reference1) {
                         foreach ($data['references'] as $tableName2 => $reference2) {
                             if ($tableName1 != $tableName2) {
-                                $tables[$tableName1]['manyToMany'][] = $tableName2;
+                                $tables[$tableName1]['manyToMany'][$tableName2] = $table['TABLE_NAME'];
                             }
                         }
                     }

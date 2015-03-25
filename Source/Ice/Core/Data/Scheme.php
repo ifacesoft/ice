@@ -167,7 +167,7 @@ class Data_Scheme
                     $schemeTables[$tableName]['oneToManyHash'] = crc32(Json::encode([]));
                 }
                 $table['oneToManyHash'] = crc32(Json::encode($table['oneToMany']));
-                if ($table['oneToManyHash'] != $schemeTables[$tableName]['oneToManyHash']) {
+                if ($force || $table['oneToManyHash'] != $schemeTables[$tableName]['oneToManyHash']) {
                     $references = [];
                     foreach ($table['oneToMany'] as $referenceTableName => $columnName) {
                         $referenceClassName = isset($schemeTables[$referenceTableName])
@@ -187,7 +187,7 @@ class Data_Scheme
                     $schemeTables[$tableName]['manyToOneHash'] = crc32(Json::encode([]));
                 }
                 $table['manyToOneHash'] = crc32(Json::encode($table['manyToOne']));
-                if ($table['manyToOneHash'] != $schemeTables[$tableName]['manyToOneHash']) {
+                if ($force || $table['manyToOneHash'] != $schemeTables[$tableName]['manyToOneHash']) {
                     $references = [];
                     foreach ($table['manyToOne'] as $referenceTableName => $columnName) {
                         $referenceClassName = isset($schemeTables[$referenceTableName])
@@ -207,8 +207,21 @@ class Data_Scheme
                     $schemeTables[$tableName]['manyToManyHash'] = crc32(Json::encode([]));
                 }
                 $table['manyToManyHash'] = crc32(Json::encode($table['manyToMany']));
-                if ($table['manyToManyHash'] != $schemeTables[$tableName]['manyToManyHash']) {
-                    Data_Scheme::getLogger()->info(['Update ManyToMany references for model {$0}: {$1}', [$schemeTables[$tableName]['modelClass'], Json::encode($table['references'])]]);
+                if ($force || $table['manyToManyHash'] != $schemeTables[$tableName]['manyToManyHash']) {
+                    $references = [];
+                    foreach ($table['manyToMany'] as $referenceTableName => $linkTableName) {
+                        $referenceClassName = isset($schemeTables[$referenceTableName])
+                            ? $schemeTables[$referenceTableName]['modelClass']
+                            : $module->getModelClass($referenceTableName, $dataSourceKey);
+
+                        $linkClassName = isset($schemeTables[$linkTableName])
+                            ? $schemeTables[$linkTableName]['modelClass']
+                            : $module->getModelClass($linkTableName, $dataSourceKey);
+
+                        $references[$referenceClassName] = $linkClassName;
+                    }
+                    $table['manyToMany'] = $references;
+                    Data_Scheme::getLogger()->info(['Update ManyToMany references for model {$0}: {$1}', [$schemeTables[$tableName]['modelClass'], Json::encode($table['manyToMany'])]]);
                     $schemeTables[$tableName]['manyToMany'] = $table['manyToMany'];
                     $schemeTables[$tableName]['manyToManyHash'] = $table['manyToManyHash'];
                     $updated = true;
