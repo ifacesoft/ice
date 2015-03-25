@@ -66,8 +66,7 @@ class Loader
             return true;
         }
 
-        $fileName = self::$_repository->get($class);
-        if ($fileName) {
+        if ($fileName = self::$_repository->get($class)) {
             require_once $fileName;
             return true;
         }
