@@ -328,6 +328,7 @@ class Query_Builder
         return $this->_modelClass;
     }
 
+
     /**
      * Append cache validate or invalidate tags for this query builder
      *
@@ -766,7 +767,7 @@ class Query_Builder
 
         /** check ability use pattern from field in base */
         return in_array($fieldValue, $columnFieldMapping)
-            ? $this->where($sqlLogical, [$fieldValue => $fieldName] , Query_Builder::SQL_COMPARISON_KEYWORD_RLIKE_REVERSE, $modelTableData)
+            ? $this->where($sqlLogical, [$fieldValue => $fieldName], Query_Builder::SQL_COMPARISON_KEYWORD_RLIKE_REVERSE, $modelTableData)
             : $this->where($sqlLogical, [$fieldName => $value], Query_Builder::SQL_COMPARISON_KEYWORD_RLIKE, $modelTableData);
     }
 
@@ -790,6 +791,82 @@ class Query_Builder
     }
 
     /**
+     * @param $joinType
+     * @param Model $modelClass
+     * @param $tableAlias
+     * @param Model $joinModelClass
+     * @param $joinTableAlias
+     * @return $this
+     */
+    private function buildJoin($joinType, $modelClass, $tableAlias, $joinModelClass, $joinTableAlias)
+    {
+        $joinModelScheme = $joinModelClass::getScheme();
+
+        $oneToMany = $joinModelScheme->gets(Model_Scheme::ONE_TO_MANY);
+
+        if (isset($oneToMany[$modelClass])) {
+            return [
+                'type' => $joinType,
+                'class' => $modelClass,
+                'alias' => $tableAlias,
+                'on' => $joinTableAlias . '.' . $oneToMany[$modelClass] . ' = ' . $tableAlias . '.' . $modelClass::getPkColumnName()
+            ];
+        }
+
+        $manyToOne = $joinModelScheme->gets(Model_Scheme::MANY_TO_ONE);
+
+        if (isset($manyToOne[$modelClass])) {
+            return [
+                'type' => $joinType,
+                'class' => $modelClass,
+                'alias' => $tableAlias,
+                'on' => $tableAlias . '.' . $manyToOne[$modelClass] . ' = ' . $joinTableAlias . '.' . $joinModelClass::getPkColumnName()
+            ];
+        }
+
+        $manyToMany = $joinModelScheme->gets(Model_Scheme::MANY_TO_MANY);
+
+        if (isset($manyToMany[$modelClass])) {
+            return [
+                $this->buildJoin($joinType, $manyToMany[$modelClass], Object::getName($manyToMany[$modelClass]), $joinModelClass, $joinTableAlias),
+                $this->buildJoin($joinType, $modelClass, $tableAlias, $manyToMany[$modelClass], Object::getName($manyToMany[$modelClass]))
+            ];
+        }
+
+        $joinFieldNames = $joinModelClass::getScheme()->getFieldColumnMap();
+
+        $joinModelName = Object::getName($joinModelClass);
+
+        $joinModelNameFk = strtolower($joinModelName . '__fk');
+        $joinModelNamePk = strtolower($joinModelName) . '_pk';
+
+        if (in_array($joinModelNameFk, $modelClass::getScheme()->getFieldNames())) {
+            return [
+                'type' => $joinType,
+                'class' => $modelClass,
+                'alias' => $tableAlias,
+                'on' => $tableAlias . '.' . $modelClass::getScheme()->getFieldColumnMap()[$joinModelNameFk] . ' = ' . $joinTableAlias . '.' . $joinFieldNames[$joinModelNamePk]
+            ];
+        }
+
+        $modelName = Object::getName($modelClass);
+
+        $modelNameFk = strtolower($modelName . '__fk');
+        $modelNamePk = strtolower($modelName) . '_pk';
+
+        if (in_array($modelNameFk, $joinModelScheme->getFieldNames())) {
+            return [
+                'type' => $joinType,
+                'class' => $modelClass,
+                'alias' => $tableAlias,
+                'on' => $tableAlias . '.' . $joinModelScheme->getFieldColumnMap()[$modelNamePk] . ' = ' . $joinTableAlias . '.' . $joinFieldNames[$modelNameFk]
+            ];
+        }
+
+        return null;
+    }
+
+    /**
      * Set  *join query part
      *
      * @param $joinType
@@ -808,62 +885,39 @@ class Query_Builder
         /** @var Model $modelClass */
         list($modelClass, $tableAlias) = $this->getModelClassTableAlias($modelTableData);
 
-        $currentJoin = [
-            'type' => $joinType,
-            'class' => $modelClass,
-            'alias' => $tableAlias
-        ];
-
         if (!$condition) {
-            $modelName = Object::getName($modelClass);
-            $fieldColumnMap = $modelClass::getScheme()->getFieldColumnMap();
-            $fieldNamesOnly = array_keys($fieldColumnMap);
-
-            $joins = [['class' => $this->getModelClass(), 'alias' => Object::getName($this->getModelClass())]];
+            $joins = [['class' => $this->getModelClass(), 'alias' => $this->getTableAlias()]];
 
             if (!empty($this->_sqlParts[self::PART_JOIN])) {
                 $joins = array_merge($joins, $this->_sqlParts[self::PART_JOIN]);
             }
 
-            $joins[] = $currentJoin;
-
             foreach ($joins as $join) {
-                /** @var Model $joinModelClass */
-                $joinModelClass = $join['class'];
-                $joinTableAlias = $join['alias'];
+                $newJoin = $this->buildJoin(
+                    $joinType,
+                    $modelClass,
+                    $tableAlias,
+                    $join['class'],
+                    $join['alias']
+                );
 
-                $joinFieldNames = $joinModelClass::getScheme()->getFieldColumnMap();
-                $joinFieldNamesOnly = array_keys($joinFieldNames);
-
-                $joinModelName = Object::getName($joinModelClass);
-
-                $joinModelNameFk = strtolower($joinModelName . '__fk');
-                $joinModelNamePk = strtolower($joinModelName) . '_pk';
-
-                if (in_array($joinModelNameFk, $fieldNamesOnly)) {
-                    $condition = $tableAlias . '.' . $fieldColumnMap[$joinModelNameFk] . ' = ' .
-                        $joinTableAlias . '.' . $joinFieldNames[$joinModelNamePk];
-                    break;
+                if ($newJoin) {
+                    $this->_sqlParts[self::PART_JOIN] += (array)$newJoin;
+                    return $this;
                 }
-
-                $modelNameFk = strtolower($modelName . '__fk');
-                $modelNamePk = strtolower($modelName) . '_pk';
-
-                if (in_array($modelNameFk, $joinFieldNamesOnly)) {
-                    $condition = $tableAlias . '.' . $fieldColumnMap[$modelNamePk] . ' = ' .
-                        $joinTableAlias . '.' . $joinFieldNames[$modelNameFk];
-                    break;
-                }
-            }
-
-            if (!$condition) {
-                Logger::getInstance(__CLASS__)->exception(['Could not defined condition for join part of sql query {$0}', $this->_sqlParts], __FILE__, __LINE__);
             }
         }
 
-        $currentJoin['on'] = $condition;
+        if (!$condition) {
+            Logger::getInstance(__CLASS__)->exception(['Could not defined condition for join part of sql query {$0}', $this->_sqlParts], __FILE__, __LINE__);
+        }
 
-        $this->_sqlParts[self::PART_JOIN][] = $currentJoin;
+        $this->_sqlParts[self::PART_JOIN][] = [
+            'type' => $joinType,
+            'class' => $modelClass,
+            'alias' => $tableAlias,
+            'on' => $condition
+        ];
 
         return $this;
     }
@@ -960,21 +1014,20 @@ class Query_Builder
      * @param null $fieldAlias
      * @param array $modelTableData
      * @param string|null $dataSourceKey
-     * @param int $ttl
-     * @return Query_Result
+     * @return Query
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
      * @since 0.0
      */
-    public function select($fieldName, $fieldAlias = null, $modelTableData = [], $dataSourceKey = null, $ttl = null)
+    public function select($fieldName, $fieldAlias = null, $modelTableData = [], $dataSourceKey = null)
     {
         $this->_queryType = Query_Builder::TYPE_SELECT;
 
         $this->_select($fieldName, $fieldAlias, $modelTableData);
 
-        return $this->getQuery($dataSourceKey)->execute($ttl);
+        return $this->getQuery($dataSourceKey);
     }
 
     /**

@@ -302,14 +302,14 @@ class Sql extends Query_Translator
                     $fieldName = $fieldColumnMap[$fieldName];
 
                     if ($isSpatial) {
-                        $fieldAlias = 'asText(' . $tableAlias . '.' . $fieldName . ')' . ' AS `' . $fieldAlias . '`';
+                        $fieldAlias = 'asText(`' . $tableAlias . '`.`' . $fieldName . '`)' . ' AS `' . $fieldAlias . '`';
                     } else {
                         $fieldAlias = $fieldAlias == $fieldName
-                            ? $tableAlias . '.' . $fieldName
-                            : $tableAlias . '.' . $fieldName . ' AS `' . $fieldAlias . '`';
+                            ? '`' . $tableAlias . '`.`' . $fieldName . '`'
+                            : '`' . $tableAlias . '`.`' . $fieldName . '` AS `' . $fieldAlias . '`';
                     }
                 } else {
-                    $fieldAlias = $tableAlias . '.' . $fieldName . ' AS `' . $fieldAlias . '`';
+                    $fieldAlias = '`' . $tableAlias . '`.`' . $fieldName . '` AS `' . $fieldAlias . '`';
                 }
             }
 
@@ -323,7 +323,7 @@ class Sql extends Query_Translator
         $sql .= "\n" . self::SQL_STATEMENT_SELECT . ($calcFoundRows ? ' ' . self::SQL_CALC_FOUND_ROWS . ' ' : '') .
             "\n\t" . implode(',' . "\n\t", $fields) .
             "\n" . self::SQL_CLAUSE_FROM .
-            "\n\t" . $modelClass::getTableName() . ' `' . $tableAlias . '`';
+            "\n\t`" . $modelClass::getTableName() . '` `' . $tableAlias . '`';
 
         return $sql;
     }

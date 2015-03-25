@@ -123,21 +123,6 @@ class Query_Result implements Cacheable
     }
 
     /**
-     * Get collection from data
-     *
-     * @return Model_Collection
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since 0.0
-     */
-    public function getModelCollection()
-    {
-        return Model_Collection::create($this->getModelClass(), $this->getRows(), $this->getQuery());
-    }
-
-    /**
      * Return target model class of data
      *
      * @return Model
@@ -174,13 +159,12 @@ class Query_Result implements Cacheable
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.6
      * @since 0.0
      */
     public function getRows()
     {
-        $rows = $this->getResult()[self::ROWS];
-        return empty($rows) ? [] : $rows;
+        return $this->getResult()[self::ROWS];
     }
 
     /**
@@ -193,7 +177,7 @@ class Query_Result implements Cacheable
      * @version 0.0
      * @since 0.0
      */
-    public function getResult()
+    private function getResult()
     {
         if ($this->_transformations === null) {
             return $this->_result;
@@ -237,77 +221,6 @@ class Query_Result implements Cacheable
 
         $this->_transformations = null;
         return $rows;
-    }
-
-    /**
-     * Get value from data
-     *
-     * @desc Результат запроса - единственное значение.
-     *
-     * @param null $columnName
-     * @return mixed
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function getValue($columnName = null)
-    {
-        $row = $this->getRow();
-        return $row ? ($columnName ? $row[$columnName] : reset($row)) : null;
-    }
-
-    /**
-     * Get first row from data
-     *
-     * @desc Результат запроса - единственная запись таблицы.
-     *
-     * @param null $pk
-     * @return array|null
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function getRow($pk = null)
-    {
-        $rows = $this->getResult()[self::ROWS];
-
-        if (empty($rows)) {
-            return null;
-        }
-
-        if (isset($pk)) {
-            return isset($rows[$pk]) ? $rows[$pk] : null;
-        }
-
-        return reset($rows);
-    }
-
-    /**
-     * Return model from data
-     *
-     * @param null $pk
-     * @return Model|null
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function getModel($pk = null)
-    {
-        $row = $this->getRow($pk);
-
-        if (empty($row)) {
-            return null;
-        }
-
-        $modelClass = $this->getModelClass();
-
-        return $modelClass::create($row)->clearAffected();
     }
 
     /**
@@ -389,39 +302,7 @@ class Query_Result implements Cacheable
         return $data;
     }
 
-    /**
-     * Return column in data
-     *
-     * @param null $fieldName
-     * @param null $indexKey
-     * @return array
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function getColumn($fieldName = null, $indexKey = null)
-    {
-        return empty($fieldName)
-            ? $this->getKeys()
-            : Arrays::column($this->_result[Query_Result::ROWS], $fieldName, $indexKey);
-    }
 
-    /**
-     * Return keys of data
-     *
-     * @return array
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function getKeys()
-    {
-        return array_keys($this->_result[Query_Result::ROWS]);
-    }
 
     /**
      * (PHP 5 &gt;= 5.0.0)<br/>
