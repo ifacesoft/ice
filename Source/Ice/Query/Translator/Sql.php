@@ -347,12 +347,12 @@ class Sql extends Query_Translator
             return $sql;
         }
 
-        foreach ($part as $joinTable) {
+        foreach ($part as $tableAlias => $joinTable) {
             /** @var Model $joinModelClass */
             $joinModelClass = $joinTable['class'];
 
-            $sql .= "\n" . $joinTable['type'] . "\n\t" .
-                $joinModelClass::getTableName() . ' AS `' . $joinTable['alias'] .
+            $sql .= "\n" . $joinTable['type'] . "\n\t`" .
+                $joinModelClass::getTableName() . '` AS `' . $tableAlias .
                 '` ON (' . $joinTable['on'] . ')';
         }
 
