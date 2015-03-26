@@ -28,39 +28,13 @@ use Ice\View\Render\Replace;
  * @package Ice
  * @subpackage Core
  */
-class Route extends Container
+class Route extends Config
 {
-    use Stored;
-
-    /**
-     * Route name
-     *
-     * @var string
-     */
-    private $_routeName = null;
-    /**
-     * Route data
-     *
-     * @var array
-     */
-    private $_route = null;
-
-    /**
-     * Private constructor of route
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since 0.0
-     */
-    private function __construct()
-    {
-    }
-
     /**
      * Create new instance of route
      *
-     * @param string $name
+     * @param string $routeName
+     * @param array $routeData
      * @return Route
      * @throws Http_Not_Found
      * @author dp <denis.a.shestakov@gmail.com>
@@ -68,20 +42,15 @@ class Route extends Container
      * @version 0.4
      * @since 0.0
      */
-    protected static function create($name)
+    public static function create($routeName, array $routeData = [])
     {
         $routes = self::getRoutes();
 
-        if (!isset($routes[$name])) {
-            throw new Http_Not_Found(['Route {$0} not found', $name]);
+        if (!isset($routes[$routeName])) {
+            throw new Http_Not_Found(['Route {$0} not found', $routeName]);
         }
 
-        $route = new Route();
-
-        $route->_routeName = $name;
-        $route->_route = $routes[$name];
-
-        return $route;
+        return parent::create($routeName, $routes[$routeName]);
     }
 
     /**
@@ -201,76 +170,9 @@ class Route extends Container
         return $routes;
     }
 
-    /**
-     * Return default route key by uri
-     *
-     * @return string
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    protected static function getDefaultKey()
-    {
-        return Router::getInstance()->get('routeName');
-    }
-
-    /**
-     * Return self route name
-     *
-     * @return string
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function getRouteName()
-    {
-        return $this->_routeName;
-    }
-
     public function getLayoutActionClassName($method)
     {
         return $this->get('request/' . $method . '/layout');
-    }
-
-    /**
-     * Get config param value
-     *
-     * @param string|null $key
-     * @param bool $isRequired
-     * @throws Exception
-     * @return string
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since 0.4
-     */
-    private function get($key = null, $isRequired = true)
-    {
-        $params = $this->gets($key, $isRequired);
-
-        return empty($params) ? null : reset($params);
-    }
-
-    /**
-     * Get config param values
-     *
-     * @param string|null $key
-     * @param bool $isRequired
-     * @return array
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since 0.4
-     */
-    public function gets($key = null, $isRequired = true)
-    {
-        return Helper_Config::gets($this->_route, $key, $isRequired);
     }
 
     public function getResponseRedirect($method)
@@ -308,27 +210,27 @@ class Route extends Container
 
         return Replace::getInstance()->fetch($route->getRoute(), $params, View_Render::TEMPLATE_TYPE_STRING);
     }
-
-    /**
-     * Return instance of Route
-     *
-     * @param null $key
-     * @param null $ttl
-     * @return Route
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since 0.4
-     */
-    public static function getInstance($key = null, $ttl = null)
-    {
-        if (!$key) {
-            $key = Route::getDefaultKey();
-        }
-
-        return parent::getInstance($key, $ttl);
-    }
+//
+//    /**
+//     * Return instance of Route
+//     *
+//     * @param null $key
+//     * @param null $ttl
+//     * @return Route
+//     *
+//     * @author dp <denis.a.shestakov@gmail.com>
+//     *
+//     * @version 0.4
+//     * @since 0.4
+//     */
+//    public static function getInstance($key = null, $ttl = null)
+//    {
+//        if (!$key) {
+//            $key = Route::getDefaultKey();
+//        }
+//
+//        return parent::getInstance($key, $ttl);
+//    }
 
     /**
      * Return route string
@@ -342,22 +244,7 @@ class Route extends Container
      */
     public function getRoute()
     {
-        return $this->getData()['route'];
-    }
-
-    /**
-     * return route data
-     *
-     * @return array
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function getData()
-    {
-        return $this->_route;
+        return $this->get('route');
     }
 
     /**

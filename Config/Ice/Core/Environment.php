@@ -49,6 +49,7 @@ return [
             ],
             'Ice\Core\Config' => [
                 'config' => 'Ice:Repository/config',
+                'route' => 'Ice:Repository/config',
             ],
             'Ice\Core\Form' => [
                 'instance' => 'Ice:Repository/form',
@@ -137,6 +138,7 @@ return [
             ],
             'Ice\Core\Config' => [
                 'config' => 'Ice:Registry/config',
+                'route' => 'Ice:Registry/config',
             ],
             'Ice\Core\Form' => [
                 'instance' => 'Ice:Registry/form',

@@ -18,6 +18,7 @@ use Ice\Data\Provider\Router;
 use Ice\Exception\Http_Bad_Request;
 use Ice\Exception\Http_Not_Found;
 use Ice\Exception\Redirect;
+use Ice\Helper\Object;
 
 class App
 {
@@ -54,7 +55,7 @@ class App
                 $method = $route->gets('request/' . $router->get('method'));
 
                 list($actionClass, $input) = each($method);
-
+                $actionClass = Action::getClass($actionClass);
                 $view = $actionClass::call($input);
             }
 
