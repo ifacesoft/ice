@@ -10,4 +10,6 @@
  * @since 0.0
  */
 
-require_once 'app.php';
+define('VENDOR_DIR', dirname(__DIR__) . '/_vendor/Ice/');
+
+require_once __DIR__ . '/app.php';
