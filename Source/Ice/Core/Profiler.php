@@ -37,6 +37,11 @@ class Profiler
         return Profiler::$_profiler[$name][Profiler::TIME] = Profiler::getMicrotimeResult($startTime);
     }
 
+    public static function setPoint($name, $startTime, $startMemory) {
+        Profiler::setTiming($name, $startTime);
+        Profiler::setMemoryUsages($name, $startMemory);
+    }
+
     /**
      * Set delta memory usage
      *
@@ -51,11 +56,11 @@ class Profiler
      */
     public static function setMemoryUsages($name, $startMemory)
     {
-       if (is_object($name)) {
-           $name = $name->__toString();
-       }
+        if (is_object($name)) {
+            $name = $name->__toString();
+        }
 
-        return Profiler::$_profiler[$name][Profiler::MEMORY] = Profiler::getMicrotimeResult($startMemory);
+        return Profiler::$_profiler[$name][Profiler::MEMORY] = Profiler::getMemoryGetUsageResult($startMemory);
     }
 
     /**
@@ -65,8 +70,8 @@ class Profiler
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
-     * @since 0.0
+     * @version 0.6
+     * @since 0.6
      */
     public static function getMicrotime()
     {
@@ -81,11 +86,11 @@ class Profiler
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
-     * @since 0.0
+     * @since 0.6
      */
     public static function getMicrotimeResult($startTime)
     {
-        return microtime(true) - $startTime;
+        return Profiler::getMicrotime() - $startTime;
     }
 
     /**
@@ -100,7 +105,7 @@ class Profiler
      */
     public static function getMemoryGetUsage()
     {
-        return $size = memory_get_usage(true);
+        return memory_get_usage(true);
     }
 
     /**
@@ -111,12 +116,12 @@ class Profiler
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
-     * @since 0.0
+     * @version 0.6
+     * @since 0.6
      */
     public static function getMemoryGetUsageResult($startMemory)
     {
-        return microtime(true) - $startMemory;
+        return Profiler::getMemoryGetUsage() - $startMemory;
     }
 
     /**
@@ -126,23 +131,21 @@ class Profiler
      *
      * @version 0.6
      * @since 0.6
+     * @param $name
+     * @return string
      */
-    public static function getReport()
+    public static function getReport($name)
     {
-        foreach (Profiler::$_profiler as $name => $data) {
-            $message = $name . ' -';
+        $message = $name . ' [';
 
-            if (isset($data[Profiler::TIME])) {
-                $message .= ' timing: ' . Helper_Profiler::getPrettyTime($data[Profiler::TIME]);
-            }
-
-            if (isset($data[Profiler::MEMORY])) {
-                $message .= ' memory usage: ' . Helper_Profiler::getPrettyMemory($data[Profiler::MEMORY]);
-            }
-
-            $message .= ' (memory peak: ' . Helper_Profiler::getPrettyMemory(memory_get_peak_usage(true));
-
-            Logger::fb($message, 'profiler', 'INFO');
+        if (isset(Profiler::$_profiler[$name])) {
+            $message .= 'Time: ' . Helper_Profiler::getPrettyTime(Profiler::$_profiler[$name][Profiler::TIME]) . ' ';
         }
+
+        if (isset(Profiler::$_profiler[$name])) {
+            $message .= 'Mem: ' . Helper_Profiler::getPrettyMemory(Profiler::$_profiler[$name][Profiler::MEMORY]) . ' ';
+        }
+
+        return $message . '(peak: ' . Helper_Profiler::getPrettyMemory(memory_get_peak_usage(true)) . ')]';
     }
 }

@@ -343,6 +343,7 @@ abstract class Data_Source extends Container
     public function execute(Query $query, $ttl)
     {
         $startTime = Profiler::getMicrotime();
+        $startMemory = Profiler::getMemoryGetUsage();
 
         $queryResult = null;
 
@@ -356,8 +357,8 @@ abstract class Data_Source extends Container
                 $queryType == Query_Builder::TYPE_DROP
             ) {
                 $queryResult = Query_Result::create($query, $this->$queryCommand($query));
-                Profiler::setMemoryUsages($queryResult, $startTime);
-                Data_Source::getLogger()->log(['(not cache) {$0}]', $queryResult->__toString()], Logger::INFO);
+                Profiler::setPoint($queryResult->__toString(), $startTime, $startMemory);
+                Data_Source::getLogger()->log(['(not cache) {$0}', Profiler::getReport($queryResult->__toString())], Logger::INFO);
                 return $queryResult;
             }
 
@@ -367,14 +368,14 @@ abstract class Data_Source extends Container
                     $queryHash = $query->getFullHash();
 
                     if ($queryResult = $cacher->get($queryHash)) {
-                        Profiler::setMemoryUsages($queryResult, $startTime);
-                        Data_Source::getLogger()->log(['(cache) {$0}]', $queryResult->__toString()], Logger::INFO);
+                        Profiler::setPoint($queryResult->__toString(), $startTime, $startMemory);
+                        Data_Source::getLogger()->log(['(cache) {$0}', Profiler::getReport($queryResult->__toString())], Logger::INFO);
                         return $queryResult;
                     }
 
                     $queryResult = Query_Result::create($query, $this->$queryCommand($query));
-                    Profiler::setMemoryUsages($queryResult, $startTime);
-                    Data_Source::getLogger()->log(['(new) {$0}]', $queryResult->__toString()], Logger::SUCCESS);
+                    Profiler::setPoint($queryResult->__toString(), $startTime, $startMemory);
+                    Data_Source::getLogger()->log(['(new) {$0}', Profiler::getReport($queryResult->__toString())], Logger::SUCCESS);
                     $cacher->set($queryHash, $queryResult, $ttl);
                     break;
 
@@ -382,16 +383,14 @@ abstract class Data_Source extends Container
                 case Query_Builder::TYPE_UPDATE:
                 case Query_Builder::TYPE_DELETE:
                     $queryResult = Query_Result::create($query, $this->$queryCommand($query))->invalidate();
-                Profiler::setMemoryUsages($queryResult, $startTime);
-                Data_Source::getLogger()->log(['(new) {$0}]', $queryResult], Logger::SUCCESS);
+                Profiler::setPoint($queryResult->__toString(), $startTime, $startMemory);
+                Data_Source::getLogger()->log(['(new) {$0}', Profiler::getReport($queryResult->__toString())], Logger::SUCCESS);
                     return $queryResult;
 
                 default:
                     Data_Source::getLogger()->exception(['Unknown data source query statement type {$0}', $queryType], __FILE__, __LINE__, null, $query);
             }
         } catch (\Exception $e) {
-            Profiler::setMemoryUsages($queryResult, $startTime);
-            Data_Source::getLogger()->log(['(error) {$0}]', $queryResult->__toString()], Logger::DANGER);
             Data_Source::getLogger()->log(print_r($query->getBody(), true) . ' (' .  print_r($query->getBinds(), true) . ')', Logger::DANGER);
             Data_Source::getLogger()->log($e->getMessage(), Logger::DANGER);
             Data_Source::getLogger()->exception('Data source execute query failed', __FILE__, __LINE__, $e, $query);

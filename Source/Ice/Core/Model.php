@@ -853,8 +853,8 @@ abstract class Model
         return Query::getBuilder(self::getClass())
             ->pk($pk)
             ->limit(1)
-            ->select($fieldNames, null, [], $dataSourceKey, $ttl)
-            ->getModel();
+            ->select($fieldNames, null, [], $dataSourceKey)
+            ->getModel(null, $ttl);
     }
 
     /**
@@ -896,6 +896,25 @@ abstract class Model
         $modelClass = self::getClass();
 
         return implode('__', $modelClass::getScheme()->getPkFieldNames());
+    }
+
+    /**
+     * Return primary key field value
+     *
+     * If have a some primary keys - return key1__key2__key3__etc
+     *
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.6
+     * @since 0.6
+     */
+    public static function getPkColumnName()
+    {
+        $modelClass = self::getClass();
+
+        return implode('__', $modelClass::getScheme()->getPkColumnNames());
     }
 
     /**
@@ -1300,20 +1319,12 @@ abstract class Model
             ->getModel();
     }
 
-    public function createQueryBuilder($modelTableData = null, $fieldNames = '/pk')
+    public function createQueryBuilder($modelClass, $tableAlias = null)
     {
         $selfModelClass = get_class($this);
 
-        $queryBuilder = Query::getBuilder($selfModelClass)->pk($this->getPk());
-
-        if ($modelTableData) {
-            list($modelClass, $tableAlias) = $queryBuilder->getModelClassTableAlias($modelTableData);
-
-            if ($selfModelClass != $modelClass) {
-                $queryBuilder->inner([$modelClass => $tableAlias], $fieldNames);
-            }
-        }
-
-        return $queryBuilder;
+        return Query::getBuilder($modelClass, $tableAlias)
+            ->inner($selfModelClass)
+            ->pk($this->getPk(), $selfModelClass);
     }
 }

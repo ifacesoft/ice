@@ -3,13 +3,7 @@ if (!defined('ICE_BOOTSTRAP')) {
     define('ICE_BOOTSTRAP', true);
 
     if (!defined('VENDOR_DIR')) {
-        $vendorDir = realpath(dirname(__DIR__) . '/_vendor');
-
-        if (!$vendorDir) {
-            die('Vendor dir not found. Please, run \'php composer.phar update --prefer-source\'' . "\n");
-        }
-
-        define('VENDOR_DIR', $vendorDir . '/');
+        die("VENDOR_DIR not defined");
     }
 
     if (!defined('MODULE_DIR')) {

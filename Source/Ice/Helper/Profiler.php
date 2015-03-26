@@ -68,6 +68,7 @@ class Profiler
      */
     public static function getPrettyMemory($memory)
     {
+        if (!$memory) { return '0 B'; }
         static $unit = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
         return round($memory / pow(1024, ($i = floor(log($memory, 1024)))), 2) . ' ' . $unit[$i];
     }

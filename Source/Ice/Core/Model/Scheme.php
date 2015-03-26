@@ -4,6 +4,10 @@ namespace Ice\Core;
 
 class Model_Scheme extends Config
 {
+    const ONE_TO_MANY = 'oneToMany';
+    const MANY_TO_ONE = 'manyToOne';
+    const MANY_TO_MANY = 'manyToMany';
+
     public function getColumnFieldMap()
     {
         /** @var Model $modelClass */

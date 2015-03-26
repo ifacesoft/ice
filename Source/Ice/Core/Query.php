@@ -10,6 +10,7 @@
 namespace Ice\Core;
 
 use Ice\Core;
+use Ice\Helper\Arrays;
 use Ice\Helper\Json;
 
 /**
@@ -415,5 +416,143 @@ class Query
      */
     public static function getBuilder($modelClass, $tableAlias = null) {
         return Query_Builder::create($modelClass, $tableAlias);
+    }
+
+    /**
+     * Get collection from data
+     *
+     * @param null $ttl
+     * @return Model_Collection
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.6
+     * @since 0.0
+     */
+    public function getModelCollection($ttl = null)
+    {
+        $queryResult = $this->execute($ttl);
+
+        return Model_Collection::create($queryResult->getModelClass(), $queryResult->getRows(), $queryResult->getQuery());
+    }
+
+
+    /**
+     * Return all rows from data as array
+     *
+     * @param null $ttl
+     * @return array
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.6
+     * @since 0.0
+     */
+    public function getRows($ttl = null)
+    {
+        return $this->execute($ttl)->getRows();
+    }
+
+    /**
+     * Get value from data
+     *
+     * @desc Результат запроса - единственное значение.
+     *
+     * @param null $columnName
+     * @param null $ttl
+     * @return mixed
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.6
+     * @since 0.0
+     */
+    public function getValue($columnName = null, $ttl = null)
+    {
+        $row = $this->getRow(null, $ttl);
+        return $row ? ($columnName ? $row[$columnName] : reset($row)) : null;
+    }
+
+    /**
+     * Get first row from data
+     *
+     * @desc Результат запроса - единственная запись таблицы.
+     *
+     * @param null $pk
+     * @param null $ttl
+     * @return array|null
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.6
+     * @since 0.0
+     */
+    public function getRow($pk = null, $ttl = null)
+    {
+        $rows = $this->getRows($ttl);
+
+        if (empty($rows)) {
+            return null;
+        }
+
+        if (isset($pk)) {
+            return isset($rows[$pk]) ? $rows[$pk] : null;
+        }
+
+        return reset($rows);
+    }
+
+    /**
+     * Return model from data
+     *
+     * @param null $pk
+     * @param null $ttl
+     * @return Model|null
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.6
+     * @since 0.0
+     */
+    public function getModel($pk = null, $ttl = null)
+    {
+        $row = $this->getRow($pk, $ttl);
+
+        if (empty($row)) {
+            return null;
+        }
+
+        $modelClass = $this->getModelClass();
+
+        return $modelClass::create($row)->clearAffected();
+    }
+
+    /**
+     * Return column in data
+     *
+     * @param null $fieldName
+     * @param null $indexKey
+     * @param null $ttl
+     * @return array
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.6
+     * @since 0.0
+     */
+    public function getColumn($fieldName = null, $indexKey = null, $ttl = null)
+    {
+        return empty($fieldName)
+            ? $this->getKeys()
+            : Arrays::column($this->getRows($ttl), $fieldName, $indexKey);
+    }
+
+    /**
+     * Return keys of data
+     *
+     * @param null $ttl
+     * @return array
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.6
+     * @since 0.0
+     */
+    public function getKeys($ttl = null)
+    {
+        return array_keys($this->getRows($ttl));
     }
 }
