@@ -82,11 +82,10 @@ class App
         App::getResponse()->send();
 
         if (!Environment::getInstance()->isProduction()) {
-            Logger::renderLog();
+            Profiler::setPoint(__CLASS__, $startTime,$startMemory);
 
-            Profiler::setTiming(__CLASS__, $startTime);
-            Profiler::setMemoryUsages(__CLASS__, $startMemory);
-            Profiler::getReport();
+            Logger::getInstance(__CLASS__)->info(Profiler::getReport(__CLASS__), Logger::INFO, false);
+            Logger::renderLog();
         }
 
         if (!Request::isCli() && function_exists('fastcgi_finish_request')) {
