@@ -167,7 +167,7 @@ class Object
      */
     public static function getBaseClass($class)
     {
-        if (!Object::isClass($class)) {
+        if (!Object::isClass($class) || !is_subclass_of($class, Container::getClass())) {
             return $class;
         }
 

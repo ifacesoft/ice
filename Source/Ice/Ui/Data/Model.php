@@ -2,10 +2,10 @@
 
 namespace Ice\Ui_Data;
 
-use Ice\Core\Data;
 use Ice\Core\Model as Core_Model;
+use Ice\Core\Ui_Data;
 
-class Model extends Data
+class Model extends Ui_Data
 {
 
     /**
@@ -13,28 +13,21 @@ class Model extends Data
      */
     private $_modelClass = null;
 
-    /**
-     * Constructor for model data
-     *
-     * @param Core_Model $modelClass
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.2
-     * @since 0.0
-     */
-    protected function __construct($modelClass)
+    protected static function create($key)
     {
-        parent::__construct($modelClass);
+        $data = parent::create($key);
 
-        $this->_modelClass = Model::getClass($modelClass);
+        /** @var Core_Model $modelClass */
+        $modelClass = $data->getKey();
 
-        foreach ($modelClass::getPlugin(Data::getClass()) as $fieldName => $columnType) {
-            $this->$columnType(
+        foreach ($modelClass::getPlugin(Ui_Data::getClass()) as $fieldName => $columnType) {
+            $data->$columnType(
                 $fieldName,
                 $modelClass::getFieldTitle($fieldName)
             );
         }
+
+        return $data;
     }
 
     /**

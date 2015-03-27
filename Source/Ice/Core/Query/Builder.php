@@ -276,6 +276,45 @@ class Query_Builder
     }
 
     /**
+     * Return couple fieldName and fieldAlias
+     *
+     * @param string|array $fieldNameAlias
+     * @param Model $modelClass
+     * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.6
+     * @since 0.6
+     */
+    private function getFieldNameAlias($fieldNameAlias, $modelClass)
+    {
+        if (empty($fieldNameAlias)) {
+            $fieldName = null;
+            $fieldAlias = null;
+        } else {
+            $fieldNameAlias = (array)$fieldNameAlias;
+
+            if (count($fieldNameAlias) > 1) {
+                $fieldNameAlias = [array_shift($fieldNameAlias) => array_shift($fieldNameAlias)];
+            }
+
+            list($fieldName, $fieldAlias) = each($fieldNameAlias);
+
+            if (is_int($fieldName)) {
+                $fieldName = $fieldAlias;
+                $fieldAlias = null;
+            }
+        }
+
+        if (!$fieldName || $fieldName == '/pk') {
+            $fieldName = $modelClass::getScheme()->getPkFieldNames();
+        }
+
+        return [$fieldName, $fieldAlias];
+    }
+
+    /**
      * Check for model class and table alias
      *
      * @param $modelTableData
@@ -294,6 +333,10 @@ class Query_Builder
         } else {
             $modelTableData = (array)$modelTableData;
 
+            if (count($modelTableData) > 1) {
+                $modelTableData = [array_shift($modelTableData) => array_shift($modelTableData)];
+            }
+
             list($modelClass, $tableAlias) = each($modelTableData);
 
             if (is_int($modelClass)) {
@@ -306,11 +349,15 @@ class Query_Builder
             ? $this->getModelClass()
             : Model::getClass($modelClass);
 
-        if (!$tableAlias) {
+        if ($tableAlias === null) {
             $tableAlias = $modelClass;
         }
 
-        return [$modelClass, Object::getName($tableAlias)];
+        if ($tableAlias !== '') {
+            $tableAlias = Object::getName($tableAlias);
+        }
+
+        return [$modelClass, $tableAlias];
     }
 
     /**
@@ -909,7 +956,7 @@ class Query_Builder
         }
 
         if (!$condition) {
-            Logger::getInstance(__CLASS__)->exception(['Could not defined condition for join part of sql query {$0}', $this->_sqlParts], __FILE__, __LINE__);
+            Logger::getInstance(__CLASS__)->exception('Could not defined condition for join part of sql query', __FILE__, __LINE__, null, $this->_sqlParts);
         }
 
         $this->_sqlParts[self::PART_JOIN][$tableAlias] = [
@@ -927,7 +974,7 @@ class Query_Builder
      * @param $fieldName
      * @param $fieldAlias
      * @param array|string $modelTableData Key -> modelClass, value -> tableAlias
-     * @return $this
+     * @return Query_Builder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
@@ -939,16 +986,18 @@ class Query_Builder
         /** @var Model $modelClass */
         list($modelClass, $tableAlias) = $this->getModelClassTableAlias($modelTableData);
 
-        if (!isset($this->_sqlParts[self::PART_SELECT][$modelClass])) {
+        if ($tableAlias && !isset($this->_sqlParts[self::PART_SELECT][$modelClass][$tableAlias])) {
             $pkFieldNames = $modelClass::getScheme()->getPkFieldNames();
 
-            $this->_sqlParts[self::PART_SELECT][$modelClass] = [
-                $tableAlias, array_combine($pkFieldNames, $pkFieldNames)
-            ];
+            $this->_sqlParts[self::PART_SELECT][$modelClass][$tableAlias] = array_combine($pkFieldNames, $pkFieldNames);
         }
 
         if ($fieldName == '*') {
             $fieldName = $modelClass::getScheme()->getFieldNames();
+        }
+
+        if ($fieldName == '/pk') {
+            $fieldName = $modelClass::getScheme()->getPkFieldNames();
         }
 
         if (is_array($fieldName)) {
@@ -962,7 +1011,7 @@ class Query_Builder
 
             return $this;
         } else {
-            $fieldName = explode(',', $fieldName);
+            $fieldName = explode(', ', $fieldName);
 
             if (count($fieldName) > 1) {
                 $this->_select($fieldName, null, $modelTableData);
@@ -979,15 +1028,15 @@ class Query_Builder
             $fieldAlias = $fieldName;
         }
 
-        if (!isset($this->_sqlParts[self::PART_SELECT][$modelClass])) {
-            $pkNames = $modelClass::getScheme()->getPkFieldNames();
+//        if (!isset($this->_sqlParts[self::PART_SELECT][$modelClass])) {
+//            $pkNames = $modelClass::getScheme()->getPkFieldNames();
+//
+//            $this->_sqlParts[self::PART_SELECT][$modelClass] = [
+//                $tableAlias, array_combine($pkNames, $pkNames)
+//            ];
+//        }
 
-            $this->_sqlParts[self::PART_SELECT][$modelClass] = [
-                $tableAlias, array_combine($pkNames, $pkNames)
-            ];
-        }
-
-        $this->_sqlParts[self::PART_SELECT][$modelClass][1][$fieldName] = $fieldAlias;
+        $this->_sqlParts[self::PART_SELECT][$modelClass][$tableAlias][$fieldName] = $fieldAlias;
 
         $this->appendCacheTag($modelClass, $fieldName, true, false);
 
@@ -1240,8 +1289,7 @@ class Query_Builder
     /**
      * Set flag of get count rows
      *
-     * @param string $fieldName
-     * @param null $fieldAlias
+     * @param array $fieldNameAlias
      * @param array $modelTableData
      * @return Query_Builder
      *
@@ -1250,20 +1298,27 @@ class Query_Builder
      * @version 0.6
      * @since 0.0
      */
-    public function count($fieldName = '/pk', $fieldAlias = null, $modelTableData = [])
+    public function count($fieldNameAlias = [], $modelTableData = [])
     {
         /** @var Model $modelClass */
-        $modelClass = $this->getModelClassTableAlias($modelTableData)[0];
+        list($modelClass, $tableAlias) = $this->getModelClassTableAlias($modelTableData);
+        list($fieldName, $fieldAlias) = $this->getFieldNameAlias($fieldNameAlias, $modelClass);
+        $fieldNames = [];
 
-        $fieldName = $modelClass::getFieldName($fieldName);
+        $fieldColumnMap = $modelClass::getScheme()->getFieldColumnMap();
 
-        if (!$fieldAlias) {
-            $fieldAlias = $fieldName . '_count';
+        foreach ((array) $fieldName as $name) {
+            $name = $fieldColumnMap[$name];
+
+            $fieldNames[] = '`' . $tableAlias . '`.`' . $modelClass::getFieldName($name) . '`';
+            $this->appendCacheTag($modelClass, $name, true, false);
         }
 
-        $this->appendCacheTag($modelClass, $fieldName, true, false);
+        if (!$fieldAlias) {
+            $fieldAlias = strtolower($modelClass::getClassName()) . '__count';
+        }
 
-        $this->_select('count(' . $fieldName . ')', $fieldAlias, $modelTableData);
+        $this->_select('count(' . implode(',', $fieldNames) . ')', $fieldAlias, [$modelClass => '']);
 
         return $this;
     }
@@ -1331,14 +1386,14 @@ class Query_Builder
      *
      * @param $fieldName
      * @param array|string $modelTableData Key -> modelClass, value -> tableAlias
-     * @return $this
+     * @return Query_Builder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
      * @since 0.0
      */
-    public function group($fieldName, $modelTableData = [])
+    public function group($fieldName = null, $modelTableData = [])
     {
         if (is_array($fieldName)) {
             foreach ($fieldName as $name) {
@@ -1350,6 +1405,12 @@ class Query_Builder
 
         /** @var Model $modelClass */
         list($modelClass, $tableAlias) = $this->getModelClassTableAlias($modelTableData);
+
+        if (!$fieldName || $fieldName == '/pk') {
+            $this->group($modelClass::getScheme()->getPkFieldNames(), $modelTableData);
+
+            return $this;
+        }
 
         $fieldName = $modelClass::getFieldName($fieldName);
 

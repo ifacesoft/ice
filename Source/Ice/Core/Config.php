@@ -61,7 +61,7 @@ class Config
     /**
      * Return new Config
      *
-     * @param $configName
+     * @param $configRouteName
      * @param array $configData
      * @return Config
      *
@@ -70,13 +70,13 @@ class Config
      * @version 0.5
      * @since 0.5
      */
-    public static function create($configName, array $configData)
+    public static function create($configRouteName, array $configData = [])
     {
         $configClass = self::getClass();
 
         $config = new $configClass();
 
-        $config->_configName = $configName;
+        $config->_configName = $configRouteName;
         $config->_config = $configData;
 
         return $config;

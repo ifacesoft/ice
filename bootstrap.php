@@ -2,10 +2,6 @@
 if (!defined('ICE_BOOTSTRAP')) {
     define('ICE_BOOTSTRAP', true);
 
-    if (!defined('VENDOR_DIR')) {
-        die("VENDOR_DIR not defined");
-    }
-
     if (!defined('MODULE_DIR')) {
         $moduleDir = php_sapi_name() == 'cli'
             ? getcwd()
@@ -33,11 +29,13 @@ if (!defined('ICE_BOOTSTRAP')) {
     }
 
     $startTime = \Ice\Core\Profiler::getMicrotime();
+    $startMemory = \Ice\Core\Profiler::getMemoryGetUsage();
 
     require_once ICE_DIR . 'Source/Ice/Core/Data/Provider.php';
     require_once ICE_DIR . 'Source/Ice/Core/View/Render.php';
     require_once ICE_DIR . 'Source/Ice/Helper/Api/Client/Yandex/Translate.php';
 
     \Ice\Core\Bootstrap::getInstance(BOOTSTRAP_CLASS)->init($loader);
-    \Ice\Core\Profiler::setTiming(__CLASS__, $startTime);
+
+    \Ice\Core\Profiler::setPoint(BOOTSTRAP_CLASS, $startTime, $startMemory);
 }

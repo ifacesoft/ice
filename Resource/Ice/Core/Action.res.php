@@ -149,4 +149,8 @@ return [
         'tr' => '{$0}{$1} tamamlayın!',
         'uk' => '{$0}{$1} В комплекті!',
     ],
+    'Calling subAction "{$0}" in action "{$1}" failed' => [
+        'en' => 'Calling subAction "{$0}" in action "{$1}" failed',
+        'ru' => 'Называя subAction "{$0}" в действии "{$1}" не удалось',
+    ],
 ];

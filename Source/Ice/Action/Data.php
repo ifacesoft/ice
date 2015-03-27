@@ -3,7 +3,7 @@ namespace Ice\Action;
 
 use Ice\Core;
 use Ice\Core\Action;
-use Ice\Core\Data as Core_Data;
+use Ice\Core\Ui_Data;
 use Ice\Helper\Arrays;
 use Ice\Helper\Emmet;
 use Ice\View\Render\Php;
@@ -63,7 +63,7 @@ class Data extends Action
         return [
             'view' => ['viewRenderClass' => 'Ice:Php', 'layout' => Emmet::PANEL_BODY],
             'input' => [
-                'data' => ['validators' => 'Ice:Is_Data']
+                'data' => ['validators' => 'Ice:Is_Ui_Data']
             ]
         ];
     }
@@ -81,7 +81,7 @@ class Data extends Action
      */
     public function run(array $input)
     {
-        /** @var Core_Data $form */
+        /** @var Ui_Data $data */
         $data = $input['data'];
 
         $rows = [];
@@ -90,22 +90,21 @@ class Data extends Action
 
         $filterFields = $data->getFilterFields();
 
-        $rows[] = Php::getInstance()->fetch(Data::getClass('Ice:Table_Row_Header'), ['columns' => array_intersect_key($columns, array_intersect(Arrays::column($columns, 'name'), $filterFields))]);
+        $rows[] = Php::getInstance()->fetch(Ui_Data::getClass('Ice:Table_Row_Header'), ['columns' => empty($filterFields) ? array_intersect_key($columns, Arrays::column($columns, 'name')) : array_intersect_key($columns, array_intersect(Arrays::column($columns, 'name'), $filterFields))]);
 
         foreach ($data->getRows() as $row) {
             $rowResult = [];
 
             foreach ($columns as $column) {
-                if (!in_array($column['name'], $filterFields)) {
+                if (!empty($filterFields) && !in_array($column['name'], $filterFields)) {
                     continue;
                 }
-
-                $rowResult[] = Php::getInstance()->fetch(Data::getClass($column['template']), ['value' => $row[$column['name']], 'scheme' => $column]);
+                $rowResult[] = Php::getInstance()->fetch(Ui_Data::getClass($column['template']), ['value' => $row[$column['name']], 'scheme' => $column]);
             }
 
-            $rows[] = Php::getInstance()->fetch(Data::getClass('Ice:Table_Row_Data'), ['columns' => $rowResult]);
+            $rows[] = Php::getInstance()->fetch(Ui_Data::getClass('Ice:Table_Row_Data'), ['columns' => $rowResult]);
         }
 
-        return ['rows' => $rows];
+        return ['title' => $data->getTitle(), 'rows' => $rows];
     }
 }

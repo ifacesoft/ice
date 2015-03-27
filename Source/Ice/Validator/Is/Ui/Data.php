@@ -9,7 +9,7 @@
 
 namespace Ice\Validator;
 
-use Ice\Core\Data;
+use Ice\Core\Ui_Data;
 use Ice\Core\Validator;
 
 /**
@@ -27,7 +27,7 @@ use Ice\Core\Validator;
  * @version 0.0
  * @since 0.0
  */
-class Is_Data extends Validator
+class Is_Ui_Data extends Validator
 {
     /**
      * Validate data by scheme
@@ -52,6 +52,6 @@ class Is_Data extends Validator
      */
     public function validate($data, $scheme = null)
     {
-        return $data instanceof Data;
+        return $data instanceof Ui_Data;
     }
 }

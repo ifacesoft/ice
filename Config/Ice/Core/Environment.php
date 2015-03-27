@@ -49,6 +49,7 @@ return [
             ],
             'Ice\Core\Config' => [
                 'config' => 'Ice:Repository/config',
+                'route' => 'Ice:Repository/config',
             ],
             'Ice\Core\Form' => [
                 'instance' => 'Ice:Repository/form',
@@ -56,8 +57,8 @@ return [
             'Ice\Core\Menu' => [
                 'instance' => 'Ice:Repository/menu',
             ],
-            'Ice\Core\Data' => [
-                'instance' => 'Ice:Repository/data',
+            'Ice\Core\Ui_Data' => [
+                'instance' => 'Ice:Repository/ui_data',
             ],
             'Ice\Core\Container' => [
                 'instance' => 'Ice:Repository/container',
@@ -137,6 +138,7 @@ return [
             ],
             'Ice\Core\Config' => [
                 'config' => 'Ice:Registry/config',
+                'route' => 'Ice:Registry/config',
             ],
             'Ice\Core\Form' => [
                 'instance' => 'Ice:Registry/form',
@@ -144,8 +146,8 @@ return [
             'Ice\Core\Menu' => [
                 'instance' => 'Ice:Registry/menu',
             ],
-            'Ice\Core\Data' => [
-                'instance' => 'Ice:Registry/data',
+            'Ice\Core\Ui_Data' => [
+                'instance' => 'Ice:Registry/ui_data',
             ],
             'Ice\Core\Container' => [
                 'instance' => 'Ice:Registry/container',

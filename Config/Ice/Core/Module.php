@@ -27,11 +27,11 @@ return [
         'configDir' => 'Config/',
         'sourceDir' => 'Source/',
         'resourceDir' => 'Resource/',
-        'logDir' => '../_log/Ice/',
-        'cacheDir' => '../_cache/Ice/',
-        'uploadDir' => '../_upload/Ice/',
-        'downloadDir' => '../_download/Ice/',
-        'compiledResourceDir' => '../_resource/Ice/resource'
+        'logDir' => '../_log/',
+        'cacheDir' => '../_cache/',
+        'uploadDir' => '../_upload/',
+        'downloadDir' => '../_download/',
+        'compiledResourceDir' => '../_resource/'
     ],
     'vendors' => []
 ];

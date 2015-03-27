@@ -24,6 +24,7 @@ class Debuger {
 
         if (!Request::isAjax()) {
             echo '<pre>';
+            Logger::renderLog();
             debug_print_backtrace();
             echo '</pre>';
         }

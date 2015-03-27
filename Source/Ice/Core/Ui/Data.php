@@ -4,9 +4,9 @@ namespace Ice\Core;
 
 use Ice\Core;
 
-abstract class Data extends Container
+abstract class Ui_Data extends Container
 {
-    use Core;
+    use Stored;
 
     /**
      * Not ignored fields
@@ -15,14 +15,14 @@ abstract class Data extends Container
      */
     protected $_filterFields = [];
 
+    private $_title = 'Title';
     private $columns = [];
     private $rows = [];
 
     private $key = null;
 
-    protected function __construct($key)
+    private function __construct()
     {
-        $this->key = $key;
     }
 
     /**
@@ -30,13 +30,13 @@ abstract class Data extends Container
      *
      * @param string $key
      * @param null $ttl
-     * @return Data
+     * @return Ui_Data
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.2
+     * @version 0.6
      * @since 0.2
      */
-    public static function getInstance($key = 'Simple', $ttl = null)
+    public static function getInstance($key = null, $ttl = null)
     {
         return parent::getInstance($key, $ttl);
     }
@@ -45,23 +45,36 @@ abstract class Data extends Container
      * Create new instance of data
      *
      * @param $key
-     * @return Data
+     * @return Ui_Data
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.2
+     * @version 0.6
      * @since 0.2
      */
     protected static function create($key)
     {
-        /** @var Data $class */
         $class = self::getClass();
+//
+//        if ($key) {
+//            $class .= '_' . $key;
+//        }
 
-        if ($class == __CLASS__) {
-            $class = 'Ice\Ui_Data\\' . $key;
-        }
+        $data = new $class();
 
-        return new $class($key);
+        $data->key = $key;
+
+        return $data;
+    }
+
+    protected static function getDefaultClassKey()
+    {
+        return 'Ice:Simple';
+    }
+
+    protected static function getDefaultKey()
+    {
+        return 'default';
     }
 
     public function bind(array $rows)
@@ -87,7 +100,7 @@ abstract class Data extends Container
     }
 
     /**
-     * @return Data
+     * @return Ui_Data
      */
     public function getKey()
     {
@@ -101,7 +114,7 @@ abstract class Data extends Container
      * @param $columnTitle
      * @param null $option
      * @param string $template
-     * @return Data
+     * @return Ui_Data
      */
     public function text($columnName, $columnTitle, $option = null, $template = 'Ice:Table_Column_Column')
     {
@@ -180,5 +193,19 @@ abstract class Data extends Container
 
     public static function schemeColumnPlugin($columnName, $table) {
         return 'text';
+    }
+
+    public function title($title)
+    {
+        $this->_title = $title;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTitle()
+    {
+        return $this->_title;
     }
 }

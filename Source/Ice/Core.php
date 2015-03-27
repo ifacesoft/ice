@@ -12,6 +12,7 @@ namespace Ice;
 use Ice\Core\Code_Generator;
 use Ice\Core\Config;
 use Ice\Core\Data_Provider;
+use Ice\Core\Debuger;
 use Ice\Core\Environment;
 use Ice\Core\Logger;
 use Ice\Core\Resource;
@@ -173,12 +174,16 @@ trait Core
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.5
      * @since 0.0
      */
     public static function getCodeGenerator()
     {
-        return Code_Generator::getInstance(self::getModuleAlias() . ':' . self::getClassName());
+        $baseClass = self::getBaseClass();
+
+        return $baseClass == self::getClass()
+            ? Code_Generator::getInstance(self::getModuleAlias() . ':' . self::getClassName())
+            : Code_Generator::getInstance(self::getModuleAlias() . ':' . $baseClass::getClassName() . '_' . self::getClassName());
     }
 
     /**
@@ -257,5 +262,17 @@ trait Core
     public static function getCacher($index = 'default')
     {
         return Cacher::getInstance(self::getClass(), $index);
+    }
+
+    public function dumpDie()
+    {
+        Debuger::dumpDie($this);
+        return $this;
+    }
+
+    public function dump()
+    {
+        Debuger::dump($this);
+        return $this;
     }
 }

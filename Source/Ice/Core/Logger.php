@@ -385,7 +385,7 @@ class Logger
      */
     public static function renderLog()
     {
-        if (!Request::isAjax()) {
+        if (!Request::isAjax() && !Environment::getInstance()->isProduction()) {
             echo implode('', self::$log);
         }
     }

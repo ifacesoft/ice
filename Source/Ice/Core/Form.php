@@ -188,7 +188,7 @@ abstract class Form extends Container
      *
      * @param $key
      * @param null $value
-     * @return $this
+     * @return Form
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
