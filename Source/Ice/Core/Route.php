@@ -30,27 +30,20 @@ use Ice\View\Render\Replace;
  */
 class Route extends Config
 {
-    /**
-     * Create new instance of route
-     *
-     * @param string $routeName
-     * @param array $routeData
-     * @return Route
-     * @throws Http_Not_Found
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since 0.0
-     */
-    public static function create($routeName, array $routeData = [])
+
+    public static function getInstance($routeName = null, $postfix = null, $isRequired = false, $ttl = null)
     {
         $routes = self::getRoutes();
 
-        if (!isset($routes[$routeName])) {
-            throw new Http_Not_Found(['Route {$0} not found', $routeName]);
+        if (!$routeName) {
+            return reset($routes);
         }
 
-        return parent::create($routeName, $routes[$routeName]);
+        if (!isset($routes[$routeName])) {
+            Route::getLogger()->exception(['Route {$0} not found', $routeName], __FILE__, __LINE__, null, null, -1, Http_Not_Found::getClass());
+        }
+
+        return $routes[$routeName];
     }
 
     /**
@@ -163,7 +156,7 @@ class Route extends Config
                     $request = [Action::getClass($actionClass) => $actionParams];
                 }
 
-                $routes[$routeName] = $route;
+                $routes[$routeName] = Route::create($routeName, $route);
             }
         }
 

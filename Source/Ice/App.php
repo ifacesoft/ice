@@ -6,6 +6,7 @@ use Ice\Action\Front_Ajax;
 use Ice\Action\Http_Status;
 use Ice\Core\Action;
 use Ice\Core\Action_Context;
+use Ice\Core\Debuger;
 use Ice\Core\Environment;
 use Ice\Core\Logger;
 use Ice\Core\Profiler;
@@ -28,6 +29,8 @@ class App
 
     public static function run()
     {
+        Logger::fb('bootstrapping finished - ' . Profiler::getReport(BOOTSTRAP_CLASS), 'application', 'LOG');
+
         $startTime = Profiler::getMicrotime();
         $startMemory = Profiler::getMemoryGetUsage();
 
@@ -82,12 +85,10 @@ class App
 
         App::getResponse()->send();
 
-        if (!Environment::getInstance()->isProduction()) {
-            Profiler::setPoint(__CLASS__, $startTime,$startMemory);
+        Profiler::setPoint(__CLASS__, $startTime, $startMemory);
+        Logger::fb('running finished - ' . Profiler::getReport(__CLASS__), 'application', 'LOG');
 
-            Logger::getInstance(__CLASS__)->info(Profiler::getReport(__CLASS__), Logger::INFO, false);
-            Logger::renderLog();
-        }
+        Logger::renderLog();
 
         if (!Request::isCli() && function_exists('fastcgi_finish_request')) {
             fastcgi_finish_request();

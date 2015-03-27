@@ -43,7 +43,7 @@ class Test extends Model
 		            'fieldName' => 'test_pk',
 		            'Ice\Core\Form' => 'Number',
 		            'Ice\Core\Validator' => [],
-		            'Ice\Core\Data' => 'text',
+		            'Ice\Core\Ui_Data' => 'text',
 		        ],
 		        'test_name' => [
 		            'scheme' => [
@@ -62,7 +62,7 @@ class Test extends Model
 		            'Ice\Core\Validator' => [
 		                'Ice:Length_Max' => 52,
 		            ],
-		            'Ice\Core\Data' => 'text',
+		            'Ice\Core\Ui_Data' => 'text',
 		        ],
 		        'name2' => [
 		            'scheme' => [
@@ -82,7 +82,7 @@ class Test extends Model
 		                'Ice:Length_Max' => 65,
 		                0 => 'Ice:Not_Null',
 		            ],
-		            'Ice\Core\Data' => 'text',
+		            'Ice\Core\Ui_Data' => 'text',
 		        ],
 		    ],
 		    'indexes' => [

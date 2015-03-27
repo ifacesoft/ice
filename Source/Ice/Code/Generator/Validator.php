@@ -48,7 +48,7 @@ class Validator extends Code_Generator
      * @version 0.0
      * @since 0.0
      */
-    public function generate($class, $data, $force = false)
+    public function generate($class, $data = null, $force = false)
     {
 //        $class = Object::getClass(Core_Validator::getClass(), $data);
         $namespace = Object::getNamespace(Core_Validator::getClass(), $class);

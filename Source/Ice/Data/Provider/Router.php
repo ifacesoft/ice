@@ -11,6 +11,7 @@ namespace Ice\Data\Provider;
 
 use Ice\Core\Config;
 use Ice\Core\Data_Provider;
+use Ice\Core\Debuger;
 use Ice\Core\Exception;
 use Ice\Core\Logger;
 use Ice\Core\Request as Core_Request;
@@ -237,35 +238,35 @@ class Router extends Data_Provider
         $foundRoutes = [];
 
         foreach (Route::getRoutes() as $routeName => $route) {
-//            Debuger::dump($routeName . ': ' . $url . ' || ' . $route['pattern'] . ' || ' . (int) preg_match($route['pattern'], $url));
+//            Debuger::dump($routeName . ': ' . $url . ' || ' . $route->get('pattern') . ' || ' . (int) preg_match($route->get('pattern'), $url));
 
-            if (!preg_match($route['pattern'], $url)) {
+            if (!preg_match($route->get('pattern'), $url)) {
                 continue;
             }
 
             $matchedRoutes[] = $routeName;
 
-            if (empty($route['request'][$method])) {
+            if (empty($route->get('request/' . $method))) {
                 continue;
             }
 
-            $weight = is_array($route['weight']) ? reset($route['weight']) : $route['weight'];
+            $weight = $route->get('weight');
 
             if (!isset($foundRoutes[$weight])) {
                 $foundRoutes[$weight] = [
                     $routeName,
-                    $route['pattern'],
-                    $route['params']
+                    $route->get('pattern'),
+                    $route->get('params')
                 ];
             }
         }
 
         if (empty($foundRoutes)) {
             if (!empty($matchedRoutes)) {
-                $this->getLogger()->warning(['Route not found for {$0} request of {$1}, but matched routes for pattern {$2}', [$method, $url, $route['pattern']]], __FILE__, __LINE__);
+                $this->getLogger()->warning(['Route not found for {$0} request of {$1}, but matched routes for pattern {$2}', [$method, $url, $route->get('pattern')]], __FILE__, __LINE__);
             }
 
-            throw new Http_Not_Found(['route for url \'{$0}\' not found', $url]);
+            Router::getLogger()->exception(['route for url \'{$0}\' not found', $url], __FILE__, __LINE__, null, null, -1, Http_Not_Found::getClass());
         }
 
         krsort($foundRoutes, SORT_NUMERIC);
@@ -284,7 +285,9 @@ class Router extends Data_Provider
             $baseMatches[0][] = '';
         }
 
-        $data = array_merge($data, array_combine(array_keys($params), array_slice($baseMatches[0], 1)));
+
+
+        $data = array_merge($data, array_combine(array_keys((array)$params), array_slice($baseMatches[0], 1)));
 
         return (bool)$connection = $dataProvider->set($key, $data);
     }

@@ -10,15 +10,12 @@
  * @since 0.0
  */
 
-use Ice\Core\Data;
-use Ice\Helper\Date;
-
 return [
     'Ice\Core\Model' => [
         'schemeColumnPlugins' => [
             'Ice\Core\Form',
             'Ice\Core\Validator',
-            'Ice\Core\Data',
+            'Ice\Core\Ui_Data',
         ]
     ],
     'Ice\Core\Environment' => [

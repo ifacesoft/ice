@@ -267,7 +267,7 @@ class Query_Result implements Cacheable
      *
      * @param $transformation
      * @param $params
-     * @return $this
+     * @return Query_Result
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *

@@ -12,6 +12,7 @@ namespace Ice\Code\Generator;
 use Ice\Core\Code_Generator;
 use Ice\Core\Loader;
 use Ice\Core\Logger;
+use Ice\Core\Module;
 use Ice\Helper\File;
 use Ice\Helper\Object;
 use Ice\View\Render\Php;
@@ -37,23 +38,27 @@ class View_Render_Smarty extends Code_Generator
     /**
      * Generate code and other
      *
+     * @param $class
      * @param array $data Sended data requered for generate
      * @param bool $force Force if already generate
      * @return mixed
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
      * @since 0.0
      */
-    public function generate($data, $force = false)
+    public function generate($class, $data = null, $force = false)
     {
-        $class = Object::getClass(Action::getClass(), $data);
-        $namespace = Object::getNamespace(Action::getClass(), $class);
+        $class = Object::getClass(Action::getClass(), $class);
+        $module = Module::getInstance(Object::getModuleAlias($class));
 
-        $path = $namespace ? 'Resource/' : 'Resource/Class/';
+        $path = $module->get(Module::RESOURCE_DIR);
 
-        $filePath = Loader::getFilePath($class, Smarty::TEMPLATE_EXTENTION, $path, false, true, true);
+//        if ($namespace) {
+//            $path .= 'Class/';
+//        }
+
+        $filePath = $path . str_replace(['\\', '_'], '/', $class) . Smarty::TEMPLATE_EXTENTION;
 
         $isFileExists = file_exists($filePath);
 

@@ -192,7 +192,7 @@ class Sql extends Query_Translator
             case Query_Builder::SQL_COMPARISON_OPERATOR_NOT_EQUAL:
                 return $tableAlias . '.' . $fieldName . ' ' . Query_Builder::SQL_COMPARISON_OPERATOR_NOT_EQUAL . ' ?';
             case Query_Builder::SQL_COMPARISON_KEYWORD_IN:
-                return $tableAlias . '.' . $fieldName . ' IN (?' . str_repeat(',?', $count - 1) . ')';
+                return $tableAlias . '.' . $fieldName . ' IN (?' . ($count > 1 ? str_repeat(',?', $count - 1) : '') . ')';
             case Query_Builder::SQL_COMPARISON_KEYWORD_IS_NULL:
                 return $tableAlias . '.' . $fieldName . ' ' . Query_Builder::SQL_COMPARISON_KEYWORD_IS_NULL;
             case Query_Builder::SQL_COMPARISON_KEYWORD_IS_NOT_NULL:
@@ -290,30 +290,37 @@ class Sql extends Query_Translator
         $modelClass = null;
         $tableAlias = null;
 
-        foreach ($part as $modelClass => $items) {
-            list($tableAlias, $fieldNames) = $items;
+        foreach ($part as $modelClass => $tableAliases) {
+            foreach ($tableAliases as $tableAlias => $fieldNames) {
 
-            $fieldColumnMap = $modelClass::getScheme()->getFieldColumnMap();
+                $fieldColumnMap = $modelClass::getScheme()->getFieldColumnMap();
 
-            foreach ($fieldNames as $fieldName => &$fieldAlias) {
-                $isSpatial = (boolean)strpos($fieldName, '__geo');
+                foreach ($fieldNames as $fieldName => &$fieldAlias) {
+                    $isSpatial = (boolean)strpos($fieldName, '__geo');
 
-                if (isset($fieldColumnMap[$fieldName])) {
-                    $fieldName = $fieldColumnMap[$fieldName];
+                    if (isset($fieldColumnMap[$fieldName])) {
+                        $fieldName = $fieldColumnMap[$fieldName];
 
-                    if ($isSpatial) {
-                        $fieldAlias = 'asText(`' . $tableAlias . '`.`' . $fieldName . '`)' . ' AS `' . $fieldAlias . '`';
+                        if ($isSpatial) {
+                            $fieldAlias = 'asText(`' . $tableAlias . '`.`' . $fieldName . '`)' . ' AS `' . $fieldAlias . '`';
+                        } else {
+                            $fieldAlias = $fieldAlias == $fieldName
+                                ? '`' . $tableAlias . '`.`' . $fieldName . '`'
+                                : (
+                                $tableAlias === ''
+                                    ? $fieldName . ' AS `' . $fieldAlias . '`'
+                                    : '`' . $tableAlias . '`.`' . $fieldName . '` AS `' . $fieldAlias . '`'
+                                );
+                        }
                     } else {
-                        $fieldAlias = $fieldAlias == $fieldName
-                            ? '`' . $tableAlias . '`.`' . $fieldName . '`'
+                        $fieldAlias = $tableAlias === ''
+                            ? $fieldName . ' AS `' . $fieldAlias . '`'
                             : '`' . $tableAlias . '`.`' . $fieldName . '` AS `' . $fieldAlias . '`';
                     }
-                } else {
-                    $fieldAlias = '`' . $tableAlias . '`.`' . $fieldName . '` AS `' . $fieldAlias . '`';
                 }
-            }
 
-            $fields = array_merge($fields, $fieldNames);
+                $fields = array_merge($fields, $fieldNames);
+            }
         }
 
         if (empty($fields)) {
@@ -426,12 +433,12 @@ class Sql extends Query_Translator
          * @var array $items
          */
         foreach ($part as $modelClass => $items) {
-            list(, $fieldNames) = $items;
+            list($tableAlias, $fieldNames) = $items;
 
             $fieldColumnMap = $modelClass::getScheme()->getFieldColumnMap();
 
             foreach ($fieldNames as $fieldName) {
-                $groups[] = $fieldColumnMap[$fieldName];
+                $groups[] = '`' . $tableAlias . '`.`' . $fieldColumnMap[$fieldName] . '`';
             }
         }
 

@@ -209,11 +209,10 @@ class View implements Cacheable
                 $this->_result['content'] = $emmetedResult;
             }
 
-            Profiler::setTiming('View '. $this->_template, $startTime);
-            Profiler::setMemoryUsages('View '. $this->_template, $startMemory);
+            Profiler::setPoint($this->_template . ' (' . $viewRenderClass::getClassName() . ')', $startTime, $startMemory);
 
             if (Environment::getInstance()->isDevelopment()) {
-                Logger::fb($this->_template . ' (' . $viewRenderClass . ')', 'view', 'INFO');
+                Logger::fb(Profiler::getReport($this->_template . ' (' . $viewRenderClass::getClassName() . ')'), 'view', 'INFO');
             }
 
             array_shift(View_Render::$templates);

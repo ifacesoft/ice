@@ -57,8 +57,8 @@ return [
             'Ice\Core\Menu' => [
                 'instance' => 'Ice:Repository/menu',
             ],
-            'Ice\Core\Data' => [
-                'instance' => 'Ice:Repository/data',
+            'Ice\Core\Ui_Data' => [
+                'instance' => 'Ice:Repository/ui_data',
             ],
             'Ice\Core\Container' => [
                 'instance' => 'Ice:Repository/container',
@@ -146,8 +146,8 @@ return [
             'Ice\Core\Menu' => [
                 'instance' => 'Ice:Registry/menu',
             ],
-            'Ice\Core\Data' => [
-                'instance' => 'Ice:Registry/data',
+            'Ice\Core\Ui_Data' => [
+                'instance' => 'Ice:Registry/ui_data',
             ],
             'Ice\Core\Container' => [
                 'instance' => 'Ice:Registry/container',

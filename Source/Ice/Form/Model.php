@@ -98,7 +98,7 @@ class Model extends Form
 //     * Binds all model field values
 //     *
 //     * @param Core_Model $model
-//     * @return $this
+//     * @return Form_Model
 //     *
 //     * @author dp <denis.a.shestakov@gmail.com>
 //     *

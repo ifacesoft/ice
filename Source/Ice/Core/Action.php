@@ -114,20 +114,23 @@ abstract class Action implements Cacheable
 
         $input = $actionClass::getInput($input);
 
-        $actionCacher = Action::getCacher();
+//        $actionCacher = Action::getCacher();
 
         if ($actionClass::getConfig()->get('ttl', false) == 3600) {
             $actionCacher = File::getInstance($actionClass);
         }
 
-        $hash = crc32(Json::encode($input));
+        $inputString = Json::encode($input);
+        $hash = crc32($inputString);
         $actionHash = $actionClass . '/' . $hash;
 
-        $actionContext = App::getContext()->initAction($actionClass, $hash);
+        App::getContext()->initAction($actionClass, $hash);
+$action = null;
 
-        /** @var Action $action */
-//        $action = $actionCacher->get($actionHash);
-        $action = null;
+        if (isset($actionCacher)) {
+            /** @var Action $action */
+            $action = $actionCacher->get($actionHash);
+        }
         if (!$action) {
             $action = $actionClass::create();
 
@@ -135,9 +138,11 @@ abstract class Action implements Cacheable
 
             $output = (array)$action->run($input);
 
-            Profiler::setTiming('Action ' . $actionClass, $startTime);
-            Profiler::setMemoryUsages('Action ' . $actionClass, $startMemory);
+            Profiler::setPoint($actionClass . ' ' . $inputString, $startTime, $startMemory);
 
+            if (Environment::getInstance()->isDevelopment()) {
+                Logger::fb(Profiler::getReport($actionClass . ' ' . $inputString), 'action', 'INFO');
+            }
 //            if ($content = $actionContext->getContent()) {
 //                App::getContext()->setContent(null);
 //                return $content;
@@ -181,15 +186,14 @@ abstract class Action implements Cacheable
                 }
             }
 
-            Profiler::setTiming('Action ' . $actionClass . ' (childs)', $startTimeAfter);
-            Profiler::setMemoryUsages('Action ' . $actionClass . ' (childs)', $startMemoryAfter);
+            Profiler::setPoint('Action ' . $actionClass . ' (childs)', $startTimeAfter, $startMemoryAfter);
 
             $action->setOutput($output);
 
             $action->getView()->render();
-
-            $actionCacher->set($actionHash, $action, $action->getTtl());
-
+            if (isset($actionCacher)) {
+                $actionCacher->set($actionHash, $action, $action->getTtl());
+            }
             if (Request::isCli()) {
                 Action::getLogger()->info(['{$0}{$1} complete!', [str_repeat("\t", $level), $actionClass::getClassName()]], Logger::MESSAGE);
             }
@@ -508,21 +512,13 @@ abstract class Action implements Cacheable
      *
      *  protected static function config()
      *  {
-     *      return array_merge_recursive(
-     *          [
-     *             'actions' => [],
-     *              'view' => [
-     *                  'layout' => null,
-     *                  'template' => null,
-     *                  'viewRenderClass' => null,
-     *              ],
-     *              'input' => [],
-     *              'output' => [],
-     *              'ttl' => 3600,
-     *              'roles' => []
-     *          ],
-     *          parent::config()
-     *      );
+     *      return return [
+     *          'view' => ['template' => '', 'viewRenderClass' => null],
+     *          'input' => [],
+     *          'output' => [],
+     *          'ttl' => 3600,
+     *          'roles' => []
+     *      ];
      *  }
      *
      * /** Run action

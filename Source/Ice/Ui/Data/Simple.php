@@ -1,9 +1,9 @@
 <?php
 
-namespace Ice\Ui_Data;
+namespace Ice\Ui\Data;
 
-use Ice\Core\Data;
+use Ice\Core\Ui_Data;
 
-class Simple extends Data {
+class Simple extends Ui_Data {
 
 }

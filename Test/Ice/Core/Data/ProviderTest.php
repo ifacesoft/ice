@@ -6,7 +6,7 @@
  * Time: 2:48 PM
  */
 
-namespace Ice\Core\Data;
+namespace Ice\Core;
 
 
 use Ice\Core\Data_Provider;
@@ -14,7 +14,7 @@ use Ice\Core\Logger;
 use Ice\Core\Module;
 use PHPUnit_Framework_TestCase;
 
-class ProviderTest extends PHPUnit_Framework_TestCase
+class Data_ProviderTest extends PHPUnit_Framework_TestCase
 {
     public function testProviders()
     {

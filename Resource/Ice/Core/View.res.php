@@ -159,4 +159,8 @@ return [
         'tr' => 'Smarty: Görünüm {$0} bulunamadı',
         'uk' => 'Смарті: вид {$0} не знайдено',
     ],
+    'Fetch template "{$0}" failed' => [
+        'en' => 'Fetch template "{$0}" failed',
+        'ru' => 'Извлечение шаблона "{$0}" не удалось',
+    ],
 ];

@@ -35,25 +35,21 @@ class Model_Collection implements IteratorAggregate, Countable
 
     private $_rows = [];
 
-    private $_query = null;
-
     /**
      * Private constructor for model collection
      *
      * @param $modelClass
      * @param array $rows
-     * @param Query $query
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.4
+     * @version 0.6
      * @since 0.0
      */
-    private function __construct($modelClass, array $rows = [], Query $query = null)
+    private function __construct($modelClass, array $rows = [])
     {
         $this->_modelClass = $modelClass;
         $this->_rows = $rows;
-        $this->_query = $query;
     }
 
     /**
@@ -61,16 +57,15 @@ class Model_Collection implements IteratorAggregate, Countable
      *
      * @param Model $modelClass
      * @param array $rows
-     * @param Query $query
      * @return Model_Collection
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
      * @since 0.0
      */
-    public static function create($modelClass, array $rows = [], Query $query = null)
+    public static function create($modelClass, array $rows = [])
     {
-        return new Model_Collection($modelClass, $rows, $query);
+        return new Model_Collection($modelClass, $rows);
     }
 
     /**
@@ -210,8 +205,6 @@ class Model_Collection implements IteratorAggregate, Countable
             $this->_rows[$newRow[$pkFieldName]] = $newRow;
         }
 
-        $this->_query = null;
-
         return $this;
     }
 
@@ -243,7 +236,7 @@ class Model_Collection implements IteratorAggregate, Countable
     public function getKeys()
     {
         if (!$this->count()) {
-            return null;
+            return [];
         }
 
         $modelClass = $this->getModelClass();
@@ -317,8 +310,6 @@ class Model_Collection implements IteratorAggregate, Countable
         $this->_rows = Query::getBuilder($modelClass)
             ->delete(Arrays::column($this->getRows(), reset($pkFieldNames)), $dataSourceKey)
             ->getRows();
-
-        $this->_query = null;
     }
 
 //    /**
@@ -405,44 +396,7 @@ class Model_Collection implements IteratorAggregate, Countable
             ->insert($this->getRows(), $update, $dataSourceKey)
             ->getRows();
 
-        $this->_query = null;
-
         return $this;
-    }
-
-    /**
-     * Reload collection if query known
-     *
-     * @return Model_Collection
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since 0.4
-     */
-    public function reload()
-    {
-        if (!$this->_query) {
-            Model_Collection::getLogger()->exception('Model collection is artificial', __FILE__, __LINE__);
-        }
-
-        $this->_rows = $this->_query->execute()->getRows();
-        return $this;
-    }
-
-    /**
-     * Return query of model collection
-     *
-     * @return Query
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since 0.4
-     */
-    public function getQuery()
-    {
-        return $this->_query;
     }
 
     /**
@@ -460,5 +414,27 @@ class Model_Collection implements IteratorAggregate, Countable
     public function column($columnKey = null, $indexKey = null)
     {
         return Arrays::column($this->getRows(), $columnKey, $indexKey);
+    }
+
+    /**
+     * Create query builder from model collection
+     *
+     * @param null $modelClass
+     * @param null $tableAlias
+     * @return Query_Builder
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.6
+     * @since 0.6
+     */
+    public function createQueryBuilder($modelClass = null, $tableAlias = null)
+    {
+        return $modelClass
+            ? Query::getBuilder($modelClass, $tableAlias)
+                ->inner($this->_modelClass)
+                ->inPk($this->getKeys(), $this->_modelClass)
+            : Query::getBuilder($this->_modelClass)
+                ->inPk($this->getKeys());
     }
 }
