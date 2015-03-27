@@ -1,2 +1,4 @@
-<a href="#"
-   onclick="Ice_Form.modal($(this), 'Bi:Blog', <?= $value ?>, 'Ice:Form_Submit', ['blog_name'], 0, 'Add blog', '_Modal', {reRenderClosest: 'Ice:Data_Model', reRenderActionClassName: [], formFilterFields: ['blog_name'], dataFilterFields: ['blog_pk', 'blog_name']}, 'Ice:Data_Model', []); return false;">Изменить</a>
+<a href="<?php if (isset($options['href'])) { ?><?= $options['href'] ?><?php } else { ?>#<?php } ?>"
+   <?php if (isset($options['onclick'])) { ?>onclick="<?= $options['onclick'] ?>"<?php } ?>
+   <?php if (!empty($options['classes'])) { ?>class="<?= implode(' ', $options['classes']) ?>"<?php } ?>
+   <?php if (isset($options['style'])) { ?>style="<?= $options['style'] ?>"<?php } ?>><?= $value ?></a>

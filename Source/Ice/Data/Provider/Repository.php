@@ -10,6 +10,7 @@
 namespace Ice\Data\Provider;
 
 use Ice\Core\Data_Provider;
+use Ice\Core\Environment;
 use Ice\Core\Exception;
 
 /**
@@ -202,15 +203,13 @@ class Repository extends Data_Provider
      */
     protected function connect(&$connection)
     {
-//        $environment = Environment::getInstance();
-//
-//        if (!$environment || $environment->isDevelopment()) {
-//            return $connection = Registry::getInstance($this->getKey(), $this->getIndex());
-//        }
-//
-//        if (!$environment->isProduction()) {
-//            return $connection = File::getInstance($this->getKey(), $this->getIndex());
-//        }
+        if (!Environment::isLoaded() || Environment::getInstance()->isDevelopment()) {
+            return $connection = Registry::getInstance($this->getKey(), $this->getIndex());
+        }
+
+        if (!Environment::getInstance()->isProduction()) {
+            return $connection = File::getInstance($this->getKey(), $this->getIndex());
+        }
 
         /** @var Data_Provider $dataProviderClass */
         $dataProviderClass = function_exists('apc_store')

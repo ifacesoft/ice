@@ -231,12 +231,8 @@ class View implements Cacheable
         $actionClass = $this->_actionClass;
 
         if ($template === null) {
-            $template = $actionClass::getConfig()->get('view/template', false);
-
-            if ($template === null) {
-                $this->_template = $actionClass;
-                return;
-            }
+            $this->_template = $actionClass;
+            return;
         }
 
         if ($template === '') {
@@ -257,11 +253,6 @@ class View implements Cacheable
      */
     public function setViewRenderClass($viewRenderClass)
     {
-        if (!$viewRenderClass) {
-            $actionClass = $this->_actionClass;
-            $viewRenderClass = $actionClass::getConfig()->get('view/viewRenderClass', false);
-        }
-
         $this->_viewRenderClass = View_Render::getClass($viewRenderClass);
     }
 
@@ -270,15 +261,10 @@ class View implements Cacheable
      */
     public function setLayout($layout)
     {
-        $actionClass = $this->_actionClass;
-
         if ($layout === null) {
-            $layout = $actionClass::getConfig()->get('view/layout', false);
+            $this->_layout = 'div.' . $this->getActionName();
 
-            if ($layout === null) {
-                $this->_layout = 'div.' . $this->getActionName();
-                return;
-            }
+            return;
         }
 
         if ($layout === '') {
@@ -304,7 +290,8 @@ class View implements Cacheable
         return $this->getResult()['data'];
     }
 
-    public function getActionName() {
+    public function getActionName()
+    {
         return $this->getResult()['actionName'];
     }
 }

@@ -86,7 +86,7 @@ class App
         App::getResponse()->send();
 
         Profiler::setPoint(__CLASS__, $startTime, $startMemory);
-        Logger::fb('running finished - ' . Profiler::getReport(__CLASS__), 'application', 'LOG');
+        Logger::fb('running finished - ' . Profiler::getReport(__CLASS__), 'ice application', 'LOG');
 
         Logger::renderLog();
 

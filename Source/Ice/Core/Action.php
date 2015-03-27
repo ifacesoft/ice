@@ -231,7 +231,7 @@ $action = null;
             'cli' => Data_Provider_Cli::DEFAULT_DATA_PROVIDER_KEY,
         ];
 
-        $params = array_merge(self::getConfig()->gets('input', false), ['actions', 'template']);
+        $params = array_merge(self::getConfig()->gets('input', false), ['actions', 'template', 'layout']);
 
         $input = [];
         foreach ($params as $name => $param) {
@@ -253,12 +253,20 @@ $action = null;
                     $dataProviderKey = $dataProviderKeyMap[$dataProviderKey];
                 }
 
-                $input[$name] = $dataProviderKey == 'default'
-                    ? (isset($data[$name]) ? $data[$name] : null)
-                    : Data_Provider::getInstance($dataProviderKey)->get($name);
+                if ($dataProviderKey == 'default') {
+                    if (array_key_exists($name, $data)) {
+                        $input[$name] = $data[$name];
+                    }
+
+                    continue;
+                }
+
+                $input[$name] = Data_Provider::getInstance($dataProviderKey)->get($name);
             }
 
-            $input[$name] = Action::getInputParam($name, $input[$name], $param);
+            if (array_key_exists($name, $input)) {
+                $input[$name] = Action::getInputParam($name, $input[$name], $param);
+            }
         }
 
         if (isset($input['redirectUrl'])) {
@@ -454,27 +462,30 @@ $action = null;
 
     private function initView(&$input)
     {
+        /** @var Action $actionClass */
+        $actionClass = get_class($this);
+
         $view = $this->getView();
 
-        if (isset($input['template'])) {
+        if (array_key_exists('template', $input)) {
             $view->setTemplate($input['template']);
             unset($input['template']);
         } else {
-            $view->setTemplate(null);
+            $view->setTemplate($actionClass::getConfig()->get('view/template', false));
         }
 
-        if (isset($input['viewRenderClass'])) {
+        if (array_key_exists('viewRenderClass', $input)) {
             $view->setViewRenderClass($input['viewRenderClass']);
             unset($input['viewRenderClass']);
         } else {
-            $view->setViewRenderClass(null);
+            $view->setViewRenderClass($actionClass::getConfig()->get('view/viewRenderClass', false));
         }
 
-        if (isset($input['layout'])) {
+        if (array_key_exists('layout', $input)) {
             $view->setLayout($input['layout']);
             unset($input['layout']);
         } else {
-            $view->setLayout(null);
+            $view->setLayout($actionClass::getConfig()->get('view/layout', false));
         }
     }
 

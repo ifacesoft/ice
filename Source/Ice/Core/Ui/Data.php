@@ -18,6 +18,8 @@ abstract class Ui_Data extends Container
     private $_title = 'Title';
     private $columns = [];
     private $rows = [];
+    private $_rowHeaderTemplate = 'Row_Header';
+    private $_rowDataTemplate = 'Row_Data';
 
     private $key = null;
 
@@ -69,7 +71,7 @@ abstract class Ui_Data extends Container
 
     protected static function getDefaultClassKey()
     {
-        return 'Ice:Simple';
+        return 'Ice:Table';
     }
 
     protected static function getDefaultKey()
@@ -112,22 +114,22 @@ abstract class Ui_Data extends Container
      *
      * @param $columnName
      * @param $columnTitle
-     * @param null $option
+     * @param null $options
      * @param string $template
      * @return Ui_Data
      */
-    public function text($columnName, $columnTitle, $option = null, $template = 'Ice:Table_Column_Column')
+    public function text($columnName, $columnTitle, $options = null, $template = 'Column_Column')
     {
-        return $this->addColumn($columnName, 'column', $columnTitle, $option, $template);
+        return $this->addColumn($columnName, 'column', $columnTitle, $options, $template);
     }
 
-    protected function addColumn($columnName, $columnType, $columnTitle, $option, $template)
+    protected function addColumn($columnName, $columnType, $columnTitle, $options, $template)
     {
         $this->columns[] = [
             'name' => $columnName,
             'type' => $columnType,
             'title' => $columnTitle,
-            'option' => $option,
+            'options' => $options,
             'template' => $template
         ];
 
@@ -160,13 +162,13 @@ abstract class Ui_Data extends Container
      *
      * @param $columnName
      * @param $columnTitle
-     * @param null $option
+     * @param null $options
      * @param string $template
-     * @return Data
+     * @return Ui_Data
      */
-    public function link($columnName, $columnTitle, $option = null, $template = 'Ice:Table_Column_Link')
+    public function link($columnName, $columnTitle, $options = null, $template = 'Column_Link')
     {
-        return $this->addColumn($columnName, 'link', $columnTitle, $option, $template);
+        return $this->addColumn($columnName, 'link', $columnTitle, $options, $template);
     }
 
     /**
@@ -174,13 +176,13 @@ abstract class Ui_Data extends Container
      *
      * @param $columnName
      * @param $columnTitle
-     * @param null $option
+     * @param null $options
      * @param string $template
-     * @return Data
+     * @return Ui_Data
      */
-    public function button($columnName, $columnTitle, $option = null, $template = 'Ice:Table_Column_Button')
+    public function button($columnName, $columnTitle, $options = null, $template = 'Column_Button')
     {
-        return $this->addColumn($columnName, 'button', $columnTitle, $option, $template);
+        return $this->addColumn($columnName, 'button', $columnTitle, $options, $template);
     }
 
     /**
@@ -208,4 +210,42 @@ abstract class Ui_Data extends Container
     {
         return $this->_title;
     }
+
+    /**
+     * @return string
+     */
+    public function getRowHeaderTemplate()
+    {
+        return $this->_rowHeaderTemplate;
+    }
+
+    /**
+     * @param string $rowHeaderTemplate
+     * @return Ui_Data
+     */
+    public function setRowHeaderTemplate($rowHeaderTemplate)
+    {
+        $this->_rowHeaderTemplate = $rowHeaderTemplate;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRowDataTemplate()
+    {
+        return $this->_rowDataTemplate;
+    }
+
+    /**
+     * @param string $rowDataTemplate
+     * @return Ui_Data
+     */
+    public function setRowDataTemplate($rowDataTemplate)
+    {
+        $this->_rowDataTemplate = $rowDataTemplate;
+        return $this;
+    }
+
+
 }

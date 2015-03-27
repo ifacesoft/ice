@@ -84,13 +84,16 @@ class Data extends Action
         /** @var Ui_Data $data */
         $data = $input['data'];
 
+        /** @var Ui_Data $dataClass */
+        $dataClass = get_class($data);
+
         $rows = [];
 
         $columns = $data->getColumns();
 
         $filterFields = $data->getFilterFields();
 
-        $rows[] = Php::getInstance()->fetch(Ui_Data::getClass('Ice:Table_Row_Header'), ['columns' => empty($filterFields) ? array_intersect_key($columns, Arrays::column($columns, 'name')) : array_intersect_key($columns, array_intersect(Arrays::column($columns, 'name'), $filterFields))]);
+        $rows[] = Php::getInstance()->fetch(Ui_Data::getClass($dataClass .  '_' . $data->getRowHeaderTemplate()), ['columns' => empty($filterFields) ? array_intersect_key($columns, Arrays::column($columns, 'name')) : array_intersect_key($columns, array_intersect(Arrays::column($columns, 'name'), $filterFields))]);
 
         foreach ($data->getRows() as $row) {
             $rowResult = [];
@@ -99,10 +102,21 @@ class Data extends Action
                 if (!empty($filterFields) && !in_array($column['name'], $filterFields)) {
                     continue;
                 }
-                $rowResult[] = Php::getInstance()->fetch(Ui_Data::getClass($column['template']), ['value' => $row[$column['name']], 'scheme' => $column]);
+
+                if (isset($column['options']['href']) && isset($column['options']['href_ext'])) {
+                    $column['options']['href'] .= implode('/', array_intersect_key($row, array_flip((array) $column['options']['href_ext'])));
+                }
+
+                $rowResult[] = Php::getInstance()->fetch(
+                    Ui_Data::getClass($dataClass . '_' . $column['template']),
+                    [
+                        'value' => array_key_exists($column['name'], $row) ? $row[$column['name']] : $column['name'],
+                        'options' => $column['options']
+                    ]
+                );
             }
 
-            $rows[] = Php::getInstance()->fetch(Ui_Data::getClass('Ice:Table_Row_Data'), ['columns' => $rowResult]);
+            $rows[] = Php::getInstance()->fetch(Ui_Data::getClass($dataClass . '_' . $data->getRowDataTemplate()), ['columns' => $rowResult]);
         }
 
         return ['title' => $data->getTitle(), 'rows' => $rows];
