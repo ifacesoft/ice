@@ -815,7 +815,8 @@ abstract class Model
     /**
      * Return model by custom field
      *
-     * @param array $fieldNameValues
+     * @param $fieldName
+     * @param $fieldValue
      * @param $fieldNames
      * @param string|null $dataSourceKey
      * @param int $ttl
@@ -826,13 +827,13 @@ abstract class Model
      * @version 0.4
      * @since 0.0
      */
-    public static function getModelBy(array $fieldNameValues, $fieldNames, $dataSourceKey = null, $ttl = null)
+    public static function getModelBy($fieldName, $fieldValue, $fieldNames, $dataSourceKey = null, $ttl = null)
     {
         return Query::getBuilder(self::getClass())
-            ->eq($fieldNameValues)
+            ->eq([$fieldName => $fieldValue])
             ->limit(1)
-            ->select($fieldNames, null, [], $dataSourceKey, $ttl)
-            ->getModel();
+            ->select($fieldNames, [], $dataSourceKey)
+            ->getModel($ttl);
     }
 
     /**
@@ -1013,8 +1014,8 @@ abstract class Model
 
         $row = Query::getBuilder($modelClass)
             ->eq($affected)
-            ->select($selectFields, null, [], $dataSourceKey, $ttl)
-            ->getRow();
+            ->select($selectFields, [], $dataSourceKey)
+            ->getRow($ttl);
 
         if (!$row) {
             return null;

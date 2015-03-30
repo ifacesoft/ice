@@ -255,7 +255,7 @@ class Logger
         if (!Request::isCli() && !headers_sent() && Loader::load('FirePHP', false)) {
             $varSize = Helper_Profiler::getVarSize($value);
 
-            if ($varSize > pow(2, 18)) {
+            if ($varSize > pow(2, 19)) {
                 $value = 'Very big data: ' . $varSize . ' bytes';
             }
 

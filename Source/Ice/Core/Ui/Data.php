@@ -15,7 +15,8 @@ abstract class Ui_Data extends Container
      */
     protected $_filterFields = [];
 
-    private $_title = 'Title';
+    private $_title = '';
+    private $_desc = '';
     private $columns = [];
     private $rows = [];
     private $_rowHeaderTemplate = 'Row_Header';
@@ -247,5 +248,21 @@ abstract class Ui_Data extends Container
         return $this;
     }
 
+    /**
+     * @return string
+     */
+    public function getDesc()
+    {
+        return $this->_desc;
+    }
 
+    /**
+     * @param string $desc
+     * @return Ui_Data
+     */
+    public function desc($desc)
+    {
+        $this->_desc = $desc;
+        return $this;
+    }
 }

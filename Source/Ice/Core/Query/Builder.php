@@ -375,7 +375,6 @@ class Query_Builder
         return $this->_modelClass;
     }
 
-
     /**
      * Append cache validate or invalidate tags for this query builder
      *
@@ -538,7 +537,8 @@ class Query_Builder
     /**
      * Set in query part where expression '>= ?'
      *
-     * @param array $fieldNameValues
+     * @param $fieldName
+     * @param $fieldValue
      * @param array $modelTableData
      * @param string $sqlLogical
      * @return Query_Builder
@@ -548,11 +548,11 @@ class Query_Builder
      * @version 0.6
      * @since 0.0
      */
-    public function ge(array $fieldNameValues, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
+    public function ge($fieldName, $fieldValue, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
     {
         return $this->where(
             $sqlLogical,
-            $fieldNameValues,
+            [$fieldName => $fieldValue],
             Query_Builder::SQL_COMPARISON_OPERATOR_GREATER_OR_EQUAL,
             $modelTableData
         );
@@ -561,7 +561,8 @@ class Query_Builder
     /**
      * Set in query part where expression 'REGEXP ?'
      *
-     * @param array $fieldNameValues
+     * @param $fieldName
+     * @param $fieldValue
      * @param array $modelTableData
      * @param string $sqlLogical
      * @return Query_Builder
@@ -571,11 +572,11 @@ class Query_Builder
      * @version 0.6
      * @since 0.4
      */
-    public function regex(array $fieldNameValues, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
+    public function regex($fieldName, $fieldValue, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
     {
         return $this->where(
             $sqlLogical,
-            $fieldNameValues,
+            [$fieldName => $fieldValue],
             Query_Builder::SQL_COMPARISON_KEYWORD_REGEXP,
             $modelTableData
         );
@@ -584,7 +585,8 @@ class Query_Builder
     /**
      * Set in query part where expression '<= ?'
      *
-     * @param array $fieldNameValues
+     * @param $fieldName
+     * @param $fieldValue
      * @param array $modelTableData
      * @param string $sqlLogical
      * @return Query_Builder
@@ -594,11 +596,11 @@ class Query_Builder
      * @version 0.6
      * @since 0.0
      */
-    public function le(array $fieldNameValues, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
+    public function le($fieldName, $fieldValue, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
     {
         return $this->where(
             $sqlLogical,
-            $fieldNameValues,
+            [$fieldName => $fieldValue],
             Query_Builder::SQL_COMPARISON_OPERATOR_LESS_OR_EQUAL,
             $modelTableData
         );
@@ -607,7 +609,8 @@ class Query_Builder
     /**
      * Set in query part where expression '> ?'
      *
-     * @param array $fieldNameValues
+     * @param $fieldName
+     * @param $fieldValue
      * @param array $modelTableData
      * @param string $sqlLogical
      * @return Query_Builder
@@ -617,11 +620,11 @@ class Query_Builder
      * @version 0.6
      * @since 0.0
      */
-    public function gt(array $fieldNameValues, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
+    public function gt($fieldName, $fieldValue, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
     {
         return $this->where(
             $sqlLogical,
-            $fieldNameValues,
+            [$fieldName => $fieldValue],
             Query_Builder::SQL_COMPARISON_OPERATOR_GREATER,
             $modelTableData
         );
@@ -630,7 +633,8 @@ class Query_Builder
     /**
      * Set in query part where expression '< ?'
      *
-     * @param array $fieldNameValues
+     * @param $fieldName
+     * @param $fieldValue
      * @param array $modelTableData
      * @param string $sqlLogical
      * @return Query_Builder
@@ -640,11 +644,11 @@ class Query_Builder
      * @version 0.6
      * @since 0.0
      */
-    public function lt(array $fieldNameValues, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
+    public function lt($fieldName, $fieldValue, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
     {
         return $this->where(
             $sqlLogical,
-            $fieldNameValues,
+            [$fieldName => $fieldValue],
             Query_Builder::SQL_COMPARISON_OPERATOR_LESS,
             $modelTableData
         );
@@ -689,7 +693,8 @@ class Query_Builder
     /**
      * Set in query part where expression '<> ?'
      *
-     * @param array $fieldNameValues
+     * @param $fieldName
+     * @param $fieldValue
      * @param array $modelTableData
      * @param string $sqlLogical
      * @return Query_Builder
@@ -699,11 +704,11 @@ class Query_Builder
      * @version 0.6
      * @since 0.0
      */
-    public function ne(array $fieldNameValues, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
+    public function ne($fieldName, $fieldValue, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
     {
         return $this->where(
             $sqlLogical,
-            $fieldNameValues,
+            [$fieldName => $fieldValue],
             Query_Builder::SQL_COMPARISON_OPERATOR_NOT_EQUAL,
             $modelTableData
         );
@@ -712,7 +717,8 @@ class Query_Builder
     /**
      * Set in query part where expression 'not in (?)'
      *
-     * @param array $fieldNameValues
+     * @param $fieldName
+     * @param array $fieldValue
      * @param array $modelTableData
      * @param string $sqlLogical
      * @return Query_Builder
@@ -722,11 +728,11 @@ class Query_Builder
      * @version 0.6
      * @since 0.0
      */
-    public function notIn(array $fieldNameValues, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
+    public function notIn($fieldName, array $fieldValue, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
     {
         return $this->where(
             $sqlLogical,
-            $fieldNameValues,
+            [$fieldName => $fieldValue],
             Query_Builder::SQL_COMPARISON_KEYWORD_NOT_IN,
             $modelTableData
         );
@@ -771,7 +777,8 @@ class Query_Builder
     /**
      * Set in query part where expression 'like ?'
      *
-     * @param array $fieldNameValues
+     * @param $fieldName
+     * @param $fieldValue
      * @param array $modelTableData
      * @param string $sqlLogical
      * @return Query_Builder
@@ -781,11 +788,11 @@ class Query_Builder
      * @version 0.6
      * @since 0.0
      */
-    public function like(array $fieldNameValues, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
+    public function like($fieldName, $fieldValue, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
     {
         return $this->where(
             $sqlLogical,
-            $fieldNameValues,
+            [$fieldName => $fieldValue],
             Query_Builder::SQL_COMPARISON_KEYWORD_LIKE,
             $modelTableData
         );
@@ -1058,8 +1065,7 @@ class Query_Builder
      *      ];
      * ```
      *
-     * @param mixed $fieldName
-     * @param null $fieldAlias
+     * @param $fieldNames
      * @param array $modelTableData
      * @param string|null $dataSourceKey
      * @return Query
@@ -1069,11 +1075,11 @@ class Query_Builder
      * @version 0.6
      * @since 0.0
      */
-    public function select($fieldName, $fieldAlias = null, $modelTableData = [], $dataSourceKey = null)
+    public function select($fieldNames, $modelTableData = [], $dataSourceKey = null)
     {
         $this->_queryType = Query_Builder::TYPE_SELECT;
 
-        $this->_select($fieldName, $fieldAlias, $modelTableData);
+        $this->_select($fieldNames, null, $modelTableData);
 
         return $this->getQuery($dataSourceKey);
     }
@@ -1583,7 +1589,8 @@ class Query_Builder
     /**
      * Set in query part where expression for search
      *
-     * @param array $fieldNameValues
+     * @param $fieldName
+     * @param $fieldValue
      * @param array $modelTableData
      * @param string $sqlLogical
      * @return Query_Builder
@@ -1593,11 +1600,11 @@ class Query_Builder
      * @version 0.6
      * @since 0.0
      */
-    public function search(array $fieldNameValues, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
+    public function search($fieldName, $fieldValue, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
     {
         return $this->where(
             $sqlLogical,
-            $fieldNameValues,
+            [$fieldName => $fieldValue],
             Query_Builder::SEARCH_KEYWORD,
             $modelTableData
         );

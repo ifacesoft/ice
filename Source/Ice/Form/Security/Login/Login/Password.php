@@ -43,7 +43,7 @@ class Login_Password extends Form_Security_Login
                 $_SESSION['userPk'] = $accountRow['user__fk'];
                 $_SESSION['roleNames'] = Query::getBuilder(User_Role_Link::getClass())
                     ->inner('Ice:Role', 'role_name')
-                    ->eq(['user__fk' => $accountRow['user__fk']])
+                    ->eq(['user__fk', $accountRow['user__fk']])
                     ->select('role_name')->getColumn();
                 return;
             }

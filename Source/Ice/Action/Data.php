@@ -119,6 +119,6 @@ class Data extends Action
             $rows[] = Php::getInstance()->fetch(Ui_Data::getClass($dataClass . '_' . $data->getRowDataTemplate()), ['columns' => $rowResult]);
         }
 
-        return ['title' => $data->getTitle(), 'rows' => $rows];
+        return ['title' => $data->getTitle(), 'desc' => $data->getDesc(), 'rows' => $rows];
     }
 }
