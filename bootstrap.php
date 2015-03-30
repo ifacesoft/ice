@@ -2,6 +2,10 @@
 if (!defined('ICE_BOOTSTRAP')) {
     define('ICE_BOOTSTRAP', true);
 
+    if (!defined('VENDOR_DIR')) {
+        define('VENDOR_DIR', dirname(__DIR__) . '/_vendor/');
+    }
+
     if (!defined('MODULE_DIR')) {
         $moduleDir = php_sapi_name() == 'cli'
             ? getcwd()

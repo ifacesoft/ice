@@ -1149,11 +1149,11 @@ class Query_Builder
      * @param bool $update
      * @param string|null $dataSourceKey
      * @param int $ttl
-     * @return Query_Result
+     * @return Query
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.2
+     * @version 0.6
      * @since 0.0
      */
     public function insert(array $data, $update = false, $dataSourceKey = null, $ttl = null)
@@ -1170,11 +1170,11 @@ class Query_Builder
      * @param $part
      * @param $dataSourceKey
      * @param $ttl
-     * @return Query_Builder
+     * @return Query
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.2
+     * @version 0.6
      * @since 0.1
      */
     private function affect(array $data, $part, $dataSourceKey, $ttl)
@@ -1217,7 +1217,7 @@ class Query_Builder
 
         $this->_bindParts[$part] = array_merge($this->_bindParts[$part], $data);
 
-        return $this->getQuery($dataSourceKey)->execute($ttl);
+        return $this->getQuery($dataSourceKey);
     }
 
     /**
@@ -1226,11 +1226,11 @@ class Query_Builder
      * @param array $data Key-value array
      * @param null $dataSource
      * @param int $ttl
-     * @return Query_Result
+     * @return Query
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.2
+     * @version 0.6
      * @since 0.0
      */
     public function update(array $data, $dataSource = null, $ttl = null)
@@ -1245,11 +1245,11 @@ class Query_Builder
      * @param array $pkValues
      * @param string|null $dataSourceKey
      * @param int $ttl
-     * @return Query_Result
+     * @return Query
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.2
+     * @version 0.6
      * @since 0.0
      */
     public function delete($pkValues = [], $dataSourceKey = null, $ttl = null)
@@ -1259,7 +1259,7 @@ class Query_Builder
 
         $this->inPk((array)$pkValues);
 
-        return $this->getQuery($dataSourceKey)->execute($ttl);
+        return $this->getQuery($dataSourceKey);
     }
 
     /**

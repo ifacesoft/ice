@@ -256,6 +256,11 @@ $action = null;
                 if ($dataProviderKey == 'default') {
                     if (array_key_exists($name, $data)) {
                         $input[$name] = $data[$name];
+                        continue;
+                    }
+
+                    if (isset($param['default'])) {
+                        $input[$name] = $param['default'];
                     }
 
                     continue;
