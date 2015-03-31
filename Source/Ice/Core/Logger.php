@@ -141,9 +141,6 @@ class Logger
 
         ini_set('display_errors', !Environment::getInstance()->isProduction());
 
-        set_error_handler('Ice\Core\Logger::errorHandler');
-        register_shutdown_function('Ice\Core\Logger::shutdownHandler');
-
         ini_set('xdebug.var_display_max_depth', -1);
         ini_set('xdebug.profiler_enable', 1);
         ini_set('xdebug.profiler_output_dir', Module::getInstance()->get('logDir') . 'xdebug');
