@@ -14,7 +14,7 @@ use Ice\Core\Form as Core_Form;
 use Ice\Core\Logger;
 
 /**
- * Class Form_Submit
+ * Class Ui_Form_Submit
  *
  * Action submit model form
  *
@@ -29,7 +29,7 @@ use Ice\Core\Logger;
  * @version 0.0
  * @since 0.0
  */
-class Form_Submit extends Action
+class Ui_Form_Submit extends Action
 {
     /**
      * Action config
@@ -113,16 +113,16 @@ class Form_Submit extends Action
                 ->submit();
 
             return [
-                'success' => Form_Submit::getLogger()->info('Submitted successfully', Logger::SUCCESS),
+                'success' => Ui_Form_Submit::getLogger()->info('Submitted successfully', Logger::SUCCESS),
                 'redirect' => $redirect
             ];
         } catch (\Exception $e) {
             $message = ['Submit failed: {$0}', $e->getMessage()];
 
-            Form_Submit::getLogger()->error($message, __FILE__, __LINE__, $e);
+            Ui_Form_Submit::getLogger()->error($message, __FILE__, __LINE__, $e);
 
             return [
-                'error' => Form_Submit::getLogger()->info($message, Logger::DANGER)
+                'error' => Ui_Form_Submit::getLogger()->info($message, Logger::DANGER)
             ];
         }
     }

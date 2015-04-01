@@ -155,9 +155,9 @@ return [
     '' => [
         'ru' => null,
     ],
-    'Validator:Is_Menu -> param \'{$0}\' with value \'{$1}\' is not valid' => [
-        'en' => 'Validator:Is_Menu -> param \'{$0}\' with value \'{$1}\' is not valid',
-        'ru' => 'Validator:Is_Menu -> param \'{$0}\' with value \'{$1}\' is not valid',
+    'Validator:Is_Ui_Menu -> param \'{$0}\' with value \'{$1}\' is not valid' => [
+        'en' => 'Validator:Is_Ui_Menu -> param \'{$0}\' with value \'{$1}\' is not valid',
+        'ru' => 'Validator:Is_Ui_Menu -> param \'{$0}\' with value \'{$1}\' is not valid',
     ],
     'Validator:Not_Empty -> param \'{$0}\' with value \'{$1}\' is not valid' => [
         'en' => 'Validator:Not_Empty -> param \'{$0}\' with value \'{$1}\' is not valid',
@@ -167,12 +167,12 @@ return [
         'en' => 'Validator:Is_Query_Result -> param \'{$0}\' with value \'{$1}\' is not valid',
         'ru' => 'Validator:Is_Query_Result -> param \'{$0}\' with value \'{$1}\' is not valid',
     ],
-    'Validator:Is_Data -> param \'{$0}\' with value \'{$1}\' is not valid' => [
-        'en' => 'Validator:Is_Data -> param \'{$0}\' with value \'{$1}\' is not valid',
-        'ru' => 'Validator:Is_Data -> param \'{$0}\' with value \'{$1}\' is not valid',
+    'Validator:Is_Ui_Data -> param \'{$0}\' with value \'{$1}\' is not valid' => [
+        'en' => 'Validator:Is_Ui_Data -> param \'{$0}\' with value \'{$1}\' is not valid',
+        'ru' => 'Validator:Is_Ui_Data -> param \'{$0}\' with value \'{$1}\' is not valid',
     ],
-    'Validator:Is_Form -> param \'{$0}\' with value \'{$1}\' is not valid' => [
-        'en' => 'Validator:Is_Form -> param \'{$0}\' with value \'{$1}\' is not valid',
-        'ru' => 'Validator:Is_Form -> param \'{$0}\' with value \'{$1}\' is not valid',
+    'Validator:Is_Ui_Form -> param \'{$0}\' with value \'{$1}\' is not valid' => [
+        'en' => 'Validator:Is_Ui_Form -> param \'{$0}\' with value \'{$1}\' is not valid',
+        'ru' => 'Validator:Is_Ui_Form -> param \'{$0}\' with value \'{$1}\' is not valid',
     ],
 ];

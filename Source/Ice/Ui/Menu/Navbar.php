@@ -1,10 +1,10 @@
 <?php
 
-namespace Ice\Menu;
+namespace Ice\Ui\Menu;
 
-use Ice\Core\Menu;
+use Ice\Core\Ui_Menu;
 
-class Navbar extends Menu
+class Navbar extends Ui_Menu
 {
     /**
      * Return instance of navbar menu

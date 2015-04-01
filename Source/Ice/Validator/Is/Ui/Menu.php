@@ -10,12 +10,13 @@
 namespace Ice\Validator;
 
 use Ice\Core\Menu;
+use Ice\Core\Ui_Menu;
 use Ice\Core\Validator;
 
 /**
- * Class Is_Menu
+ * Class Is_Ui_Menu
  *
- * Validate Menu data
+ * Validate Ui_Menu data
  *
  * @see Ice\Core\Validator
  *
@@ -27,7 +28,7 @@ use Ice\Core\Validator;
  * @version 0.1
  * @since 0.1
  */
-class Is_Menu extends Validator
+class Is_Ui_Menu extends Validator
 {
     /**
      * Validate data by scheme
@@ -52,6 +53,6 @@ class Is_Menu extends Validator
      */
     public function validate($data, $scheme = null)
     {
-        return $data instanceof Menu;
+        return $data instanceof Ui_Menu;
     }
 }

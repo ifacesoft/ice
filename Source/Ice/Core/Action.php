@@ -256,6 +256,11 @@ $action = null;
                 if ($dataProviderKey == 'default') {
                     if (array_key_exists($name, $data)) {
                         $input[$name] = $data[$name];
+                        continue;
+                    }
+
+                    if (isset($param['default'])) {
+                        $input[$name] = $param['default'];
                     }
 
                     continue;
@@ -558,10 +563,10 @@ $action = null;
             $params = [];
 
             if (is_string($action)) {
-                $action = [$key => $action];
+                $action = [$action => $key];
             }
 
-            list($key, $class) = each($action);
+            list($class, $key) = each($action);
 
             if (count($action) > 1) {
                 $params = current($action);

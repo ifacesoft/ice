@@ -28,6 +28,9 @@ use Ice\View\Render\Php;
  *
  * @package Ice
  * @subpackage Action
+ *
+ * @version 0.0
+ * @since 0.0
  */
 class Form extends Action
 {
@@ -73,6 +76,13 @@ class Form extends Action
             'view' => ['viewRenderClass' => 'Ice:Php', 'layout' => 'div.Form>div.panel.panel-default>div.panel-body'],
             'input' => [
                 'form' => ['validators' => 'Ice:Is_Ui_Form'],
+//                'submitTitle' => ['validators' => 'Ice:Not_Empty'],
+                'grouping' => ['default' => 1],
+                'submitActionName' => ['default' => 'Ice:Form_Submit'],
+                'redirect' => ['default' => ''],
+                'params' => ['default' => []],
+                'reRenderClosest' => ['default' => ''],
+                'reRenderActionNames' => ['default' => []]
             ]
         ];
     }
@@ -96,10 +106,11 @@ class Form extends Action
 
         $formClass = get_class($form);
 
-        $formName = 'Form_' . Object::getName($formClass) . '_' . $form->getKey();
+        $formKey = $form->getKey();
+
+        $formName = 'Form_' . Object::getName($formClass) . '_' . Object::getName($formKey);
 
         $filterFields = $form->getFilterFields();
-
         $fields = $form->getFields();
         $values = $form->getValues();
 
@@ -128,22 +139,35 @@ class Form extends Action
 
         unset($fields);
 
-        foreach ($targetFields as $fieldName => $field) {
-            $result[] = Php::getInstance()->fetch(
-                Ui_Form::getClass($formClass . '_' . $field['template']),
-                [
-                    'fieldName' => $fieldName,
-                    'value' => $values[$fieldName],
-                    'options' => $field['options'],
-                    'formName' => $formName,
-                    'title' => $field['title']
-                ]
-            );
+        foreach ($targetFields as $fieldName => $scheme) {
+            $data = [
+                'formName' => $formName,
+                'fieldName' => $fieldName,
+                'value' => $values[$fieldName]
+            ];
+
+            $field = Php::getInstance()->fetch(Ui_Form::getClass($scheme['template']), array_merge($scheme, $data));
+
+            if ($input['grouping']) {
+                $result[$scheme['type']][] = $field;
+            } else {
+                $result[] = $field;
+            }
         }
 
         return [
+            'grouping' => $input['grouping'],
             'fields' => $result,
-            'classes' => $form->getClasses()
+            'formName' => $formName,
+            'formClass' => $formClass,
+            'formKey' => $formKey,
+            'submitActionName' => $input['submitActionName'],
+//            'submitTitle' => $input['submitTitle'],
+            'redirect' => $input['redirect'],
+            'filterFields' => implode(',', $filterFields),
+            'params' => Arrays::toJsObjectString($input['params']),
+            'reRenderActionNames' => Arrays::toJsArrayString($input['reRenderActionNames']),
+            'reRenderClosest' => $input['reRenderClosest']
         ];
     }
 }

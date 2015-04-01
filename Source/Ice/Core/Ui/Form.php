@@ -9,14 +9,14 @@
 
 namespace Ice\Core;
 
-use Ice\Form\Model as Form_Model;
+use Ice\Form\Model as Ui_Form_Model;
 use Ice\Core;
 use Ice\Helper\Arrays;
 
 /**
- * Class Form
+ * Class Ui_Form
  *
- * Core Form class
+ * Core Ui_Form class
  *
  * @see Ice\Core\Container
  *
@@ -24,24 +24,11 @@ use Ice\Helper\Arrays;
  *
  * @package Ice
  * @subpackage Core
- *
- * @version 0.1
- * @since 0.0
  */
-abstract class Form extends Container
+abstract class Ui_Form extends Container
 {
-    use Core;
+    use Ui, Stored;
 
-    const FIELD_HIDDEN = 'Hidden';
-    const FIELD_TEXT = 'Text';
-    const FIELD_DATE = 'Date';
-    const FIELD_CHECKBOX = 'Checkbox';
-    const FIELD_GEO = 'Geo';
-    const FIELD_NUMBER = 'Number';
-    const FIELD_PASSWORD = 'Password';
-    const FIELD_TEXTAREA = 'Textarea';
-    const NAME_MODEL = 'Model';
-    const NAME_SIMPLE = 'Simple';
     /**
      * Fields - form parts
      *
@@ -74,29 +61,27 @@ abstract class Form extends Container
         'disabled' => false,
         'readonly' => false
     ];
+
     private $_key = null;
 
     /**
      * Constructor for model forms
      *
-     * @param string $key
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.1
+     * @version 0.6
      * @since 0.1
      */
-    protected function __construct($key)
+    private function __construct()
     {
-        $this->_key = $key;
     }
 
     /**
-     * Return instance of Form
+     * Return instance of Ui_Form
      *
      * @param null $key
      * @param null $ttl
-     * @return Form
+     * @return Ui_Form
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.1
@@ -111,72 +96,73 @@ abstract class Form extends Container
      * Create new instance of form
      *
      * @param $key
-     * @return Form
+     * @return Ui_Form
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.6
      * @since 0.0
      */
     protected static function create($key)
     {
-        /** @var Form $class */
         $class = self::getClass();
+//
+//        if ($key) {
+//            $class .= '_' . $key;
+//        }
 
-        if ($class == __CLASS__) {
-            $class = 'Ice\Form\\' . $key;
-        }
+        $form = new $class();
 
-        return new $class($key);
+        $form->_key = $key;
+
+        return $form;
     }
 
     /**
      * Add hidden type field
      *
      * @param $fieldName
-     * @param $title
+     * @param $fieldTitle
      * @param array $options
      * @param array $validators
      * @param null $value
      * @param string $template
-     * @return Form
+     * @return Ui_Form
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.3
+     * @version 0.6
      * @since 0.0
      */
-    public function hidden($fieldName, $title, array $options = [], array $validators = [], $value = null, $template = 'Ice:Field_Hidden')
+    public function hidden($fieldName, $fieldTitle, array $options = [], array $validators = [], $value = null, $template = 'Field_Hidden')
     {
-        $options['type'] = Form::FIELD_HIDDEN;
-        $options['title'] = $title;
-        $options['template'] = $template;
-
-        return $this->addField(
-            $fieldName,
-            Arrays::defaults($this->_defaultOptions, $options),
-            $validators,
-            $value
-        );
+        return $this->addField($fieldName, $fieldTitle, $options, $validators, $value, $template);
     }
 
     /**
      * Add field as form part
      *
      * @param $fieldName
+     * @param $fieldTitle
      * @param array $options
      * @param array $validators
      * @param $value
-     * @return Form
+     * @param $template
+     * @return Ui_Form
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.3
+     * @version 0.6
      * @since 0.0
      */
-    private function addField($fieldName, array $options, array $validators, $value)
+    private function addField($fieldName, $fieldTitle, array $options, array $validators, $value, $template)
     {
-        $this->_fields[$fieldName] = $options;
+        $this->_fields[$fieldName] = [
+            'title' => $fieldTitle,
+            'options' => Arrays::defaults($this->_defaultOptions, $options),
+            'template' => $template
+        ];
+
         $this->_validateScheme[$fieldName] = $validators;
         $this->bind($fieldName, $value);
 
@@ -188,7 +174,7 @@ abstract class Form extends Container
      *
      * @param $key
      * @param null $value
-     * @return Form
+     * @return Ui_Form
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
@@ -214,209 +200,168 @@ abstract class Form extends Container
      * Add password type field
      *
      * @param $fieldName
-     * @param $title
+     * @param $fieldTitle
      * @param array $options
      * @param array $validators
      * @param null $value
      * @param string $template
-     * @return Form
+     * @return Ui_Form
+     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.3
+     * @version 0.6
      * @since 0.1
      */
-    public function password($fieldName, $title, array $options = [], array $validators = [], $value = null, $template = 'Ice:Field_Password')
+    public function password($fieldName, $fieldTitle, array $options = [], array $validators = [], $value = null, $template = 'Field_Password')
     {
-        $options['type'] = Form::FIELD_PASSWORD;
-        $options['title'] = $title;
-        $options['template'] = $template;
-
-        return $this->addField(
-            $fieldName,
-            Arrays::defaults($this->_defaultOptions, $options),
-            $validators,
-            $value
-        );
+        return $this->addField($fieldName, $fieldTitle, $options, $validators, $value, $template);
     }
 
     /**
      * Add number type field
      *
      * @param $fieldName
-     * @param $title
+     * @param $fieldTitle
      * @param array $options
      * @param array $validators
      * @param null $value
      * @param string $template
-     * @return Form
+     * @return Ui_Form
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.3
+     * @version 0.6
      * @since 0.0
      */
-    public function number($fieldName, $title, array $options = [], array $validators = [], $value = null, $template = 'Ice:Field_Number')
+    public function number($fieldName, $fieldTitle, array $options = [], array $validators = [], $value = null, $template = 'Field_Number')
     {
-        $options['type'] = Form::FIELD_NUMBER;
-        $options['title'] = $title;
-        $options['template'] = $template;
-
-        return $this->addField(
-            $fieldName,
-            Arrays::defaults($this->_defaultOptions, $options),
-            $validators,
-            $value
-        );
+        return $this->addField($fieldName, $fieldTitle, $options, $validators, $value, $template);
     }
 
     /**
      * Add text type field
      *
      * @param $fieldName
-     * @param $title
+     * @param $fieldTitle
      * @param array $options
      * @param array $validators
      * @param null $value
      * @param string $template
-     * @return Form
+     * @return Ui_Form
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.3
+     * @version 0.6
      * @since 0.0
      */
-    public function text($fieldName, $title, array $options = [], array $validators = [], $value = null, $template = 'Ice:Field_Text')
+    public function text($fieldName, $fieldTitle, array $options = [], array $validators = [], $value = null, $template = 'Field_Text')
     {
-        $options['type'] = Form::FIELD_TEXT;
-        $options['title'] = $title;
-        $options['template'] = $template;
-
-        return $this->addField(
-            $fieldName,
-            Arrays::defaults($this->_defaultOptions, $options),
-            $validators,
-            $value
-        );
+        return $this->addField($fieldName, $fieldTitle, $options, $validators, $value, $template);
     }
 
     /**
      * Add date type field
      *
      * @param $fieldName
-     * @param $title
+     * @param $fieldTitle
      * @param array $options
      * @param array $validators
      * @param null $value
      * @param string $template
-     * @return Form
+     * @return Ui_Form
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.3
+     * @version 0.6
      * @since 0.0
      */
-    public function date($fieldName, $title, array $options = [], array $validators = [], $value = null, $template = 'Ice:Field_Date')
+    public function date($fieldName, $fieldTitle, array $options = [], array $validators = [], $value = null, $template = 'Field_Date')
     {
-        $options['type'] = Form::FIELD_DATE;
-        $options['title'] = $title;
-        $options['template'] = $template;
-
-        return $this->addField(
-            $fieldName,
-            Arrays::defaults($this->_defaultOptions, $options),
-            $validators,
-            $value
-        );
+        return $this->addField($fieldName, $fieldTitle, $options, $validators, $value, $template);
     }
 
     /**
      * Add checkbox type field
      *
      * @param $fieldName
-     * @param $title
+     * @param $fieldTitle
      * @param array $options
      * @param array $validators
      * @param null $value
      * @param string $template
-     * @return Form
+     * @return Ui_Form
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.3
+     * @version 0.6
      * @since 0.0
      */
-    public function checkbox($fieldName, $title, array $options = [], array $validators = [], $value = null, $template = 'Ice:Field_Checkbox')
+    public function checkbox($fieldName, $fieldTitle, array $options = [], array $validators = [], $value = null, $template = 'Field_Checkbox')
     {
-        $options['type'] = Form::FIELD_CHECKBOX;
-        $options['title'] = $title;
-        $options['template'] = $template;
+        return $this->addField($fieldName, $fieldTitle, $options, $validators, $value, $template);
+    }
 
-        return $this->addField(
-            $fieldName,
-            Arrays::defaults($this->_defaultOptions, $options),
-            $validators,
-            $value
-        );
+    /**
+     * Add combobox type field
+     *
+     * @param $fieldName
+     * @param $fieldTitle
+     * @param array $options
+     * @param array $validators
+     * @param null $value
+     * @param string $template
+     * @return Ui_Form
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.6
+     * @since 0.0
+     */
+    public function combobox($fieldName, $fieldTitle, array $options = [], array $validators = [], $value = null, $template = 'Field_Combobox')
+    {
+        return $this->addField($fieldName, $fieldTitle, $options, $validators, $value, $template);
     }
 
     /**
      * Add map type field
      *
      * @param $fieldName
-     * @param $title
+     * @param $fieldTitle
      * @param array $options
      * @param array $validators
      * @param null $value
      * @param string $template
-     * @return Form
+     * @return Ui_Form
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.3
+     * @version 0.6
      * @since 0.0
      */
-    public function geo($fieldName, $title, array $options = [], array $validators = [], $value = null, $template = 'Ice:Field_Geo')
+    public function geo($fieldName, $fieldTitle, array $options = [], array $validators = [], $value = null, $template = 'Field_Geo')
     {
-        $options['type'] = Form::FIELD_GEO;
-        $options['title'] = $title;
-        $options['template'] = $template;
-
-        return $this->addField(
-            $fieldName,
-            Arrays::defaults($this->_defaultOptions, $options),
-            $validators,
-            $value
-        );
+        return $this->addField($fieldName, $fieldTitle, $options, $validators, $value, $template);
     }
 
     /**
      * Add textarea type field
      *
      * @param $fieldName
-     * @param $title
+     * @param $fieldTitle
      * @param array $options
      * @param array $validators
      * @param null $value
      * @param string $template
-     * @return Form
+     * @return Ui_Form
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.3
+     * @version 0.6
      * @since 0.0
      */
-    public function textarea($fieldName, $title, array $options = [], array $validators = [], $value = null, $template = 'Ice:Field_Textarea')
+    public function textarea($fieldName, $fieldTitle, array $options = [], array $validators = [], $value = null, $template = 'Field_Textarea')
     {
-        $options['type'] = Form::FIELD_TEXTAREA;
-        $options['title'] = $title;
-        $options['template'] = $template;
-
-        return $this->addField(
-            $fieldName,
-            Arrays::defaults($this->_defaultOptions, $options),
-            $validators,
-            $value
-        );
+        return $this->addField($fieldName, $fieldTitle, $options, $validators, $value, $template);
     }
 
     /**
@@ -508,7 +453,7 @@ abstract class Form extends Container
      * Add accepted fields
      *
      * @param array $filterFields
-     * @return Form
+     * @return Ui_Form
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
@@ -533,20 +478,30 @@ abstract class Form extends Container
         return $this->_key;
     }
 
+    protected static function getDefaultClassKey()
+    {
+        return 'Ice:Simple';
+    }
+
+    protected static function getDefaultKey()
+    {
+        return 'default';
+    }
+
     /**
      * Submit form
      *
-     * @author dp <denis.a.shestakov@gmail.com>
+     * @author anonymous <email>
      *
-     * @version 0.0
-     * @since 0.0
+     * @version 0
+     * @since 0
      */
     abstract public function submit();
 
     public static function schemeColumnPlugin($columnName, $table)
     {
-        return isset(Form_Model::$typeMap[$table['columns'][$columnName]['scheme']['dataType']])
-            ? Form_Model::$typeMap[$table['columns'][$columnName]['scheme']['dataType']]
+        return isset(Ui_Form_Model::$typeMap[$table['columns'][$columnName]['scheme']['dataType']])
+            ? Ui_Form_Model::$typeMap[$table['columns'][$columnName]['scheme']['dataType']]
             : 'text';
     }
 }

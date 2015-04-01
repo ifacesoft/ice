@@ -4,9 +4,9 @@ namespace Ice\Core;
 
 use Ice\Core;
 
-abstract class Menu extends Container
+abstract class Ui_Menu extends Container
 {
-    use Stored;
+    use Ui, Stored;
 
     private $items = [];
     private $_key = null;
@@ -16,11 +16,11 @@ abstract class Menu extends Container
     }
 
     /**
-     * Return instance of Menu
+     * Return instance of Ui_Menu
      *
      * @param null $key
      * @param null $ttl
-     * @return Menu
+     * @return Ui_Menu
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.1
@@ -35,21 +35,20 @@ abstract class Menu extends Container
      * Create new instance of menu
      *
      * @param $key
-     * @return Menu
+     * @return Ui_Menu
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.1
+     * @version 0.6
      * @since 0.1
      */
     protected static function create($key)
     {
-        /** @var Menu $class */
         $class = self::getClass();
-
-        if ($class == __CLASS__) {
-            $class = 'Ice\Menu\\' . $key;
-        }
+//
+//        if ($key) {
+//            $class .= '_' . $key;
+//        }
 
         $menu = new $class();
 
@@ -59,7 +58,7 @@ abstract class Menu extends Container
     }
 
     /**
-     * Return Menu items
+     * Return Ui_Menu items
      *
      * @return array
      *
@@ -76,29 +75,36 @@ abstract class Menu extends Container
     /**
      * Add menu item
      *
-     * @param $itemType
+     * @param $name
      * @param $title
      * @param $options
-     * @param $position
-     * @param $isActive
      * @param $template
-     * @return Menu
+     * @return Ui_Menu
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.1
+     * @version 0.6
      * @since 0.1
      */
-    protected function addItem($itemType, $title, $options, $position, $isActive, $template)
+    protected function addItem($name, $title, $options, $template)
     {
-        if ($isActive) {
-            $this->items[$position][] = [
-                'itemType' => $itemType,
+        if (!isset($options['disable']) || !$options['disable']) {
+            $this->items[$name] = [
                 'title' => $title,
                 'options' => $options,
                 'template' => $template
             ];
         }
+
         return $this;
     }
+
+    /**
+     * @return array
+     */
+    public function getKey()
+    {
+        return $this->_key;
+    }
+
 }

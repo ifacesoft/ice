@@ -2,11 +2,11 @@
 namespace Ice\Action;
 
 use Ice\Core\Action;
-use Ice\Core\Menu;
+use Ice\Core\Ui_Menu;
 use Ice\View\Render\Php;
 
 /**
- * Class Menu_Navbar
+ * Class Menu
  *
  * @see Ice\Core\Action
  * @see Ice\Core\Action_Context;
@@ -15,7 +15,7 @@ use Ice\View\Render\Php;
  *
  * @author dp <denis.a.shestakov@gmail.com>
  */
-class Menu_Navbar extends Action
+class Menu extends Action
 {
     /**
      * Action config
@@ -56,9 +56,9 @@ class Menu_Navbar extends Action
     protected static function config()
     {
         return [
-            'view' => ['viewRenderClass' => 'Ice:Php', 'layout' => 'div.Menu_Navbar.collapse.navbar-collapse'],
+            'view' => ['viewRenderClass' => 'Ice:Php'],
             'input' => [
-                'menu' => ['validators' => 'Ice:Is_Menu']
+                'menu' => ['validators' => 'Ice:Is_Ui_Menu']
             ]
         ];
     }
@@ -71,14 +71,22 @@ class Menu_Navbar extends Action
      */
     public function run(array $input)
     {
-        $result = $input['menu']->getItems();
+        /** @var Ui_Menu $menu */
+        $menu = $input['menu'];
 
-        foreach ($result as $position => &$items) {
-            foreach ($items as &$item) {
-                $item = Php::getInstance()->fetch(Menu::getClass($item['template']), $item);
-            }
-        }
+        $menuClass = get_class($menu);
 
-        return ['items' => $result];
+        return [
+            'menu' => Php::getInstance()->fetch(
+                Ui_Menu::getClass($menuClass),
+                [
+                    'items' => $menu->getItems(),
+                    'menuClass' => $menuClass,
+                    'options' => $menu->getKey(),
+                    'classes' => $menu->getClasses(),
+                    'style' => $menu->getStyle()
+                ]
+            )
+        ];
     }
 }

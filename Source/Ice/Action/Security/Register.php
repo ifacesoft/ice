@@ -75,7 +75,7 @@ class Security_Register extends Action
 
         $this->addAction(
             'Ice:Form', [
-                'form' => Form_Security_Register::getInstance($input['security']),
+                'form' => Ui_Form_Security_Register::getInstance($input['security']),
                 'submitTitle' => $resource->get('Register'),
                 'redirect' => $input['redirect']
             ]

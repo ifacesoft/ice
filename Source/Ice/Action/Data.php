@@ -93,7 +93,18 @@ class Data extends Action
 
         $filterFields = $data->getFilterFields();
 
-        $rows[] = Php::getInstance()->fetch(Ui_Data::getClass($dataClass .  '_' . $data->getRowHeaderTemplate()), ['columns' => empty($filterFields) ? array_intersect_key($columns, Arrays::column($columns, 'name')) : array_intersect_key($columns, array_intersect(Arrays::column($columns, 'name'), $filterFields))]);
+        $columnNames = Arrays::column($columns, 'name');
+
+        if (!empty($filterFields)) {
+            $columnNames = array_intersect($columnNames, $filterFields);
+        }
+
+        $rows[] = Php::getInstance()->fetch(
+            Ui_Data::getClass($dataClass . '_' . $data->getRowHeaderTemplate()),
+            ['columns' => array_intersect_key($columns, $columnNames)]
+        );
+
+        $offset = $data->getOffset();
 
         foreach ($data->getRows() as $row) {
             $rowResult = [];
@@ -104,21 +115,46 @@ class Data extends Action
                 }
 
                 if (isset($column['options']['href']) && isset($column['options']['href_ext'])) {
-                    $column['options']['href'] .= implode('/', array_intersect_key($row, array_flip((array) $column['options']['href_ext'])));
+                    $column['options']['href'] .= implode('/', array_intersect_key($row, array_flip((array)$column['options']['href_ext'])));
                 }
 
                 $rowResult[] = Php::getInstance()->fetch(
                     Ui_Data::getClass($dataClass . '_' . $column['template']),
                     [
                         'value' => array_key_exists($column['name'], $row) ? $row[$column['name']] : $column['name'],
-                        'options' => $column['options']
+                        'options' => $column['options'],
                     ]
                 );
             }
 
-            $rows[] = Php::getInstance()->fetch(Ui_Data::getClass($dataClass . '_' . $data->getRowDataTemplate()), ['columns' => $rowResult]);
+            $rows[] = Php::getInstance()->fetch(
+                Ui_Data::getClass($dataClass . '_' . $data->getRowDataTemplate()),
+                [
+                    'columns' => $rowResult,
+                    'id' => ++$offset
+                ]
+            );
         }
 
-        return ['title' => $data->getTitle(), 'desc' => $data->getDesc(), 'rows' => $rows];
+        if ($data->getFilterForm()) {
+            $this->addAction(['Ice:Form' => 'filter', ['form' => $data->getFilterForm()]]);
+        }
+
+        if ($data->getPaginationMenu()) {
+            $this->addAction(['Ice:Menu' => 'pagination', ['menu' => $data->getPaginationMenu()]]);
+        }
+
+        return [
+            'title' => $data->getTitle(),
+            'desc' => $data->getDesc(),
+            'ui_data' => Php::getInstance()->fetch(
+                Ui_Data::getClass($dataClass),
+                [
+                    'rows' => $rows,
+                    'classes' => $data->getClasses(),
+                    'style' => $data->getStyle()
+                ]
+            )
+        ];
     }
 }

@@ -1192,7 +1192,7 @@ class Query_Builder
 
             $this->_bindParts[$part] = [[]];
 
-            return $this->getQuery($dataSourceKey)->execute($ttl);
+            return $this->getQuery($dataSourceKey)->getQueryResult($ttl);
         }
 
         if (!is_array(reset($data))) {
@@ -1217,7 +1217,7 @@ class Query_Builder
 
         $this->_bindParts[$part] = array_merge($this->_bindParts[$part], $data);
 
-        return $this->getQuery($dataSourceKey)->execute($ttl);
+        return $this->getQuery($dataSourceKey)->getQueryResult($ttl);
     }
 
     /**
@@ -1259,7 +1259,7 @@ class Query_Builder
 
         $this->inPk((array)$pkValues);
 
-        return $this->getQuery($dataSourceKey)->execute($ttl);
+        return $this->getQuery($dataSourceKey)->getQueryResult($ttl);
     }
 
     /**
@@ -1455,15 +1455,15 @@ class Query_Builder
      * @return Query_Builder
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.2
+     * @version 0.6
      * @since 0.0
      */
-    public function setPaginator(array $paginator)
+    public function setPagination(array $paginator)
     {
-        list($page, $limit) = $paginator;
+        $page = isset($paginator['page']) ? $paginator['page'] : 1;
+        $limit = isset($paginator['limit']) ? $paginator['limit'] : 10000;
 
-        return $this->calcFoundRows()
-            ->limit($limit, ($page - 1) * $limit);
+        return $this->calcFoundRows()->limit($limit, ($page - 1) * $limit);
     }
 
     /**
@@ -1522,7 +1522,7 @@ class Query_Builder
         }
 
         $this->_queryType = Query_Builder::TYPE_CREATE;
-        return $this->getQuery($dataSourceKey)->execute($ttl);
+        return $this->getQuery($dataSourceKey)->getQueryResult($ttl);
     }
 
     /**
@@ -1568,7 +1568,7 @@ class Query_Builder
     {
         $this->_queryType = Query_Builder::TYPE_DROP;
         $this->_sqlParts[self::PART_DROP]['_drop'] = $this->_modelClass;
-        return $this->getQuery($dataSourceKey)->execute($ttl);
+        return $this->getQuery($dataSourceKey)->getQueryResult($ttl);
     }
 
     /**

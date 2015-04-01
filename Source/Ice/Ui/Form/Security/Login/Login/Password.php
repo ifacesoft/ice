@@ -7,7 +7,7 @@ use Ice\Core\Query;
 use Ice\Model\Account;
 use Ice\Model\User_Role_Link;
 
-class Login_Password extends Form_Security_Login
+class Login_Password extends Ui_Form_Security_Login
 {
     function __construct($key)
     {
@@ -49,6 +49,6 @@ class Login_Password extends Form_Security_Login
             }
         }
 
-        Form_Security_Login::getLogger()->exception('Authorization failed: login-password incorrect', __FILE__, __LINE__);
+        Ui_Form_Security_Login::getLogger()->exception('Authorization failed: login-password incorrect', __FILE__, __LINE__);
     }
 }

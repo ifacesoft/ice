@@ -9,13 +9,13 @@
 
 namespace Ice\Validator;
 
-use Ice\Core\Form;
+use Ice\Core\Ui_Form;
 use Ice\Core\Validator;
 
 /**
- * Class Is_Form
+ * Class Is_Ui_Form
  *
- * Validate Form data
+ * Validate Ui_Form data
  *
  * @see Ice\Core\Validator
  *
@@ -27,7 +27,7 @@ use Ice\Core\Validator;
  * @version 0.0
  * @since 0.0
  */
-class Is_Form extends Validator
+class Is_Ui_Form extends Validator
 {
     /**
      * Validate data by scheme
@@ -52,6 +52,6 @@ class Is_Form extends Validator
      */
     public function validate($data, $scheme = null)
     {
-        return $data instanceof Form;
+        return $data instanceof Ui_Form;
     }
 }

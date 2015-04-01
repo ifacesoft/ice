@@ -11,6 +11,7 @@ namespace Ice\Form;
 
 use Ice\Core\Form;
 use Ice\Core\Model as Core_Model;
+use Ice\Core\Ui_Form;
 use Ice\Core\Validator;
 
 /**
@@ -23,57 +24,46 @@ use Ice\Core\Validator;
  * @author dp <denis.a.shestakov@gmail.com>
  *
  * @package Ice
- * @subpackage Form
- *
- * @version 0.1
- * @since 0.0
+ * @subpackage Ui_Form
  */
-class Model extends Form
+class Model extends Ui_Form
 {
-    /**
-     * @var Core_Model
-     */
-    private $_modelClass = null;
-
     /**
      * Field type map
      *
      * @var array
      */
     public static $typeMap = [
-        'int' => Form::FIELD_NUMBER,
-        'varchar' => Form::FIELD_TEXT,
-        'datetime' => Form::FIELD_DATE,
-        'timestamp' => Form::FIELD_DATE,
-        'tinyint' => Form::FIELD_CHECKBOX,
-        'point' => Form::FIELD_GEO,
-        'bigint' => Form::FIELD_NUMBER,
-        'text' => Form::FIELD_TEXTAREA,
-        'double' => Form::FIELD_TEXT,
-        'longtext' => Form::FIELD_TEXT
+        'int' => Ui_Form::FIELD_NUMBER,
+        'varchar' => Ui_Form::FIELD_TEXT,
+        'datetime' => Ui_Form::FIELD_DATE,
+        'timestamp' => Ui_Form::FIELD_DATE,
+        'tinyint' => Ui_Form::FIELD_CHECKBOX,
+        'point' => Ui_Form::FIELD_GEO,
+        'bigint' => Ui_Form::FIELD_NUMBER,
+        'text' => Ui_Form::FIELD_TEXTAREA,
+        'double' => Ui_Form::FIELD_TEXT,
+        'longtext' => Ui_Form::FIELD_TEXT
     ];
 
     /**
      * Constructor for model forms
-     *
-     * @param Core_Model $modelClass
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.2
      * @since 0.0
      */
-    protected function __construct($modelClass)
+    protected function __construct()
     {
-        parent::__construct($modelClass);
-
-        $this->_modelClass = Model::getClass($modelClass);
+        /** @var Core_Model $modelClass */
+        $modelClass = $this->getKey();
 
         $validateScheme = $modelClass::getPlugin(Validator::getClass());
 
         $pkFieldNames = $modelClass::getScheme()->getPkFieldNames();
 
-        foreach ($modelClass::getPlugin(Form::getClass()) as $fieldName => $fieldType) {
+        foreach ($modelClass::getPlugin(Ui_Form::getClass()) as $fieldName => $fieldType) {
             $this->$fieldType(
                 $fieldName,
                 $modelClass::getFieldTitle($fieldName),
@@ -86,19 +76,11 @@ class Model extends Form
         }
     }
 
-    /**
-     * @return Core_Model
-     */
-    public function getModelClass()
-    {
-        return $this->_modelClass;
-    }
-
 //    /**
 //     * Binds all model field values
 //     *
 //     * @param Core_Model $model
-//     * @return Form_Model
+//     * @return Ui_Form_Model
 //     *
 //     * @author dp <denis.a.shestakov@gmail.com>
 //     *
@@ -112,7 +94,8 @@ class Model extends Form
 
     public function addFilterFields(array $filterFields)
     {
-        $modelClass = $this->getModelClass();
+        /** @var Core_Model $modelClass */
+        $modelClass = $this->getKey();
 
         foreach ($filterFields as &$filterField) {
             $filterField = $modelClass::getFieldName($filterField);
@@ -131,6 +114,7 @@ class Model extends Form
      */
     public function submit()
     {
+        /** @var Core_Model $modelClass */
         $modelClass = $this->getKey();
         $modelClass::create($this->validate())->save(true);
     }

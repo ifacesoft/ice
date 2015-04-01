@@ -10,6 +10,7 @@
 namespace Ice\Core;
 
 use Ice\Core;
+use Ice\Data\Source\Mysqli;
 
 /**
  * Class Data_Source

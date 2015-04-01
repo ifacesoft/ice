@@ -417,7 +417,7 @@ class Model_Collection implements IteratorAggregate, Countable
     }
 
     /**
-     * Create query builder from model collection
+     * Get query builder from model collection
      *
      * @param null $modelClass
      * @param null $tableAlias
@@ -428,7 +428,7 @@ class Model_Collection implements IteratorAggregate, Countable
      * @version 0.6
      * @since 0.6
      */
-    public function createQueryBuilder($modelClass = null, $tableAlias = null)
+    public function getQueryBuilder($modelClass = null, $tableAlias = null)
     {
         return $modelClass
             ? Query::getBuilder($modelClass, $tableAlias)

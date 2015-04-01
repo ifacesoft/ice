@@ -158,7 +158,12 @@ class Query
 
         if (!empty($limit)) {
             list($limit, $offset) = $limit;
-            $this->_pagination = [$offset ? $offset / $limit + 1 : 1, $limit, $foundRows];
+            $this->_pagination = [
+                'page' => $offset ? $offset / $limit + 1 : 1,
+                'limit' => $limit,
+                'foundRows' => $foundRows,
+                'offset' => $offset
+            ];
         }
     }
 
@@ -363,7 +368,7 @@ class Query
      * @version 0.4
      * @since 0.4
      */
-    public function execute($ttl = null)
+    public function getQueryResult($ttl = null)
     {
         return $this->getDataSource()->execute($this, $ttl);
     }
@@ -430,7 +435,7 @@ class Query
      */
     public function getModelCollection($ttl = null)
     {
-        $queryResult = $this->execute($ttl);
+        $queryResult = $this->getQueryResult($ttl);
 
         return Model_Collection::create($queryResult->getModelClass(), $queryResult->getRows(), $queryResult->getQuery());
     }
@@ -448,7 +453,7 @@ class Query
      */
     public function getRows($ttl = null)
     {
-        return $this->execute($ttl)->getRows();
+        return $this->getQueryResult($ttl)->getRows();
     }
 
     /**

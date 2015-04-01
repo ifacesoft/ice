@@ -4,7 +4,7 @@ namespace Ice\Form\Security\Register;
 
 use Ice\Core\Form_Security_Register;
 
-class Login_Password extends Form_Security_Register
+class Login_Password extends Ui_Form_Security_Register
 {
     function __construct($key)
     {
