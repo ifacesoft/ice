@@ -3,7 +3,7 @@
 namespace Ice\Helper;
 
 use Ice\Core\Config as Core_Config;
-use Ice\Core\Request;
+use Ice\Core\Request as Core_Request;
 use Ice\Data\Provider\Repository;
 
 class Api_Client_Yandex_Translate
@@ -87,7 +87,7 @@ class Api_Client_Yandex_Translate
             return $detect;
         }
 
-        return $locale = Request::getConfig()->get('locale');
+        return $locale = Core_Request::getConfig()->get('locale');
     }
 
     /**
@@ -160,7 +160,7 @@ class Api_Client_Yandex_Translate
     public static function getLocales($locale = null)
     {
         if (!$locale) {
-            $locale = Request::getConfig()->get('locale');
+            $locale = Core_Request::getConfig()->get('locale');
         }
 
         $locales = [];
@@ -198,7 +198,7 @@ class Api_Client_Yandex_Translate
             throw new \Exception('Key is empty. See https://tech.yandex.ru/keys/get/?service=trnsl');
         }
 
-        $url = 'https://translate.yandex.net/api/v1.5/tr.json/getLangs?key=' . $yaKey . '&ui=' . Request::getConfig()->get('locale');
+        $url = 'https://translate.yandex.net/api/v1.5/tr.json/getLangs?key=' . $yaKey . '&ui=' . Core_Request::getConfig()->get('locale');
 
         $langs = Json::decode(Http::getContents($url));
 

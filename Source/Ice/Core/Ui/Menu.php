@@ -8,7 +8,7 @@ abstract class Ui_Menu extends Container
 {
     use Ui, Stored;
 
-    private $items = [];
+    private $items = null;
     private $_key = null;
 
     private function __construct()
@@ -86,7 +86,7 @@ abstract class Ui_Menu extends Container
      * @version 0.6
      * @since 0.1
      */
-    protected function addItem($name, $title, $options, $template)
+    protected function addItem($name, $title, array $options, $template)
     {
         if (!isset($options['disable']) || !$options['disable']) {
             $this->items[$name] = [
@@ -100,11 +100,15 @@ abstract class Ui_Menu extends Container
     }
 
     /**
+     * @param null $name
      * @return array
      */
-    public function getKey()
+    public function getKey($name = null)
     {
+        if ($name) {
+            return isset($this->_key[$name]) ? $this->_key[$name] : null;
+        }
+
         return $this->_key;
     }
-
 }

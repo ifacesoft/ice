@@ -78,7 +78,17 @@ class Request extends Data_Provider
             return $_REQUEST;
         }
 
-        return isset($_REQUEST[$key]) ? $_REQUEST[$key] : null;
+        if (!is_array($key)) {
+            return isset($_REQUEST[$key]) ? $_REQUEST[$key] : null;
+        }
+
+        $params = [];
+
+        foreach ($key as $name) {
+            $params[$name] = empty($_REQUEST[$name]) ? null : $_REQUEST[$name];
+        }
+
+        return $params;
     }
 
     /**

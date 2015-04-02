@@ -13,8 +13,10 @@ use Ice\Core\Action;
 use Ice\Core\Debuger;
 use Ice\Core\Ui_Form;
 use Ice\Helper\Arrays;
+use Ice\Helper\Emmet;
 use Ice\Helper\Object;
 use Ice\View\Render\Php;
+use Ice\View\Render\Replace;
 
 /**
  * Class Form
@@ -96,12 +98,12 @@ class Form extends Action
 
         $formClass = get_class($form);
 
-        $formName = 'Form_' . Object::getName($formClass) . '_' . $form->getKey();
+        $formName = 'Form_' . Object::getName($formClass);
 
         $filterFields = $form->getFilterFields();
 
         $fields = $form->getFields();
-        $values = $form->getValues();
+        $values = $form->getKey();
 
         $result = [];
 

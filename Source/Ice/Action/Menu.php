@@ -2,6 +2,7 @@
 namespace Ice\Action;
 
 use Ice\Core\Action;
+use Ice\Core\Debuger;
 use Ice\Core\Ui_Menu;
 use Ice\View\Render\Php;
 
@@ -74,15 +75,25 @@ class Menu extends Action
         /** @var Ui_Menu $menu */
         $menu = $input['menu'];
 
+        /** @var Menu $menuClass */
         $menuClass = get_class($menu);
+        $menuName = 'Menu_' . $menuClass::getClassName();
+
+        $items = [];
+
+        foreach ($menu->getItems() as $name => $item) {
+            $item['name'] = $name;
+            $item['menuName'] = $menuName;
+
+            $items[] = Php::getInstance()->fetch($menuClass . '_' . $item['template'], $item);
+        }
 
         return [
             'menu' => Php::getInstance()->fetch(
                 Ui_Menu::getClass($menuClass),
                 [
-                    'items' => $menu->getItems(),
-                    'menuClass' => $menuClass,
-                    'options' => $menu->getKey(),
+                    'items' => $items,
+                    'menuName' => $menuName,
                     'classes' => $menu->getClasses(),
                     'style' => $menu->getStyle()
                 ]

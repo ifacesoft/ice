@@ -104,7 +104,7 @@ class Data extends Action
             ['columns' => array_intersect_key($columns, $columnNames)]
         );
 
-        $offset = $data->getOffset();
+        $offset = $data->getPaginationMenu()->getOffset();
 
         foreach ($data->getRows() as $row) {
             $rowResult = [];

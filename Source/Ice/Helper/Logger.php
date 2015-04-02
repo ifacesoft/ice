@@ -12,7 +12,7 @@ namespace Ice\Helper;
 use Ice\Core\Exception;
 use Ice\Core\Logger as Core_Logger;
 use Ice\Core\Module;
-use Ice\Core\Request;
+use Ice\Core\Request as Core_Request;
 use Ice\Core\View_Render;
 use Ice\View\Render\Php as View_Render_Php;
 
@@ -95,9 +95,9 @@ class Logger
 
         $output = [
             'time' => date('H:i:s'),
-            'host' => Request::host(),
-            'uri' => Request::uri(),
-            'referer' => Request::referer(),
+            'host' => Core_Request::host(),
+            'uri' => Core_Request::uri(),
+            'referer' => Core_Request::referer(),
             'lastTemplate' => View_Render::getLastTemplate(),
             'message' => Core_Logger::$errorCodes[$exception->getCode()] . ': ' . $exception->getMessage(),
             'errPoint' => $exception->getFile() . ':' . $exception->getLine(),
@@ -108,7 +108,7 @@ class Logger
             'level' => $level
         ];
 
-        $message = Request::isCli()
+        $message = Core_Request::isCli()
             ? View_Render_Php::getInstance()->fetch(Core_Logger::getClass() . '/Cli', $output)
             : View_Render_Php::getInstance()->fetch(Core_Logger::getClass() . '/Http', $output);
 

@@ -3,6 +3,8 @@
 
 <?php if (isset($filter)) {?><?= $filter ?><?php } ?>
 
+<?php if (isset($pagination)) { ?><?= $pagination ?><?php } ?>
+
 <?= $ui_data ?>
 
 <?php if (isset($pagination)) {?><?= $pagination ?><?php } ?>

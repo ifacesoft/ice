@@ -119,9 +119,9 @@ class Mysqli extends Data_Source
             $result = $this->getConnection()->query('SELECT FOUND_ROWS()');
             $foundRows = $result->fetch_row();
             $result->close();
-            $query->setPagination(reset($foundRows));
+            $data[Query_Result::FOUND_ROWS] = reset($foundRows);
         } else {
-            $query->setPagination($data[Query_Result::NUM_ROWS]);
+            $data[Query_Result::FOUND_ROWS] = $data[Query_Result::NUM_ROWS];
         }
 
         return $data;

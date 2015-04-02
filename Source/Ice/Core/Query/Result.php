@@ -33,7 +33,7 @@ class Query_Result implements Cacheable
     const ROWS = 'rows';
     const NUM_ROWS = 'numRows';
     const AFFECTED_ROWS = 'affectedRows';
-    const FOUND_ROWS = 'affectedRows';
+    const FOUND_ROWS = 'foundRows';
     const INSERT_ID = 'insertId';
     const QUERY_BODY = 'queryBody';
     const QUERY_PARAMS = 'queryParams';
@@ -551,12 +551,8 @@ class Query_Result implements Cacheable
         return $string;
     }
 
-    /**
-     * @todo Формировать pagination c использованием Query_Result::FOUND_ROWS
-     * @return array
-     */
-    public function getPagination()
+    public function getFoundRows()
     {
-        return $this->getQuery()->getPagination();
+        return $this->_result[Query_Result::FOUND_ROWS];
     }
 }

@@ -33,13 +33,11 @@ abstract class Ui_Data extends Container
     /**
      * Pagination menu
      *
-     * @var Ui_Menu
+     * @var Pagination
      */
     private $paginationMenu = null;
 
     private $_key = null;
-
-    private $_offset = 0;
 
     private function __construct()
     {
@@ -106,12 +104,10 @@ abstract class Ui_Data extends Container
     public function bind($rows)
     {
         if ($rows instanceof Query_Result) {
-            /** @var Pagination $pagination */
-            $pagination = Pagination::getInstance($rows->getPagination())
-                ->classes(['pagination-sm'])
-                ->style('margin: 0;');
+            if ($this->paginationMenu) {
+                $this->paginationMenu->setFoundRows($rows->getFoundRows());
+            }
 
-            $this->setPaginationMenu($pagination);
             $rows = $rows->getRows();
         }
 
@@ -333,16 +329,21 @@ abstract class Ui_Data extends Container
     public function setPaginationMenu(Pagination $paginationMenu)
     {
         $this->paginationMenu = $paginationMenu;
-
-        $this->_offset = $paginationMenu->getKey()['offset'];
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getOffset()
+    public function getParams()
     {
-        return $this->_offset;
+        $params = $this->getKey();
+
+        if ($this->filterForm) {
+            $params += $this->filterForm->getKey();
+        }
+
+        if ($this->paginationMenu) {
+            $params += $this->paginationMenu->getKey();
+        }
+
+        return $params;
     }
 }

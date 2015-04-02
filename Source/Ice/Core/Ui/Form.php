@@ -9,8 +9,8 @@
 
 namespace Ice\Core;
 
-use Ice\Form\Model as Ui_Form_Model;
 use Ice\Core;
+use Ice\Form\Model as Ui_Form_Model;
 use Ice\Helper\Arrays;
 
 /**
@@ -47,12 +47,7 @@ abstract class Ui_Form extends Container
      * @var array
      */
     protected $_validateScheme = [];
-    /**
-     * Binds values
-     *
-     * @var array
-     */
-    protected $_values = [];
+
     /**
      * Default field options
      */
@@ -62,7 +57,7 @@ abstract class Ui_Form extends Container
         'readonly' => false
     ];
 
-    private $_key = null;
+    private $_key = [];
 
     /**
      * Constructor for model forms
@@ -111,9 +106,10 @@ abstract class Ui_Form extends Container
 //            $class .= '_' . $key;
 //        }
 
+        /** @var Ui_Form $form */
         $form = new $class();
 
-        $form->_key = $key;
+        $form->bind($key);
 
         return $form;
     }
@@ -124,8 +120,6 @@ abstract class Ui_Form extends Container
      * @param $fieldName
      * @param $fieldTitle
      * @param array $options
-     * @param array $validators
-     * @param null $value
      * @param string $template
      * @return Ui_Form
      *
@@ -134,9 +128,9 @@ abstract class Ui_Form extends Container
      * @version 0.6
      * @since 0.0
      */
-    public function hidden($fieldName, $fieldTitle, array $options = [], array $validators = [], $value = null, $template = 'Field_Hidden')
+    public function hidden($fieldName, $fieldTitle, array $options = [], $template = 'Field_Hidden')
     {
-        return $this->addField($fieldName, $fieldTitle, $options, $validators, $value, $template);
+        return $this->addField($fieldName, $fieldTitle, $options, $template);
     }
 
     /**
@@ -145,8 +139,6 @@ abstract class Ui_Form extends Container
      * @param $fieldName
      * @param $fieldTitle
      * @param array $options
-     * @param array $validators
-     * @param $value
      * @param $template
      * @return Ui_Form
      *
@@ -155,16 +147,22 @@ abstract class Ui_Form extends Container
      * @version 0.6
      * @since 0.0
      */
-    private function addField($fieldName, $fieldTitle, array $options, array $validators, $value, $template)
+    private function addField($fieldName, $fieldTitle, array $options, $template)
     {
+        if (!empty($options['validators'])) {
+            $this->_validateScheme[$fieldName] = $options['validators'];
+            unset($options['validators']);
+        }
+
+        if (empty($this->_key[$fieldName]) && array_key_exists('defaultValue', $options)) {
+            $this->bind($fieldName, $options['defaultValue']);
+        }
+
         $this->_fields[$fieldName] = [
             'title' => $fieldTitle,
             'options' => Arrays::defaults($this->_defaultOptions, $options),
             'template' => $template
         ];
-
-        $this->_validateScheme[$fieldName] = $validators;
-        $this->bind($fieldName, $value);
 
         return $this;
     }
@@ -178,7 +176,7 @@ abstract class Ui_Form extends Container
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.6
      * @since 0.0
      */
     public function bind($key, $value = null)
@@ -191,7 +189,7 @@ abstract class Ui_Form extends Container
             return $this;
         }
 
-        $this->_values[$key] = empty($value) ? null : $value;
+        $this->_key[$key] = $value;
 
         return $this;
     }
@@ -202,8 +200,6 @@ abstract class Ui_Form extends Container
      * @param $fieldName
      * @param $fieldTitle
      * @param array $options
-     * @param array $validators
-     * @param null $value
      * @param string $template
      * @return Ui_Form
      *
@@ -212,9 +208,9 @@ abstract class Ui_Form extends Container
      * @version 0.6
      * @since 0.1
      */
-    public function password($fieldName, $fieldTitle, array $options = [], array $validators = [], $value = null, $template = 'Field_Password')
+    public function password($fieldName, $fieldTitle, array $options = [], $template = 'Field_Password')
     {
-        return $this->addField($fieldName, $fieldTitle, $options, $validators, $value, $template);
+        return $this->addField($fieldName, $fieldTitle, $options, $template);
     }
 
     /**
@@ -223,8 +219,6 @@ abstract class Ui_Form extends Container
      * @param $fieldName
      * @param $fieldTitle
      * @param array $options
-     * @param array $validators
-     * @param null $value
      * @param string $template
      * @return Ui_Form
      *
@@ -233,9 +227,9 @@ abstract class Ui_Form extends Container
      * @version 0.6
      * @since 0.0
      */
-    public function number($fieldName, $fieldTitle, array $options = [], array $validators = [], $value = null, $template = 'Field_Number')
+    public function number($fieldName, $fieldTitle, array $options = [], $template = 'Field_Number')
     {
-        return $this->addField($fieldName, $fieldTitle, $options, $validators, $value, $template);
+        return $this->addField($fieldName, $fieldTitle, $options, $template);
     }
 
     /**
@@ -244,8 +238,6 @@ abstract class Ui_Form extends Container
      * @param $fieldName
      * @param $fieldTitle
      * @param array $options
-     * @param array $validators
-     * @param null $value
      * @param string $template
      * @return Ui_Form
      *
@@ -254,9 +246,9 @@ abstract class Ui_Form extends Container
      * @version 0.6
      * @since 0.0
      */
-    public function text($fieldName, $fieldTitle, array $options = [], array $validators = [], $value = null, $template = 'Field_Text')
+    public function text($fieldName, $fieldTitle, array $options = [], $template = 'Field_Text')
     {
-        return $this->addField($fieldName, $fieldTitle, $options, $validators, $value, $template);
+        return $this->addField($fieldName, $fieldTitle, $options, $template);
     }
 
     /**
@@ -265,8 +257,6 @@ abstract class Ui_Form extends Container
      * @param $fieldName
      * @param $fieldTitle
      * @param array $options
-     * @param array $validators
-     * @param null $value
      * @param string $template
      * @return Ui_Form
      *
@@ -275,9 +265,9 @@ abstract class Ui_Form extends Container
      * @version 0.6
      * @since 0.0
      */
-    public function date($fieldName, $fieldTitle, array $options = [], array $validators = [], $value = null, $template = 'Field_Date')
+    public function date($fieldName, $fieldTitle, array $options = [], $template = 'Field_Date')
     {
-        return $this->addField($fieldName, $fieldTitle, $options, $validators, $value, $template);
+        return $this->addField($fieldName, $fieldTitle, $options, $template);
     }
 
     /**
@@ -286,8 +276,6 @@ abstract class Ui_Form extends Container
      * @param $fieldName
      * @param $fieldTitle
      * @param array $options
-     * @param array $validators
-     * @param null $value
      * @param string $template
      * @return Ui_Form
      *
@@ -296,9 +284,9 @@ abstract class Ui_Form extends Container
      * @version 0.6
      * @since 0.0
      */
-    public function checkbox($fieldName, $fieldTitle, array $options = [], array $validators = [], $value = null, $template = 'Field_Checkbox')
+    public function checkbox($fieldName, $fieldTitle, array $options = [], $template = 'Field_Checkbox')
     {
-        return $this->addField($fieldName, $fieldTitle, $options, $validators, $value, $template);
+        return $this->addField($fieldName, $fieldTitle, $options, $template);
     }
 
     /**
@@ -307,8 +295,6 @@ abstract class Ui_Form extends Container
      * @param $fieldName
      * @param $fieldTitle
      * @param array $options
-     * @param array $validators
-     * @param null $value
      * @param string $template
      * @return Ui_Form
      *
@@ -317,9 +303,9 @@ abstract class Ui_Form extends Container
      * @version 0.6
      * @since 0.0
      */
-    public function combobox($fieldName, $fieldTitle, array $options = [], array $validators = [], $value = null, $template = 'Field_Combobox')
+    public function combobox($fieldName, $fieldTitle, array $options = [], $template = 'Field_Combobox')
     {
-        return $this->addField($fieldName, $fieldTitle, $options, $validators, $value, $template);
+        return $this->addField($fieldName, $fieldTitle, $options, $template);
     }
 
     /**
@@ -328,8 +314,6 @@ abstract class Ui_Form extends Container
      * @param $fieldName
      * @param $fieldTitle
      * @param array $options
-     * @param array $validators
-     * @param null $value
      * @param string $template
      * @return Ui_Form
      *
@@ -338,9 +322,9 @@ abstract class Ui_Form extends Container
      * @version 0.6
      * @since 0.0
      */
-    public function geo($fieldName, $fieldTitle, array $options = [], array $validators = [], $value = null, $template = 'Field_Geo')
+    public function geo($fieldName, $fieldTitle, array $options = [], $template = 'Field_Geo')
     {
-        return $this->addField($fieldName, $fieldTitle, $options, $validators, $value, $template);
+        return $this->addField($fieldName, $fieldTitle, $options, $template);
     }
 
     /**
@@ -349,8 +333,6 @@ abstract class Ui_Form extends Container
      * @param $fieldName
      * @param $fieldTitle
      * @param array $options
-     * @param array $validators
-     * @param null $value
      * @param string $template
      * @return Ui_Form
      *
@@ -359,9 +341,9 @@ abstract class Ui_Form extends Container
      * @version 0.6
      * @since 0.0
      */
-    public function textarea($fieldName, $fieldTitle, array $options = [], array $validators = [], $value = null, $template = 'Field_Textarea')
+    public function textarea($fieldName, $fieldTitle, array $options = [], $template = 'Field_Textarea')
     {
-        return $this->addField($fieldName, $fieldTitle, $options, $validators, $value, $template);
+        return $this->addField($fieldName, $fieldTitle, $options, $template);
     }
 
     /**
@@ -397,7 +379,7 @@ abstract class Ui_Form extends Container
             ? $this->getValidateScheme()
             : array_intersect_key($this->getValidateScheme(), array_flip($var));
 
-        return Validator::validateByScheme($this->getValues(), $validateScheme);
+        return Validator::validateByScheme($this->getKey(), $validateScheme);
     }
 
     /**
@@ -431,25 +413,6 @@ abstract class Ui_Form extends Container
     }
 
     /**
-     * Return binded values
-     *
-     * @return array
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function getValues()
-    {
-        $var = $this->getFilterFields();
-
-        return empty($var)
-            ? $this->_values
-            : array_intersect_key($this->_values, array_flip($var));
-    }
-
-    /**
      * Add accepted fields
      *
      * @param array $filterFields
@@ -475,7 +438,11 @@ abstract class Ui_Form extends Container
      */
     public function getKey()
     {
-        return $this->_key;
+        $var = $this->getFilterFields();
+
+        return empty($var)
+            ? $this->_key
+            : array_intersect_key($this->_key, array_flip($var));
     }
 
     protected static function getDefaultClassKey()
