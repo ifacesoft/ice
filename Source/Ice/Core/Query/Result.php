@@ -555,4 +555,22 @@ class Query_Result implements Cacheable
     {
         return $this->_result[Query_Result::FOUND_ROWS];
     }
+//
+//    public function getPagination()
+//    {
+//        $pagination = ['foundRows' => $this->getFoundRows()];
+//
+//        $limit = $this->getQuery()->getBodyParts()[Query_Builder::PART_LIMIT];
+//
+//        if (empty($limit)) {
+//            $pagination['page'] = 1;
+//            $pagination['limit'] = 0;
+//        } else {
+//            list($limit, $offset) = $limit;
+//            $pagination['page'] = $offset ? $offset / $limit + 1 : 1;
+//            $pagination['limit'] = $limit;
+//        }
+//
+//        return $pagination;
+//    }
 }

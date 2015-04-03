@@ -6,10 +6,9 @@ use Ice\Core;
 
 abstract class Ui_Menu extends Container
 {
-    use Ui, Stored;
+    use Ui;
 
     private $items = null;
-    private $_key = null;
 
     private function __construct()
     {
@@ -29,32 +28,6 @@ abstract class Ui_Menu extends Container
     public static function getInstance($key = null, $ttl = null)
     {
         return parent::getInstance($key, $ttl);
-    }
-
-    /**
-     * Create new instance of menu
-     *
-     * @param $key
-     * @return Ui_Menu
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.6
-     * @since 0.1
-     */
-    protected static function create($key)
-    {
-        $class = self::getClass();
-//
-//        if ($key) {
-//            $class .= '_' . $key;
-//        }
-
-        $menu = new $class();
-
-        $menu->_key = $key;
-
-        return $menu;
     }
 
     /**
@@ -97,18 +70,5 @@ abstract class Ui_Menu extends Container
         }
 
         return $this;
-    }
-
-    /**
-     * @param null $name
-     * @return array
-     */
-    public function getKey($name = null)
-    {
-        if ($name) {
-            return isset($this->_key[$name]) ? $this->_key[$name] : null;
-        }
-
-        return $this->_key;
     }
 }

@@ -29,56 +29,81 @@ class Pagination extends Ui_Menu
         }
 
         if (parent::getItems() === null) {
-            $fastStep = 5;
-
+            $page = $this->getKey('page');
+            
             $pageCount = intval($this->foundRows / $this->getKey('limit')) + 1;
 
-            $limit = $this->getKey('page') == $pageCount
+            
+            $limit = $page == $pageCount
                 ? $this->foundRows - ($pageCount - 1) * $this->getKey('limit')
                 : $this->getKey('limit');
 
-            if ($this->getKey('page') > 1) {
-                $this->link('first', 1 . ' &lt;&lt;&lt;');
+            $newPage = 1;
+            if ($page > $newPage) {
+                $this->link('first', $newPage . ' &lt;&lt;&lt;', ['page' => $newPage]);
+                $this->link('leftSep3', ' &hellip; ', ['classes' => ['disabled'], 'style' => 'border: none;']);
             }
 
-            if ($this->getKey('page') - $fastStep >= 1) {
-                $this->link('fastPrev', ($this->getKey('page') - $fastStep) . ' &lt;&lt;');
+            $newPage = $page - 100;
+            if ($newPage >= 1) {
+                $this->link('fastPrev2', $newPage . ' &lt;&lt;', ['page' => $newPage]);
+                $this->link('leftSep2', ' &hellip; ', ['classes' => ['disabled'], 'style' => 'border: none;']);
             }
 
-            if ($this->getKey('page') > 1) {
+            $newPage = $page - 10;
+            if ($newPage >= 1) {
+                $this->link('fastPrev', $newPage . ' &lt;', ['page' => $newPage]);
                 $this->link('leftSep', ' &hellip; ', ['classes' => ['disabled'], 'style' => 'border: none;']);
             }
 
-            if ($this->getKey('page') - 2 >= 1) {
-                $this->link('before2', $this->getKey('page') - 2);
+            $newPage = $page - 3;
+            if ($newPage >= 1) {
+                $this->link('before3', $newPage, ['page' => $newPage]);
             }
 
-            if ($this->getKey('page') - 1 >= 1) {
-//                $this->link('prev', ($this->getKey('page') - 1) . ' &lt;');
-                $this->link('before1', $this->getKey('page') - 1);
+            $newPage = $page - 2;
+            if ($newPage >= 1) {
+                $this->link('before2', $newPage, ['page' => $newPage]);
             }
 
-            $this->link('current', $this->getKey('page') . ' ( ' . $limit . ' / ' . $this->foundRows . ' )', ['classes' => ['active'], 'style' => 'z-index: 0;']);
-
-            if ($this->getKey('page') + 1 <= $pageCount) {
-//                $this->link('next', '&gt; ' . ($this->getKey('page') + 1));
-                $this->link('after1', $this->getKey('page') + 1);
+            $newPage = $page - 1;
+            if ($newPage >= 1) {
+                $this->link('before1', $newPage, ['page' => $newPage]);
             }
 
-            if ($this->getKey('page') + 2 <= $pageCount) {
-                $this->link('after2', $this->getKey('page') + 2);
+            $this->link('current', $page . ' ( ' . $limit . ' / ' . $this->foundRows . ' )', ['page' => $page, 'classes' => ['active'], 'style' => 'z-index: 0;']);
+
+            $newPage = $page + 1;
+            if ($newPage <= $pageCount) {
+                $this->link('after1', $newPage, ['page' => $newPage]);
             }
 
-            if ($this->getKey('page') < $pageCount) {
+            $newPage = $page + 2;
+            if ($newPage <= $pageCount) {
+                $this->link('after2', $newPage, ['page' => $newPage]);
+            }
+
+            $newPage = $page + 3;
+            if ($newPage <= $pageCount) {
+                $this->link('after3', $newPage, ['page' => $newPage]);
+            }
+
+            $newPage = $page + 10;
+            if ($newPage <= $pageCount) {
                 $this->link('rightSep', ' &hellip; ', ['classes' => ['disabled'], 'style' => 'border: none;']);
+                $this->link('fastNext', '&gt; ' . $newPage, ['page' => $newPage]);
             }
 
-            if ($this->getKey('page') + $fastStep <= $pageCount) {
-                $this->link('fastNext', '&gt;&gt; ' . ($this->getKey('page') + $fastStep));
+            $newPage = $page + 100;
+            if ($newPage <= $pageCount) {
+                $this->link('rightSep2', ' &hellip; ', ['classes' => ['disabled'], 'style' => 'border: none;']);
+                $this->link('fastNext2', '&gt;&gt; ' . $newPage, ['page' => $newPage]);
             }
 
-            if ($this->getKey('page') < $pageCount) {
-                $this->link('last', '&gt;&gt;&gt; ' . $pageCount);
+            $newPage = $page;
+            if ($newPage < $pageCount) {
+                $this->link('rightSep3', ' &hellip; ', ['classes' => ['disabled'], 'style' => 'border: none;']);
+                $this->link('last', '&gt;&gt;&gt; ' . $pageCount, ['page' => $newPage]);
             }
         }
 

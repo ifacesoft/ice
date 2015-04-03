@@ -67,18 +67,16 @@ class Json
      * Encode data to json string
      *
      * @param mixed $data
-     * @param bool $isPretty
+     * @param int $options
      * @return string
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.6
      * @since 0.0
      */
-    public static function encode($data, $isPretty = false)
+    public static function encode($data, $options = JSON_UNESCAPED_UNICODE)
     {
-        return $isPretty
-            ? json_encode($data, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT)
-            : json_encode($data, JSON_UNESCAPED_UNICODE);
+        return json_encode($data, $options);
     }
 }

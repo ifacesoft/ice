@@ -2,8 +2,8 @@
 namespace Ice\Action;
 
 use Ice\Core\Action;
-use Ice\Core\Debuger;
 use Ice\Core\Ui_Menu;
+use Ice\Helper\Json;
 use Ice\View\Render\Php;
 
 /**
@@ -82,8 +82,16 @@ class Menu extends Action
         $items = [];
 
         foreach ($menu->getItems() as $name => $item) {
+            $page = isset($item['options']['page'])
+                ? $item['options']['page'] : 0;
+
             $item['name'] = $name;
             $item['menuName'] = $menuName;
+            $item['href'] = $menu->getUrl();
+            $item['dataJson'] = Json::encode($menu->getParams());
+            $item['dataAction'] = $menu->getAction();
+            $item['dataBlock'] = $menu->getBlock();
+            $item['onclick'] = 'Ice_Action_Menu.click($(this), ' . $page . '); return false;';
 
             $items[] = Php::getInstance()->fetch($menuClass . '_' . $item['template'], $item);
         }

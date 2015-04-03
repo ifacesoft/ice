@@ -144,6 +144,8 @@ class Data extends Action
             $this->addAction(['Ice:Menu' => 'pagination', ['menu' => $data->getPaginationMenu()]]);
         }
 
+        Core\Debuger::dump($data);
+
         return [
             'title' => $data->getTitle(),
             'desc' => $data->getDesc(),

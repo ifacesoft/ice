@@ -7,7 +7,7 @@ use Ice\Ui\Menu\Pagination;
 
 abstract class Ui_Data extends Container
 {
-    use Ui, Stored;
+    use Ui;
 
     /**
      * Not ignored fields
@@ -37,8 +37,6 @@ abstract class Ui_Data extends Container
      */
     private $paginationMenu = null;
 
-    private $_key = null;
-
     private function __construct()
     {
     }
@@ -59,34 +57,6 @@ abstract class Ui_Data extends Container
         return parent::getInstance($key, $ttl);
     }
 
-    /**
-     * Create new instance of data
-     *
-     * @param $key
-     * @return Ui_Data
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.6
-     * @since 0.2
-     */
-    protected static function create($key)
-    {
-        /** @var Ui_Data $class */
-        $class = self::getClass();
-//
-//        if ($key) {
-//            $class .= '_' . $key;
-//        }
-
-        /** @var Ui_Data $class */
-        $data = new $class();
-
-        $data->_key = $key;
-
-        return $data;
-    }
-
     protected static function getDefaultClassKey()
     {
         return 'Ice:Table';
@@ -98,19 +68,11 @@ abstract class Ui_Data extends Container
     }
 
     /**
-     * @param Query_Result|array $rows
+     * @param array $rows
      * @return $this
      */
-    public function bind($rows)
+    public function bind(array $rows)
     {
-        if ($rows instanceof Query_Result) {
-            if ($this->paginationMenu) {
-                $this->paginationMenu->setFoundRows($rows->getFoundRows());
-            }
-
-            $rows = $rows->getRows();
-        }
-
         $this->rows = $rows;
 
         return $this;
@@ -130,14 +92,6 @@ abstract class Ui_Data extends Container
     public function getRows()
     {
         return $this->rows;
-    }
-
-    /**
-     * @return Ui_Data
-     */
-    public function getKey()
-    {
-        return $this->_key;
     }
 
     /**
@@ -311,6 +265,9 @@ abstract class Ui_Data extends Container
     public function setFilterForm(Ui_Form $filter)
     {
         $this->filterForm = $filter;
+
+        $this->updateParams();
+
         return $this;
     }
 
@@ -324,26 +281,55 @@ abstract class Ui_Data extends Container
 
     /**
      * @param Pagination $paginationMenu
+     * @param $foundRows
      * @return Ui_Data
      */
-    public function setPaginationMenu(Pagination $paginationMenu)
+    public function setPaginationMenu(Pagination $paginationMenu, $foundRows)
     {
+        $paginationMenu->setFoundRows($foundRows);
         $this->paginationMenu = $paginationMenu;
+
+        $this->updateParams();
+
         return $this;
     }
 
-    public function getParams()
+    private function updateParams()
     {
-        $params = $this->getKey();
-
-        if ($this->filterForm) {
-            $params += $this->filterForm->getKey();
-        }
+        $params = [];
 
         if ($this->paginationMenu) {
-            $params += $this->paginationMenu->getKey();
+            foreach ($this->paginationMenu->getKey() as $key => $value) {
+                if ($value !== null) {
+                    $params[$key] = $value;
+                }
+            }
         }
 
-        return $params;
+        if ($this->filterForm) {
+            foreach ($this->filterForm->getKey() as $key => $value) {
+                if ($value !== null) {
+                    $params[$key] = $value;
+                }
+            }
+        }
+
+        foreach ($this->getKey() as $key => $value) {
+            if ($value !== null) {
+                $params[$key] = isset($params[$key])
+                    ? $params[$key] . '/' . $value
+                    : $value;
+            }
+        }
+
+        $this->setParams($params);
+
+        if ($this->paginationMenu) {
+            $this->paginationMenu->setParams($params);
+        }
+
+        if ($this->filterForm) {
+            $this->filterForm->setParams($params);
+        }
     }
 }

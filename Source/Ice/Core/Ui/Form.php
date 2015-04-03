@@ -27,7 +27,7 @@ use Ice\Helper\Arrays;
  */
 abstract class Ui_Form extends Container
 {
-    use Ui, Stored;
+    use Ui;
 
     /**
      * Fields - form parts
@@ -56,8 +56,6 @@ abstract class Ui_Form extends Container
         'disabled' => false,
         'readonly' => false
     ];
-
-    private $_key = [];
 
     /**
      * Constructor for model forms
