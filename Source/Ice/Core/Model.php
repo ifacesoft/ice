@@ -815,8 +815,7 @@ abstract class Model
     /**
      * Return model by custom field
      *
-     * @param $fieldName
-     * @param $fieldValue
+     * @param array $fieldValueNames
      * @param $fieldNames
      * @param string|null $dataSourceKey
      * @param int $ttl
@@ -824,13 +823,13 @@ abstract class Model
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.4
+     * @version 0.6
      * @since 0.0
      */
-    public static function getModelBy($fieldName, $fieldValue, $fieldNames, $dataSourceKey = null, $ttl = null)
+    public static function getModelBy(array $fieldValueNames, $fieldNames, $dataSourceKey = null, $ttl = null)
     {
         return Query::getBuilder(self::getClass())
-            ->eq([$fieldName => $fieldValue])
+            ->eq($fieldValueNames)
             ->limit(1)
             ->select($fieldNames, [], $dataSourceKey)
             ->getModel($ttl);
@@ -1069,6 +1068,7 @@ abstract class Model
 
         $insertId = Query::getBuilder($modelClass)
             ->insert($affected, $isSmart, $dataSourceKey)
+            ->execute()
             ->getInsertId();
 
         $this->set(reset($insertId));

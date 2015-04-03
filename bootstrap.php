@@ -4,10 +4,14 @@ if (!defined('ICE_BOOTSTRAP')) {
 
     if (!defined('MODULE_DIR')) {
         $moduleDir = php_sapi_name() == 'cli'
-            ? getcwd()
+            ? dirname(realpath($argv[0]))
             : dirname(dirname($_SERVER['SCRIPT_FILENAME']));
 
         define('MODULE_DIR', $moduleDir . '/');
+    }
+
+    if (!defined('VENDOR_DIR')) {
+        define('VENDOR_DIR', dirname(MODULE_DIR) . '/_vendor/');
     }
 
     if (!defined('ICE_DIR')) {

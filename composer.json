@@ -12,7 +12,7 @@
     }
   ],
   "config": {
-    "vendor-dir": "../_vendor/Ice"
+    "vendor-dir": "../_vendor"
   },
   "autoload": {
     "psr-4": {"Ice\\": "Source/Ice/"},
@@ -23,7 +23,8 @@
   "require": {
     "php": ">=5.4.0",
     "twig/twig": "1.*",
-    "smarty/smarty": "3.1.*"
+    "smarty/smarty": "3.1.*",
+    "michelf/php-markdown": "1.5.0"
   },
   "require-dev": {
     "firephp/firephp-core": "dev-master",
