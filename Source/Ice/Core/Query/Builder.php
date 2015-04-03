@@ -276,45 +276,6 @@ class Query_Builder
     }
 
     /**
-     * Return couple fieldName and fieldAlias
-     *
-     * @param string|array $fieldNameAlias
-     * @param Model $modelClass
-     * @return array
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.6
-     * @since 0.6
-     */
-    private function getFieldNameAlias($fieldNameAlias, $modelClass)
-    {
-        if (empty($fieldNameAlias)) {
-            $fieldName = null;
-            $fieldAlias = null;
-        } else {
-            $fieldNameAlias = (array)$fieldNameAlias;
-
-            if (count($fieldNameAlias) > 1) {
-                $fieldNameAlias = [array_shift($fieldNameAlias) => array_shift($fieldNameAlias)];
-            }
-
-            list($fieldName, $fieldAlias) = each($fieldNameAlias);
-
-            if (is_int($fieldName)) {
-                $fieldName = $fieldAlias;
-                $fieldAlias = null;
-            }
-        }
-
-        if (!$fieldName || $fieldName == '/pk') {
-            $fieldName = $modelClass::getScheme()->getPkFieldNames();
-        }
-
-        return [$fieldName, $fieldAlias];
-    }
-
-    /**
      * Check for model class and table alias
      *
      * @param $modelTableData
@@ -405,21 +366,6 @@ class Query_Builder
     }
 
     /**
-     * Return table alias for model class for query
-     *
-     * @return Model
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function getTableAlias()
-    {
-        return $this->_tableAlias;
-    }
-
-    /**
      * Set in query part where expression 'IS NULL'
      *
      * @param $fieldName
@@ -506,30 +452,6 @@ class Query_Builder
             $sqlLogical,
             $fieldNameValues,
             Query_Builder::SQL_COMPARISON_OPERATOR_EQUAL,
-            $modelTableData
-        );
-    }
-
-    /**
-     * Set in query part where expression 'in (?)'
-     *
-     * @param $fieldName
-     * @param array $fieldValue
-     * @param array $modelTableData
-     * @param string $sqlLogical
-     * @return Query_Builder
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.6
-     * @since 0.0
-     */
-    public function in($fieldName, array $fieldValue, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
-    {
-        return $this->where(
-            $sqlLogical,
-            [$fieldName => $fieldValue],
-            Query_Builder::SQL_COMPARISON_KEYWORD_IN,
             $modelTableData
         );
     }
@@ -846,88 +768,6 @@ class Query_Builder
     }
 
     /**
-     * @param $joinType
-     * @param Model $modelClass
-     * @param $tableAlias
-     * @param Model $joinModelClass
-     * @param $joinTableAlias
-     * @return bool
-     */
-    private function addJoin($joinType, $modelClass, $tableAlias, $joinModelClass, $joinTableAlias)
-    {
-        if (isset($this->_sqlParts[self::PART_JOIN][$tableAlias])) {
-            return false;
-        }
-
-        $joinModelScheme = $joinModelClass::getScheme();
-
-        $oneToMany = $joinModelScheme->gets(Model_Scheme::ONE_TO_MANY);
-
-        if (isset($oneToMany[$modelClass])) {
-            $this->_sqlParts[self::PART_JOIN][$tableAlias] = [
-                'type' => $joinType,
-                'class' => $modelClass,
-                'on' => $joinTableAlias . '.' . $oneToMany[$modelClass] . ' = ' . $tableAlias . '.' . $modelClass::getPkColumnName()
-            ];
-
-            return true;
-        }
-
-        $manyToOne = $joinModelScheme->gets(Model_Scheme::MANY_TO_ONE);
-
-        if (isset($manyToOne[$modelClass])) {
-            $this->_sqlParts[self::PART_JOIN][$tableAlias] = [
-                'type' => $joinType,
-                'class' => $modelClass,
-                'on' => $tableAlias . '.' . $manyToOne[$modelClass] . ' = ' . $joinTableAlias . '.' . $joinModelClass::getPkColumnName()
-            ];
-
-            return true;
-        }
-
-        $manyToMany = $joinModelScheme->gets(Model_Scheme::MANY_TO_MANY);
-
-        if (isset($manyToMany[$modelClass])) {
-            return $this->addJoin($joinType, $manyToMany[$modelClass], Object::getName($manyToMany[$modelClass]), $joinModelClass, $joinTableAlias) &&
-                $this->addJoin($joinType, $modelClass, $tableAlias, $manyToMany[$modelClass], Object::getName($manyToMany[$modelClass]));
-        }
-
-        $joinFieldNames = $joinModelClass::getScheme()->getFieldColumnMap();
-
-        $joinModelName = Object::getName($joinModelClass);
-
-        $joinModelNameFk = strtolower($joinModelName . '__fk');
-        $joinModelNamePk = strtolower($joinModelName) . '_pk';
-
-        if (in_array($joinModelNameFk, $modelClass::getScheme()->getFieldNames())) {
-            $this->_sqlParts[self::PART_JOIN][$tableAlias] = [
-                'type' => $joinType,
-                'class' => $modelClass,
-                'on' => $tableAlias . '.' . $modelClass::getScheme()->getFieldColumnMap()[$joinModelNameFk] . ' = ' . $joinTableAlias . '.' . $joinFieldNames[$joinModelNamePk]
-            ];
-
-            return true;
-        }
-
-        $modelName = Object::getName($modelClass);
-
-        $modelNameFk = strtolower($modelName . '__fk');
-        $modelNamePk = strtolower($modelName) . '_pk';
-
-        if (in_array($modelNameFk, $joinModelScheme->getFieldNames())) {
-            $this->_sqlParts[self::PART_JOIN][$tableAlias] = [
-                'type' => $joinType,
-                'class' => $modelClass,
-                'on' => $tableAlias . '.' . $joinModelScheme->getFieldColumnMap()[$modelNamePk] . ' = ' . $joinTableAlias . '.' . $joinFieldNames[$modelNameFk]
-            ];
-
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
      * Set  *join query part
      *
      * @param $joinType
@@ -973,6 +813,103 @@ class Query_Builder
         ];
 
         return $this;
+    }
+
+    /**
+     * Return table alias for model class for query
+     *
+     * @return Model
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since 0.0
+     */
+    public function getTableAlias()
+    {
+        return $this->_tableAlias;
+    }
+
+    /**
+     * @param $joinType
+     * @param Model $modelClass
+     * @param $tableAlias
+     * @param Model $joinModelClass
+     * @param $joinTableAlias
+     * @return bool
+     */
+    private function addJoin($joinType, $modelClass, $tableAlias, $joinModelClass, $joinTableAlias)
+    {
+        if (isset($this->_sqlParts[self::PART_JOIN][$tableAlias])) {
+            return false;
+        }
+
+        $joinModelScheme = $joinModelClass::getScheme();
+
+        $oneToMany = $joinModelScheme->gets(Model_Scheme::ONE_TO_MANY);
+
+        if (isset($oneToMany[$modelClass])) {
+            $this->_sqlParts[self::PART_JOIN][$tableAlias] = [
+                'type' => $joinType,
+                'class' => $modelClass,
+                'on' => $joinTableAlias . '.' . $oneToMany[$modelClass] . ' = ' . $tableAlias . '.' . $modelClass::getPkColumnName()
+            ];
+
+            return true;
+        }
+
+        $manyToOne = $joinModelScheme->gets(Model_Scheme::MANY_TO_ONE);
+
+        if (isset($manyToOne[$modelClass])) {
+            $this->_sqlParts[self::PART_JOIN][$tableAlias] = [
+                'type' => $joinType,
+                'class' => $modelClass,
+                'on' => $tableAlias . '.' . $manyToOne[$modelClass] . ' = ' . $joinTableAlias . '.' . $joinModelClass::getPkColumnName()
+            ];
+
+            return true;
+        }
+
+        $manyToMany = $joinModelScheme->gets(Model_Scheme::MANY_TO_MANY);
+
+        if (isset($manyToMany[$modelClass])) {
+            return $this->addJoin($joinType, $manyToMany[$modelClass], Object::getName($manyToMany[$modelClass]), $joinModelClass, $joinTableAlias) &&
+            $this->addJoin($joinType, $modelClass, $tableAlias, $manyToMany[$modelClass], Object::getName($manyToMany[$modelClass]));
+        }
+
+        $joinFieldNames = $joinModelClass::getScheme()->getFieldColumnMap();
+
+        $joinModelName = Object::getName($joinModelClass);
+
+        $joinModelNameFk = strtolower($joinModelName . '__fk');
+        $joinModelNamePk = strtolower($joinModelName) . '_pk';
+
+        if (in_array($joinModelNameFk, $modelClass::getScheme()->getFieldNames())) {
+            $this->_sqlParts[self::PART_JOIN][$tableAlias] = [
+                'type' => $joinType,
+                'class' => $modelClass,
+                'on' => $tableAlias . '.' . $modelClass::getScheme()->getFieldColumnMap()[$joinModelNameFk] . ' = ' . $joinTableAlias . '.' . $joinFieldNames[$joinModelNamePk]
+            ];
+
+            return true;
+        }
+
+        $modelName = Object::getName($modelClass);
+
+        $modelNameFk = strtolower($modelName . '__fk');
+        $modelNamePk = strtolower($modelName) . '_pk';
+
+        if (in_array($modelNameFk, $joinModelScheme->getFieldNames())) {
+            $this->_sqlParts[self::PART_JOIN][$tableAlias] = [
+                'type' => $joinType,
+                'class' => $modelClass,
+                'on' => $tableAlias . '.' . $joinModelScheme->getFieldColumnMap()[$modelNamePk] . ' = ' . $joinTableAlias . '.' . $joinFieldNames[$modelNameFk]
+            ];
+
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -1192,7 +1129,7 @@ class Query_Builder
 
             $this->_bindParts[$part] = [[]];
 
-            return $this->getQuery($dataSourceKey)->execute($ttl);
+            return $this->getQuery($dataSourceKey)->getQueryResult($ttl);
         }
 
         if (!is_array(reset($data))) {
@@ -1217,7 +1154,7 @@ class Query_Builder
 
         $this->_bindParts[$part] = array_merge($this->_bindParts[$part], $data);
 
-        return $this->getQuery($dataSourceKey);
+        return $this->getQuery($dataSourceKey)->getQueryResult($ttl);
     }
 
     /**
@@ -1259,7 +1196,7 @@ class Query_Builder
 
         $this->inPk((array)$pkValues);
 
-        return $this->getQuery($dataSourceKey);
+        return $this->getQuery($dataSourceKey)->getQueryResult($ttl);
     }
 
     /**
@@ -1293,6 +1230,30 @@ class Query_Builder
     }
 
     /**
+     * Set in query part where expression 'in (?)'
+     *
+     * @param $fieldName
+     * @param array $fieldValue
+     * @param array $modelTableData
+     * @param string $sqlLogical
+     * @return Query_Builder
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.6
+     * @since 0.0
+     */
+    public function in($fieldName, array $fieldValue, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
+    {
+        return $this->where(
+            $sqlLogical,
+            [$fieldName => $fieldValue],
+            Query_Builder::SQL_COMPARISON_KEYWORD_IN,
+            $modelTableData
+        );
+    }
+
+    /**
      * Set flag of get count rows
      *
      * @param array $fieldNameAlias
@@ -1313,7 +1274,7 @@ class Query_Builder
 
         $fieldColumnMap = $modelClass::getScheme()->getFieldColumnMap();
 
-        foreach ((array) $fieldName as $name) {
+        foreach ((array)$fieldName as $name) {
             $name = $fieldColumnMap[$name];
 
             $fieldNames[] = '`' . $tableAlias . '`.`' . $modelClass::getFieldName($name) . '`';
@@ -1327,6 +1288,45 @@ class Query_Builder
         $this->_select('count(' . implode(',', $fieldNames) . ')', $fieldAlias, [$modelClass => '']);
 
         return $this;
+    }
+
+    /**
+     * Return couple fieldName and fieldAlias
+     *
+     * @param string|array $fieldNameAlias
+     * @param Model $modelClass
+     * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.6
+     * @since 0.6
+     */
+    private function getFieldNameAlias($fieldNameAlias, $modelClass)
+    {
+        if (empty($fieldNameAlias)) {
+            $fieldName = null;
+            $fieldAlias = null;
+        } else {
+            $fieldNameAlias = (array)$fieldNameAlias;
+
+            if (count($fieldNameAlias) > 1) {
+                $fieldNameAlias = [array_shift($fieldNameAlias) => array_shift($fieldNameAlias)];
+            }
+
+            list($fieldName, $fieldAlias) = each($fieldNameAlias);
+
+            if (is_int($fieldName)) {
+                $fieldName = $fieldAlias;
+                $fieldAlias = null;
+            }
+        }
+
+        if (!$fieldName || $fieldName == '/pk') {
+            $fieldName = $modelClass::getScheme()->getPkFieldNames();
+        }
+
+        return [$fieldName, $fieldAlias];
     }
 
     /**
@@ -1451,19 +1451,19 @@ class Query_Builder
     /**
      * Set Limits and offset by page and limit
      *
-     * @param array $paginator
+     * @param array $pagination
      * @return Query_Builder
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.2
+     * @version 0.6
      * @since 0.0
      */
-    public function setPaginator(array $paginator)
+    public function setPagination(array $pagination)
     {
-        list($page, $limit) = $paginator;
+        $page = isset($pagination['page']) ? $pagination['page'] : 1;
+        $limit = isset($pagination['limit']) ? $pagination['limit'] : 1000;
 
-        return $this->calcFoundRows()
-            ->limit($limit, ($page - 1) * $limit);
+        return $this->calcFoundRows()->limit($limit, ($page - 1) * $limit);
     }
 
     /**
@@ -1522,7 +1522,7 @@ class Query_Builder
         }
 
         $this->_queryType = Query_Builder::TYPE_CREATE;
-        return $this->getQuery($dataSourceKey)->execute($ttl);
+        return $this->getQuery($dataSourceKey)->getQueryResult($ttl);
     }
 
     /**
@@ -1568,7 +1568,7 @@ class Query_Builder
     {
         $this->_queryType = Query_Builder::TYPE_DROP;
         $this->_sqlParts[self::PART_DROP]['_drop'] = $this->_modelClass;
-        return $this->getQuery($dataSourceKey)->execute($ttl);
+        return $this->getQuery($dataSourceKey)->getQueryResult($ttl);
     }
 
     /**
@@ -1615,6 +1615,12 @@ class Query_Builder
         return $this->addTrigger('afterSelect', $method, $params);
     }
 
+    private function addTrigger($type, $method, $params)
+    {
+        $this->_triggers[$type][] = [$method, $params];
+        return $this;
+    }
+
     public function beforeSelect($method, $params = null)
     {
         return $this->addTrigger('beforeSelect', $method, $params);
@@ -1648,11 +1654,5 @@ class Query_Builder
     public function beforeDelete($method, $params = null)
     {
         return $this->addTrigger('beforeDelete', $method, $params);
-    }
-
-    private function addTrigger($type, $method, $params)
-    {
-        $this->_triggers[$type][] = [$method, $params];
-        return $this;
     }
 }

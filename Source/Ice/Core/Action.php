@@ -563,10 +563,10 @@ $action = null;
             $params = [];
 
             if (is_string($action)) {
-                $action = [$key => $action];
+                $action = [$action => $key];
             }
 
-            list($key, $class) = each($action);
+            list($class, $key) = each($action);
 
             if (count($action) > 1) {
                 $params = current($action);

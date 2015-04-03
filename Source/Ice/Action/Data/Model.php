@@ -112,7 +112,7 @@ class Data_Model extends Action
         ]);
 
         $queryResult = Query::getBuilder($modelClass)
-            ->setPaginator([$input['page'], $input['limit']])
+            ->setPagination([$input['page'], $input['limit']])
             ->desc('/pk')
             ->select('*');
 

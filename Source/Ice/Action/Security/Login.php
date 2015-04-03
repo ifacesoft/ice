@@ -75,7 +75,7 @@ class Security_Login extends Action
 
         $this->addAction(
             'Ice:Form', [
-                'form' => Form_Security_Login::getInstance($input['security']),
+                'form' => Ui_Form_Security_Login::getInstance($input['security']),
                 'submitTitle' => $resource->get('Login'),
                 'redirect' => $input['redirect']
             ]

@@ -51,11 +51,11 @@ return [
                 'config' => 'Ice:Repository/config',
                 'route' => 'Ice:Repository/config',
             ],
-            'Ice\Core\Form' => [
-                'instance' => 'Ice:Repository/form',
+            'Ice\Core\Ui_Form' => [
+                'instance' => 'Ice:Repository/ui_form',
             ],
-            'Ice\Core\Menu' => [
-                'instance' => 'Ice:Repository/menu',
+            'Ice\Core\Ui_Menu' => [
+                'instance' => 'Ice:Repository/ui_menu',
             ],
             'Ice\Core\Ui_Data' => [
                 'instance' => 'Ice:Repository/ui_data',
@@ -140,11 +140,11 @@ return [
                 'config' => 'Ice:Registry/config',
                 'route' => 'Ice:Registry/config',
             ],
-            'Ice\Core\Form' => [
-                'instance' => 'Ice:Registry/form',
+            'Ice\Core\Ui_Form' => [
+                'instance' => 'Ice:Registry/ui_form',
             ],
-            'Ice\Core\Menu' => [
-                'instance' => 'Ice:Registry/menu',
+            'Ice\Core\Ui_Menu' => [
+                'instance' => 'Ice:Registry/ui_menu',
             ],
             'Ice\Core\Ui_Data' => [
                 'instance' => 'Ice:Registry/ui_data',

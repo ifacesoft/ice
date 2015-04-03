@@ -87,12 +87,6 @@ class Query
      */
     private $_bindHash = null;
 
-    /**
-     * Page, perpage and totalCount
-     *
-     * @var array
-     */
-    private $_pagination = null;
     private $_triggers;
 
     /**
@@ -139,42 +133,6 @@ class Query
         $query->_triggers = $triggers;
 
         return $query;
-    }
-
-    /**
-     * @return array
-     */
-    public function getPagination()
-    {
-        return $this->_pagination;
-    }
-
-    /**
-     * @param $foundRows
-     */
-    public function setPagination($foundRows)
-    {
-        $limit = $this->getLimit();
-
-        if (!empty($limit)) {
-            list($limit, $offset) = $limit;
-            $this->_pagination = [$offset ? $offset / $limit + 1 : 1, $limit, $foundRows];
-        }
-    }
-
-    /**
-     * Return query limits
-     *
-     * @return array
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since 0.0
-     */
-    public function getLimit()
-    {
-        return $this->_bodyParts[Query_Builder::PART_LIMIT];
     }
 
     /**
@@ -363,7 +321,7 @@ class Query
      * @version 0.4
      * @since 0.4
      */
-    public function execute($ttl = null)
+    public function getQueryResult($ttl = null)
     {
         return $this->getDataSource()->execute($this, $ttl);
     }
@@ -430,7 +388,7 @@ class Query
      */
     public function getModelCollection($ttl = null)
     {
-        $queryResult = $this->execute($ttl);
+        $queryResult = $this->getQueryResult($ttl);
 
         return Model_Collection::create($queryResult->getModelClass(), $queryResult->getRows(), $queryResult->getQuery());
     }
@@ -448,7 +406,7 @@ class Query
      */
     public function getRows($ttl = null)
     {
-        return $this->execute($ttl)->getRows();
+        return $this->getQueryResult($ttl)->getRows();
     }
 
     /**

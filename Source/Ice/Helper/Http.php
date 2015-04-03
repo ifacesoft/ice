@@ -1,15 +1,7 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: dp
- * Date: 1/26/15
- * Time: 3:24 PM
- */
-
 namespace Ice\Helper;
 
-
-use Ice\Core\Request;
+use Ice\Core\Request as Core_Request;
 
 class Http
 {
@@ -139,7 +131,7 @@ class Http
      */
     public static function getContents($url)
     {
-        if (Request::isCli()) {
+        if (Core_Request::isCli()) {
             fwrite(STDOUT, Console::getText($url, Console::C_GREEN_B) . "\n");
         }
 

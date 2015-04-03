@@ -3,10 +3,11 @@
 namespace Ice\Core;
 
 use Ice\Core;
+use Ice\Ui\Menu\Pagination;
 
 abstract class Ui_Data extends Container
 {
-    use Stored;
+    use Ui;
 
     /**
      * Not ignored fields
@@ -22,7 +23,19 @@ abstract class Ui_Data extends Container
     private $_rowHeaderTemplate = 'Row_Header';
     private $_rowDataTemplate = 'Row_Data';
 
-    private $key = null;
+    /**
+     * Filter form
+     *
+     * @var Ui_Form
+     */
+    private $filterForm = null;
+
+    /**
+     * Pagination menu
+     *
+     * @var Pagination
+     */
+    private $paginationMenu = null;
 
     private function __construct()
     {
@@ -44,32 +57,6 @@ abstract class Ui_Data extends Container
         return parent::getInstance($key, $ttl);
     }
 
-    /**
-     * Create new instance of data
-     *
-     * @param $key
-     * @return Ui_Data
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.6
-     * @since 0.2
-     */
-    protected static function create($key)
-    {
-        $class = self::getClass();
-//
-//        if ($key) {
-//            $class .= '_' . $key;
-//        }
-
-        $data = new $class();
-
-        $data->key = $key;
-
-        return $data;
-    }
-
     protected static function getDefaultClassKey()
     {
         return 'Ice:Table';
@@ -80,9 +67,14 @@ abstract class Ui_Data extends Container
         return 'default';
     }
 
+    /**
+     * @param array $rows
+     * @return $this
+     */
     public function bind(array $rows)
     {
         $this->rows = $rows;
+
         return $this;
     }
 
@@ -103,14 +95,6 @@ abstract class Ui_Data extends Container
     }
 
     /**
-     * @return Ui_Data
-     */
-    public function getKey()
-    {
-        return $this->key;
-    }
-
-    /**
      * Build column part
      *
      * @param $columnName
@@ -121,14 +105,13 @@ abstract class Ui_Data extends Container
      */
     public function text($columnName, $columnTitle, $options = null, $template = 'Column_Column')
     {
-        return $this->addColumn($columnName, 'column', $columnTitle, $options, $template);
+        return $this->addColumn($columnName, $columnTitle, $options, $template);
     }
 
-    protected function addColumn($columnName, $columnType, $columnTitle, $options, $template)
+    protected function addColumn($columnName, $columnTitle, $options, $template)
     {
         $this->columns[] = [
             'name' => $columnName,
-            'type' => $columnType,
             'title' => $columnTitle,
             'options' => $options,
             'template' => $template
@@ -141,7 +124,7 @@ abstract class Ui_Data extends Container
      * Add accepted fields
      *
      * @param array $filterFields
-     * @return Form
+     * @return Ui_Data
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
@@ -169,7 +152,7 @@ abstract class Ui_Data extends Container
      */
     public function link($columnName, $columnTitle, $options = null, $template = 'Column_Link')
     {
-        return $this->addColumn($columnName, 'link', $columnTitle, $options, $template);
+        return $this->addColumn($columnName, $columnTitle, $options, $template);
     }
 
     /**
@@ -183,7 +166,7 @@ abstract class Ui_Data extends Container
      */
     public function button($columnName, $columnTitle, $options = null, $template = 'Column_Button')
     {
-        return $this->addColumn($columnName, 'button', $columnTitle, $options, $template);
+        return $this->addColumn($columnName, $columnTitle, $options, $template);
     }
 
     /**
@@ -194,7 +177,8 @@ abstract class Ui_Data extends Container
         return $this->_filterFields;
     }
 
-    public static function schemeColumnPlugin($columnName, $table) {
+    public static function schemeColumnPlugin($columnName, $table)
+    {
         return 'text';
     }
 
@@ -264,5 +248,88 @@ abstract class Ui_Data extends Container
     {
         $this->_desc = $desc;
         return $this;
+    }
+
+    /**
+     * @return Ui_Form
+     */
+    public function getFilterForm()
+    {
+        return $this->filterForm;
+    }
+
+    /**
+     * @param Ui_Form $filter
+     * @return Ui_Data
+     */
+    public function setFilterForm(Ui_Form $filter)
+    {
+        $this->filterForm = $filter;
+
+        $this->updateParams();
+
+        return $this;
+    }
+
+    /**
+     * @return Pagination
+     */
+    public function getPaginationMenu()
+    {
+        return $this->paginationMenu;
+    }
+
+    /**
+     * @param Pagination $paginationMenu
+     * @param $foundRows
+     * @return Ui_Data
+     */
+    public function setPaginationMenu(Pagination $paginationMenu, $foundRows)
+    {
+        $paginationMenu->setFoundRows($foundRows);
+        $this->paginationMenu = $paginationMenu;
+
+        $this->updateParams();
+
+        return $this;
+    }
+
+    private function updateParams()
+    {
+        $params = [];
+
+        if ($this->paginationMenu) {
+            foreach ($this->paginationMenu->getKey() as $key => $value) {
+                if ($value !== null) {
+                    $params[$key] = $value;
+                }
+            }
+        }
+
+        if ($this->filterForm) {
+            foreach ($this->filterForm->getKey() as $key => $value) {
+                if ($value !== null) {
+                    $params[$key] = $value;
+                }
+            }
+        }
+
+        foreach ($this->getKey() as $key => $value) {
+            if ($value !== null) {
+                $params[$key] = isset($params[$key])
+                    ? $params[$key] . '/' . $value
+                    : $value;
+            }
+        }
+
+        $this->setParams($params);
+
+        if ($this->paginationMenu) {
+            $this->paginationMenu->setParams($params);
+        }
+
+        if ($this->filterForm) {
+            $this->filterForm->setParams($params);
+        }
     }
 }

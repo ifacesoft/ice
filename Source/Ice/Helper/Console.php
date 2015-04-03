@@ -11,7 +11,7 @@ namespace Ice\Helper;
 
 use Ice\Core;
 use Ice\Core\Logger as Core_Logger;
-use Ice\Core\Request;
+use Ice\Core\Request as Core_Request;
 use Ice\Core\Resource;
 use Ice\Core\Validator as Core_Validator;
 
@@ -190,7 +190,7 @@ class Console
             $commandString .= ' > /dev/null 2>&1';
         }
 
-        if (Request::isCli()) {
+        if (Core_Request::isCli()) {
             fwrite(STDOUT, Console::getText($commandString, Console::C_GREEN_B) . "\n");
         };
 

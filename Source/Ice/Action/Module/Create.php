@@ -373,7 +373,7 @@ class Module_Create extends Action
             unset($composer['homepage']);
             unset($composer['license']);
 
-            File::createData($moduleDir . 'composer.json', Json::encode($composer, true), false);
+            File::createData($moduleDir . 'composer.json', Json::encode($composer, JSON_PRETTY_PRINT), false);
 
             Directory::get(ROOT_DIR . '_log/' . $moduleName);
         } else {

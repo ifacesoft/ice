@@ -11,7 +11,7 @@ namespace Ice\Core;
 
 use Ice\Core;
 use Ice\Ui_Data\Model as Data_Model;
-use Ice\Form\Model as Form_Model;
+use Ice\Form\Model as Ui_Form_Model;
 use Ice\Helper\Json;
 use Ice\Helper\Model as Helper_Model;
 use Ice\Helper\Object;
@@ -663,7 +663,7 @@ abstract class Model
     public static function getRows(array $pagination, $fieldNames = '*', $dataSourceKey = null, $ttl = null)
     {
         return Query::getBuilder(self::getClass())
-            ->setPaginator($pagination)
+            ->setPagination($pagination)
             ->select($fieldNames, null, [], $dataSourceKey, $ttl)
             ->getRows();
     }
@@ -684,7 +684,7 @@ abstract class Model
     public static function getCollection($fieldNames, array $pagination = [1, 1000, 0], $dataSourceKey = null, $ttl = null)
     {
         return Query::getBuilder(self::getClass())
-            ->setPaginator($pagination)
+            ->setPagination($pagination)
             ->select($fieldNames, null, [], $dataSourceKey, $ttl)
             ->getModelCollection();
     }
@@ -784,7 +784,7 @@ abstract class Model
      * Return form of self model class
      *
      * @param array $filterFields
-     * @return Form_Model
+     * @return Ui_Form_Model
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
@@ -793,7 +793,7 @@ abstract class Model
      */
     public static function getForm(array $filterFields = [])
     {
-        return Form_Model::getInstance(self::getClass())->addFilterFields($filterFields);
+        return Ui_Form_Model::getInstance(self::getClass())->addFilterFields($filterFields);
     }
 
     /**
@@ -1316,16 +1316,35 @@ abstract class Model
                 strtolower($selfClassName) . '__fk' => $this->getPk(),
                 strtolower($className) . '__fk' => $modelPk
             ])
-            ->select('*', null, null, null, $dataSourceKey, $ttl)
+            ->select('*', null, $dataSourceKey)
             ->getModel();
     }
 
-    public function createQueryBuilder($modelClass, $tableAlias = null)
+    public static function createQueryBuilder() {
+        return Query::getBuilder(self::getClass());
+    }
+
+    /**
+     * Get query builder by current model
+     *
+     * @param $modelClass
+     * @param null $tableAlias
+     * @return Query_Builder
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since 0.5
+     */
+    public function getQueryBuilder($modelClass, $tableAlias = null)
     {
         $selfModelClass = get_class($this);
 
-        return Query::getBuilder($modelClass, $tableAlias)
-            ->inner($selfModelClass)
-            ->pk($this->getPk(), $selfModelClass);
+        return $modelClass
+            ? Query::getBuilder($modelClass, $tableAlias)
+                ->inner($selfModelClass)
+                ->pk($this->getPk(), $selfModelClass)
+            : Query::getBuilder($selfModelClass)
+                ->pk($this->getPk());
     }
 }

@@ -14,7 +14,7 @@ use Ice\Core\Model;
 use Ice\Helper\Arrays;
 
 /**
- * Class Form_Model
+ * Class Ui_Form_Model
  *
  * Action for model form
  *
@@ -29,7 +29,7 @@ use Ice\Helper\Arrays;
  * @version 0.0
  * @since 0.0
  */
-class Form_Model extends Action
+class Ui_Form_Model extends Action
 {
     /**
      * Action config

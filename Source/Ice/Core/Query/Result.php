@@ -33,6 +33,7 @@ class Query_Result implements Cacheable
     const ROWS = 'rows';
     const NUM_ROWS = 'numRows';
     const AFFECTED_ROWS = 'affectedRows';
+    const FOUND_ROWS = 'foundRows';
     const INSERT_ID = 'insertId';
     const QUERY_BODY = 'queryBody';
     const QUERY_PARAMS = 'queryParams';
@@ -46,6 +47,7 @@ class Query_Result implements Cacheable
         Query_Result::ROWS => [],
         Query_Result::NUM_ROWS => 0,
         Query_Result::AFFECTED_ROWS => 0,
+        Query_Result::FOUND_ROWS => 0,
         Query_Result::INSERT_ID => null,
         Query_Result::QUERY_BODY => null,
         Query_Result::QUERY_PARAMS => []
@@ -548,4 +550,27 @@ class Query_Result implements Cacheable
 
         return $string;
     }
+
+    public function getFoundRows()
+    {
+        return $this->_result[Query_Result::FOUND_ROWS];
+    }
+//
+//    public function getPagination()
+//    {
+//        $pagination = ['foundRows' => $this->getFoundRows()];
+//
+//        $limit = $this->getQuery()->getBodyParts()[Query_Builder::PART_LIMIT];
+//
+//        if (empty($limit)) {
+//            $pagination['page'] = 1;
+//            $pagination['limit'] = 0;
+//        } else {
+//            list($limit, $offset) = $limit;
+//            $pagination['page'] = $offset ? $offset / $limit + 1 : 1;
+//            $pagination['limit'] = $limit;
+//        }
+//
+//        return $pagination;
+//    }
 }

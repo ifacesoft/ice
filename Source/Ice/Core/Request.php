@@ -51,16 +51,16 @@ class Request
     /**
      * Return all params from request
      *
+     * @param array $filterParams
      * @return mixed
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
      * @since 0.0
      */
-    public static function getParams()
+    public static function getParams(array $filterParams = [])
     {
-        return Data_Provider_Request::getInstance()->get();
+        return Data_Provider_Request::getInstance()->get($filterParams);
     }
 
     /**

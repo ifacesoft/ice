@@ -1,13 +1,12 @@
 <?php
 
-namespace Ice\Ui_Data;
+namespace Ice\Ui\Data;
 
 use Ice\Core\Model as Core_Model;
 use Ice\Core\Ui_Data;
 
 class Model extends Ui_Data
 {
-
     /**
      * @var Core_Model
      */
