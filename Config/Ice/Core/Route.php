@@ -20,7 +20,7 @@ return [
             'GET' => [
                 'Ice:Layout_Test' => [
                     'actions' => [
-                        'testAction' => 'Ice:Test'
+                        'Ice:Test' => 'testAction'
                     ]
                 ]
             ]

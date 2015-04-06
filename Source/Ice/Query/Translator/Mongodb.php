@@ -277,7 +277,7 @@ class Mongodb extends Query_Translator
 
         list($modelClass, $items) = each($part);
 
-        list($tableAlias, $fieldNames) = $items;
+        list($tableAlias, $fieldNames) = each($items);
 
         $columnNames = [];
 
