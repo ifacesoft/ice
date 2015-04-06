@@ -17,8 +17,8 @@ class Model_CollectionTest extends PHPUnit_Framework_TestCase
 
                     Logger::getInstance(__CLASS__)->info('test ' . __CLASS__ . ' ' . $dataSourceKey . '...', null, false);
 
-                    Query::getBuilder(Test::getClass())->drop($dataSourceKey);
-                    Query::getBuilder(Test::getClass())->createTable($dataSourceKey);
+                    Query::getBuilder(Test::getClass())->dropTableQuery($dataSourceKey)->getQueryResult();
+                    Query::getBuilder(Test::getClass())->createTableQuery($dataSourceKey)->getQueryResult();
 
                     switch ($dataSourceClass) {
                         case Mongodb::getClass():

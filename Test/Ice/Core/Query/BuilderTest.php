@@ -9,11 +9,11 @@ class BuilderTest extends PHPUnit_Framework_TestCase
 {
     public function testActiveRecordCrud()
     {
-        Query::getBuilder(Test::getClass())->drop();
-        Query::getBuilder(Test::getClass())->createTable();
+        Query::getBuilder(Test::getClass())->dropTableQuery()->getQueryResult();
+        Query::getBuilder(Test::getClass())->createTableQuery()->getQueryResult();
 
         $userRow = Query::getBuilder(Test::getClass())
-            ->insert([
+            ->insertQuery([
                 '/name' => 'name',
                 'name2' => 'test'
             ])->getRow();

@@ -70,7 +70,7 @@ class Deploy extends Action
                 'Ice:Composer_Update',
                 'Ice:Cache_Clear',
                 'Ice:Orm_Scheme_Update',
-//                'Ice:Phpunit_Run',
+                'Ice:Phpunit_Run',
                 'Ice:Resources'
             ]
         ];
