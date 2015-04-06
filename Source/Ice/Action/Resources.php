@@ -198,6 +198,7 @@ class Resources extends Action
                 ],
                 'js' => ['default' => []],
                 'css' => ['default' => []],
+                'routeName' => ['default' => '']
             ],
             'ttl' => 3600
         ];
@@ -317,7 +318,9 @@ class Resources extends Action
         $cssRes = $moduleAlias . '/css/';
 
         if (!Request::isCli()) {
-            $resourceName = Route::getInstance()->getConfigName();
+            $resourceName = empty($input['routeName'])
+                ? Route::getInstance()->getConfigName()
+                : $input['routeName'];
 
             $jsFile = $resourceName . '.pack.js';
             $cssFile = $resourceName . '.pack.css';
