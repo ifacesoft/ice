@@ -73,7 +73,7 @@ class Phpunit_Run extends Action
             'view' => ['template' => ''],
             'input' => [
                 'vendor' => ['default' => 'phpunit/phpunit'],
-                'script' => ['default' => 'phpunit']
+                'command' => ['default' => '/phpunit']
             ]
         ];
     }
@@ -96,7 +96,7 @@ class Phpunit_Run extends Action
         foreach (Module::getAll() as $module) {
             $path = $module->get('path');
 
-            $command = VENDOR_DIR . $input['vendor'] . '/' . $input['script'] .
+            $command = VENDOR_DIR . $input['vendor'] . $input['command'] .
                 ' --configuration ' . $path . 'Config/vendor/phpunit.xml' .
                 ' --bootstrap ' . $path . 'bootstrap.php';
 

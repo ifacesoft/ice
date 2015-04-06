@@ -1,6 +1,6 @@
 <?php
 
-namespace Ice\Form\Security\Register;
+namespace Ice\Ui\Form\Security\Register;
 
 use Ice\Core\Form_Security_Register;
 

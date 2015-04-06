@@ -1,6 +1,6 @@
 <?php
 
-namespace Ice\Form\Security\Login;
+namespace Ice\Ui\Form\Security\Login;
 
 use Ice\Core\Form_Security_Login;
 use Ice\Core\Query;

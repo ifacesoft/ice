@@ -12,7 +12,7 @@ namespace Ice\Helper;
 use Ice\Core;
 use Ice\Core\Logger as Core_Logger;
 use Ice\Core\Request as Core_Request;
-use Ice\Core\Resource;
+use Ice\Core\Resource as Core_Resource;
 use Ice\Core\Validator as Core_Validator;
 
 /**
@@ -62,14 +62,14 @@ class Console
      * Return stylized header text for console
      *
      * @param $string
-     * @param Resource $resource
+     * @param Core_Resource $resource
      * @return string
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
      * @since 0.0
      */
-    public static function getHeader($string, Resource $resource)
+    public static function getHeader($string, Core_Resource $resource)
     {
         $string = $resource->get($string);
 
@@ -128,6 +128,7 @@ class Console
      */
     public static function getInteractive($class, $param, $data)
     {
+        /** @var Core_Resource $resource */
         $resource = $class::getResource();
 
         $title = Console::C_YELLOW . $resource->get($data['title'], $data['default']) . Console::C_GRAY_B;
@@ -178,13 +179,11 @@ class Console
 
     public static function run($commands, $toDevNull = false)
     {
-        $commandString = '';
+        $commandString = 'cd ' . MODULE_DIR;
 
         foreach ((array)$commands as $command) {
-            $commandString .= $command . ' && \\' . "\n";
+            $commandString .= ' && \\' . "\n" . $command;
         }
-
-        $commandString = substr($commandString, 0, -5);
 
         if ($toDevNull) {
             $commandString .= ' > /dev/null 2>&1';

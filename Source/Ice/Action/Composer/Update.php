@@ -95,7 +95,6 @@ class Composer_Update extends Action
         $command = VENDOR_DIR . $input['vendor'] . $input['command'];
 
         Console::run([
-            'cd ' . MODULE_DIR,
             'php ' . $command . ' clear-cache',
             'php ' . $command . ' update --prefer-source'
         ]);

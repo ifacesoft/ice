@@ -31,6 +31,14 @@ use Ice\View\Render\Replace;
 class Route extends Config
 {
 
+    /**
+     * @param null $routeName
+     * @param null $postfix
+     * @param bool $isRequired
+     * @param null $ttl
+     * @return Route
+     * @throws Exception
+     */
     public static function getInstance($routeName = null, $postfix = null, $isRequired = false, $ttl = null)
     {
         $routes = self::getRoutes();

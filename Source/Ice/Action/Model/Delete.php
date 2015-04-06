@@ -94,7 +94,7 @@ class Model_Delete extends Action
      */
     public function run(array $input)
     {
-        return Query::getBuilder(Model::getClass($input['modelClassName']))->delete($input['pk'])->getAffectedRows()
+        return Query::getBuilder(Model::getClass($input['modelClassName']))->deleteQuery($input['pk'])->getQueryResult()->getAffectedRows()
             ? ['success' => Model_Delete::getLogger()->info('Delete successfully', Logger::SUCCESS)]
             : ['error' => Model_Delete::getLogger()->info('Delete failed', Logger::DANGER)];
     }

@@ -929,7 +929,9 @@ abstract class Model
      */
     public static function createTable($dataSourceKey = null)
     {
-        return Query::getBuilder(self::getClass())->createTable($dataSourceKey);
+        return Query::getBuilder(self::getClass())
+            ->createTableQuery($dataSourceKey)
+            ->getQueryResult();
     }
 
     /**
@@ -944,7 +946,7 @@ abstract class Model
      */
     public static function dropTable($dataSourceKey = null)
     {
-        return Query::getBuilder(self::getClass())->drop($dataSourceKey);
+        return Query::getBuilder(self::getClass())->dropTableQuery($dataSourceKey)->getQueryResult();
     }
 
     /**
@@ -1067,8 +1069,8 @@ abstract class Model
         $this->beforeInsert();
 
         $insertId = Query::getBuilder($modelClass)
-            ->insert($affected, $isSmart, $dataSourceKey)
-            ->execute()
+            ->insertQuery($affected, $isSmart, $dataSourceKey)
+            ->getQueryResult()
             ->getInsertId();
 
         $this->set(reset($insertId));
@@ -1087,7 +1089,8 @@ abstract class Model
 
         Query::getBuilder($modelClass)
             ->pk($this->getPk())
-            ->update($affected, $dataSourceKey);
+            ->updateQuery($affected, $dataSourceKey)
+            ->getQueryResult();
 
         $this->afterUpdate();
     }
@@ -1201,7 +1204,7 @@ abstract class Model
     {
         $this->beforeDelete();
 
-        Query::getBuilder(get_class($this))->delete($this->getPk(), $dataSourceKey);
+        Query::getBuilder(get_class($this))->deleteQuery($this->getPk(), $dataSourceKey)->getQueryResult();
 
         $this->afterDelete();
 

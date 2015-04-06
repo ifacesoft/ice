@@ -1085,7 +1085,6 @@ class Query_Builder
      * @param array $data Key-value array
      * @param bool $update
      * @param string|null $dataSourceKey
-     * @param int $ttl
      * @return Query
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -1093,11 +1092,11 @@ class Query_Builder
      * @version 0.6
      * @since 0.0
      */
-    public function insert(array $data, $update = false, $dataSourceKey = null, $ttl = null)
+    public function insertQuery(array $data, $update = false, $dataSourceKey = null)
     {
         $this->_queryType = Query_Builder::TYPE_INSERT;
         $this->_sqlParts[Query_Builder::PART_VALUES]['_update'] = $update;
-        return $this->affect($data, Query_Builder::PART_VALUES, $dataSourceKey, $ttl);
+        return $this->affect($data, Query_Builder::PART_VALUES, $dataSourceKey);
     }
 
     /**
@@ -1106,7 +1105,6 @@ class Query_Builder
      * @param array $data Key-value array
      * @param $part
      * @param $dataSourceKey
-     * @param $ttl
      * @return Query
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -1114,7 +1112,7 @@ class Query_Builder
      * @version 0.6
      * @since 0.1
      */
-    private function affect(array $data, $part, $dataSourceKey, $ttl)
+    private function affect(array $data, $part, $dataSourceKey)
     {
         $modelClass = $this->getModelClass();
 
@@ -1129,11 +1127,11 @@ class Query_Builder
 
             $this->_bindParts[$part] = [[]];
 
-            return $this->getQuery($dataSourceKey)->getQueryResult($ttl);
+            return $this->getQuery($dataSourceKey);
         }
 
         if (!is_array(reset($data))) {
-            return $this->affect([$data], $part, $dataSourceKey, $ttl);
+            return $this->affect([$data], $part, $dataSourceKey);
         }
 
         $fieldNames = [];
@@ -1154,7 +1152,7 @@ class Query_Builder
 
         $this->_bindParts[$part] = array_merge($this->_bindParts[$part], $data);
 
-        return $this->getQuery($dataSourceKey)->getQueryResult($ttl);
+        return $this->getQuery($dataSourceKey);
     }
 
     /**
@@ -1162,7 +1160,6 @@ class Query_Builder
      *
      * @param array $data Key-value array
      * @param null $dataSource
-     * @param int $ttl
      * @return Query
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -1170,10 +1167,10 @@ class Query_Builder
      * @version 0.6
      * @since 0.0
      */
-    public function update(array $data, $dataSource = null, $ttl = null)
+    public function updateQuery(array $data, $dataSource = null)
     {
         $this->_queryType = Query_Builder::TYPE_UPDATE;
-        return $this->affect($data, Query_Builder::PART_SET, $dataSource, $ttl);
+        return $this->affect($data, Query_Builder::PART_SET, $dataSource);
     }
 
     /**
@@ -1181,7 +1178,6 @@ class Query_Builder
      *
      * @param array $pkValues
      * @param string|null $dataSourceKey
-     * @param int $ttl
      * @return Query
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -1189,14 +1185,14 @@ class Query_Builder
      * @version 0.6
      * @since 0.0
      */
-    public function delete($pkValues = [], $dataSourceKey = null, $ttl = null)
+    public function deleteQuery($pkValues = [], $dataSourceKey = null)
     {
         $this->_queryType = Query_Builder::TYPE_DELETE;
         $this->_sqlParts[Query_Builder::PART_WHERE]['_delete'] = $this->_modelClass;
 
         $this->inPk((array)$pkValues);
 
-        return $this->getQuery($dataSourceKey)->getQueryResult($ttl);
+        return $this->getQuery($dataSourceKey);
     }
 
     /**
@@ -1505,15 +1501,14 @@ class Query_Builder
      * Execute query create table
      *
      * @param string|null $dataSourceKey
-     * @param int $ttl
-     * @return Query_Result
+     * @return Query
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.2
+     * @version 0.6
      * @since 0.2
      */
-    public function createTable($dataSourceKey = null, $ttl = null)
+    public function createTableQuery($dataSourceKey = null)
     {
         $modelClass = $this->_modelClass;
 
@@ -1522,7 +1517,7 @@ class Query_Builder
         }
 
         $this->_queryType = Query_Builder::TYPE_CREATE;
-        return $this->getQuery($dataSourceKey)->getQueryResult($ttl);
+        return $this->getQuery($dataSourceKey);
     }
 
     /**
@@ -1556,19 +1551,18 @@ class Query_Builder
      * Execute query drop table
      *
      * @param string|null $dataSourceKey
-     * @param int $ttl
-     * @return Query_Result
+     * @return Query
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.2
+     * @version 0.6
      * @since 0.2
      */
-    public function drop($dataSourceKey = null, $ttl = null)
+    public function dropTableQuery($dataSourceKey = null)
     {
         $this->_queryType = Query_Builder::TYPE_DROP;
         $this->_sqlParts[self::PART_DROP]['_drop'] = $this->_modelClass;
-        return $this->getQuery($dataSourceKey)->getQueryResult($ttl);
+        return $this->getQuery($dataSourceKey);
     }
 
     /**

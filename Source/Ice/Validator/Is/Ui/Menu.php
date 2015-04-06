@@ -9,7 +9,6 @@
 
 namespace Ice\Validator;
 
-use Ice\Core\Menu;
 use Ice\Core\Ui_Menu;
 use Ice\Core\Validator;
 

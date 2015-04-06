@@ -56,6 +56,7 @@ class Serializer
             default:
                 Core_Logger::getInstance(__CLASS__)->exception(['Unknown serializer {$0}', $serializer], __FILE__, __LINE__);
         }
+        return $data;
     }
 
     /**
@@ -77,9 +78,9 @@ class Serializer
 
         return self::SERIALIZER_JSON;
 
-        return function_exists('igbinary_serialize')
-            ? self::SERIALIZER_IGBINARY
-            : self::SERIALIZER_DEFAULT;
+//        return function_exists('igbinary_serialize')
+//            ? self::SERIALIZER_IGBINARY
+//            : self::SERIALIZER_DEFAULT;
     }
 
     /**
@@ -107,5 +108,7 @@ class Serializer
             default:
                 Core_Logger::getInstance(__CLASS__)->exception(['Unknown serializer {$0}', $serializer], __FILE__, __LINE__);
         }
+
+        return $data;
     }
 } 

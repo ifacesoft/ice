@@ -72,5 +72,7 @@ class Hash
             default:
                 Core_Logger::getInstance(__CLASS__)->exception(['Unknown hash {$0}', $hash], __FILE__, __LINE__);
         }
+
+        return $data;
     }
 } 

@@ -23,11 +23,8 @@ use Ice\Core\Action;
  *
  * @package Ice
  * @subpackage Action
- *
- * @version 0.0
- * @since 0.0
  */
-class Module_Deploy extends Action
+class Deploy extends Action
 {
     /**
      * Action config
@@ -70,9 +67,11 @@ class Module_Deploy extends Action
         return [
             'view' => ['template' => ''],
             'actions' => [
+                'Ice:Composer_Update',
                 'Ice:Cache_Clear',
-                'Ice:Scheme_Update',
-                'Ice:Phpunit_Run'
+                'Ice:Orm_Scheme_Update',
+                'Ice:Phpunit_Run',
+                'Ice:Resources'
             ]
         ];
     }

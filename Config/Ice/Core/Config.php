@@ -13,7 +13,7 @@
 return [
     'Ice\Core\Model' => [
         'schemeColumnPlugins' => [
-            'Ice\Core\Form',
+            'Ice\Core\Ui_Form',
             'Ice\Core\Validator',
             'Ice\Core\Ui_Data',
         ]

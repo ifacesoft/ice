@@ -84,7 +84,7 @@ class Arrays
                             }
                             break;
                         default:
-                            Logger::getInstance(__CLASS__)->exception(['Unknown comparison operator {$0}', $comparison], __FILE__, __LINE__);
+                            Core_Logger::getInstance(__CLASS__)->exception(['Unknown comparison operator {$0}', $comparison], __FILE__, __LINE__);
                     };
                 }
                 return true;

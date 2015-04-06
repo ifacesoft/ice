@@ -19,12 +19,40 @@
     "files": [
     ]
   },
-  "minimum-stability": "dev",
+  "repositories": [
+    {
+      "type": "package",
+      "package": {
+        "name": "jquery/jquery-ui",
+        "version": "1.11.1",
+        "dist": {
+          "url": "http://jqueryui.com/resources/download/jquery-ui-1.11.1.zip",
+          "type": "zip"
+        }
+      }
+    },
+    {
+      "type": "package",
+      "package": {
+        "name": "mailru/fileapi",
+        "version": "2.0.10",
+        "dist": {
+          "url": "https://github.com/mailru/FileAPI/archive/master.zip",
+          "type": "zip"
+        }
+      }
+    }
+  ],
+  "minimum-stability": "stable",
   "require": {
     "php": ">=5.4.0",
     "twig/twig": "1.*",
     "smarty/smarty": "3.1.*",
-    "michelf/php-markdown": "1.5.0"
+    "twbs/bootstrap": "3.3.*",
+    "jquery/jquery-ui": "1.11.1",
+    "mailru/fileapi": "2.0.10",
+    "mrclay/minify": "2.2.*",
+    "michelf/php-markdown": "1.5.*"
   },
   "require-dev": {
     "firephp/firephp-core": "dev-master",

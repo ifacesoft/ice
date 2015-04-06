@@ -15,6 +15,8 @@ use Ice\Core\Action;
 use Ice\Core\Data_Provider;
 use Ice\Core\Loader;
 use Ice\Core\Module;
+use Ice\Core\Request;
+use Ice\Core\Route;
 use Ice\Helper\Arrays;
 use Ice\Helper\Directory;
 use JSMin;
@@ -196,9 +198,6 @@ class Resources extends Action
                 ],
                 'js' => ['default' => []],
                 'css' => ['default' => []],
-                'routeName' => [
-                    'providers' => 'router'
-                ]
             ],
             'ttl' => 3600
         ];
@@ -312,38 +311,40 @@ class Resources extends Action
             }
         }
 
-        $resourceName = $input['routeName'];
-
-        $jsFile = $resourceName . '.pack.js';
-        $cssFile = $resourceName . '.pack.css';
-
         $moduleAlias = Module::getInstance()->getAlias();
 
         $jsRes = $moduleAlias . '/js/';
         $cssRes = $moduleAlias . '/css/';
 
-        $jsResource = Directory::get($compiledResourceDir . $jsRes) . $jsFile;
-        $cssResource = Directory::get($compiledResourceDir . $cssRes) . $cssFile;
+        if (!Request::isCli()) {
+            $resourceName = Route::getInstance()->getConfigName();
 
-        $callStack = App::getContext()->getFullStack();
+            $jsFile = $resourceName . '.pack.js';
+            $cssFile = $resourceName . '.pack.css';
 
-        foreach (array_keys($callStack) as $actionClass) {
-            if (file_exists($jsSource = Loader::getFilePath($actionClass, '.js', MODULE::RESOURCE_DIR, false))) {
-                $resources['js'][] = [
-                    'source' => $jsSource,
-                    'resource' => $jsResource,
-                    'url' => '/resource/' . $jsRes . $jsFile,
-                    'pack' => true
-                ];
-            }
-            if (file_exists($cssSource = Loader::getFilePath($actionClass, '.css', MODULE::RESOURCE_DIR, false))) {
-                $resources['css'][] = [
-                    'source' => $cssSource,
-                    'resource' => $cssResource,
-                    'url' => '/resource/' . $cssRes . $cssFile,
-                    'pack' => true,
-                    'css_replace' => []
-                ];
+            $jsResource = Directory::get($compiledResourceDir . $jsRes) . $jsFile;
+            $cssResource = Directory::get($compiledResourceDir . $cssRes) . $cssFile;
+
+            $callStack = App::getContext()->getFullStack();
+
+            foreach (array_keys($callStack) as $actionClass) {
+                if (file_exists($jsSource = Loader::getFilePath($actionClass, '.js', MODULE::RESOURCE_DIR, false))) {
+                    $resources['js'][] = [
+                        'source' => $jsSource,
+                        'resource' => $jsResource,
+                        'url' => '/resource/' . $jsRes . $jsFile,
+                        'pack' => true
+                    ];
+                }
+                if (file_exists($cssSource = Loader::getFilePath($actionClass, '.css', MODULE::RESOURCE_DIR, false))) {
+                    $resources['css'][] = [
+                        'source' => $cssSource,
+                        'resource' => $cssResource,
+                        'url' => '/resource/' . $cssRes . $cssFile,
+                        'pack' => true,
+                        'css_replace' => []
+                    ];
+                }
             }
         }
 

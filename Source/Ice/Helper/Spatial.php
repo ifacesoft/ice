@@ -77,6 +77,8 @@ class Spatial
             default:
                 Logger::getInstance(__CLASS__)->exception(['Unknown spatial type {$0}', $type], __FILE__, __LINE__);
         }
+
+        return $geoData;
     }
 
     /**

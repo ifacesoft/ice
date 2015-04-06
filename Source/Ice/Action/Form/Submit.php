@@ -10,8 +10,8 @@
 namespace Ice\Action;
 
 use Ice\Core\Action;
-use Ice\Core\Form as Core_Form;
 use Ice\Core\Logger;
+use Ice\Core\Ui_Form;
 
 /**
  * Class Ui_Form_Submit
@@ -29,7 +29,7 @@ use Ice\Core\Logger;
  * @version 0.0
  * @since 0.0
  */
-class Ui_Form_Submit extends Action
+class Form_Submit extends Action
 {
     /**
      * Action config
@@ -93,7 +93,7 @@ class Ui_Form_Submit extends Action
      */
     public function run(array $input)
     {
-        /** @var Core_Form $formClass */
+        /** @var Ui_Form $formClass */
         $formClass = $input['formClass'];
         unset($input['formClass']);
 
@@ -113,16 +113,16 @@ class Ui_Form_Submit extends Action
                 ->submit();
 
             return [
-                'success' => Ui_Form_Submit::getLogger()->info('Submitted successfully', Logger::SUCCESS),
+                'success' => Form_Submit::getLogger()->info('Submitted successfully', Logger::SUCCESS),
                 'redirect' => $redirect
             ];
         } catch (\Exception $e) {
             $message = ['Submit failed: {$0}', $e->getMessage()];
 
-            Ui_Form_Submit::getLogger()->error($message, __FILE__, __LINE__, $e);
+            Form_Submit::getLogger()->error($message, __FILE__, __LINE__, $e);
 
             return [
-                'error' => Ui_Form_Submit::getLogger()->info($message, Logger::DANGER)
+                'error' => Form_Submit::getLogger()->info($message, Logger::DANGER)
             ];
         }
     }

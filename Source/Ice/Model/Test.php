@@ -18,7 +18,6 @@ class Test extends Model
     protected static function config()
     {
         return [
-		    'revision' => '03180947_4b',
 		    'dataSourceKey' => 'Ice\Data\Source\Mysqli/default.test',
 		    'scheme' => [
 		        'tableName' => 'ice_test',
@@ -26,7 +25,6 @@ class Test extends Model
 		        'charset' => 'utf8_general_ci',
 		        'comment' => '',
 		    ],
-		    'schemeHash' => 3368682505,
 		    'columns' => [
 		        'id' => [
 		            'scheme' => [
@@ -41,7 +39,7 @@ class Test extends Model
 		            ],
 		            'schemeHash' => 708064701,
 		            'fieldName' => 'test_pk',
-		            'Ice\Core\Form' => 'Number',
+		            'Ice\Core\Ui_Form' => 'Number',
 		            'Ice\Core\Validator' => [],
 		            'Ice\Core\Ui_Data' => 'text',
 		        ],
@@ -52,15 +50,16 @@ class Test extends Model
 		                'dataType' => 'varchar',
 		                'length' => '52',
 		                'characterSet' => 'utf8',
-		                'nullable' => true,
+		                'nullable' => false,
 		                'default' => null,
 		                'comment' => '',
 		            ],
-		            'schemeHash' => 3726904188,
+		            'schemeHash' => 336823333,
 		            'fieldName' => 'test_name',
-		            'Ice\Core\Form' => 'Text',
+		            'Ice\Core\Ui_Form' => 'Text',
 		            'Ice\Core\Validator' => [
 		                'Ice:Length_Max' => 52,
+		                0 => 'Ice:Not_Null',
 		            ],
 		            'Ice\Core\Ui_Data' => 'text',
 		        ],
@@ -71,20 +70,22 @@ class Test extends Model
 		                'dataType' => 'varchar',
 		                'length' => '65',
 		                'characterSet' => 'utf8',
-		                'nullable' => false,
+		                'nullable' => true,
 		                'default' => null,
 		                'comment' => '',
 		            ],
-		            'schemeHash' => 3057425486,
+		            'schemeHash' => 2521633375,
 		            'fieldName' => 'name2',
-		            'Ice\Core\Form' => 'Text',
+		            'Ice\Core\Ui_Form' => 'Text',
 		            'Ice\Core\Validator' => [
 		                'Ice:Length_Max' => 65,
-		                0 => 'Ice:Not_Null',
 		            ],
 		            'Ice\Core\Ui_Data' => 'text',
 		        ],
 		    ],
+		    'oneToMany' => [],
+		    'manyToOne' => [],
+		    'manyToMany' => [],
 		    'indexes' => [
 		        'PRIMARY KEY' => [
 		            'PRIMARY' => [
@@ -94,7 +95,14 @@ class Test extends Model
 		        'FOREIGN KEY' => [],
 		        'UNIQUE' => [],
 		    ],
+		    'references' => [],
+		    'revision' => '04061152_si',
+		    'schemeHash' => 3368682505,
 		    'indexesHash' => 3780610860,
+		    'referencesHash' => 223132457,
+		    'oneToManyHash' => 223132457,
+		    'manyToOneHash' => 223132457,
+		    'manyToManyHash' => 223132457,
 		];
     }
 }

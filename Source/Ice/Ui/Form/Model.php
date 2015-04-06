@@ -7,9 +7,8 @@
  * @license https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
-namespace Ice\Form;
+namespace Ice\Ui\Form;
 
-use Ice\Core\Form;
 use Ice\Core\Model as Core_Model;
 use Ice\Core\Ui_Form;
 use Ice\Core\Validator;
@@ -19,7 +18,7 @@ use Ice\Core\Validator;
  *
  * Binds forms and submit data for model objects
  *
- * @see Ice\Core\Form
+ * @see Ice\Core\Ui_Form
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
