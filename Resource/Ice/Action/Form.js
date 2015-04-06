@@ -2,7 +2,7 @@
  * Created by dp on 9/26/14.
  */
 
-var Ice_Form = {
+var Ice_Action_Form = {
     submit: function ($button, submitActionName, $params, reRenderClosest, reRenderActionNames) {
         Ice.call(
             submitActionName,

@@ -169,36 +169,37 @@ class Resources extends Action
                                 ],
                                 'module' => [
                                     'path' => 'Ice/',
-                                    'js' => ['Helper/String.js'],
+                                    'js' => ['Helper/String.js', 'Action/Form.js', 'Action/Menu.js'],
                                     'css' => [],
                                     'isCopy' => false,
                                 ],
                             ],
                         ],
-                        'vendors' => [
-                            'jquery/jquery-ui' => [
-                                'jquery' => [
-                                    'path' => '/',
-                                    'js' => ['external/jquery/jquery.js', '-jquery-ui.min.js'],
-                                    'css' => ['-jquery-ui.min.css', '-jquery-ui.structure.min.css', '-jquery-ui.theme.min.css'],
-                                    'isCopy' => true,
-                                ],
-                            ],
-                            'twbs/bootstrap' => [
-                                'bootstrap' => [
-                                    'path' => 'dist/',
-                                    'js' => ['-js/bootstrap.min.js'],
-                                    'css' => ['-css/bootstrap.min.css', '-css/bootstrap-theme.min.css'],
-                                    'isCopy' => true,
-                                    'css_replace' => ['url(../', 'url('],
-                                ],
-                            ],
-                        ],
+//                        'vendors' => [
+//                            'jquery/jquery-ui' => [
+//                                'jquery' => [
+//                                    'path' => '/',
+//                                    'js' => ['external/jquery/jquery.js', '-jquery-ui.min.js'],
+//                                    'css' => ['-jquery-ui.min.css', '-jquery-ui.structure.min.css', '-jquery-ui.theme.min.css'],
+//                                    'isCopy' => true,
+//                                ],
+//                            ],
+//                            'twbs/bootstrap' => [
+//                                'bootstrap' => [
+//                                    'path' => 'dist/',
+//                                    'js' => ['-js/bootstrap.min.js'],
+//                                    'css' => ['-css/bootstrap.min.css', '-css/bootstrap-theme.min.css'],
+//                                    'isCopy' => true,
+//                                    'css_replace' => ['url(../', 'url('],
+//                                ],
+//                            ],
+//                        ],
                     ],
                 ],
                 'js' => ['default' => []],
                 'css' => ['default' => []],
-                'routeName' => ['default' => '']
+                'routeName' => ['default' => ''],
+                'context' => ['default' => '/resource/']
             ],
             'ttl' => 3600
         ];
@@ -233,7 +234,7 @@ class Resources extends Action
                 $resources['js'][] = [
                     'source' => $jsSource,
                     'resource' => $jsResource,
-                    'url' => '/resource/' . $name . '/javascript.pack.js',
+                    'url' => $input['context'] . $name . '/javascript.pack.js',
                     'pack' => true
                 ];
             }
@@ -241,7 +242,7 @@ class Resources extends Action
                 $resources['css'][] = [
                     'source' => $cssSource,
                     'resource' => $cssResource,
-                    'url' => '/resource/' . $name . '/style.pack.css',
+                    'url' => $input['context'] . $name . '/style.pack.css',
                     'pack' => true,
                     'css_replace' => []
                 ];
@@ -292,7 +293,7 @@ class Resources extends Action
                         $resources['js'][] = [
                             'source' => $source . ltrim($resource, '-'),
                             'resource' => $jsResource,
-                            'url' => '/resource/' . $res . $resourceKey . '.pack.js',
+                            'url' => $input['context'] . $res . $resourceKey . '.pack.js',
                             'pack' => $resource[0] != '-'
                         ];
                     }
@@ -303,7 +304,7 @@ class Resources extends Action
                         $resources['css'][] = [
                             'source' => $source . ltrim($resource, '-'),
                             'resource' => $cssResource,
-                            'url' => '/resource/' . $res . $resourceKey . '.pack.css',
+                            'url' => $input['context'] . $res . $resourceKey . '.pack.css',
                             'pack' => $resource[0] != '-',
                             'css_replace' => $css_replace
                         ];
@@ -335,7 +336,7 @@ class Resources extends Action
                     $resources['js'][] = [
                         'source' => $jsSource,
                         'resource' => $jsResource,
-                        'url' => '/resource/' . $jsRes . $jsFile,
+                        'url' => $input['context'] . $jsRes . $jsFile,
                         'pack' => true
                     ];
                 }
@@ -343,7 +344,7 @@ class Resources extends Action
                     $resources['css'][] = [
                         'source' => $cssSource,
                         'resource' => $cssResource,
-                        'url' => '/resource/' . $cssRes . $cssFile,
+                        'url' => $input['context'] . $cssRes . $cssFile,
                         'pack' => true,
                         'css_replace' => []
                     ];
@@ -363,7 +364,7 @@ class Resources extends Action
                     [
                         'source' => Loader::getFilePath($resource, '.js', 'Resource/js/'),
                         'resource' => $jsResource,
-                        'url' => '/resource/' . $jsRes . $jsFile,
+                        'url' => $input['context'] . $jsRes . $jsFile,
                         'pack' => true
                     ];
             }
@@ -374,7 +375,7 @@ class Resources extends Action
                     [
                         'source' => Loader::getFilePath($resource, '.css', 'Resource/css/'),
                         'resource' => $cssResource,
-                        'url' => '/resource/' . $cssRes . $cssFile,
+                        'url' => $input['context'] . $cssRes . $cssFile,
                         'pack' => true,
                         'css_replace' => []
                     ];

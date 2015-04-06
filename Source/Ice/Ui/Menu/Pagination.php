@@ -56,10 +56,10 @@ class Pagination extends Ui_Menu
                 $this->link('leftSep', ' &hellip; ', ['classes' => ['disabled'], 'style' => 'border: none;']);
             }
 
-            $newPage = $page - 3;
-            if ($newPage >= 1) {
-                $this->link('before3', $newPage, ['page' => $newPage]);
-            }
+//            $newPage = $page - 3;
+//            if ($newPage >= 1) {
+//                $this->link('before3', $newPage, ['page' => $newPage]);
+//            }
 
             $newPage = $page - 2;
             if ($newPage >= 1) {
@@ -83,10 +83,10 @@ class Pagination extends Ui_Menu
                 $this->link('after2', $newPage, ['page' => $newPage]);
             }
 
-            $newPage = $page + 3;
-            if ($newPage <= $pageCount) {
-                $this->link('after3', $newPage, ['page' => $newPage]);
-            }
+//            $newPage = $page + 3;
+//            if ($newPage <= $pageCount) {
+//                $this->link('after3', $newPage, ['page' => $newPage]);
+//            }
 
             $newPage = $page + 10;
             if ($newPage <= $pageCount) {
@@ -100,10 +100,10 @@ class Pagination extends Ui_Menu
                 $this->link('fastNext2', '&gt;&gt; ' . $newPage, ['page' => $newPage]);
             }
 
-            $newPage = $page;
-            if ($newPage < $pageCount) {
+            $newPage = $pageCount;
+            if ($page < $pageCount) {
                 $this->link('rightSep3', ' &hellip; ', ['classes' => ['disabled'], 'style' => 'border: none;']);
-                $this->link('last', '&gt;&gt;&gt; ' . $pageCount, ['page' => $newPage]);
+                $this->link('last', '&gt;&gt;&gt; ' . $newPage, ['page' => $newPage]);
             }
         }
 

@@ -7,37 +7,42 @@ var Ice = {
     _callbacks: {},
     _lastback: 0,
 
-    call: function (action, params, callback, url) {
+    call: function (action, data, callback, url) {
         $('#icePreloader').show();
 
         var back = this._lastback++;
+
         Ice._callbacks [back] = callback;
+
+        data.call = action;
+        data.back = back;
+
         $.ajax({
             type: 'POST',
             url: url ? url : location.href,
-            data: {
-                call: action,
-                params: params,
-                back: back
-            },
+            data: data,
             //crossDomain: true,
             beforeSend: function (jqXHR, settings) {
                 jqXHR.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
             },
-            success: function (data) {
-                if (data.result.error) {
-                    Ice.notify($('#iceMessages'), data.result.error, 5000);
+            success: function (result) {
+                if (result.error) {
+                    Ice.notify($('#iceMessages'), result.error, 5000);
                 }
-                if (data.result.success) {
-                    Ice.notify($('#iceMessages'), data.result.success, 5000);
+                if (result.success) {
+                    Ice.notify($('#iceMessages'), result.success, 5000);
                 }
 
-                var callback = Ice._callbacks[data.back];
-                callback(data.result);
+                if (result.back) {
+                    back = result.back;
+                }
+
+                var callback = Ice._callbacks[back];
+                callback(result);
                 $('#icePreloader').hide();
             },
-            error: function (data) {
-                console.error(data);
+            error: function (result) {
+                console.error(result);
                 $('#icePreloader').hide();
             },
             dataType: 'json'
@@ -68,7 +73,7 @@ var Ice = {
                         $element.closest('.' + result.actionName).replaceWith($block);
                     }
 
-                    if (callback) {
+                    if (callback != null) {
                         callback($block);
                     }
                 }
@@ -76,14 +81,16 @@ var Ice = {
         );
     },
 
-    reRender: function (actionClassName, actionParams, callback, url) {
+    reRender: function ($element, actionParams, callback, url) {
+        var action = $element.attr('data-action');
+        var block = $element.attr('data-block');
+
         Ice.call(
-            actionClassName,
+            action,
             actionParams,
             function (result) {
-                if (result.actionName) {
-                    $('.' + result.actionName).replaceWith(result.html);
-                }
+                $element.closest('.' + block).replaceWith(result.html);
+
                 if (callback) {
                     callback();
                 }
