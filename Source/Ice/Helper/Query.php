@@ -9,6 +9,8 @@
 
 namespace Ice\Helper;
 
+use Ice\Core\Query as Core_Query;
+
 /**
  * Class Query
  *
@@ -41,7 +43,7 @@ class Query
     /**
      * Convert where part to array filter format
      *
-     * @param Query $query
+     * @param Core_Query $query
      * @return array
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -49,7 +51,7 @@ class Query
      * @version 0.0
      * @since 0.0
      */
-    public static function convertWhereForFilter(Query $query)
+    public static function convertWhereForFilter(Core_Query $query)
     {
         $where = $query->getSqlPart('where');
         $binds = $query->getBindPart('where');

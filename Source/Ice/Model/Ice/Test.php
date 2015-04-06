@@ -15,8 +15,8 @@ class Ice_Test extends Model
     protected static function config()
     {
         return [
-		    'revision' => '03171513_um',
-		    'dataSourceKey' => 'Ice\\Data\\Source\\Mongodb/default.test',
+		    'revision' => '04061152_eh',
+		    'dataSourceKey' => 'Ice\Data\Source\Mongodb/default.test',
 		    'scheme' => [
 		        'tableName' => 'ice_test',
 		        'engine' => 'MongoDB',
@@ -28,6 +28,14 @@ class Ice_Test extends Model
 		    'indexes' => [],
 		    'indexesHash' => 223132457,
 		    'columnsHash' => 223132457,
+		    'references' => [],
+		    'referencesHash' => '',
+		    'oneToMany' => [],
+		    'oneToManyHash' => 223132457,
+		    'manyToOne' => [],
+		    'manyToOneHash' => 223132457,
+		    'manyToMany' => [],
+		    'manyToManyHash' => 223132457,
 		];
     }
 }

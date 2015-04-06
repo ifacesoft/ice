@@ -6,8 +6,6 @@ use Ice\Action\Front_Ajax;
 use Ice\Action\Http_Status;
 use Ice\Core\Action;
 use Ice\Core\Action_Context;
-use Ice\Core\Debuger;
-use Ice\Core\Environment;
 use Ice\Core\Logger;
 use Ice\Core\Profiler;
 use Ice\Core\Request;
@@ -19,7 +17,6 @@ use Ice\Data\Provider\Router;
 use Ice\Exception\Http_Bad_Request;
 use Ice\Exception\Http_Not_Found;
 use Ice\Exception\Redirect;
-use Ice\Helper\Object;
 
 class App
 {

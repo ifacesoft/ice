@@ -156,6 +156,12 @@ class Data_Scheme
                 if (!isset($schemeTables[$tableName]['referencesHash'])) {
                     $schemeTables[$tableName]['referencesHash'] = crc32(Json::encode([]));
                 }
+                if (!isset($table['references'])) {
+                    $table['references'] = [];
+                }
+                if (!isset($table['referencesHash'])) {
+                    $table['referencesHash'] = '';
+                }
                 if ($table['referencesHash'] != $schemeTables[$tableName]['referencesHash']) {
                     Data_Scheme::getLogger()->info(['Update references for model {$0}: {$1}', [$schemeTables[$tableName]['modelClass'], Json::encode($table['references'])]]);
                     $schemeTables[$tableName]['references'] = $table['references'];
@@ -165,6 +171,9 @@ class Data_Scheme
 
                 if (!isset($schemeTables[$tableName]['oneToManyHash'])) {
                     $schemeTables[$tableName]['oneToManyHash'] = crc32(Json::encode([]));
+                }
+                if (!isset($table['oneToMany'])) {
+                    $table['oneToMany'] = [];
                 }
                 $table['oneToManyHash'] = crc32(Json::encode($table['oneToMany']));
                 if ($force || $table['oneToManyHash'] != $schemeTables[$tableName]['oneToManyHash']) {
@@ -186,6 +195,9 @@ class Data_Scheme
                 if (!isset($schemeTables[$tableName]['manyToOneHash'])) {
                     $schemeTables[$tableName]['manyToOneHash'] = crc32(Json::encode([]));
                 }
+                if (!isset($table['manyToOne'])) {
+                    $table['manyToOne'] = [];
+                }
                 $table['manyToOneHash'] = crc32(Json::encode($table['manyToOne']));
                 if ($force || $table['manyToOneHash'] != $schemeTables[$tableName]['manyToOneHash']) {
                     $references = [];
@@ -205,6 +217,9 @@ class Data_Scheme
 
                 if (!isset($schemeTables[$tableName]['manyToManyHash'])) {
                     $schemeTables[$tableName]['manyToManyHash'] = crc32(Json::encode([]));
+                }
+                if (!isset($table['manyToMany'])) {
+                    $table['manyToMany'] = [];
                 }
                 $table['manyToManyHash'] = crc32(Json::encode($table['manyToMany']));
                 if ($force || $table['manyToManyHash'] != $schemeTables[$tableName]['manyToManyHash']) {

@@ -4,7 +4,8 @@ if (!defined('ICE_BOOTSTRAP')) {
 
     if (!defined('MODULE_DIR')) {
         $moduleDir = php_sapi_name() == 'cli'
-            ? dirname(realpath($argv[0]))
+//            ? dirname(realpath($_SERVER['argv'][0]))
+            ? getcwd()
             : dirname(dirname($_SERVER['SCRIPT_FILENAME']));
 
         define('MODULE_DIR', $moduleDir . '/');

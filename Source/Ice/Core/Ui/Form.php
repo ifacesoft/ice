@@ -10,7 +10,7 @@
 namespace Ice\Core;
 
 use Ice\Core;
-use Ice\Form\Model as Ui_Form_Model;
+use Ice\Ui\Form\Model as Ui_Form_Model;
 use Ice\Helper\Arrays;
 
 /**
@@ -28,6 +28,18 @@ use Ice\Helper\Arrays;
 abstract class Ui_Form extends Container
 {
     use Ui;
+
+    const FIELD_HIDDEN = 'Hidden';
+    const FIELD_TEXT = 'Text';
+    const FIELD_DATE = 'Date';
+    const FIELD_CHECKBOX = 'Checkbox';
+    const FIELD_GEO = 'Geo';
+    const FIELD_NUMBER = 'Number';
+    const FIELD_PASSWORD = 'Password';
+    const FIELD_TEXTAREA = 'Textarea';
+    const NAME_MODEL = 'Model';
+    const NAME_SIMPLE = 'Simple';
+
 
     /**
      * Fields - form parts

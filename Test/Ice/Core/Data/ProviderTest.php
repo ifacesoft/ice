@@ -8,10 +8,6 @@
 
 namespace Ice\Core;
 
-
-use Ice\Core\Data_Provider;
-use Ice\Core\Logger;
-use Ice\Core\Module;
 use PHPUnit_Framework_TestCase;
 
 class Data_ProviderTest extends PHPUnit_Framework_TestCase
