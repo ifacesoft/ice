@@ -1323,6 +1323,9 @@ abstract class Model
             ->getModel();
     }
 
+    /**
+     * @return Query_Builder
+     */
     public static function createQueryBuilder() {
         return Query::getBuilder(self::getClass());
     }

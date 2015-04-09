@@ -1,10 +1,11 @@
 <?php
 namespace Ice\Core;
 
-trait Ui {
+abstract class Ui
+{
     use Stored;
 
-    private $_key = null;
+    private $_values = null;
     private $_classes = '';
     private $_style = '';
     private $_template = null;
@@ -12,11 +13,20 @@ trait Ui {
     private $_url = null;
     private $_action = null;
     private $_block = null;
+    private $_event = null;
+
+    private function __construct()
+    {
+    }
+
+    protected function addValue($key, $value)
+    {
+        $this->_values[$key] = $value;
+    }
 
     /**
-     * Create new instance of ui
+     * Create new instance of ui component
      *
-     * @param $key
      * @return Ui_Menu|Ui_Data|Ui_Form
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -24,19 +34,11 @@ trait Ui {
      * @version 0.6
      * @since 0.1
      */
-    protected static function create($key)
+    public static function create()
     {
         $class = self::getClass();
-//
-//        if ($key) {
-//            $class .= '_' . $key;
-//        }
 
-        $menu = new $class();
-
-        $menu->_key = $key;
-
-        return $menu;
+        return new $class();
     }
 
     /**
@@ -52,7 +54,7 @@ trait Ui {
      *
      * @return Ui_Form|Ui_Menu|Ui_Data
      */
-    public function classes($classes)
+    public function setClasses($classes)
     {
         $this->_classes = $classes;
         return $this;
@@ -70,7 +72,7 @@ trait Ui {
      * @param string $style
      * @return Ui_Form|Ui_Menu|Ui_Data
      */
-    public function style($style)
+    public function setStyle($style)
     {
         $this->_style = $style;
         return $this;
@@ -88,7 +90,7 @@ trait Ui {
      * @param string $template
      * @return Ui_Form|Ui_Menu|Ui_Data
      */
-    public function template($template)
+    public function setTemplate($template)
     {
         $this->_template = $template;
         return $this;
@@ -103,7 +105,7 @@ trait Ui {
             return $this->_params;
         }
 
-        return $this->_params = $this->getKey();
+        return $this->_params = $this->getValues();
     }
 
     /**
@@ -118,13 +120,13 @@ trait Ui {
      * @param string $name
      * @return array
      */
-    public function getKey($name = null)
+    public function getValues($name = null)
     {
         if ($name) {
-            return isset($this->_key[$name]) ? $this->_key[$name] : null;
+            return isset($this->_values[$name]) ? $this->_values[$name] : null;
         }
 
-        return $this->_key;
+        return $this->_values;
     }
 
     /**
@@ -136,31 +138,11 @@ trait Ui {
     }
 
     /**
-     * @param string $url
-     * @return Ui_Form|Ui_Menu|Ui_Data
-     */
-    public function url($url)
-    {
-        $this->_url = $url;
-        return $this;
-    }
-
-    /**
      * @return string
      */
     public function getAction()
     {
         return $this->_action;
-    }
-
-    /**
-     * @param string $action
-     * @return Ui_Form|Ui_Menu|Ui_Data
-     */
-    public function action($action)
-    {
-        $this->_action = addslashes($action);
-        return $this;
     }
 
     /**
@@ -172,12 +154,34 @@ trait Ui {
     }
 
     /**
-     * @param string $block
+     * @param $url
+     * @param $action
+     * @param $block
+     * @param string $event
      * @return Ui_Form|Ui_Menu|Ui_Data
      */
-    public function block($block)
+    public function setAjax($url, $action, $block, $event = Ui_Form::SUBMIT_EVENT_ONCHANGE)
     {
+        $this->_url = $url;
+        $this->_action = $action;
         $this->_block = $block;
+        $this->_event = $event;
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEvent()
+    {
+        return $this->_event;
+    }
+
+    public abstract function bind($key, $value);
+
+    public abstract function render();
+
+    public function setQueryResult(Query_Result $queryResult)
+    {
     }
 }

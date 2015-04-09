@@ -77,4 +77,9 @@ class Navbar extends Ui_Menu
     {
         return $this->addItem('button', $title, $onclick, $position, $isActive, $template);
     }
+
+    public function render()
+    {
+        // TODO: Implement render() method.
+    }
 }

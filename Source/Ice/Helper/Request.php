@@ -15,22 +15,20 @@ class Request
     {
         $orderParams = [];
 
-        $checkAsc = '/' . Query_Builder::SQL_ORDERING_ASC;
-        $checkDesc = '/' . Query_Builder::SQL_ORDERING_DESC;
+        $ascPattern = '/(?:[^\/]+\/)?' . Query_Builder::SQL_ORDERING_ASC . '$/';
+        $descPattern = '/(?:[^\/]+\/)?' . Query_Builder::SQL_ORDERING_DESC . '$/';
 
         foreach (Core_Request::getParams($params) as $name => $value) {
-            if (strlen($value) < strlen($checkAsc)) {
-                continue;
+            if (!$value) {
+                $orderParams[$name] = '';
             }
 
-            if (substr($value, -strlen($checkAsc)) == $checkAsc) {
+            if (preg_match($ascPattern, $value)) {
                 $orderParams[$name] = Query_Builder::SQL_ORDERING_ASC;
-                continue;
-            }
-
-            if (strlen($value) > strlen($checkAsc) && substr($value, -strlen($checkDesc)) == $checkDesc) {
+            } else if (preg_match($descPattern, $value)) {
                 $orderParams[$name] = Query_Builder::SQL_ORDERING_DESC;
-                continue;
+            } else {
+                $orderParams[$name] = '';
             }
         }
 

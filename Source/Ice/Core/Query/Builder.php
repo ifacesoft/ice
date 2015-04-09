@@ -21,12 +21,11 @@ use Ice\Helper\Object;
  *
  * @package Ice
  * @subpackage Core
- *
- * @version 0.0
- * @since 0.0
  */
 class Query_Builder
 {
+    use Core;
+
     const TYPE_CREATE = 'create';
     const TYPE_DROP = 'drop';
     const TYPE_SELECT = 'select';
@@ -100,23 +99,15 @@ class Query_Builder
      */
     private $_sqlParts = [
         self::PART_CREATE => [],
-        self::PART_DROP => [
-            '_drop' => null
-        ],
-        self::PART_SELECT => [
-            '_calcFoundRows' => null,
-        ],
-        self::PART_VALUES => [
-            '_update' => null,
-        ],
+        self::PART_DROP => ['_drop' => null],
+        self::PART_SELECT => ['_calcFoundRows' => null],
+        self::PART_VALUES => ['_update' => null],
         self::PART_SET => [],
         self::PART_JOIN => [],
-        self::PART_WHERE => [
-            '_delete' => null,
-        ],
+        self::PART_WHERE => ['_delete' => null],
         self::PART_GROUP => [],
         self::PART_ORDER => [],
-        self::PART_LIMIT => []
+        self::PART_LIMIT => ['offset' => 0]
     ];
 
     private $_triggers = [
@@ -154,6 +145,9 @@ class Query_Builder
         Cache::INVALIDATE => []
     ];
 
+    private $uis = [];
+
+    private $transforms = [];
     /**
      * Private constructor of query builder
      *
@@ -1034,8 +1028,7 @@ class Query_Builder
      */
     public function getQuery($dataSourceKey = null)
     {
-        return Query::create([$dataSourceKey, $this->_queryType, $this->_sqlParts, $this->_modelClass, $this->_cacheTags, $this->_triggers])
-            ->bind($this->_bindParts);
+        return Query::create($this, $dataSourceKey)->bind($this->_bindParts);
     }
 
     /**
@@ -1346,7 +1339,7 @@ class Query_Builder
      * Ordering
      *
      * @param $fieldName
-     * @param $isAscending
+     * @param $ascOrDesc
      * @param array|string $modelTableData Key -> modelClass, value -> tableAlias
      * @return Query_Builder
      *
@@ -1355,11 +1348,11 @@ class Query_Builder
      * @version 0.6
      * @since 0.0
      */
-    private function order($fieldName, $isAscending, $modelTableData = [])
+    private function order($fieldName, $ascOrDesc, $modelTableData = [])
     {
         if (is_array($fieldName)) {
             foreach ($fieldName as $name) {
-                $this->order($name, $isAscending, $modelTableData);
+                $this->order($name, $ascOrDesc, $modelTableData);
             }
 
             return $this;
@@ -1373,11 +1366,11 @@ class Query_Builder
         if (!isset($this->_sqlParts[self::PART_ORDER][$modelClass])) {
             $this->_sqlParts[self::PART_ORDER][$modelClass] = [
                 $tableAlias, [
-                    $fieldName => $isAscending
+                    $fieldName => $ascOrDesc
                 ]
             ];
         } else {
-            $this->_sqlParts[self::PART_ORDER][$modelClass][1][$fieldName] = $isAscending;
+            $this->_sqlParts[self::PART_ORDER][$modelClass][1][$fieldName] = $ascOrDesc;
         }
 
         return $this;
@@ -1447,17 +1440,21 @@ class Query_Builder
     /**
      * Set Limits and offset by page and limit
      *
-     * @param array $pagination
      * @return Query_Builder
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
      * @since 0.0
      */
-    public function setPagination(array $pagination)
+    public function setPagination($page, $limit)
     {
-        $page = isset($pagination['page']) ? $pagination['page'] : 1;
-        $limit = isset($pagination['limit']) ? $pagination['limit'] : 1000;
+        if (empty($page)) {
+            $page = 1;
+        }
+
+        if (empty($limit)) {
+            $limit = 1000;
+        }
 
         return $this->calcFoundRows()->limit($limit, ($page - 1) * $limit);
     }
@@ -1476,7 +1473,10 @@ class Query_Builder
      */
     public function limit($limit, $offset = 0)
     {
-        $this->_sqlParts[self::PART_LIMIT] = [$limit, $offset];
+        $this->_sqlParts[self::PART_LIMIT] = [
+            'limit' => $limit,
+            'offset' => $offset
+        ];
 
         return $this;
     }
@@ -1648,5 +1648,150 @@ class Query_Builder
     public function beforeDelete($method, $params = null)
     {
         return $this->addTrigger('beforeDelete', $method, $params);
+    }
+
+    public function attachUi($name, Ui $ui)
+    {
+        $this->uis[get_class($ui)][$name] = $ui;
+        return $this;
+    }
+
+    /**
+     * @param $uiName
+     * @return Ui
+     * @throws Exception
+     */
+    private function findUi($uiName)
+    {
+        foreach ($this->uis as $uis) {
+            foreach ($uis as $name => $ui) {
+                if ($uiName == $name) {
+                    return $ui;
+                }
+            }
+        }
+
+        Query_Builder::getLogger()->exception(['Ui {$0} not found', $uiName], __FILE__, __LINE__);
+
+        return null;
+    }
+
+    public function orderUi($uiName, $key, $value, $fieldName = null, $modelTableData = [])
+    {
+        $ui = $this->findUi($uiName);
+
+        $value = $ui->bind($key, $value);
+
+        if (!empty($value)) {
+            if (!$fieldName) {
+                $fieldName = $key;
+            }
+
+            $this->order($fieldName, $value, $modelTableData);
+        }
+
+        return $this;
+    }
+
+    public function paginationUi($uiName, $page, $limit)
+    {
+        $ui = $this->findUi($uiName);
+
+        $this->setPagination($ui->bind('page', $page), $ui->bind('limit', $limit));
+
+        return $this;
+    }
+
+    public function filterUi($uiName, $key, $value, $fieldName = null, $comparison = Query_Builder::SQL_COMPARISON_OPERATOR_EQUAL, $modelTableData = [])
+    {
+        $ui = $this->findUi($uiName);
+
+        $value = $ui->bind($key, $value);
+
+        if (!empty($value)) {
+            if (!$fieldName) {
+                $fieldName = $key;
+            }
+
+            $this->where(Query_Builder::SQL_LOGICAL_AND, [$fieldName => $value], $comparison, $modelTableData);
+        }
+
+        return $this;
+    }
+
+    public function addTransformUi($uiName, $key, $value, $fieldName, $transform)
+    {
+        $ui = $this->findUi($uiName);
+
+        $value = $ui->bind($key, $value);
+
+        if (!empty($value)) {
+            if (!$fieldName) {
+                $fieldName = $key;
+            }
+
+            $this->addTransform($transform, [$fieldName, $value]);
+        }
+
+        return $this;
+    }
+
+    public function addTransform($transform, $data)
+    {
+        $this->transforms[] = [$transform, $data];
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getQueryType()
+    {
+        return $this->_queryType;
+    }
+
+    /**
+     * @param string|null $queryPart
+     * @return array
+     */
+    public function getSqlParts($queryPart = null)
+    {
+        if (!$queryPart) {
+            return $this->_sqlParts;
+        }
+
+       return isset($this->_sqlParts[$queryPart]) ? $this->_sqlParts[$queryPart] : null;
+    }
+
+    /**
+     * @return array
+     */
+    public function getTriggers()
+    {
+        return $this->_triggers;
+    }
+
+    /**
+     * @return array
+     */
+    public function getCacheTags()
+    {
+        return $this->_cacheTags;
+    }
+
+    /**
+     * @return array
+     */
+    public function getTransforms()
+    {
+        return $this->transforms;
+    }
+
+    /**
+     * @return Ui[]
+     */
+    public function getUis()
+    {
+        return $this->uis;
     }
 }

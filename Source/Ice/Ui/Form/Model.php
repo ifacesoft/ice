@@ -56,7 +56,7 @@ class Model extends Ui_Form
     protected function __construct()
     {
         /** @var Core_Model $modelClass */
-        $modelClass = $this->getKey();
+        $modelClass = $this->getValues();
 
         $validateScheme = $modelClass::getPlugin(Validator::getClass());
 
@@ -94,7 +94,7 @@ class Model extends Ui_Form
     public function addFilterFields(array $filterFields)
     {
         /** @var Core_Model $modelClass */
-        $modelClass = $this->getKey();
+        $modelClass = $this->getValues();
 
         foreach ($filterFields as &$filterField) {
             $filterField = $modelClass::getFieldName($filterField);
@@ -114,7 +114,12 @@ class Model extends Ui_Form
     public function submit()
     {
         /** @var Core_Model $modelClass */
-        $modelClass = $this->getKey();
+        $modelClass = $this->getValues();
         $modelClass::create($this->validate())->save(true);
+    }
+
+    public function render()
+    {
+        // TODO: Implement render() method.
     }
 }

@@ -4,31 +4,9 @@ namespace Ice\Core;
 
 use Ice\Core;
 
-abstract class Ui_Menu extends Container
+abstract class Ui_Menu extends Ui
 {
-    use Ui;
-
-    private $items = null;
-
-    private function __construct()
-    {
-    }
-
-    /**
-     * Return instance of Ui_Menu
-     *
-     * @param null $key
-     * @param null $ttl
-     * @return Ui_Menu
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.1
-     * @since 0.1
-     */
-    public static function getInstance($key = null, $ttl = null)
-    {
-        return parent::getInstance($key, $ttl);
-    }
+    private $items = [];
 
     /**
      * Return Ui_Menu items
@@ -70,5 +48,17 @@ abstract class Ui_Menu extends Container
         }
 
         return $this;
+    }
+
+    public function link($name, $title, array $options = [], $template = 'Link')
+    {
+        return $this->addItem($name, $title, $options, $template);
+    }
+
+    public function bind($key, $value)
+    {
+        $this->addValue($key, $value);
+
+        return $value;
     }
 }
