@@ -169,7 +169,7 @@ class Resources extends Action
                                 ],
                                 'module' => [
                                     'path' => 'Ice/',
-                                    'js' => ['Helper/String.js', 'Action/Form.js', 'Action/Menu.js'],
+                                    'js' => ['Helper/String.js', 'Ui/Form.js', 'Ui/Menu.js', 'Ui/Data.js'],
                                     'css' => [],
                                     'isCopy' => false,
                                 ],

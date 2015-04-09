@@ -29,9 +29,6 @@ use Ice\Helper\Object;
  * @author dp <denis.a.shestakov@gmail.com>
  *
  * @package Ice
- *
- * @version 0.0
- * @since 0.0
  */
 trait Core
 {

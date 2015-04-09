@@ -3,11 +3,26 @@
 namespace Ice\Core;
 
 use Ice\Core;
-use Ice\Ui\Menu\Pagination;
 
-abstract class Ui_Data extends Container
+abstract class Ui_Data extends Ui
 {
-    use Ui;
+    private $offset = 0;
+
+    /**
+     * @return int
+     */
+    public function getOffset()
+    {
+        return $this->offset;
+    }
+
+    /**
+     * @param int $offset
+     */
+    public function setOffset($offset)
+    {
+        $this->offset = $offset;
+    }
 
     /**
      * Not ignored fields
@@ -16,66 +31,14 @@ abstract class Ui_Data extends Container
      */
     protected $_filterFields = [];
 
-    private $_title = '';
-    private $_desc = '';
     private $columns = [];
     private $rows = [];
     private $_rowHeaderTemplate = 'Row_Header';
     private $_rowDataTemplate = 'Row_Data';
 
-    /**
-     * Filter form
-     *
-     * @var Ui_Form
-     */
-    private $filterForm = null;
-
-    /**
-     * Pagination menu
-     *
-     * @var Pagination
-     */
-    private $paginationMenu = null;
-
-    private function __construct()
-    {
-    }
-
-    /**
-     * Return instance of Data
-     *
-     * @param string $key
-     * @param null $ttl
-     * @return Ui_Data
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.6
-     * @since 0.2
-     */
-    public static function getInstance($key = null, $ttl = null)
-    {
-        return parent::getInstance($key, $ttl);
-    }
-
-    protected static function getDefaultClassKey()
-    {
-        return 'Ice:Table';
-    }
-
-    protected static function getDefaultKey()
-    {
-        return 'default';
-    }
-
-    /**
-     * @param array $rows
-     * @return $this
-     */
-    public function bind(array $rows)
+    public function setRows(array $rows)
     {
         $this->rows = $rows;
-
-        return $this;
     }
 
     /**
@@ -99,19 +62,18 @@ abstract class Ui_Data extends Container
      *
      * @param $columnName
      * @param $columnTitle
-     * @param null $options
+     * @param array $options
      * @param string $template
      * @return Ui_Data
      */
-    public function text($columnName, $columnTitle, $options = null, $template = 'Column_Column')
+    public function text($columnName, $columnTitle, $options = [], $template = 'Column_Column')
     {
         return $this->addColumn($columnName, $columnTitle, $options, $template);
     }
 
     protected function addColumn($columnName, $columnTitle, $options, $template)
     {
-        $this->columns[] = [
-            'name' => $columnName,
+        $this->columns[$columnName] = [
             'title' => $columnTitle,
             'options' => $options,
             'template' => $template
@@ -146,11 +108,11 @@ abstract class Ui_Data extends Container
      *
      * @param $columnName
      * @param $columnTitle
-     * @param null $options
+     * @param array $options
      * @param string $template
      * @return Ui_Data
      */
-    public function link($columnName, $columnTitle, $options = null, $template = 'Column_Link')
+    public function link($columnName, $columnTitle, $options = [], $template = 'Column_Link')
     {
         return $this->addColumn($columnName, $columnTitle, $options, $template);
     }
@@ -160,11 +122,11 @@ abstract class Ui_Data extends Container
      *
      * @param $columnName
      * @param $columnTitle
-     * @param null $options
+     * @param array $options
      * @param string $template
      * @return Ui_Data
      */
-    public function button($columnName, $columnTitle, $options = null, $template = 'Column_Button')
+    public function button($columnName, $columnTitle, $options = [], $template = 'Column_Button')
     {
         return $this->addColumn($columnName, $columnTitle, $options, $template);
     }
@@ -180,20 +142,6 @@ abstract class Ui_Data extends Container
     public static function schemeColumnPlugin($columnName, $table)
     {
         return 'text';
-    }
-
-    public function title($title)
-    {
-        $this->_title = $title;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getTitle()
-    {
-        return $this->_title;
     }
 
     /**
@@ -232,104 +180,33 @@ abstract class Ui_Data extends Container
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getDesc()
+    public function bind($key, $value)
     {
-        return $this->_desc;
-    }
+        $ascPattern = '/(?:[^\/]+\/)?' . Query_Builder::SQL_ORDERING_ASC . '$/';
+        $descPattern = '/(?:[^\/]+\/)?' . Query_Builder::SQL_ORDERING_DESC . '$/';
 
-    /**
-     * @param string $desc
-     * @return Ui_Data
-     */
-    public function desc($desc)
-    {
-        $this->_desc = $desc;
-        return $this;
-    }
+        if (preg_match($ascPattern, $value)) {
+            $value = Query_Builder::SQL_ORDERING_ASC;
+        } else if (preg_match($descPattern, $value)) {
+            $value = Query_Builder::SQL_ORDERING_DESC;
+        } else {
+            $value = '';
+        }
 
-    /**
-     * @return Ui_Form
-     */
-    public function getFilterForm()
-    {
-        return $this->filterForm;
-    }
-
-    /**
-     * @param Ui_Form $filter
-     * @return Ui_Data
-     */
-    public function setFilterForm(Ui_Form $filter)
-    {
-        $this->filterForm = $filter;
-
-        $this->updateParams();
-
-        return $this;
-    }
-
-    /**
-     * @return Pagination
-     */
-    public function getPaginationMenu()
-    {
-        return $this->paginationMenu;
-    }
-
-    /**
-     * @param Pagination $paginationMenu
-     * @param $foundRows
-     * @return Ui_Data
-     */
-    public function setPaginationMenu(Pagination $paginationMenu, $foundRows)
-    {
-        $paginationMenu->setFoundRows($foundRows);
-        $this->paginationMenu = $paginationMenu;
-
-        $this->updateParams();
-
-        return $this;
-    }
-
-    private function updateParams()
-    {
-        $params = [];
-
-        if ($this->paginationMenu) {
-            foreach ($this->paginationMenu->getKey() as $key => $value) {
-                if ($value !== null) {
-                    $params[$key] = $value;
-                }
+        if (isset($this->columns[$key])) {
+            if (empty($value) && isset($this->columns[$key]['options']['default'])) {
+                $value = $this->columns[$key]['options']['default'];
             }
+
+            $this->addValue($key, $value);
         }
 
-        if ($this->filterForm) {
-            foreach ($this->filterForm->getKey() as $key => $value) {
-                if ($value !== null) {
-                    $params[$key] = $value;
-                }
-            }
-        }
+        return $value;
+    }
 
-        foreach ($this->getKey() as $key => $value) {
-            if ($value !== null) {
-                $params[$key] = isset($params[$key])
-                    ? $params[$key] . '/' . $value
-                    : $value;
-            }
-        }
-
-        $this->setParams($params);
-
-        if ($this->paginationMenu) {
-            $this->paginationMenu->setParams($params);
-        }
-
-        if ($this->filterForm) {
-            $this->filterForm->setParams($params);
-        }
+    public function setQueryResult(Query_Result $queryResult)
+    {
+        $this->setRows($queryResult->getRows());
+        $this->setOffset($queryResult->getQuery()->getQueryBuilder()->getSqlParts()[Query_Builder::PART_LIMIT]['offset']);
     }
 }

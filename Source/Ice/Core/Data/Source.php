@@ -348,10 +348,11 @@ abstract class Data_Source extends Container
 
         $queryResult = null;
 
-        $queryCommand = 'execute' . ucfirst($query->getQueryType());
+        $queryType = $query->getQueryBuilder()->getQueryType();
+
+        $queryCommand = 'execute' . ucfirst(strtolower($queryType));
 
         try {
-            $queryType = $query->getQueryType();
             if (
                 ($queryType == Query_Builder::TYPE_SELECT && !$ttl) ||
                 $queryType == Query_Builder::TYPE_CREATE ||

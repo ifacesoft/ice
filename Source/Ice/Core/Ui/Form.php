@@ -10,8 +10,8 @@
 namespace Ice\Core;
 
 use Ice\Core;
-use Ice\Ui\Form\Model as Ui_Form_Model;
 use Ice\Helper\Arrays;
+use Ice\Ui\Form\Model as Ui_Form_Model;
 
 /**
  * Class Ui_Form
@@ -25,9 +25,10 @@ use Ice\Helper\Arrays;
  * @package Ice
  * @subpackage Core
  */
-abstract class Ui_Form extends Container
+abstract class Ui_Form extends Ui
 {
-    use Ui;
+    const SUBMIT_EVENT_ONCHANGE = 'onchange';
+    const SUBMIT_EVENT_ONSUBMIT = 'onsubmit';
 
     const FIELD_HIDDEN = 'Hidden';
     const FIELD_TEXT = 'Text';
@@ -39,7 +40,6 @@ abstract class Ui_Form extends Container
     const FIELD_TEXTAREA = 'Textarea';
     const NAME_MODEL = 'Model';
     const NAME_SIMPLE = 'Simple';
-
 
     /**
      * Fields - form parts
@@ -70,61 +70,6 @@ abstract class Ui_Form extends Container
     ];
 
     /**
-     * Constructor for model forms
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.6
-     * @since 0.1
-     */
-    private function __construct()
-    {
-    }
-
-    /**
-     * Return instance of Ui_Form
-     *
-     * @param null $key
-     * @param null $ttl
-     * @return Ui_Form
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.1
-     * @since 0.1
-     */
-    public static function getInstance($key = null, $ttl = null)
-    {
-        return parent::getInstance($key, $ttl);
-    }
-
-    /**
-     * Create new instance of form
-     *
-     * @param $key
-     * @return Ui_Form
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.6
-     * @since 0.0
-     */
-    protected static function create($key)
-    {
-        $class = self::getClass();
-//
-//        if ($key) {
-//            $class .= '_' . $key;
-//        }
-
-        /** @var Ui_Form $form */
-        $form = new $class();
-
-        $form->bind($key);
-
-        return $form;
-    }
-
-    /**
      * Add hidden type field
      *
      * @param $fieldName
@@ -138,7 +83,7 @@ abstract class Ui_Form extends Container
      * @version 0.6
      * @since 0.0
      */
-    public function hidden($fieldName, $fieldTitle, array $options = [], $template = 'Field_Hidden')
+    public function hidden($fieldName, $fieldTitle, array $options = [], $template = 'Hidden')
     {
         return $this->addField($fieldName, $fieldTitle, $options, $template);
     }
@@ -164,10 +109,6 @@ abstract class Ui_Form extends Container
             unset($options['validators']);
         }
 
-        if (empty($this->_key[$fieldName]) && array_key_exists('defaultValue', $options)) {
-            $this->bind($fieldName, $options['defaultValue']);
-        }
-
         $this->_fields[$fieldName] = [
             'title' => $fieldTitle,
             'options' => Arrays::defaults($this->_defaultOptions, $options),
@@ -177,32 +118,32 @@ abstract class Ui_Form extends Container
         return $this;
     }
 
-    /**
-     * Bind value
-     *
-     * @param $key
-     * @param null $value
-     * @return Ui_Form
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.6
-     * @since 0.0
-     */
-    public function bind($key, $value = null)
-    {
-        if (is_array($key)) {
-            foreach ($key as $v => $k) {
-                $this->bind($v, $k);
-            }
-
-            return $this;
-        }
-
-        $this->_key[$key] = $value;
-
-        return $this;
-    }
+//    /**
+//     * Bind value
+//     *
+//     * @param $key
+//     * @param null $value
+//     * @return Ui_Form
+//     *
+//     * @author dp <denis.a.shestakov@gmail.com>
+//     *
+//     * @version 0.6
+//     * @since 0.0
+//     */
+//    public function bind($key, $value = null)
+//    {
+//        if (is_array($key)) {
+//            foreach ($key as $v => $k) {
+//                $this->bind($v, $k);
+//            }
+//
+//            return $this;
+//        }
+//
+//        $this->addValue($key, $value);
+//
+//        return $this;
+//    }
 
     /**
      * Add password type field
@@ -218,7 +159,7 @@ abstract class Ui_Form extends Container
      * @version 0.6
      * @since 0.1
      */
-    public function password($fieldName, $fieldTitle, array $options = [], $template = 'Field_Password')
+    public function password($fieldName, $fieldTitle, array $options = [], $template = 'Password')
     {
         return $this->addField($fieldName, $fieldTitle, $options, $template);
     }
@@ -237,7 +178,7 @@ abstract class Ui_Form extends Container
      * @version 0.6
      * @since 0.0
      */
-    public function number($fieldName, $fieldTitle, array $options = [], $template = 'Field_Number')
+    public function number($fieldName, $fieldTitle, array $options = [], $template = 'Number')
     {
         return $this->addField($fieldName, $fieldTitle, $options, $template);
     }
@@ -256,7 +197,7 @@ abstract class Ui_Form extends Container
      * @version 0.6
      * @since 0.0
      */
-    public function text($fieldName, $fieldTitle, array $options = [], $template = 'Field_Text')
+    public function text($fieldName, $fieldTitle, array $options = [], $template = 'Text')
     {
         return $this->addField($fieldName, $fieldTitle, $options, $template);
     }
@@ -275,7 +216,7 @@ abstract class Ui_Form extends Container
      * @version 0.6
      * @since 0.0
      */
-    public function date($fieldName, $fieldTitle, array $options = [], $template = 'Field_Date')
+    public function date($fieldName, $fieldTitle, array $options = [], $template = 'Date')
     {
         return $this->addField($fieldName, $fieldTitle, $options, $template);
     }
@@ -294,7 +235,7 @@ abstract class Ui_Form extends Container
      * @version 0.6
      * @since 0.0
      */
-    public function checkbox($fieldName, $fieldTitle, array $options = [], $template = 'Field_Checkbox')
+    public function checkbox($fieldName, $fieldTitle, array $options = [], $template = 'Checkbox')
     {
         return $this->addField($fieldName, $fieldTitle, $options, $template);
     }
@@ -313,7 +254,7 @@ abstract class Ui_Form extends Container
      * @version 0.6
      * @since 0.0
      */
-    public function combobox($fieldName, $fieldTitle, array $options = [], $template = 'Field_Combobox')
+    public function combobox($fieldName, $fieldTitle, array $options = [], $template = 'Combobox')
     {
         return $this->addField($fieldName, $fieldTitle, $options, $template);
     }
@@ -332,7 +273,7 @@ abstract class Ui_Form extends Container
      * @version 0.6
      * @since 0.0
      */
-    public function geo($fieldName, $fieldTitle, array $options = [], $template = 'Field_Geo')
+    public function geo($fieldName, $fieldTitle, array $options = [], $template = 'Geo')
     {
         return $this->addField($fieldName, $fieldTitle, $options, $template);
     }
@@ -351,7 +292,7 @@ abstract class Ui_Form extends Container
      * @version 0.6
      * @since 0.0
      */
-    public function textarea($fieldName, $fieldTitle, array $options = [], $template = 'Field_Textarea')
+    public function textarea($fieldName, $fieldTitle, array $options = [], $template = 'Textarea')
     {
         return $this->addField($fieldName, $fieldTitle, $options, $template);
     }
@@ -389,7 +330,7 @@ abstract class Ui_Form extends Container
             ? $this->getValidateScheme()
             : array_intersect_key($this->getValidateScheme(), array_flip($var));
 
-        return Validator::validateByScheme($this->getKey(), $validateScheme);
+        return Validator::validateByScheme($this->getValues(), $validateScheme);
     }
 
     /**
@@ -444,15 +385,16 @@ abstract class Ui_Form extends Container
     }
 
     /**
+     * @param null $name
      * @return null|string
      */
-    public function getKey()
+    public function getValues($name = null)
     {
         $var = $this->getFilterFields();
 
         return empty($var)
-            ? $this->_key
-            : array_intersect_key($this->_key, array_flip($var));
+            ? parent::getValues($name)
+            : array_intersect_key(parent::getValues($name), array_flip($var));
     }
 
     protected static function getDefaultClassKey()
@@ -480,5 +422,43 @@ abstract class Ui_Form extends Container
         return isset(Ui_Form_Model::$typeMap[$table['columns'][$columnName]['scheme']['dataType']])
             ? Ui_Form_Model::$typeMap[$table['columns'][$columnName]['scheme']['dataType']]
             : 'text';
+    }
+
+    public function setInput($params)
+    {
+        foreach ($this->getFields() as $fieldName => $field) {
+            if ($param = strstr($params[$fieldName], '/' . Query_Builder::SQL_ORDERING_ASC, false) !== false) {
+                $this->addValue($fieldName, $param);
+                continue;
+            }
+
+            if ($param = strstr($params[$fieldName], '/' . Query_Builder::SQL_ORDERING_DESC, false) !== false) {
+                $this->addValue($fieldName, $param);
+                continue;
+            }
+
+
+            if (empty($params[$fieldName]) && isset($field['options']['default'])) {
+                $this->addValue($fieldName, $field['options']['default']);
+                continue;
+            }
+
+            $this->addValue($fieldName, isset($params[$fieldName]) ? $params[$fieldName] : null);
+        }
+
+        return $this;
+    }
+
+    public function bind($key, $value)
+    {
+        if (isset($this->_fields[$key])) {
+            if (empty($value) && isset($this->_fields[$key]['options']['default'])) {
+                $value = $this->_fields[$key]['options']['default'];
+            }
+
+            $this->addValue($key, $value);
+        }
+
+        return $value;
     }
 }

@@ -92,8 +92,7 @@ class Mysqli extends Data_Source
             );
         }
 
-        /** @var Model $modelClass */
-        $modelClass = $query->getModelClass();
+        $modelClass = $query->getQueryBuilder()->getModelClass();
 
         $pkFieldNames = $modelClass::getScheme()->getPkFieldNames();
 

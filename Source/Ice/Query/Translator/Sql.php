@@ -461,18 +461,12 @@ class Sql extends Query_Translator
      */
     protected function translateLimit($part)
     {
-        if (empty($part)) {
-            return '';
-        }
-
-        list($limit, $offset) = $part;
-
-        if ($limit == 0) {
+        if (empty($part) || empty($part['limit'])) {
             return '';
         }
 
         return "\n" . 'LIMIT ' .
-        "\n\t" . $offset . ', ' . $limit;
+        "\n\t" . $part['offset'] . ', ' . $part['limit'];
     }
 
     /**

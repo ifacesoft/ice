@@ -59,4 +59,9 @@ class Model extends Ui_Data
     {
         return $this->_modelClass;
     }
+
+    public function render()
+    {
+        // TODO: Implement render() method.
+    }
 }

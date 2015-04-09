@@ -12,6 +12,9 @@ namespace Ice\Core;
 use Ice\Core;
 use Ice\Helper\Arrays;
 use Ice\Helper\Json;
+use Ice\Ui\Data\Table;
+use Ice\Ui\Form\Simple;
+use Ice\Ui\Menu\Pagination;
 
 /**
  * Class Query
@@ -30,20 +33,9 @@ class Query
     use Stored;
 
     /**
-     * Target model class
-     *
-     * @var Model
+     * @var Query_Builder
      */
-    private $_modelClass = null;
-
-    /**
-     * Query statement type
-     *
-     * Available statment types: SELECT|INSERT|UPDATE|DELETE
-     *
-     * @var string
-     */
-    private $_queryType = null;
+    private $queryBuilder = null;
 
     /**
      * Bind parts
@@ -51,13 +43,6 @@ class Query
      * @var array
      */
     private $_bindParts = [];
-
-    /**
-     * Cache tags  (validate|invalidate)
-     *
-     * @var array
-     */
-    private $_cacheTags = null;
 
     /**
      * Data source name
@@ -87,8 +72,6 @@ class Query
      */
     private $_bindHash = null;
 
-    private $_triggers;
-
     /**
      * Private constructor of query builder. Create: Query::create()->...
      *
@@ -105,34 +88,60 @@ class Query
     /**
      * Create new instance of query
      *
-     * @param $key
+     * @param Query_Builder $queryBuilder
+     * @param $dataSourceKey
      * @return Query
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @todo Need caching
-     * @version 0.4
+     * @version 0.6
      * @since 0.0
      */
-    public static function create($key)
+    public static function create(Query_Builder $queryBuilder, $dataSourceKey)
     {
         $query = new Query();
-        $query->_hash = md5(Json::encode($key));
 
-        list($dataSourceKey, $queryType, $sqlParts, $modelClass, $cacheTags, $triggers) = $key;
+        $query->queryBuilder = $queryBuilder;
+
+        $modelClass = $queryBuilder->getModelClass();
 
         if (!$dataSourceKey) {
             $dataSourceKey = $modelClass::getDataSourceKey();
         }
 
         $query->_dataSourceKey = $dataSourceKey;
-        $query->_queryType = $queryType;
-        $query->_modelClass = $modelClass;
-        $query->_cacheTags = $cacheTags;
-        $query->_bodyParts = $sqlParts;
-        $query->_triggers = $triggers;
+
+        $query->_hash = md5(
+            Json::encode([
+                $queryBuilder->getQueryType(),
+                $queryBuilder->getSqlParts(),
+                $queryBuilder->getModelClass(),
+                $queryBuilder->getCacheTags(),
+                $queryBuilder->getTriggers(),
+                $queryBuilder->getTransforms()
+            ])
+        );
 
         return $query;
+    }
+
+    /**
+     * @param $modelClass
+     * @param $tableAlias
+     * @return Query_Builder
+     */
+    public static function getBuilder($modelClass, $tableAlias = null)
+    {
+        return Query_Builder::create($modelClass, $tableAlias);
+    }
+
+    /**
+     * @return Query_Builder
+     */
+    public function getQueryBuilder()
+    {
+        return $this->queryBuilder;
     }
 
     /**
@@ -142,12 +151,13 @@ class Query
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.4
+     * @version 0.6
      * @since 0.0
      */
     public function isCalcFoundRows()
     {
-        return reset($this->_bodyParts[Query_Builder::PART_SELECT]);
+        $selectQueryParts = $this->queryBuilder->getSqlParts(Query_Builder::PART_SELECT);
+        return reset($selectQueryParts);
     }
 
     /**
@@ -165,26 +175,11 @@ class Query
     {
         $this->_bindParts = $bindParts;
 
-        if ($this->getQueryType() == Query_Builder::TYPE_SELECT) {
+        if ($this->queryBuilder->getQueryType() == Query_Builder::TYPE_SELECT) {
             $this->_bindHash = md5(json_encode($bindParts));
         }
 
         return $this;
-    }
-
-    /**
-     * Return query statement type
-     *
-     * @return string
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function getQueryType()
-    {
-        return $this->_queryType;
     }
 
     /**
@@ -232,48 +227,18 @@ class Query
     }
 
     /**
-     * Return data source name
-     *
-     * @return Data_Source
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since 0.0
-     */
-    public function getDataSource()
-    {
-        return Data_Source::getInstance($this->getDataSourceKey());
-    }
-
-    /**
-     * Return model class
-     *
-     * @return Model
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function getModelClass()
-    {
-        return $this->_modelClass;
-    }
-
-    /**
      * Return validate tags
      *
      * @return array
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.6
      * @since 0.0
      */
     public function getValidateTags()
     {
-        return $this->_cacheTags[Cache::VALIDATE];
+        return $this->queryBuilder->getCacheTags()[Cache::VALIDATE];
     }
 
     /**
@@ -283,12 +248,12 @@ class Query
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.6
      * @since 0.0
      */
     public function getInvalidateTags()
     {
-        return $this->_cacheTags[Cache::INVALIDATE];
+        return $this->queryBuilder->getCacheTags()[Cache::INVALIDATE];
     }
 
     /**
@@ -310,20 +275,25 @@ class Query
         return $this->_hash . '/' . $this->_bindHash;
     }
 
+    public function getBody()
+    {
+        $queryTranslatorClass = $this->getDataSource()->getQueryTranslatorClass();
+        return $queryTranslatorClass::getInstance()->translate($this->getBodyParts());
+    }
+
     /**
-     * Execute query
+     * Return data source name
      *
-     * @param int $ttl
-     * @return Query_Result
+     * @return Data_Source
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
-     * @since 0.4
+     * @since 0.0
      */
-    public function getQueryResult($ttl = null)
+    public function getDataSource()
     {
-        return $this->getDataSource()->execute($this, $ttl);
+        return Data_Source::getInstance($this->getDataSourceKey());
     }
 
     /**
@@ -353,27 +323,12 @@ class Query
      */
     public function getBodyParts()
     {
-        return $this->_bodyParts;
-    }
-
-    public function getBody()
-    {
-        $queryTranslatorClass = $this->getDataSource()->getQueryTranslatorClass();
-        return $queryTranslatorClass::getInstance()->translate($this->getBodyParts());
+        return $this->queryBuilder->getSqlParts();
     }
 
     public function getAfterSelectTriggers()
     {
-        return $this->_triggers['afterSelect'];
-    }
-
-    /**
-     * @param $modelClass
-     * @param $tableAlias
-     * @return Query_Builder
-     */
-    public static function getBuilder($modelClass, $tableAlias = null) {
-        return Query_Builder::create($modelClass, $tableAlias);
+        return $this->queryBuilder->getTriggers()['afterSelect'];
     }
 
     /**
@@ -390,23 +345,63 @@ class Query
     {
         $queryResult = $this->getQueryResult($ttl);
 
-        return Model_Collection::create($queryResult->getModelClass(), $queryResult->getRows(), $queryResult->getQuery());
+        return Model_Collection::create($queryResult->getQuery()->getQueryBuilder()->getModelClass(), $queryResult->getRows(), $queryResult->getQuery());
     }
 
-
     /**
-     * Return all rows from data as array
+     * Execute query
      *
-     * @param null $ttl
-     * @return array
+     * @param int $ttl
+     * @return Query_Result
+     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
+     * @todo костылькостылем погоняет((
      * @version 0.6
-     * @since 0.0
+     * @since 0.4
      */
-    public function getRows($ttl = null)
+    public function getQueryResult($ttl = null)
     {
-        return $this->getQueryResult($ttl)->getRows();
+        $queryResult = $this->getDataSource()->execute($this, $ttl);
+
+        $params = [];
+
+        /** @var Ui $ui */
+
+        if (isset($this->queryBuilder->getUis()[Simple::getClass()])) {
+            foreach ($this->queryBuilder->getUis()[Simple::getClass()] as $ui) {
+                $params += (array)$ui->getValues();
+            }
+        }
+
+        if (isset($this->queryBuilder->getUis()[Pagination::getClass()])) {
+            foreach ($this->queryBuilder->getUis()[Pagination::getClass()] as $ui) {
+                $params += $ui->getValues();
+            }
+        }
+
+        if (isset($this->queryBuilder->getUis()[Table::getClass()])) {
+            foreach ($this->queryBuilder->getUis()[Table::getClass()] as $ui) {
+                foreach ($ui->getValues() as $key => $value) {
+                    if ($value) {
+                        if (!isset($params[$key])) {
+                            $params[$key] = $value;
+                        } else {
+                            $params[$key] .= '/' . $value;
+                        }
+                    }
+                }
+            }
+        }
+
+        foreach ($this->queryBuilder->getUis() as $uis) {
+            foreach ($uis as $ui) {
+                $ui->setQueryResult($queryResult);
+                $ui->setParams($params);
+            }
+        }
+
+        return $queryResult;
     }
 
     /**
@@ -457,6 +452,21 @@ class Query
     }
 
     /**
+     * Return all rows from data as array
+     *
+     * @param null $ttl
+     * @return array
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.6
+     * @since 0.0
+     */
+    public function getRows($ttl = null)
+    {
+        return $this->getQueryResult($ttl)->getRows();
+    }
+
+    /**
      * Return model from data
      *
      * @param null $pk
@@ -475,7 +485,7 @@ class Query
             return null;
         }
 
-        $modelClass = $this->getModelClass();
+        $modelClass = $this->queryBuilder->getModelClass();
 
         return $modelClass::create($row)->clearAffected();
     }

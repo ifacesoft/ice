@@ -2,7 +2,14 @@
  * Created by dp on 9/26/14.
  */
 
-var Ice_Action_Form = {
+var Ice_Ui_Form = {
+    change: function ($element, callback) {
+        var data = JSON.parse($element.attr('data-json'));
+        data[$element.attr('name')] = $element.val();
+
+        Ice.reRender($element, data, callback, $element.attr('data-url'));
+    },
+
     submit: function ($button, submitActionName, $params, reRenderClosest, reRenderActionNames) {
         Ice.call(
             submitActionName,

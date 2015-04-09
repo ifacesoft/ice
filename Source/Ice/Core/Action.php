@@ -528,11 +528,11 @@ $action = null;
      *
      *  protected static function config()
      *  {
-     *      return return [
+     *      return [
      *          'view' => ['template' => '', 'viewRenderClass' => null],
      *          'input' => [],
      *          'output' => [],
-     *          'ttl' => 3600,
+     *          'ttl' => -1,
      *          'roles' => []
      *      ];
      *  }
