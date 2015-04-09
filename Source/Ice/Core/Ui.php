@@ -19,11 +19,6 @@ abstract class Ui
     {
     }
 
-    protected function addValue($key, $value)
-    {
-        $this->_values[$key] = $value;
-    }
-
     /**
      * Create new instance of ui component
      *
@@ -179,9 +174,19 @@ abstract class Ui
 
     public abstract function bind($key, $value);
 
-    public abstract function render();
-
     public function setQueryResult(Query_Result $queryResult)
     {
+    }
+
+    public function __toString()
+    {
+        return $this->render();
+    }
+
+    public abstract function render();
+
+    protected function addValue($key, $value)
+    {
+        $this->_values[$key] = $value;
     }
 }

@@ -31,8 +31,6 @@ abstract class Ui_Data extends Ui
      */
     protected $_filterFields = [];
 
-    private $_title = '';
-    private $_desc = '';
     private $columns = [];
     private $rows = [];
     private $_rowHeaderTemplate = 'Row_Header';
@@ -146,20 +144,6 @@ abstract class Ui_Data extends Ui
         return 'text';
     }
 
-    public function setTitle($title)
-    {
-        $this->_title = $title;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getTitle()
-    {
-        return $this->_title;
-    }
-
     /**
      * @return string
      */
@@ -193,24 +177,6 @@ abstract class Ui_Data extends Ui
     public function setRowDataTemplate($rowDataTemplate)
     {
         $this->_rowDataTemplate = $rowDataTemplate;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getDesc()
-    {
-        return $this->_desc;
-    }
-
-    /**
-     * @param string $desc
-     * @return Ui_Data
-     */
-    public function desc($desc)
-    {
-        $this->_desc = $desc;
         return $this;
     }
 
