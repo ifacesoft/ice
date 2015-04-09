@@ -127,6 +127,16 @@ class Query
     }
 
     /**
+     * @param $modelClass
+     * @param $tableAlias
+     * @return Query_Builder
+     */
+    public static function getBuilder($modelClass, $tableAlias = null)
+    {
+        return Query_Builder::create($modelClass, $tableAlias);
+    }
+
+    /**
      * @return Query_Builder
      */
     public function getQueryBuilder()
@@ -217,21 +227,6 @@ class Query
     }
 
     /**
-     * Return data source name
-     *
-     * @return Data_Source
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since 0.0
-     */
-    public function getDataSource()
-    {
-        return Data_Source::getInstance($this->getDataSourceKey());
-    }
-
-    /**
      * Return validate tags
      *
      * @return array
@@ -280,53 +275,25 @@ class Query
         return $this->_hash . '/' . $this->_bindHash;
     }
 
+    public function getBody()
+    {
+        $queryTranslatorClass = $this->getDataSource()->getQueryTranslatorClass();
+        return $queryTranslatorClass::getInstance()->translate($this->getBodyParts());
+    }
+
     /**
-     * Execute query
+     * Return data source name
      *
-     * @param int $ttl
-     * @return Query_Result
+     * @return Data_Source
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @todo костылькостылем погоняет((
-     * @version 0.6
-     * @since 0.4
+     * @version 0.4
+     * @since 0.0
      */
-    public function getQueryResult($ttl = null)
+    public function getDataSource()
     {
-        $queryResult = $this->getDataSource()->execute($this, $ttl);
-
-        $params = [];
-
-        /** @var Ui $ui */
-        foreach ($this->queryBuilder->getUis()[Simple::getClass()] as $ui) {
-            $params += (array)$ui->getValues();
-        }
-
-        foreach ($this->queryBuilder->getUis()[Pagination::getClass()] as $ui) {
-            $params += $ui->getValues();
-        }
-
-        foreach ($this->queryBuilder->getUis()[Table::getClass()] as $ui) {
-            foreach ($ui->getValues() as $key => $value) {
-                if ($value) {
-                    if (!isset($params[$key])) {
-                        $params[$key] = $value;
-                    } else {
-                        $params[$key] .= '/' . $value;
-                    }
-                }
-            }
-        }
-
-        foreach ($this->queryBuilder->getUis() as $uis) {
-            foreach ($uis as $ui) {
-                $ui->setQueryResult($queryResult);
-                $ui->setParams($params);
-            }
-        }
-
-        return $queryResult;
+        return Data_Source::getInstance($this->getDataSourceKey());
     }
 
     /**
@@ -359,24 +326,9 @@ class Query
         return $this->queryBuilder->getSqlParts();
     }
 
-    public function getBody()
-    {
-        $queryTranslatorClass = $this->getDataSource()->getQueryTranslatorClass();
-        return $queryTranslatorClass::getInstance()->translate($this->getBodyParts());
-    }
-
     public function getAfterSelectTriggers()
     {
         return $this->queryBuilder->getTriggers()['afterSelect'];
-    }
-
-    /**
-     * @param $modelClass
-     * @param $tableAlias
-     * @return Query_Builder
-     */
-    public static function getBuilder($modelClass, $tableAlias = null) {
-        return Query_Builder::create($modelClass, $tableAlias);
     }
 
     /**
@@ -393,23 +345,63 @@ class Query
     {
         $queryResult = $this->getQueryResult($ttl);
 
-        return Model_Collection::create($queryResult->getModelClass(), $queryResult->getRows(), $queryResult->getQuery());
+        return Model_Collection::create($queryResult->getQuery()->getQueryBuilder()->getModelClass(), $queryResult->getRows(), $queryResult->getQuery());
     }
 
-
     /**
-     * Return all rows from data as array
+     * Execute query
      *
-     * @param null $ttl
-     * @return array
+     * @param int $ttl
+     * @return Query_Result
+     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
+     * @todo костылькостылем погоняет((
      * @version 0.6
-     * @since 0.0
+     * @since 0.4
      */
-    public function getRows($ttl = null)
+    public function getQueryResult($ttl = null)
     {
-        return $this->getQueryResult($ttl)->getRows();
+        $queryResult = $this->getDataSource()->execute($this, $ttl);
+
+        $params = [];
+
+        /** @var Ui $ui */
+
+        if (isset($this->queryBuilder->getUis()[Simple::getClass()])) {
+            foreach ($this->queryBuilder->getUis()[Simple::getClass()] as $ui) {
+                $params += (array)$ui->getValues();
+            }
+        }
+
+        if (isset($this->queryBuilder->getUis()[Pagination::getClass()])) {
+            foreach ($this->queryBuilder->getUis()[Pagination::getClass()] as $ui) {
+                $params += $ui->getValues();
+            }
+        }
+
+        if (isset($this->queryBuilder->getUis()[Table::getClass()])) {
+            foreach ($this->queryBuilder->getUis()[Table::getClass()] as $ui) {
+                foreach ($ui->getValues() as $key => $value) {
+                    if ($value) {
+                        if (!isset($params[$key])) {
+                            $params[$key] = $value;
+                        } else {
+                            $params[$key] .= '/' . $value;
+                        }
+                    }
+                }
+            }
+        }
+
+        foreach ($this->queryBuilder->getUis() as $uis) {
+            foreach ($uis as $ui) {
+                $ui->setQueryResult($queryResult);
+                $ui->setParams($params);
+            }
+        }
+
+        return $queryResult;
     }
 
     /**
@@ -457,6 +449,21 @@ class Query
         }
 
         return reset($rows);
+    }
+
+    /**
+     * Return all rows from data as array
+     *
+     * @param null $ttl
+     * @return array
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.6
+     * @since 0.0
+     */
+    public function getRows($ttl = null)
+    {
+        return $this->getQueryResult($ttl)->getRows();
     }
 
     /**

@@ -94,6 +94,12 @@ var Ice = {
                 if (callback) {
                     callback();
                 }
+
+                var title = result.title
+                ? result.title
+                    : document.title;
+
+                history.pushState({}, title, url);
             },
             url
         );

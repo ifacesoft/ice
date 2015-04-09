@@ -22,9 +22,10 @@ class Report extends Action
             'view' => ['viewRenderClass' => 'Ice:Php'],
             'input' => [
                 'name' => ['validators' => 'Ice:Not_Empty'],
-                'filterForm' => ['validators' => 'Ice:Is_Ui_Form'],
-                'tableData' => ['validators' => 'Ice:Is_Ui_Data'],
-                'paginationMenu' => ['validators' => 'Ice:Is_Ui_Menu'],
+                'desc',
+                'filterForm',
+                'tableData',
+                'paginationMenu'
             ],
             'output' => [],
             'ttl' => -1,

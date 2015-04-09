@@ -30,67 +30,19 @@ class Pagination extends Ui_Menu
 
         $pageCount = intval($this->foundRows / $this->getValues('limit')) + 1;
 
-        $limit = $page == $pageCount
-            ? $this->foundRows - ($pageCount - 1) * $this->getValues('limit')
-            : $this->getValues('limit');
+        $this->first(1);
+        $this->fastFastPrev($page - 100);
+        $this->fastPrev($page - 10);
+        $this->prevPrev($page - 2);
+        $this->prev($page - 1);
+        $this->curr($page, $pageCount);
+        $this->next($page + 1, $pageCount);
+        $this->nextNext($page + 2, $pageCount);
+        $this->fastNext($page + 10, $pageCount);
+        $this->fastFastNext($page + 100, $pageCount);
+        $this->last($pageCount);
 
-        $newPage = 1;
-        if ($page > $newPage) {
-            $this->link('first', $newPage . ' &lt;&lt;&lt;', ['page' => $newPage]);
-            $this->link('leftSep3', ' &hellip; ', ['classes' => ['disabled'], 'style' => 'border: none;']);
-        }
 
-        $newPage = $page - 100;
-        if ($newPage >= 1) {
-            $this->link('fastPrev2', $newPage . ' &lt;&lt;', ['page' => $newPage]);
-            $this->link('leftSep2', ' &hellip; ', ['classes' => ['disabled'], 'style' => 'border: none;']);
-        }
-
-        $newPage = $page - 10;
-        if ($newPage >= 1) {
-            $this->link('fastPrev', $newPage . ' &lt;', ['page' => $newPage]);
-            $this->link('leftSep', ' &hellip; ', ['classes' => ['disabled'], 'style' => 'border: none;']);
-        }
-
-        $newPage = $page - 2;
-        if ($newPage >= 1) {
-            $this->link('before2', $newPage, ['page' => $newPage]);
-        }
-
-        $newPage = $page - 1;
-        if ($newPage >= 1) {
-            $this->link('before1', $newPage, ['page' => $newPage]);
-        }
-
-        $this->link('current', $page . ' ( ' . $limit . ' / ' . $this->foundRows . ' )', ['page' => $page, 'classes' => ['active'], 'style' => 'z-index: 0;']);
-
-        $newPage = $page + 1;
-        if ($newPage <= $pageCount) {
-            $this->link('after1', $newPage, ['page' => $newPage]);
-        }
-
-        $newPage = $page + 2;
-        if ($newPage <= $pageCount) {
-            $this->link('after2', $newPage, ['page' => $newPage]);
-        }
-
-        $newPage = $page + 10;
-        if ($newPage <= $pageCount) {
-            $this->link('rightSep', ' &hellip; ', ['classes' => ['disabled'], 'style' => 'border: none;']);
-            $this->link('fastNext', '&gt; ' . $newPage, ['page' => $newPage]);
-        }
-
-        $newPage = $page + 100;
-        if ($newPage <= $pageCount) {
-            $this->link('rightSep2', ' &hellip; ', ['classes' => ['disabled'], 'style' => 'border: none;']);
-            $this->link('fastNext2', '&gt;&gt; ' . $newPage, ['page' => $newPage]);
-        }
-
-        $newPage = $pageCount;
-        if ($page < $pageCount) {
-            $this->link('rightSep3', ' &hellip; ', ['classes' => ['disabled'], 'style' => 'border: none;']);
-            $this->link('last', '&gt;&gt;&gt; ' . $newPage, ['page' => $newPage]);
-        }
     }
 
     public function render()
@@ -147,5 +99,90 @@ class Pagination extends Ui_Menu
     public function setQueryResult(Query_Result $queryResult)
     {
         $this->setFoundRows($queryResult->getFoundRows());
+    }
+
+    private function first($page)
+    {
+        if ($this->getValues('page') > $page) {
+            $this->link(__FUNCTION__, $page . ' &lt;&lt;&lt;', ['page' => $page]);
+            $this->link('after_' . __FUNCTION__, ' &hellip; ', ['classes' => ['disabled'], 'style' => 'border: none;']);
+        }
+    }
+
+    private function fastFastPrev($page)
+    {
+        if ($page > 1) {
+            $this->link(__FUNCTION__, $page . ' &lt;&lt;', ['page' => $page]);
+            $this->link('after_' . __FUNCTION__, ' &hellip; ', ['classes' => ['disabled'], 'style' => 'border: none;']);
+        }
+    }
+
+    private function fastPrev($page)
+    {
+        if ($page > 1) {
+            $this->link(__FUNCTION__, $page . ' &lt;', ['page' => $page]);
+            $this->link('after_' . __FUNCTION__, ' &hellip; ', ['classes' => ['disabled'], 'style' => 'border: none;']);
+        }
+    }
+
+    private function prevPrev($page)
+    {
+        if ($page > 1) {
+            $this->link(__FUNCTION__, $page, ['page' => $page]);
+        }
+    }
+
+    private function prev($page)
+    {
+        if ($page > 1) {
+            $this->link(__FUNCTION__, $page, ['page' => $page]);
+        }
+    }
+
+    private function curr($page, $pageCount)
+    {
+        $limit = $page == $pageCount
+            ? $this->foundRows - ($pageCount - 1) * $this->getValues('limit')
+            : $this->getValues('limit');
+
+        $this->link('current', $page . ' ( ' . $limit . ' / ' . $this->foundRows . ' )', ['page' => $page, 'classes' => ['active'], 'style' => 'z-index: 0;']);
+    }
+
+    private function next($page, $pageCount)
+    {
+        if ($page < $pageCount) {
+            $this->link('after1', $page, ['page' => $page]);
+        }
+    }
+
+    private function nextNext($page, $pageCount)
+    {
+        if ($page < $pageCount) {
+            $this->link('after2', $page, ['page' => $page]);
+        }
+    }
+
+    private function fastNext($page, $pageCount)
+    {
+        if ($page < $pageCount) {
+            $this->link('rightSep', ' &hellip; ', ['classes' => ['disabled'], 'style' => 'border: none;']);
+            $this->link('fastNext', '&gt; ' . $page, ['page' => $page]);
+        }
+    }
+
+    private function fastFastNext($page, $pageCount)
+    {
+        if ($page < $pageCount) {
+            $this->link('rightSep2', ' &hellip; ', ['classes' => ['disabled'], 'style' => 'border: none;']);
+            $this->link('fastNext2', '&gt;&gt; ' . $page, ['page' => $page]);
+        }
+    }
+
+    private function last($page)
+    {
+        if ($this->getValues('page') < $page) {
+            $this->link('rightSep3', ' &hellip; ', ['classes' => ['disabled'], 'style' => 'border: none;']);
+            $this->link('last', '&gt;&gt;&gt; ' . $page, ['page' => $page]);
+        }
     }
 }
