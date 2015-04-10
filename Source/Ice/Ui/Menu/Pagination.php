@@ -41,8 +41,6 @@ class Pagination extends Ui_Menu
         $this->fastNext($page + 10, $pageCount);
         $this->fastFastNext($page + 100, $pageCount);
         $this->last($pageCount);
-
-
     }
 
     public function render()
