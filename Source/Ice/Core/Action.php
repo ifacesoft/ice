@@ -125,7 +125,7 @@ abstract class Action implements Cacheable
         $actionHash = $actionClass . '/' . $hash;
 
         App::getContext()->initAction($actionClass, $hash);
-$action = null;
+        $action = null;
 
         if (isset($actionCacher)) {
             /** @var Action $action */
@@ -151,7 +151,9 @@ $action = null;
             $startTimeAfter = Profiler::getMicrotime();
             $startMemoryAfter = Profiler::getMemoryGetUsage();
 
-            foreach ($action->getActions() as $actionKey => $actionData) {
+            $rawActions = array_merge($action->_actions, $actionClass::getConfig()->gets('actions', false));
+
+            foreach ($action->getActions($rawActions) as $actionKey => $actionData) {
                 if (empty($actionData) || count($actionData) > 2) {
                     Action::getLogger()->exception(['Wrong param count ({$0}) in action {$1}', [count($actionData), $actionClass]], __FILE__, __LINE__, null, $actionData);
                 }
@@ -550,26 +552,36 @@ $action = null;
     abstract public function run(array $input);
 
     /**
+     * @param array $rawActions
      * @return array
      */
-    public function getActions()
+    public function getActions(array $rawActions)
     {
         $actions = [];
 
-        /** @var Action $actionClass */
-        $actionClass = get_class($this);
-
-        foreach (array_merge($this->_actions, $actionClass::getConfig()->gets('actions', false)) as $key => $action) {
-            $params = [];
-
-            if (is_string($action)) {
-                $action = [$action => $key];
+        foreach ($rawActions as $key => $action) {
+            if (empty($action)) {
+                continue;
             }
 
-            list($class, $key) = each($action);
+            $params = [];
 
-            if (count($action) > 1) {
-                $params = current($action);
+            if (is_array($action)) {
+                list($class, $key) = each($action);
+
+                if (is_int($class)) {
+                    $class = $key;
+                    $key = 0;
+                }
+
+                $params = count($action) < 2 ? [] : current($action);
+            } else {
+                if (!is_int($key)) {
+                    $class = $key;
+                    $key = $action;
+                } else {
+                    $class = $action;
+                }
             }
 
             $class = $class[0] == '_'
@@ -581,7 +593,6 @@ $action = null;
             } else {
                 $actions[] = [$class => $params];
             }
-
         }
 
         return $actions;

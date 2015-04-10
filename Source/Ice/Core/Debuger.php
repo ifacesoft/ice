@@ -60,6 +60,8 @@ class Debuger {
 
             Logger::fb($arg, 'debug', 'INFO');
         }
+
+        return $arg;
     }
 
 }

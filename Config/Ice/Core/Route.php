@@ -7,8 +7,8 @@ return [
             'GET' => [
                 'Ice:Layout_Main' => [
                     'actions' => [
-                        ['title' => 'Ice:Title', ['title' => 'Hello world']],
-                        'main' => 'Ice:Main'
+                        ['Ice:Title' => 'title', ['title' => 'Hello world']],
+                        'Ice:Main' => 'main'
                     ]
                 ]
             ]
@@ -20,7 +20,7 @@ return [
             'GET' => [
                 'Ice:Layout_Test' => [
                     'actions' => [
-                        'Ice:Test' => 'testAction'
+                        'Ice:Test'=> 'testAction'
                     ]
                 ]
             ]
