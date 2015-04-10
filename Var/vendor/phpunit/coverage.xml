@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1428323728">
-  <project timestamp="1428323728">
+<coverage generated="1428338908">
+  <project timestamp="1428338908">
     <file name="/home/dp/PhpstormProjects/ice/Ice/Config/Ice/Core/Route.php">
       <line num="5" type="stmt" count="1"/>
       <line num="10" type="stmt" count="1"/>
@@ -751,13 +751,13 @@
     <package name="Ice\Core">
       <file name="/home/dp/PhpstormProjects/ice/Ice/Source/Ice/Core/Action.php">
         <class name="Action" namespace="Ice\Core" fullPackage="Ice.Core" package="Ice" subpackage="Core">
-          <metrics methods="22" coveredmethods="9" conditionals="0" coveredconditionals="0" statements="222" coveredstatements="150" elements="244" coveredelements="159"/>
+          <metrics methods="22" coveredmethods="9" conditionals="0" coveredconditionals="0" statements="223" coveredstatements="151" elements="245" coveredelements="160"/>
         </class>
         <line num="82" type="method" name="__construct" crap="1" count="1"/>
         <line num="84" type="stmt" count="1"/>
         <line num="96" type="method" name="getRegistry" crap="2" count="0"/>
         <line num="98" type="stmt" count="0"/>
-        <line num="101" type="method" name="call" crap="21.52" count="1"/>
+        <line num="101" type="method" name="call" crap="21.31" count="1"/>
         <line num="103" type="stmt" count="1"/>
         <line num="104" type="stmt" count="1"/>
         <line num="107" type="stmt" count="1"/>
@@ -814,190 +814,191 @@
         <line num="189" type="stmt" count="1"/>
         <line num="191" type="stmt" count="1"/>
         <line num="193" type="stmt" count="1"/>
-        <line num="194" type="stmt" count="1"/>
-        <line num="195" type="stmt" count="0"/>
-        <line num="196" type="stmt" count="0"/>
-        <line num="197" type="stmt" count="1"/>
-        <line num="198" type="stmt" count="1"/>
+        <line num="195" type="stmt" count="1"/>
+        <line num="196" type="stmt" count="1"/>
+        <line num="197" type="stmt" count="0"/>
+        <line num="198" type="stmt" count="0"/>
         <line num="199" type="stmt" count="1"/>
         <line num="200" type="stmt" count="1"/>
+        <line num="201" type="stmt" count="1"/>
         <line num="202" type="stmt" count="1"/>
-        <line num="205" type="method" name="checkResponse" crap="12.19" count="1"/>
-        <line num="207" type="stmt" count="1"/>
-        <line num="208" type="stmt" count="0"/>
-        <line num="209" type="stmt" count="0"/>
+        <line num="204" type="stmt" count="1"/>
+        <line num="207" type="method" name="checkResponse" crap="12.19" count="1"/>
+        <line num="209" type="stmt" count="1"/>
         <line num="210" type="stmt" count="0"/>
+        <line num="211" type="stmt" count="0"/>
         <line num="212" type="stmt" count="0"/>
-        <line num="213" type="stmt" count="0"/>
         <line num="214" type="stmt" count="0"/>
+        <line num="215" type="stmt" count="0"/>
         <line num="216" type="stmt" count="0"/>
-        <line num="217" type="stmt" count="0"/>
-        <line num="218" type="stmt" count="1"/>
-        <line num="225" type="method" name="getInput" crap="12.90" count="1"/>
-        <line num="228" type="stmt" count="1"/>
-        <line num="229" type="stmt" count="1"/>
+        <line num="218" type="stmt" count="0"/>
+        <line num="219" type="stmt" count="0"/>
+        <line num="220" type="stmt" count="1"/>
+        <line num="227" type="method" name="getInput" crap="12.90" count="1"/>
         <line num="230" type="stmt" count="1"/>
         <line num="231" type="stmt" count="1"/>
         <line num="232" type="stmt" count="1"/>
+        <line num="233" type="stmt" count="1"/>
         <line num="234" type="stmt" count="1"/>
         <line num="236" type="stmt" count="1"/>
-        <line num="237" type="stmt" count="1"/>
         <line num="238" type="stmt" count="1"/>
         <line num="239" type="stmt" count="1"/>
         <line num="240" type="stmt" count="1"/>
         <line num="241" type="stmt" count="1"/>
+        <line num="242" type="stmt" count="1"/>
         <line num="243" type="stmt" count="1"/>
-        <line num="244" type="stmt" count="1"/>
         <line num="245" type="stmt" count="1"/>
+        <line num="246" type="stmt" count="1"/>
         <line num="247" type="stmt" count="1"/>
-        <line num="248" type="stmt" count="1"/>
-        <line num="249" type="stmt" count="0"/>
-        <line num="252" type="stmt" count="1"/>
-        <line num="253" type="stmt" count="0"/>
-        <line num="254" type="stmt" count="0"/>
-        <line num="256" type="stmt" count="1"/>
-        <line num="257" type="stmt" count="1"/>
+        <line num="249" type="stmt" count="1"/>
+        <line num="250" type="stmt" count="1"/>
+        <line num="251" type="stmt" count="0"/>
+        <line num="254" type="stmt" count="1"/>
+        <line num="255" type="stmt" count="0"/>
+        <line num="256" type="stmt" count="0"/>
         <line num="258" type="stmt" count="1"/>
         <line num="259" type="stmt" count="1"/>
-        <line num="262" type="stmt" count="1"/>
-        <line num="263" type="stmt" count="0"/>
-        <line num="264" type="stmt" count="0"/>
-        <line num="266" type="stmt" count="1"/>
-        <line num="269" type="stmt" count="0"/>
-        <line num="270" type="stmt" count="1"/>
+        <line num="260" type="stmt" count="1"/>
+        <line num="261" type="stmt" count="1"/>
+        <line num="264" type="stmt" count="1"/>
+        <line num="265" type="stmt" count="0"/>
+        <line num="266" type="stmt" count="0"/>
+        <line num="268" type="stmt" count="1"/>
+        <line num="271" type="stmt" count="0"/>
         <line num="272" type="stmt" count="1"/>
-        <line num="273" type="stmt" count="1"/>
         <line num="274" type="stmt" count="1"/>
         <line num="275" type="stmt" count="1"/>
+        <line num="276" type="stmt" count="1"/>
         <line num="277" type="stmt" count="1"/>
-        <line num="278" type="stmt" count="0"/>
-        <line num="281" type="stmt" count="1"/>
-        <line num="294" type="method" name="getConfig" crap="2" count="1"/>
-        <line num="296" type="stmt" count="1"/>
+        <line num="279" type="stmt" count="1"/>
+        <line num="280" type="stmt" count="0"/>
+        <line num="283" type="stmt" count="1"/>
+        <line num="296" type="method" name="getConfig" crap="2" count="1"/>
         <line num="298" type="stmt" count="1"/>
-        <line num="299" type="stmt" count="1"/>
-        <line num="303" type="stmt" count="1"/>
+        <line num="300" type="stmt" count="1"/>
+        <line num="301" type="stmt" count="1"/>
         <line num="305" type="stmt" count="1"/>
         <line num="307" type="stmt" count="1"/>
-        <line num="320" type="method" name="getRepository" crap="1" count="1"/>
-        <line num="322" type="stmt" count="1"/>
-        <line num="361" type="method" name="config" crap="2" count="0"/>
-        <line num="363" type="stmt" count="0"/>
-        <line num="379" type="method" name="getInputParam" crap="52.95" count="1"/>
-        <line num="381" type="stmt" count="1"/>
-        <line num="382" type="stmt" count="1"/>
-        <line num="385" type="stmt" count="0"/>
-        <line num="386" type="stmt" count="0"/>
+        <line num="309" type="stmt" count="1"/>
+        <line num="322" type="method" name="getRepository" crap="1" count="1"/>
+        <line num="324" type="stmt" count="1"/>
+        <line num="363" type="method" name="config" crap="2" count="0"/>
+        <line num="365" type="stmt" count="0"/>
+        <line num="381" type="method" name="getInputParam" crap="52.95" count="1"/>
+        <line num="383" type="stmt" count="1"/>
+        <line num="384" type="stmt" count="1"/>
         <line num="387" type="stmt" count="0"/>
+        <line num="388" type="stmt" count="0"/>
         <line num="389" type="stmt" count="0"/>
-        <line num="390" type="stmt" count="0"/>
         <line num="391" type="stmt" count="0"/>
+        <line num="392" type="stmt" count="0"/>
         <line num="393" type="stmt" count="0"/>
-        <line num="394" type="stmt" count="0"/>
         <line num="395" type="stmt" count="0"/>
         <line num="396" type="stmt" count="0"/>
         <line num="397" type="stmt" count="0"/>
         <line num="398" type="stmt" count="0"/>
+        <line num="399" type="stmt" count="0"/>
         <line num="400" type="stmt" count="0"/>
-        <line num="401" type="stmt" count="0"/>
         <line num="402" type="stmt" count="0"/>
-        <line num="408" type="stmt" count="0"/>
-        <line num="422" type="method" name="create" crap="1" count="1"/>
-        <line num="424" type="stmt" count="1"/>
+        <line num="403" type="stmt" count="0"/>
+        <line num="404" type="stmt" count="0"/>
+        <line num="410" type="stmt" count="0"/>
+        <line num="424" type="method" name="create" crap="1" count="1"/>
         <line num="426" type="stmt" count="1"/>
-        <line num="439" type="method" name="setInput" crap="1" count="1"/>
-        <line num="441" type="stmt" count="1"/>
-        <line num="442" type="stmt" count="1"/>
+        <line num="428" type="stmt" count="1"/>
+        <line num="441" type="method" name="setInput" crap="1" count="1"/>
         <line num="443" type="stmt" count="1"/>
+        <line num="444" type="stmt" count="1"/>
         <line num="445" type="stmt" count="1"/>
-        <line num="446" type="stmt" count="1"/>
-        <line num="448" type="method" name="initActions" crap="4" count="1"/>
-        <line num="450" type="stmt" count="1"/>
-        <line num="451" type="stmt" count="1"/>
+        <line num="447" type="stmt" count="1"/>
+        <line num="448" type="stmt" count="1"/>
+        <line num="450" type="method" name="initActions" crap="4" count="1"/>
         <line num="452" type="stmt" count="1"/>
         <line num="453" type="stmt" count="1"/>
         <line num="454" type="stmt" count="1"/>
+        <line num="455" type="stmt" count="1"/>
         <line num="456" type="stmt" count="1"/>
-        <line num="457" type="stmt" count="1"/>
+        <line num="458" type="stmt" count="1"/>
         <line num="459" type="stmt" count="1"/>
-        <line num="460" type="stmt" count="1"/>
         <line num="461" type="stmt" count="1"/>
-        <line num="463" type="method" name="addAction" crap="1" count="1"/>
-        <line num="465" type="stmt" count="1"/>
-        <line num="466" type="stmt" count="1"/>
-        <line num="468" type="method" name="initView" crap="6.00" count="1"/>
-        <line num="471" type="stmt" count="1"/>
+        <line num="462" type="stmt" count="1"/>
+        <line num="463" type="stmt" count="1"/>
+        <line num="465" type="method" name="addAction" crap="1" count="1"/>
+        <line num="467" type="stmt" count="1"/>
+        <line num="468" type="stmt" count="1"/>
+        <line num="470" type="method" name="initView" crap="6.00" count="1"/>
         <line num="473" type="stmt" count="1"/>
         <line num="475" type="stmt" count="1"/>
-        <line num="476" type="stmt" count="0"/>
-        <line num="477" type="stmt" count="0"/>
+        <line num="477" type="stmt" count="1"/>
         <line num="478" type="stmt" count="0"/>
-        <line num="479" type="stmt" count="1"/>
-        <line num="482" type="stmt" count="1"/>
-        <line num="483" type="stmt" count="0"/>
-        <line num="484" type="stmt" count="0"/>
+        <line num="479" type="stmt" count="0"/>
+        <line num="480" type="stmt" count="0"/>
+        <line num="481" type="stmt" count="1"/>
+        <line num="484" type="stmt" count="1"/>
         <line num="485" type="stmt" count="0"/>
-        <line num="486" type="stmt" count="1"/>
-        <line num="489" type="stmt" count="1"/>
-        <line num="490" type="stmt" count="0"/>
-        <line num="491" type="stmt" count="0"/>
+        <line num="486" type="stmt" count="0"/>
+        <line num="487" type="stmt" count="0"/>
+        <line num="488" type="stmt" count="1"/>
+        <line num="491" type="stmt" count="1"/>
         <line num="492" type="stmt" count="0"/>
-        <line num="493" type="stmt" count="1"/>
+        <line num="493" type="stmt" count="0"/>
+        <line num="494" type="stmt" count="0"/>
         <line num="495" type="stmt" count="1"/>
-        <line num="500" type="method" name="getView" crap="2" count="1"/>
-        <line num="502" type="stmt" count="1"/>
-        <line num="503" type="stmt" count="1"/>
-        <line num="506" type="stmt" count="1"/>
-        <line num="509" type="method" name="initTtl" crap="2.50" count="1"/>
-        <line num="511" type="stmt" count="1"/>
-        <line num="512" type="stmt" count="0"/>
-        <line num="513" type="stmt" count="0"/>
+        <line num="497" type="stmt" count="1"/>
+        <line num="502" type="method" name="getView" crap="2" count="1"/>
+        <line num="504" type="stmt" count="1"/>
+        <line num="505" type="stmt" count="1"/>
+        <line num="508" type="stmt" count="1"/>
+        <line num="511" type="method" name="initTtl" crap="2.50" count="1"/>
+        <line num="513" type="stmt" count="1"/>
         <line num="514" type="stmt" count="0"/>
-        <line num="515" type="stmt" count="1"/>
+        <line num="515" type="stmt" count="0"/>
+        <line num="516" type="stmt" count="0"/>
         <line num="517" type="stmt" count="1"/>
-        <line num="555" type="method" name="getActions" crap="7.77" count="1"/>
-        <line num="557" type="stmt" count="1"/>
-        <line num="560" type="stmt" count="1"/>
+        <line num="519" type="stmt" count="1"/>
+        <line num="557" type="method" name="getActions" crap="7.77" count="1"/>
+        <line num="559" type="stmt" count="1"/>
         <line num="562" type="stmt" count="1"/>
-        <line num="563" type="stmt" count="1"/>
+        <line num="564" type="stmt" count="1"/>
         <line num="565" type="stmt" count="1"/>
-        <line num="566" type="stmt" count="0"/>
-        <line num="567" type="stmt" count="0"/>
-        <line num="569" type="stmt" count="1"/>
+        <line num="567" type="stmt" count="1"/>
+        <line num="568" type="stmt" count="0"/>
+        <line num="569" type="stmt" count="0"/>
         <line num="571" type="stmt" count="1"/>
-        <line num="572" type="stmt" count="0"/>
-        <line num="573" type="stmt" count="0"/>
-        <line num="575" type="stmt" count="1"/>
-        <line num="576" type="stmt" count="1"/>
+        <line num="573" type="stmt" count="1"/>
+        <line num="574" type="stmt" count="0"/>
+        <line num="575" type="stmt" count="0"/>
         <line num="577" type="stmt" count="1"/>
+        <line num="578" type="stmt" count="1"/>
         <line num="579" type="stmt" count="1"/>
-        <line num="580" type="stmt" count="1"/>
         <line num="581" type="stmt" count="1"/>
-        <line num="582" type="stmt" count="0"/>
-        <line num="585" type="stmt" count="1"/>
+        <line num="582" type="stmt" count="1"/>
+        <line num="583" type="stmt" count="1"/>
+        <line num="584" type="stmt" count="0"/>
         <line num="587" type="stmt" count="1"/>
-        <line num="593" type="method" name="setOutput" crap="3.71" count="1"/>
-        <line num="595" type="stmt" count="1"/>
-        <line num="596" type="stmt" count="0"/>
-        <line num="597" type="stmt" count="0"/>
+        <line num="589" type="stmt" count="1"/>
+        <line num="595" type="method" name="setOutput" crap="3.71" count="1"/>
+        <line num="597" type="stmt" count="1"/>
         <line num="598" type="stmt" count="0"/>
-        <line num="599" type="stmt" count="1"/>
+        <line num="599" type="stmt" count="0"/>
+        <line num="600" type="stmt" count="0"/>
         <line num="601" type="stmt" count="1"/>
-        <line num="602" type="stmt" count="1"/>
-        <line num="607" type="method" name="getTtl" crap="2" count="0"/>
-        <line num="609" type="stmt" count="0"/>
-        <line num="622" type="method" name="setTtl" crap="2" count="1"/>
-        <line num="624" type="stmt" count="1"/>
+        <line num="603" type="stmt" count="1"/>
+        <line num="604" type="stmt" count="1"/>
+        <line num="609" type="method" name="getTtl" crap="2" count="0"/>
+        <line num="611" type="stmt" count="0"/>
+        <line num="624" type="method" name="setTtl" crap="2" count="1"/>
         <line num="626" type="stmt" count="1"/>
-        <line num="627" type="stmt" count="1"/>
         <line num="628" type="stmt" count="1"/>
+        <line num="629" type="stmt" count="1"/>
         <line num="630" type="stmt" count="1"/>
-        <line num="631" type="stmt" count="1"/>
-        <line num="644" type="method" name="validate" crap="2" count="0"/>
-        <line num="646" type="stmt" count="0"/>
-        <line num="659" type="method" name="invalidate" crap="2" count="0"/>
-        <line num="661" type="stmt" count="0"/>
-        <metrics loc="662" ncloc="411" classes="1" methods="22" coveredmethods="9" conditionals="0" coveredconditionals="0" statements="222" coveredstatements="150" elements="244" coveredelements="159"/>
+        <line num="632" type="stmt" count="1"/>
+        <line num="633" type="stmt" count="1"/>
+        <line num="646" type="method" name="validate" crap="2" count="0"/>
+        <line num="648" type="stmt" count="0"/>
+        <line num="661" type="method" name="invalidate" crap="2" count="0"/>
+        <line num="663" type="stmt" count="0"/>
+        <metrics loc="664" ncloc="413" classes="1" methods="22" coveredmethods="9" conditionals="0" coveredconditionals="0" statements="223" coveredstatements="151" elements="245" coveredelements="160"/>
       </file>
       <file name="/home/dp/PhpstormProjects/ice/Ice/Source/Ice/Core/Action/Context.php">
         <class name="Action_Context" namespace="Ice\Core" fullPackage="Ice.Core" package="Ice" subpackage="Core">
@@ -1414,6 +1415,37 @@
         <line num="500" type="stmt" count="0"/>
         <metrics loc="501" ncloc="188" classes="1" methods="11" coveredmethods="4" conditionals="0" coveredconditionals="0" statements="73" coveredstatements="41" elements="84" coveredelements="45"/>
       </file>
+      <file name="/home/dp/PhpstormProjects/ice/Ice/Source/Ice/Core/Debuger.php">
+        <class name="Debuger" namespace="Ice\Core">
+          <metrics methods="2" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="23" coveredstatements="12" elements="25" coveredelements="12"/>
+        </class>
+        <line num="19" type="method" name="dumpDie" crap="12" count="0"/>
+        <line num="21" type="stmt" count="0"/>
+        <line num="22" type="stmt" count="0"/>
+        <line num="23" type="stmt" count="0"/>
+        <line num="25" type="stmt" count="0"/>
+        <line num="26" type="stmt" count="0"/>
+        <line num="27" type="stmt" count="0"/>
+        <line num="28" type="stmt" count="0"/>
+        <line num="29" type="stmt" count="0"/>
+        <line num="30" type="stmt" count="0"/>
+        <line num="32" type="stmt" count="0"/>
+        <line num="45" type="method" name="dump" crap="4.01" count="1"/>
+        <line num="47" type="stmt" count="1"/>
+        <line num="48" type="stmt" count="1"/>
+        <line num="50" type="stmt" count="1"/>
+        <line num="51" type="stmt" count="1"/>
+        <line num="52" type="stmt" count="1"/>
+        <line num="53" type="stmt" count="1"/>
+        <line num="54" type="stmt" count="0"/>
+        <line num="57" type="stmt" count="1"/>
+        <line num="58" type="stmt" count="1"/>
+        <line num="59" type="stmt" count="1"/>
+        <line num="61" type="stmt" count="1"/>
+        <line num="62" type="stmt" count="1"/>
+        <line num="63" type="stmt" count="1"/>
+        <metrics loc="64" ncloc="46" classes="1" methods="2" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="23" coveredstatements="12" elements="25" coveredelements="12"/>
+      </file>
       <file name="/home/dp/PhpstormProjects/ice/Ice/Source/Ice/Core/Environment.php">
         <class name="Environment" namespace="Ice\Core" fullPackage="Ice.Core" package="Ice" subpackage="Core">
           <metrics methods="6" coveredmethods="4" conditionals="0" coveredconditionals="0" statements="32" coveredstatements="12" elements="38" coveredelements="16"/>
@@ -1462,10 +1494,10 @@
         <class name="Exception" namespace="Ice\Core" fullPackage="Ice.Core" package="Ice" subpackage="Core">
           <metrics methods="3" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="26" coveredstatements="22" elements="29" coveredelements="24"/>
         </class>
-        <line num="52" type="method" name="__construct" crap="13.89" count="4"/>
-        <line num="54" type="stmt" count="4"/>
-        <line num="56" type="stmt" count="4"/>
-        <line num="58" type="stmt" count="4"/>
+        <line num="52" type="method" name="__construct" crap="13.89" count="3"/>
+        <line num="54" type="stmt" count="3"/>
+        <line num="56" type="stmt" count="3"/>
+        <line num="58" type="stmt" count="3"/>
         <line num="59" type="stmt" count="2"/>
         <line num="60" type="stmt" count="2"/>
         <line num="61" type="stmt" count="2"/>
@@ -1482,8 +1514,8 @@
         <line num="72" type="stmt" count="2"/>
         <line num="74" type="stmt" count="2"/>
         <line num="75" type="stmt" count="2"/>
-        <line num="76" type="stmt" count="3"/>
-        <line num="77" type="stmt" count="3"/>
+        <line num="76" type="stmt" count="2"/>
+        <line num="77" type="stmt" count="2"/>
         <line num="78" type="stmt" count="1"/>
         <line num="79" type="stmt" count="1"/>
         <line num="80" type="method" name="anonymous function" crap="1" count="1"/>
@@ -1492,9 +1524,9 @@
         <line num="83" type="stmt" count="1"/>
         <line num="84" type="stmt" count="1"/>
         <line num="85" type="stmt" count="1"/>
-        <line num="87" type="stmt" count="3"/>
-        <line num="88" type="stmt" count="3"/>
-        <line num="91" type="stmt" count="4"/>
+        <line num="87" type="stmt" count="2"/>
+        <line num="88" type="stmt" count="2"/>
+        <line num="91" type="stmt" count="3"/>
         <line num="92" type="stmt" count="0"/>
         <line num="94" type="stmt" count="0"/>
         <line num="96" type="stmt" count="0"/>
@@ -1502,11 +1534,11 @@
         <line num="98" type="stmt" count="0"/>
         <line num="99" type="stmt" count="0"/>
         <line num="100" type="stmt" count="0"/>
-        <line num="103" type="stmt" count="4"/>
-        <line num="105" type="stmt" count="4"/>
-        <line num="106" type="stmt" count="4"/>
-        <line num="120" type="method" name="getErrContext" crap="1" count="2"/>
-        <line num="122" type="stmt" count="2"/>
+        <line num="103" type="stmt" count="3"/>
+        <line num="105" type="stmt" count="3"/>
+        <line num="106" type="stmt" count="3"/>
+        <line num="120" type="method" name="getErrContext" crap="1" count="1"/>
+        <line num="122" type="stmt" count="1"/>
         <metrics loc="123" ncloc="71" classes="1" methods="3" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="42" coveredstatements="31" elements="45" coveredelements="33"/>
       </file>
       <file name="/home/dp/PhpstormProjects/ice/Ice/Source/Ice/Core/Loader.php">
@@ -1621,14 +1653,14 @@
         <line num="165" type="stmt" count="0"/>
         <line num="167" type="stmt" count="0"/>
         <line num="168" type="stmt" count="0"/>
-        <line num="184" type="method" name="errorHandler" crap="5.58" count="2"/>
-        <line num="187" type="stmt" count="2"/>
-        <line num="188" type="stmt" count="2"/>
-        <line num="189" type="stmt" count="2"/>
+        <line num="184" type="method" name="errorHandler" crap="5.58" count="1"/>
+        <line num="187" type="stmt" count="1"/>
+        <line num="188" type="stmt" count="1"/>
+        <line num="189" type="stmt" count="1"/>
         <line num="190" type="stmt" count="0"/>
         <line num="191" type="stmt" count="0"/>
-        <line num="194" type="stmt" count="2"/>
-        <line num="195" type="stmt" count="2"/>
+        <line num="194" type="stmt" count="1"/>
+        <line num="195" type="stmt" count="1"/>
         <line num="211" type="method" name="info" crap="7.05" count="4"/>
         <line num="213" type="stmt" count="4"/>
         <line num="214" type="stmt" count="2"/>
@@ -1661,35 +1693,35 @@
         <line num="261" type="stmt" count="4"/>
         <line num="274" type="method" name="addLog" crap="2" count="0"/>
         <line num="276" type="stmt" count="0"/>
-        <line num="296" type="method" name="error" crap="3.05" count="2"/>
-        <line num="298" type="stmt" count="2"/>
+        <line num="296" type="method" name="error" crap="3.05" count="1"/>
+        <line num="298" type="stmt" count="1"/>
         <line num="299" type="stmt" count="0"/>
         <line num="300" type="stmt" count="0"/>
-        <line num="302" type="stmt" count="2"/>
-        <line num="305" type="stmt" count="2"/>
-        <line num="306" type="stmt" count="2"/>
-        <line num="307" type="stmt" count="2"/>
-        <line num="308" type="stmt" count="2"/>
-        <line num="309" type="stmt" count="2"/>
-        <line num="310" type="stmt" count="2"/>
-        <line num="312" type="stmt" count="2"/>
-        <line num="313" type="stmt" count="2"/>
-        <line num="315" type="stmt" count="2"/>
-        <line num="317" type="stmt" count="2"/>
-        <line num="318" type="stmt" count="2"/>
-        <line num="319" type="stmt" count="2"/>
+        <line num="302" type="stmt" count="1"/>
+        <line num="305" type="stmt" count="1"/>
+        <line num="306" type="stmt" count="1"/>
+        <line num="307" type="stmt" count="1"/>
+        <line num="308" type="stmt" count="1"/>
+        <line num="309" type="stmt" count="1"/>
+        <line num="310" type="stmt" count="1"/>
+        <line num="312" type="stmt" count="1"/>
+        <line num="313" type="stmt" count="1"/>
+        <line num="315" type="stmt" count="1"/>
+        <line num="317" type="stmt" count="1"/>
+        <line num="318" type="stmt" count="1"/>
+        <line num="319" type="stmt" count="1"/>
         <line num="321" type="stmt" count="0"/>
-        <line num="341" type="method" name="createException" crap="4.13" count="4"/>
-        <line num="343" type="stmt" count="4"/>
-        <line num="344" type="stmt" count="4"/>
-        <line num="345" type="stmt" count="3"/>
-        <line num="346" type="stmt" count="3"/>
-        <line num="347" type="stmt" count="4"/>
-        <line num="350" type="stmt" count="4"/>
-        <line num="352" type="stmt" count="4"/>
+        <line num="341" type="method" name="createException" crap="4.13" count="3"/>
+        <line num="343" type="stmt" count="3"/>
+        <line num="344" type="stmt" count="3"/>
+        <line num="345" type="stmt" count="2"/>
+        <line num="346" type="stmt" count="2"/>
+        <line num="347" type="stmt" count="3"/>
+        <line num="350" type="stmt" count="3"/>
+        <line num="352" type="stmt" count="3"/>
         <line num="353" type="stmt" count="0"/>
         <line num="354" type="stmt" count="0"/>
-        <line num="356" type="stmt" count="4"/>
+        <line num="356" type="stmt" count="3"/>
         <line num="370" type="method" name="getInstance" crap="1" count="5"/>
         <line num="372" type="stmt" count="5"/>
         <line num="383" type="method" name="renderLog" crap="12" count="0"/>
@@ -3025,7 +3057,7 @@
       </file>
       <file name="/home/dp/PhpstormProjects/ice/Ice/Source/Ice/Core/Request.php">
         <class name="Request" namespace="Ice\Core" fullPackage="Ice.Core" package="Ice" subpackage="Core">
-          <metrics methods="14" coveredmethods="4" conditionals="0" coveredconditionals="0" statements="52" coveredstatements="16" elements="66" coveredelements="20"/>
+          <metrics methods="14" coveredmethods="5" conditionals="0" coveredconditionals="0" statements="52" coveredstatements="17" elements="66" coveredelements="22"/>
         </class>
         <line num="45" type="method" name="getParam" crap="6" count="0"/>
         <line num="47" type="stmt" count="0"/>
@@ -3043,18 +3075,18 @@
         <line num="90" type="stmt" count="2"/>
         <line num="92" type="stmt" count="2"/>
         <line num="94" type="stmt" count="2"/>
-        <line num="108" type="method" name="uri" crap="3" count="3"/>
-        <line num="110" type="stmt" count="3"/>
-        <line num="111" type="stmt" count="3"/>
-        <line num="112" type="stmt" count="3"/>
+        <line num="108" type="method" name="uri" crap="3" count="2"/>
+        <line num="110" type="stmt" count="2"/>
+        <line num="111" type="stmt" count="2"/>
+        <line num="112" type="stmt" count="2"/>
         <line num="125" type="method" name="queryString" crap="6" count="0"/>
         <line num="127" type="stmt" count="0"/>
-        <line num="140" type="method" name="host" crap="2.86" count="2"/>
-        <line num="142" type="stmt" count="2"/>
+        <line num="140" type="method" name="host" crap="2.86" count="1"/>
+        <line num="142" type="stmt" count="1"/>
         <line num="143" type="stmt" count="0"/>
         <line num="144" type="stmt" count="0"/>
         <line num="145" type="stmt" count="0"/>
-        <line num="147" type="stmt" count="2"/>
+        <line num="147" type="stmt" count="1"/>
         <line num="160" type="method" name="ip" crap="56" count="0"/>
         <line num="162" type="stmt" count="0"/>
         <line num="163" type="stmt" count="0"/>
@@ -3072,12 +3104,12 @@
         <line num="192" type="stmt" count="0"/>
         <line num="193" type="stmt" count="0"/>
         <line num="194" type="stmt" count="0"/>
-        <line num="207" type="method" name="referer" crap="2" count="2"/>
-        <line num="209" type="stmt" count="2"/>
+        <line num="207" type="method" name="referer" crap="2" count="1"/>
+        <line num="209" type="stmt" count="1"/>
         <line num="222" type="method" name="isCli" crap="1" count="7"/>
         <line num="224" type="stmt" count="7"/>
-        <line num="237" type="method" name="isAjax" crap="6" count="0"/>
-        <line num="239" type="stmt" count="0"/>
+        <line num="237" type="method" name="isAjax" crap="2" count="1"/>
+        <line num="239" type="stmt" count="1"/>
         <line num="252" type="method" name="getMethod" crap="2" count="2"/>
         <line num="254" type="stmt" count="2"/>
         <line num="257" type="method" name="init" crap="20" count="0"/>
@@ -3093,7 +3125,7 @@
         <line num="269" type="stmt" count="0"/>
         <line num="271" type="method" name="isOptions" crap="6" count="0"/>
         <line num="273" type="stmt" count="0"/>
-        <metrics loc="279" ncloc="125" classes="1" methods="14" coveredmethods="4" conditionals="0" coveredconditionals="0" statements="52" coveredstatements="16" elements="66" coveredelements="20"/>
+        <metrics loc="279" ncloc="125" classes="1" methods="14" coveredmethods="5" conditionals="0" coveredconditionals="0" statements="52" coveredstatements="17" elements="66" coveredelements="22"/>
       </file>
       <file name="/home/dp/PhpstormProjects/ice/Ice/Source/Ice/Core/Resource.php">
         <class name="Resource" namespace="Ice\Core" fullPackage="Ice.Core" package="Ice" subpackage="Core">
@@ -3358,9 +3390,9 @@
         <line num="54" type="method" name="create" crap="1" count="1"/>
         <line num="56" type="stmt" count="1"/>
         <line num="57" type="stmt" count="1"/>
-        <line num="70" type="method" name="getLastTemplate" crap="2" count="2"/>
-        <line num="72" type="stmt" count="2"/>
-        <line num="73" type="stmt" count="2"/>
+        <line num="70" type="method" name="getLastTemplate" crap="2" count="1"/>
+        <line num="72" type="stmt" count="1"/>
+        <line num="73" type="stmt" count="1"/>
         <line num="76" type="stmt" count="1"/>
         <line num="118" type="method" name="getDefaultKey" crap="2" count="0"/>
         <line num="120" type="stmt" count="0"/>
@@ -5064,63 +5096,63 @@
         <class name="Logger" namespace="Ice\Helper" fullPackage="Ice.Helper" package="Ice" subpackage="Helper">
           <metrics methods="3" coveredmethods="3" conditionals="0" coveredconditionals="0" statements="54" coveredstatements="54" elements="57" coveredelements="57"/>
         </class>
-        <line num="45" type="method" name="outputFb" crap="4" count="2"/>
-        <line num="47" type="stmt" count="2"/>
-        <line num="49" type="stmt" count="2"/>
+        <line num="45" type="method" name="outputFb" crap="4" count="1"/>
+        <line num="47" type="stmt" count="1"/>
+        <line num="49" type="stmt" count="1"/>
         <line num="50" type="stmt" count="1"/>
         <line num="51" type="stmt" count="1"/>
-        <line num="54" type="stmt" count="2"/>
-        <line num="55" type="stmt" count="2"/>
-        <line num="57" type="stmt" count="2"/>
-        <line num="58" type="stmt" count="2"/>
-        <line num="59" type="stmt" count="2"/>
-        <line num="61" type="stmt" count="2"/>
-        <line num="62" type="stmt" count="2"/>
-        <line num="63" type="stmt" count="2"/>
-        <line num="64" type="stmt" count="2"/>
-        <line num="66" type="stmt" count="2"/>
-        <line num="67" type="stmt" count="2"/>
-        <line num="82" type="method" name="getMessage" crap="6" count="2"/>
-        <line num="85" type="stmt" count="2"/>
-        <line num="86" type="stmt" count="2"/>
-        <line num="88" type="stmt" count="2"/>
-        <line num="89" type="stmt" count="2"/>
-        <line num="90" type="stmt" count="2"/>
-        <line num="91" type="stmt" count="2"/>
-        <line num="92" type="stmt" count="2"/>
-        <line num="94" type="stmt" count="2"/>
-        <line num="97" type="stmt" count="2"/>
-        <line num="98" type="stmt" count="2"/>
-        <line num="99" type="stmt" count="2"/>
-        <line num="100" type="stmt" count="2"/>
-        <line num="101" type="stmt" count="2"/>
-        <line num="102" type="stmt" count="2"/>
-        <line num="103" type="stmt" count="2"/>
-        <line num="104" type="stmt" count="2"/>
-        <line num="105" type="stmt" count="2"/>
-        <line num="106" type="stmt" count="2"/>
-        <line num="107" type="stmt" count="2"/>
-        <line num="109" type="stmt" count="2"/>
-        <line num="111" type="stmt" count="2"/>
-        <line num="112" type="stmt" count="2"/>
-        <line num="113" type="stmt" count="2"/>
-        <line num="115" type="stmt" count="2"/>
+        <line num="54" type="stmt" count="1"/>
+        <line num="55" type="stmt" count="1"/>
+        <line num="57" type="stmt" count="1"/>
+        <line num="58" type="stmt" count="1"/>
+        <line num="59" type="stmt" count="1"/>
+        <line num="61" type="stmt" count="1"/>
+        <line num="62" type="stmt" count="1"/>
+        <line num="63" type="stmt" count="1"/>
+        <line num="64" type="stmt" count="1"/>
+        <line num="66" type="stmt" count="1"/>
+        <line num="67" type="stmt" count="1"/>
+        <line num="82" type="method" name="getMessage" crap="6" count="1"/>
+        <line num="85" type="stmt" count="1"/>
+        <line num="86" type="stmt" count="1"/>
+        <line num="88" type="stmt" count="1"/>
+        <line num="89" type="stmt" count="1"/>
+        <line num="90" type="stmt" count="1"/>
+        <line num="91" type="stmt" count="1"/>
+        <line num="92" type="stmt" count="1"/>
+        <line num="94" type="stmt" count="1"/>
+        <line num="97" type="stmt" count="1"/>
+        <line num="98" type="stmt" count="1"/>
+        <line num="99" type="stmt" count="1"/>
+        <line num="100" type="stmt" count="1"/>
+        <line num="101" type="stmt" count="1"/>
+        <line num="102" type="stmt" count="1"/>
+        <line num="103" type="stmt" count="1"/>
+        <line num="104" type="stmt" count="1"/>
+        <line num="105" type="stmt" count="1"/>
+        <line num="106" type="stmt" count="1"/>
+        <line num="107" type="stmt" count="1"/>
+        <line num="109" type="stmt" count="1"/>
+        <line num="111" type="stmt" count="1"/>
+        <line num="112" type="stmt" count="1"/>
+        <line num="113" type="stmt" count="1"/>
+        <line num="115" type="stmt" count="1"/>
         <line num="116" type="stmt" count="1"/>
-        <line num="119" type="stmt" count="2"/>
-        <line num="133" type="method" name="outputFile" crap="3" count="2"/>
-        <line num="135" type="stmt" count="2"/>
-        <line num="137" type="stmt" count="2"/>
+        <line num="119" type="stmt" count="1"/>
+        <line num="133" type="method" name="outputFile" crap="3" count="1"/>
+        <line num="135" type="stmt" count="1"/>
+        <line num="137" type="stmt" count="1"/>
         <line num="138" type="stmt" count="1"/>
         <line num="139" type="stmt" count="1"/>
-        <line num="142" type="stmt" count="2"/>
-        <line num="143" type="stmt" count="2"/>
-        <line num="145" type="stmt" count="2"/>
-        <line num="146" type="stmt" count="2"/>
-        <line num="147" type="stmt" count="2"/>
-        <line num="148" type="stmt" count="2"/>
-        <line num="150" type="stmt" count="2"/>
-        <line num="152" type="stmt" count="2"/>
-        <line num="153" type="stmt" count="2"/>
+        <line num="142" type="stmt" count="1"/>
+        <line num="143" type="stmt" count="1"/>
+        <line num="145" type="stmt" count="1"/>
+        <line num="146" type="stmt" count="1"/>
+        <line num="147" type="stmt" count="1"/>
+        <line num="148" type="stmt" count="1"/>
+        <line num="150" type="stmt" count="1"/>
+        <line num="152" type="stmt" count="1"/>
+        <line num="153" type="stmt" count="1"/>
         <metrics loc="153" ncloc="95" classes="1" methods="3" coveredmethods="3" conditionals="0" coveredconditionals="0" statements="54" coveredstatements="54" elements="57" coveredelements="57"/>
       </file>
       <file name="/home/dp/PhpstormProjects/ice/Ice/Source/Ice/Helper/Mapping.php">
@@ -5182,22 +5214,22 @@
         <class name="Php" namespace="Ice\Helper" fullPackage="Ice.Helper" package="Ice" subpackage="Helper">
           <metrics methods="5" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="52" coveredstatements="17" elements="57" coveredelements="19"/>
         </class>
-        <line num="37" type="method" name="varToPhpString" crap="3" count="3"/>
-        <line num="40" type="stmt" count="3"/>
-        <line num="41" type="stmt" count="3"/>
-        <line num="43" type="stmt" count="3"/>
-        <line num="44" type="stmt" count="3"/>
-        <line num="45" type="stmt" count="3"/>
-        <line num="46" type="stmt" count="3"/>
-        <line num="47" type="stmt" count="3"/>
-        <line num="48" type="stmt" count="3"/>
-        <line num="49" type="stmt" count="3"/>
-        <line num="50" type="stmt" count="3"/>
-        <line num="51" type="stmt" count="3"/>
-        <line num="52" type="stmt" count="3"/>
-        <line num="53" type="stmt" count="3"/>
-        <line num="54" type="stmt" count="3"/>
-        <line num="55" type="stmt" count="3"/>
+        <line num="37" type="method" name="varToPhpString" crap="3" count="2"/>
+        <line num="40" type="stmt" count="2"/>
+        <line num="41" type="stmt" count="2"/>
+        <line num="43" type="stmt" count="2"/>
+        <line num="44" type="stmt" count="2"/>
+        <line num="45" type="stmt" count="2"/>
+        <line num="46" type="stmt" count="2"/>
+        <line num="47" type="stmt" count="2"/>
+        <line num="48" type="stmt" count="2"/>
+        <line num="49" type="stmt" count="2"/>
+        <line num="50" type="stmt" count="2"/>
+        <line num="51" type="stmt" count="2"/>
+        <line num="52" type="stmt" count="2"/>
+        <line num="53" type="stmt" count="2"/>
+        <line num="54" type="stmt" count="2"/>
+        <line num="55" type="stmt" count="2"/>
         <line num="63" type="method" name="passingByReference" crap="1" count="1"/>
         <line num="65" type="stmt" count="1"/>
         <line num="66" type="stmt" count="1"/>
@@ -5433,7 +5465,7 @@
     <package name="Ice\Query\Translator">
       <file name="/home/dp/PhpstormProjects/ice/Ice/Source/Ice/Query/Translator/Mongodb.php">
         <class name="Mongodb" namespace="Ice\Query\Translator" fullPackage="Ice.Query_Translator" package="Ice" subpackage="Query_Translator">
-          <metrics methods="12" coveredmethods="3" conditionals="0" coveredconditionals="0" statements="102" coveredstatements="59" elements="114" coveredelements="62"/>
+          <metrics methods="12" coveredmethods="4" conditionals="0" coveredconditionals="0" statements="102" coveredstatements="60" elements="114" coveredelements="64"/>
         </class>
         <line num="69" type="method" name="translateSet" crap="12" count="0"/>
         <line num="72" type="stmt" count="0"/>
@@ -5488,7 +5520,7 @@
         <line num="234" type="stmt" count="1"/>
         <line num="235" type="stmt" count="1"/>
         <line num="237" type="stmt" count="1"/>
-        <line num="268" type="method" name="translateSelect" crap="3.00" count="1"/>
+        <line num="268" type="method" name="translateSelect" crap="3" count="1"/>
         <line num="270" type="stmt" count="1"/>
         <line num="272" type="stmt" count="1"/>
         <line num="274" type="stmt" count="1"/>
@@ -5497,7 +5529,7 @@
         <line num="280" type="stmt" count="1"/>
         <line num="282" type="stmt" count="1"/>
         <line num="284" type="stmt" count="1"/>
-        <line num="285" type="stmt" count="0"/>
+        <line num="285" type="stmt" count="1"/>
         <line num="286" type="stmt" count="1"/>
         <line num="290" type="stmt" count="1"/>
         <line num="291" type="stmt" count="1"/>
@@ -5549,7 +5581,7 @@
         <line num="558" type="stmt" count="0"/>
         <line num="570" type="method" name="getDefaultKey" crap="2" count="0"/>
         <line num="572" type="stmt" count="0"/>
-        <metrics loc="573" ncloc="189" classes="1" methods="12" coveredmethods="3" conditionals="0" coveredconditionals="0" statements="102" coveredstatements="59" elements="114" coveredelements="62"/>
+        <metrics loc="573" ncloc="189" classes="1" methods="12" coveredmethods="4" conditionals="0" coveredconditionals="0" statements="102" coveredstatements="60" elements="114" coveredelements="64"/>
       </file>
       <file name="/home/dp/PhpstormProjects/ice/Ice/Source/Ice/Query/Translator/Sql.php">
         <class name="Sql" namespace="Ice\Query\Translator" fullPackage="Ice.Query_Translator" package="Ice" subpackage="Query_Translator">
@@ -5786,21 +5818,21 @@
         </class>
         <line num="48" type="method" name="__construct" crap="1" count="1"/>
         <line num="50" type="stmt" count="1"/>
-        <line num="97" type="method" name="fetch" crap="3.33" count="2"/>
-        <line num="99" type="stmt" count="2"/>
-        <line num="101" type="stmt" count="2"/>
+        <line num="97" type="method" name="fetch" crap="3.33" count="1"/>
+        <line num="99" type="stmt" count="1"/>
+        <line num="101" type="stmt" count="1"/>
         <line num="102" type="stmt" count="0"/>
         <line num="103" type="stmt" count="0"/>
         <line num="105" type="stmt" count="0"/>
         <line num="107" type="stmt" count="0"/>
-        <line num="111" type="stmt" count="2"/>
-        <line num="112" type="stmt" count="2"/>
-        <line num="114" type="stmt" count="2"/>
-        <line num="115" type="stmt" count="2"/>
-        <line num="117" type="stmt" count="2"/>
-        <line num="118" type="stmt" count="2"/>
-        <line num="133" type="method" name="getInstance" crap="1" count="2"/>
-        <line num="135" type="stmt" count="2"/>
+        <line num="111" type="stmt" count="1"/>
+        <line num="112" type="stmt" count="1"/>
+        <line num="114" type="stmt" count="1"/>
+        <line num="115" type="stmt" count="1"/>
+        <line num="117" type="stmt" count="1"/>
+        <line num="118" type="stmt" count="1"/>
+        <line num="133" type="method" name="getInstance" crap="1" count="1"/>
+        <line num="135" type="stmt" count="1"/>
         <metrics loc="136" ncloc="17" classes="1" methods="3" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="14" coveredstatements="10" elements="17" coveredelements="12"/>
       </file>
       <file name="/home/dp/PhpstormProjects/ice/Ice/Source/Ice/View/Render/Replace.php">
@@ -7365,6 +7397,6 @@
         <metrics loc="443" ncloc="274" classes="1" methods="22" coveredmethods="7" conditionals="0" coveredconditionals="0" statements="130" coveredstatements="52" elements="152" coveredelements="59"/>
       </file>
     </package>
-    <metrics files="88" loc="23168" ncloc="12314" classes="77" methods="768" coveredmethods="255" conditionals="0" coveredconditionals="0" statements="6071" coveredstatements="2627" elements="6839" coveredelements="2882"/>
+    <metrics files="89" loc="23234" ncloc="12362" classes="78" methods="770" coveredmethods="257" conditionals="0" coveredconditionals="0" statements="6095" coveredstatements="2642" elements="6865" coveredelements="2899"/>
   </project>
 </coverage>
