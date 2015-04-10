@@ -233,7 +233,7 @@ class Mysqli extends Data_Source
         }
 
         /** @var Model $modelClass */
-        $modelClass = $query->getModelClass();
+        $modelClass = $query->getQueryBuilder()->getModelClass();
         $pkFieldNames = $modelClass::getScheme()->getPkFieldNames();
 
         $pkFieldName = count($pkFieldNames) == 1 ? reset($pkFieldNames) : null;
@@ -295,7 +295,7 @@ class Mysqli extends Data_Source
         }
 
         /** @var Model $modelclass */
-        $modelclass = $query->getModelClass();
+        $modelclass = $query->getQueryBuilder()->getModelClass();
         $pkFieldNames = $modelclass::getScheme()->getPkFieldNames();
 
         foreach ($query->getBindParts()[Query_Builder::PART_SET] as $row) {

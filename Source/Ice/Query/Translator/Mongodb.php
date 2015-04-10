@@ -470,21 +470,19 @@ class Mongodb extends Query_Translator
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.4
+     * @version 0.6
      * @since 0.4
      */
     protected function translateLimit($part)
     {
-        if (empty($part)) {
+        if (empty($part) || empty($part['limit'])) {
             return [];
         }
 
-        list($limit, $skip) = $part;
-
         return [
             'limit' => [
-                'limit' => $limit,
-                'skip' => $skip,
+                'limit' => $part['limit'],
+                'skip' => $part['offset'],
             ]
         ];
     }

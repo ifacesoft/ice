@@ -49,7 +49,7 @@ class Defined extends Data_Source
     public function executeSelect($statement, Query $query)
     {
         /** @var Model $modelClass */
-        $modelClass = $query->getModelClass();
+        $modelClass = $query->getQueryBuilder()->getModelClass();
         $rows = $this->getConnection($modelClass);
 
         $pkName = $modelClass::getFieldName('/pk');

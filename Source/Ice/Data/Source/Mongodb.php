@@ -54,7 +54,7 @@ class Mongodb extends Data_Source
         $statement = $this->getStatement($query->getBody(), $query->getBinds());
 
         /** @var Model $modelClass */
-        $modelClass = $query->getModelClass();
+        $modelClass = $query->getQueryBuilder()->getModelClass();
         $tableName = $modelClass::getTableName();
 
         $pkFieldNames = $modelClass::getScheme()->getPkFieldNames();
@@ -212,7 +212,7 @@ class Mongodb extends Data_Source
         $statement = $this->getStatement($query->getBody(), $query->getBinds());
 
         /** @var Model $modelClass */
-        $modelClass = $query->getModelClass();
+        $modelClass = $query->getQueryBuilder()->getModelClass();
         $tableName = $modelClass::getTableName();
 
         try {
@@ -259,7 +259,7 @@ class Mongodb extends Data_Source
         $statement = $this->getStatement($query->getBody(), $query->getBinds());
 
         /** @var Model $modelClass */
-        $modelClass = $query->getModelClass();
+        $modelClass = $query->getQueryBuilder()->getModelClass();
         $tableName = $modelClass::getTableName();
 
         $this->getConnection()->$tableName->update($statement['where']['data'], $statement['update']['data']);
@@ -286,7 +286,7 @@ class Mongodb extends Data_Source
         $statement = $this->getStatement($query->getBody(), $query->getBinds());
 
         /** @var Model $modelClass */
-        $modelClass = $query->getModelClass();
+        $modelClass = $query->getQueryBuilder()->getModelClass();
         $tableName = $modelClass::getTableName();
 
         $this->getConnection()->$tableName->remove($statement['where']['data']);
@@ -309,7 +309,7 @@ class Mongodb extends Data_Source
     public function executeCreate(Query $query)
     {
         /** @var Model $modelClass */
-        $modelClass = $query->getModelClass();
+        $modelClass = $query->getQueryBuilder()->getModelClass();
         $tableName = $modelClass::getTableName();
 
         $this->getConnection()->$tableName;
@@ -330,7 +330,7 @@ class Mongodb extends Data_Source
     public function executeDrop(Query $query)
     {
         /** @var Model $modelClass */
-        $modelClass = $query->getModelClass();
+        $modelClass = $query->getQueryBuilder()->getModelClass();
         $tableName = $modelClass::getTableName();
 
         $this->getConnection()->$tableName->drop();

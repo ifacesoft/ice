@@ -23,7 +23,7 @@ class Api_Client_Yandex_TranslateTest extends PHPUnit_Framework_TestCase
     public function testTranslate()
     {
         if (!empty(Core_Config::getInstance(Api_Client_Yandex_Translate::getClass())->get('translateKey'))) {
-            $this->assertEquals('Language detection', Api_Client_Yandex_Translate::translate('Определение языка', 'ru-en'));
+            $this->assertEquals('The language definition', Api_Client_Yandex_Translate::translate('Определение языка', 'ru-en'));
         }
     }
 
