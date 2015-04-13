@@ -112,6 +112,8 @@ class Logger
      */
     private $_class;
 
+    private static $_reserveMemory = null;
+
     /**
      * Private constructor for logger object
      *
@@ -141,6 +143,8 @@ class Logger
 
         ini_set('display_errors', !Environment::getInstance()->isProduction());
 
+        self::$_reserveMemory = str_repeat(' ', pow(2, 15));
+
         ini_set('xdebug.var_display_max_depth', -1);
         ini_set('xdebug.profiler_enable', 1);
         ini_set('xdebug.profiler_output_dir', Module::getInstance()->get('logDir') . 'xdebug');
@@ -158,9 +162,11 @@ class Logger
      */
     public static function shutdownHandler()
     {
+        self::$_reserveMemory;
+
         if ($error = error_get_last()) {
             Http::setHeader(Http::getStatusCodeHeader(500), true, 500);
-            self::errorHandler($error['type'], $error['message'], $error['file'], $error['line'], debug_backtrace());
+            self::errorHandler($error['type'], $error['message'], $error['file'], $error['line'], []);
             self::renderLog();
         }
 

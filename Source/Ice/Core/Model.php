@@ -1342,7 +1342,7 @@ abstract class Model
      * @version 0.5
      * @since 0.5
      */
-    public function getQueryBuilder($modelClass, $tableAlias = null)
+    public function getQueryBuilder($modelClass = null, $tableAlias = null)
     {
         $selfModelClass = get_class($this);
 
