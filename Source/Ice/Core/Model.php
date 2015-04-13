@@ -1116,7 +1116,7 @@ abstract class Model
         $pk = $this->getPk();
         $affected = $this->getAffected();
 
-        $isSetPk = !empty($pk) && $pk == array_intersect_key($affected, array_flip($modelClass::getScheme()->getPkFieldNames()));
+        $isSetPk = !empty($pk);// && $pk != array_intersect_key($affected, array_flip($modelClass::getScheme()->getPkFieldNames()));
 
         if (!$isSmart) {
             if ($isSetPk) {

@@ -501,7 +501,7 @@ class Sql extends Query_Translator
                     (empty($scheme['extra']) ? '' : strtoupper($scheme['extra']) . ' ') .
                     ($scheme['extra'] ? 'PRIMARY KEY ' : '') .
                     (empty($scheme['default']) ? '' : 'DEFAULT ' . $scheme['default'] . ' ') .
-                    (empty($scheme['nullable']) ? 'NULL' : 'NOT NULL');
+                    ($scheme['nullable'] ? 'NULL' : 'NOT NULL');
             }
         );
 
