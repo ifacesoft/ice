@@ -24,9 +24,9 @@
       "type": "package",
       "package": {
         "name": "jquery/jquery-ui",
-        "version": "1.11.1",
+        "version": "1.11.4",
         "dist": {
-          "url": "http://jqueryui.com/resources/download/jquery-ui-1.11.1.zip",
+          "url": "http://jqueryui.com/resources/download/jquery-ui-1.11.4.zip",
           "type": "zip"
         }
       }
@@ -44,11 +44,11 @@
     }
   ],
   "require": {
-    "php": ">=5.4.0",
+    "php": ">=5.3.3",
     "twig/twig": "1.*",
     "smarty/smarty": "3.1.*",
     "twbs/bootstrap": "3.3.*",
-    "jquery/jquery-ui": "1.11.1",
+    "jquery/jquery-ui": "1.11.4",
     "mailru/fileapi": "2.0.10",
     "mrclay/minify": "2.2.*",
     "michelf/php-markdown": "1.5.*"
