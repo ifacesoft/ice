@@ -15,7 +15,7 @@ before_script:
   - wget http://getcomposer.org/composer.phar
   - php composer.phar install
 
-script: ./cli Ice:Phpunit
+script: ./cli Ice:PhpUnit
 
 after_script:
 - travis_retry wget https://scrutinizer-ci.com/ocular.phar
