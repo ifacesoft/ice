@@ -56,6 +56,9 @@ return [
             'Ice\Core\Converter' => [
                 'instance' => 'Ice:Repository/converter',
             ],
+            'Ice\Core\Widget' => [
+                'instance' => 'Ice:Repository/widget',
+            ],
             'Ice\Core\Widget_Form' => [
                 'instance' => 'Ice:Repository/widget_form',
             ],
@@ -149,6 +152,9 @@ return [
             ],
             'Ice\Core\Converter' => [
                 'instance' => 'Ice:Registry/converter',
+            ],
+            'Ice\Core\Widget' => [
+                'instance' => 'Ice:Registry/widget',
             ],
             'Ice\Core\Widget_Form' => [
                 'instance' => 'Ice:Registry/widget_form',
