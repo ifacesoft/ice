@@ -5,13 +5,13 @@ interface Cacheable
     /**
      * Validate cacheable object
      *
-     * @param $value
+     * @param  $value
      * @return Cacheable
      *
      * @author anonymous <email>
      *
      * @version 0
-     * @since 0
+     * @since   0
      */
     public function validate($value);
 
@@ -23,7 +23,7 @@ interface Cacheable
      * @author anonymous <email>
      *
      * @version 0
-     * @since 0
+     * @since   0
      */
     public function invalidate();
 }

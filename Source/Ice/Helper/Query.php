@@ -2,9 +2,9 @@
 /**
  * Ice helper query class
  *
- * @link http://www.iceframework.net
+ * @link      http://www.iceframework.net
  * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
- * @license https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
+ * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
 namespace Ice\Helper;
@@ -18,38 +18,38 @@ use Ice\Core\Query as Core_Query;
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
- * @package Ice
+ * @package    Ice
  * @subpackage Helper
  *
  * @version 0.0
- * @since 0.0
+ * @since   0.0
  */
 class Query
 {
 
-//SELECT T2.id, T2.table_name
-//FROM (
-//SELECT
-//@r AS _id,
-//(SELECT @r := table_id FROM ice_table WHERE id = _id) AS parent_id,
-//@l := @l + 1 AS lvl
-//FROM
-//(SELECT @r := 113, @l := 0) vars,
-//ice_table h
-//WHERE @r <> 0) T1
-//JOIN ice_table T2
-//ON T1._id = T2.id
-//ORDER BY T1.lvl DESC
+    //SELECT T2.id, T2.table_name
+    //FROM (
+    //SELECT
+    //@r AS _id,
+    //(SELECT @r := table_id FROM ice_table WHERE id = _id) AS parent_id,
+    //@l := @l + 1 AS lvl
+    //FROM
+    //(SELECT @r := 113, @l := 0) vars,
+    //ice_table h
+    //WHERE @r <> 0) T1
+    //JOIN ice_table T2
+    //ON T1._id = T2.id
+    //ORDER BY T1.lvl DESC
     /**
      * Convert where part to array filter format
      *
-     * @param Core_Query $query
+     * @param  Core_Query $query
      * @return array
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public static function convertWhereForFilter(Core_Query $query)
     {

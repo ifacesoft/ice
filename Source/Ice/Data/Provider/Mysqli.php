@@ -2,9 +2,9 @@
 /**
  * Ice data provider implementation mysqli class
  *
- * @link http://www.iceframework.net
+ * @link      http://www.iceframework.net
  * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
- * @license https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
+ * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
 namespace Ice\Data\Provider;
@@ -21,7 +21,7 @@ use Ice\Core\Exception;
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
- * @package Ice
+ * @package    Ice
  * @subpackage Data_Provider
  */
 class Mysqli extends Data_Provider
@@ -29,7 +29,7 @@ class Mysqli extends Data_Provider
     const DEFAULT_DATA_PROVIDER_KEY = 'Ice:Mysqli/default';
     const DEFAULT_KEY = 'default';
 
-    protected $_options = [
+    protected $options = [
         'host' => 'localhost',
         'port' => '3306',
         'charset' => 'utf8'
@@ -43,7 +43,7 @@ class Mysqli extends Data_Provider
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
-     * @since 0.4
+     * @since   0.4
      */
     protected static function getDefaultDataProviderKey()
     {
@@ -58,7 +58,7 @@ class Mysqli extends Data_Provider
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     protected static function getDefaultKey()
     {
@@ -70,13 +70,13 @@ class Mysqli extends Data_Provider
      *
      * table:field/value or table
      *
-     * @param string $key
+     * @param  string $key
      * @return mixed
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public function get($key = null)
     {
@@ -105,7 +105,11 @@ class Mysqli extends Data_Provider
         $result = $this->getConnection()->query('SELECT * FROM ' . $sql, MYSQLI_USE_RESULT);
 
         if ($this->getConnection()->errno) {
-            Mysqli::getLogger()->error(['mysql - #' . $this->getConnection()->errno . ': {$0}', $this->getConnection()->error], __FILE__, __LINE__);
+            Mysqli::getLogger()->error(
+                ['mysql - #' . $this->getConnection()->errno . ': {$0}', $this->getConnection()->error],
+                __FILE__,
+                __LINE__
+            );
             return [];
         }
 
@@ -122,12 +126,13 @@ class Mysqli extends Data_Provider
 
     /**
      * Get instance connection of data provider
+     *
      * @return \Mysqli
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public function getConnection()
     {
@@ -137,16 +142,16 @@ class Mysqli extends Data_Provider
     /**
      * Set data to data provider
      *
-     * @param string $key
-     * @param $value
-     * @param null $ttl
+     * @param  string $key
+     * @param  $value
+     * @param  null $ttl
      * @throws \Exception
      * @return mixed setted value
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public function set($key, $value = null, $ttl = null)
     {
@@ -156,15 +161,15 @@ class Mysqli extends Data_Provider
     /**
      * Delete from data provider by key
      *
-     * @param string $key
-     * @param bool $force if true return boolean else deleted value
+     * @param  string $key
+     * @param  bool $force if true return boolean else deleted value
      * @throws \Exception
      * @return mixed|boolean
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public function delete($key, $force = true)
     {
@@ -174,15 +179,15 @@ class Mysqli extends Data_Provider
     /**
      * Increment value by key with defined step (default 1)
      *
-     * @param $key
-     * @param int $step
+     * @param  $key
+     * @param  int $step
      * @throws \Exception
      * @return mixed new value
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public function incr($key, $step = 1)
     {
@@ -192,15 +197,15 @@ class Mysqli extends Data_Provider
     /**
      * Decrement value by key with defined step (default 1)
      *
-     * @param $key
-     * @param int $step
+     * @param  $key
+     * @param  int $step
      * @throws \Exception
      * @return mixed new value
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public function decr($key, $step = 1)
     {
@@ -213,7 +218,7 @@ class Mysqli extends Data_Provider
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public function flushAll()
     {
@@ -222,18 +227,22 @@ class Mysqli extends Data_Provider
     /**
      * Switch to new scheme name
      *
-     * @param string $scheme
+     * @param  string $scheme
      * @throws Exception
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public function setScheme($scheme)
     {
         if (!$this->getConnection()->select_db($scheme)) {
-            Mysqli::getLogger()->exception(['mysql - #' . $this->getConnection()->errno . ': {$0}', $this->getConnection()->error], __FILE__, __LINE__);
+            Mysqli::getLogger()->exception(
+                ['mysql - #' . $this->getConnection()->errno . ': {$0}', $this->getConnection()->error],
+                __FILE__,
+                __LINE__
+            );
         }
 
         parent::setScheme($scheme);
@@ -242,13 +251,13 @@ class Mysqli extends Data_Provider
     /**
      * Return keys by pattern
      *
-     * @param string $pattern
+     * @param  string $pattern
      * @return array
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public function getKeys($pattern = null)
     {
@@ -258,22 +267,34 @@ class Mysqli extends Data_Provider
     /**
      * Connect to data provider
      *
-     * @param $connection
+     * @param  $connection
      * @return boolean
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     protected function connect(&$connection)
     {
         $options = $this->getOptions(__CLASS__);
 
         $connection = mysqli_init();
-        $isConnected = $connection->real_connect($options['host'], $options['username'], $options['password'], null, $options['port']);
+
+        $isConnected = $connection->real_connect(
+            $options['host'],
+            $options['username'],
+            $options['password'],
+            null,
+            $options['port']
+        );
+
         if (!$isConnected) {
-            Mysqli::getLogger()->exception(['mysql - #' . $connection->errno . ': {$0}', $connection->error], __FILE__, __LINE__);
+            Mysqli::getLogger()->exception(
+                ['mysql - #' . $connection->errno . ': {$0}', $connection->error],
+                __FILE__,
+                __LINE__
+            );
         }
 
         $connection->set_charset($options['charset']);
@@ -284,13 +305,13 @@ class Mysqli extends Data_Provider
     /**
      * Close connection with data provider
      *
-     * @param $connection
+     * @param  $connection
      * @return boolean
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     protected function close(&$connection)
     {

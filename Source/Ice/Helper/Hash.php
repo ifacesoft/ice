@@ -2,9 +2,9 @@
 /**
  * Ice helper hash class
  *
- * @link http://www.iceframework.net
+ * @link      http://www.iceframework.net
  * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
- * @license https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
+ * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
 namespace Ice\Helper;
@@ -19,11 +19,11 @@ use Ice\Core\Logger as Core_Logger;
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
- * @package Ice
+ * @package    Ice
  * @subpackage Helper
  *
  * @version 0.0
- * @since 0.0
+ * @since   0.0
  */
 class Hash
 {
@@ -35,16 +35,16 @@ class Hash
     /**
      * Get hash by serializer and hash type
      *
-     * @param mixed $data
-     * @param string $serializer
-     * @param string $hash
+     * @param  mixed $data
+     * @param  string $serializer
+     * @param  string $hash
      * @throws Exception
      * @return string
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public static function get($data, $hash = null, $serializer = null)
     {
@@ -75,4 +75,4 @@ class Hash
 
         return $data;
     }
-} 
+}

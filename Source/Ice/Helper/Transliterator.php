@@ -2,9 +2,9 @@
 /**
  * Ice helper transliterator class
  *
- * @link http://www.iceframework.net
+ * @link      http://www.iceframework.net
  * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
- * @license https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
+ * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
 namespace Ice\Helper;
@@ -16,30 +16,31 @@ namespace Ice\Helper;
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
- * @package Ice
+ * @package    Ice
  * @subpackage Helper
  *
  * @version 0.0
- * @since 0.0
+ * @since   0.0
  */
 class Transliterator
 {
     /**
      * Transliterate string
      *
-     * @param $string
+     * @param  $string
      * @return string
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public static function transliterate($string)
     {
         $string = function_exists('transliterator_transliterate')
             ? transliterator_transliterate(
-                "Any-Latin; NFD; [:Nonspacing Mark:] Remove; NFC; [:Punctuation:] Remove; Lower();", $string
+                "Any-Latin; NFD; [:Nonspacing Mark:] Remove; NFC; [:Punctuation:] Remove; Lower();",
+                $string
             )
             : self::translit($string);
 
@@ -50,8 +51,8 @@ class Transliterator
     /**
      * Alteranive translitertion method
      *
-     * @param string $value Исходна стока
-     * @param bool|string $fromRussianToTranslit [optional] Направление перевода
+     * @param  string $value Исходна стока
+     * @param  bool|string $fromRussianToTranslit [optional] Направление перевода
      *         Если "en" - из русского на транслит,
      *         если "ru" - из транслита на русский
      * @return mixed|string Результат транслитации.
@@ -59,7 +60,7 @@ class Transliterator
      * @author anonymous <email>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     private static function translit($value, $fromRussianToTranslit = true)
     {
@@ -73,11 +74,19 @@ class Transliterator
 
         if ($fromRussianToTranslit) {
             // Сначала заменяем "односимвольные" фонемы.
-            $value = self::u_strtr($value, "абвгдеёзийклмнопрстуфхыэ ", "abvgdeeziyklmnoprstufhie_");
-            $value = self::u_strtr($value, "АБВГДЕЁЗИЙКЛМНОПРСТУФХЫЭ ", "ABVGDEEZIYKLMNOPRSTUFHIE_");
+            $value = self::unicodeStrtr(
+                $value,
+                "абвгдеёзийклмнопрстуфхыэ ",
+                "abvgdeeziyklmnoprstufhie_"
+            );
+            $value = self::unicodeStrtr(
+                $value,
+                "АБВГДЕЁЗИЙКЛМНОПРСТУФХЫЭ ",
+                "ABVGDEEZIYKLMNOPRSTUFHIE_"
+            );
 
             // Затем - "многосимвольные".
-            $value = self::u_strtr(
+            $value = self::unicodeStrtr(
                 $value,
                 array(
                     "ж" => "zh", "ц" => "ts", "ч" => "ch", "ш" => "sh",
@@ -90,7 +99,7 @@ class Transliterator
             );
         } else {
             // Сначала заменяем "многосимвольные".
-            $value = self::u_strtr(
+            $value = self::unicodeStrtr(
                 $value,
                 array(
                     "zh" => "ж", "ts" => "ц", "ch" => "ч", "sh" => "ш",
@@ -102,8 +111,8 @@ class Transliterator
             );
 
             //  Затем - "односимвольные" фонемы.
-            $value = self::u_strtr($value, "abvgdeziyklmnoprstufh_", "абвгдезийклмнопрстуфх ");
-            $value = self::u_strtr($value, "ABVGDEZIYKLMNOPRSTUFH_", "АБВГДЕЗИЙКЛМНОПРСТУФХ ");
+            $value = self::unicodeStrtr($value, "abvgdeziyklmnoprstufh_", "абвгдезийклмнопрстуфх ");
+            $value = self::unicodeStrtr($value, "ABVGDEZIYKLMNOPRSTUFH_", "АБВГДЕЗИЙКЛМНОПРСТУФХ ");
         }
 
         return strtolower($value);
@@ -112,14 +121,14 @@ class Transliterator
     /**
      * Удаление из строки спец. символы кроме '+'
      *
-     * @param $string
-     * @param string $value Исходна стока
+     * @param  $string
+     * @param  string $value Исходна стока
      * @return mixed Результат очистки.
      *
      * @author anonymous <email>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     private static function replaceSpecialChars($string, $value = ' ')
     {
@@ -140,20 +149,20 @@ class Transliterator
     /**
      * Заменяет символы в строке согласно переданным наборам.
      *
-     * @param string $value Исходая строка.
-     * @param string|array $to Символы, которые будут вставлены на места
+     * @param  string $value Исходая строка.
+     * @param  string|array $to Символы, которые будут вставлены на места
      * заменяемых.
-     * @param string $from [optional] Символы, которые будут заменены.
-     * Если этот аргумент не передан, в $to ожидается ассоциативный
-     * массив вида "заменяемый символ" => "символ для замены".
+     * @param  string $from [optional] Символы, которые будут заменены.
+     * Если этот аргумент не передан, в $to ожидается ассоциативный массив вида
+     * "заменяемый символ" => "символ для замены".
      * @return string Результат замены
      *
      * @author anonymous <email>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
-    private static function u_strtr($value, $to, $from = null)
+    private static function unicodeStrtr($value, $to, $from = null)
     {
         if (is_null($from)) {
             arsort($to, SORT_LOCALE_STRING);
@@ -172,4 +181,4 @@ class Transliterator
         }
         return $value;
     }
-} 
+}

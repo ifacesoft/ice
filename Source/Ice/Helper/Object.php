@@ -2,9 +2,9 @@
 /**
  * Ice helper object class
  *
- * @link http://www.iceframework.net
+ * @link      http://www.iceframework.net
  * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
- * @license https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
+ * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
 namespace Ice\Helper;
@@ -20,7 +20,7 @@ use Ice\Core\Module;
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
- * @package Ice
+ * @package    Ice
  * @subpackage Helper
  */
 class Object
@@ -28,14 +28,14 @@ class Object
     /**
      * Return namespace by base class
      *
-     * @param $baseClass
-     * @param $className
+     * @param  $baseClass
+     * @param  $className
      * @return string
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public static function getNamespace($baseClass, $className)
     {
@@ -46,14 +46,14 @@ class Object
     /**
      * Return class by base class
      *
-     * @param $baseClass
-     * @param $name
+     * @param  $baseClass
+     * @param  $name
      * @return string
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public static function getClass($baseClass, $name)
     {
@@ -69,13 +69,13 @@ class Object
     /**
      * Check is short name (Ice:Class_Name)
      *
-     * @param $shortName
+     * @param  $shortName
      * @return bool
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public static function isShortName($shortName)
     {
@@ -85,13 +85,13 @@ class Object
     /**
      * Return class name (without namespace)
      *
-     * @param string $class
+     * @param  string $class
      * @return string
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public static function getName($class)
     {
@@ -105,14 +105,14 @@ class Object
     /**
      * Return alias of namespace class
      *
-     * @param $class
-     * @param $shortName
+     * @param  $class
+     * @param  $shortName
      * @return string
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public static function getPrefixByClassShortName($class, $shortName)
     {
@@ -124,13 +124,13 @@ class Object
      *
      * 'Ice/Model/Ice/User' => 'Ice'
      *
-     * @param $class
+     * @param  $class
      * @return string
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public static function getModuleAlias($class)
     {
@@ -141,13 +141,13 @@ class Object
     /**
      * Return short name of class (Ice:Class_Name)
      *
-     * @param $class
+     * @param  $class
      * @return string
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public static function getShortName($class)
     {
@@ -157,17 +157,17 @@ class Object
     /**
      * Return base class (class extends Container)
      *
-     * @param $class
+     * @param  $class
      * @return mixed
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
-     * @since 0.0
+     * @version 0.6
+     * @since   0.0
      */
     public static function getBaseClass($class)
     {
-        if (!Object::isClass($class) || !is_subclass_of($class, Container::getClass())) {
+        if (!Object::isClass($class)) {
             return $class;
         }
 
@@ -196,4 +196,4 @@ class Object
 
         return true;
     }
-} 
+}

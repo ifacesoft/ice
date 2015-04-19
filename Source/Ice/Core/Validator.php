@@ -2,9 +2,9 @@
 /**
  * Ice core validator abstract class
  *
- * @link http://www.iceframework.net
+ * @link      http://www.iceframework.net
  * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
- * @license https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
+ * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
 namespace Ice\Core;
@@ -21,11 +21,11 @@ use Ice\Helper\Validator as Helper_Validator;
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
- * @package Ice
+ * @package    Ice
  * @subpackage Core
  *
  * @version 0.0
- * @since 0.0
+ * @since   0.0
  */
 abstract class Validator extends Container
 {
@@ -66,8 +66,8 @@ abstract class Validator extends Container
      *      ];
      * ```
      *
-     * @param $data
-     * @param array $validateScheme
+     * @param  $data
+     * @param  array $validateScheme
      * @return array
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -75,7 +75,7 @@ abstract class Validator extends Container
      * @todo Заменить на Helper_Array::validate()
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public static function validateByScheme(array $data, array $validateScheme)
     {
@@ -93,6 +93,91 @@ abstract class Validator extends Container
         }
 
         return $data;
+    }
+
+    /**
+     * Return validator instance
+     *
+     * @param  null $key
+     * @param  null $ttl
+     * @return Validator
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.1
+     * @since   0.1
+     */
+    public static function getInstance($key = null, $ttl = null)
+    {
+        return parent::getInstance($key, $ttl);
+    }
+
+    public static function schemeColumnPlugin($columnName, $table)
+    {
+        $validators = [];
+
+        switch ($table['columns'][$columnName][Widget_Form::getClass()]) {
+            case 'Text':
+            case 'Textarea':
+                $validators['Ice:Length_Max'] = (int)$table['columns'][$columnName]['scheme']['length'];
+                break;
+            default:
+        }
+
+        if ($table['columns'][$columnName]['scheme']['nullable'] === false &&
+            !in_array($columnName, $table['indexes']['PRIMARY KEY']['PRIMARY'])
+        ) {
+            $validators[] = 'Ice:Not_Null';
+        }
+
+        return $validators;
+    }
+
+    /**
+     * Create new instance of validator
+     *
+     * @param  $key
+     * @return Validator
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since   0.0
+     */
+    protected static function create($key)
+    {
+        $class = self::getClass();
+        return new $class();
+    }
+
+    /**
+     * Default action key
+     *
+     * @return Core
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since   0.0
+     */
+    protected static function getDefaultKey()
+    {
+        return Validator::DEFAULT_KEY;
+    }
+
+    /**
+     * Default class key
+     *
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since   0.4
+     */
+    protected static function getDefaultClassKey()
+    {
+        return self::getClass() . '/default';
     }
 
     /**
@@ -117,97 +202,14 @@ abstract class Validator extends Container
      *      ];
      * ```
      *
-     * @param $value
-     * @param mixed $params
+     * @param  $value
+     * @param  mixed $params
      * @return boolean
      *
      * @author anonymous <email>
      *
      * @version 0
-     * @since 0
+     * @since   0
      */
-    public abstract function validate($value, $params = null);
-
-    /**
-     * Return validator instance
-     *
-     * @param null $key
-     * @param null $ttl
-     * @return Validator
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.1
-     * @since 0.1
-     */
-    public static function getInstance($key = null, $ttl = null)
-    {
-        return parent::getInstance($key, $ttl);
-    }
-
-    /**
-     * Create new instance of validator
-     *
-     * @param $key
-     * @return Validator
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    protected static function create($key)
-    {
-        $class = self::getClass();
-        return new $class();
-    }
-
-    /**
-     * Default action key
-     *
-     * @return Core
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since 0.0
-     */
-    protected static function getDefaultKey()
-    {
-        return Validator::DEFAULT_KEY;
-    }
-
-    /**
-     * Default class key
-     *
-     * @return string
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since 0.4
-     */
-    protected static function getDefaultClassKey()
-    {
-        return self::getClass() . '/default';
-    }
-
-    public static function schemeColumnPlugin($columnName, $table)
-    {
-        $validators = [];
-
-        switch ($table['columns'][$columnName][Ui_Form::getClass()]) {
-            case 'Text':
-            case 'Textarea':
-                $validators['Ice:Length_Max'] = (int)$table['columns'][$columnName]['scheme']['length'];
-                break;
-            default:
-        }
-
-        if ($table['columns'][$columnName]['scheme']['nullable'] === false && !in_array($columnName, $table['indexes']['PRIMARY KEY']['PRIMARY'])) {
-            $validators[] = 'Ice:Not_Null';
-        }
-
-        return $validators;
-    }
+    abstract public function validate($value, $params = null);
 }

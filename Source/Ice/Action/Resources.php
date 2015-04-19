@@ -2,9 +2,9 @@
 /**
  * Ice action resources class
  *
- * @link http://www.iceframework.net
+ * @link      http://www.iceframework.net
  * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
- * @license https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
+ * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
 namespace Ice\Action;
@@ -31,11 +31,11 @@ use JSMin;
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
- * @package Ice
+ * @package    Ice
  * @subpackage Action
  *
  * @version 0.0
- * @since 0.0
+ * @since   0.0
  */
 class Resources extends Action
 {
@@ -47,7 +47,7 @@ class Resources extends Action
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public static function appendJs($resource)
     {
@@ -63,11 +63,13 @@ class Resources extends Action
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     private static function append($resourceType, $resource)
     {
-        /** @var Action $actionClass */
+        /**
+         * @var Action $actionClass
+         */
         $actionClass = self::getClass();
 
         $dataProvider = Data_Provider::getInstance($actionClass::getRegistryDataProviderKey());
@@ -91,7 +93,7 @@ class Resources extends Action
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public static function appendCss($resource)
     {
@@ -127,12 +129,13 @@ class Resources extends Action
      *      'roles' => []
      *  ];
      * ```
+     *
      * @return array
      *
      * @author anonymous <email>
      *
      * @version 0
-     * @since 0
+     * @since   0
      */
     protected static function config()
     {
@@ -140,61 +143,7 @@ class Resources extends Action
             'view' => ['viewRenderClass' => 'Ice:Php', 'layout' => ''],
             'input' => [
                 'resources' => [
-                    'default' => [
-                        'modules' => [
-                            'Ice' => [
-                                'vendor_js' => [
-                                    'path' => 'js/vendor/',
-                                    'js' => ['-modernizr-2.8.3.min.js'],
-                                    'css' => [],
-                                    'isCopy' => false,
-                                ],
-                                'vendor_css' => [
-                                    'path' => 'css/vendor/',
-                                    'js' => [],
-                                    'css' => ['empty.css'],
-                                    'isCopy' => false,
-                                ],
-                                'vendor' => [
-                                    'path' => 'vendor/',
-                                    'js' => [],
-                                    'css' => [],
-                                    'isCopy' => false,
-                                ],
-                                'common' => [
-                                    'path' => '',
-                                    'js' => [],
-                                    'css' => ['css/flags.css', 'css/preloader.css'],
-                                    'isCopy' => false,
-                                ],
-                                'module' => [
-                                    'path' => 'Ice/',
-                                    'js' => ['Helper/String.js', 'Ui/Form.js', 'Ui/Menu.js', 'Ui/Data.js'],
-                                    'css' => [],
-                                    'isCopy' => false,
-                                ],
-                            ],
-                        ],
-//                        'vendors' => [
-//                            'jquery/jquery-ui' => [
-//                                'jquery' => [
-//                                    'path' => '/',
-//                                    'js' => ['external/jquery/jquery.js', '-jquery-ui.min.js'],
-//                                    'css' => ['-jquery-ui.min.css', '-jquery-ui.structure.min.css', '-jquery-ui.theme.min.css'],
-//                                    'isCopy' => true,
-//                                ],
-//                            ],
-//                            'twbs/bootstrap' => [
-//                                'bootstrap' => [
-//                                    'path' => 'dist/',
-//                                    'js' => ['-js/bootstrap.min.js'],
-//                                    'css' => ['-css/bootstrap.min.css', '-css/bootstrap-theme.min.css'],
-//                                    'isCopy' => true,
-//                                    'css_replace' => ['url(../', 'url('],
-//                                ],
-//                            ],
-//                        ],
-                    ],
+                    'default' => [],
                 ],
                 'js' => ['default' => []],
                 'css' => ['default' => []],
@@ -208,13 +157,13 @@ class Resources extends Action
     /**
      * Run action
      *
-     * @param array $input
+     * @param  array $input
      * @return array
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
-     * @since 0.0
+     * @version 0.6
+     * @since   0.0
      */
     public function run(array $input)
     {
@@ -224,7 +173,7 @@ class Resources extends Action
         ];
 
         $compiledResourceDir = Module::getInstance()->get('compiledResourceDir');
-        
+
         foreach (array_keys(Module::getAll()) as $name) {
             $modulePath = Module::getInstance($name)->get('path');
             $jsResource = $compiledResourceDir . $name . '/javascript.pack.js';
@@ -398,17 +347,17 @@ class Resources extends Action
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     private function pack($resources)
     {
         if (!class_exists('JSMin', false) && !function_exists('jsmin')) {
-            require_once(VENDOR_DIR . 'mrclay/minify/min/lib/JSMin.php');
+            include_once VENDOR_DIR . 'mrclay/minify/min/lib/JSMin.php';
 
             /**
              * Custom implementation jsmin
              *
-             * @param $js
+             * @param  $js
              * @return string
              */
             function jsmin($js)
@@ -418,13 +367,13 @@ class Resources extends Action
         }
 
         if (!class_exists('CSSMin', false)) {
-            require_once(VENDOR_DIR . 'mrclay/minify/min/lib/CSSmin.php');
+            include_once VENDOR_DIR . 'mrclay/minify/min/lib/CSSmin.php';
         }
         $handlers = [];
 
         $CSSmin = new CSSMin();
 
-//        Debuger::dump($resources['css']);
+        //        Debuger::dump($resources['css']);
 
         foreach ($resources['js'] as $resource) {
             if (!isset($handlers[$resource['resource']])) {

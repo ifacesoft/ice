@@ -2,15 +2,14 @@
 /**
  * Ice view render implementation php class
  *
- * @link http://www.iceframework.net
+ * @link      http://www.iceframework.net
  * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
- * @license https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
+ * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
 namespace Ice\View\Render;
 
 use Ice\Core\Action;
-use Ice\Core\Debuger;
 use Ice\Core\Environment;
 use Ice\Core\Loader;
 use Ice\Core\Logger;
@@ -27,11 +26,11 @@ use Ice\Core\View_Render;
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
- * @package Ice
+ * @package    Ice
  * @subpackage View_Render
  *
  * @version 0.0
- * @since 0.0
+ * @since   0.0
  */
 class Php extends View_Render
 {
@@ -43,56 +42,41 @@ class Php extends View_Render
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     protected function __construct()
     {
     }
-//
-//    /**
-//     * Display rendered view in standard output
-//     *
-//     * @param $template
-//     * @param array $data
-//     * @param string $templateType
-//     *
-//     * @author dp <denis.a.shestakov@gmail.com>
-//     *
-//     * @version 0.0
-//     * @since 0.0
-//     */
-//    public function display($template, array $data = [], $templateType = View_Render::TEMPLATE_TYPE_FILE)
-//    {
-//        $templateFilePath = Loader::getFilePath($template, self::TEMPLATE_EXTENTION, Module::RESOURCE_DIR, false);
-//
-//        if (!file_exists($templateFilePath)) {
-//            if (Environment::getInstance()->isDevelopment()) {
-//                View::getLogger()->info([Php::getClassName() . ': View {$0} not found. Trying generate template {$1}...', [$template, Php::getClassName()]], Logger::WARNING);
-//
-//                echo Php::getCodeGenerator()->generate($template);
-//            } else {
-//                echo View::getLogger()->error(['Render error in template "{$0}" "{$1}"', [$templateFilePath, ob_get_clean()]], __FILE__, __LINE__);
-//            }
-//        }
-//
-//        extract($data);
-//        unset($data);
-//
-//        require $templateFilePath;
-//    }
+
+    /**
+     * Return php view render
+     *
+     * @param  mixed $key
+     * @param  int $ttl
+     * @return Php
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since   0.4
+     */
+    public static function getInstance($key = null, $ttl = null)
+    {
+        return parent::getInstance($key, $ttl);
+    }
 
     /**
      * Render view via current view render
      *
-     * @param $template
-     * @param array $data
-     * @param string $templateType
+     * @param  $template
+     * @param  array $data
+     * @param  string $templateType
      * @return mixed
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public function fetch($template, array $data = [], $templateType = View_Render::TEMPLATE_TYPE_FILE)
     {
@@ -100,11 +84,21 @@ class Php extends View_Render
 
         if (!file_exists($templateFilePath)) {
             if (Environment::getInstance()->isDevelopment()) {
-                View::getLogger()->info([Php::getClassName() . ': View {$0} not found. Trying generate template {$1}...', [$template, Php::getClassName()]], Logger::WARNING);
+                View::getLogger()->info(
+                    [
+                        Php::getClassName() . ': View {$0} not found. Trying generate template {$1}...',
+                        [$template, Php::getClassName()]
+                    ],
+                    Logger::WARNING
+                );
 
                 return Php::getCodeGenerator()->generate($template);
             } else {
-                return View::getLogger()->error(['Render error in template "{$0}" "{$1}"', [$templateFilePath, ob_get_clean()]], __FILE__, __LINE__);
+                return View::getLogger()->error(
+                    ['Render error in template "{$0}" "{$1}"', [$templateFilePath, ob_get_clean()]],
+                    __FILE__,
+                    __LINE__
+                );
             }
         }
 
@@ -114,24 +108,7 @@ class Php extends View_Render
         extract($data);
         unset($data);
 
-        require $templateFilePath;
+        include $templateFilePath;
         return ob_get_clean();
-    }
-
-    /**
-     * Return php view render
-     *
-     * @param mixed $key
-     * @param int $ttl
-     * @return Php
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since 0.4
-     */
-    public static function getInstance($key = null, $ttl = null)
-    {
-        return parent::getInstance($key, $ttl);
     }
 }

@@ -1,11 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: dp
- * Date: 28.12.14
- * Time: 20:32
- */
-
 namespace Ice\Action;
 
 use Ice\Core\Action;
@@ -41,12 +34,13 @@ class Test extends Action
      *      'roles' => []
      *  ];
      * ```
+     *
      * @return array
      *
      * @author anonymous <email>
      *
      * @version 0
-     * @since 0
+     * @since   0
      */
     protected static function config()
     {
@@ -68,15 +62,16 @@ class Test extends Action
         ];
     }
 
-    /** Run action
+    /**
+     * Run action
      *
-     * @param array $input
+     * @param  array $input
      * @return array
      *
      * @author anonymous <email>
      *
      * @version 0
-     * @since 0
+     * @since   0
      */
     public function run(array $input)
     {

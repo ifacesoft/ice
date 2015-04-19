@@ -2,9 +2,9 @@
 /**
  * Ice helper model class
  *
- * @link http://www.iceframework.net
+ * @link      http://www.iceframework.net
  * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
- * @license https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
+ * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
 namespace Ice\Helper;
@@ -16,37 +16,37 @@ namespace Ice\Helper;
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
- * @package Ice
+ * @package    Ice
  * @subpackage Helper
  *
  * @version 0.0
- * @since 0.0
+ * @since   0.0
  */
 class Model
 {
-//
-//    /**
-//     * Return table prefix
-//     *
-//     * @param $tableName
-//     * @return string
-//     * @throws Exception
-//     *
-//     * @author dp <denis.a.shestakov@gmail.com>
-//     *
-//     * @version 0.0
-//     * @since 0.0
-//     */
-//    public static function getTablePrefix($tableName)
-//    {
-//        $prefix = strstr($tableName, '_', true);
-//
-//        if (!Core_Config::getInstance(Core_Model::getClass())->get('prefixes/' . $prefix, false)) {
-//            return '';
-//        }
-//
-//        return $prefix;
-//    }
+    //
+    //    /**
+    //     * Return table prefix
+    //     *
+    //     * @param $tableName
+    //     * @return string
+    //     * @throws Exception
+    //     *
+    //     * @author dp <denis.a.shestakov@gmail.com>
+    //     *
+    //     * @version 0.0
+    //     * @since 0.0
+    //     */
+    //    public static function getTablePrefix($tableName)
+    //    {
+    //        $prefix = strstr($tableName, '_', true);
+    //
+    //        if (!Core_Config::getInstance(Core_Model::getClass())->get('prefixes/' . $prefix, false)) {
+    //            return '';
+    //        }
+    //
+    //        return $prefix;
+    //    }
 
     public static function getFieldNameByColumnName($columnName, array $table, array $tablePrefixes)
     {
@@ -60,7 +60,7 @@ class Model
             if (substr($fieldName, -4, 4) != '__fk') {
                 $fieldName = String::trim($fieldName, ['__id', '_id', 'id'], String::TRIM_TYPE_RIGHT) . '__fk';
             }
-        } else if (in_array($columnName, $primaryKeys)) {
+        } elseif (in_array($columnName, $primaryKeys)) {
             $column['is_primary'] = true;
             if (substr($fieldName, -3, 3) != '_pk') {
                 $fieldName = str_replace($tablePrefixes, '', $table['scheme']['tableName']);

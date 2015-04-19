@@ -15,6 +15,10 @@ class Resource
 
         list($message, $params) = $message;
 
-        return str_replace(["\t", "\n"], ' ', Replace::getInstance()->fetch($message, (array)$params, View_Render::TEMPLATE_TYPE_STRING));
+        return str_replace(
+            ["\t", "\n"],
+            ' ',
+            Replace::getInstance()->fetch($message, (array)$params, View_Render::TEMPLATE_TYPE_STRING)
+        );
     }
 }

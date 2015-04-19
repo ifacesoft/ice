@@ -2,20 +2,18 @@
 /**
  * Ice query translator implementation sql class
  *
- * @link http://www.iceframework.net
+ * @link      http://www.iceframework.net
  * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
- * @license https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
+ * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
 namespace Ice\Query\Translator;
 
 use Ice\Core\Exception;
-use Ice\Core\Logger;
 use Ice\Core\Model;
 use Ice\Core\Query_Builder;
 use Ice\Core\Query_Translator;
 use Ice\Helper\Mapping;
-use Ice\Helper\Object;
 
 /**
  * Class Sql
@@ -26,7 +24,7 @@ use Ice\Helper\Object;
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
- * @package Ice
+ * @package    Ice
  * @subpackage Query_Translator
  */
 class Sql extends Query_Translator
@@ -51,19 +49,60 @@ class Sql extends Query_Translator
     const DEFAULT_KEY = 'instance';
 
     /**
+     * Return default class key
+     *
+     * @return string
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since   0.4
+     */
+    protected static function getDefaultClassKey()
+    {
+        return Sql::DEFAULT_CLASS_KEY;
+    }
+
+    /**
+     * Return default key
+     *
+     * @return string
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since   0.4
+     */
+    protected static function getDefaultKey()
+    {
+        return Sql::DEFAULT_KEY;
+    }
+
+    public function translateDrop(array $part)
+    {
+        $modelClass = array_shift($part);
+
+        if (empty($modelClass)) {
+            return '';
+        }
+
+        return "\n" . self::SQL_STATEMENT_DROP . ' `' . $modelClass::getTableName() . '`';
+    }
+
+    /**
      * Translate set part
      *
-     * @param array $part
+     * @param  array $part
      * @return string
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.1
-     * @since 0.0
+     * @since   0.0
      */
     protected function translateSet(array $part)
     {
-        /** @var Model $modelClass */
+        /**
+         * @var Model $modelClass
+         */
         $modelClass = $part['modelClass'];
 
         if ($part['rowCount'] > 1) {
@@ -79,10 +118,16 @@ class Sql extends Query_Translator
         $sql = "\n" . self::SQL_STATEMENT_UPDATE .
             "\n\t" . $modelClass::getTableName() . ' ' . $tableAlias . '';
         $sql .= "\n" . self::SQL_CLAUSE_SET;
-        $sql .= implode(',', array_map(function ($fieldName) use ($fieldColumnMap, $tableAlias) {
-            $columnName = $fieldColumnMap[$fieldName];
-            return "\n\t" . $tableAlias . '.`' . $columnName . '` = ?';
-        }, $part['fieldNames']));
+        $sql .= implode(
+            ',',
+            array_map(
+                function ($fieldName) use ($fieldColumnMap, $tableAlias) {
+                    $columnName = $fieldColumnMap[$fieldName];
+                    return "\n\t" . $tableAlias . '.`' . $columnName . '` = ?';
+                },
+                $part['fieldNames']
+            )
+        );
 
         return $sql;
     }
@@ -90,13 +135,13 @@ class Sql extends Query_Translator
     /**
      * Translate values part
      *
-     * @param array $part
+     * @param  array $part
      * @return string
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.1
-     * @since 0.0
+     * @since   0.0
      */
     protected function translateValues(array $part)
     {
@@ -107,7 +152,9 @@ class Sql extends Query_Translator
             return '';
         }
 
-        /** @var Model $modelClass */
+        /**
+         * @var Model $modelClass
+         */
         $modelClass = $part['modelClass'];
 
         $sql = "\n" . self::SQL_STATEMENT_INSERT . ' ' . self::SQL_CLAUSE_INTO .
@@ -115,7 +162,9 @@ class Sql extends Query_Translator
 
         $fieldNamesCount = count($part['fieldNames']);
 
-        /** Insert empty row */
+        /**
+         * Insert empty row
+         */
         if (!$fieldNamesCount) {
             $sql .= "\n\t" . '()';
             $sql .= "\n" . self::SQL_CLAUSE_VALUES;
@@ -145,30 +194,95 @@ class Sql extends Query_Translator
 
         if ($update) {
             $sql .= "\n" . self::ON_DUPLICATE_KEY_UPDATE;
-            $sql .= implode(',', array_map(function ($fieldName) use ($fieldColumnMap) {
-                $columnName = $fieldColumnMap[$fieldName];
-                return "\n\t" . '`' . $columnName . '`=' . self::SQL_CLAUSE_VALUES . '(`' . $columnName . '`)';
-            }, $fieldNames));
+            $sql .= implode(
+                ',',
+                array_map(
+                    function ($fieldName) use ($fieldColumnMap) {
+                        $columnName = $fieldColumnMap[$fieldName];
+                        return "\n\t" . '`' . $columnName . '`=' . self::SQL_CLAUSE_VALUES . '(`' . $columnName . '`)';
+                    },
+                    $fieldNames
+                )
+            );
         }
 
         return $sql;
     }
 
     /**
+     * Translate where part
+     *
+     * @param  array $part
+     * @throws Exception
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.3
+     * @since   0.0
+     */
+    protected function translateWhere(array $part)
+    {
+        $sql = '';
+        $delete = '';
+
+        $deleteClass = array_shift($part);
+
+        if ($deleteClass) {
+            $tableAlias = reset($part)[0];
+
+            $delete = "\n" . self::SQL_STATEMENT_DELETE . ' ' . self::SQL_CLAUSE_FROM .
+                "\n\t" . '`' . $tableAlias . '` USING ' . $deleteClass::getTableName() . ' AS `' . $tableAlias . '`';
+            $sql .= $delete;
+        }
+
+        if (empty($part)) {
+            return $sql;
+        }
+
+        $sql = '';
+
+        /**
+         * @var Model $modelClass
+         * @var array $where
+         */
+        foreach ($part as $tableAlias => $where) {
+            $modelClass = $where['class'];
+
+            foreach ($where['data'] as $fieldNameArr) {
+                list($logicalOperator, $fieldName, $comparisonOperator, $count) = $fieldNameArr;
+
+                $sql .= $sql
+                    ? ' ' . $logicalOperator . "\n\t"
+                    : "\n" . self::SQL_CLAUSE_WHERE . "\n\t";
+                $sql .= $this->buildWhere(
+                    $modelClass::getScheme()->getFieldColumnMap(),
+                    $fieldName,
+                    $comparisonOperator,
+                    $tableAlias,
+                    $count
+                );
+            }
+        }
+
+        return empty($delete) ? $sql : $delete . $sql;
+    }
+
+    /**
      * Build where part string
      *
-     * @param array $fields
-     * @param $fieldName
-     * @param $comparisonOperator
-     * @param $tableAlias
-     * @param $count
+     * @param  array $fields
+     * @param  $fieldName
+     * @param  $comparisonOperator
+     * @param  $tableAlias
+     * @param  $count
      * @return string
      * @throws Exception
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.3
-     * @since 0.3
+     * @since   0.3
      */
     private function buildWhere(array $fields, $fieldName, $comparisonOperator, $tableAlias, $count)
     {
@@ -211,68 +325,15 @@ class Sql extends Query_Translator
     }
 
     /**
-     * Translate where part
-     *
-     * @param array $part
-     * @throws Exception
-     * @return string
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.3
-     * @since 0.0
-     */
-    protected function translateWhere(array $part)
-    {
-        $sql = '';
-        $delete = '';
-
-        $deleteClass = array_shift($part);
-
-        if ($deleteClass) {
-            $tableAlias = reset($part)[0];
-
-            $delete = "\n" . self::SQL_STATEMENT_DELETE . ' ' . self::SQL_CLAUSE_FROM .
-                "\n\t" . '`' . $tableAlias . '` USING ' . $deleteClass::getTableName() . ' AS `' . $tableAlias . '`';
-            $sql .= $delete;
-        }
-
-        if (empty($part)) {
-            return $sql;
-        }
-
-        $sql = '';
-
-        /**
-         * @var Model $modelClass
-         * @var array $items
-         */
-        foreach ($part as $modelClass => $items) {
-            list($tableAlias, $fieldNames) = $items;
-
-            foreach ($fieldNames as $fieldNameArr) {
-                list($logicalOperator, $fieldName, $comparisonOperator, $count) = $fieldNameArr;
-
-                $sql .= $sql
-                    ? ' ' . $logicalOperator . "\n\t"
-                    : "\n" . self::SQL_CLAUSE_WHERE . "\n\t";
-                $sql .= $this->buildWhere($modelClass::getScheme()->getFieldColumnMap(), $fieldName, $comparisonOperator, $tableAlias, $count);
-            }
-        }
-
-        return empty($delete) ? $sql : $delete . $sql;
-    }
-
-    /**
      * Translate select part
      *
-     * @param array $part
+     * @param  array $part
      * @return string
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     protected function translateSelect(array $part)
     {
@@ -286,13 +347,14 @@ class Sql extends Query_Translator
 
         $fields = [];
 
-        /** @var Model $modelClass */
+        /**
+         * @var Model $modelClass
+         */
         $modelClass = null;
         $tableAlias = null;
 
         foreach ($part as $modelClass => $tableAliases) {
             foreach ($tableAliases as $tableAlias => $fieldNames) {
-
                 $fieldColumnMap = $modelClass::getScheme()->getFieldColumnMap();
 
                 foreach ($fieldNames as $fieldName => &$fieldAlias) {
@@ -338,13 +400,13 @@ class Sql extends Query_Translator
     /**
      * Translate join part
      *
-     * @param array $part
+     * @param  array $part
      * @return string
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     protected function translateJoin(array $part)
     {
@@ -355,7 +417,9 @@ class Sql extends Query_Translator
         }
 
         foreach ($part as $tableAlias => $joinTable) {
-            /** @var Model $joinModelClass */
+            /**
+             * @var Model $joinModelClass
+             */
             $joinModelClass = $joinTable['class'];
 
             $sql .= "\n" . $joinTable['type'] . "\n\t`" .
@@ -369,13 +433,13 @@ class Sql extends Query_Translator
     /**
      * Translate order part
      *
-     * @param array $part
+     * @param  array $part
      * @return string
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     protected function translateOrder(array $part)
     {
@@ -410,13 +474,13 @@ class Sql extends Query_Translator
     /**
      * Translate group part
      *
-     * @param array $part
+     * @param  array $part
      * @return string
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     protected function translateGroup(array $part)
     {
@@ -451,13 +515,13 @@ class Sql extends Query_Translator
     /**
      * Translate limit part
      *
-     * @param array $part
+     * @param  array $part
      * @return string
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     protected function translateLimit($part)
     {
@@ -472,13 +536,13 @@ class Sql extends Query_Translator
     /**
      * Translate create part
      *
-     * @param array $part
+     * @param  array $part
      * @return string
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.2
-     * @since 0.2
+     * @since   0.2
      */
     protected function translateCreate(array $part)
     {
@@ -490,7 +554,9 @@ class Sql extends Query_Translator
 
         $scheme = each($part);
 
-        /** @var Model $modelClass */
+        /**
+         * @var Model $modelClass
+         */
         $modelClass = $scheme['key'];
 
         array_walk(
@@ -511,44 +577,5 @@ class Sql extends Query_Translator
             "\n" . ') ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;';
 
         return $sql;
-    }
-
-    public function translateDrop(array $part)
-    {
-        $modelClass = array_shift($part);
-
-        if (empty($modelClass)) {
-            return '';
-        }
-
-        return "\n" . self::SQL_STATEMENT_DROP . ' `' . $modelClass::getTableName() . '`';
-    }
-
-    /**
-     * Return default class key
-     *
-     * @return string
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since 0.4
-     */
-    protected static function getDefaultClassKey()
-    {
-        return Sql::DEFAULT_CLASS_KEY;
-    }
-
-    /**
-     * Return default key
-     *
-     * @return string
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since 0.4
-     */
-    protected static function getDefaultKey()
-    {
-        return Sql::DEFAULT_KEY;
     }
 }

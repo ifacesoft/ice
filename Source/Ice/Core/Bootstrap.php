@@ -2,21 +2,15 @@
 /**
  * Ice bootstrap class
  *
- * @link http://www.iceframework.net
+ * @link      http://www.iceframework.net
  * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
- * @license https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
+ * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
 namespace Ice\Core;
 
 use Composer\Autoload\ClassLoader;
 use Ice\Core;
-use Ice\Core\Loader;
-use Ice\Core\Logger;
-use Ice\Core\Module;
-use Ice\Core\Profiler;
-use Ice\Core\Request;
-use Ice\Core\Session;
 
 /**
  * Class Bootstrap
@@ -31,7 +25,7 @@ class Bootstrap extends Container
 {
     use Core;
 
-    private $_moduleConfigPath = null;
+    private $moduleConfigPath = null;
 
     /**
      * Bootstrap constructor.
@@ -39,7 +33,7 @@ class Bootstrap extends Container
      */
     private function __construct($moduleConfigPath)
     {
-        $this->_moduleConfigPath = $moduleConfigPath;
+        $this->moduleConfigPath = $moduleConfigPath;
     }
 
     protected static function create($key)
@@ -55,9 +49,9 @@ class Bootstrap extends Container
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.2
-     * @since 0.0
-     * @param ClassLoader $loader
-     * @param bool $force
+     * @since   0.0
+     * @param   ClassLoader $loader
+     * @param   bool $force
      */
     public function init(ClassLoader $loader, $force = false)
     {
@@ -80,7 +74,9 @@ class Bootstrap extends Container
                 Session::init();
             }
         } catch (\Exception $e) {
-            echo '<span style="background-color: red; color:white; font-weight: bold;">Bootstrapping failed: ' . $e->getMessage() . '</span><br>';
+            echo '<span style="background-color: red; color:white; font-weight: bold;">Bootstrapping failed: ' .
+                $e->getMessage() .
+                '</span><br>';
             echo nl2br($e->getTraceAsString());
             die('Terminated. Bye-bye...' . "\n");
         }
@@ -91,6 +87,6 @@ class Bootstrap extends Container
      */
     public function getModuleConfigPath()
     {
-        return $this->_moduleConfigPath;
+        return $this->moduleConfigPath;
     }
 }

@@ -2,9 +2,9 @@
 /**
  * Ice helper php class
  *
- * @link http://www.iceframework.net
+ * @link      http://www.iceframework.net
  * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
- * @license https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
+ * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
 namespace Ice\Helper;
@@ -16,7 +16,7 @@ namespace Ice\Helper;
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
- * @package Ice
+ * @package    Ice
  * @subpackage Helper
  */
 class Php
@@ -26,13 +26,13 @@ class Php
     /**
      * Pretty formatting php data (array)
      *
-     * @param $var
-     * @param bool $withPhpTag
+     * @param  $var
+     * @param  bool $withPhpTag
      * @return mixed|string
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public static function varToPhpString($var, $withPhpTag = true)
     {
@@ -95,21 +95,23 @@ class Php
         return $var;
     }
 
-    public static function getClassNamesFromFile($filePath) {
+    public static function getClassNamesFromFile($filePath)
+    {
         $phpString = file_get_contents($filePath);
         $classNames = Php::getClassNamesFromPhpString($phpString);
         return $classNames;
     }
 
-    public static function getClassNamesFromPhpString($php_code) {
+    public static function getClassNamesFromPhpString($php_code)
+    {
         $classNames = array();
         $tokens = token_get_all($php_code);
         $count = count($tokens);
         for ($i = 2; $i < $count; $i++) {
-            if (   $tokens[$i - 2][0] == T_CLASS
+            if ($tokens[$i - 2][0] == T_CLASS
                 && $tokens[$i - 1][0] == T_WHITESPACE
-                && $tokens[$i][0] == T_STRING) {
-
+                && $tokens[$i][0] == T_STRING
+            ) {
                 $class_name = $tokens[$i][1];
                 $classNames[] = $class_name;
             }

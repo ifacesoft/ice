@@ -6,22 +6,24 @@ use Ice\Helper\Arrays;
 use Ice\Model\Account;
 use Ice\Model\User;
 
-abstract class Ui_Form_Security_Register extends Ui_Form
+abstract class Widget_Form_Security_Register extends Widget_Form
 {
     /**
      * Create new instance of form security register
      *
-     * @param $key
-     * @return Ui_Form_Security_Register
+     * @param  $key
+     * @return Widget_Form_Security_Register
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.1
-     * @since 0.1
+     * @since   0.1
      */
     protected static function create($key)
     {
-        /** @var Ui_Form_Security_Register $class */
+        /**
+         * @var Widget_Form_Security_Register $class
+         */
         $class = self::getClass();
 
         if ($class == __CLASS__) {
@@ -37,7 +39,7 @@ abstract class Ui_Form_Security_Register extends Ui_Form
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.1
-     * @since 0.1
+     * @since   0.1
      */
     public function submit()
     {

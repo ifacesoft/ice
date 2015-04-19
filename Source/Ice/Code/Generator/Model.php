@@ -2,9 +2,9 @@
 /**
  * Ice code generator implementation model class
  *
- * @link http://www.iceframework.net
+ * @link      http://www.iceframework.net
  * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
- * @license https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
+ * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
 namespace Ice\Code\Generator;
@@ -18,9 +18,8 @@ use Ice\Core\Module;
 use Ice\Helper\Arrays;
 use Ice\Helper\File;
 use Ice\Helper\Object;
-use Ice\View\Render\Php;
-use Ice\Helper\Model as Helper_Model;
 use Ice\Helper\Php as Helper_Php;
+use Ice\View\Render\Php;
 
 /**
  * Class Model
@@ -31,7 +30,7 @@ use Ice\Helper\Php as Helper_Php;
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
- * @package Ice
+ * @package    Ice
  * @subpackage Code_Generator
  */
 class Model extends Code_Generator
@@ -39,15 +38,15 @@ class Model extends Code_Generator
     /**
      * Generate code and other
      *
-     * @param $class
-     * @param array $data Sended data requered for generate
-     * @param bool $force Force if already generate
+     * @param  $class
+     * @param  array $data Sended data requered for generate
+     * @param  bool $force Force if already generate
      * @return mixed
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.5
-     * @since 0.0
+     * @since   0.0
      */
     public function generate($class, $data = null, $force = false)
     {
@@ -59,9 +58,9 @@ class Model extends Code_Generator
 
         $path = $module->get(Module::SOURCE_DIR);
 
-//        if ($namespace) {
-//            $path .= 'Model/';
-//        }
+        //        if ($namespace) {
+        //            $path .= 'Model/';
+        //        }
 
         $filePath = $path . str_replace(['\\', '_'], '/', $class) . '.php';
 

@@ -2,9 +2,9 @@
 /**
  * Ice helper date class
  *
- * @link http://www.iceframework.net
+ * @link      http://www.iceframework.net
  * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
- * @license https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
+ * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
 namespace Ice\Helper;
@@ -16,11 +16,11 @@ namespace Ice\Helper;
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
- * @package Ice
+ * @package    Ice
  * @subpackage Helper
  *
  * @version 0.0
- * @since 0.0
+ * @since   0.0
  */
 class Date
 {
@@ -37,7 +37,7 @@ class Date
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.5
-     * @since 0.5
+     * @since   0.5
      */
     public static function getRevision()
     {
@@ -47,16 +47,16 @@ class Date
     /**
      * Return current data in default (mysql) format
      *
-     * @param null $time
-     * @param string $format
+     * @param  null $time
+     * @param  string $format
      * @return string
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public static function get($time = null, $format = Date::FORMAT_MYSQL)
     {
         return $time ? date($format, $time) : date($format);
     }
-} 
+}

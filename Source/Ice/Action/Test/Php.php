@@ -34,12 +34,13 @@ class Test_Php extends Action
      *      'roles' => []
      *  ];
      * ```
+     *
      * @return array
      *
      * @author anonymous <email>
      *
      * @version 0
-     * @since 0
+     * @since   0
      */
     protected static function config()
     {
@@ -49,15 +50,16 @@ class Test_Php extends Action
         ];
     }
 
-    /** Run action
+    /**
+     * Run action
      *
-     * @param array $input
+     * @param  array $input
      * @return array
      *
      * @author anonymous <email>
      *
      * @version 0
-     * @since 0
+     * @since   0
      */
     public function run(array $input)
     {

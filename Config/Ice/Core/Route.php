@@ -20,7 +20,7 @@ return [
             'GET' => [
                 'Ice:Layout_Test' => [
                     'actions' => [
-                        'Ice:Test'=> 'testAction'
+                        'Ice:Test' => 'testAction'
                     ]
                 ]
             ]
@@ -48,4 +48,5 @@ return [
         ]
     ],
     '_Security' => '/security',
+    '_Admin' => '/admin',
 ];

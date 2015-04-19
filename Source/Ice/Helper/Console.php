@@ -2,9 +2,9 @@
 /**
  * Ice helper console class
  *
- * @link http://www.iceframework.net
+ * @link      http://www.iceframework.net
  * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
- * @license https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
+ * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
 namespace Ice\Helper;
@@ -22,11 +22,11 @@ use Ice\Core\Validator as Core_Validator;
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
- * @package Ice
+ * @package    Ice
  * @subpackage Helper
  *
  * @version 0.0
- * @since 0.0
+ * @since   0.0
  */
 class Console
 {
@@ -61,13 +61,13 @@ class Console
     /**
      * Return stylized header text for console
      *
-     * @param $string
-     * @param Core_Resource $resource
+     * @param  $string
+     * @param  Core_Resource $resource
      * @return string
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public static function getHeader($string, Core_Resource $resource)
     {
@@ -80,7 +80,11 @@ class Console
 
         return self::getText(str_repeat(' ', $half), Console::C_BLACK, Console::BG_GRAY) .
         self::getText(str_repeat(' ', $half + $residue), Console::C_BLACK, Console::BG_GRAY) . "\n" .
-        self::getText(str_repeat(' ', $padding) . $string . str_repeat(' ', $padding), Console::C_BLACK, Console::BG_GRAY) . "\n" .
+        self::getText(
+            str_repeat(' ', $padding) . $string . str_repeat(' ', $padding),
+            Console::C_BLACK,
+            Console::BG_GRAY
+        ) . "\n" .
         self::getText(str_repeat(' ', $half), Console::C_BLACK, Console::BG_GRAY) .
         self::getText(str_repeat(' ', $half + $residue), Console::C_BLACK, Console::BG_GRAY) . "\n";
     }
@@ -88,15 +92,15 @@ class Console
     /**
      * Return stylized simple text for console
      *
-     * @param $string
-     * @param null $color
-     * @param null $background
+     * @param  $string
+     * @param  null $color
+     * @param  null $background
      * @return string
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public static function getText($string, $color = null, $background = null)
     {
@@ -116,19 +120,21 @@ class Console
     /**
      * Return interactive output for define variable from input
      *
-     * @param $class Core
-     * @param $param
-     * @param $data
+     * @param  $class Core
+     * @param  $param
+     * @param  $data
      * @return string
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public static function getInteractive($class, $param, $data)
     {
-        /** @var Core_Resource $resource */
+        /**
+         * @var Core_Resource $resource
+         */
         $resource = $class::getResource();
 
         $title = Console::C_YELLOW . $resource->get($data['title'], $data['default']) . Console::C_GRAY_B;

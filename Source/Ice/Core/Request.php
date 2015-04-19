@@ -2,9 +2,9 @@
 /**
  * Ice core request class
  *
- * @link http://www.iceframework.net
+ * @link      http://www.iceframework.net
  * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
- * @license https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
+ * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
 namespace Ice\Core;
@@ -21,11 +21,11 @@ use Locale;
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
- * @package Ice
+ * @package    Ice
  * @subpackage Core
  *
  * @version 0.0
- * @since 0.0
+ * @since   0.0
  */
 class Request
 {
@@ -34,13 +34,13 @@ class Request
     /**
      * Return param from request
      *
-     * @param string $paramName Param name
+     * @param  string $paramName Param name
      * @return mixed
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public static function getParam($paramName)
     {
@@ -51,12 +51,12 @@ class Request
     /**
      * Return all params from request
      *
-     * @param array $filterParams
+     * @param  array $filterParams
      * @return mixed
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public static function getParams(array $filterParams = [])
     {
@@ -71,7 +71,7 @@ class Request
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public static function locale()
     {
@@ -97,13 +97,13 @@ class Request
     /**
      * Return uri from request
      *
-     * @param bool $withoutQueryString
+     * @param  bool $withoutQueryString
      * @return string
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public static function uri($withoutQueryString = false)
     {
@@ -120,7 +120,7 @@ class Request
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public static function queryString()
     {
@@ -135,7 +135,7 @@ class Request
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public static function host()
     {
@@ -155,14 +155,15 @@ class Request
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public static function ip()
     {
         if (isset($_SERVER['HTTP_CLIENT_IP']) && filter_var($_SERVER['HTTP_CLIENT_IP'], FILTER_VALIDATE_IP)) {
             return $_SERVER['HTTP_CLIENT_IP'];
         } elseif (isset($_SERVER['HTTP_X_FORWARDED_FOR']) && filter_var(
-                $_SERVER['HTTP_X_FORWARDED_FOR'], FILTER_VALIDATE_IP
+                $_SERVER['HTTP_X_FORWARDED_FOR'],
+                FILTER_VALIDATE_IP
             )
         ) {
             return $_SERVER['HTTP_X_FORWARDED_FOR'];
@@ -183,7 +184,7 @@ class Request
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public static function agent()
     {
@@ -202,7 +203,7 @@ class Request
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public static function referer()
     {
@@ -217,7 +218,7 @@ class Request
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public static function isCli()
     {
@@ -232,7 +233,7 @@ class Request
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.2
-     * @since 0.0
+     * @since   0.0
      */
     public static function isAjax()
     {
@@ -247,7 +248,7 @@ class Request
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public static function getMethod()
     {
@@ -263,8 +264,12 @@ class Request
             if (!empty($cors[$_SERVER['HTTP_ORIGIN']]['cookie'])) {
                 Http::setHeader('Access-Control-Allow-Credentials: true');
             }
-            Http::setHeader('Access-Control-Allow-Methods: ' . implode(', ', $cors[$_SERVER['HTTP_ORIGIN']]['methods']));
-            Http::setHeader('Access-Control-Allow-Headers: ' . implode(', ', $cors[$_SERVER['HTTP_ORIGIN']]['headers']));
+            Http::setHeader(
+                'Access-Control-Allow-Methods: ' . implode(', ', $cors[$_SERVER['HTTP_ORIGIN']]['methods'])
+            );
+            Http::setHeader(
+                'Access-Control-Allow-Headers: ' . implode(', ', $cors[$_SERVER['HTTP_ORIGIN']]['headers'])
+            );
         }
     }
 
@@ -272,9 +277,4 @@ class Request
     {
         return isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] == 'OPTIONS';
     }
-
-    //   public function isNoCache()
-    //       {
-    //           return isset($_SERVER['Pragma']) && $_SERVER['Pragma'] == 'no-cache' && inHeader(acheControlDirective, 'no-cache');
-    //       }
 }

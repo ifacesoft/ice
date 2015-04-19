@@ -7,7 +7,9 @@ class Validator
 {
     public static function validate($validatorClass, $validatorParams, $param, $value)
     {
-        /** @var Core_Validator $validatorClass */
+        /**
+         * @var Core_Validator $validatorClass
+         */
         $validatorClass = Core_Validator::getClass($validatorClass);
 
         if ($validatorClass::getInstance()->validate($value, $validatorParams)) {

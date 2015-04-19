@@ -2,9 +2,9 @@
 /**
  * Ice core data provider abstract class
  *
- * @link http://www.iceframework.net
+ * @link      http://www.iceframework.net
  * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
- * @license https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
+ * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
 namespace Ice\Core;
@@ -19,11 +19,11 @@ use Ice\Helper\Object;
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
- * @package Ice
+ * @package    Ice
  * @subpackage Core
  *
  * @version 0.0
- * @since 0.0
+ * @since   0.0
  */
 abstract class Data_Provider
 {
@@ -37,36 +37,31 @@ abstract class Data_Provider
      * @var Data_Provider[]
      */
     private static $_dataProviders = [];
-
+    protected $options = [];
     /**
      * Connection of data provider
      *
      * @var mixed
      */
-    private $_connection = null;
-
+    private $connection = null;
     /**
      * Data provider key
      *
      * @var string
      */
-    private $_key = null;
-
+    private $key = null;
     /**
      * Data provider index
      *
      * @var string
      */
-    private $_index = null;
-
+    private $index = null;
     /**
      * Data provider scheme
      *
      * @var string
      */
-    private $_scheme = null;
-
-    protected $_options = [];
+    private $scheme = null;
 
     /**
      * Constructor of Data provider
@@ -77,16 +72,18 @@ abstract class Data_Provider
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     protected function __construct($key, $index)
     {
-        $this->_key = $key;
-        $this->_index = $index;
+        $this->key = $key;
+        $this->index = $index;
 
-        if ($this->_options !== null && $key != Config::getClass() && $key != Environment::getClass()) {
-            foreach (Environment::getInstance()->gets(__CLASS__ . '/' . get_class($this) . '/' . $key, false) as $key => $value) {
-                $this->_options[$key] = is_array($value) ? reset($value) : $value;
+        if ($this->options !== null && $key != Config::getClass() && $key != Environment::getClass()) {
+            $dataProviderKey = __CLASS__ . '/' . get_class($this) . '/' . $key;
+
+            foreach (Environment::getInstance()->gets($dataProviderKey, false) as $key => $value) {
+                $this->options[$key] = is_array($value) ? reset($value) : $value;
             }
         }
     }
@@ -94,22 +91,28 @@ abstract class Data_Provider
     /**
      * Return new instance of data provider
      *
-     * @param $key
-     * @param string $index
+     * @param  $key
+     * @param  string $index
      * @return Data_Provider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public static function getInstance($key = null, $index = 'default')
     {
-        /** @var Data_Provider $class */
+        /**
+         * @var Data_Provider $class
+         */
         $class = self::getClass();
 
         if (!$key && $class == __CLASS__) {
-            Data_Provider::getLogger()->exception('Not known how create instance of data provider. Need data provider key.', __FILE__, __LINE__);
+            Data_Provider::getLogger()->exception(
+                'Not known how create instance of data provider. Need data provider key.',
+                __FILE__,
+                __LINE__
+            );
         }
 
         if (!$key) {
@@ -128,7 +131,9 @@ abstract class Data_Provider
             $key = $class::getDefaultKey();
         }
 
-        /** @var string $class */
+        /**
+         * @var string $class
+         */
         if (isset(self::$_dataProviders[$class][$key][$index])) {
             return self::$_dataProviders[$class][$key][$index];
         }
@@ -145,11 +150,15 @@ abstract class Data_Provider
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     protected static function getDefaultDataProviderKey()
     {
-        Data_Provider::getLogger()->exception(['Need implements {$0} for {$1}', [__METHOD__, self::getClass()]], __FILE__, __LINE__);
+        Data_Provider::getLogger()->exception(
+            ['Need implements {$0} for {$1}', [__METHOD__, self::getClass()]],
+            __FILE__,
+            __LINE__
+        );
         return null;
     }
 
@@ -162,11 +171,15 @@ abstract class Data_Provider
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.5
-     * @since 0.5
+     * @since   0.5
      */
     protected static function getDefaultKey()
     {
-        Data_Provider::getLogger()->exception(['Need implements {$0} for {$1}', [__METHOD__, self::getClass()]], __FILE__, __LINE__);
+        Data_Provider::getLogger()->exception(
+            ['Need implements {$0} for {$1}', [__METHOD__, self::getClass()]],
+            __FILE__,
+            __LINE__
+        );
         return null;
     }
 
@@ -178,11 +191,11 @@ abstract class Data_Provider
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public function getScheme()
     {
-        return $this->_scheme;
+        return $this->scheme;
     }
 
     /**
@@ -193,11 +206,11 @@ abstract class Data_Provider
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public function setScheme($scheme)
     {
-        $this->_scheme = $scheme;
+        $this->scheme = $scheme;
     }
 
     /**
@@ -209,33 +222,41 @@ abstract class Data_Provider
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public function getConnection()
     {
-        if ($this->_connection !== null) {
-            return $this->_connection;
+        if ($this->connection !== null) {
+            return $this->connection;
         }
 
-        if (!$this->connect($this->_connection)) {
-            /** @var Data_Provider $class */
+        if (!$this->connect($this->connection)) {
+            /**
+             * @var Data_Provider $class
+             */
             $class = __CLASS__;
-            $class::getLogger()->exception(['Data provider "{$0}" connection failed', get_class($this) . '/' . $this->getKey() . ' (index: ' . $this->getIndex() . ')'], __FILE__, __LINE__);
+            $class::getLogger()->exception(
+                [
+                    'Data provider "{$0}" connection failed',
+                    get_class($this) . '/' . $this->getKey() . ' (index: ' . $this->getIndex() . ')'],
+                __FILE__,
+                __LINE__
+            );
         }
 
-        return $this->_connection;
+        return $this->connection;
     }
 
     /**
      * Connect to data provider
      *
-     * @param $connection
+     * @param  $connection
      * @return boolean
      *
      * @author anonymous <email>
      *
      * @version 0
-     * @since 0
+     * @since   0
      */
     abstract protected function connect(&$connection);
 
@@ -247,11 +268,11 @@ abstract class Data_Provider
      * @author anonymous <email>
      *
      * @version 0
-     * @since 0
+     * @since   0
      */
     public function getKey()
     {
-        return $this->_key;
+        return $this->key;
     }
 
     /**
@@ -262,11 +283,11 @@ abstract class Data_Provider
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public function getIndex()
     {
-        return $this->_index;
+        return $this->index;
     }
 
     /**
@@ -278,17 +299,26 @@ abstract class Data_Provider
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public function closeConnection()
     {
-        if (!$this->close($this->_connection)) {
-            /** @var Data_Provider $class */
+        if (!$this->close($this->connection)) {
+            /**
+             * @var Data_Provider $class
+             */
             $class = __CLASS__;
-            $class::getLogger()->exception(['Не удалось закрыть соединенеие с дата провайдером {$0}', get_class($this) . '/' . $this->getKey() . ' (index: ' . $this->getIndex() . ')'], __FILE__, __LINE__);
+            $class::getLogger()->exception(
+                [
+                    'Не удалось закрыть соединенеие с дата провайдером {$0}',
+                    get_class($this) . '/' . $this->getKey() . ' (index: ' . $this->getIndex() . ')'
+                ],
+                __FILE__,
+                __LINE__
+            );
         }
 
-        $this->_connection = null;
+        $this->connection = null;
         return true;
     }
 
@@ -300,78 +330,78 @@ abstract class Data_Provider
      * @author anonymous <email>
      *
      * @version 0
-     * @since 0
+     * @since   0
      */
     abstract protected function close(&$connection);
 
     /**
      * Get data from data provider by key
      *
-     * @param string $key
+     * @param  string $key
      * @return mixed
      *
      * @author anonymous <email>
      *
      * @version 0
-     * @since 0
+     * @since   0
      */
     abstract public function get($key = null);
 
     /**
      * Set data to data provider
      *
-     * @param string $key
-     * @param $value
-     * @param null $ttl
+     * @param  string $key
+     * @param  $value
+     * @param  null $ttl
      * @return mixed setted value
      *
      * @author anonymous <email>
      *
      * @version 0
-     * @since 0
+     * @since   0
      */
     abstract public function set($key, $value = null, $ttl = null);
 
     /**
      * Delete from data provider by key
      *
-     * @param string $key
-     * @param bool $force if true return boolean else deleted value
+     * @param  string $key
+     * @param  bool $force if true return boolean else deleted value
      * @throws Exception
      * @return mixed|boolean
      *
      * @author anonymous <email>
      *
      * @version 0
-     * @since 0
+     * @since   0
      */
     abstract public function delete($key, $force = true);
 
     /**
      * Increment value by key with defined step (default 1)
      *
-     * @param $key
-     * @param int $step
+     * @param  $key
+     * @param  int $step
      * @return mixed new value
      *
      * @author anonymous <email>
      *
      * @version 0
-     * @since 0
+     * @since   0
      */
     abstract public function incr($key, $step = 1);
 
     /**
      * Decrement value by key with defined step (default 1)
      *
-     * @param $key
-     * @param int $step
+     * @param  $key
+     * @param  int $step
      * @return mixed new value
      *
      * @author anonymous <email>
      *
      * @version 0
-     * @since 0
+     * @since   0
      */
     abstract public function decr($key, $step = 1);
 
@@ -381,33 +411,33 @@ abstract class Data_Provider
      * @author anonymous <email>
      *
      * @version 0
-     * @since 0
+     * @since   0
      */
     abstract public function flushAll();
 
     /**
      * Return keys by pattern
      *
-     * @param string $pattern
+     * @param  string $pattern
      * @return array
      *
      * @author anonymous <email>
      *
      * @version 0
-     * @since 0
+     * @since   0
      */
     abstract public function getKeys($pattern = null);
 
     /**
      * Return full key
      *
-     * @param $key
+     * @param  $key
      * @return string
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public function getFullKey($key)
     {
@@ -422,13 +452,22 @@ abstract class Data_Provider
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     protected function getKeyPrefix()
     {
-        /** @var Data_Provider $class */
+        /**
+         * @var Data_Provider $class
+         */
         $class = get_class($this);
-        return str_replace('\\', '/', Data_Provider::getModuleAlias() . '/' . $class::getClassName() . '/' . $this->getKey() . '/' . $this->getIndex());
+        return str_replace(
+            '\\',
+            '/',
+            Data_Provider::getModuleAlias() . '/' .
+            $class::getClassName() . '/' .
+            $this->getKey() . '/' .
+            $this->getIndex()
+        );
     }
 
     /**
@@ -439,10 +478,10 @@ abstract class Data_Provider
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.5
-     * @since 0.0
+     * @since   0.0
      */
     protected function getOptions()
     {
-        return $this->_options;
+        return $this->options;
     }
 }

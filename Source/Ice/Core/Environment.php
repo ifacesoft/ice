@@ -2,9 +2,9 @@
 /**
  * Ice core environment class
  *
- * @link http://www.iceframework.net
+ * @link      http://www.iceframework.net
  * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
- * @license https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
+ * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
 namespace Ice\Core;
@@ -20,7 +20,7 @@ use Ice\Core;
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
- * @package Ice
+ * @package    Ice
  * @subpackage Core
  */
 class Environment extends Config
@@ -29,26 +29,31 @@ class Environment extends Config
     const TEST = 'test';
     const DEVELOPMENT = 'development';
 
-    private static $_instance = null;
+    private static $instance = null;
 
     /**
      * Return application environment
      *
-     * @param string $environmentName
-     * @param null $postfix
-     * @param bool $isRequired
-     * @param null $ttl
+     * @param  string $environmentName
+     * @param  null $postfix
+     * @param  bool $isRequired
+     * @param  null $ttl
      * @return Environment
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.5
-     * @since 0.5
+     * @since   0.5
      */
-    public static function getInstance($environmentName = Environment::PRODUCTION, $postfix = null, $isRequired = false, $ttl = null)
+    public static function getInstance(
+        $environmentName = Environment::PRODUCTION,
+        $postfix = null,
+        $isRequired = false,
+        $ttl = null
+    )
     {
-        if (Environment::$_instance !== null) {
-            return Environment::$_instance;
+        if (Environment::$instance !== null) {
+            return Environment::$instance;
         }
 
         $host = Request::host();
@@ -58,7 +63,7 @@ class Environment extends Config
             preg_match($hostPattern, $host, $matches);
 
             if (!empty($matches)) {
-                $environmentName = $name;
+                $environmentName = is_array($name) ? reset($name) : $name;
                 break;
             }
         }
@@ -78,11 +83,12 @@ class Environment extends Config
 
         Logger::fb('init environment - ' . $environmentName, 'ice bootstrap', 'LOG');
 
-        return Environment::$_instance = Environment::create($environmentName, $environment);
+        return Environment::$instance = Environment::create($environmentName, $environment);
     }
 
-    public static function isLoaded() {
-        return Environment::$_instance;
+    public static function isLoaded()
+    {
+        return Environment::$instance;
     }
 
     /**
@@ -93,7 +99,7 @@ class Environment extends Config
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public function isDevelopment()
     {
@@ -108,7 +114,7 @@ class Environment extends Config
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public function isProduction()
     {
@@ -118,14 +124,14 @@ class Environment extends Config
     /**
      * Retern Data Provider by class name
      *
-     * @param string $class Class (found data provider for this class)
-     * @param string $index Index of data provider
+     * @param  string $class Class (found data provider for this class)
+     * @param  string $index Index of data provider
      * @return Data_Provider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public function getProvider($class, $index)
     {
@@ -135,7 +141,7 @@ class Environment extends Config
     /**
      * Return data provider key by class name
      *
-     * @param $class
+     * @param  $class
      * @param  $index
      * @throws Exception
      * @return string
@@ -143,7 +149,7 @@ class Environment extends Config
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public function getDataProviderKey($class, $index)
     {
@@ -152,7 +158,11 @@ class Environment extends Config
         $dataProviderKey = $this->get($key);
 
         if ($dataProviderKey === null) {
-            Environment::getLogger()->exception(['In environment config param {$0} not found', $key], __FILE__, __LINE__);
+            Environment::getLogger()->exception(
+                ['In environment config param {$0} not found', $key],
+                __FILE__,
+                __LINE__
+            );
         }
 
         return is_array($dataProviderKey)

@@ -10,7 +10,7 @@ class Http
      *
      * @var array
      */
-    private static $_statusCodeHeaders = [
+    private static $statusCodeHeaders = [
         '400' => 'HTTP/1.1 400 Bad Request',
         '403' => 'HTTP/1.1 403 Forbidden',
         '404' => 'HTTP/1.1 404 Not Found',
@@ -22,7 +22,7 @@ class Http
      *
      * @var array
      */
-    private static $_mimeTypes = [
+    private static $mimeTypes = [
         'txt' => 'text/plain',
         'htm' => 'text/html',
         'html' => 'text/html',
@@ -80,54 +80,54 @@ class Http
     /**
      * Return content type header by file extension
      *
-     * @param $extension
+     * @param  $extension
      * @return string
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @package Ice
+     * @package    Ice
      * @subpackage Helper
      *
      * @version 0.4
-     * @since 0.4
+     * @since   0.4
      */
     public static function getContentTypeHeader($extension)
     {
-        return 'Content-Type: ' . Http::$_mimeTypes[$extension] . '; charset=utf-8';
+        return 'Content-Type: ' . Http::$mimeTypes[$extension] . '; charset=utf-8';
     }
 
     /**
      * Return status code header by code
      *
-     * @param $code
+     * @param  $code
      * @return mixed
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @package Ice
+     * @package    Ice
      * @subpackage Helper
      *
      * @version 0.4
-     * @since 0.4
+     * @since   0.4
      */
     public static function getStatusCodeHeader($code)
     {
-        return Http::$_statusCodeHeaders[$code];
+        return Http::$statusCodeHeaders[$code];
     }
 
     /**
      * Gets content via http
      *
-     * @param $url
+     * @param  $url
      * @return string
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @package Ice
+     * @package    Ice
      * @subpackage Helper
      *
      * @version 0.4
-     * @since 0.4
+     * @since   0.4
      */
     public static function getContents($url)
     {

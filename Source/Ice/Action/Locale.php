@@ -1,6 +1,5 @@
 <?php namespace Ice\Action;
 
-
 use Ice\Core\Action;
 use Ice\Core\Request;
 use Ice\Exception\Redirect;
@@ -37,12 +36,13 @@ class Locale extends Action
      *      'roles' => []
      *  ];
      * ```
+     *
      * @return array
      *
      * @author anonymous <email>
      *
      * @version 0
-     * @since 0
+     * @since   0
      */
     protected static function config()
     {
@@ -57,15 +57,16 @@ class Locale extends Action
         ];
     }
 
-    /** Run action
+    /**
+     * Run action
      *
-     * @param array $input
+     * @param  array $input
      * @return array
      * @throws Redirect
      * @author anonymous <email>
      *
      * @version 0
-     * @since 0
+     * @since   0
      */
     public function run(array $input)
     {

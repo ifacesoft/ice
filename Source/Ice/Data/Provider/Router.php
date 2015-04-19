@@ -2,9 +2,9 @@
 /**
  * Ice data provider implementation router class
  *
- * @link http://www.iceframework.net
+ * @link      http://www.iceframework.net
  * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
- * @license https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
+ * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
 namespace Ice\Data\Provider;
@@ -12,8 +12,8 @@ namespace Ice\Data\Provider;
 use Ice\Core\Config;
 use Ice\Core\Data_Provider;
 use Ice\Core\Debuger;
+use Ice\Core\Environment;
 use Ice\Core\Exception;
-use Ice\Core\Logger;
 use Ice\Core\Request as Core_Request;
 use Ice\Core\Route;
 use Ice\Exception\Http_Forbidden;
@@ -28,14 +28,12 @@ use Ice\Exception\Http_Not_Found;
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
- * @package Ice
+ * @package    Ice
  * @subpackage Data_Provider
  */
 class Router extends Data_Provider
 {
     const DEFAULT_DATA_PROVIDER_KEY = 'Ice:Router/default';
-
-    protected $_options = null;
 
     /**
      * Return default data provider key
@@ -45,7 +43,7 @@ class Router extends Data_Provider
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     protected static function getDefaultKey()
     {
@@ -60,7 +58,7 @@ class Router extends Data_Provider
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     protected static function getDefaultDataProviderKey()
     {
@@ -70,13 +68,13 @@ class Router extends Data_Provider
     /**
      * Get data from data provider by key
      *
-     * @param string $key
+     * @param  string $key
      * @return mixed
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public function get($key = null)
     {
@@ -85,13 +83,14 @@ class Router extends Data_Provider
 
     /**
      * Get instance connection of data provider
+     *
      * @throws Exception
      * @return Config[]
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public function getConnection()
     {
@@ -101,16 +100,16 @@ class Router extends Data_Provider
     /**
      * Set data to data provider
      *
-     * @param string $key
-     * @param $value
-     * @param null $ttl
+     * @param  string $key
+     * @param  $value
+     * @param  null $ttl
      * @throws \Exception
      * @return mixed setted value
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public function set($key, $value = null, $ttl = null)
     {
@@ -120,15 +119,15 @@ class Router extends Data_Provider
     /**
      * Delete from data provider by key
      *
-     * @param string $key
-     * @param bool $force if true return boolean else deleted value
+     * @param  string $key
+     * @param  bool $force if true return boolean else deleted value
      * @throws \Exception
      * @return mixed|boolean
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public function delete($key, $force = true)
     {
@@ -138,15 +137,15 @@ class Router extends Data_Provider
     /**
      * Increment value by key with defined step (default 1)
      *
-     * @param $key
-     * @param int $step
+     * @param  $key
+     * @param  int $step
      * @throws \Exception
      * @return mixed new value
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public function incr($key, $step = 1)
     {
@@ -156,15 +155,15 @@ class Router extends Data_Provider
     /**
      * Decrement value by key with defined step (default 1)
      *
-     * @param $key
-     * @param int $step
+     * @param  $key
+     * @param  int $step
      * @throws \Exception
      * @return mixed new value
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public function decr($key, $step = 1)
     {
@@ -177,7 +176,7 @@ class Router extends Data_Provider
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public function flushAll()
     {
@@ -187,13 +186,13 @@ class Router extends Data_Provider
     /**
      * Return keys by pattern
      *
-     * @param string $pattern
+     * @param  string $pattern
      * @return array
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public function getKeys($pattern = null)
     {
@@ -203,14 +202,14 @@ class Router extends Data_Provider
     /**
      * Connect to data provider
      *
-     * @param $connection
+     * @param  $connection
      * @return bool
      * @throws Http_Forbidden
      * @throws Http_Not_Found
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
-     * @since 0.0
+     * @since   0.0
      */
     protected function connect(&$connection)
     {
@@ -218,7 +217,9 @@ class Router extends Data_Provider
 
         $key = $this->getKey();
 
-        /** @var Route $route */
+        /**
+         * @var Route $route
+         */
         $route = $dataProvider->get($key);
 
         if ($route) {
@@ -238,7 +239,13 @@ class Router extends Data_Provider
         $foundRoutes = [];
 
         foreach (Route::getRoutes() as $routeName => $route) {
-//            Debuger::dump($routeName . ': ' . $url . ' || ' . $route->get('pattern') . ' || ' . (int) preg_match($route->get('pattern'), $url));
+            if (Environment::getInstance()->isDevelopment() && Core_Request::getParam('routing')) {
+                Debuger::dump(
+                    $routeName . ': ' . $url . ' || ' .
+                    $route->get('pattern') . ' || ' .
+                    (int)preg_match($route->get('pattern'), $url)
+                );
+            }
 
             if (!preg_match($route->get('pattern'), $url)) {
                 continue;
@@ -263,10 +270,25 @@ class Router extends Data_Provider
 
         if (empty($foundRoutes)) {
             if (!empty($matchedRoutes)) {
-                $this->getLogger()->warning(['Route not found for {$0} request of {$1}, but matched routes for pattern {$2}', [$method, $url, $route->get('pattern')]], __FILE__, __LINE__);
+                $this->getLogger()->warning(
+                    [
+                        'Route not found for {$0} request of {$1}, but matched routes for pattern {$2}',
+                        [$method, $url, $route->get('pattern')]
+                    ],
+                    __FILE__,
+                    __LINE__
+                );
             }
 
-            Router::getLogger()->exception(['route for url \'{$0}\' not found', $url], __FILE__, __LINE__, null, null, -1, Http_Not_Found::getClass());
+            Router::getLogger()->exception(
+                ['route for url \'{$0}\' not found', $url],
+                __FILE__,
+                __LINE__,
+                null,
+                null,
+                -1,
+                Http_Not_Found::getClass()
+            );
         }
 
         krsort($foundRoutes, SORT_NUMERIC);
@@ -286,7 +308,6 @@ class Router extends Data_Provider
         }
 
 
-
         $data = array_merge($data, array_combine(array_keys((array)$params), array_slice($baseMatches[0], 1)));
 
         return (bool)$connection = $dataProvider->set($key, $data);
@@ -295,13 +316,13 @@ class Router extends Data_Provider
     /**
      * Close connection with data provider
      *
-     * @param $connection
+     * @param  $connection
      * @return boolean
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     protected function close(&$connection)
     {

@@ -2,9 +2,9 @@
 /**
  * Ice core action abstract class
  *
- * @link http://www.iceframework.net
+ * @link      http://www.iceframework.net
  * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
- * @license https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
+ * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
 namespace Ice\Core;
@@ -34,7 +34,7 @@ use Ice\Helper\Validator as Helper_Validator;
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
- * @package Ice
+ * @package    Ice
  * @subpackage Core
  */
 abstract class Action implements Cacheable
@@ -48,28 +48,28 @@ abstract class Action implements Cacheable
      *
      * @var array
      */
-    private $_actions = [];
+    private $actions = [];
 
     /**
      * Input params
      *
      * @var array
      */
-    private $_input = [];
+    private $input = [];
 
     /**
      * Cache ttl
      *
      * @var null
      */
-    private $_ttl = null;
+    private $ttl = null;
 
     /**
      * Action view
      *
      * @var View
      */
-    private $_view = null;
+    private $view = null;
 
     /**
      * Private constructor of action
@@ -77,7 +77,7 @@ abstract class Action implements Cacheable
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.5
-     * @since 0.0
+     * @since   0.0
      */
     private function __construct()
     {
@@ -91,7 +91,7 @@ abstract class Action implements Cacheable
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.5
-     * @since 0.5
+     * @since   0.5
      */
     public static function getRegistry()
     {
@@ -103,7 +103,9 @@ abstract class Action implements Cacheable
         $startTime = Profiler::getMicrotime();
         $startMemory = Profiler::getMemoryGetUsage();
 
-        /** @var Action $actionClass */
+        /**
+         * @var Action $actionClass
+         */
         $actionClass = self::getClass();
 
         if (Request::isCli()) {
@@ -114,7 +116,7 @@ abstract class Action implements Cacheable
 
         $input = $actionClass::getInput($input);
 
-//        $actionCacher = Action::getCacher();
+        //        $actionCacher = Action::getCacher();
 
         if ($actionClass::getConfig()->get('ttl', false) == 3600) {
             $actionCacher = File::getInstance($actionClass);
@@ -128,7 +130,9 @@ abstract class Action implements Cacheable
         $action = null;
 
         if (isset($actionCacher)) {
-            /** @var Action $action */
+            /**
+             * @var Action $action
+             */
             $action = $actionCacher->get($actionHash);
         }
         if (!$action) {
@@ -143,24 +147,32 @@ abstract class Action implements Cacheable
             if (Environment::getInstance()->isDevelopment()) {
                 Logger::fb(Profiler::getReport($actionClass . ' ' . $inputString), 'action', 'INFO');
             }
-//            if ($content = $actionContext->getContent()) {
-//                App::getContext()->setContent(null);
-//                return $content;
-//            }
+            //            if ($content = $actionContext->getContent()) {
+            //                App::getContext()->setContent(null);
+            //                return $content;
+            //            }
 
             $startTimeAfter = Profiler::getMicrotime();
             $startMemoryAfter = Profiler::getMemoryGetUsage();
 
-            $rawActions = array_merge($action->_actions, $actionClass::getConfig()->gets('actions', false));
+            $rawActions = array_merge($action->actions, $actionClass::getConfig()->gets('actions', false));
 
             foreach ($action->getActions($rawActions) as $actionKey => $actionData) {
                 if (empty($actionData) || count($actionData) > 2) {
-                    Action::getLogger()->exception(['Wrong param count ({$0}) in action {$1}', [count($actionData), $actionClass]], __FILE__, __LINE__, null, $actionData);
+                    Action::getLogger()->exception(
+                        ['Wrong param count ({$0}) in action {$1}', [count($actionData), $actionClass]],
+                        __FILE__,
+                        __LINE__,
+                        null,
+                        $actionData
+                    );
                 }
 
                 $newLevel = $level + 1;
 
-                /** @var Action $subActionClass */
+                /**
+                 * @var Action $subActionClass
+                 */
                 list($subActionClass, $subActionParams) = each($actionData);
 
                 $subView = null;
@@ -174,7 +186,12 @@ abstract class Action implements Cacheable
                 } catch (Http_Not_Found $e) {
                     throw $e;
                 } catch (\Exception $e) {
-                    $subView = Action::getLogger()->error(['Calling subAction "{$0}" in action "{$1}" failed', [$subActionClass, $actionClass]], __FILE__, __LINE__, $e);
+                    $subView = Action::getLogger()->error(
+                        ['Calling subAction "{$0}" in action "{$1}" failed', [$subActionClass, $actionClass]],
+                        __FILE__,
+                        __LINE__,
+                        $e
+                    );
                 }
 
                 if (is_int($actionKey)) {
@@ -197,7 +214,10 @@ abstract class Action implements Cacheable
                 $actionCacher->set($actionHash, $action, $action->getTtl());
             }
             if (Request::isCli()) {
-                Action::getLogger()->info(['{$0}{$1} complete!', [str_repeat("\t", $level), $actionClass::getClassName()]], Logger::MESSAGE);
+                Action::getLogger()->info(
+                    ['{$0}{$1} complete!', [str_repeat("\t", $level), $actionClass::getClassName()]],
+                    Logger::MESSAGE
+                );
             }
         }
 
@@ -291,7 +311,7 @@ abstract class Action implements Cacheable
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.5
-     * @since 0.5
+     * @since   0.5
      */
     public static function getConfig()
     {
@@ -301,10 +321,15 @@ abstract class Action implements Cacheable
             return $config;
         }
 
-        /** @var Action $actionClass */
+        /**
+         * @var Action $actionClass
+         */
         $actionClass = self::getClass();
 
-        $config = Config::create($actionClass, array_merge_recursive($actionClass::config(), Config::getInstance($actionClass, null, false, -1)->gets()));
+        $config = Config::create(
+            $actionClass,
+            array_merge_recursive($actionClass::config(), Config::getInstance($actionClass, null, false, -1)->gets())
+        );
 
         return $repository->set('config', $config);
     }
@@ -317,7 +342,7 @@ abstract class Action implements Cacheable
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.5
-     * @since 0.5
+     * @since   0.5
      */
     public static function getRepository()
     {
@@ -353,12 +378,13 @@ abstract class Action implements Cacheable
      *      'roles' => []
      *  ];
      * ```
+     *
      * @return array
      *
      * @author anonymous <email>
      *
      * @version 0
-     * @since 0
+     * @since   0
      */
     protected static function config()
     {
@@ -368,15 +394,15 @@ abstract class Action implements Cacheable
     /**
      * Return valid input value
      *
-     * @param $name
-     * @param $value
-     * @param $param
+     * @param  $name
+     * @param  $value
+     * @param  $param
      * @return mixed
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.5
-     * @since 0.5
+     * @since   0.5
      */
     public static function getInputParam($name, $value, $param)
     {
@@ -403,9 +429,9 @@ abstract class Action implements Cacheable
             }
         }
 
-//        if (isset($param['converter']) && is_callable($param['converter'])) {
-//            $value = $param['converter']($value);
-//        }
+        //        if (isset($param['converter']) && is_callable($param['converter'])) {
+        //            $value = $param['converter']($value);
+        //        }
 
         return $value;
     }
@@ -419,7 +445,7 @@ abstract class Action implements Cacheable
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.5
-     * @since 0.0
+     * @since   0.0
      */
     public static function create()
     {
@@ -436,7 +462,7 @@ abstract class Action implements Cacheable
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.5
-     * @since 0.5
+     * @since   0.5
      */
     public function setInput($input)
     {
@@ -444,7 +470,7 @@ abstract class Action implements Cacheable
         $this->initView($input);
         $this->initTtl($input);
 
-        $this->_input = $input;
+        $this->input = $input;
     }
 
     private function initActions(&$input)
@@ -464,12 +490,14 @@ abstract class Action implements Cacheable
 
     protected function addAction(array $action)
     {
-        $this->_actions[] = $action;
+        $this->actions[] = $action;
     }
 
     private function initView(&$input)
     {
-        /** @var Action $actionClass */
+        /**
+         * @var Action $actionClass
+         */
         $actionClass = get_class($this);
 
         $view = $this->getView();
@@ -501,11 +529,11 @@ abstract class Action implements Cacheable
      */
     public function getView()
     {
-        if ($this->_view) {
-            return $this->_view;
+        if ($this->view) {
+            return $this->view;
         }
 
-        return $this->_view = View::create(get_class($this));
+        return $this->view = View::create(get_class($this));
     }
 
     private function initTtl(&$input)
@@ -526,7 +554,7 @@ abstract class Action implements Cacheable
      * @author anonymous <email>
      *
      * @version 0
-     * @since 0
+     * @since   0
      *
      *  protected static function config()
      *  {
@@ -541,13 +569,13 @@ abstract class Action implements Cacheable
      *
      * /** Run action
      *
-     * @param array $input
+     * @param  array $input
      * @return array
      *
      * @author anonymous <email>
      *
      * @version 0
-     * @since 0
+     * @since   0
      */
     abstract public function run(array $input);
 
@@ -617,7 +645,7 @@ abstract class Action implements Cacheable
      */
     public function getTtl()
     {
-        return $this->_ttl;
+        return $this->ttl;
     }
 
     /**
@@ -628,29 +656,31 @@ abstract class Action implements Cacheable
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.5
-     * @since 0.5
+     * @since   0.5
      */
     protected function setTtl($ttl)
     {
         if ($ttl === null) {
-            /** @var Action $actionClass */
+            /**
+             * @var Action $actionClass
+             */
             $actionClass = get_class($this);
             $ttl = $actionClass::getConfig()->get('ttl', false);
         }
 
-        $this->_ttl = $ttl;
+        $this->ttl = $ttl;
     }
 
     /**
      * Validate cacheable object
      *
-     * @param $value
+     * @param  $value
      * @return Cacheable
      *
      * @author anonymous <email>
      *
      * @version 0
-     * @since 0
+     * @since   0
      */
     public function validate($value)
     {
@@ -665,7 +695,7 @@ abstract class Action implements Cacheable
      * @author anonymous <email>
      *
      * @version 0
-     * @since 0
+     * @since   0
      */
     public function invalidate()
     {

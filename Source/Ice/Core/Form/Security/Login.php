@@ -2,22 +2,24 @@
 
 namespace Ice\Core;
 
-abstract class Ui_Form_Security_Login extends Ui_Form
+abstract class Widget_Form_Security_Login extends Widget_Form
 {
     /**
      * Create new instance of form security login
      *
-     * @param $key
-     * @return Ui_Form_Security_Login
+     * @param  $key
+     * @return Widget_Form_Security_Login
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.1
-     * @since 0.1
+     * @since   0.1
      */
     protected static function create($key)
     {
-        /** @var Ui_Form_Security_Login $class */
+        /**
+         * @var Widget_Form_Security_Login $class
+         */
         $class = self::getClass();
 
         if ($class == __CLASS__) {

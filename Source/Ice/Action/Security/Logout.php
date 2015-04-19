@@ -8,14 +8,14 @@ use Ice\Exception\Redirect;
 /**
  * Class Security_Logout
  *
- * @see Ice\Core\Action
- * @see Ice\Core\Action_Context;
+ * @see     Ice\Core\Action
+ * @see     Ice\Core\Action_Context;
  * @package Ice\Action;
  *
  * @author dp <email>
  *
  * @version 0
- * @since 0
+ * @since   0
  */
 class Security_Logout extends Action
 {
@@ -48,12 +48,13 @@ class Security_Logout extends Action
      *      'roles' => []
      *  ];
      * ```
+     *
      * @return array
      *
      * @author anonymous <email>
      *
      * @version 0
-     * @since 0
+     * @since   0
      */
     protected static function config()
     {
@@ -65,7 +66,7 @@ class Security_Logout extends Action
     /**
      * Run action
      *
-     * @param array $input
+     * @param  array $input
      * @return array
      * @throws Redirect
      */

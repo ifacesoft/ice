@@ -8,9 +8,24 @@ class Model_Scheme extends Config
     const MANY_TO_ONE = 'manyToOne';
     const MANY_TO_MANY = 'manyToMany';
 
+    public function getFieldColumnMap()
+    {
+        /**
+         * @var Model $modelClass
+         */
+        $modelClass = $this->getConfigName();
+
+        $repository = $modelClass::getRepository('mapping');
+        $key = 'fieldColumnMap';
+
+        return $repository->set($key, array_flip($this->getColumnFieldMap()));
+    }
+
     public function getColumnFieldMap()
     {
-        /** @var Model $modelClass */
+        /**
+         * @var Model $modelClass
+         */
         $modelClass = $this->getConfigName();
 
         $repository = $modelClass::getRepository('mapping');
@@ -28,32 +43,23 @@ class Model_Scheme extends Config
         return $repository->set($key, $columns);
     }
 
-    public function getFieldColumnMap()
-    {
-        /** @var Model $modelClass */
-        $modelClass = $this->getConfigName();
-
-        $repository = $modelClass::getRepository('mapping');
-        $key = 'fieldColumnMap';
-
-        return $repository->set($key, array_flip($this->getColumnFieldMap()));
-    }
-
     /**
      * Return full field names
      *
-     * @param array $fields
+     * @param  array $fields
      * @throws Exception
      * @return array
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.5
-     * @since 0.0
+     * @since   0.0
      */
     public function getFieldNames($fields = [])
     {
-        /** @var Model $modelClass */
+        /**
+         * @var Model $modelClass
+         */
         $modelClass = $this->getConfigName();
 
         $fieldNames = array_values($this->getColumnFieldMap());
@@ -86,7 +92,11 @@ class Model_Scheme extends Config
                 continue;
             }
 
-            Model::getLogger()->exception(['Поле "{$0}" не найдено в модели "{$1}"', [$fieldName, self::getClass()]], __FILE__, __LINE__);
+            Model::getLogger()->exception(
+                ['Поле "{$0}" не найдено в модели "{$1}"', [$fieldName, self::getClass()]],
+                __FILE__,
+                __LINE__
+            );
         }
 
         return $fields;
@@ -100,11 +110,13 @@ class Model_Scheme extends Config
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.1
-     * @since 0.1
+     * @since   0.1
      */
     public function getPkFieldNames()
     {
-        /** @var Model $modelClass */
+        /**
+         * @var Model $modelClass
+         */
         $modelClass = $this->getConfigName();
 
         $repository = $modelClass::getRepository('scheme');
@@ -135,7 +147,7 @@ class Model_Scheme extends Config
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
-     * @since 0.4
+     * @since   0.4
      */
     public function getPkColumnNames()
     {
@@ -150,7 +162,7 @@ class Model_Scheme extends Config
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.5
-     * @since 0.0
+     * @since   0.0
      */
     public function getIndexes()
     {

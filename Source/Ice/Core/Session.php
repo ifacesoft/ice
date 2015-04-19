@@ -2,9 +2,9 @@
 /**
  * Ice core session class
  *
- * @link http://www.iceframework.net
+ * @link      http://www.iceframework.net
  * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
- * @license https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
+ * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
 namespace Ice\Core;
@@ -18,11 +18,11 @@ use Ice\Core;
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
- * @package Ice
+ * @package    Ice
  * @subpackage Core
  *
  * @version 0.0
- * @since 0.0
+ * @since   0.0
  */
 class Session
 {
@@ -34,7 +34,7 @@ class Session
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public static function init()
     {
@@ -53,7 +53,8 @@ class Session
     /**
      * PHP >= 5.4.0<br/>
      * Close the session
-     * @link http://php.net/manual/en/sessionhandlerinterafce.close.php
+     *
+     * @link   http://php.net/manual/en/sessionhandlerinterafce.close.php
      * @return bool <p>
      * The return value (usually TRUE on success, FALSE on failure).
      * Note this value is returned internally to PHP for processing.
@@ -62,7 +63,7 @@ class Session
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public static function close()
     {
@@ -72,8 +73,9 @@ class Session
     /**
      * PHP >= 5.4.0<br/>
      * Destroy a session
-     * @link http://php.net/manual/en/sessionhandlerinterafce.destroy.php
-     * @param int $session_id The session ID being destroyed.
+     *
+     * @link   http://php.net/manual/en/sessionhandlerinterafce.destroy.php
+     * @param  int $session_id The session ID being destroyed.
      * @return bool <p>
      * The return value (usually TRUE on success, FALSE on failure).
      * Note this value is returned internally to PHP for processing.
@@ -82,7 +84,7 @@ class Session
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public static function destroy($session_id)
     {
@@ -92,7 +94,8 @@ class Session
     /**
      * PHP >= 5.4.0<br/>
      * Cleanup old sessions
-     * @link http://php.net/manual/en/sessionhandlerinterafce.gc.php
+     *
+     * @link   http://php.net/manual/en/sessionhandlerinterafce.gc.php
      * <p>
      * Sessions that have not updated for
      * the last maxlifetime seconds will be removed.
@@ -104,7 +107,7 @@ class Session
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public static function gc()
     {
@@ -114,9 +117,10 @@ class Session
     /**
      * PHP >= 5.4.0<br/>
      * Initialize session
-     * @link http://php.net/manual/en/sessionhandlerinterafce.open.php
-     * @param string $save_path The path where to store/retrieve the session.
-     * @param string $session_id The session id.
+     *
+     * @link   http://php.net/manual/en/sessionhandlerinterafce.open.php
+     * @param  string $save_path The path where to store/retrieve the session.
+     * @param  string $session_id The session id.
      * @return bool <p>
      * The return value (usually TRUE on success, FALSE on failure).
      * Note this value is returned internally to PHP for processing.
@@ -125,7 +129,7 @@ class Session
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public static function open()
     {
@@ -135,8 +139,9 @@ class Session
     /**
      * PHP >= 5.4.0<br/>
      * Read session data
-     * @link http://php.net/manual/en/sessionhandlerinterafce.read.php
-     * @param string $session_id The session id to read data for.
+     *
+     * @link   http://php.net/manual/en/sessionhandlerinterafce.read.php
+     * @param  string $session_id The session id to read data for.
      * @return string <p>
      * Returns an encoded string of the read data.
      * If nothing was read, it must return an empty string.
@@ -146,7 +151,7 @@ class Session
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public static function read($session_id)
     {
@@ -156,9 +161,10 @@ class Session
     /**
      * PHP >= 5.4.0<br/>
      * Write session data
-     * @link http://php.net/manual/en/sessionhandlerinterafce.write.php
-     * @param string $session_id The session id.
-     * @param string $session_data <p>
+     *
+     * @link   http://php.net/manual/en/sessionhandlerinterafce.write.php
+     * @param  string $session_id The session id.
+     * @param  string $session_data <p>
      * The encoded session data. This data is the
      * result of the PHP internally encoding
      * the $_SESSION superglobal to a serialized
@@ -173,10 +179,10 @@ class Session
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public static function write($session_id, $session_data)
     {
         Session::getDataProvider()->set($session_id, $session_data);
     }
-} 
+}

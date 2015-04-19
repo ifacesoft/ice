@@ -2,9 +2,9 @@
 /**
  * Ice core query builder class
  *
- * @link http://www.iceframework.net
+ * @link      http://www.iceframework.net
  * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
- * @license https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
+ * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
 namespace Ice\Core;
@@ -19,7 +19,7 @@ use Ice\Helper\Object;
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
- * @package Ice
+ * @package    Ice
  * @subpackage Core
  */
 class Query_Builder
@@ -71,33 +71,33 @@ class Query_Builder
      * Main model class for builded query
      *
      * @access private
-     * @var Model
+     * @var    Model
      */
-    private $_modelClass = null;
+    private $modelClass = null;
 
     /**
      * Table alias for prefix column in query
      *
      * @access private
-     * @var null|string
+     * @var    null|string
      */
-    private $_tableAlias = null;
+    private $tableAlias = null;
 
     /**
      * Query statement type (SELECT|INSERT|UPDATE|DELETE)
      *
      * @access private
-     * @var string
+     * @var    string
      */
-    private $_queryType = null;
+    private $queryType = null;
 
     /**
      * Query parts
      *
      * @access private
-     * @var array
+     * @var    array
      */
-    private $_sqlParts = [
+    private $sqlParts = [
         self::PART_CREATE => [],
         self::PART_DROP => ['_drop' => null],
         self::PART_SELECT => ['_calcFoundRows' => null],
@@ -110,7 +110,7 @@ class Query_Builder
         self::PART_LIMIT => ['offset' => 0]
     ];
 
-    private $_triggers = [
+    private $triggers = [
         'beforeSelect' => [],
         'afterSelect' => [],
         'beforeInsert' => [],
@@ -125,9 +125,9 @@ class Query_Builder
      * Query binds
      *
      * @access private
-     * @var array
+     * @var    array
      */
-    private $_bindParts = [
+    private $bindParts = [
         self::PART_VALUES => [],
         self::PART_SET => [],
         self::PART_WHERE => [],
@@ -138,9 +138,9 @@ class Query_Builder
      * Query caches tags (validates and invalidates)
      *
      * @access private
-     * @var array
+     * @var    array
      */
-    private $_cacheTags = [
+    private $cacheTags = [
         Cache::VALIDATE => [],
         Cache::INVALIDATE => []
     ];
@@ -148,6 +148,7 @@ class Query_Builder
     private $uis = [];
 
     private $transforms = [];
+
     /**
      * Private constructor of query builder
      *
@@ -157,30 +158,30 @@ class Query_Builder
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     private function __construct($modelClass, $tableAlias = null)
     {
-        $this->_modelClass = Model::getClass($modelClass);
+        $this->modelClass = Model::getClass($modelClass);
 
         if (!$tableAlias) {
             $tableAlias = $modelClass;
         }
 
-        $this->_tableAlias = Object::getName($tableAlias);
+        $this->tableAlias = Object::getName($tableAlias);
     }
 
     /**
      * Return new instance of query builder
      *
-     * @param string $modelClass Class of model
-     * @param string|null $tableAlias Alias of table in query (default: class name of model)
+     * @param  string $modelClass Class of model
+     * @param  string|null $tableAlias Alias of table in query (default: class name of model)
      * @return Query_Builder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public static function create($modelClass, $tableAlias = null)
     {
@@ -190,15 +191,15 @@ class Query_Builder
     /**
      * Set in query part where expression 'IS NOT NULL'
      *
-     * @param $fieldName
-     * @param array $modelTableData
-     * @param string $sqlLogical
+     * @param  $fieldName
+     * @param  array $modelTableData
+     * @param  string $sqlLogical
      * @return Query_Builder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
-     * @since 0.0
+     * @since   0.0
      */
     public function notNull($fieldName, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
     {
@@ -227,20 +228,23 @@ class Query_Builder
      *          ]
      *      ];
      * ```
-     * @param $sqlLogical
-     * @param array $fieldNameValues
-     * @param $sqlComparison
-     * @param array|string $modelTableData Key -> modelClass, value -> tableAlias
+     *
+     * @param  $sqlLogical
+     * @param  array $fieldNameValues
+     * @param  $sqlComparison
+     * @param  array|string $modelTableData Key -> modelClass, value -> tableAlias
      * @return Query_Builder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
-     * @since 0.0
+     * @since   0.0
      */
     private function where($sqlLogical, array $fieldNameValues, $sqlComparison, $modelTableData = [])
     {
-        /** @var Model $modelClass */
+        /**
+         * @var Model $modelClass
+         */
         list($modelClass, $tableAlias) = $this->getModelClassTableAlias($modelTableData);
 
         foreach ($fieldNameValues as $fieldName => $value) {
@@ -253,15 +257,18 @@ class Query_Builder
 
             $where = [$sqlLogical, $fieldName, $sqlComparison, count((array)$value)];
 
-            if (isset($this->_sqlParts[Query_Builder::PART_WHERE][$modelClass])) {
-                $this->_sqlParts[Query_Builder::PART_WHERE][$modelClass][1][] = $where;
+            if (isset($this->sqlParts[Query_Builder::PART_WHERE][$tableAlias])) {
+                $this->sqlParts[Query_Builder::PART_WHERE][$tableAlias]['data'][] = $where;
             } else {
-                $this->_sqlParts[Query_Builder::PART_WHERE][$modelClass] = [$tableAlias, [$where]];
+                $this->sqlParts[Query_Builder::PART_WHERE][$tableAlias] = [
+                    'class' => $modelClass,
+                    'data' => [$where]
+                ];
             }
 
             $this->appendCacheTag($modelClass, $fieldName, true, false);
 
-            $this->_bindParts[Query_Builder::PART_WHERE][] = $value == null
+            $this->bindParts[Query_Builder::PART_WHERE][] = $value == null
                 ? [null]
                 : (array)$value;
         }
@@ -272,13 +279,13 @@ class Query_Builder
     /**
      * Check for model class and table alias
      *
-     * @param $modelTableData
+     * @param  $modelTableData
      * @return array
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
-     * @since 0.6
+     * @since   0.6
      */
     public function getModelClassTableAlias($modelTableData)
     {
@@ -323,11 +330,11 @@ class Query_Builder
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public function getModelClass()
     {
-        return $this->_modelClass;
+        return $this->modelClass;
     }
 
     /**
@@ -341,7 +348,7 @@ class Query_Builder
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     private function appendCacheTag($modelClass, $fieldNames, $isValidate, $isInvalidate)
     {
@@ -350,10 +357,10 @@ class Query_Builder
         foreach ((array)$fieldNames as $fieldName) {
             if (in_array($fieldName, $columnFieldMapping)) {
                 if ($isValidate) {
-                    $this->_cacheTags[Cache::VALIDATE][$modelClass][$fieldName] = true;
+                    $this->cacheTags[Cache::VALIDATE][$modelClass][$fieldName] = true;
                 }
                 if ($isInvalidate) {
-                    $this->_cacheTags[Cache::INVALIDATE][$modelClass][$fieldName] = true;
+                    $this->cacheTags[Cache::INVALIDATE][$modelClass][$fieldName] = true;
                 }
             }
         }
@@ -362,15 +369,15 @@ class Query_Builder
     /**
      * Set in query part where expression 'IS NULL'
      *
-     * @param $fieldName
-     * @param array $modelTableData
-     * @param string $sqlLogical
+     * @param  $fieldName
+     * @param  array $modelTableData
+     * @param  string $sqlLogical
      * @return Query_Builder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
-     * @since 0.0
+     * @since   0.0
      */
     public function isNull($fieldName, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
     {
@@ -385,25 +392,33 @@ class Query_Builder
     /**
      * Set in query part where expression '= ?' for primary key column
      *
-     * @param $pk
-     * @param $modelTableData
-     * @param string $sqlLogical
+     * @param  $pk
+     * @param  $modelTableData
+     * @param  string $sqlLogical
      * @return Query_Builder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
-     * @since 0.0
+     * @since   0.0
      */
     public function pk($pk, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
     {
         if (empty($pk)) {
-            Logger::getInstance(__CLASS__)->exception('Primary key value mast be not empty', __FILE__, __LINE__, null, $this);
+            Logger::getInstance(__CLASS__)->exception(
+                'Primary key value mast be not empty',
+                __FILE__,
+                __LINE__,
+                null,
+                $this
+            );
         }
 
         $eq = [];
 
-        /** @var Model $modelClass */
+        /**
+         * @var Model $modelClass
+         */
         $modelClass = $this->getModelClassTableAlias($modelTableData)[0];
 
         $pkFieldNames = $modelClass::getScheme()->getPkFieldNames();
@@ -430,15 +445,15 @@ class Query_Builder
     /**
      * Set in query part where expression '= ?'
      *
-     * @param array $fieldNameValues
-     * @param array $modelTableData
-     * @param string $sqlLogical
+     * @param  array $fieldNameValues
+     * @param  array $modelTableData
+     * @param  string $sqlLogical
      * @return Query_Builder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
-     * @since 0.0
+     * @since   0.0
      */
     public function eq(array $fieldNameValues, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
     {
@@ -453,16 +468,16 @@ class Query_Builder
     /**
      * Set in query part where expression '>= ?'
      *
-     * @param $fieldName
-     * @param $fieldValue
-     * @param array $modelTableData
-     * @param string $sqlLogical
+     * @param  $fieldName
+     * @param  $fieldValue
+     * @param  array $modelTableData
+     * @param  string $sqlLogical
      * @return Query_Builder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
-     * @since 0.0
+     * @since   0.0
      */
     public function ge($fieldName, $fieldValue, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
     {
@@ -477,16 +492,16 @@ class Query_Builder
     /**
      * Set in query part where expression 'REGEXP ?'
      *
-     * @param $fieldName
-     * @param $fieldValue
-     * @param array $modelTableData
-     * @param string $sqlLogical
+     * @param  $fieldName
+     * @param  $fieldValue
+     * @param  array $modelTableData
+     * @param  string $sqlLogical
      * @return Query_Builder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
-     * @since 0.4
+     * @since   0.4
      */
     public function regex($fieldName, $fieldValue, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
     {
@@ -501,16 +516,16 @@ class Query_Builder
     /**
      * Set in query part where expression '<= ?'
      *
-     * @param $fieldName
-     * @param $fieldValue
-     * @param array $modelTableData
-     * @param string $sqlLogical
+     * @param  $fieldName
+     * @param  $fieldValue
+     * @param  array $modelTableData
+     * @param  string $sqlLogical
      * @return Query_Builder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
-     * @since 0.0
+     * @since   0.0
      */
     public function le($fieldName, $fieldValue, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
     {
@@ -525,16 +540,16 @@ class Query_Builder
     /**
      * Set in query part where expression '> ?'
      *
-     * @param $fieldName
-     * @param $fieldValue
-     * @param array $modelTableData
-     * @param string $sqlLogical
+     * @param  $fieldName
+     * @param  $fieldValue
+     * @param  array $modelTableData
+     * @param  string $sqlLogical
      * @return Query_Builder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
-     * @since 0.0
+     * @since   0.0
      */
     public function gt($fieldName, $fieldValue, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
     {
@@ -549,16 +564,16 @@ class Query_Builder
     /**
      * Set in query part where expression '< ?'
      *
-     * @param $fieldName
-     * @param $fieldValue
-     * @param array $modelTableData
-     * @param string $sqlLogical
+     * @param  $fieldName
+     * @param  $fieldValue
+     * @param  array $modelTableData
+     * @param  string $sqlLogical
      * @return Query_Builder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
-     * @since 0.0
+     * @since   0.0
      */
     public function lt($fieldName, $fieldValue, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
     {
@@ -573,15 +588,15 @@ class Query_Builder
     /**
      * Set in query part where expression '= ""'
      *
-     * @param $fieldName
-     * @param array $modelTableData
-     * @param string $sqlLogical
+     * @param  $fieldName
+     * @param  array $modelTableData
+     * @param  string $sqlLogical
      * @return Query_Builder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
-     * @since 0.0
+     * @since   0.0
      */
     public function isEmpty($fieldName, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
     {
@@ -591,15 +606,15 @@ class Query_Builder
     /**
      * Set in query part where expression '<> ""'
      *
-     * @param $fieldName
-     * @param array $modelTableData
-     * @param string $sqlLogical
+     * @param  $fieldName
+     * @param  array $modelTableData
+     * @param  string $sqlLogical
      * @return Query_Builder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
-     * @since 0.0
+     * @since   0.0
      */
     public function notEmpty($fieldName, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
     {
@@ -609,16 +624,16 @@ class Query_Builder
     /**
      * Set in query part where expression '<> ?'
      *
-     * @param $fieldName
-     * @param $fieldValue
-     * @param array $modelTableData
-     * @param string $sqlLogical
+     * @param  $fieldName
+     * @param  $fieldValue
+     * @param  array $modelTableData
+     * @param  string $sqlLogical
      * @return Query_Builder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
-     * @since 0.0
+     * @since   0.0
      */
     public function ne($fieldName, $fieldValue, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
     {
@@ -633,18 +648,24 @@ class Query_Builder
     /**
      * Set in query part where expression 'not in (?)'
      *
-     * @param $fieldName
-     * @param array $fieldValue
-     * @param array $modelTableData
-     * @param string $sqlLogical
+     * @param  $fieldName
+     * @param  array $fieldValue
+     * @param  array $modelTableData
+     * @param  string $sqlLogical
      * @return Query_Builder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
-     * @since 0.0
+     * @since   0.0
      */
-    public function notIn($fieldName, array $fieldValue, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
+    public function notIn(
+        $fieldName,
+        array $fieldValue,
+        $modelTableData = [],
+        $sqlLogical =
+        Query_Builder::SQL_LOGICAL_AND
+    )
     {
         return $this->where(
             $sqlLogical,
@@ -657,15 +678,15 @@ class Query_Builder
     /**
      * Set in query part where expression '== 1' is boolean true(1)
      *
-     * @param $fieldName
-     * @param array $modelTableData
-     * @param string $sqlLogical
+     * @param  $fieldName
+     * @param  array $modelTableData
+     * @param  string $sqlLogical
      * @return Query_Builder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
-     * @since 0.0
+     * @since   0.0
      */
     public function is($fieldName, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
     {
@@ -675,15 +696,15 @@ class Query_Builder
     /**
      * Set in query part where expression '== 0' is boolean false(0)
      *
-     * @param $fieldName
-     * @param array $modelTableData
-     * @param string $sqlLogical
+     * @param  $fieldName
+     * @param  array $modelTableData
+     * @param  string $sqlLogical
      * @return Query_Builder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
-     * @since 0.0
+     * @since   0.0
      */
     public function not($fieldName, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
     {
@@ -693,16 +714,16 @@ class Query_Builder
     /**
      * Set in query part where expression 'like ?'
      *
-     * @param $fieldName
-     * @param $fieldValue
-     * @param array $modelTableData
-     * @param string $sqlLogical
+     * @param  $fieldName
+     * @param  $fieldValue
+     * @param  array $modelTableData
+     * @param  string $sqlLogical
      * @return Query_Builder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
-     * @since 0.0
+     * @since   0.0
      */
     public function like($fieldName, $fieldValue, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
     {
@@ -717,67 +738,83 @@ class Query_Builder
     /**
      * Set in query part where expression 'rlike ?'
      *
-     * @param $fieldName
-     * @param $value
-     * @param array $modelTableData
-     * @param string $sqlLogical
+     * @param  $fieldName
+     * @param  $value
+     * @param  array $modelTableData
+     * @param  string $sqlLogical
      * @return Query_Builder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
-     * @since 0.0
+     * @since   0.0
      */
     public function rlike($fieldName, $value, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
     {
-        /** @var Model $modelClass */
+        /**
+         * @var Model $modelClass
+         */
         $modelClass = $this->getModelClassTableAlias($modelTableData)[0];
 
         $columnFieldMapping = $modelClass::getScheme()->getColumnFieldMap();
         $fieldValue = $modelClass::getFieldName($value);
 
-        /** check ability use pattern from field in base */
+        /**
+         * check ability use pattern from field in base
+         */
         return in_array($fieldValue, $columnFieldMapping)
-            ? $this->where($sqlLogical, [$fieldValue => $fieldName], Query_Builder::SQL_COMPARISON_KEYWORD_RLIKE_REVERSE, $modelTableData)
-            : $this->where($sqlLogical, [$fieldName => $value], Query_Builder::SQL_COMPARISON_KEYWORD_RLIKE, $modelTableData);
+            ? $this->where(
+                $sqlLogical,
+                [$fieldValue => $fieldName],
+                Query_Builder::SQL_COMPARISON_KEYWORD_RLIKE_REVERSE,
+                $modelTableData
+            )
+            : $this->where(
+                $sqlLogical,
+                [$fieldName => $value],
+                Query_Builder::SQL_COMPARISON_KEYWORD_RLIKE,
+                $modelTableData
+            );
     }
 
     /**
      * Set inner join query part
      *
-     * @param $modelTableData
-     * @param string $fieldNames
-     * @param null $condition
+     * @param  $modelTableData
+     * @param  string $fieldNames
+     * @param  null $condition
      * @return Query_Builder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
-     * @since 0.0
+     * @since   0.0
      */
     public function inner($modelTableData, $fieldNames = '/pk', $condition = null)
     {
-        return $this->_select($fieldNames, null, $modelTableData)
+        return $this->select($fieldNames, null, $modelTableData)
             ->join(Query_Builder::SQL_CLAUSE_INNER_JOIN, $modelTableData, $condition);
     }
 
     /**
      * Set  *join query part
      *
-     * @param $joinType
-     * @param array|string $modelTableData Key -> modelClass, value -> tableAlias
-     * @param null $condition
+     * @param  $joinType
+     * @param  array|string $modelTableData Key -> modelClass, value -> tableAlias
+     * @param  null $condition
      * @return Query_Builder
      * @throws Exception
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
-     * @since 0.0
+     * @since   0.0
      */
     private function join($joinType, $modelTableData, $condition = null)
     {
-        /** @var Model $modelClass */
+        /**
+         * @var Model $modelClass
+         */
         list($modelClass, $tableAlias) = $this->getModelClassTableAlias($modelTableData);
 
         if (!$condition) {
@@ -786,7 +823,7 @@ class Query_Builder
                     'type' => 'FROM',
                     'class' => $this->getModelClass()]
                 ],
-                $this->_sqlParts[self::PART_JOIN]
+                $this->sqlParts[self::PART_JOIN]
             );
 
             foreach ($joins as $joinTableAlias => $join) {
@@ -797,10 +834,16 @@ class Query_Builder
         }
 
         if (!$condition) {
-            Logger::getInstance(__CLASS__)->exception('Could not defined condition for join part of sql query', __FILE__, __LINE__, null, $this->_sqlParts);
+            Logger::getInstance(__CLASS__)->exception(
+                'Could not defined condition for join part of sql query',
+                __FILE__,
+                __LINE__,
+                null,
+                $this->sqlParts
+            );
         }
 
-        $this->_sqlParts[self::PART_JOIN][$tableAlias] = [
+        $this->sqlParts[self::PART_JOIN][$tableAlias] = [
             'type' => $joinType,
             'class' => $modelClass,
             'on' => $condition
@@ -817,11 +860,11 @@ class Query_Builder
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public function getTableAlias()
     {
-        return $this->_tableAlias;
+        return $this->tableAlias;
     }
 
     /**
@@ -834,7 +877,7 @@ class Query_Builder
      */
     private function addJoin($joinType, $modelClass, $tableAlias, $joinModelClass, $joinTableAlias)
     {
-        if (isset($this->_sqlParts[self::PART_JOIN][$tableAlias])) {
+        if (isset($this->sqlParts[self::PART_JOIN][$tableAlias])) {
             return false;
         }
 
@@ -843,10 +886,11 @@ class Query_Builder
         $oneToMany = $joinModelScheme->gets(Model_Scheme::ONE_TO_MANY);
 
         if (isset($oneToMany[$modelClass])) {
-            $this->_sqlParts[self::PART_JOIN][$tableAlias] = [
+            $this->sqlParts[self::PART_JOIN][$tableAlias] = [
                 'type' => $joinType,
                 'class' => $modelClass,
-                'on' => $joinTableAlias . '.' . $oneToMany[$modelClass] . ' = ' . $tableAlias . '.' . $modelClass::getPkColumnName()
+                'on' => $joinTableAlias . '.' . $oneToMany[$modelClass] . ' = ' .
+                    $tableAlias . '.' . $modelClass::getPkColumnName()
             ];
 
             return true;
@@ -855,10 +899,11 @@ class Query_Builder
         $manyToOne = $joinModelScheme->gets(Model_Scheme::MANY_TO_ONE);
 
         if (isset($manyToOne[$modelClass])) {
-            $this->_sqlParts[self::PART_JOIN][$tableAlias] = [
+            $this->sqlParts[self::PART_JOIN][$tableAlias] = [
                 'type' => $joinType,
                 'class' => $modelClass,
-                'on' => $tableAlias . '.' . $manyToOne[$modelClass] . ' = ' . $joinTableAlias . '.' . $joinModelClass::getPkColumnName()
+                'on' => $tableAlias . '.' . $manyToOne[$modelClass] . ' = ' .
+                    $joinTableAlias . '.' . $joinModelClass::getPkColumnName()
             ];
 
             return true;
@@ -867,8 +912,19 @@ class Query_Builder
         $manyToMany = $joinModelScheme->gets(Model_Scheme::MANY_TO_MANY);
 
         if (isset($manyToMany[$modelClass])) {
-            return $this->addJoin($joinType, $manyToMany[$modelClass], Object::getName($manyToMany[$modelClass]), $joinModelClass, $joinTableAlias) &&
-            $this->addJoin($joinType, $modelClass, $tableAlias, $manyToMany[$modelClass], Object::getName($manyToMany[$modelClass]));
+            return $this->addJoin(
+                $joinType,
+                $manyToMany[$modelClass],
+                Object::getName($manyToMany[$modelClass]),
+                $joinModelClass,
+                $joinTableAlias
+            ) && $this->addJoin(
+                $joinType,
+                $modelClass,
+                $tableAlias,
+                $manyToMany[$modelClass],
+                Object::getName($manyToMany[$modelClass])
+            );
         }
 
         $joinFieldNames = $joinModelClass::getScheme()->getFieldColumnMap();
@@ -879,10 +935,11 @@ class Query_Builder
         $joinModelNamePk = strtolower($joinModelName) . '_pk';
 
         if (in_array($joinModelNameFk, $modelClass::getScheme()->getFieldNames())) {
-            $this->_sqlParts[self::PART_JOIN][$tableAlias] = [
+            $this->sqlParts[self::PART_JOIN][$tableAlias] = [
                 'type' => $joinType,
                 'class' => $modelClass,
-                'on' => $tableAlias . '.' . $modelClass::getScheme()->getFieldColumnMap()[$joinModelNameFk] . ' = ' . $joinTableAlias . '.' . $joinFieldNames[$joinModelNamePk]
+                'on' => $tableAlias . '.' . $modelClass::getScheme()->getFieldColumnMap()[$joinModelNameFk] . ' = ' .
+                    $joinTableAlias . '.' . $joinFieldNames[$joinModelNamePk]
             ];
 
             return true;
@@ -894,10 +951,11 @@ class Query_Builder
         $modelNamePk = strtolower($modelName) . '_pk';
 
         if (in_array($modelNameFk, $joinModelScheme->getFieldNames())) {
-            $this->_sqlParts[self::PART_JOIN][$tableAlias] = [
+            $this->sqlParts[self::PART_JOIN][$tableAlias] = [
                 'type' => $joinType,
                 'class' => $modelClass,
-                'on' => $tableAlias . '.' . $joinModelScheme->getFieldColumnMap()[$modelNamePk] . ' = ' . $joinTableAlias . '.' . $joinFieldNames[$modelNameFk]
+                'on' => $tableAlias . '.' . $joinModelScheme->getFieldColumnMap()[$modelNamePk] . ' = ' .
+                    $joinTableAlias . '.' . $joinFieldNames[$modelNameFk]
             ];
 
             return true;
@@ -909,25 +967,27 @@ class Query_Builder
     /**
      * Prepare select query part
      *
-     * @param $fieldName
-     * @param $fieldAlias
-     * @param array|string $modelTableData Key -> modelClass, value -> tableAlias
+     * @param  $fieldName
+     * @param  $fieldAlias
+     * @param  array|string $modelTableData Key -> modelClass, value -> tableAlias
      * @return Query_Builder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
-     * @since 0.2
+     * @since   0.2
      */
-    private function _select($fieldName, $fieldAlias, $modelTableData)
+    private function select($fieldName, $fieldAlias, $modelTableData)
     {
-        /** @var Model $modelClass */
+        /**
+         * @var Model $modelClass
+         */
         list($modelClass, $tableAlias) = $this->getModelClassTableAlias($modelTableData);
 
-        if ($tableAlias && !isset($this->_sqlParts[self::PART_SELECT][$modelClass][$tableAlias])) {
+        if ($tableAlias && !isset($this->sqlParts[self::PART_SELECT][$modelClass][$tableAlias])) {
             $pkFieldNames = $modelClass::getScheme()->getPkFieldNames();
 
-            $this->_sqlParts[self::PART_SELECT][$modelClass][$tableAlias] = array_combine($pkFieldNames, $pkFieldNames);
+            $this->sqlParts[self::PART_SELECT][$modelClass][$tableAlias] = array_combine($pkFieldNames, $pkFieldNames);
         }
 
         if ($fieldName == '*') {
@@ -941,9 +1001,9 @@ class Query_Builder
         if (is_array($fieldName)) {
             foreach ($fieldName as $field => $fieldAlias) {
                 if (is_numeric($field)) {
-                    $this->_select($fieldAlias, null, $modelTableData);
+                    $this->select($fieldAlias, null, $modelTableData);
                 } else {
-                    $this->_select($field, $fieldAlias, $modelTableData);
+                    $this->select($field, $fieldAlias, $modelTableData);
                 }
             }
 
@@ -952,7 +1012,7 @@ class Query_Builder
             $fieldName = explode(', ', $fieldName);
 
             if (count($fieldName) > 1) {
-                $this->_select($fieldName, null, $modelTableData);
+                $this->select($fieldName, null, $modelTableData);
 
                 return $this;
             } else {
@@ -966,15 +1026,15 @@ class Query_Builder
             $fieldAlias = $fieldName;
         }
 
-//        if (!isset($this->_sqlParts[self::PART_SELECT][$modelClass])) {
-//            $pkNames = $modelClass::getScheme()->getPkFieldNames();
-//
-//            $this->_sqlParts[self::PART_SELECT][$modelClass] = [
-//                $tableAlias, array_combine($pkNames, $pkNames)
-//            ];
-//        }
+        //        if (!isset($this->_sqlParts[self::PART_SELECT][$modelClass])) {
+        //            $pkNames = $modelClass::getScheme()->getPkFieldNames();
+        //
+        //            $this->_sqlParts[self::PART_SELECT][$modelClass] = [
+        //                $tableAlias, array_combine($pkNames, $pkNames)
+        //            ];
+        //        }
 
-        $this->_sqlParts[self::PART_SELECT][$modelClass][$tableAlias][$fieldName] = $fieldAlias;
+        $this->sqlParts[self::PART_SELECT][$modelClass][$tableAlias][$fieldName] = $fieldAlias;
 
         $this->appendCacheTag($modelClass, $fieldName, true, false);
 
@@ -996,21 +1056,21 @@ class Query_Builder
      *      ];
      * ```
      *
-     * @param $fieldNames
-     * @param array $modelTableData
-     * @param string|null $dataSourceKey
+     * @param  $fieldNames
+     * @param  array $modelTableData
+     * @param  string|null $dataSourceKey
      * @return Query
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
-     * @since 0.0
+     * @since   0.0
      */
-    public function select($fieldNames, $modelTableData = [], $dataSourceKey = null)
+    public function executeSelect($fieldNames, $modelTableData = [], $dataSourceKey = null)
     {
-        $this->_queryType = Query_Builder::TYPE_SELECT;
+        $this->queryType = Query_Builder::TYPE_SELECT;
 
-        $this->_select($fieldNames, null, $modelTableData);
+        $this->select($fieldNames, null, $modelTableData);
 
         return $this->getQuery($dataSourceKey);
     }
@@ -1018,35 +1078,35 @@ class Query_Builder
     /**
      * Return instance of query by current query builder
      *
-     * @param string|null $dataSourceKey
+     * @param  string|null $dataSourceKey
      * @return Query
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.2
-     * @since 0.0
+     * @version 0.6
+     * @since   0.0
      */
-    public function getQuery($dataSourceKey = null)
+    private function getQuery($dataSourceKey = null)
     {
-        return Query::create($this, $dataSourceKey)->bind($this->_bindParts);
+        return Query::create($this, $dataSourceKey)->bind($this->bindParts);
     }
 
     /**
      * Set inner join query part
      *
-     * @param $modelTableData
-     * @param string $fieldNames
-     * @param null $condition
+     * @param  $modelTableData
+     * @param  string $fieldNames
+     * @param  null $condition
      * @return Query_Builder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
-     * @since 0.0
+     * @since   0.0
      */
     public function left($modelTableData, $fieldNames = '/pk', $condition = null)
     {
-        return $this->_select($fieldNames, null, $modelTableData)
+        return $this->select($fieldNames, null, $modelTableData)
             ->join(Query_Builder::SQL_CLAUSE_LEFT_JOIN, $modelTableData, $condition);
     }
 
@@ -1075,50 +1135,51 @@ class Query_Builder
      *      ])
      * ```
      *
-     * @param array $data Key-value array
-     * @param bool $update
-     * @param string|null $dataSourceKey
+     * @param  array $data Key-value array
+     * @param  bool $update
+     * @param  string|null $dataSourceKey
      * @return Query
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
-     * @since 0.0
+     * @since   0.0
      */
     public function insertQuery(array $data, $update = false, $dataSourceKey = null)
     {
-        $this->_queryType = Query_Builder::TYPE_INSERT;
-        $this->_sqlParts[Query_Builder::PART_VALUES]['_update'] = $update;
+        $this->queryType = Query_Builder::TYPE_INSERT;
+        $this->sqlParts[Query_Builder::PART_VALUES]['_update'] = $update;
         return $this->affect($data, Query_Builder::PART_VALUES, $dataSourceKey);
     }
 
     /**
      * Affect query
      *
-     * @param array $data Key-value array
-     * @param $part
-     * @param $dataSourceKey
+     * @param  array $data Key-value array
+     * @param  $part
+     * @param  $dataSourceKey
      * @return Query
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
-     * @since 0.1
+     * @since   0.1
      */
     private function affect(array $data, $part, $dataSourceKey)
     {
         $modelClass = $this->getModelClass();
 
         if (empty($data)) {
-            $this->_sqlParts[$part] = array_merge(
-                $this->_sqlParts[$part], [
+            $this->sqlParts[$part] = array_merge(
+                $this->sqlParts[$part],
+                [
                     'modelClass' => $modelClass,
                     'fieldNames' => [],
                     'rowCount' => 0
                 ]
             );
 
-            $this->_bindParts[$part] = [[]];
+            $this->bindParts[$part] = [[]];
 
             return $this->getQuery($dataSourceKey);
         }
@@ -1133,8 +1194,9 @@ class Query_Builder
             $fieldNames[] = $modelClass::getFieldName($fieldName);
         }
 
-        $this->_sqlParts[$part] = array_merge(
-            $this->_sqlParts[$part], [
+        $this->sqlParts[$part] = array_merge(
+            $this->sqlParts[$part],
+            [
                 'modelClass' => $modelClass,
                 'fieldNames' => $fieldNames,
                 'rowCount' => count($data)
@@ -1143,7 +1205,7 @@ class Query_Builder
 
         $this->appendCacheTag($modelClass, $fieldNames, false, true);
 
-        $this->_bindParts[$part] = array_merge($this->_bindParts[$part], $data);
+        $this->bindParts[$part] = array_merge($this->bindParts[$part], $data);
 
         return $this->getQuery($dataSourceKey);
     }
@@ -1151,37 +1213,37 @@ class Query_Builder
     /**
      * Return query result for update query
      *
-     * @param array $data Key-value array
-     * @param null $dataSource
+     * @param  array $data Key-value array
+     * @param  null $dataSource
      * @return Query
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
-     * @since 0.0
+     * @since   0.0
      */
     public function updateQuery(array $data, $dataSource = null)
     {
-        $this->_queryType = Query_Builder::TYPE_UPDATE;
+        $this->queryType = Query_Builder::TYPE_UPDATE;
         return $this->affect($data, Query_Builder::PART_SET, $dataSource);
     }
 
     /**
      * Return query result for delete query
      *
-     * @param array $pkValues
-     * @param string|null $dataSourceKey
+     * @param  array $pkValues
+     * @param  string|null $dataSourceKey
      * @return Query
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
-     * @since 0.0
+     * @since   0.0
      */
     public function deleteQuery($pkValues = [], $dataSourceKey = null)
     {
-        $this->_queryType = Query_Builder::TYPE_DELETE;
-        $this->_sqlParts[Query_Builder::PART_WHERE]['_delete'] = $this->_modelClass;
+        $this->queryType = Query_Builder::TYPE_DELETE;
+        $this->sqlParts[Query_Builder::PART_WHERE]['_delete'] = $this->modelClass;
 
         $this->inPk((array)$pkValues);
 
@@ -1198,19 +1260,21 @@ class Query_Builder
      *      // ...
      * ```
      *
-     * @param array $value
-     * @param array $modelTableData
-     * @param string $sqlLogical
+     * @param  array $value
+     * @param  array $modelTableData
+     * @param  string $sqlLogical
      * @return Query_Builder
      * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
-     * @since 0.0
+     * @since   0.0
      */
     public function inPk(array $value, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
     {
-        /** @var Model $modelClass */
+        /**
+         * @var Model $modelClass
+         */
         $modelClass = $this->getModelClassTableAlias($modelTableData)[0];
 
         $pkFieldNames = $modelClass::getScheme()->getPkFieldNames();
@@ -1221,18 +1285,18 @@ class Query_Builder
     /**
      * Set in query part where expression 'in (?)'
      *
-     * @param $fieldName
-     * @param array $fieldValue
-     * @param array $modelTableData
-     * @param string $sqlLogical
+     * @param  $fieldName
+     * @param  array $fieldValue
+     * @param  array $modelTableData
+     * @param  string $sqlLogical
      * @return Query_Builder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
-     * @since 0.0
+     * @since   0.0
      */
-    public function in($fieldName, array $fieldValue, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
+    public function in($fieldName, $fieldValue, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
     {
         return $this->where(
             $sqlLogical,
@@ -1245,18 +1309,20 @@ class Query_Builder
     /**
      * Set flag of get count rows
      *
-     * @param array $fieldNameAlias
-     * @param array $modelTableData
+     * @param  array $fieldNameAlias
+     * @param  array $modelTableData
      * @return Query_Builder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
-     * @since 0.0
+     * @since   0.0
      */
     public function count($fieldNameAlias = [], $modelTableData = [])
     {
-        /** @var Model $modelClass */
+        /**
+         * @var Model $modelClass
+         */
         list($modelClass, $tableAlias) = $this->getModelClassTableAlias($modelTableData);
         list($fieldName, $fieldAlias) = $this->getFieldNameAlias($fieldNameAlias, $modelClass);
         $fieldNames = [];
@@ -1274,7 +1340,7 @@ class Query_Builder
             $fieldAlias = strtolower($modelClass::getClassName()) . '__count';
         }
 
-        $this->_select('count(' . implode(',', $fieldNames) . ')', $fieldAlias, [$modelClass => '']);
+        $this->select('count(' . implode(',', $fieldNames) . ')', $fieldAlias, [$modelClass => '']);
 
         return $this;
     }
@@ -1282,14 +1348,14 @@ class Query_Builder
     /**
      * Return couple fieldName and fieldAlias
      *
-     * @param string|array $fieldNameAlias
-     * @param Model $modelClass
+     * @param  string|array $fieldNameAlias
+     * @param  Model $modelClass
      * @return array
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
-     * @since 0.6
+     * @since   0.6
      */
     private function getFieldNameAlias($fieldNameAlias, $modelClass)
     {
@@ -1321,14 +1387,14 @@ class Query_Builder
     /**
      * Ascending ordering
      *
-     * @param $fieldName
-     * @param array $modelTableData
+     * @param  $fieldName
+     * @param  array $modelTableData
      * @return Query_Builder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
-     * @since 0.0
+     * @since   0.0
      */
     public function asc($fieldName, $modelTableData = [])
     {
@@ -1338,15 +1404,15 @@ class Query_Builder
     /**
      * Ordering
      *
-     * @param $fieldName
-     * @param $ascOrDesc
-     * @param array|string $modelTableData Key -> modelClass, value -> tableAlias
+     * @param  $fieldName
+     * @param  $ascOrDesc
+     * @param  array|string $modelTableData Key -> modelClass, value -> tableAlias
      * @return Query_Builder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
-     * @since 0.0
+     * @since   0.0
      */
     private function order($fieldName, $ascOrDesc, $modelTableData = [])
     {
@@ -1358,19 +1424,21 @@ class Query_Builder
             return $this;
         }
 
-        /** @var Model $modelClass */
+        /**
+         * @var Model $modelClass
+         */
         list($modelClass, $tableAlias) = $this->getModelClassTableAlias($modelTableData);
 
         $fieldName = $modelClass::getFieldName($fieldName);
 
-        if (!isset($this->_sqlParts[self::PART_ORDER][$modelClass])) {
-            $this->_sqlParts[self::PART_ORDER][$modelClass] = [
+        if (!isset($this->sqlParts[self::PART_ORDER][$modelClass])) {
+            $this->sqlParts[self::PART_ORDER][$modelClass] = [
                 $tableAlias, [
                     $fieldName => $ascOrDesc
                 ]
             ];
         } else {
-            $this->_sqlParts[self::PART_ORDER][$modelClass][1][$fieldName] = $ascOrDesc;
+            $this->sqlParts[self::PART_ORDER][$modelClass][1][$fieldName] = $ascOrDesc;
         }
 
         return $this;
@@ -1379,14 +1447,14 @@ class Query_Builder
     /**
      * grouping by
      *
-     * @param $fieldName
-     * @param array|string $modelTableData Key -> modelClass, value -> tableAlias
+     * @param  $fieldName
+     * @param  array|string $modelTableData Key -> modelClass, value -> tableAlias
      * @return Query_Builder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
-     * @since 0.0
+     * @since   0.0
      */
     public function group($fieldName = null, $modelTableData = [])
     {
@@ -1398,7 +1466,9 @@ class Query_Builder
             return $this;
         }
 
-        /** @var Model $modelClass */
+        /**
+         * @var Model $modelClass
+         */
         list($modelClass, $tableAlias) = $this->getModelClassTableAlias($modelTableData);
 
         if (!$fieldName || $fieldName == '/pk') {
@@ -1409,12 +1479,12 @@ class Query_Builder
 
         $fieldName = $modelClass::getFieldName($fieldName);
 
-        if (!isset($this->_sqlParts[self::PART_GROUP][$modelClass])) {
-            $this->_sqlParts[self::PART_GROUP][$modelClass] = [
+        if (!isset($this->sqlParts[self::PART_GROUP][$modelClass])) {
+            $this->sqlParts[self::PART_GROUP][$modelClass] = [
                 $tableAlias, [$fieldName]
             ];
         } else {
-            $this->_sqlParts[self::PART_GROUP][$modelClass][1][] = $fieldName;
+            $this->sqlParts[self::PART_GROUP][$modelClass][1][] = $fieldName;
         }
 
         return $this;
@@ -1423,14 +1493,14 @@ class Query_Builder
     /**
      * Descending ordering
      *
-     * @param $fieldName
-     * @param array $modelTableData
+     * @param  $fieldName
+     * @param  array $modelTableData
      * @return Query_Builder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
-     * @since 0.0
+     * @since   0.0
      */
     public function desc($fieldName, $modelTableData = [])
     {
@@ -1438,100 +1508,40 @@ class Query_Builder
     }
 
     /**
-     * Set Limits and offset by page and limit
-     *
-     * @return Query_Builder
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.6
-     * @since 0.0
-     */
-    public function setPagination($page, $limit)
-    {
-        if (empty($page)) {
-            $page = 1;
-        }
-
-        if (empty($limit)) {
-            $limit = 1000;
-        }
-
-        return $this->calcFoundRows()->limit($limit, ($page - 1) * $limit);
-    }
-
-    /**
-     * Set query part limit
-     *
-     * @param $limit
-     * @param int|null $offset
-     * @return Query_Builder
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function limit($limit, $offset = 0)
-    {
-        $this->_sqlParts[self::PART_LIMIT] = [
-            'limit' => $limit,
-            'offset' => $offset
-        ];
-
-        return $this;
-    }
-
-    /**
-     * Set flag for total found rows query
-     *
-     * @return Query_Builder
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function calcFoundRows()
-    {
-        $this->_sqlParts[self::PART_SELECT]['_calcFoundRows'] = true;
-        return $this;
-    }
-
-    /**
      * Execute query create table
      *
-     * @param string|null $dataSourceKey
+     * @param  string|null $dataSourceKey
      * @return Query
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
-     * @since 0.2
+     * @since   0.2
      */
     public function createTableQuery($dataSourceKey = null)
     {
-        $modelClass = $this->_modelClass;
+        $modelClass = $this->modelClass;
 
         foreach ($modelClass::getConfig()->gets('columns') as $columnName => $column) {
             $this->column($columnName, $column['scheme']);
         }
 
-        $this->_queryType = Query_Builder::TYPE_CREATE;
+        $this->queryType = Query_Builder::TYPE_CREATE;
         return $this->getQuery($dataSourceKey);
     }
 
     /**
      * Set column part for create or alter table
      *
-     * @param $name
-     * @param array $scheme
-     * @param null $modelClass
+     * @param  $name
+     * @param  array $scheme
+     * @param  null $modelClass
      * @return Query_Builder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.2
-     * @since 0.2
+     * @since   0.2
      */
     public function column($name, array $scheme, $modelClass = null)
     {
@@ -1539,10 +1549,10 @@ class Query_Builder
             $modelClass = $this->getModelClass();
         }
 
-        if (isset($this->_sqlParts[Query_Builder::PART_CREATE][$modelClass])) {
-            $this->_sqlParts[Query_Builder::PART_CREATE][$modelClass][$name] = $scheme;
+        if (isset($this->sqlParts[Query_Builder::PART_CREATE][$modelClass])) {
+            $this->sqlParts[Query_Builder::PART_CREATE][$modelClass][$name] = $scheme;
         } else {
-            $this->_sqlParts[Query_Builder::PART_CREATE][$modelClass] = [$name => $scheme];
+            $this->sqlParts[Query_Builder::PART_CREATE][$modelClass] = [$name => $scheme];
         }
         return $this;
     }
@@ -1550,18 +1560,18 @@ class Query_Builder
     /**
      * Execute query drop table
      *
-     * @param string|null $dataSourceKey
+     * @param  string|null $dataSourceKey
      * @return Query
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
-     * @since 0.2
+     * @since   0.2
      */
     public function dropTableQuery($dataSourceKey = null)
     {
-        $this->_queryType = Query_Builder::TYPE_DROP;
-        $this->_sqlParts[self::PART_DROP]['_drop'] = $this->_modelClass;
+        $this->queryType = Query_Builder::TYPE_DROP;
+        $this->sqlParts[self::PART_DROP]['_drop'] = $this->modelClass;
         return $this->getQuery($dataSourceKey);
     }
 
@@ -1573,7 +1583,7 @@ class Query_Builder
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.2
-     * @since 0.2
+     * @since   0.2
      */
     public function cloneBuilder()
     {
@@ -1583,16 +1593,16 @@ class Query_Builder
     /**
      * Set in query part where expression for search
      *
-     * @param $fieldName
-     * @param $fieldValue
-     * @param array $modelTableData
-     * @param string $sqlLogical
+     * @param  $fieldName
+     * @param  $fieldValue
+     * @param  array $modelTableData
+     * @param  string $sqlLogical
      * @return Query_Builder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
-     * @since 0.0
+     * @since   0.0
      */
     public function search($fieldName, $fieldValue, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
     {
@@ -1611,7 +1621,7 @@ class Query_Builder
 
     private function addTrigger($type, $method, $params)
     {
-        $this->_triggers[$type][] = [$method, $params];
+        $this->triggers[$type][] = [$method, $params];
         return $this;
     }
 
@@ -1656,6 +1666,23 @@ class Query_Builder
         return $this;
     }
 
+    public function orderUi($uiName, $key, $value, $fieldName = null, $modelTableData = [])
+    {
+        $ui = $this->findUi($uiName);
+
+        $value = $ui->bind($key, $value);
+
+        if (!empty($value)) {
+            if (!$fieldName) {
+                $fieldName = $key;
+            }
+
+            $this->order($fieldName, $value, $modelTableData);
+        }
+
+        return $this;
+    }
+
     /**
      * @param $uiName
      * @return Ui
@@ -1676,23 +1703,6 @@ class Query_Builder
         return null;
     }
 
-    public function orderUi($uiName, $key, $value, $fieldName = null, $modelTableData = [])
-    {
-        $ui = $this->findUi($uiName);
-
-        $value = $ui->bind($key, $value);
-
-        if (!empty($value)) {
-            if (!$fieldName) {
-                $fieldName = $key;
-            }
-
-            $this->order($fieldName, $value, $modelTableData);
-        }
-
-        return $this;
-    }
-
     public function paginationUi($uiName, $page, $limit)
     {
         $ui = $this->findUi($uiName);
@@ -1702,7 +1712,74 @@ class Query_Builder
         return $this;
     }
 
-    public function filterUi($uiName, $key, $value, $fieldName = null, $comparison = Query_Builder::SQL_COMPARISON_OPERATOR_EQUAL, $modelTableData = [])
+    /**
+     * Set Limits and offset by page and limit
+     *
+     * @return Query_Builder
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.6
+     * @since   0.0
+     */
+    public function setPagination($page, $limit)
+    {
+        if (empty($page)) {
+            $page = 1;
+        }
+
+        if (empty($limit)) {
+            $limit = 1000;
+        }
+
+        return $this->calcFoundRows()->limit($limit, ($page - 1) * $limit);
+    }
+
+    /**
+     * Set query part limit
+     *
+     * @param  $limit
+     * @param  int|null $offset
+     * @return Query_Builder
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since   0.0
+     */
+    public function limit($limit, $offset = 0)
+    {
+        $this->sqlParts[self::PART_LIMIT] = [
+            'limit' => $limit,
+            'offset' => $offset
+        ];
+
+        return $this;
+    }
+
+    /**
+     * Set flag for total found rows query
+     *
+     * @return Query_Builder
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since   0.0
+     */
+    public function calcFoundRows()
+    {
+        $this->sqlParts[self::PART_SELECT]['_calcFoundRows'] = true;
+        return $this;
+    }
+
+    public function filterUi(
+        $uiName,
+        $key,
+        $value,
+        $fieldName = null,
+        $comparison = Query_Builder::SQL_COMPARISON_OPERATOR_EQUAL,
+        $modelTableData = []
+    )
     {
         $ui = $this->findUi($uiName);
 
@@ -1730,7 +1807,13 @@ class Query_Builder
                 $fieldName = $key;
             }
 
-            $this->addTransform($transform, [$fieldName, $value]);
+            $params = [$fieldName => $value];
+            if (is_array($transform)) {
+                $params += $transform[1];
+                $transform = $transform[0];
+            }
+
+            $this->addTransform($transform, $params);
         }
 
         return $this;
@@ -1747,7 +1830,7 @@ class Query_Builder
      */
     public function getQueryType()
     {
-        return $this->_queryType;
+        return $this->queryType;
     }
 
     /**
@@ -1757,10 +1840,10 @@ class Query_Builder
     public function getSqlParts($queryPart = null)
     {
         if (!$queryPart) {
-            return $this->_sqlParts;
+            return $this->sqlParts;
         }
 
-       return isset($this->_sqlParts[$queryPart]) ? $this->_sqlParts[$queryPart] : null;
+        return isset($this->sqlParts[$queryPart]) ? $this->sqlParts[$queryPart] : null;
     }
 
     /**
@@ -1768,7 +1851,7 @@ class Query_Builder
      */
     public function getTriggers()
     {
-        return $this->_triggers;
+        return $this->triggers;
     }
 
     /**
@@ -1776,7 +1859,7 @@ class Query_Builder
      */
     public function getCacheTags()
     {
-        return $this->_cacheTags;
+        return $this->cacheTags;
     }
 
     /**

@@ -2,10 +2,7 @@
 
 use Ice\Core\Action;
 use Ice\Core\Data_Scheme;
-use Ice\Core\Data_Source;
-use Ice\Core\Logger;
 use Ice\Core\Module;
-use Ice\Data\Provider\Mongodb;
 
 class Orm_Scheme_Update extends Action
 {
@@ -38,12 +35,13 @@ class Orm_Scheme_Update extends Action
      *      'roles' => []
      *  ];
      * ```
+     *
      * @return array
      *
      * @author anonymous <email>
      *
      * @version 0
-     * @since 0
+     * @since   0
      */
     protected static function config()
     {
@@ -55,18 +53,19 @@ class Orm_Scheme_Update extends Action
         ];
     }
 
-    /** Run action
+    /**
+     * Run action
      *
-     * @param array $input
+     * @param  array $input
      * @return array
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @package Ice
+     * @package    Ice
      * @subpackage Action
      *
      * @version 0.5
-     * @since 0.5
+     * @since   0.5
      */
     public function run(array $input)
     {

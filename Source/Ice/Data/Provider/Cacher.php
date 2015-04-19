@@ -2,9 +2,9 @@
 /**
  * Ice data provider implementation string class
  *
- * @link http://www.iceframework.net
+ * @link      http://www.iceframework.net
  * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
- * @license https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
+ * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
 namespace Ice\Data\Provider;
@@ -24,7 +24,7 @@ use Ice\Core\Exception;
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
- * @package Ice
+ * @package    Ice
  * @subpackage Data_Provider
  */
 class Cacher extends Data_Provider
@@ -40,7 +40,7 @@ class Cacher extends Data_Provider
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
-     * @since 0.4
+     * @since   0.4
      */
     protected static function getDefaultDataProviderKey()
     {
@@ -55,7 +55,7 @@ class Cacher extends Data_Provider
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
-     * @since 0.4
+     * @since   0.4
      */
     protected static function getDefaultKey()
     {
@@ -65,17 +65,19 @@ class Cacher extends Data_Provider
     /**
      * Get data from data provider by key
      *
-     * @param string $key
+     * @param  string $key
      * @return Cacheable
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.5
-     * @since 0.0
+     * @since   0.0
      */
     public function get($key = null)
     {
-        /** @var Cache $cache */
+        /**
+         * @var Cache $cache
+         */
         if ($cache = $this->getConnection()->get($key)) {
             return $cache->validate();
         }
@@ -91,7 +93,7 @@ class Cacher extends Data_Provider
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public function getConnection()
     {
@@ -101,15 +103,15 @@ class Cacher extends Data_Provider
     /**
      * Set data to data provider
      *
-     * @param string $key
-     * @param $value
-     * @param null $ttl
+     * @param  string $key
+     * @param  $value
+     * @param  null $ttl
      * @return mixed setted value
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public function set($key, $value = null, $ttl = null)
     {
@@ -138,15 +140,15 @@ class Cacher extends Data_Provider
     /**
      * Delete from data provider by key
      *
-     * @param string $key
-     * @param bool $force if true return boolean else deleted value
+     * @param  string $key
+     * @param  bool $force if true return boolean else deleted value
      * @throws Exception
      * @return mixed|boolean
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public function delete($key, $force = true)
     {
@@ -156,14 +158,14 @@ class Cacher extends Data_Provider
     /**
      * Increment value by key with defined step (default 1)
      *
-     * @param $key
-     * @param int $step
+     * @param  $key
+     * @param  int $step
      * @return mixed new value
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public function incr($key, $step = 1)
     {
@@ -173,14 +175,14 @@ class Cacher extends Data_Provider
     /**
      * Decrement value by key with defined step (default 1)
      *
-     * @param $key
-     * @param int $step
+     * @param  $key
+     * @param  int $step
      * @return mixed new value
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public function decr($key, $step = 1)
     {
@@ -193,7 +195,7 @@ class Cacher extends Data_Provider
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public function flushAll()
     {
@@ -203,13 +205,13 @@ class Cacher extends Data_Provider
     /**
      * Return keys by pattern
      *
-     * @param string $pattern
+     * @param  string $pattern
      * @return array
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public function getKeys($pattern = null)
     {
@@ -219,13 +221,13 @@ class Cacher extends Data_Provider
     /**
      * Connect to data provider
      *
-     * @param $connection
+     * @param  $connection
      * @return boolean
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.5
-     * @since 0.0
+     * @since   0.0
      */
     protected function connect(&$connection)
     {
@@ -237,7 +239,9 @@ class Cacher extends Data_Provider
             return $connection = File::getInstance($this->getKey(), $this->getIndex());
         }
 
-        /** @var Data_Provider $dataProviderClass */
+        /**
+         * @var Data_Provider $dataProviderClass
+         */
         $dataProviderClass = class_exists('Redis', false)
             ? Redis::getClass()
             : File::getClass();
@@ -248,13 +252,13 @@ class Cacher extends Data_Provider
     /**
      * Close connection with data provider
      *
-     * @param $connection
+     * @param  $connection
      * @return boolean
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     protected function close(&$connection)
     {

@@ -2,9 +2,9 @@
 /**
  * Ice action front ajax class
  *
- * @link http://www.iceframework.net
+ * @link      http://www.iceframework.net
  * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
- * @license https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
+ * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
 namespace Ice\Action;
@@ -23,11 +23,11 @@ use Ice\Helper\Object;
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
- * @package Ice
+ * @package    Ice
  * @subpackage Action
  *
  * @version 0.0
- * @since 0.0
+ * @since   0.0
  */
 class Front_Ajax extends Action
 {
@@ -60,12 +60,13 @@ class Front_Ajax extends Action
      *      'roles' => []
      *  ];
      * ```
+     *
      * @return array
      *
      * @author anonymous <email>
      *
      * @version 0
-     * @since 0
+     * @since   0
      */
     protected static function config()
     {
@@ -89,13 +90,13 @@ class Front_Ajax extends Action
     /**
      * Run action
      *
-     * @param array $input
+     * @param  array $input
      * @return array
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public function run(array $input)
     {
@@ -119,13 +120,13 @@ class Front_Ajax extends Action
      *
      * Modify view after flush
      *
-     * @param View $view
+     * @param  View $view
      * @return View
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public function flush(View $view)
     {

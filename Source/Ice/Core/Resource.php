@@ -2,14 +2,14 @@
 /**
  * Ice core resource class
  *
- * @link http://www.iceframework.net
+ * @link      http://www.iceframework.net
  * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
- * @license https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
+ * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 namespace Ice\Core;
 
 use Ice\Core;
-use Ice\Exception\File_Not_Found;
+use Ice\Exception\FileNotFound;
 use Ice\Helper\Api_Client_Yandex_Translate;
 use Ice\Helper\File;
 use Ice\Helper\String;
@@ -24,7 +24,7 @@ use Ice\View\Render\Replace;
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
- * @package Ice
+ * @package    Ice
  * @subpackage Core
  */
 class Resource
@@ -36,14 +36,14 @@ class Resource
      *
      * @var array
      */
-    private $_resource = null;
+    private $resource = null;
 
     /**
      * Target class
      *
      * @var Core
      */
-    private $_class = null;
+    private $class = null;
 
     /**
      * Private constructor for resource
@@ -54,26 +54,69 @@ class Resource
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     private function __construct($class, $resource)
     {
-        $this->_resource = $resource;
-        $this->_class = $class;
+        $this->resource = $resource;
+        $this->class = $class;
+    }
+
+    /**
+     * Return localized resource by key
+     *
+     * @param  $message
+     * @param  $params
+     * @param  $class
+     * @return string
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since   0.0
+     */
+    public function get($message, $params = null, $class = null)
+    {
+        /**
+         * @var string $message
+         */
+        /**
+         * @var Core $class
+         */
+        $resource = isset($class)
+            ? Resource::create($class)->resource
+            : $this->resource;
+
+        if (!isset($class)) {
+            $class = $this->class;
+        }
+
+        $locale = Request::locale();
+
+        if (!isset($resource[$message]) || !isset($resource[$message][$locale])) {
+            $resource = Resource::create($class);
+            $resource->set(rtrim($message, ';'));
+            $resource = $resource->resource;
+        }
+
+        if (isset($resource[$message][$locale])) {
+            $message = $resource[$message][$locale];
+        }
+
+        return Replace::getInstance()->fetch($message, (array)$params, View_Render::TEMPLATE_TYPE_STRING);
     }
 
     /**
      * Create new instance of resource
      *
-     * @param $class
+     * @param  $class
      * @return Resource
-     * @throws File_Not_Found
+     * @throws FileNotFound
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @todo need caching
+     * @todo    need caching
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public static function create($class)
     {
@@ -84,48 +127,9 @@ class Resource
             : new Resource($class, []);
     }
 
-    /**
-     * Return localized resource by key
-     *
-     * @param $message
-     * @param $params
-     * @param $class
-     * @return string
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function get($message, $params = null, $class = null)
-    {
-        /** @var string $message */
-        /** @var Core $class */
-        $resource = isset($class)
-            ? Resource::create($class)->_resource
-            : $this->_resource;
-
-        if (!isset($class)) {
-            $class = $this->_class;
-        }
-
-        $locale = Request::locale();
-
-        if (!isset($resource[$message]) || !isset($resource[$message][$locale])) {
-            $resource = Resource::create($class);
-            $resource->set(rtrim($message, ';'));
-            $resource = $resource->_resource;
-        }
-
-        if (isset($resource[$message][$locale])) {
-            $message = $resource[$message][$locale];
-        }
-
-        return Replace::getInstance()->fetch($message, (array)$params, View_Render::TEMPLATE_TYPE_STRING);
-    }
-
     public function set($message)
     {
-        $resourceFile = Loader::getFilePath($this->_class, '.res.php', Module::RESOURCE_DIR, false, true, true);
+        $resourceFile = Loader::getFilePath($this->class, '.res.php', Module::RESOURCE_DIR, false, true, true);
 
         $data = file_exists($resourceFile)
             ? File::loadData($resourceFile)

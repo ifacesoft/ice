@@ -175,7 +175,7 @@ class Model_CollectionTest extends PHPUnit_Framework_TestCase
                         $testCollection->getRows()
                     );
 
-                    Query::getBuilder(Test::getClass())->inPk([reset($firstId), $id3, $id6])->select('/name', null, null, null, $dataSourceKey)->getModelCollection()->remove($dataSourceKey);
+                    Query::getBuilder(Test::getClass())->inPk([reset($firstId), $id3, $id6])->executeSelect('/name', null, null, null, $dataSourceKey)->getModelCollection()->remove($dataSourceKey);
 
                     $this->assertNotEquals($testCollection->getRows(), Test::getCollection('*', [1, 1000, 0], $dataSourceKey)->getRows());
 

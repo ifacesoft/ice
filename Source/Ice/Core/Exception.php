@@ -2,9 +2,9 @@
 /**
  * Ice core exception class
  *
- * @link http://www.iceframework.net
+ * @link      http://www.iceframework.net
  * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
- * @license https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
+ * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
 namespace Ice\Core;
@@ -19,7 +19,7 @@ use Ice\Core;
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
- * @package Ice
+ * @package    Ice
  * @subpackage Core
  */
 abstract class Exception extends ErrorException
@@ -47,15 +47,26 @@ abstract class Exception extends ErrorException
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
-    public function __construct($message, $errcontext = [], \Exception $previous = null, $errfile = null, $errline = null, $errno = 0)
+    public function __construct(
+        $message,
+        $errcontext = [],
+        \Exception $previous = null,
+        $errfile = null,
+        $errline = null,
+        $errno = 0
+    )
     {
         $this->errcontext = $errcontext;
 
         $isExistsResourceClass = class_exists('Ice\Core\Resource', false);
 
-        if (($errno == 0 || substr(Logger::$errorCodes[$errno], 0, 7) == 'E_USER_' || Logger::$errorCodes[$errno] == 'FATAL') && $isExistsResourceClass) {
+        if (($errno == 0 ||
+                substr(Logger::$errorCodes[$errno], 0, 7) == 'E_USER_' ||
+                Logger::$errorCodes[$errno] == 'FATAL')
+            && $isExistsResourceClass
+        ) {
             $params = null;
             $class = null;
             if (is_array($message)) {
@@ -79,9 +90,12 @@ abstract class Exception extends ErrorException
                         array_map(
                             function ($var) {
                                 return '{$' . $var . '}';
-                            }, array_keys((array)$message[1])
-                        ), array_values((array)$message[1]),
-                        $message[0]);
+                            },
+                            array_keys((array)$message[1])
+                        ),
+                        array_values((array)$message[1]),
+                        $message[0]
+                    );
                 }
 
                 $message = reset($message);
@@ -92,17 +106,28 @@ abstract class Exception extends ErrorException
             $debug = debug_backtrace();
 
             if (!empty($debug)) {
-                /** @var Exception $exception */
+                /**
+                 * @var Exception $exception
+                 */
                 $exception = reset($debug)['object'];
                 $errfile = $exception->getFile();
                 $errline = $exception->getLine();
             }
         }
 
-        /** @var Exception $exceptionClass */
+        /**
+         * @var Exception $exceptionClass
+         */
         $exceptionClass = get_class($this);
 
-        parent::__construct($exceptionClass::getClassName() . ' - ' . $message, $errno, 1, $errfile, $errline, $previous);
+        parent::__construct(
+            $exceptionClass::getClassName() . ' - ' . $message,
+            $errno,
+            1,
+            $errfile,
+            $errline,
+            $previous
+        );
     }
 
     /**
@@ -115,7 +140,7 @@ abstract class Exception extends ErrorException
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public function getErrContext()
     {

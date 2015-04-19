@@ -1,7 +1,6 @@
 <?php
 namespace Ice\Action;
 
-
 use Ice\Core\Action;
 
 class Test_Smarty extends Action
@@ -35,12 +34,13 @@ class Test_Smarty extends Action
      *      'roles' => []
      *  ];
      * ```
+     *
      * @return array
      *
      * @author anonymous <email>
      *
      * @version 0
-     * @since 0
+     * @since   0
      */
     protected static function config()
     {
@@ -50,15 +50,16 @@ class Test_Smarty extends Action
         ];
     }
 
-    /** Run action
+    /**
+     * Run action
      *
-     * @param array $input
+     * @param  array $input
      * @return array
      *
      * @author anonymous <email>
      *
      * @version 0
-     * @since 0
+     * @since   0
      */
     public function run(array $input)
     {

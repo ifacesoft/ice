@@ -2,9 +2,9 @@
 /**
  * Ice helper serializer class
  *
- * @link http://www.iceframework.net
+ * @link      http://www.iceframework.net
  * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
- * @license https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
+ * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
 namespace Ice\Helper;
@@ -19,11 +19,11 @@ use Ice\Core\Logger as Core_Logger;
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
- * @package Ice
+ * @package    Ice
  * @subpackage Helper
  *
  * @version 0.0
- * @since 0.0
+ * @since   0.0
  */
 class Serializer
 {
@@ -34,15 +34,15 @@ class Serializer
     /**
      * Serialize with known serializer
      *
-     * @param mixed $data
-     * @param string $serializer
+     * @param  mixed $data
+     * @param  string $serializer
      * @throws Exception
      * @return string
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public static function serialize($data, $serializer = null)
     {
@@ -54,7 +54,11 @@ class Serializer
             case self::SERIALIZER_IGBINARY:
                 return igbinary_serialize($data);
             default:
-                Core_Logger::getInstance(__CLASS__)->exception(['Unknown serializer {$0}', $serializer], __FILE__, __LINE__);
+                Core_Logger::getInstance(__CLASS__)->exception(
+                    ['Unknown serializer {$0}', $serializer],
+                    __FILE__,
+                    __LINE__
+                );
         }
         return $data;
     }
@@ -62,13 +66,13 @@ class Serializer
     /**
      * Get current serializer
      *
-     * @param string $serializer
+     * @param  string $serializer
      * @return string
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public static function getSerializer($serializer = null)
     {
@@ -78,23 +82,23 @@ class Serializer
 
         return self::SERIALIZER_JSON;
 
-//        return function_exists('igbinary_serialize')
-//            ? self::SERIALIZER_IGBINARY
-//            : self::SERIALIZER_DEFAULT;
+        //        return function_exists('igbinary_serialize')
+        //            ? self::SERIALIZER_IGBINARY
+        //            : self::SERIALIZER_DEFAULT;
     }
 
     /**
      * Unserialize with known serializer
      *
-     * @param mixed $data
-     * @param string $serializer
+     * @param  mixed $data
+     * @param  string $serializer
      * @throws Exception
      * @return string
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public static function unserialize($data, $serializer = null)
     {
@@ -106,9 +110,13 @@ class Serializer
             case self::SERIALIZER_IGBINARY:
                 return igbinary_unserialize($data);
             default:
-                Core_Logger::getInstance(__CLASS__)->exception(['Unknown serializer {$0}', $serializer], __FILE__, __LINE__);
+                Core_Logger::getInstance(__CLASS__)->exception(
+                    ['Unknown serializer {$0}', $serializer],
+                    __FILE__,
+                    __LINE__
+                );
         }
 
         return $data;
     }
-} 
+}

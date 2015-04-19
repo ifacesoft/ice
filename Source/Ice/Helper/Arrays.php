@@ -2,9 +2,9 @@
 /**
  * Ice helper arrays class
  *
- * @link http://www.iceframework.net
+ * @link      http://www.iceframework.net
  * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
- * @license https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
+ * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
 namespace Ice\Helper;
@@ -18,11 +18,11 @@ use Ice\Core\Logger as Core_Logger;
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
- * @package Ice
+ * @package    Ice
  * @subpackage Helper
  *
  * @version 0.0
- * @since 0.0
+ * @since   0.0
  */
 class Arrays
 {
@@ -35,14 +35,14 @@ class Arrays
      *      ['surname', 'Iv%', 'like']
      *  ];
      *
-     * @param array $rows
-     * @param $filterScheme
+     * @param  array $rows
+     * @param  $filterScheme
      * @return array
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public static function filter(array $rows, $filterScheme)
     {
@@ -97,14 +97,14 @@ class Arrays
     /**
      * Group array by known column
      *
-     * @param $array
-     * @param $column
+     * @param  $array
+     * @param  $column
      * @return array
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public static function group($array, $column)
     {
@@ -127,7 +127,7 @@ class Arrays
      * file that was distributed with this source code.
      *
      * @copyright Copyright (c) 2013 Ben Ramsey <http://benramsey.com>
-     * @license http://opensource.org/licenses/MIT MIT
+     * @license   http://opensource.org/licenses/MIT MIT
      *
      *
      * Returns the values from a single column of the input array, identified by
@@ -149,15 +149,38 @@ class Arrays
     public static function column($input, $columnKey = null, $indexKey = null)
     {
         if (!is_array($input)) {
-            Core_Logger::getInstance(__CLASS__)->exception('array_column() expects parameter 1 to be array, ' . gettype($input) . ' given', __FILE__, __LINE__);
+            Core_Logger::getInstance(__CLASS__)->exception(
+                'array_column() expects parameter 1 to be array, ' . gettype($input) . ' given',
+                __FILE__,
+                __LINE__
+            );
         }
 
-        if (!is_int($columnKey) && !is_float($columnKey) && !is_string($columnKey) && !is_array($columnKey) && $columnKey !== null && !(is_object($columnKey) && method_exists($columnKey, '__toString'))) {
-            Core_Logger::getInstance(__CLASS__)->exception('array_column(): The column key should be either a string or an integer', __FILE__, __LINE__);
+        if (!is_int($columnKey) &&
+            !is_float($columnKey) &&
+            !is_string($columnKey) &&
+            !is_array($columnKey) &&
+            $columnKey !== null &&
+            !(is_object($columnKey) && method_exists($columnKey, '__toString'))
+        ) {
+            Core_Logger::getInstance(__CLASS__)->exception(
+                'array_column(): The column key should be either a string or an integer',
+                __FILE__,
+                __LINE__
+            );
         }
 
-        if (isset($indexKey) && !is_int($indexKey) && !is_float($indexKey) && !is_string($indexKey) && !(is_object($indexKey) && method_exists($indexKey, '__toString'))) {
-            Core_Logger::getInstance(__CLASS__)->exception('array_column(): The index key should be either a string or an integer', __FILE__, __LINE__);
+        if (isset($indexKey) &&
+            !is_int($indexKey) &&
+            !is_float($indexKey) &&
+            !is_string($indexKey) &&
+            !(is_object($indexKey) && method_exists($indexKey, '__toString'))
+        ) {
+            Core_Logger::getInstance(__CLASS__)->exception(
+                'array_column(): The index key should be either a string or an integer',
+                __FILE__,
+                __LINE__
+            );
         }
 
         if (isset($indexKey)) {
@@ -176,14 +199,14 @@ class Arrays
 
             if ($indexKey !== null && array_key_exists($indexKey, $row)) {
                 $key = (string)$row[$indexKey];
-            } else if ($indexKey === '') {
+            } elseif ($indexKey === '') {
                 $key = '';
             }
 
             if ($columnKey === null) {
                 $valueSet = true;
                 $value = $row;
-            } else if ($columnKey === 0) {
+            } elseif ($columnKey === 0) {
                 $valueSet = true;
                 $value = reset($row);
             } else {
@@ -219,14 +242,14 @@ class Arrays
      *
      * Return array of added, deleted and other rows
      *
-     * @param $old
-     * @param $new
+     * @param  $old
+     * @param  $new
      * @return array
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public static function diff($old, $new)
     {
@@ -243,14 +266,14 @@ class Arrays
     /**
      * Apply default values to array
      *
-     * @param array $data
-     * @param array $defaults
+     * @param  array $data
+     * @param  array $defaults
      * @return array
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
-     * @since 0.3
+     * @since   0.3
      */
     public static function defaults(array $defaults, array $data = null)
     {
@@ -268,14 +291,14 @@ class Arrays
     /**
      * Validate array
      *
-     * @param array $data
-     * @param array $validators
+     * @param  array $data
+     * @param  array $validators
      * @return bool
      *
-     * @author dp <denis.a.shestakov@gmail.com>
-     * @todo need impements
+     * @author  dp <denis.a.shestakov@gmail.com>
+     * @todo    need impements
      * @version 0.3
-     * @since 0.3
+     * @since   0.3
      */
     public static function validate(array $data, array $validators = array())
     {
@@ -285,14 +308,14 @@ class Arrays
     /**
      * Convert array data
      *
-     * @param array $data
-     * @param array $converters
+     * @param  array $data
+     * @param  array $converters
      * @return array
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.3
-     * @since 0.3
+     * @since   0.3
      */
     public static function convert(array $data, array $converters = array())
     {
@@ -309,17 +332,22 @@ class Arrays
 
     public static function toJsObjectString(array $array)
     {
-        array_walk($array, function (&$item, $key) {
-            if (is_array($item)) {
-                array_walk(
-                    $item, function (&$item) {
-                    $item = '\'' . $item . '\'';
-                });
-                $item = $key . ': [' . implode(', ', $item) . ']';
-            } else {
-                $item = $key . ': \'' . $item . '\'';
+        array_walk(
+            $array,
+            function (&$item, $key) {
+                if (is_array($item)) {
+                    array_walk(
+                        $item,
+                        function (&$item) {
+                            $item = '\'' . $item . '\'';
+                        }
+                    );
+                    $item = $key . ': [' . implode(', ', $item) . ']';
+                } else {
+                    $item = $key . ': \'' . $item . '\'';
+                }
             }
-        });
+        );
 
         return '{' . implode(', ', $array) . '}';
     }
@@ -327,7 +355,7 @@ class Arrays
     /**
      * Convert array to string
      *
-     * @param array $array
+     * @param  array $array
      * @return string
      */
     public static function toJsArrayString(array $array)

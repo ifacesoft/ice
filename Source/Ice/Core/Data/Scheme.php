@@ -2,9 +2,9 @@
 /**
  * Ice core data scheme container class
  *
- * @link http://www.iceframework.net
+ * @link      http://www.iceframework.net
  * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
- * @license https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
+ * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
 namespace Ice\Core;
@@ -27,21 +27,20 @@ use RegexIterator;
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
- * @package Ice
+ * @package    Ice
  * @subpackage Core
  */
 class Data_Scheme
 {
     use Core;
 
+    private static $tables = null;
     /**
      * Data source key
      *
      * @var string
      */
-    private $_dataSourceKey = null;
-
-    private static $_tables = null;
+    private $dataSourceKey = null;
 
     /**
      * Private constructor of dat scheme
@@ -49,67 +48,27 @@ class Data_Scheme
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
-     * @param $dataSourceKey
+     * @since   0.0
+     * @param   $dataSourceKey
      */
     private function __construct($dataSourceKey)
     {
-        $this->_dataSourceKey = $dataSourceKey;
+        $this->dataSourceKey = $dataSourceKey;
     }
 
     /**
      * Create new instance of data scheme
-     * @param $dataSourceKey
+     *
+     * @param  $dataSourceKey
      * @return Data_Scheme
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
-     * @since 0.0
+     * @since   0.0
      */
     public static function create($dataSourceKey)
     {
         return new Data_Scheme($dataSourceKey);
-    }
-
-    /**
-     * Return tables
-     *
-     * @param Module $module
-     * @return array
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since 0.5
-     */
-    public static function getTables(Module $module)
-    {
-        if (self::$_tables !== null) {
-            return self::$_tables;
-        }
-
-        self::$_tables = [];
-
-        $sourceDir = $module->get(Module::SOURCE_DIR);
-
-        $Directory = new RecursiveDirectoryIterator(Directory::get($sourceDir . $module->getAlias() . '/Model'));
-        $Iterator = new RecursiveIteratorIterator($Directory);
-        $Regex = new RegexIterator($Iterator, '/^.+\.php$/i', RecursiveRegexIterator::GET_MATCH);
-
-        foreach ($Regex as $filePathes) {
-            $modelPath = reset($filePathes);
-            $classNames = Php::getClassNamesFromFile($modelPath);
-            $modelName = reset($classNames);
-
-            $modelClass = str_replace('/', '\\', substr($modelPath, strlen($sourceDir), -4 - strlen($modelName))) . $modelName;
-
-            $config = $modelClass::getConfig()->gets();
-
-            $config['modelClass'] = $modelClass;
-            $config['modelPath'] = substr($modelPath, strlen($sourceDir));
-            self::$_tables[$config['dataSourceKey']][$config['scheme']['tableName']] = $config;
-        }
-
-        return self::$_tables;
     }
 
     public static function update(Module $module, $force = false)
@@ -136,7 +95,13 @@ class Data_Scheme
                 $tableScheme = &$schemeTables[$tableName]['scheme'];
 
                 if ($table['schemeHash'] != $tableSchemeHash) {
-                    Data_Scheme::getLogger()->info(['Update scheme for model {$0}: {$1}', [$schemeTables[$tableName]['modelClass'], Json::encode(array_diff($table['scheme'], $tableScheme))]]);
+                    Data_Scheme::getLogger()->info([
+                        'Update scheme for model {$0}: {$1}',
+                        [
+                            $schemeTables[$tableName]['modelClass'],
+                            Json::encode(array_diff($table['scheme'], $tableScheme))
+                        ]
+                    ]);
                     $tableScheme = $table['scheme'];
                     $tableSchemeHash = $table['schemeHash'];
                     $updated = true;
@@ -146,7 +111,10 @@ class Data_Scheme
                 $tableIndexes = &$schemeTables[$tableName]['indexes'];
 
                 if ($table['indexesHash'] != $tableIndexesHash) {
-                    Data_Scheme::getLogger()->info(['Update indexes for model {$0}: {$1}', [$schemeTables[$tableName]['modelClass'], Json::encode($table['indexes'])]]);
+                    Data_Scheme::getLogger()->info([
+                        'Update indexes for model {$0}: {$1}',
+                        [$schemeTables[$tableName]['modelClass'], Json::encode($table['indexes'])]
+                    ]);
                     $tableIndexes = $table['indexes'];
                     $tableIndexesHash = $table['indexesHash'];
                     $updated = true;
@@ -163,7 +131,10 @@ class Data_Scheme
                     $table['referencesHash'] = '';
                 }
                 if ($table['referencesHash'] != $schemeTables[$tableName]['referencesHash']) {
-                    Data_Scheme::getLogger()->info(['Update references for model {$0}: {$1}', [$schemeTables[$tableName]['modelClass'], Json::encode($table['references'])]]);
+                    Data_Scheme::getLogger()->info([
+                        'Update references for model {$0}: {$1}',
+                        [$schemeTables[$tableName]['modelClass'], Json::encode($table['references'])]
+                    ]);
                     $schemeTables[$tableName]['references'] = $table['references'];
                     $schemeTables[$tableName]['referencesHash'] = $table['referencesHash'];
                     $updated = true;
@@ -186,7 +157,10 @@ class Data_Scheme
                         $references[$referenceClassName] = $columnName;
                     }
                     $table['oneToMany'] = $references;
-                    Data_Scheme::getLogger()->info(['Update OneToMany references for model {$0}: {$1}', [$schemeTables[$tableName]['modelClass'], Json::encode($table['oneToMany'])]]);
+                    Data_Scheme::getLogger()->info([
+                        'Update OneToMany references for model {$0}: {$1}',
+                        [$schemeTables[$tableName]['modelClass'], Json::encode($table['oneToMany'])]
+                    ]);
                     $schemeTables[$tableName]['oneToMany'] = $table['oneToMany'];
                     $schemeTables[$tableName]['oneToManyHash'] = $table['oneToManyHash'];
                     $updated = true;
@@ -209,7 +183,10 @@ class Data_Scheme
                         $references[$referenceClassName] = $columnName;
                     }
                     $table['manyToOne'] = $references;
-                    Data_Scheme::getLogger()->info(['Update ManyToOne references for model {$0}: {$1}', [$schemeTables[$tableName]['modelClass'], Json::encode($table['manyToOne'])]]);
+                    Data_Scheme::getLogger()->info([
+                        'Update ManyToOne references for model {$0}: {$1}',
+                        [$schemeTables[$tableName]['modelClass'], Json::encode($table['manyToOne'])]
+                    ]);
                     $schemeTables[$tableName]['manyToOne'] = $table['manyToOne'];
                     $schemeTables[$tableName]['manyToOneHash'] = $table['manyToOneHash'];
                     $updated = true;
@@ -236,7 +213,10 @@ class Data_Scheme
                         $references[$referenceClassName] = $linkClassName;
                     }
                     $table['manyToMany'] = $references;
-                    Data_Scheme::getLogger()->info(['Update ManyToMany references for model {$0}: {$1}', [$schemeTables[$tableName]['modelClass'], Json::encode($table['manyToMany'])]]);
+                    Data_Scheme::getLogger()->info([
+                        'Update ManyToMany references for model {$0}: {$1}',
+                        [$schemeTables[$tableName]['modelClass'], Json::encode($table['manyToMany'])]
+                    ]);
                     $schemeTables[$tableName]['manyToMany'] = $table['manyToMany'];
                     $schemeTables[$tableName]['manyToManyHash'] = $table['manyToManyHash'];
                     $updated = true;
@@ -250,7 +230,10 @@ class Data_Scheme
                             'scheme' => $column['scheme'],
                             'schemeHash' => $column['schemeHash']
                         ];
-                        Data_Scheme::getLogger()->info(['Create field {$0} for model {$1}', [$column['fieldName'], $schemeTables[$tableName]['modelClass']]]);
+                        Data_Scheme::getLogger()->info([
+                            'Create field {$0} for model {$1}',
+                            [$column['fieldName'], $schemeTables[$tableName]['modelClass']]
+                        ]);
                         $updated = true;
                         continue;
                     }
@@ -259,7 +242,14 @@ class Data_Scheme
                     $columnScheme = &$schemeTables[$tableName]['columns'][$columnName]['scheme'];
 
                     if ($column['schemeHash'] != $columnSchemeHash) {
-                        Data_Scheme::getLogger()->info(['Update field {$0} for model {$1}: {$2}', [$column['fieldName'], $schemeTables[$tableName]['modelClass'], Json::encode(array_diff($column['scheme'], $columnScheme))]]);
+                        Data_Scheme::getLogger()->info([
+                            'Update field {$0} for model {$1}: {$2}',
+                            [
+                                $column['fieldName'],
+                                $schemeTables[$tableName]['modelClass'],
+                                Json::encode(array_diff($column['scheme'], $columnScheme))
+                            ]
+                        ]);
                         $columnScheme = $column['scheme'];
                         $columnSchemeHash = $column['schemeHash'];
                         $updated = true;
@@ -269,7 +259,10 @@ class Data_Scheme
                 }
 
                 foreach ($dataSchemeColumns as $columnName => $column) {
-                    Data_Scheme::getLogger()->info(['Remove field {$0} for model {$1}', [$column['fieldName'], $schemeTables[$tableName]['modelClass']]]);
+                    Data_Scheme::getLogger()->info([
+                        'Remove field {$0} for model {$1}',
+                        [$column['fieldName'], $schemeTables[$tableName]['modelClass']]
+                    ]);
                     unset($schemeTables[$tableName]['columns'][$columnName]);
                     $updated = true;
                 }
@@ -291,5 +284,50 @@ class Data_Scheme
                 }
             }
         }
+    }
+
+    /**
+     * Return tables
+     *
+     * @param  Module $module
+     * @return array
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since   0.5
+     */
+    public static function getTables(Module $module)
+    {
+        if (self::$tables !== null) {
+            return self::$tables;
+        }
+
+        self::$tables = [];
+
+        $sourceDir = $module->get(Module::SOURCE_DIR);
+
+        $Directory = new RecursiveDirectoryIterator(Directory::get($sourceDir . $module->getAlias() . '/Model'));
+        $Iterator = new RecursiveIteratorIterator($Directory);
+        $Regex = new RegexIterator($Iterator, '/^.+\.php$/i', RecursiveRegexIterator::GET_MATCH);
+
+        foreach ($Regex as $filePathes) {
+            $modelPath = reset($filePathes);
+            $classNames = Php::getClassNamesFromFile($modelPath);
+            $modelName = reset($classNames);
+
+            $modelClass = str_replace(
+                    '/',
+                    '\\',
+                    substr($modelPath, strlen($sourceDir), -4 - strlen($modelName))
+                ) . $modelName;
+
+            $config = $modelClass::getConfig()->gets();
+
+            $config['modelClass'] = $modelClass;
+            $config['modelPath'] = substr($modelPath, strlen($sourceDir));
+            self::$tables[$config['dataSourceKey']][$config['scheme']['tableName']] = $config;
+        }
+
+        return self::$tables;
     }
 }

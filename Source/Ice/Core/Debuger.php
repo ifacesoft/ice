@@ -7,14 +7,15 @@ use Ice\Helper\Directory;
 use Ice\Helper\File;
 use Ice\Helper\Php;
 
-class Debuger {
+class Debuger
+{
     /**
      * Debug variables with die application
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public static function dumpDie()
     {
@@ -40,7 +41,7 @@ class Debuger {
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public static function dump($arg)
     {
@@ -63,5 +64,4 @@ class Debuger {
 
         return $arg;
     }
-
 }

@@ -2,9 +2,9 @@
 /**
  * Ice action form model class
  *
- * @link http://www.iceframework.net
+ * @link      http://www.iceframework.net
  * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
- * @license https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
+ * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
 namespace Ice\Action;
@@ -14,7 +14,7 @@ use Ice\Core\Model;
 use Ice\Helper\Arrays;
 
 /**
- * Class Ui_Form_Model
+ * class Widget_Form_Model
  *
  * Action for model form
  *
@@ -23,13 +23,13 @@ use Ice\Helper\Arrays;
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
- * @package Ice
+ * @package    Ice
  * @subpackage Action
  *
  * @version 0.0
- * @since 0.0
+ * @since   0.0
  */
-class Ui_Form_Model extends Action
+class Widget_Form_Model extends Action
 {
     /**
      * Action config
@@ -60,12 +60,13 @@ class Ui_Form_Model extends Action
      *      'roles' => []
      *  ];
      * ```
+     *
      * @return array
      *
      * @author anonymous <email>
      *
      * @version 0
-     * @since 0
+     * @since   0
      */
     protected static function config()
     {
@@ -89,17 +90,19 @@ class Ui_Form_Model extends Action
     /**
      * Run action
      *
-     * @param array $input
+     * @param  array $input
      * @return array
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.2
-     * @since 0.0
+     * @since   0.0
      */
     public function run(array $input)
     {
-        /** @var Model $modelClass */
+        /**
+         * @var Model $modelClass
+         */
         $modelClass = Model::getClass($input['modelClassName']);
 
         $form = $modelClass::getForm($input['formFilterFields']);
@@ -108,19 +111,21 @@ class Ui_Form_Model extends Action
             $form->bind($modelClass::getRow($input['pk'], '*'));
         }
 
-        $this->addAction([
-            'Ice:Form',
+        $this->addAction(
             [
-                'form' => $form,
-                'submitActionName' => $input['submitActionName'],
-                'reRenderClosest' => $input['reRenderClosest'],
-                'reRenderActionNames' => $input['reRenderActionNames'],
-                'grouping' => $input['grouping'],
-                'submitTitle' => $input['submitTitle'],
-                'redirect' => $input['redirect'],
-                'params' => $input['params']
+                'Ice:Form',
+                [
+                    'form' => $form,
+                    'submitActionName' => $input['submitActionName'],
+                    'reRenderClosest' => $input['reRenderClosest'],
+                    'reRenderActionNames' => $input['reRenderActionNames'],
+                    'grouping' => $input['grouping'],
+                    'submitTitle' => $input['submitTitle'],
+                    'redirect' => $input['redirect'],
+                    'params' => $input['params']
+                ]
             ]
-        ]);
+        );
 
         $input['formFilterFields'] = Arrays::toJsArrayString($input['formFilterFields']);
         $input['params'] = Arrays::toJsObjectString($input['params']);

@@ -2,9 +2,9 @@
 /**
  * Ice core data source container abstract class
  *
- * @link http://www.iceframework.net
+ * @link      http://www.iceframework.net
  * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
- * @license https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
+ * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
 namespace Ice\Core;
@@ -21,11 +21,11 @@ use Ice\Data\Source\Mysqli;
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
- * @package Ice
+ * @package    Ice
  * @subpackage Core
  *
  * @version 0.0
- * @since 0.0
+ * @since   0.0
  */
 abstract class Data_Source extends Container
 {
@@ -36,13 +36,13 @@ abstract class Data_Source extends Container
      *
      * @var string
      */
-    protected $_scheme = null;
+    protected $scheme = null;
     /**
      * Data source key
      *
      * @var string
      */
-    private $_key = null;
+    private $key = null;
 
     /**
      * Private constructor for dat source
@@ -53,12 +53,12 @@ abstract class Data_Source extends Container
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
-     * @since 0.0
+     * @since   0.0
      */
     private function __construct($key, $scheme)
     {
-        $this->_key = $key;
-        $this->_scheme = $scheme;
+        $this->key = $key;
+        $this->scheme = $scheme;
         $this->getSourceDataProvider()->setScheme($scheme);
     }
 
@@ -70,17 +70,19 @@ abstract class Data_Source extends Container
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public function getSourceDataProvider()
     {
         $sourceDataProviderClass = $this->getDataProviderClass();
 
-        /** @var Data_Provider $sourceDataProvider */
-        $sourceDataProvider = $sourceDataProviderClass::getInstance($this->_key);
+        /**
+         * @var Data_Provider $sourceDataProvider
+         */
+        $sourceDataProvider = $sourceDataProviderClass::getInstance($this->key);
 
-        if ($sourceDataProvider->getScheme() != $this->_scheme) {
-            $sourceDataProvider->setScheme($this->_scheme);
+        if ($sourceDataProvider->getScheme() != $this->scheme) {
+            $sourceDataProvider->setScheme($this->scheme);
         }
 
         return $sourceDataProvider;
@@ -94,21 +96,21 @@ abstract class Data_Source extends Container
      * @author anonymous <email>
      *
      * @version 0
-     * @since 0
+     * @since   0
      */
     abstract public function getDataProviderClass();
 
     /**
      * Return instance of data source
      *
-     * @param null $key
-     * @param null $ttl
+     * @param  null $key
+     * @param  null $ttl
      * @return Data_Source
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.2
-     * @since 0.2
+     * @since   0.2
      */
     public static function getInstance($key = null, $ttl = null)
     {
@@ -123,11 +125,13 @@ abstract class Data_Source extends Container
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
-     * @since 0.0
+     * @since   0.0
      */
     protected static function getDefaultKey()
     {
-        /** @var Data_Source $dataSourceClass */
+        /**
+         * @var Data_Source $dataSourceClass
+         */
         $dataSourceClass = self::getClass();
 
         return substr(strstr($dataSourceClass::getDefaultClassKey(), '/'), 1);
@@ -140,11 +144,13 @@ abstract class Data_Source extends Container
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
-     * @since 0.4
+     * @since   0.4
      */
     public static function getDefaultClassKey()
     {
-        /** @var Data_Source $dataSourceClass */
+        /**
+         * @var Data_Source $dataSourceClass
+         */
         $dataSourceClass = self::getClass();
 
         $key = 'defaultClassKey_' . $dataSourceClass;
@@ -166,13 +172,13 @@ abstract class Data_Source extends Container
     /**
      * Create new instance of data source
      *
-     * @param $key
+     * @param  $key
      * @return Data_Source
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
-     * @since 0.0
+     * @since   0.0
      */
     protected static function create($key)
     {
@@ -189,78 +195,78 @@ abstract class Data_Source extends Container
     /**
      * Execute query select to data source
      *
-     * @param Query $query
+     * @param  Query $query
      * @return array
      *
      * @author anonymous <email>
      *
      * @version 0
-     * @since 0
+     * @since   0
      */
     abstract public function executeSelect(Query $query);
 
     /**
      * Execute query insert to data source
      *
-     * @param Query $query
+     * @param  Query $query
      * @return array
      *
      * @author anonymous <email>
      *
      * @version 0
-     * @since 0
+     * @since   0
      */
     abstract public function executeInsert(Query $query);
 
     /**
      * Execute query update to data source
      *
-     * @param Query $query
+     * @param  Query $query
      * @return array
      *
      * @author anonymous <email>
      *
      * @version 0
-     * @since 0
+     * @since   0
      */
     abstract public function executeUpdate(Query $query);
 
     /**
      * Execute query update to data source
      *
-     * @param Query $query
+     * @param  Query $query
      * @return array
      *
      * @author anonymous <email>
      *
      * @version 0
-     * @since 0
+     * @since   0
      */
     abstract public function executeDelete(Query $query);
 
     /**
      * Execute query create table to data source
      *
-     * @param Query $query
+     * @param  Query $query
      * @return array
      *
      * @author anonymous <email>
      *
      * @version 0
-     * @since 0
+     * @since   0
      */
     abstract public function executeCreate(Query $query);
 
     /**
      * Execute query drop table to data source
      *
-     * @param Query $query
+     * @param  Query $query
      * @return array
      *
      * @author anonymous <email>
      *
      * @version 0
-     * @since 0
+     * @since   0
      */
     abstract public function executeDrop(Query $query);
 
@@ -272,7 +278,7 @@ abstract class Data_Source extends Container
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public function getConnection()
     {
@@ -282,54 +288,54 @@ abstract class Data_Source extends Container
     /**
      * Get data Scheme from data source
      *
-     * @param Module $module
+     * @param  Module $module
      * @return array
      *
      * @author anonymous <email>
      *
      * @version 0
-     * @since 0
+     * @since   0
      */
-    public abstract function getTables(Module $module);
+    abstract public function getTables(Module $module);
 
     /**
      * Get table scheme from source
      *
-     * @param $tableName
+     * @param  $tableName
      * @return array
      *
      * @author anonymous <email>
      *
      * @version 0
-     * @since 0
+     * @since   0
      */
-    public abstract function getColumns($tableName);
+    abstract public function getColumns($tableName);
 
     /**
      * Get table indexes from source
      *
-     * @param $tableName
+     * @param  $tableName
      * @return array
      *
      * @author anonymous <email>
      *
      * @version 0
-     * @since 0
+     * @since   0
      */
-    public abstract function getIndexes($tableName);
+    abstract public function getIndexes($tableName);
 
     /**
      * Get table references from source
      *
-     * @param $tableName
+     * @param  $tableName
      * @return array
      *
      * @author anonymous <email>
      *
      * @version 0
-     * @since 0
+     * @since   0
      */
-    public abstract function getReferences($tableName);
+    abstract public function getReferences($tableName);
 
     /**
      * @param Query $query
@@ -353,14 +359,16 @@ abstract class Data_Source extends Container
         $queryCommand = 'execute' . ucfirst(strtolower($queryType));
 
         try {
-            if (
-                ($queryType == Query_Builder::TYPE_SELECT && !$ttl) ||
-                $queryType == Query_Builder::TYPE_CREATE ||
-                $queryType == Query_Builder::TYPE_DROP
+            if (($queryType == Query_Builder::TYPE_SELECT && !$ttl)
+                || $queryType == Query_Builder::TYPE_CREATE
+                || $queryType == Query_Builder::TYPE_DROP
             ) {
                 $queryResult = Query_Result::create($query, $this->$queryCommand($query));
                 Profiler::setPoint($queryResult->__toString(), $startTime, $startMemory);
-                Data_Source::getLogger()->log(['(not cache) {$0}', Profiler::getReport($queryResult->__toString())], Logger::INFO);
+                Data_Source::getLogger()->log(
+                    ['(not cache) {$0}', Profiler::getReport($queryResult->__toString())],
+                    Logger::INFO
+                );
                 return $queryResult;
             }
 
@@ -371,13 +379,19 @@ abstract class Data_Source extends Container
 
                     if ($queryResult = $cacher->get($queryHash)) {
                         Profiler::setPoint($queryResult->__toString(), $startTime, $startMemory);
-                        Data_Source::getLogger()->log(['(cache) {$0}', Profiler::getReport($queryResult->__toString())], Logger::INFO);
+                        Data_Source::getLogger()->log(
+                            ['(cache) {$0}', Profiler::getReport($queryResult->__toString())],
+                            Logger::INFO
+                        );
                         return $queryResult;
                     }
 
                     $queryResult = Query_Result::create($query, $this->$queryCommand($query));
                     Profiler::setPoint($queryResult->__toString(), $startTime, $startMemory);
-                    Data_Source::getLogger()->log(['(new) {$0}', Profiler::getReport($queryResult->__toString())], Logger::SUCCESS);
+                    Data_Source::getLogger()->log(
+                        ['(new) {$0}', Profiler::getReport($queryResult->__toString())],
+                        Logger::SUCCESS
+                    );
                     $cacher->set($queryHash, $queryResult, $ttl);
                     break;
 
@@ -386,14 +400,26 @@ abstract class Data_Source extends Container
                 case Query_Builder::TYPE_DELETE:
                     $queryResult = Query_Result::create($query, $this->$queryCommand($query))->invalidate();
                 Profiler::setPoint($queryResult->__toString(), $startTime, $startMemory);
-                Data_Source::getLogger()->log(['(new) {$0}', Profiler::getReport($queryResult->__toString())], Logger::SUCCESS);
+                Data_Source::getLogger()->log(
+                    ['(new) {$0}', Profiler::getReport($queryResult->__toString())],
+                    Logger::SUCCESS
+                );
                     return $queryResult;
 
                 default:
-                    Data_Source::getLogger()->exception(['Unknown data source query statement type {$0}', $queryType], __FILE__, __LINE__, null, $query);
+                    Data_Source::getLogger()->exception(
+                        ['Unknown data source query statement type {$0}', $queryType],
+                        __FILE__,
+                        __LINE__,
+                        null,
+                        $query
+                    );
             }
         } catch (\Exception $e) {
-            Data_Source::getLogger()->log(print_r($query->getBody(), true) . ' (' .  print_r($query->getBinds(), true) . ')', Logger::DANGER);
+            Data_Source::getLogger()->log(
+                print_r($query->getBody(), true) . ' (' . print_r($query->getBinds(), true) . ')',
+                Logger::DANGER
+            );
             Data_Source::getLogger()->log($e->getMessage(), Logger::DANGER);
             Data_Source::getLogger()->exception('Data source execute query failed', __FILE__, __LINE__, $e, $query);
         }
@@ -404,13 +430,13 @@ abstract class Data_Source extends Container
     /**
      * Prepare query statement for query
      *
-     * @param $body
-     * @param array $binds
+     * @param  $body
+     * @param  array $binds
      * @return mixed
      * @author anonymous <email>
      *
      * @version 0
-     * @since 0
+     * @since   0
      */
     abstract public function getStatement($body, array $binds);
 
@@ -422,7 +448,7 @@ abstract class Data_Source extends Container
      * @author anonymous <email>
      *
      * @version 0
-     * @since 0
+     * @since   0
      */
     abstract public function getQueryTranslatorClass();
 
@@ -432,7 +458,7 @@ abstract class Data_Source extends Container
      * @author anonymous <email>
      *
      * @version 0
-     * @since 0
+     * @since   0
      */
     abstract public function beginTransaction();
 
@@ -442,7 +468,7 @@ abstract class Data_Source extends Container
      * @author anonymous <email>
      *
      * @version 0
-     * @since 0
+     * @since   0
      */
     abstract public function commitTransaction();
 
@@ -452,7 +478,7 @@ abstract class Data_Source extends Container
      * @author anonymous <email>
      *
      * @version 0
-     * @since 0
+     * @since   0
      */
     abstract public function rollbackTransaction();
 
@@ -464,7 +490,7 @@ abstract class Data_Source extends Container
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.5
-     * @since 0.5
+     * @since   0.5
      */
     public function getDataSourceKey()
     {
@@ -479,11 +505,11 @@ abstract class Data_Source extends Container
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.5
-     * @since 0.5
+     * @since   0.5
      */
     public function getKey()
     {
-        return $this->_key;
+        return $this->key;
     }
 
     /**
@@ -494,10 +520,10 @@ abstract class Data_Source extends Container
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.5
-     * @since 0.5
+     * @since   0.5
      */
     public function getScheme()
     {
-        return $this->_scheme;
+        return $this->scheme;
     }
 }

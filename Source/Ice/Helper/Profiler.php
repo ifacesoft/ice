@@ -2,9 +2,9 @@
 /**
  * Ice helper memory class
  *
- * @link http://www.iceframework.net
+ * @link      http://www.iceframework.net
  * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
- * @license https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
+ * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
 namespace Ice\Helper;
@@ -16,7 +16,7 @@ namespace Ice\Helper;
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
- * @package Ice
+ * @package    Ice
  * @subpackage Helper
  */
 class Profiler
@@ -24,13 +24,13 @@ class Profiler
     /**
      * Return memory size of variable
      *
-     * @param mixed $var Variable
+     * @param  mixed $var Variable
      * @return int
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public static function getVarSize($var)
     {
@@ -42,13 +42,13 @@ class Profiler
     /**
      * Get pretty time in milliseconds
      *
-     * @param $time
+     * @param  $time
      * @return string
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
-     * @since 0.6
+     * @since   0.6
      */
     public static function getPrettyTime($time)
     {
@@ -58,18 +58,21 @@ class Profiler
     /**
      * Get pretty memory in any units
      *
-     * @param $memory
+     * @param  $memory
      * @return string
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
-     * @since 0.6
+     * @since   0.6
      */
     public static function getPrettyMemory($memory)
     {
-        if (!$memory) { return '0 B'; }
+        if (!$memory) {
+            return '0 B';
+        }
         static $unit = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
-        return round($memory / pow(1024, ($i = floor(log($memory, 1024)))), 2) . ' ' . (isset($unit[$i]) ? $unit[$i] : 'undefined');
+        return round($memory / pow(1024, ($i = floor(log($memory, 1024)))), 2) . ' ' .
+        (isset($unit[$i]) ? $unit[$i] : 'undefined');
     }
-} 
+}
