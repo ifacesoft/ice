@@ -79,7 +79,7 @@ abstract class View_Render extends Container
     /**
      * Default action key
      *
-     * @return Core
+     * @return string
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *

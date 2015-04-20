@@ -36,7 +36,9 @@ class Profiler
     {
         $start_memory = memory_get_usage();
         $tmp = Json::decode(Json::encode($var));
-        return memory_get_usage() - $start_memory;
+        $varSize = memory_get_usage() - $start_memory;
+        unset($tmp);
+        return $varSize;
     }
 
     /**

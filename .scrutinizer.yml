@@ -6,6 +6,7 @@ filter:
 #        - Source/*
     excluded_paths:
         - Test/*
+        - Resource/*
 tools:
     external_code_coverage:
         timeout: 2100 # Timeout in seconds.
