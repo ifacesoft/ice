@@ -30,11 +30,6 @@
     "files": [
     ]
   },
-  "scripts": {
-    "post-install-cmd": [
-      "install.php"
-    ]
-  },
   "require": {
     "php": ">=5.4.0",
     "twig/twig": "1.*",
