@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: dp
- * Date: 2/3/15
- * Time: 2:48 PM
- */
 
 namespace Ice\Core;
 
@@ -15,7 +9,12 @@ class Data_ProviderTest extends PHPUnit_Framework_TestCase
     public function testProviders()
     {
         foreach (scandir(Module::getInstance('Ice')->get(Module::SOURCE_DIR) . 'Ice/Data/Provider', 1) as $dataProviderFile) {
-            if ($dataProviderFile == '..' || $dataProviderFile == '.' || $dataProviderFile == 'Apc.php') {
+            if (
+                $dataProviderFile == '..' ||
+                $dataProviderFile == '.' ||
+                $dataProviderFile == 'Apc.php' ||
+                pathinfo($dataProviderFile, PATHINFO_EXTENSION) != 'php'
+            ) {
                 continue;
             }
 

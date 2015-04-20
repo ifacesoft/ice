@@ -2,9 +2,9 @@
 /**
  * Ice core query class
  *
- * @link http://www.iceframework.net
+ * @link      http://www.iceframework.net
  * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
- * @license https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
+ * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
 namespace Ice\Core;
@@ -12,9 +12,9 @@ namespace Ice\Core;
 use Ice\Core;
 use Ice\Helper\Arrays;
 use Ice\Helper\Json;
-use Ice\Ui\Data\Table;
-use Ice\Ui\Form\Simple;
-use Ice\Ui\Menu\Pagination;
+use Ice\Widget\Data\Table;
+use Ice\Widget\Form\Simple;
+use Ice\Widget\Menu\Pagination;
 
 /**
  * Class Query
@@ -25,7 +25,7 @@ use Ice\Ui\Menu\Pagination;
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
- * @package Ice
+ * @package    Ice
  * @subpackage Core
  */
 class Query
@@ -42,44 +42,36 @@ class Query
      *
      * @var array
      */
-    private $_bindParts = [];
+    private $bindParts = [];
 
     /**
      * Data source name
      *
      * @var string
      */
-    private $_dataSourceKey = null;
-
-    /**
-     * Sql parts
-     *
-     * @var array
-     */
-    private $_bodyParts = null;
+    private $dataSourceKey = null;
 
     /**
      * Query sql md5 hash
      *
      * @var string
      */
-    private $_hash = null;
+    private $hash = null;
 
     /**
      * Serialized bind values
      *
      * @var string
      */
-    private $_bindHash = null;
+    private $bindHash = null;
 
     /**
      * Private constructor of query builder. Create: Query::create()->...
      *
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
-     * @since 0.0
+     * @since   0.0
      */
     private function __construct()
     {
@@ -88,15 +80,15 @@ class Query
     /**
      * Create new instance of query
      *
-     * @param Query_Builder $queryBuilder
-     * @param $dataSourceKey
+     * @param  Query_Builder $queryBuilder
+     * @param  $dataSourceKey
      * @return Query
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @todo Need caching
+     * @todo    Need caching
      * @version 0.6
-     * @since 0.0
+     * @since   0.0
      */
     public static function create(Query_Builder $queryBuilder, $dataSourceKey)
     {
@@ -110,17 +102,19 @@ class Query
             $dataSourceKey = $modelClass::getDataSourceKey();
         }
 
-        $query->_dataSourceKey = $dataSourceKey;
+        $query->dataSourceKey = $dataSourceKey;
 
-        $query->_hash = md5(
-            Json::encode([
-                $queryBuilder->getQueryType(),
-                $queryBuilder->getSqlParts(),
-                $queryBuilder->getModelClass(),
-                $queryBuilder->getCacheTags(),
-                $queryBuilder->getTriggers(),
-                $queryBuilder->getTransforms()
-            ])
+        $query->hash = md5(
+            Json::encode(
+                [
+                    $queryBuilder->getQueryType(),
+                    $queryBuilder->getSqlParts(),
+                    $queryBuilder->getModelClass(),
+                    $queryBuilder->getCacheTags(),
+                    $queryBuilder->getTriggers(),
+                    $queryBuilder->getTransforms()
+                ]
+            )
         );
 
         return $query;
@@ -137,14 +131,6 @@ class Query
     }
 
     /**
-     * @return Query_Builder
-     */
-    public function getQueryBuilder()
-    {
-        return $this->queryBuilder;
-    }
-
-    /**
      * Return calc found rows flag
      *
      * @return boolean
@@ -152,7 +138,7 @@ class Query
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
-     * @since 0.0
+     * @since   0.0
      */
     public function isCalcFoundRows()
     {
@@ -163,20 +149,20 @@ class Query
     /**
      * Bind values
      *
-     * @param array $bindParts
+     * @param  array $bindParts
      * @return Query
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.1
-     * @since 0.0
+     * @since   0.0
      */
     public function bind(array $bindParts)
     {
-        $this->_bindParts = $bindParts;
+        $this->bindParts = $bindParts;
 
         if ($this->queryBuilder->getQueryType() == Query_Builder::TYPE_SELECT) {
-            $this->_bindHash = md5(json_encode($bindParts));
+            $this->bindHash = md5(json_encode($bindParts));
         }
 
         return $this;
@@ -190,7 +176,7 @@ class Query
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.1
-     * @since 0.1
+     * @since   0.1
      */
     public function getBinds()
     {
@@ -219,11 +205,11 @@ class Query
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public function getBindParts()
     {
-        return $this->_bindParts;
+        return $this->bindParts;
     }
 
     /**
@@ -234,7 +220,7 @@ class Query
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
-     * @since 0.0
+     * @since   0.0
      */
     public function getValidateTags()
     {
@@ -249,7 +235,7 @@ class Query
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
-     * @since 0.0
+     * @since   0.0
      */
     public function getInvalidateTags()
     {
@@ -264,15 +250,15 @@ class Query
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public function getFullHash()
     {
-        if ($this->_bindHash === null) {
+        if ($this->bindHash === null) {
             Query::getLogger()->exception('Bind hash is empty', __FILE__, __LINE__, null, $this);
         }
 
-        return $this->_hash . '/' . $this->_bindHash;
+        return $this->hash . '/' . $this->bindHash;
     }
 
     public function getBody()
@@ -289,7 +275,7 @@ class Query
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
-     * @since 0.0
+     * @since   0.0
      */
     public function getDataSource()
     {
@@ -304,11 +290,11 @@ class Query
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
-     * @since 0.4
+     * @since   0.4
      */
     public function getDataSourceKey()
     {
-        return $this->_dataSourceKey;
+        return $this->dataSourceKey;
     }
 
     /**
@@ -319,7 +305,7 @@ class Query
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
-     * @since 0.4
+     * @since   0.4
      */
     public function getBodyParts()
     {
@@ -334,31 +320,34 @@ class Query
     /**
      * Get collection from data
      *
-     * @param null $ttl
+     * @param  null $ttl
      * @return Model_Collection
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
-     * @since 0.0
+     * @since   0.0
      */
     public function getModelCollection($ttl = null)
     {
         $queryResult = $this->getQueryResult($ttl);
 
-        return Model_Collection::create($queryResult->getQuery()->getQueryBuilder()->getModelClass(), $queryResult->getRows(), $queryResult->getQuery());
+        return Model_Collection::create(
+            $queryResult->getQuery()->getQueryBuilder()->getModelClass(),
+            $queryResult->getRows()
+        );
     }
 
     /**
      * Execute query
      *
-     * @param int $ttl
+     * @param  int $ttl
      * @return Query_Result
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @todo костылькостылем погоняет((
+     * @todo    костылькостылем погоняет((
      * @version 0.6
-     * @since 0.4
+     * @since   0.4
      */
     public function getQueryResult($ttl = null)
     {
@@ -366,7 +355,9 @@ class Query
 
         $params = [];
 
-        /** @var Ui $ui */
+        /**
+         * @var Ui $ui
+         */
 
         if (isset($this->queryBuilder->getUis()[Simple::getClass()])) {
             foreach ($this->queryBuilder->getUis()[Simple::getClass()] as $ui) {
@@ -396,8 +387,8 @@ class Query
 
         foreach ($this->queryBuilder->getUis() as $uis) {
             foreach ($uis as $ui) {
-                $ui->setQueryResult($queryResult);
                 $ui->setParams($params);
+                $ui->setQueryResult($queryResult);
             }
         }
 
@@ -405,17 +396,25 @@ class Query
     }
 
     /**
+     * @return Query_Builder
+     */
+    public function getQueryBuilder()
+    {
+        return $this->queryBuilder;
+    }
+
+    /**
      * Get value from data
      *
      * @desc Результат запроса - единственное значение.
      *
-     * @param null $columnName
-     * @param null $ttl
+     * @param  null $columnName
+     * @param  null $ttl
      * @return mixed
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
-     * @since 0.0
+     * @since   0.0
      */
     public function getValue($columnName = null, $ttl = null)
     {
@@ -428,13 +427,13 @@ class Query
      *
      * @desc Результат запроса - единственная запись таблицы.
      *
-     * @param null $pk
-     * @param null $ttl
+     * @param  null $pk
+     * @param  null $ttl
      * @return array|null
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
-     * @since 0.0
+     * @since   0.0
      */
     public function getRow($pk = null, $ttl = null)
     {
@@ -454,12 +453,12 @@ class Query
     /**
      * Return all rows from data as array
      *
-     * @param null $ttl
+     * @param  null $ttl
      * @return array
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
-     * @since 0.0
+     * @since   0.0
      */
     public function getRows($ttl = null)
     {
@@ -469,13 +468,13 @@ class Query
     /**
      * Return model from data
      *
-     * @param null $pk
-     * @param null $ttl
+     * @param  null $pk
+     * @param  null $ttl
      * @return Model|null
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
-     * @since 0.0
+     * @since   0.0
      */
     public function getModel($pk = null, $ttl = null)
     {
@@ -493,14 +492,14 @@ class Query
     /**
      * Return column in data
      *
-     * @param null $fieldName
-     * @param null $indexKey
-     * @param null $ttl
+     * @param  null $fieldName
+     * @param  null $indexKey
+     * @param  null $ttl
      * @return array
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
-     * @since 0.0
+     * @since   0.0
      */
     public function getColumn($fieldName = null, $indexKey = null, $ttl = null)
     {
@@ -512,12 +511,12 @@ class Query
     /**
      * Return keys of data
      *
-     * @param null $ttl
+     * @param  null $ttl
      * @return array
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
-     * @since 0.0
+     * @since   0.0
      */
     public function getKeys($ttl = null)
     {

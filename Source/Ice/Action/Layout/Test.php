@@ -12,11 +12,11 @@ namespace Ice\Action;
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
- * @package Ice
+ * @package    Ice
  * @subpackage Action
  *
  * @version 0.2
- * @since 0.2
+ * @since   0.2
  */
 class Layout_Test extends Layout
 {

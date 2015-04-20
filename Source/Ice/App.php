@@ -6,6 +6,7 @@ use Ice\Action\Front_Ajax;
 use Ice\Action\Http_Status;
 use Ice\Core\Action;
 use Ice\Core\Action_Context;
+use Ice\Core\Debuger;
 use Ice\Core\Logger;
 use Ice\Core\Profiler;
 use Ice\Core\Request;
@@ -20,9 +21,9 @@ use Ice\Exception\Redirect;
 
 class App
 {
-    private static $_response = null;
+    private static $response = null;
 
-    private static $_context = null;
+    private static $context = null;
 
     public static function run()
     {
@@ -32,10 +33,14 @@ class App
         $startMemory = Profiler::getMemoryGetUsage();
 
         try {
-            /** @var Action $actionClass */
+            /**
+             * @var Action $actionClass
+             */
             $actionClass = null;
 
-            /** @var View $view */
+            /**
+             * @var View $view
+             */
             $view = null;
 
             if (Request::isCli()) {
@@ -93,25 +98,6 @@ class App
     }
 
     /**
-     * Return application context
-     *
-     * @return Action_Context
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since 0.5
-     */
-    public static function getContext()
-    {
-        if (App::$_context) {
-            return App::$_context;
-        }
-
-        return App::$_context = Action_Context::create();
-    }
-
-    /**
      * Return http response
      *
      * @return Response
@@ -119,14 +105,33 @@ class App
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.5
-     * @since 0.5
+     * @since   0.5
      */
     public static function getResponse()
     {
-        if (App::$_response) {
-            return App::$_response;
+        if (App::$response) {
+            return App::$response;
         }
 
-        return App::$_response = Response::create();
+        return App::$response = Response::create();
+    }
+
+    /**
+     * Return application context
+     *
+     * @return Action_Context
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since   0.5
+     */
+    public static function getContext()
+    {
+        if (App::$context) {
+            return App::$context;
+        }
+
+        return App::$context = Action_Context::create();
     }
 }

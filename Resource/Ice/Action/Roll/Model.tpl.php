@@ -9,13 +9,13 @@
             <?php } ?>
             <td>
                 <button type="button" class="btn btn-xs btn-default"
-                        onclick="Tp_Action_Roll.editForm('{$message.messages_pk}');">
+                        onclick="Ice_Action_Roll.editForm('{$message.messages_pk}');">
                     <span class="glyphicon glyphicon-edit"></span>
                 </button>
             </td>
             <td>
                 <button type="button" class="btn btn-xs btn-danger"
-                        onclick="Tp_Action_Roll.delete('{$message.messages_pk}');">
+                        onclick="Ice_Action_Roll.delete('{$message.messages_pk}');">
                     <span class="glyphicon glyphicon-remove-circle"></span>
                 </button>
             </td>

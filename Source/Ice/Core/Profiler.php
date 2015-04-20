@@ -14,19 +14,25 @@ class Profiler
      *
      * @var array
      */
-    private static $_profiler = [];
+    private static $profiler = [];
+
+    public static function setPoint($name, $startTime, $startMemory)
+    {
+        Profiler::setTiming($name, $startTime);
+        Profiler::setMemoryUsages($name, $startMemory);
+    }
 
     /**
      * Set delta timing
      *
-     * @param string $name
-     * @param int $startTime
+     * @param  string $name
+     * @param  int $startTime
      * @return float
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
-     * @since 0.6
+     * @since   0.6
      */
     public static function setTiming($name, $startTime)
     {
@@ -34,33 +40,22 @@ class Profiler
             $name = $name->__toString();
         }
 
-        return Profiler::$_profiler[$name][Profiler::TIME] = Profiler::getMicrotimeResult($startTime);
-    }
-
-    public static function setPoint($name, $startTime, $startMemory) {
-        Profiler::setTiming($name, $startTime);
-        Profiler::setMemoryUsages($name, $startMemory);
+        return Profiler::$profiler[$name][Profiler::TIME] = Profiler::getMicrotimeResult($startTime);
     }
 
     /**
-     * Set delta memory usage
+     * Return delta time
      *
-     * @param string $name
-     * @param int $startMemory
+     * @param  float $startTime Start time point
      * @return float
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
-     * @since 0.6
+     * @since   0.6
      */
-    public static function setMemoryUsages($name, $startMemory)
+    public static function getMicrotimeResult($startTime)
     {
-        if (is_object($name)) {
-            $name = $name->__toString();
-        }
-
-        return Profiler::$_profiler[$name][Profiler::MEMORY] = Profiler::getMemoryGetUsageResult($startMemory);
+        return Profiler::getMicrotime() - $startTime;
     }
 
     /**
@@ -71,7 +66,7 @@ class Profiler
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
-     * @since 0.6
+     * @since   0.6
      */
     public static function getMicrotime()
     {
@@ -79,18 +74,40 @@ class Profiler
     }
 
     /**
-     * Return delta time
+     * Set delta memory usage
      *
-     * @param float $startTime Start time point
+     * @param  string $name
+     * @param  int $startMemory
      * @return float
+     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
-     * @since 0.6
+     * @since   0.6
      */
-    public static function getMicrotimeResult($startTime)
+    public static function setMemoryUsages($name, $startMemory)
     {
-        return Profiler::getMicrotime() - $startTime;
+        if (is_object($name)) {
+            $name = $name->__toString();
+        }
+
+        return Profiler::$profiler[$name][Profiler::MEMORY] = Profiler::getMemoryGetUsageResult($startMemory);
+    }
+
+    /**
+     * Get delta memory usage
+     *
+     * @param  $startMemory
+     * @return int
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.6
+     * @since   0.6
+     */
+    public static function getMemoryGetUsageResult($startMemory)
+    {
+        return Profiler::getMemoryGetUsage() - $startMemory;
     }
 
     /**
@@ -101,27 +118,11 @@ class Profiler
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
-     * @since 0.6
+     * @since   0.6
      */
     public static function getMemoryGetUsage()
     {
         return memory_get_usage(true);
-    }
-
-    /**
-     * Get delta memory usage
-     *
-     * @param $startMemory
-     * @return int
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.6
-     * @since 0.6
-     */
-    public static function getMemoryGetUsageResult($startMemory)
-    {
-        return Profiler::getMemoryGetUsage() - $startMemory;
     }
 
     /**
@@ -130,20 +131,20 @@ class Profiler
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
-     * @since 0.6
-     * @param $name
-     * @return string
+     * @since   0.6
+     * @param   $name
+     * @return  string
      */
     public static function getReport($name)
     {
         $message = $name . ' [';
 
-        if (isset(Profiler::$_profiler[$name])) {
-            $message .= 'Time: ' . Helper_Profiler::getPrettyTime(Profiler::$_profiler[$name][Profiler::TIME]) . ' ';
+        if (isset(Profiler::$profiler[$name])) {
+            $message .= 'Time: ' . Helper_Profiler::getPrettyTime(Profiler::$profiler[$name][Profiler::TIME]) . ' ';
         }
 
-        if (isset(Profiler::$_profiler[$name])) {
-            $message .= 'Mem: ' . Helper_Profiler::getPrettyMemory(Profiler::$_profiler[$name][Profiler::MEMORY]) . ' ';
+        if (isset(Profiler::$profiler[$name])) {
+            $message .= 'Mem: ' . Helper_Profiler::getPrettyMemory(Profiler::$profiler[$name][Profiler::MEMORY]) . ' ';
         }
 
         return $message . '(peak: ' . Helper_Profiler::getPrettyMemory(memory_get_peak_usage(true)) . ')]';

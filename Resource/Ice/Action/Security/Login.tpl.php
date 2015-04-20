@@ -4,7 +4,7 @@
             <li class="active">
                 <a href="#" onclick="return false;"><?= $resource->get('Login form') ?></a></li>
             <li>
-                <a href="/ice/security/register"><?= $resource->get('Register form', null, 'Ice\Action\Security_Register') ?></a>
+                <a href="<?= $router->get('ice_security_register')->getUrl() ?>"><?= $resource->get('Register form', null, 'Ice\Action\Security_Register') ?></a>
             </li>
         </ul>
         <?= $Form[0] ?>

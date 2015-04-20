@@ -2,9 +2,9 @@
 /**
  * Ice core model defined abstract class
  *
- * @link http://www.iceframework.net
+ * @link      http://www.iceframework.net
  * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
- * @license https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
+ * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
 namespace Ice\Core;
@@ -18,11 +18,11 @@ namespace Ice\Core;
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
- * @package Ice
+ * @package    Ice
  * @subpackage Core
  *
  * @version 0.0
- * @since 0.0
+ * @since   0.0
  */
 abstract class Model_Defined extends Model
 {
@@ -34,10 +34,10 @@ abstract class Model_Defined extends Model
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public static function getDefinedConfig()
     {
         return Config::getInstance(self::getClass(), 'Defined', true);
     }
-} 
+}

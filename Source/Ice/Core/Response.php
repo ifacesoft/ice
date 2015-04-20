@@ -2,9 +2,9 @@
 /**
  * Ice core response class
  *
- * @link http://www.iceframework.net
+ * @link      http://www.iceframework.net
  * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
- * @license https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
+ * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 namespace Ice\Core;
 
@@ -17,7 +17,7 @@ use Ice\Helper\Http;
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
- * @package Ice
+ * @package    Ice
  * @subpackage Core
  */
 class Response
@@ -27,33 +27,33 @@ class Response
      *
      * @var string
      */
-    private $_content = '';
+    private $content = '';
 
     /**
      * Content type
      *
      * @var string
      */
-    private $_contentType = null;
+    private $contentType = null;
 
     /**
      * Http status code
      *
      * @var string
      */
-    private $_statusCode = null;
+    private $statusCode = null;
 
     /**
      * Redirect url
      *
      * @var string|null
      */
-    private $_redirectUrl = null;
+    private $redirectUrl = null;
 
     /**
      * @var bool
      */
-    private $_isError = false;
+    private $isError = false;
 
     /**
      * Private constructor of Request object
@@ -61,7 +61,7 @@ class Response
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
-     * @since 0.4
+     * @since   0.4
      */
     private function __construct()
     {
@@ -75,7 +75,7 @@ class Response
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
-     * @since 0.4
+     * @since   0.4
      */
     public static function create()
     {
@@ -88,35 +88,35 @@ class Response
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
-     * @since 0.0
+     * @since   0.0
      */
     public function send()
     {
         if (Request::isCli()) {
-            fwrite($this->_isError ? STDERR : STDOUT, $this->_content);
+            fwrite($this->isError ? STDERR : STDOUT, $this->content);
             return;
         }
 
 
-        if ($this->_redirectUrl) {
+        if ($this->redirectUrl) {
             if (headers_sent()) {
-                echo '<script type="text/javascript">location.href="' . $this->_redirectUrl . '"</script>';
+                echo '<script type="text/javascript">location.href="' . $this->redirectUrl . '"</script>';
                 return;
             }
 
-            Http::setHeader('Location: ' . $this->_redirectUrl, false, $this->_statusCode);
+            Http::setHeader('Location: ' . $this->redirectUrl, false, $this->statusCode);
             return;
         }
 
-        if ($this->_contentType) {
-            Http::setHeader(Http::getContentTypeHeader($this->_contentType), true, $this->_statusCode);
+        if ($this->contentType) {
+            Http::setHeader(Http::getContentTypeHeader($this->contentType), true, $this->statusCode);
         }
 
-        if ($this->_statusCode) {
-            Http::setHeader(Http::getStatusCodeHeader($this->_statusCode), true, $this->_statusCode);
+        if ($this->statusCode) {
+            Http::setHeader(Http::getStatusCodeHeader($this->statusCode), true, $this->statusCode);
         }
 
-        echo $this->_content;
+        echo $this->content;
     }
 
     /**
@@ -127,11 +127,11 @@ class Response
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
-     * @since 0.4
+     * @since   0.4
      */
     public function setContent($content)
     {
-        $this->_content = $content;
+        $this->content = $content;
     }
 
     /**
@@ -142,11 +142,11 @@ class Response
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
-     * @since 0.4
+     * @since   0.4
      */
     public function setContentType($contentType)
     {
-        $this->_contentType = $contentType;
+        $this->contentType = $contentType;
     }
 
     /**
@@ -158,11 +158,11 @@ class Response
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
-     * @since 0.4
+     * @since   0.4
      */
     public function setRedirectUrl($redirectUrl, $statusCode = 301)
     {
-        $this->_redirectUrl = $redirectUrl;
+        $this->redirectUrl = $redirectUrl;
         $this->setStatusCode($statusCode);
     }
 
@@ -174,11 +174,11 @@ class Response
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
-     * @since 0.4
+     * @since   0.4
      */
     public function setStatusCode($statusCode)
     {
-        $this->_statusCode = $statusCode;
+        $this->statusCode = $statusCode;
     }
 
     /**
@@ -187,10 +187,10 @@ class Response
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
-     * @since 0.4
+     * @since   0.4
      */
     public function setError()
     {
-        $this->_isError = true;
+        $this->isError = true;
     }
 }

@@ -9,14 +9,14 @@ class Config
     /**
      * Get more then one params of config
      *
-     * @param array $config
-     * @param $key
-     * @param bool $isRequired
+     * @param  array $config
+     * @param  $key
+     * @param  bool $isRequired
      * @return array
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
-     * @since 0.4
+     * @since   0.4
      */
     public static function gets(array $config, $key = null, $isRequired = true)
     {
@@ -28,7 +28,13 @@ class Config
 
         if ($params === false) {
             if ($isRequired) {
-                Logger::getInstance(__CLASS__)->exception(['Could not found required param {$0}', $key], __FILE__, __LINE__, null, $config);
+                Logger::getInstance(__CLASS__)->exception(
+                    ['Could not found required param {$0}', $key],
+                    __FILE__,
+                    __LINE__,
+                    null,
+                    $config
+                );
             }
 
             return [];
@@ -40,13 +46,13 @@ class Config
     /**
      * Check is set key in config
      *
-     * @param array $config
-     * @param $key
+     * @param  array $config
+     * @param  $key
      * @return array|bool
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
-     * @since 0.4
+     * @since   0.4
      */
     private static function isSetKey(array $config, $key)
     {
@@ -66,14 +72,14 @@ class Config
     /**
      * Set or update config param
      *
-     * @param array $config
-     * @param $key
-     * @param $value
-     * @param bool $force
+     * @param  array $config
+     * @param  $key
+     * @param  $value
+     * @param  bool $force
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.5
-     * @since 0.5
+     * @since   0.5
      */
     public static function set(array &$config, $key, $value, $force = false)
     {
@@ -102,12 +108,12 @@ class Config
     /**
      * Remove config param
      *
-     * @param $config
-     * @param $key
+     * @param  $config
+     * @param  $key
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.5
-     * @since 0.5
+     * @since   0.5
      */
     public static function remove(array &$config, $key)
     {

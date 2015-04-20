@@ -2,16 +2,15 @@
 /**
  * Ice data provider implementation file class
  *
- * @link http://www.iceframework.net
+ * @link      http://www.iceframework.net
  * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
- * @license https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
+ * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
 namespace Ice\Data\Provider;
 
 use Ice\Core\Data_Provider;
 use Ice\Core\Exception;
-use Ice\Core\Logger;
 use Ice\Core\Module;
 use Ice\Helper\Directory;
 use Ice\Helper\File as Helper_File;
@@ -26,7 +25,7 @@ use Ice\Helper\Hash;
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
- * @package Ice
+ * @package    Ice
  * @subpackage Data_Provider
  */
 class File extends Data_Provider
@@ -42,7 +41,7 @@ class File extends Data_Provider
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
-     * @since 0.4
+     * @since   0.4
      */
     protected static function getDefaultDataProviderKey()
     {
@@ -57,7 +56,7 @@ class File extends Data_Provider
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     protected static function getDefaultKey()
     {
@@ -65,77 +64,23 @@ class File extends Data_Provider
     }
 
     /**
-     * Set data to data provider
-     *
-     * @param string $key
-     * @param $value
-     * @param null $ttl
-     * @return mixed setted value
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function set($key, $value = null, $ttl = null)
-    {
-        if (is_array($key) && $value === null) {
-            foreach ($key as $index => $value) {
-                $this->set($index, $value, $ttl);
-            }
-
-            return $key;
-        }
-
-        if ($ttl == -1) {
-            return $value;
-        }
-
-        if ($ttl === null) {
-            $options = $this->getOptions(__CLASS__);
-            $ttl = isset($options['ttl']) ? $options['ttl'] : 3600;
-        }
-
-        Helper_File::createData($this->getFileName($key), [$ttl, Hash::get($value, Hash::HASH_CRC32), $value]);
-
-        return $value;
-    }
-
-    /**
-     * Get storage file name
-     *
-     * @param $key
-     * @return string
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    private function getFileName($key)
-    {
-        return $this->getConnection() . $this->getFullKey($key) . '.php';
-    }
-
-    /**
      * Delete from data provider by key
      *
-     * @param string $key
-     * @param bool $force if true return boolean else deleted value
+     * @param  string $key
+     * @param  bool $force if true return boolean else deleted value
      * @throws Exception
      * @return mixed|boolean
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public function delete($key, $force = true)
     {
         $fileName = $this->getFileName($key);
 
         if (file_exists($fileName)) {
-
             if ($force) {
                 return unlink($fileName);
             }
@@ -151,15 +96,31 @@ class File extends Data_Provider
     }
 
     /**
+     * Get storage file name
+     *
+     * @param  $key
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since   0.0
+     */
+    private function getFileName($key)
+    {
+        return $this->getConnection() . $this->getFullKey($key) . '.php';
+    }
+
+    /**
      * Get data from data provider by key
      *
-     * @param string $key
+     * @param  string $key
      * @return mixed
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public function get($key = null)
     {
@@ -181,15 +142,15 @@ class File extends Data_Provider
     /**
      * Increment value by key with defined step (default 1)
      *
-     * @param $key
-     * @param int $step
+     * @param  $key
+     * @param  int $step
      * @throws Exception
      * @return mixed new value
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
-     * @since 0.0
+     * @since   0.0
      */
     public function incr($key, $step = 1)
     {
@@ -197,17 +158,54 @@ class File extends Data_Provider
     }
 
     /**
+     * Set data to data provider
+     *
+     * @param  string $key
+     * @param  $value
+     * @param  null $ttl
+     * @return mixed setted value
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since   0.0
+     */
+    public function set($key, $value = null, $ttl = null)
+    {
+        if (is_array($key) && $value === null) {
+            foreach ($key as $index => $value) {
+                $this->set($index, $value, $ttl);
+            }
+
+            return $key;
+        }
+
+        if ($ttl == -1) {
+            return $value;
+        }
+
+        if ($ttl === null) {
+            $options = $this->getOptions();
+            $ttl = isset($options['ttl']) ? $options['ttl'] : 3600;
+        }
+
+        Helper_File::createData($this->getFileName($key), [$ttl, Hash::get($value, Hash::HASH_CRC32), $value]);
+
+        return $value;
+    }
+
+    /**
      * Decrement value by key with defined step (default 1)
      *
-     * @param $key
-     * @param int $step
+     * @param  $key
+     * @param  int $step
      * @throws Exception
      * @return mixed new value
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public function decr($key, $step = 1)
     {
@@ -220,7 +218,7 @@ class File extends Data_Provider
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public function flushAll()
     {
@@ -230,13 +228,13 @@ class File extends Data_Provider
     /**
      * Return keys by pattern
      *
-     * @param string $pattern
+     * @param  string $pattern
      * @return array
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public function getKeys($pattern = null)
     {
@@ -246,17 +244,17 @@ class File extends Data_Provider
     /**
      * Connect to data provider
      *
-     * @param $connection
+     * @param  $connection
      * @return boolean
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     protected function connect(&$connection)
     {
-        $options = $this->getOptions(__CLASS__);
+        $options = $this->getOptions();
 
         if (!isset($options['path'])) {
             $options['path'] = Module::getInstance()->get('cacheDir');
@@ -269,13 +267,13 @@ class File extends Data_Provider
     /**
      * Close connection with data provider
      *
-     * @param $connection
+     * @param  $connection
      * @return boolean
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     protected function close(&$connection)
     {

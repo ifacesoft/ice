@@ -2,9 +2,9 @@
 /**
  * Ice common core trait
  *
- * @link http://www.iceframework.net
+ * @link      http://www.iceframework.net
  * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
- * @license https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
+ * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
 namespace Ice;
@@ -40,7 +40,7 @@ trait Core
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public static function getShortName()
     {
@@ -50,36 +50,19 @@ trait Core
     /**
      * Return class by base class
      *
-     * @param string|null $className
+     * @param  string|null $className
      * @return Core
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public static function getClass($className = null)
     {
         return empty($className)
             ? get_called_class()
             : Object::getClass(get_called_class(), $className);
-    }
-
-    /**
-     * Get module name of object
-     *
-     * 'Ice/Model/Ice/User' => 'Ice'
-     *
-     * @return string
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public static function getModuleAlias()
-    {
-        return Object::getModuleAlias(self::getClass());
     }
 
     /**
@@ -90,7 +73,7 @@ trait Core
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public static function getResource()
     {
@@ -100,14 +83,14 @@ trait Core
     /**
      * Return config of self class
      *
-     * @param null $postfix
-     * @param bool $isRequired
-     * @param null $ttl
+     * @param  null $postfix
+     * @param  bool $isRequired
+     * @param  null $ttl
      * @return Config
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.5
-     * @since 0.0
+     * @since   0.0
      */
     public static function getConfig($postfix = null, $isRequired = false, $ttl = null)
     {
@@ -117,13 +100,13 @@ trait Core
     /**
      * Return dat provider for self class
      *
-     * @param string|null $postfix
+     * @param  string|null $postfix
      * @return Data_Provider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public static function getDataProvider($postfix = null)
     {
@@ -142,7 +125,7 @@ trait Core
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public static function getClassName()
     {
@@ -157,7 +140,7 @@ trait Core
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public static function getBaseClass()
     {
@@ -172,15 +155,34 @@ trait Core
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.5
-     * @since 0.0
+     * @since   0.0
      */
     public static function getCodeGenerator()
     {
         $baseClass = self::getBaseClass();
 
-        return $baseClass == self::getClass()
-            ? Code_Generator::getInstance(self::getModuleAlias() . ':' . self::getClassName())
-            : Code_Generator::getInstance(self::getModuleAlias() . ':' . $baseClass::getClassName() . '_' . self::getClassName());
+        $class = $baseClass == self::getClass()
+            ? self::getModuleAlias() . ':' . self::getClassName()
+            : self::getModuleAlias() . ':' . $baseClass::getClassName() . '_' . self::getClassName();
+
+        return Code_Generator::getInstance($class);
+    }
+
+    /**
+     * Get module name of object
+     *
+     * 'Ice/Model/Ice/User' => 'Ice'
+     *
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since   0.0
+     */
+    public static function getModuleAlias()
+    {
+        return Object::getModuleAlias(self::getClass());
     }
 
     /**
@@ -191,7 +193,7 @@ trait Core
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public static function getNamespace()
     {
@@ -206,7 +208,7 @@ trait Core
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public static function getLogger()
     {
@@ -216,13 +218,13 @@ trait Core
     /**
      * Return registry storage for class
      *
-     * @param string $index
+     * @param  string $index
      * @return Registry
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.5
-     * @since 0.0
+     * @since   0.0
      */
     public static function getRegistry($index = 'default')
     {
@@ -232,13 +234,13 @@ trait Core
     /**
      * Return repository storage for class
      *
-     * @param string $index
+     * @param  string $index
      * @return Repository
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.5
-     * @since 0.4
+     * @since   0.4
      */
     public static function getRepository($index = 'default')
     {
@@ -248,13 +250,13 @@ trait Core
     /**
      * Return cacher storage for class
      *
-     * @param string $index
+     * @param  string $index
      * @return Repository
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.5
-     * @since 0.5
+     * @since   0.5
      */
     public static function getCacher($index = 'default')
     {
@@ -271,5 +273,9 @@ trait Core
     {
         Debuger::dump($this);
         return $this;
+    }
+
+    public function __toString() {
+        return (string) get_class($this);
     }
 }

@@ -2,9 +2,9 @@
 /**
  * Ice helper json class
  *
- * @link http://www.iceframework.net
+ * @link      http://www.iceframework.net
  * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
- * @license https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
+ * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
 namespace Ice\Helper;
@@ -16,25 +16,25 @@ namespace Ice\Helper;
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
- * @package Ice
+ * @package    Ice
  * @subpackage Helper
  *
  * @version 0.0
- * @since 0.0
+ * @since   0.0
  */
 class Json
 {
     /**
      * Decode json string to data
      *
-     * @param $json
+     * @param  $json
      * @return array
      * @throws \Exception
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public static function decode($json)
     {
@@ -54,8 +54,13 @@ class Json
             case JSON_ERROR_CTRL_CHAR:
                 throw new \Exception('JSON - Некорректный управляющий символ', print_r($json, true));
             case JSON_ERROR_SYNTAX:
-                throw new \Exception('JSON - Синтаксическая ошибка, не корректный JSON', print_r(
-                    $json, true));
+                throw new \Exception(
+                    'JSON - Синтаксическая ошибка, не корректный JSON',
+                    print_r(
+                        $json,
+                        true
+                    )
+                );
             case JSON_ERROR_UTF8:
                 throw new \Exception('JSON - Некорректные символы UTF-8, возможно неверная кодировка', print_r($json, true));
             default:
@@ -66,14 +71,14 @@ class Json
     /**
      * Encode data to json string
      *
-     * @param mixed $data
-     * @param int $options
+     * @param  mixed $data
+     * @param  int $options
      * @return string
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
-     * @since 0.0
+     * @since   0.0
      */
     public static function encode($data, $options = JSON_UNESCAPED_UNICODE)
     {

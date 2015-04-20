@@ -2,18 +2,17 @@
 /**
  * Ice data source implementation mysqli class
  *
- * @link http://www.iceframework.net
+ * @link      http://www.iceframework.net
  * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
- * @license https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
+ * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
 namespace Ice\Data\Source;
 
+use Ice\Core\Converter;
 use Ice\Core\Data_Provider;
 use Ice\Core\Data_Source;
-use Ice\Core\Debuger;
 use Ice\Core\Exception;
-use Ice\Core\Logger;
 use Ice\Core\Model;
 use Ice\Core\Module;
 use Ice\Core\Query;
@@ -22,8 +21,8 @@ use Ice\Core\Query_Result;
 use Ice\Core\Query_Translator;
 use Ice\Helper\Arrays;
 use Ice\Helper\Json;
-use Ice\Helper\String;
 use Ice\Helper\Model as Helper_Model;
+use Ice\Helper\String;
 use mysqli_result;
 use mysqli_stmt;
 
@@ -36,7 +35,7 @@ use mysqli_stmt;
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
- * @package Ice
+ * @package    Ice
  * @subpackage Data_Source
  */
 class Mysqli extends Data_Source
@@ -47,13 +46,13 @@ class Mysqli extends Data_Source
     /**
      * Execute query select to data source
      *
-     * @param Query $query
+     * @param  Query $query
      * @return array
      * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.5
-     * @since 0.0
+     * @version 0.6
+     * @since   0.0
      */
     public function executeSelect(Query $query)
     {
@@ -71,11 +70,14 @@ class Mysqli extends Data_Source
                     '#' . $errno . ': {$0} - {$1} [{$2}]',
                     [$error, print_r($query->getBody(), true), implode(', ', $query->getBinds())]
                 ],
-                __FILE__, __LINE__
+                __FILE__,
+                __LINE__
             );
         }
-//            $statement->store_result(); // Так почемуто не работает
-        /** @var mysqli_result $result */
+        //            $statement->store_result(); // Так почемуто не работает
+        /**
+         * @var mysqli_result $result
+         */
         $result = $statement->get_result();
 
         if ($result === false) {
@@ -88,7 +90,8 @@ class Mysqli extends Data_Source
                     '#' . $errno . ': {$0} - {$1} [{$2}]',
                     [$error, print_r($query->getBody(), true), implode(', ', $query->getBinds())]
                 ],
-                __FILE__, __LINE__
+                __FILE__,
+                __LINE__
             );
         }
 
@@ -97,13 +100,18 @@ class Mysqli extends Data_Source
         $pkFieldNames = $modelClass::getScheme()->getPkFieldNames();
 
         $data[Query_Result::NUM_ROWS] = $result->num_rows;
+        $data[Query_Result::ROWS] = [];
 
         while ($row = $result->fetch_assoc()) {
             foreach ($query->getAfterSelectTriggers() as list($method, $params)) {
                 $row = $modelClass::$method($row, $params);
 
                 if (!$row) {
-                    Mysqli::getLogger()->exception(['Trigger(method) {$0} of model {$1} must return row. Fix it.', [$method, $modelClass]], __FILE__, __LINE__);
+                    Mysqli::getLogger()->exception(
+                        ['Trigger(method) {$0} of model {$1} must return row. Fix it.', [$method, $modelClass]],
+                        __FILE__,
+                        __LINE__
+                    );
                 }
             }
 
@@ -123,44 +131,36 @@ class Mysqli extends Data_Source
             $data[Query_Result::FOUND_ROWS] = $data[Query_Result::NUM_ROWS];
         }
 
-        return $data;
-    }
+        foreach ($query->getQueryBuilder()->getTransforms() as list($converterClass, $params)) {
+            $data = Converter::getInstance($converterClass)->convert($data, $params);
+        }
 
-    /**
-     * Get connection instance
-     *
-     * @param string|null $scheme
-     * @return \Mysqli
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function getConnection($scheme = null)
-    {
-        return parent::getConnection();
+        return $data;
     }
 
     /**
      * Prepare query statement for query
      *
-     * @param $body
-     * @param array $binds
-     * @return mysqli_stmt
-     * @throws Exception
+     * @param    $body
+     * @param    array $binds
+     * @return   mysqli_stmt
+     * @throws   Exception
      * @internal param array $bodyParts
-     * @author dp <denis.a.shestakov@gmail.com>
+     * @author   dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.2
-     * @since 0.0
+     * @since   0.0
      */
     public function getStatement($body, array $binds)
     {
         $statement = $this->getConnection()->prepare($body);
 
         if (!$statement) {
-            Data_Source::getLogger()->exception(['#' . $this->getConnection()->errno . ': {$0}', $this->getConnection()->error], __FILE__, __LINE__);
+            Data_Source::getLogger()->exception(
+                ['#' . $this->getConnection()->errno . ': {$0}', $this->getConnection()->error],
+                __FILE__,
+                __LINE__
+            );
         }
 
         $types = '';
@@ -174,7 +174,13 @@ class Mysqli extends Data_Source
             $values = array_merge($values, $binds);
 
             if (call_user_func_array(array($statement, 'bind_param'), $this->makeValuesReferenced($values)) === false) {
-                Mysqli::getLogger()->exception('Bind params failure', __FILE__, __LINE__, null, ['types' => $types, 'values' => $values, 'body' => $body, 'binds' => $binds]);
+                Mysqli::getLogger()->exception(
+                    'Bind params failure',
+                    __FILE__,
+                    __LINE__,
+                    null,
+                    ['types' => $types, 'values' => $values, 'body' => $body, 'binds' => $binds]
+                );
             }
         }
 
@@ -182,15 +188,31 @@ class Mysqli extends Data_Source
     }
 
     /**
+     * Get connection instance
+     *
+     * @param  string|null $scheme
+     * @return \Mysqli
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since   0.0
+     */
+    public function getConnection($scheme = null)
+    {
+        return parent::getConnection();
+    }
+
+    /**
      * Override values in query binds (man solution)
      *
-     * @param $arr
+     * @param  $arr
      * @return array
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     private function makeValuesReferenced($arr)
     {
@@ -204,13 +226,13 @@ class Mysqli extends Data_Source
     /**
      * Execute query insert to data source
      *
-     * @param Query $query
+     * @param  Query $query
      * @return array
      * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
-     * @since 0.0
+     * @since   0.0
      */
     public function executeInsert(Query $query)
     {
@@ -228,12 +250,15 @@ class Mysqli extends Data_Source
                     '#' . $errno . ': {$0} - {$1} [{$2}]',
                     [$error, print_r($query->getBody(), true), implode(', ', $query->getBinds())]
                 ],
-                __FILE__, __LINE__
+                __FILE__,
+                __LINE__
             );
         }
 
-        /** @var Model $modelClass */
-        $modelClass = $query->getModelClass();
+        /**
+         * @var Model $modelClass
+         */
+        $modelClass = $query->getQueryBuilder()->getModelClass();
         $pkFieldNames = $modelClass::getScheme()->getPkFieldNames();
 
         $pkFieldName = count($pkFieldNames) == 1 ? reset($pkFieldNames) : null;
@@ -266,13 +291,13 @@ class Mysqli extends Data_Source
     /**
      * Execute query update to data source
      *
-     * @param Query $query
+     * @param  Query $query
      * @return array
      * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.2
-     * @since 0.0
+     * @since   0.0
      */
     public function executeUpdate(Query $query)
     {
@@ -290,12 +315,15 @@ class Mysqli extends Data_Source
                     '#' . $errno . ': {$0} - {$1} [{$2}]',
                     [$error, print_r($query->getBody(), true), implode(', ', $query->getBinds())]
                 ],
-                __FILE__, __LINE__
+                __FILE__,
+                __LINE__
             );
         }
 
-        /** @var Model $modelclass */
-        $modelclass = $query->getModelClass();
+        /**
+         * @var Model $modelclass
+         */
+        $modelclass = $query->getQueryBuilder()->getModelClass();
         $pkFieldNames = $modelclass::getScheme()->getPkFieldNames();
 
         foreach ($query->getBindParts()[Query_Builder::PART_SET] as $row) {
@@ -313,13 +341,13 @@ class Mysqli extends Data_Source
     /**
      * Execute query update to data source
      *
-     * @param Query $query
+     * @param  Query $query
      * @return array
      * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.2
-     * @since 0.0
+     * @since   0.0
      */
     public function executeDelete(Query $query)
     {
@@ -337,7 +365,8 @@ class Mysqli extends Data_Source
                     '#' . $errno . ': {$0} - {$1} [{$2}]',
                     [$error, print_r($query->getBody(), true), implode(', ', $query->getBinds())]
                 ],
-                __FILE__, __LINE__
+                __FILE__,
+                __LINE__
             );
         }
 
@@ -349,86 +378,14 @@ class Mysqli extends Data_Source
     }
 
     /**
-     * Get indexes of table
-     *
-     * @param $tableName
-     * @return array
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since 0.0
-     */
-    public function getIndexes($tableName)
-    {
-        $dataProvider = $this->getSourceDataProvider();
-        $dataProvider->setScheme('information_schema');
-
-        $constraints = [
-            'PRIMARY KEY' => [
-                'PRIMARY' => []
-            ],
-            'FOREIGN KEY' => [],
-            'UNIQUE' => []
-        ];
-
-        foreach ($dataProvider->get(['TABLE_CONSTRAINTS:TABLE_SCHEMA/' . $this->_scheme, 'TABLE_CONSTRAINTS:TABLE_NAME/' . $tableName]) as $constraint) {
-            $constraints[$constraint['CONSTRAINT_TYPE']][$constraint['CONSTRAINT_NAME']] = [];
-        }
-
-        $indexes = $dataProvider->get(['STATISTICS:TABLE_SCHEMA/' . $this->_scheme, 'STATISTICS:TABLE_NAME/' . $tableName]);
-
-        foreach ($constraints['PRIMARY KEY'] as $constraintName => &$constraint) {
-            foreach ($indexes as $index) {
-                if ($index['INDEX_NAME'] != $constraintName) {
-                    continue;
-                }
-
-                $constraint[$index['SEQ_IN_INDEX']] = $index['COLUMN_NAME'];
-                unset($index['COLUMN_NAME']);
-            }
-        }
-
-        foreach ($constraints['UNIQUE'] as $constraintName => &$constraint) {
-            foreach ($indexes as $index) {
-                if ($index['INDEX_NAME'] != $constraintName) {
-                    continue;
-                }
-
-                $constraint[$index['SEQ_IN_INDEX']] = $index['COLUMN_NAME'];
-                unset($index['COLUMN_NAME']);
-            }
-        }
-
-        $flippedIndexes = Arrays::column($indexes, 'INDEX_NAME', 'COLUMN_NAME');
-
-        $foreignKeys = [];
-
-        $referenceColumns = Arrays::column(
-            $dataProvider->get(['KEY_COLUMN_USAGE:TABLE_SCHEMA/' . $this->_scheme, 'KEY_COLUMN_USAGE:TABLE_NAME/' . $tableName]),
-            'COLUMN_NAME',
-            'CONSTRAINT_NAME'
-        );
-
-        foreach (array_keys($constraints['FOREIGN KEY']) as $constraintName) {
-            $columnName = $referenceColumns[$constraintName];
-            $foreignKeys[$flippedIndexes[$columnName]][$constraintName] = $columnName;
-        }
-
-        $constraints['FOREIGN KEY'] = $foreignKeys;
-
-        return $constraints;
-    }
-
-    /**
      * Get data Scheme from data source
      *
-     * @param Module $module
+     * @param  Module $module
      * @return array
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.5
-     * @since 0.0
+     * @since   0.0
      */
     public function getTables(Module $module)
     {
@@ -448,7 +405,7 @@ class Mysqli extends Data_Source
             'references' => []
         ];
 
-        foreach ($dataProvider->get('TABLES:TABLE_SCHEMA/' . $this->_scheme) as $table) {
+        foreach ($dataProvider->get('TABLES:TABLE_SCHEMA/' . $this->scheme) as $table) {
             if ($module->checkTableByPrefix($table['TABLE_NAME'], $this->getDataSourceKey())) {
                 if (!isset($tables[$table['TABLE_NAME']])) {
                     $tables[$table['TABLE_NAME']] = $tableDefault;
@@ -508,14 +465,18 @@ class Mysqli extends Data_Source
                     $columns[$columnName]['scheme'] = $column;
                     $columns[$columnName]['schemeHash'] = crc32(Json::encode($columns[$columnName]['scheme']));
 
-                    $columns[$columnName]['fieldName'] =
-                        Helper_Model::getFieldNameByColumnName($columnName, $data, $module->getDataSourcePrefixes($this->getDataSourceKey()));
+                    $columns[$columnName]['fieldName'] = Helper_Model::getFieldNameByColumnName(
+                        $columnName,
+                        $data,
+                        $module->getDataSourcePrefixes($this->getDataSourceKey())
+                    );
 
                     foreach (Model::getConfig()->gets('schemeColumnPlugins') as $columnPluginClass) {
-                        $columns[$columnName][$columnPluginClass] = $columnPluginClass::schemeColumnPlugin($columnName, $data);
+                        $columns[$columnName][$columnPluginClass] =
+                            $columnPluginClass::schemeColumnPlugin($columnName, $data);
                     }
                 }
-//                Model::getCodeGenerator()->generate($data, 1);
+                //                Model::getCodeGenerator()->generate($data, 1);
             }
         }
 
@@ -523,15 +484,120 @@ class Mysqli extends Data_Source
     }
 
     /**
-     * Get table scheme from source
+     * Get indexes of table
      *
-     * @param $tableName
+     * @param  $tableName
      * @return array
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
+     */
+    public function getIndexes($tableName)
+    {
+        $dataProvider = $this->getSourceDataProvider();
+        $dataProvider->setScheme('information_schema');
+
+        $constraints = [
+            'PRIMARY KEY' => [
+                'PRIMARY' => []
+            ],
+            'FOREIGN KEY' => [],
+            'UNIQUE' => []
+        ];
+
+        $key = ['TABLE_CONSTRAINTS:TABLE_SCHEMA/' . $this->scheme, 'TABLE_CONSTRAINTS:TABLE_NAME/' . $tableName];
+
+        foreach ($dataProvider->get($key) as $constraint) {
+            $constraints[$constraint['CONSTRAINT_TYPE']][$constraint['CONSTRAINT_NAME']] = [];
+        }
+
+        $key = ['STATISTICS:TABLE_SCHEMA/' . $this->scheme, 'STATISTICS:TABLE_NAME/' . $tableName];
+
+        $indexes = $dataProvider->get($key);
+
+        foreach ($constraints['PRIMARY KEY'] as $constraintName => &$constraint) {
+            foreach ($indexes as $index) {
+                if ($index['INDEX_NAME'] != $constraintName) {
+                    continue;
+                }
+
+                $constraint[$index['SEQ_IN_INDEX']] = $index['COLUMN_NAME'];
+                unset($index['COLUMN_NAME']);
+            }
+        }
+
+        foreach ($constraints['UNIQUE'] as $constraintName => &$constraint) {
+            foreach ($indexes as $index) {
+                if ($index['INDEX_NAME'] != $constraintName) {
+                    continue;
+                }
+
+                $constraint[$index['SEQ_IN_INDEX']] = $index['COLUMN_NAME'];
+                unset($index['COLUMN_NAME']);
+            }
+        }
+
+        $flippedIndexes = Arrays::column($indexes, 'INDEX_NAME', 'COLUMN_NAME');
+
+        $foreignKeys = [];
+
+        $key = ['KEY_COLUMN_USAGE:TABLE_SCHEMA/' . $this->scheme, 'KEY_COLUMN_USAGE:TABLE_NAME/' . $tableName];
+
+        $referenceColumns = Arrays::column($dataProvider->get($key), 'COLUMN_NAME', 'CONSTRAINT_NAME');
+
+        foreach (array_keys($constraints['FOREIGN KEY']) as $constraintName) {
+            $columnName = $referenceColumns[$constraintName];
+            $foreignKeys[$flippedIndexes[$columnName]][$constraintName] = $columnName;
+        }
+
+        $constraints['FOREIGN KEY'] = $foreignKeys;
+
+        return $constraints;
+    }
+
+    /**
+     * Get table references from source
+     *
+     * @param  $tableName
+     * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.6
+     * @since   0.6
+     */
+    public function getReferences($tableName)
+    {
+        $dataProvider = $this->getSourceDataProvider();
+        $dataProvider->setScheme('information_schema');
+
+        $references = [];
+
+        $key = ['REFERENTIAL_CONSTRAINTS:CONSTRAINT_SCHEMA/' . $this->scheme, 'CONSTRAINTS:TABLE_NAME/' . $tableName];
+
+        foreach ($dataProvider->get($key) as $reference) {
+            $references[$reference['REFERENCED_TABLE_NAME']] = [
+                'constraintName' => $reference['CONSTRAINT_NAME'],
+                'onUpdate' => $reference['UPDATE_RULE'],
+                'onDelete' => $reference['DELETE_RULE'],
+            ];
+        }
+
+        return $references;
+    }
+
+    /**
+     * Get table scheme from source
+     *
+     * @param  $tableName
+     * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since   0.0
      */
     public function getColumns($tableName)
     {
@@ -540,7 +606,9 @@ class Mysqli extends Data_Source
         $dataProvider = $this->getSourceDataProvider();
         $dataProvider->setScheme('information_schema');
 
-        foreach ($dataProvider->get(['COLUMNS:TABLE_SCHEMA/' . $this->_scheme, 'COLUMNS:TABLE_NAME/' . $tableName]) as $column) {
+        $key = ['COLUMNS:TABLE_SCHEMA/' . $this->scheme, 'COLUMNS:TABLE_NAME/' . $tableName];
+
+        foreach ($dataProvider->get($key) as $column) {
             $columnName = $column['COLUMN_NAME'];
             $default = $default = $column['COLUMN_DEFAULT'];
 
@@ -572,13 +640,13 @@ class Mysqli extends Data_Source
     /**
      * Execute query create table to data source
      *
-     * @param Query $query
+     * @param  Query $query
      * @return array
      * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.2
-     * @since 0.2
+     * @since   0.2
      */
     public function executeCreate(Query $query)
     {
@@ -596,7 +664,8 @@ class Mysqli extends Data_Source
                     '#' . $errno . ': {$0} - {$1} [{$2}]',
                     [$error, print_r($query->getBody(), true), implode(', ', $query->getBinds())]
                 ],
-                __FILE__, __LINE__
+                __FILE__,
+                __LINE__
             );
         }
 
@@ -610,13 +679,13 @@ class Mysqli extends Data_Source
     /**
      * Execute query drop table to data source
      *
-     * @param Query $query
+     * @param  Query $query
      * @return array
      * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.2
-     * @since 0.2
+     * @since   0.2
      */
     public function executeDrop(Query $query)
     {
@@ -634,7 +703,8 @@ class Mysqli extends Data_Source
                     '#' . $errno . ': {$0} - {$1} [{$2}]',
                     [$error, print_r($query->getBody(), true), implode(', ', $query->getBinds())]
                 ],
-                __FILE__, __LINE__
+                __FILE__,
+                __LINE__
             );
         }
 
@@ -653,7 +723,7 @@ class Mysqli extends Data_Source
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
-     * @since 0.4
+     * @since   0.4
      */
     public function getDataProviderClass()
     {
@@ -668,7 +738,7 @@ class Mysqli extends Data_Source
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
-     * @since 0.4
+     * @since   0.4
      */
     public function getQueryTranslatorClass()
     {
@@ -681,7 +751,7 @@ class Mysqli extends Data_Source
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.5
-     * @since 0.5
+     * @since   0.5
      */
     public function beginTransaction()
     {
@@ -694,7 +764,7 @@ class Mysqli extends Data_Source
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.5
-     * @since 0.5
+     * @since   0.5
      */
     public function commitTransaction()
     {
@@ -708,40 +778,11 @@ class Mysqli extends Data_Source
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.5
-     * @since 0.5
+     * @since   0.5
      */
     public function rollbackTransaction()
     {
         $this->getConnection()->rollback();
         $this->getConnection()->autocommit(true);
-    }
-
-    /**
-     * Get table references from source
-     *
-     * @param $tableName
-     * @return array
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.6
-     * @since 0.6
-     */
-    public function getReferences($tableName)
-    {
-        $dataProvider = $this->getSourceDataProvider();
-        $dataProvider->setScheme('information_schema');
-
-        $references = [];
-
-        foreach ($dataProvider->get(['REFERENTIAL_CONSTRAINTS:CONSTRAINT_SCHEMA/' . $this->_scheme, 'CONSTRAINTS:TABLE_NAME/' . $tableName]) as $reference) {
-            $references[$reference['REFERENCED_TABLE_NAME']] = [
-                'constraintName' => $reference['CONSTRAINT_NAME'],
-                'onUpdate' => $reference['UPDATE_RULE'],
-                'onDelete' => $reference['DELETE_RULE'],
-            ];
-        }
-
-        return $references;
     }
 }

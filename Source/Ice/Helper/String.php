@@ -2,13 +2,12 @@
 /**
  * Ice helper string class
  *
- * @link http://www.iceframework.net
+ * @link      http://www.iceframework.net
  * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
- * @license https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
+ * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
 namespace Ice\Helper;
-
 
 use Ice\Core\Exception;
 
@@ -19,11 +18,11 @@ use Ice\Core\Exception;
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
- * @package Ice
+ * @package    Ice
  * @subpackage Helper
  *
  * @version 0.0
- * @since 0.0
+ * @since   0.0
  */
 class String
 {
@@ -34,16 +33,16 @@ class String
     /**
      * Trim with some chars
      *
-     * @param $string
-     * @param null $chars
-     * @param string $type
+     * @param  $string
+     * @param  null $chars
+     * @param  string $type
      * @return string
      * @throws Exception
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.3
-     * @since 0.0
+     * @since   0.0
      */
     public static function trim($string, $chars, $type = self::TRIM_TYPE_BOTH)
     {
@@ -70,15 +69,15 @@ class String
     /**
      * Check starts with string
      *
-     * @param $haystack
-     * @param $needles
-     * @param string $type
+     * @param  $haystack
+     * @param  $needles
+     * @param  string $type
      * @return bool
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.5
-     * @since 0.5
+     * @since   0.5
      */
     public static function startsWith($haystack, $needles, $type = 'or')
     {
@@ -103,14 +102,14 @@ class String
     /**
      * Check ends with string
      *
-     * @param $haystack
-     * @param $needle
+     * @param  $haystack
+     * @param  $needle
      * @return bool
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.5
-     * @since 0.5
+     * @since   0.5
      */
     public static function endsWith($haystack, $needle)
     {
@@ -125,13 +124,13 @@ class String
     /**
      * Return random string
      *
-     * @param int $length
+     * @param  int $length
      * @return string
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.5
-     * @since 0.5
+     * @since   0.5
      */
     public static function getRandomString($length = 12)
     {
@@ -143,4 +142,4 @@ class String
         }
         return $randomString;
     }
-} 
+}

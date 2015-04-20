@@ -4,13 +4,14 @@ namespace Ice\Data\Provider;
 
 use Ice\Core\Data_Provider;
 use Ice\Core\Exception;
+use Ice\Core\Logger;
 
 class Mongodb extends Data_Provider
 {
     const DEFAULT_DATA_PROVIDER_KEY = 'Ice:Mongodb/default';
     const DEFAULT_KEY = 'default';
 
-    protected $_options = [
+    protected $options = [
         'host' => 'localhost',
         'port' => '27017'
     ];
@@ -23,7 +24,7 @@ class Mongodb extends Data_Provider
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
-     * @since 0.4
+     * @since   0.4
      */
     protected static function getDefaultDataProviderKey()
     {
@@ -38,7 +39,7 @@ class Mongodb extends Data_Provider
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     protected static function getDefaultKey()
     {
@@ -48,13 +49,13 @@ class Mongodb extends Data_Provider
     /**
      * Get data from data provider by key
      *
-     * @param string $key
+     * @param  string $key
      * @return mixed
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
-     * @since 0.4
+     * @since   0.4
      */
     public function get($key = null)
     {
@@ -64,15 +65,15 @@ class Mongodb extends Data_Provider
     /**
      * Set data to data provider
      *
-     * @param string $key
-     * @param $value
-     * @param null $ttl
+     * @param  string $key
+     * @param  $value
+     * @param  null $ttl
      * @return mixed setted value
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
-     * @since 0.4
+     * @since   0.4
      */
     public function set($key, $value = null, $ttl = null)
     {
@@ -82,15 +83,15 @@ class Mongodb extends Data_Provider
     /**
      * Delete from data provider by key
      *
-     * @param string $key
-     * @param bool $force if true return boolean else deleted value
+     * @param  string $key
+     * @param  bool $force if true return boolean else deleted value
      * @throws Exception
      * @return mixed|boolean
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
-     * @since 0.4
+     * @since   0.4
      */
     public function delete($key, $force = true)
     {
@@ -100,14 +101,14 @@ class Mongodb extends Data_Provider
     /**
      * Increment value by key with defined step (default 1)
      *
-     * @param $key
-     * @param int $step
+     * @param  $key
+     * @param  int $step
      * @return mixed new value
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
-     * @since 0.4
+     * @since   0.4
      */
     public function incr($key, $step = 1)
     {
@@ -117,14 +118,14 @@ class Mongodb extends Data_Provider
     /**
      * Decrement value by key with defined step (default 1)
      *
-     * @param $key
-     * @param int $step
+     * @param  $key
+     * @param  int $step
      * @return mixed new value
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
-     * @since 0.4
+     * @since   0.4
      */
     public function decr($key, $step = 1)
     {
@@ -139,7 +140,7 @@ class Mongodb extends Data_Provider
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
-     * @since 0.4
+     * @since   0.4
      */
     public function flushAll()
     {
@@ -149,41 +150,17 @@ class Mongodb extends Data_Provider
     /**
      * Return keys by pattern
      *
-     * @param string $pattern
+     * @param  string $pattern
      * @return array
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
-     * @since 0.4
+     * @since   0.4
      */
     public function getKeys($pattern = null)
     {
         // TODO: Implement getKeys() method.
-    }
-
-    /**
-     * Connect to data provider
-     *
-     * @param $connection
-     * @return boolean
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since 0.4
-     */
-    protected function connect(&$connection)
-    {
-        $options = $this->getOptions();
-
-        try {
-            $connection = new \MongoClient('mongodb://' . $options['host'] . ':' . $options['port']);
-        } catch (\MongoConnectionException $e) {
-            Mongodb::getLogger()->exception('mongodb - ' . $e->getMessage(), __FILE__, __LINE__, $e);
-        }
-
-        return (bool)$connection;
     }
 
     /**
@@ -194,11 +171,38 @@ class Mongodb extends Data_Provider
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
-     * @since 0.4
+     * @since   0.4
      */
     public function getConnection()
     {
         return parent::getConnection();
+    }
+
+    /**
+     * Connect to data provider
+     *
+     * @param  $connection
+     * @return boolean
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since   0.4
+     */
+    protected function connect(&$connection)
+    {
+        $options = $this->getOptions();
+
+        try {
+            $connection = new \MongoClient('mongodb://' . $options['host'] . ':' . $options['port']);
+        } catch (\MongoConnectionException $e) {
+//            Mongodb::getLogger()->exception('mongodb - ' . $e->getMessage(), __FILE__, __LINE__, $e);
+            Mongodb::getLogger()
+                ->info(['mongodb - #' . $e->getCode() . ': {$0}', $e->getMessage()], Logger::WARNING);
+            return false;
+        }
+
+        return (bool)$connection;
     }
 
     /**
@@ -209,7 +213,7 @@ class Mongodb extends Data_Provider
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
-     * @since 0.4
+     * @since   0.4
      */
     protected function close(&$connection)
     {

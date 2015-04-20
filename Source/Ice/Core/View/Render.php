@@ -2,9 +2,9 @@
 /**
  * Ice core view render abstarct class
  *
- * @link http://www.iceframework.net
+ * @link      http://www.iceframework.net
  * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
- * @license https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
+ * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
 namespace Ice\Core;
@@ -20,11 +20,11 @@ use Ice\Core;
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
- * @package Ice
+ * @package    Ice
  * @subpackage Core
  *
  * @version 0.0
- * @since 0.0
+ * @since   0.0
  */
 abstract class View_Render extends Container
 {
@@ -42,22 +42,6 @@ abstract class View_Render extends Container
     public static $templates = [];
 
     /**
-     * Create new instance of view render
-     *
-     * @param $key
-     * @return View_Render
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since 0.0
-     */
-    protected static function create($key)
-    {
-        $viewRenderClass = self::getClass();
-        return new $viewRenderClass();
-    }
-
-    /**
      * Return current processing template
      *
      * @return string
@@ -65,7 +49,7 @@ abstract class View_Render extends Container
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public static function getLastTemplate()
     {
@@ -76,34 +60,21 @@ abstract class View_Render extends Container
         return reset(View_Render::$templates);
     }
 
-//    /**
-//     * Display rendered view in standard output
-//     *
-//     * @param $template
-//     * @param array $data
-//     * @param string $templateType
-//     *
-//     * @author anonymous <email>
-//     *
-//     * @version 0
-//     * @since 0
-//     */
-//    abstract public function display($template, array $data = [], $templateType = View_Render::TEMPLATE_TYPE_FILE);
-
     /**
-     * Render view via current view render
+     * Create new instance of view render
      *
-     * @param $template
-     * @param array $data
-     * @param string $templateType
-     * @return mixed
+     * @param  $key
+     * @return View_Render
+     * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @author anonymous <email>
-     *
-     * @version 0
-     * @since 0
+     * @version 0.4
+     * @since   0.0
      */
-    abstract public function fetch($template, array $data = [], $templateType = View_Render::TEMPLATE_TYPE_FILE);
+    protected static function create($key)
+    {
+        $viewRenderClass = self::getClass();
+        return new $viewRenderClass();
+    }
 
     /**
      * Default action key
@@ -113,7 +84,7 @@ abstract class View_Render extends Container
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
-     * @since 0.0
+     * @since   0.0
      */
     protected static function getDefaultKey()
     {
@@ -128,10 +99,25 @@ abstract class View_Render extends Container
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
-     * @since 0.4
+     * @since   0.4
      */
     protected static function getDefaultClassKey()
     {
         return self::getClass() . '/default';
     }
+
+    /**
+     * Render view via current view render
+     *
+     * @param  $template
+     * @param  array $data
+     * @param  string $templateType
+     * @return mixed
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since   0
+     */
+    abstract public function fetch($template, array $data = [], $templateType = View_Render::TEMPLATE_TYPE_FILE);
 }

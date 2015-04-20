@@ -1,42 +1,50 @@
 <?php
 return [
-    'filemtime(): stat failed for /home/dp/PhpstormProjects/ifs/_cache/GuestBook/smarty/templates_c/de70cb76f312be4caa65ad9f3233284f1fb51b05.file.Index.tpl.php' => [
-        'en' => 'filemtime(): stat failed for /home/dp/PhpstormProjects/ifs/_cache/GuestBook/smarty/templates_c/de70cb76f312be4caa65ad9f3233284f1fb51b05.file.Index.tpl.php',
+    'Undefined offset: 1' => [
+        'en' => 'Undefined offset: 1',
+        'ru' => 'Значение Undefined смещение: 1',
     ],
-    'filemtime(): stat failed for /home/dp/PhpstormProjects/ifs/_cache/GuestBook/smarty/templates_c/1588bd16289b4ec1d673894b9b180ea4af0d9a26.string.php' => [
-        'en' => 'filemtime(): stat failed for /home/dp/PhpstormProjects/ifs/_cache/GuestBook/smarty/templates_c/1588bd16289b4ec1d673894b9b180ea4af0d9a26.string.php',
+    'Class \'MongoClient\' not found' => [
+        'en' => 'Class \'MongoClient\' not found',
+        'ru' => 'Класс \'MongoClient\' не найдена',
     ],
-    'filemtime(): stat failed for /home/dp/PhpstormProjects/ifs/_cache/GuestBook/smarty/templates_c/a7934e51bb591fa6bed52da943329e2f8829ea70.string.php' => [
-        'en' => 'filemtime(): stat failed for /home/dp/PhpstormProjects/ifs/_cache/GuestBook/smarty/templates_c/a7934e51bb591fa6bed52da943329e2f8829ea70.string.php',
+    'Undefined offset: 71' => [
+        'en' => 'Undefined offset: 71',
+        'ru' => 'Значение Undefined смещение: 71',
     ],
-    'filemtime(): stat failed for /home/dp/PhpstormProjects/ifs/_cache/GuestBook/smarty/templates_c/1a6ec570b5291115aca308f518c013abdbf152b3.file.Roll.tpl.php' => [
-        'en' => 'filemtime(): stat failed for /home/dp/PhpstormProjects/ifs/_cache/GuestBook/smarty/templates_c/1a6ec570b5291115aca308f518c013abdbf152b3.file.Roll.tpl.php',
+    'chgrp(): Operation not permitted' => [
+        'en' => 'chgrp(): Operation not permitted',
+        'ru' => 'chgrp, указав(): операция не допускается',
     ],
-    'filemtime(): stat failed for /home/dp/PhpstormProjects/ifs/_cache/GuestBook/smarty/templates_c/8301da652422a98afbcef5933b92f42e3deb204c.string.php' => [
-        'en' => 'filemtime(): stat failed for /home/dp/PhpstormProjects/ifs/_cache/GuestBook/smarty/templates_c/8301da652422a98afbcef5933b92f42e3deb204c.string.php',
+    'Undefined index: limit' => [
+        'en' => 'Undefined index: limit',
+        'ru' => 'Неопределенный индекс: предел',
     ],
-    'filemtime(): stat failed for /home/dp/PhpstormProjects/ifs/_cache/GuestBook/smarty/templates_c/6521e969c0528a35445bd9af12bc6b50f3efb3ad.string.php' => [
-        'en' => 'filemtime(): stat failed for /home/dp/PhpstormProjects/ifs/_cache/GuestBook/smarty/templates_c/6521e969c0528a35445bd9af12bc6b50f3efb3ad.string.php',
+    'Argument 2 passed to Ice\\Core\\Query_Builder::attachUi() must be an instance of Ice\\Core\\Ui, instance of Ice\\Widget\\Menu\\Pagination given, called in /home/dp/PhpstormProjects/ebs/vendor/ifacesoft/ice/Source/Ice/Action/Crud.php on line 96 and defined' => [
+        'en' => 'Argument 2 passed to Ice\\Core\\Query_Builder::attachUi() must be an instance of Ice\\Core\\Ui, instance of Ice\\Widget\\Menu\\Pagination given, called in /home/dp/PhpstormProjects/ebs/vendor/ifacesoft/ice/Source/Ice/Action/Crud.php on line 96 and defined',
+        'ru' => 'Аргумент 2 прошел на льду\\ядро\\Query_Builder::attachUi() должен быть экземпляр лед\\ядро\\пользовательский интерфейс, экземпляр лед\\виджет\\меню\\Пагинация дается, называемый в /home/dp/PhpstormProjects/ebs/vendor/ifacesoft/ice/Source/Ice/Action/Crud.php на линии 96 и определенными',
     ],
-    'filemtime(): stat failed for /home/dp/PhpstormProjects/ifs/_cache/GuestBook/smarty/templates_c/759c6e36a96df90a849e715090911ada2d58b786.file.Submit.tpl.php' => [
-        'en' => 'filemtime(): stat failed for /home/dp/PhpstormProjects/ifs/_cache/GuestBook/smarty/templates_c/759c6e36a96df90a849e715090911ada2d58b786.file.Submit.tpl.php',
+    'Argument 2 passed to Ice\\Core\\Query_Builder::attachUi() must be an instance of Ice\\Core\\Ui, instance of Ice\\Widget\\Data\\Table given, called in /home/dp/PhpstormProjects/ebs/vendor/ifacesoft/ice/Source/Ice/Action/Crud.php on line 95 and defined' => [
+        'en' => 'Argument 2 passed to Ice\\Core\\Query_Builder::attachUi() must be an instance of Ice\\Core\\Ui, instance of Ice\\Widget\\Data\\Table given, called in /home/dp/PhpstormProjects/ebs/vendor/ifacesoft/ice/Source/Ice/Action/Crud.php on line 95 and defined',
+        'ru' => 'Аргумент 2 прошел на льду\\ядро\\Query_Builder::attachUi() должен быть экземпляр лед\\ядро\\пользовательский интерфейс, экземпляр лед\\виджет\\данные\\Таблица дается, называемый в /home/dp/PhpstormProjects/ebs/vendor/ifacesoft/ice/Source/Ice/Action/Crud.php на линии 95 и определенными',
     ],
-    'filemtime(): stat failed for /home/dp/PhpstormProjects/ifs/_cache/GuestBook/smarty/templates_c/b545c29374ea198eb400f51f03740d222d6ffb93.file.Action.tpl.php' => [
-        'en' => 'filemtime(): stat failed for /home/dp/PhpstormProjects/ifs/_cache/GuestBook/smarty/templates_c/b545c29374ea198eb400f51f03740d222d6ffb93.file.Action.tpl.php',
+    'chmod(): Operation not permitted' => [
+        'en' => 'chmod(): Operation not permitted',
+        'ru' => 'утилита chmod(): операция не допускается',
     ],
-    'filemtime(): stat failed for /home/dp/PhpstormProjects/ifs/_cache/GuestBook/smarty/templates_c/3907a3dcf4e8fd9ab0db1070576055556befd53e.file.Submit.tpl.php' => [
-        'en' => 'filemtime(): stat failed for /home/dp/PhpstormProjects/ifs/_cache/GuestBook/smarty/templates_c/3907a3dcf4e8fd9ab0db1070576055556befd53e.file.Submit.tpl.php',
+    'Object of class Ice\\Widget\\Menu\\Pagination could not be converted to int' => [
+        'en' => 'Object of class Ice\\Widget\\Menu\\Pagination could not be converted to int',
+        'ru' => 'Объект класса лед\\виджет\\меню\\Пагинация не может быть преобразован в int',
     ],
-    'filemtime(): stat failed for /home/dp/PhpstormProjects/ifs/_cache/GuestBook/smarty/templates_c/d94ff7a64bd44d1c5425d5726b0bb53a29c3b72f.file.Edit.tpl.php' => [
-        'en' => 'filemtime(): stat failed for /home/dp/PhpstormProjects/ifs/_cache/GuestBook/smarty/templates_c/d94ff7a64bd44d1c5425d5726b0bb53a29c3b72f.file.Edit.tpl.php',
+    'var_export does not handle circular references' => [
+        'en' => 'var_export does not handle circular references',
+        'ru' => 'var_export не обрабатывает циклические ссылки',
     ],
-    'filemtime(): stat failed for /home/dp/PhpstormProjects/ifs/_cache/GuestBook/smarty/templates_c/0751e7fcfbe8a6b5336c70f5db5c98d44d132e5d.file.Edit.tpl.php' => [
-        'en' => 'filemtime(): stat failed for /home/dp/PhpstormProjects/ifs/_cache/GuestBook/smarty/templates_c/0751e7fcfbe8a6b5336c70f5db5c98d44d132e5d.file.Edit.tpl.php',
-    ],
-    'array_column() expects at least 2 parameters, 1 given' => [
-        'ru' => 'array_column() expects at least 2 parameters, 1 given',
-    ],
-    'array_column() expects parameter 1 to be array, string given' => [
-        'ru' => 'array_column() expects parameter 1 to be array, string given',
+    'file_get_contents(https://translate.yandex.net/api/v1.5/tr.json/translate?key=trnsl.1.1.20150207T134028Z.19bab9f8d9228706.89067e4f90535d4a934a39fbaf284d8af968c9a9&text=mongodb - #71: {$0}&lang=en-ru): failed to open stream: HTTP request failed! HTTP/1.1 400 BAD REQUEST
+' => [
+        'en' => 'file_get_contents(https://translate.yandex.net/api/v1.5/tr.json/translate?key=trnsl.1.1.20150207T134028Z.19bab9f8d9228706.89067e4f90535d4a934a39fbaf284d8af968c9a9&text=mongodb - #71: {$0}&lang=en-ru): failed to open stream: HTTP request failed! HTTP/1.1 400 BAD REQUEST
+',
+        'ru' => 'file_get_contents(https://translate.yandex.net/api/v1.5/tr.json/translate?key=trnsl.1.1.20150207T134028Z.19bab9f8d9228706.89067e4f90535d4a934a39fbaf284d8af968c9a9&text=mongodb - #71: {$0}&lang=en-ru): failed to open stream: HTTP request failed! HTTP/1.1 400 BAD REQUEST
+',
     ],
 ];

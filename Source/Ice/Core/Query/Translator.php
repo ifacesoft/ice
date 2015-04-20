@@ -2,9 +2,9 @@
 /**
  * Ice core query translator class
  *
- * @link http://www.iceframework.net
+ * @link      http://www.iceframework.net
  * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
- * @license https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
+ * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
 namespace Ice\Core;
@@ -20,11 +20,11 @@ use Ice\Core;
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
- * @package Ice
+ * @package    Ice
  * @subpackage Core
  *
  * @version 0.0
- * @since 0.0
+ * @since   0.0
  */
 abstract class Query_Translator extends Container
 {
@@ -38,15 +38,32 @@ abstract class Query_Translator extends Container
     }
 
     /**
-     * Create new instance of query translator
+     * Return instance of query translator
      *
-     * @param $key
+     * @param  null $key
+     * @param  null $ttl
      * @return Query_Translator
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
-     * @since 0.0
+     * @since   0.4
+     */
+    public static function getInstance($key = null, $ttl = null)
+    {
+        return parent::getInstance($key, $ttl);
+    }
+
+    /**
+     * Create new instance of query translator
+     *
+     * @param  $key
+     * @return Query_Translator
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since   0.0
      */
     protected static function create($key)
     {
@@ -57,14 +74,14 @@ abstract class Query_Translator extends Container
     /**
      * Translate query body
      *
-     * @param array $sqlParts
+     * @param  array $sqlParts
      * @return string|array
      * @throws Exception
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
-     * @since 0.4
+     * @since   0.4
      */
     public function translate(array $sqlParts)
     {
@@ -94,22 +111,5 @@ abstract class Query_Translator extends Container
         }
 
         return $body;
-    }
-
-    /**
-     * Return instance of query translator
-     *
-     * @param null $key
-     * @param null $ttl
-     * @return Query_Translator
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since 0.4
-     */
-    public static function getInstance($key = null, $ttl = null)
-    {
-        return parent::getInstance($key, $ttl);
     }
 }

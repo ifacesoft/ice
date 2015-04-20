@@ -2,9 +2,9 @@
 /**
  * Ice core module class
  *
- * @link http://www.iceframework.net
+ * @link      http://www.iceframework.net
  * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
- * @license https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
+ * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
 namespace Ice\Core;
@@ -23,7 +23,7 @@ use Ice\Helper\String;
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
- * @package Ice
+ * @package    Ice
  * @subpackage Core
  */
 class Module extends Config
@@ -42,21 +42,90 @@ class Module extends Config
      *
      * @var array
      */
-    private static $_modules = null;
+    private static $modules = null;
+
+    /**
+     * Check table belongs to module
+     *
+     * @param  $tableName
+     * @param  $dataSourceKey
+     * @return bool
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since   0.5
+     */
+    public function checkTableByPrefix($tableName, $dataSourceKey)
+    {
+        return String::startsWith($tableName, $this->getDataSourcePrefixes($dataSourceKey));
+    }
+
+    /**
+     * Return table prefixes for module
+     *
+     * @param  $dataSourceKey
+     * @return array
+     * @throws Exception
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.6
+     * @since   0.5
+     */
+    public function getDataSourcePrefixes($dataSourceKey)
+    {
+        $dataSources = $this->getDataSources();
+        return (array)$dataSources[$dataSourceKey];
+    }
+
+    public function getDataSources()
+    {
+        return $this->gets(Data_Source::getClass());
+    }
+
+    public function getModelClass($tableName, $dataSourceKey)
+    {
+        $alias = null;
+        $tableNamePart = $tableName;
+
+        foreach ($this->getDataSourcePrefixes($dataSourceKey) as $prefix) {
+            if (String::startsWith($tableName, $prefix)) {
+                $alias = $this->getAlias();
+                $tableNamePart = substr($tableName, strlen($prefix));
+                break;
+            }
+        }
+
+        if (!$alias) {
+            $alias = Module::getInstance()->getAlias();
+        }
+
+        $modelName = $alias . '\Model\\';
+
+        foreach (explode('_', preg_replace('/_{2,}/', '_', $tableNamePart)) as $modelNamePart) {
+            $modelName .= ucfirst($modelNamePart) . '_';
+        }
+
+        return rtrim($modelName, '_');
+    }
+
+    public function getAlias()
+    {
+        return $this->getConfigName();
+    }
 
     /**
      * Get module instance by module alias
      *
-     * @param string $moduleAlias
-     * @param null $postfix
-     * @param bool $isRequired
-     * @param null $ttl
+     * @param  string $moduleAlias
+     * @param  null $postfix
+     * @param  bool $isRequired
+     * @param  null $ttl
      * @return Module
      * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
-     * @since 0.0
+     * @since   0.0
      */
     public static function getInstance($moduleAlias = null, $postfix = null, $isRequired = false, $ttl = null)
     {
@@ -67,7 +136,11 @@ class Module extends Config
         }
 
         if (!isset($modules[$moduleAlias])) {
-            Module::getLogger()->exception(['Module alias {$0} not found in module config files', $moduleAlias], __FILE__, __LINE__);
+            Module::getLogger()->exception(
+                ['Module alias {$0} not found in module config files', $moduleAlias],
+                __FILE__,
+                __LINE__
+            );
         }
 
         return $modules[$moduleAlias];
@@ -81,17 +154,17 @@ class Module extends Config
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
-     * @since 0.0
+     * @since   0.0
      */
     public static function getAll()
     {
-        if (self::$_modules === null) {
-            self::$_modules = [];
+        if (self::$modules === null) {
+            self::$modules = [];
 
-            Module::loadConfig('', '', self::$_modules, MODULE_CONFIG_PATH);
+            Module::loadConfig('', '', self::$modules, MODULE_CONFIG_PATH);
         }
 
-        return self::$_modules;
+        return self::$modules;
     }
 
     /**
@@ -101,14 +174,19 @@ class Module extends Config
      * @param string $context
      * @param array $modules
      *
-     * @param string $configFilePath
+     * @param  string $configFilePath
      * @throws \ErrorException
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
-     * @since 0.0
+     * @since   0.0
      */
-    private static function loadConfig($vendor, $context, array &$modules = [], $configFilePath = 'Config/Ice/Core/Module.php')
+    private static function loadConfig(
+        $vendor,
+        $context,
+        array &$modules = [],
+        $configFilePath = 'Config/Ice/Core/Module.php'
+    )
     {
         $modulePath = $vendor
             ? VENDOR_DIR . $vendor . '/'
@@ -156,70 +234,6 @@ class Module extends Config
         }
     }
 
-    /**
-     * Return table prefixes for module
-     *
-     * @param $dataSourceKey
-     * @return array
-     * @throws Exception
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.6
-     * @since 0.5
-     */
-    public function getDataSourcePrefixes($dataSourceKey)
-    {
-        $dataSources = $this->getDataSources();
-        return (array)$dataSources[$dataSourceKey];
-    }
-
-    /**
-     * Check table belongs to module
-     *
-     * @param $tableName
-     * @param $dataSourceKey
-     * @return bool
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since 0.5
-     */
-    public function checkTableByPrefix($tableName, $dataSourceKey)
-    {
-        return String::startsWith($tableName, $this->getDataSourcePrefixes($dataSourceKey));
-    }
-
-    public function getModelClass($tableName, $dataSourceKey)
-    {
-        $alias = null;
-        $tableNamePart = $tableName;
-
-        foreach ($this->getDataSourcePrefixes($dataSourceKey) as $prefix) {
-            if (String::startsWith($tableName, $prefix)) {
-                $alias = $this->getAlias();
-                $tableNamePart = substr($tableName, strlen($prefix));
-                break;
-            }
-        }
-
-        if (!$alias) {
-            $alias = Module::getInstance()->getAlias();
-        }
-
-        $modelName = $alias . '\Model\\';
-
-        foreach (explode('_', preg_replace('/_{2,}/', '_', $tableNamePart)) as $modelNamePart) {
-            $modelName .= ucfirst($modelNamePart) . '_';
-        }
-
-        return rtrim($modelName, '_');
-    }
-
-    public function getDataSources()
-    {
-        return $this->gets(Data_Source::getClass());
-    }
-
     public function getDataSourceTables()
     {
         $tables = [];
@@ -234,10 +248,5 @@ class Module extends Config
     public function getDataSourceKeys()
     {
         return array_keys($this->getDataSources());
-    }
-
-    public function getAlias()
-    {
-        return $this->getConfigName();
     }
 }

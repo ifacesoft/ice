@@ -56,7 +56,7 @@ class Api_Client_Yandex_Translate
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.5
-     * @since 0.5
+     * @since   0.5
      */
     public static function getClass()
     {
@@ -66,14 +66,14 @@ class Api_Client_Yandex_Translate
     /**
      * Определение языка
      *
-     * @param $text
+     * @param  $text
      * @return mixed
      * @throws \Exception
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
-     * @since 0.4
+     * @since   0.4
      */
     public static function detect($text)
     {
@@ -83,7 +83,9 @@ class Api_Client_Yandex_Translate
             throw new \Exception('Key is empty. See https://tech.yandex.ru/keys/get/?service=trnsl');
         }
 
-        if ($detect = Json::decode(Http::getContents('https://translate.yandex.net/api/v1.5/tr.json/detect?key=' . $yaKey . '&text=' . $text))['lang']) {
+        if ($detect = Json::decode(Http::getContents('https://translate.yandex.net/api/v1.5/tr.json/detect?key=' .
+            $yaKey . '&text=' . $text))['lang']
+        ) {
             return $detect;
         }
 
@@ -93,15 +95,15 @@ class Api_Client_Yandex_Translate
     /**
      * Перевод текста
      *
-     * @param $text
-     * @param $direction
+     * @param  $text
+     * @param  $direction
      * @return mixed
      * @throws \Exception
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
-     * @since 0.4
+     * @since   0.4
      */
     public static function translate($text, $direction)
     {
@@ -111,7 +113,9 @@ class Api_Client_Yandex_Translate
             throw new \Exception('Key is empty. See https://tech.yandex.ru/keys/get/?service=trnsl');
         }
 
-        if ($translate = Json::decode(Http::getContents('https://translate.yandex.net/api/v1.5/tr.json/translate?key=' . $yaKey . '&text=' . $text . '&lang=' . $direction))['text'][0]) {
+        if ($translate = Json::decode(Http::getContents('https://translate.yandex.net/api/v1.5/tr.json/translate?key=' .
+            $yaKey . '&text=' . $text . '&lang=' . $direction))['text'][0]
+        ) {
             return $translate;
         }
 
@@ -121,12 +125,12 @@ class Api_Client_Yandex_Translate
     /**
      * Return flags info
      *
-     * @param null $locale
+     * @param  null $locale
      * @return array
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.5
-     * @since 0.5
+     * @since   0.5
      */
     public static function getFlags($locale = null)
     {
@@ -148,14 +152,14 @@ class Api_Client_Yandex_Translate
     /**
      * Get available locales
      *
-     * @param null $locale
+     * @param  null $locale
      * @return array
      * @throws \Exception
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.5
-     * @since 0.5
+     * @since   0.5
      */
     public static function getLocales($locale = null)
     {
@@ -175,13 +179,13 @@ class Api_Client_Yandex_Translate
     /**
      * Получение списка направлений перевода
      *
-     * @param null $locale
+     * @param  null $locale
      * @return array
      * @throws \Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
-     * @since 0.4
+     * @since   0.4
      */
     public static function getLangs($locale)
     {
@@ -198,7 +202,8 @@ class Api_Client_Yandex_Translate
             throw new \Exception('Key is empty. See https://tech.yandex.ru/keys/get/?service=trnsl');
         }
 
-        $url = 'https://translate.yandex.net/api/v1.5/tr.json/getLangs?key=' . $yaKey . '&ui=' . Core_Request::getConfig()->get('locale');
+        $url = 'https://translate.yandex.net/api/v1.5/tr.json/getLangs?key=' . $yaKey .
+            '&ui=' . Core_Request::getConfig()->get('locale');
 
         $langs = Json::decode(Http::getContents($url));
 

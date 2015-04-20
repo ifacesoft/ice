@@ -4,7 +4,6 @@ namespace Ice\Data\Source;
 
 use Ice\Core\Data_Provider;
 use Ice\Core\Data_Source;
-use Ice\Core\Logger;
 use Ice\Core\Model;
 use Ice\Core\Module;
 use Ice\Core\Query;
@@ -23,14 +22,14 @@ class Mongodb extends Data_Source
     /**
      * Return instance of mongodb
      *
-     * @param null $key
-     * @param null $ttl
+     * @param  null $key
+     * @param  null $ttl
      * @return Mongodb
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
-     * @since 0.4
+     * @since   0.4
      */
     public static function getInstance($key = null, $ttl = null)
     {
@@ -40,12 +39,12 @@ class Mongodb extends Data_Source
     /**
      * Execute query select to data source
      *
-     * @param Query $query
+     * @param  Query $query
      * @return array
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
-     * @since 0.4
+     * @since   0.4
      */
     public function executeSelect(Query $query)
     {
@@ -53,8 +52,10 @@ class Mongodb extends Data_Source
 
         $statement = $this->getStatement($query->getBody(), $query->getBinds());
 
-        /** @var Model $modelClass */
-        $modelClass = $query->getModelClass();
+        /**
+         * @var Model $modelClass
+         */
+        $modelClass = $query->getQueryBuilder()->getModelClass();
         $tableName = $modelClass::getTableName();
 
         $pkFieldNames = $modelClass::getScheme()->getPkFieldNames();
@@ -68,7 +69,9 @@ class Mongodb extends Data_Source
             : [];
 
         try {
-            /** @var MongoCursor $cursor */
+            /**
+             * @var MongoCursor $cursor
+             */
             $cursor = $this->getConnection()->$tableName->find($filter, $statement['select']['columnNames']);
 
             if (isset($statement['order'])) {
@@ -95,7 +98,9 @@ class Mongodb extends Data_Source
                     '#' . $e->getCode() . ': {$0} - {$1} [{$2}]',
                     [$e->getMessage(), print_r($query->getBody(), true), implode(', ', $query->getBinds())]
                 ],
-                __FILE__, __LINE__, $e
+                __FILE__,
+                __LINE__,
+                $e
             );
         }
 
@@ -107,13 +112,13 @@ class Mongodb extends Data_Source
     /**
      * Prepare query statement for query
      *
-     * @param $body
-     * @param array $binds
+     * @param  $body
+     * @param  array $binds
      * @return mixed
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
-     * @since 0.4
+     * @since   0.4
      */
     public function getStatement($body, array $binds)
     {
@@ -122,7 +127,9 @@ class Mongodb extends Data_Source
                 continue;
             }
 
-            /** @var Model $modelClass */
+            /**
+             * @var Model $modelClass
+             */
             $modelClass = $data['modelClass'];
 
             $pkColumnNames = $modelClass::getScheme()->getPkColumnNames();
@@ -174,7 +181,13 @@ class Mongodb extends Data_Source
         }
 
         if (!empty($binds)) {
-            Mongodb::getLogger()->exception('Bind params failure', __FILE__, __LINE__, null, ['body' => $body, 'binds' => $binds]);
+            Mongodb::getLogger()->exception(
+                'Bind params failure',
+                __FILE__,
+                __LINE__,
+                null,
+                ['body' => $body, 'binds' => $binds]
+            );
         }
 
         return $body;
@@ -188,22 +201,22 @@ class Mongodb extends Data_Source
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
-     * @since 0.4
+     * @since   0.4
      */
     public function getConnection()
     {
-        return $this->getSourceDataProvider()->getConnection()->selectDB($this->_scheme);
+        return $this->getSourceDataProvider()->getConnection()->selectDB($this->scheme);
     }
 
     /**
      * Execute query insert to data source
      *
-     * @param Query $query
+     * @param  Query $query
      * @return array
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
-     * @since 0.4
+     * @since   0.4
      */
     public function executeInsert(Query $query)
     {
@@ -211,8 +224,10 @@ class Mongodb extends Data_Source
 
         $statement = $this->getStatement($query->getBody(), $query->getBinds());
 
-        /** @var Model $modelClass */
-        $modelClass = $query->getModelClass();
+        /**
+         * @var Model $modelClass
+         */
+        $modelClass = $query->getQueryBuilder()->getModelClass();
         $tableName = $modelClass::getTableName();
 
         try {
@@ -245,12 +260,12 @@ class Mongodb extends Data_Source
     /**
      * Execute query update to data source
      *
-     * @param Query $query
+     * @param  Query $query
      * @return array
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
-     * @since 0.4
+     * @since   0.4
      */
     public function executeUpdate(Query $query)
     {
@@ -258,8 +273,10 @@ class Mongodb extends Data_Source
 
         $statement = $this->getStatement($query->getBody(), $query->getBinds());
 
-        /** @var Model $modelClass */
-        $modelClass = $query->getModelClass();
+        /**
+         * @var Model $modelClass
+         */
+        $modelClass = $query->getQueryBuilder()->getModelClass();
         $tableName = $modelClass::getTableName();
 
         $this->getConnection()->$tableName->update($statement['where']['data'], $statement['update']['data']);
@@ -272,12 +289,12 @@ class Mongodb extends Data_Source
     /**
      * Execute query update to data source
      *
-     * @param Query $query
+     * @param  Query $query
      * @return array
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
-     * @since 0.4
+     * @since   0.4
      */
     public function executeDelete(Query $query)
     {
@@ -285,8 +302,10 @@ class Mongodb extends Data_Source
 
         $statement = $this->getStatement($query->getBody(), $query->getBinds());
 
-        /** @var Model $modelClass */
-        $modelClass = $query->getModelClass();
+        /**
+         * @var Model $modelClass
+         */
+        $modelClass = $query->getQueryBuilder()->getModelClass();
         $tableName = $modelClass::getTableName();
 
         $this->getConnection()->$tableName->remove($statement['where']['data']);
@@ -299,17 +318,19 @@ class Mongodb extends Data_Source
     /**
      * Execute query create table to data source
      *
-     * @param Query $query
+     * @param  Query $query
      * @return array
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
-     * @since 0.4
+     * @since   0.4
      */
     public function executeCreate(Query $query)
     {
-        /** @var Model $modelClass */
-        $modelClass = $query->getModelClass();
+        /**
+         * @var Model $modelClass
+         */
+        $modelClass = $query->getQueryBuilder()->getModelClass();
         $tableName = $modelClass::getTableName();
 
         $this->getConnection()->$tableName;
@@ -320,17 +341,19 @@ class Mongodb extends Data_Source
     /**
      * Execute query drop table to data source
      *
-     * @param Query $query
+     * @param  Query $query
      * @return array
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
-     * @since 0.4
+     * @since   0.4
      */
     public function executeDrop(Query $query)
     {
-        /** @var Model $modelClass */
-        $modelClass = $query->getModelClass();
+        /**
+         * @var Model $modelClass
+         */
+        $modelClass = $query->getQueryBuilder()->getModelClass();
         $tableName = $modelClass::getTableName();
 
         $this->getConnection()->$tableName->drop();
@@ -341,12 +364,12 @@ class Mongodb extends Data_Source
     /**
      * Get data Scheme from data source
      *
-     * @param Module $module
+     * @param  Module $module
      * @return array
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
-     * @since 0.4
+     * @since   0.4
      */
     public function getTables(Module $module)
     {
@@ -387,13 +410,13 @@ class Mongodb extends Data_Source
     /**
      * Get table scheme from source
      *
-     * @param $tableName
+     * @param  $tableName
      * @return array
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.5
-     * @since 0.4
+     * @since   0.4
      */
     public function getColumns($tableName)
     {
@@ -403,13 +426,13 @@ class Mongodb extends Data_Source
     /**
      * Get table indexes from source
      *
-     * @param $tableName
+     * @param  $tableName
      * @return array
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
-     * @since 0.4
+     * @since   0.4
      */
     public function getIndexes($tableName)
     {
@@ -432,7 +455,7 @@ class Mongodb extends Data_Source
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
-     * @since 0.4
+     * @since   0.4
      */
     public function getDataProviderClass()
     {
@@ -447,7 +470,7 @@ class Mongodb extends Data_Source
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
-     * @since 0.4
+     * @since   0.4
      */
     public function getQueryTranslatorClass()
     {
@@ -460,7 +483,7 @@ class Mongodb extends Data_Source
      * @author anonymous <email>
      *
      * @version 0
-     * @since 0
+     * @since   0
      */
     public function beginTransaction()
     {
@@ -473,7 +496,7 @@ class Mongodb extends Data_Source
      * @author anonymous <email>
      *
      * @version 0
-     * @since 0
+     * @since   0
      */
     public function commitTransaction()
     {
@@ -486,7 +509,7 @@ class Mongodb extends Data_Source
      * @author anonymous <email>
      *
      * @version 0
-     * @since 0
+     * @since   0
      */
     public function rollbackTransaction()
     {
@@ -497,13 +520,13 @@ class Mongodb extends Data_Source
     /**
      * Get table references from source
      *
-     * @param $tableName
+     * @param  $tableName
      * @return array
      *
      * @author anonymous <email>
      *
      * @version 0
-     * @since 0
+     * @since   0
      */
     public function getReferences($tableName)
     {

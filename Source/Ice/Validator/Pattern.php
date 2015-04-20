@@ -2,9 +2,9 @@
 /**
  * Ice validator implementation pattern class
  *
- * @link http://www.iceframework.net
+ * @link      http://www.iceframework.net
  * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
- * @license https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
+ * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
 namespace Ice\Validator;
@@ -20,11 +20,11 @@ use Ice\Core\Validator;
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
- * @package Ice
+ * @package    Ice
  * @subpackage Validator
  *
  * @version 0.0
- * @since 0.0
+ * @since   0.0
  */
 class Pattern extends Validator
 {
@@ -53,14 +53,14 @@ class Pattern extends Validator
      *      ];
      * ```
      *
-     * @param $data
-     * @param mixed|null $scheme
+     * @param  $data
+     * @param  mixed|null $scheme
      * @return boolean
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public function validate($data, $scheme = null)
     {

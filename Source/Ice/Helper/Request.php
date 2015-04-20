@@ -25,7 +25,7 @@ class Request
 
             if (preg_match($ascPattern, $value)) {
                 $orderParams[$name] = Query_Builder::SQL_ORDERING_ASC;
-            } else if (preg_match($descPattern, $value)) {
+            } elseif (preg_match($descPattern, $value)) {
                 $orderParams[$name] = Query_Builder::SQL_ORDERING_DESC;
             } else {
                 $orderParams[$name] = '';

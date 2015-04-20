@@ -2,9 +2,9 @@
 /**
  * Ice helper emmet class
  *
- * @link http://www.iceframework.net
+ * @link      http://www.iceframework.net
  * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>, sergb <email>
- * @license https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
+ * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
 namespace Ice\Helper;
@@ -16,11 +16,11 @@ namespace Ice\Helper;
  *
  * @author sergb <email>
  *
- * @package Ice
+ * @package    Ice
  * @subpackage Helper
  *
  * @version 0.0
- * @since 0.0
+ * @since   0.0
  */
 class Emmet
 {
@@ -29,62 +29,62 @@ class Emmet
     /**
      * Translate emmet string
      *
-     * @param string $emmetAbbreviation
-     * @param array $vars
+     * @param  string $emmetAbbreviation
+     * @param  array $vars
      * @return string
      *
      * @author sergb <email>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public static function translate($emmetAbbreviation, $vars = array())
     {
-//        // html>body>div#parent.wew.wewq{{$view}}
-//
-//        $result = '';
-//        $varPos = strpos($emmetAbbreviation, '{{');
-//        if ($varPos !== false) {
-//            $varName = substr($emmetAbbreviation, $varPos + 3, -2);
-//            $emmetAbbreviation = strstr($emmetAbbreviation, '{{', true);
-//        }
-//
-//        $tags = [];
-//
-//        foreach (explode('>', $emmetAbbreviation) as $tagPart) {
-//            $ids = explode('#', $tagPart);
-//
-//            if (count($ids) > 1) {
-//                list($tag, $tagPart) = $ids;
-//            }
-//
-//            $classes = explode('.', $tagPart);
-//
-//            $id = '';
-//            if (isset($tag)) {
-//                $id = ' id="' . array_shift($classes) . '"';
-//            } else {
-//                $tag = array_shift($classes);
-//            }
-//
-//            $class = empty($classes)
-//                ? ''
-//                : ' class="' . implode(' ', $classes) . '"';
-//
-//            $tags[] = $tag;
-//
-//            $result .= '<' . $tag . $id . $class . '>';
-//        }
-//
-//        if (isset($varName)) {
-//            $result .= $vars[$varName];
-//        }
-//
-//        foreach (array_reverse($tags) as $tag) {
-//            $result .= '</' . $tag . '>';
-//        }
-//
-//        return $result;
+        //        // html>body>div#parent.wew.wewq{{$view}}
+        //
+        //        $result = '';
+        //        $varPos = strpos($emmetAbbreviation, '{{');
+        //        if ($varPos !== false) {
+        //            $varName = substr($emmetAbbreviation, $varPos + 3, -2);
+        //            $emmetAbbreviation = strstr($emmetAbbreviation, '{{', true);
+        //        }
+        //
+        //        $tags = [];
+        //
+        //        foreach (explode('>', $emmetAbbreviation) as $tagPart) {
+        //            $ids = explode('#', $tagPart);
+        //
+        //            if (count($ids) > 1) {
+        //                list($tag, $tagPart) = $ids;
+        //            }
+        //
+        //            $classes = explode('.', $tagPart);
+        //
+        //            $id = '';
+        //            if (isset($tag)) {
+        //                $id = ' id="' . array_shift($classes) . '"';
+        //            } else {
+        //                $tag = array_shift($classes);
+        //            }
+        //
+        //            $class = empty($classes)
+        //                ? ''
+        //                : ' class="' . implode(' ', $classes) . '"';
+        //
+        //            $tags[] = $tag;
+        //
+        //            $result .= '<' . $tag . $id . $class . '>';
+        //        }
+        //
+        //        if (isset($varName)) {
+        //            $result .= $vars[$varName];
+        //        }
+        //
+        //        foreach (array_reverse($tags) as $tag) {
+        //            $result .= '</' . $tag . '>';
+        //        }
+        //
+        //        return $result;
 
 
         $reEmmetDelimiter = '[>+]';
@@ -95,9 +95,12 @@ class Emmet
         $reEmmetElementAttributeSpec = '(?:[#.](?:[$0-9a-zA-Z_-]|' . $reEmmetBucksSpec . ')+|\[[^]]*\])';
         $reEmmetTextSpec = '([{](?:(?>[^{}]+)|(?-1))*[}])'; // Recursive RE! Limited to 15-levels.
         $reEmmetElementAttributesAndTextSpec = '(?:' . $reEmmetElementAttributeSpec . '*' . $reEmmetTextSpec . '?)';
-        $reEmmetElementSpec = $reEmmetElementTag . '' . $reEmmetElementAttributesAndTextSpec . '(?:[*]' . $reEmmetElementTrivial . ')??';
-        $reEmmetElementReplace = '/^(' . $reEmmetElementTag . ')(' . $reEmmetElementAttributesAndTextSpec . ')((?:[*]' . $reEmmetElementTrivial . ')??)$/';
-        $reEmmetLastElementMatch = '/^(.*?)' . $reEmmetElementTagLeftBorder . '(' . $reEmmetElementSpec . ')(' . $reEmmetDelimiter . '?)$/';
+        $reEmmetElementSpec =
+            $reEmmetElementTag . '' . $reEmmetElementAttributesAndTextSpec . '(?:[*]' . $reEmmetElementTrivial . ')??';
+        $reEmmetElementReplace = '/^(' . $reEmmetElementTag . ')(' . $reEmmetElementAttributesAndTextSpec .
+            ')((?:[*]' . $reEmmetElementTrivial . ')??)$/';
+        $reEmmetLastElementMatch = '/^(.*?)' . $reEmmetElementTagLeftBorder . '(' .
+            $reEmmetElementSpec . ')(' . $reEmmetDelimiter . '?)$/';
 
         $emmetAbbreviationRemain = $emmetAbbreviation;
         $previosTranslatedElement = '';
@@ -133,20 +136,20 @@ class Emmet
     /**
      * Трянсляция аббревиатуры одного элемента с подстановкой значений счетчика и переменных.
      *
-     * @param array $matches
-     * @param string $innerHtml
-     * @param array $vars
+     * @param  array $matches
+     * @param  string $innerHtml
+     * @param  array $vars
      * @return string
      *
      * @author sergb <email>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     private static function translateElement($matches, $innerHtml = '', $vars = array())
     {
-//        $indentString = ' ';
-//        $eol = PHP_EOL;
+        //        $indentString = ' ';
+        //        $eol = PHP_EOL;
         $reEmmetBucksSpec = '(?:[$]+@?-?\d*)';
 
         $html = $innerHtml;
@@ -155,7 +158,7 @@ class Emmet
         $emmetAttrs = $matches[2];
         $tagName = $matches[1];
         $multiplier = $matches[4];
-//        var_dump(__METHOD__); print_r($matches); // mega debug
+        //        var_dump(__METHOD__); print_r($matches); // mega debug
         if (!empty($emmetText)) {
             $html = self::translateText($emmetText, $vars) . $html;
         }
@@ -177,32 +180,32 @@ class Emmet
         if (!empty($tagName)) {
             $html = '<' . $tagName . $attrString . '>' . $html . '</' . $tagName . '>';
         }
-//        if (!empty($multiplier)) {
-//            if (preg_match('/^[*](\d+)/', $multiplier, $m)) {
-//                $limit = intval($m[1]);
-//                $tmpHtml = '';
-//                for ($i = 1; $i <= $limit; $i++) {
-//                    $tmpHtml .= self::translateBucks($html, $limit, $i);
-//                }
-//                $html = $tmpHtml;
-//            }
-//        } else {
-//            $html = self::translateBucks($html, 1, 1);
-//        }
+        //        if (!empty($multiplier)) {
+        //            if (preg_match('/^[*](\d+)/', $multiplier, $m)) {
+        //                $limit = intval($m[1]);
+        //                $tmpHtml = '';
+        //                for ($i = 1; $i <= $limit; $i++) {
+        //                    $tmpHtml .= self::translateBucks($html, $limit, $i);
+        //                }
+        //                $html = $tmpHtml;
+        //            }
+        //        } else {
+        //            $html = self::translateBucks($html, 1, 1);
+        //        }
         return $html;
     }
 
     /**
      * Подставляет в текст значения именованных переменных.
      *
-     * @param string $emmetText
-     * @param array $vars
+     * @param  string $emmetText
+     * @param  array $vars
      * @return string
      *
      * @author sergb <email>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     private static function translateText($emmetText, $vars = array())
     {
@@ -219,15 +222,15 @@ class Emmet
     /**
      * Подставляет в текст значения счетчика.
      *
-     * @param string $emmet Text
-     * @param int $multiplierValue Общее число циклов.
-     * @param int $counterValue Номер итерации в цикле.
+     * @param  string $emmet Text
+     * @param  int $multiplierValue Общее число циклов.
+     * @param  int $counterValue Номер итерации в цикле.
      * @return string
      *
      * @author sergb <email>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     private static function translateBucks($emmet, $multiplierValue, $counterValue = 1)
     {
@@ -250,7 +253,6 @@ class Emmet
         };
         return preg_replace_callback($reEmmetBucksReplace, $callback, $emmet);
     }
-
 }
 
 //$emmet = 'html>head>tex+oppo';

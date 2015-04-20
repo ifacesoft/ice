@@ -2,9 +2,9 @@
 /**
  * Ice core cache class
  *
- * @link http://www.iceframework.net
+ * @link      http://www.iceframework.net
  * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
- * @license https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
+ * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
 namespace Ice\Core;
@@ -19,7 +19,7 @@ use Ice\Data\Provider\Repository;
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
- * @package Ice
+ * @package    Ice
  * @subpackage Core
  */
 class Cache
@@ -29,8 +29,8 @@ class Cache
     const VALIDATE = 'validate';
     const INVALIDATE = 'invalidate';
 
-    private $_value = null;
-    private $_cacheable = null;
+    private $value = null;
+    private $cacheable = null;
 
     /**
      * Private constructor for cache object
@@ -41,25 +41,25 @@ class Cache
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.5
-     * @since 0.5
+     * @since   0.5
      */
     private function __construct(Cacheable $cacheable, $value)
     {
-        $this->_value = $value;
-        $this->_cacheable = $cacheable;
+        $this->value = $value;
+        $this->cacheable = $cacheable;
     }
 
     /**
      * Create cache object
      *
-     * @param $cacheable
-     * @param $time
+     * @param  $cacheable
+     * @param  $time
      * @return Cache
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.5
-     * @since 0.5
+     * @since   0.5
      */
     public static function create($cacheable, $time)
     {
@@ -69,15 +69,15 @@ class Cache
     /**
      * Validate time tags
      *
-     * @param Cacheable $cacheable
-     * @param $cacheTime
-     * @param array $tags
+     * @param  Cacheable $cacheable
+     * @param  $cacheTime
+     * @param  array $tags
      * @return Cacheable|null
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.5
-     * @since 0.5
+     * @since   0.5
      */
     public static function validateTimeTags(Cacheable $cacheable, array $tags, $cacheTime)
     {
@@ -106,13 +106,13 @@ class Cache
     /**
      * Return cache repository
      *
-     * @param Cacheable $cacheable
+     * @param  Cacheable $cacheable
      * @return Repository
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.5
-     * @since 0.5
+     * @since   0.5
      */
     public static function getRepository(Cacheable $cacheable)
     {
@@ -122,13 +122,13 @@ class Cache
     /**
      * Return validation keys
      *
-     * @param $tags
+     * @param  $tags
      * @return array
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public static function getKeys($tags)
     {
@@ -154,14 +154,14 @@ class Cache
     /**
      * Invalidation cache
      *
-     * @param Cacheable $cacheable
-     * @param array $invalidateTags
+     * @param  Cacheable $cacheable
+     * @param  array $invalidateTags
      * @return Cacheable
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.5
-     * @since 0.5
+     * @since   0.5
      */
     public static function invalidateTimeTags(Cacheable $cacheable, array $invalidateTags)
     {
@@ -184,10 +184,10 @@ class Cache
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.5
-     * @since 0.0
+     * @since   0.0
      */
     public function validate()
     {
-        return $this->_cacheable->validate($this->_value);
+        return $this->cacheable->validate($this->value);
     }
 }

@@ -2,9 +2,9 @@
 /**
  * Ice core action context class
  *
- * @link http://www.iceframework.net
+ * @link      http://www.iceframework.net
  * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
- * @license https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
+ * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
 namespace Ice\Core;
@@ -18,11 +18,11 @@ use Ice\Core;
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
- * @package Ice
+ * @package    Ice
  * @subpackage Core
  *
  * @version 0.2
- * @since 0.0
+ * @since   0.0
  */
 class Action_Context
 {
@@ -33,14 +33,14 @@ class Action_Context
      *
      * @var array
      */
-    private $_fullStack = [];
+    private $fullStack = [];
 
     /**
      * String temp content current action
      *
      * @var string
      */
-    private $_tempContent = null;
+    private $tempContent = null;
 
     private function __construct()
     {
@@ -54,33 +54,43 @@ class Action_Context
     /**
      * Initialize added action (push to full action call stack)
      *
-     * @param string $actionClass
-     * @param $hash
+     * @param  string $actionClass
+     * @param  $hash
      * @return Action_Context
      * @throws Exception
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public function initAction($actionClass, $hash)
     {
-        if (!isset($this->_fullStack[$actionClass])) {
-            $this->_fullStack[$actionClass] = [];
+        if (!isset($this->fullStack[$actionClass])) {
+            $this->fullStack[$actionClass] = [];
         }
 
-        if (!isset($this->_fullStack[$actionClass][$hash])) {
-            $this->_fullStack[$actionClass][$hash] = 0;
+        if (!isset($this->fullStack[$actionClass][$hash])) {
+            $this->fullStack[$actionClass][$hash] = 0;
         }
 
-        if ($this->_fullStack[$actionClass][$hash] < 5) {
-            $this->_fullStack[$actionClass][$hash]++;
+        if ($this->fullStack[$actionClass][$hash] < 5) {
+            $this->fullStack[$actionClass][$hash]++;
 
             return $this;
         }
 
-        Action::getLogger()->exception(['Action {$0} with input hash {$1} already runned ({$2}). May by found infinite loop.', [$actionClass, $hash, $this->_fullStack[$actionClass][$hash]]], __FILE__, __LINE__, null, $this->_fullStack);
+        Action::getLogger()->exception(
+            [
+                'Action {$0} with input hash {$1} already runned ({$2}). May by found infinite loop.',
+                [$actionClass, $hash, $this->fullStack[$actionClass][$hash]]
+            ],
+            __FILE__,
+            __LINE__,
+            null,
+            $this->fullStack
+        );
+
         return $this;
     }
 
@@ -92,11 +102,11 @@ class Action_Context
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public function getFullStack()
     {
-        return $this->_fullStack;
+        return $this->fullStack;
     }
 
     /**
@@ -107,11 +117,11 @@ class Action_Context
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
-     * @since 0.4
+     * @since   0.4
      */
     public function getContent()
     {
-        return $this->_tempContent;
+        return $this->tempContent;
     }
 
     /**
@@ -122,10 +132,10 @@ class Action_Context
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
-     * @since 0.4
+     * @since   0.4
      */
     public function setContent($content)
     {
-        $this->_tempContent = $content;
+        $this->tempContent = $content;
     }
 }

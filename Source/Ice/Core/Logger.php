@@ -2,9 +2,9 @@
 /**
  * Ice core logger class
  *
- * @link http://www.iceframework.net
+ * @link      http://www.iceframework.net
  * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
- * @license https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
+ * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
 namespace Ice\Core;
@@ -16,9 +16,8 @@ use Ice\Helper\Directory;
 use Ice\Helper\File;
 use Ice\Helper\Http;
 use Ice\Helper\Logger as Helper_Logger;
-use Ice\Helper\Profiler as Helper_Profiler;
 use Ice\Helper\Object;
-use Ice\Helper\Php;
+use Ice\Helper\Profiler as Helper_Profiler;
 use Ice\Helper\Resource as Helper_Resource;
 
 /**
@@ -30,11 +29,11 @@ use Ice\Helper\Resource as Helper_Resource;
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
- * @package Ice
+ * @package    Ice
  * @subpackage Core
  *
  * @version 0.0
- * @since 0.0
+ * @since   0.0
  */
 class Logger
 {
@@ -104,15 +103,13 @@ class Logger
      * @var array
      */
     private static $log = [];
-
+    private static $reserveMemory = null;
     /**
      * Target Logger
      *
      * @var string
      */
-    private $_class;
-
-    private static $_reserveMemory = null;
+    private $class;
 
     /**
      * Private constructor for logger object
@@ -122,11 +119,11 @@ class Logger
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     private function __construct($class)
     {
-        $this->_class = $class;
+        $this->class = $class;
     }
 
     /**
@@ -135,7 +132,7 @@ class Logger
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public static function init()
     {
@@ -143,7 +140,7 @@ class Logger
 
         ini_set('display_errors', !Environment::getInstance()->isProduction());
 
-        self::$_reserveMemory = str_repeat(' ', pow(2, 15));
+        self::$reserveMemory = str_repeat(' ', pow(2, 15));
 
         ini_set('xdebug.var_display_max_depth', -1);
         ini_set('xdebug.profiler_enable', 1);
@@ -158,11 +155,11 @@ class Logger
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public static function shutdownHandler()
     {
-        self::$_reserveMemory;
+        self::$reserveMemory;
 
         if ($error = error_get_last()) {
             Http::setHeader(Http::getStatusCodeHeader(500), true, 500);
@@ -185,13 +182,12 @@ class Logger
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public static function errorHandler($errno, $errstr, $errfile, $errline, $errcontext)
     {
-        if (
-            $errno == E_WARNING && strpos($errstr, 'filemtime():') !== false ||
-            $errno == E_WARNING && strpos($errstr, 'mysqli::real_connect():') !== false
+        if ($errno == E_WARNING && strpos($errstr, 'filemtime():') !== false
+            || $errno == E_WARNING && strpos($errstr, 'mysqli::real_connect():') !== false
         ) {
             Logger::getLogger()->info($errstr, self::WARNING, false);
             return; // подавляем ошибку смарти и ошибку подключения mysql (пароль в открытом виде)
@@ -203,16 +199,16 @@ class Logger
     /**
      * Info message
      *
-     * @param $message
-     * @param string|null $type
-     * @param bool $isResource
-     * @param bool $logging
+     * @param  $message
+     * @param  string|null $type
+     * @param  bool $isResource
+     * @param  bool $logging
      * @return string
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public function info($message, $type = null, $isResource = true, $logging = true)
     {
@@ -221,8 +217,10 @@ class Logger
         }
 
         if ($isResource) {
-            /** @var Core $class */
-            $class = $this->_class;
+            /**
+             * @var Core $class
+             */
+            $class = $this->class;
             $params = null;
             if (is_array($message)) {
                 list($message, $params) = $message;
@@ -259,7 +257,8 @@ class Logger
             $varSize = Helper_Profiler::getVarSize($value);
 
             if ($varSize > pow(2, 19)) {
-                $value = 'Very big data: ' . $varSize . ' bytes';
+                FirePHP::getInstance(true)->fb('Very big data: ' . $varSize . ' bytes', $label, 'WARN', $options);
+                return;
             }
 
             FirePHP::getInstance(true)->fb($value, $label, $type, $options);
@@ -269,13 +268,13 @@ class Logger
     /**
      * Add message into log stack
      *
-     * @param $message
+     * @param  $message
      * @return mixed
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public static function addLog($message)
     {
@@ -285,19 +284,19 @@ class Logger
     /**
      * Error message this exception stacktrace
      *
-     * @param $message
-     * @param $file
-     * @param $line
-     * @param \Exception $e
-     * @param null $errcontext
-     * @param int $errno
+     * @param  $message
+     * @param  $file
+     * @param  $line
+     * @param  \Exception $e
+     * @param  null $errcontext
+     * @param  int $errno
      * @return null|string
      * @throws Exception
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public function error($message, $file, $line, \Exception $e = null, $errcontext = null, $errno = E_USER_ERROR)
     {
@@ -331,28 +330,38 @@ class Logger
     /**
      * Create ice exception
      *
-     * @param $message
-     * @param $file
-     * @param $line
-     * @param \Exception $e
-     * @param array|null $errcontext
-     * @param int $errno
-     * @param string $exceptionClass
+     * @param  $message
+     * @param  $file
+     * @param  $line
+     * @param  \Exception $e
+     * @param  array|null $errcontext
+     * @param  int $errno
+     * @param  string $exceptionClass
      * @return Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
-    private function createException($message, $file, $line, \Exception $e = null, $errcontext = [], $errno = 1, $exceptionClass = 'Ice:Error')
+    private function createException(
+        $message,
+        $file,
+        $line,
+        \Exception $e = null,
+        $errcontext = [],
+        $errno = 1,
+        $exceptionClass = 'Ice:Error'
+    )
     {
         $message = (array)$message;
         if (!isset($message[1])) {
             $message[1] = [];
         }
-        $message[2] = $this->_class;
+        $message[2] = $this->class;
 
-        /** @var Exception $exceptionClass */
+        /**
+         * @var Exception $exceptionClass
+         */
         $exceptionClass = Object::getClass(Exception::getClass(), $exceptionClass);
 
         if (is_array($errcontext) && isset($errcontext['e'])) {
@@ -365,13 +374,13 @@ class Logger
     /**
      * Return new instance of logger
      *
-     * @param string $class
+     * @param  string $class
      * @return Logger
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public static function getInstance($class = __CLASS__)
     {
@@ -384,7 +393,7 @@ class Logger
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public static function renderLog()
     {
@@ -399,7 +408,7 @@ class Logger
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public static function clearLog()
     {
@@ -409,18 +418,18 @@ class Logger
     /**
      * Notice
      *
-     * @param $message
-     * @param $file
-     * @param $line
-     * @param \Exception $e
-     * @param null $errcontext
-     * @param int $errno
+     * @param  $message
+     * @param  $file
+     * @param  $line
+     * @param  \Exception $e
+     * @param  null $errcontext
+     * @param  int $errno
      * @return null|string
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public function notice($message, $file, $line, \Exception $e = null, $errcontext = null, $errno = E_USER_NOTICE)
     {
@@ -430,18 +439,18 @@ class Logger
     /**
      * Warning
      *
-     * @param $message
-     * @param $file
-     * @param $line
-     * @param \Exception $e
-     * @param null $errcontext
-     * @param int $errno
+     * @param  $message
+     * @param  $file
+     * @param  $line
+     * @param  \Exception $e
+     * @param  null $errcontext
+     * @param  int $errno
      * @return null|string
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public function warning($message, $file, $line, \Exception $e = null, $errcontext = null, $errno = E_USER_WARNING)
     {
@@ -451,20 +460,28 @@ class Logger
     /**
      * Fatal - throw ice exception
      *
-     * @param $message
-     * @param $file
-     * @param $line
-     * @param \Exception $e
-     * @param null $errcontext
-     * @param int $errno
-     * @param string $exceptionClass
+     * @param  $message
+     * @param  $file
+     * @param  $line
+     * @param  \Exception $e
+     * @param  null $errcontext
+     * @param  int $errno
+     * @param  string $exceptionClass
      * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.5
-     * @since 0.0
+     * @since   0.0
      */
-    public function exception($message, $file, $line, \Exception $e = null, $errcontext = null, $errno = -1, $exceptionClass = 'Ice:Error')
+    public function exception(
+        $message,
+        $file,
+        $line,
+        \Exception $e = null,
+        $errcontext = null,
+        $errno = -1,
+        $exceptionClass = 'Ice:Error'
+    )
     {
         throw $this->createException($message, $file, $line, $e, $errcontext, $errno, $exceptionClass);
     }
@@ -474,20 +491,20 @@ class Logger
      *
      * @param $message
      *
-     * @param string $type
+     * @param  string $type
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
-     * @since 0.4
+     * @since   0.4
      */
     public function log($message, $type = Logger::SUCCESS)
     {
         if (!Environment::getInstance()->isProduction()) {
-//            if (Request::isCli()) {
+            //            if (Request::isCli()) {
             $this->info(Helper_Resource::getMessage($message), $type, false);
-//            } else {
-//                Logger::fb($message, 'log', 'LOG');
-//            }
+            //            } else {
+            //                Logger::fb($message, 'log', 'LOG');
+            //            }
         }
     }
 }

@@ -1,6 +1,6 @@
 <div>
     <button class="btn btn-primary"
-            onclick="Ice_Form.modal($(this), '{$modelClassName}', {$pk}, '{$submitActionName}', {$formFilterFields}, {$grouping}, '{$submitTitle}', '{$template}', {$params}, '{$reRenderClosest}', {$reRenderActionNames});">{$submitTitle}</button>
+            onclick="Ice_Widget_Form.modal($(this), '{$modelClassName}', {$pk}, '{$submitActionName}', {$formFilterFields}, {$grouping}, '{$submitTitle}', '{$template}', {$params}, '{$reRenderClosest}', {$reRenderActionNames});">{$submitTitle}</button>
 </div>
 <div class="modal fade">
     <div class="container">

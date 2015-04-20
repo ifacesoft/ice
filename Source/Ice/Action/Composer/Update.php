@@ -2,16 +2,14 @@
 /**
  * Ice action composer update class
  *
- * @link http://www.iceframework.net
+ * @link      http://www.iceframework.net
  * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
- * @license https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
+ * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
 namespace Ice\Action;
 
 use Ice\Core\Action;
-use Ice\Core\Logger;
-use Ice\Core\Module;
 use Ice\Helper\Console;
 
 /**
@@ -24,11 +22,11 @@ use Ice\Helper\Console;
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
- * @package Ice
+ * @package    Ice
  * @subpackage Action
  *
  * @version 0.0
- * @since 0.0
+ * @since   0.0
  */
 class Composer_Update extends Action
 {
@@ -61,12 +59,13 @@ class Composer_Update extends Action
      *      'roles' => []
      *  ];
      * ```
+     *
      * @return array
      *
      * @author anonymous <email>
      *
      * @version 0
-     * @since 0
+     * @since   0
      */
     protected static function config()
     {
@@ -82,21 +81,24 @@ class Composer_Update extends Action
     /**
      * Run action
      *
-     * @param array $input
+     * @param  array $input
      * @return array
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public function run(array $input)
     {
         $command = VENDOR_DIR . $input['vendor'] . $input['command'];
 
-        Console::run([
-            'php ' . $command . ' clear-cache',
-            'php ' . $command . ' update --prefer-source'
-        ]);
+        Console::run(
+            [
+                'php ' . $command . ' clear-cache',
+                'php ' . $command . ' update --prefer-source --optimize-autoloader',
+                'php ' . $command . ' show -i'
+            ]
+        );
     }
 }

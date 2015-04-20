@@ -30,8 +30,8 @@ return [
         'logDir' => '../_log/',
         'cacheDir' => '../_cache/',
         'uploadDir' => '../_upload/',
-        'downloadDir' => '../_download/',
-        'compiledResourceDir' => '../_resource/'
+        'compiledResourceDir' => '../_resource/',
+        'downloadDir' => '../_resource/download/',
     ],
     'vendors' => []
 ];

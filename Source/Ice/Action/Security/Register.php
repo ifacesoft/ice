@@ -3,16 +3,17 @@ namespace Ice\Action;
 
 use Ice\Core\Action;
 use Ice\Core\Form_Security_Register;
+use Ice\Core\Widget_Form_Security_Register;
 
 /**
  * Class Security_Register
  *
- * @see Ice\Core\Action
- * @see Ice\Core\Action_Context;
+ * @see     Ice\Core\Action
+ * @see     Ice\Core\Action_Context;
  * @package Ice\Action;
- * @author dp <email>
+ * @author  dp <email>
  * @version 0
- * @since 0
+ * @since   0
  */
 class Security_Register extends Action
 {
@@ -45,12 +46,13 @@ class Security_Register extends Action
      *      'roles' => []
      *  ];
      * ```
+     *
      * @return array
      *
      * @author anonymous <email>
      *
      * @version 0
-     * @since 0
+     * @since   0
      */
     protected static function config()
     {
@@ -66,20 +68,21 @@ class Security_Register extends Action
     /**
      * Run action
      *
-     * @param array $input
+     * @param  array $input
      * @return array
      */
     public function run(array $input)
     {
         $resource = Security_Register::getResource();
 
-        $this->addAction(
-            'Ice:Form', [
-                'form' => Ui_Form_Security_Register::getInstance($input['security']),
+        $this->addAction([
+            'Ice:Form',
+            [
+                'form' => Widget_Form_Security_Register::getInstance($input['security']),
                 'submitTitle' => $resource->get('Register'),
                 'redirect' => $input['redirect']
             ]
-        );
+        ]);
         return ['resource' => $resource];
     }
 }

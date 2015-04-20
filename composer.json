@@ -3,7 +3,18 @@
   "description": "Ice Open Source PHP Framework",
   "homepage": "http://iceframework.net",
   "type": "library",
-  "keywords": ["ice", "framework", "orm", "http", "web", "database", "mysql", "mongodb", "iceframework", "ifacesoft"],
+  "keywords": [
+    "ice",
+    "framework",
+    "orm",
+    "http",
+    "web",
+    "database",
+    "mysql",
+    "mongodb",
+    "iceframework",
+    "ifacesoft"
+  ],
   "license": "BSD ICE",
   "authors": [
     {
@@ -19,48 +30,27 @@
     "files": [
     ]
   },
-  "repositories": [
-    {
-      "type": "package",
-      "package": {
-        "name": "jquery/jquery-ui",
-        "version": "1.11.4",
-        "dist": {
-          "url": "http://jqueryui.com/resources/download/jquery-ui-1.11.4.zip",
-          "type": "zip"
-        }
-      }
-    },
-    {
-      "type": "package",
-      "package": {
-        "name": "mailru/fileapi",
-        "version": "2.0.10",
-        "dist": {
-          "url": "https://github.com/mailru/FileAPI/archive/master.zip",
-          "type": "zip"
-        }
-      }
-    }
-  ],
+  "scripts": {
+    "post-install-cmd": [
+      "install.php"
+    ]
+  },
   "require": {
-    "php": ">=5.3.3",
+    "php": ">=5.4.0",
     "twig/twig": "1.*",
     "smarty/smarty": "3.1.*",
-    "twbs/bootstrap": "3.3.*",
-    "jquery/jquery-ui": "1.11.4",
-    "mailru/fileapi": "2.0.10",
     "mrclay/minify": "2.2.*",
     "michelf/php-markdown": "1.5.*"
   },
   "require-dev": {
+    "sami/sami": "3.0.*@dev",
+    "squizlabs/php_codesniffer": "2.0.*@dev",
     "firephp/firephp-core": "dev-master",
-    "phpunit/phpunit": "4.4.*",
-    "phpunit/php-invoker": "1.1.*",
-    "phpunit/dbunit": "1.3.*",
-    "phpunit/phpunit-selenium": "1.4.*",
-    "phpunit/phpunit-story": "1.0.*",
-    "ocramius/instantiator": "1.1.*",
+    "phpunit/phpunit": "4.6.*@dev",
+    "phpunit/php-invoker": "dev-master",
+    "phpunit/dbunit": "1.3.*@dev",
+    "phpunit/phpunit-selenium": "dev-master",
+    "phpunit/phpunit-story": "dev-master",
     "facebook/xhprof": "dev-master",
     "composer/composer": "dev-master"
   }

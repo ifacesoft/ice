@@ -2,6 +2,7 @@
 return [
     'Data provider "{$0}" connection failed' => [
         'en' => 'Data provider "{$0}" connection failed',
+        'ru' => 'Поставщик данных "{$0}" подключение не удалось',
     ],
     '#1049: {$0}' => [
         'en' => '#1049: {$0}',

@@ -32,4 +32,8 @@ return [
         'en' => 'mongodb - Failed to connect to: localhost:27017: Connection refused',
         'ru' => 'в mongodb - не удалось подключиться к: имя localhost:27017: в подключении отказано',
     ],
+    'mongodb - #71: {$0}' => [
+        'en' => 'mongodb - #71: {$0}',
+        'ru' => 'mongodb - #71: {$0}',
+    ],
 ];

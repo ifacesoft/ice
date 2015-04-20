@@ -48,17 +48,26 @@ return [
                 'routes' => 'Ice:Repository/route',
             ],
             'Ice\Core\Config' => [
+                'instance' => 'Ice:Repository/config',
                 'config' => 'Ice:Repository/config',
                 'route' => 'Ice:Repository/config',
+                'routes' => 'Ice:Repository/config',
+                'model_scheme' => 'Ice:Repository/config',
             ],
-            'Ice\Core\Ui_Form' => [
-                'instance' => 'Ice:Repository/ui_form',
+            'Ice\Core\Converter' => [
+                'instance' => 'Ice:Repository/converter',
             ],
-            'Ice\Core\Ui_Menu' => [
-                'instance' => 'Ice:Repository/ui_menu',
+            'Ice\Core\Widget' => [
+                'instance' => 'Ice:Repository/widget',
             ],
-            'Ice\Core\Ui_Data' => [
-                'instance' => 'Ice:Repository/ui_data',
+            'Ice\Core\Widget_Form' => [
+                'instance' => 'Ice:Repository/widget_form',
+            ],
+            'Ice\Core\Widget_Menu' => [
+                'instance' => 'Ice:Repository/widget_menu',
+            ],
+            'Ice\Core\Widget_Data' => [
+                'instance' => 'Ice:Repository/widget_data',
             ],
             'Ice\Core\Container' => [
                 'instance' => 'Ice:Repository/container',
@@ -137,17 +146,26 @@ return [
                 'routes' => 'Ice:Registry/route',
             ],
             'Ice\Core\Config' => [
+                'instance' => 'Ice:Registry/config',
                 'config' => 'Ice:Registry/config',
                 'route' => 'Ice:Registry/config',
+                'routes' => 'Ice:Registry/config',
+                'model_scheme' => 'Ice:Registry/config',
             ],
-            'Ice\Core\Ui_Form' => [
-                'instance' => 'Ice:Registry/ui_form',
+            'Ice\Core\Converter' => [
+                'instance' => 'Ice:Registry/converter',
             ],
-            'Ice\Core\Ui_Menu' => [
-                'instance' => 'Ice:Registry/ui_menu',
+            'Ice\Core\Widget' => [
+                'instance' => 'Ice:Registry/widget',
             ],
-            'Ice\Core\Ui_Data' => [
-                'instance' => 'Ice:Registry/ui_data',
+            'Ice\Core\Widget_Form' => [
+                'instance' => 'Ice:Registry/widget_form',
+            ],
+            'Ice\Core\Widget_Menu' => [
+                'instance' => 'Ice:Registry/widget_menu',
+            ],
+            'Ice\Core\Widget_Data' => [
+                'instance' => 'Ice:Registry/widget_data',
             ],
             'Ice\Core\Container' => [
                 'instance' => 'Ice:Registry/container',

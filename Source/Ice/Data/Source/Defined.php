@@ -2,9 +2,9 @@
 /**
  * Ice data source implementation defined class
  *
- * @link http://www.iceframework.net
+ * @link      http://www.iceframework.net
  * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
- * @license https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
+ * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
 namespace Ice\Data\Source;
@@ -12,6 +12,7 @@ namespace Ice\Data\Source;
 use Ice\Core\Data_Provider;
 use Ice\Core\Data_Source;
 use Ice\Core\Model;
+use Ice\Core\Module;
 use Ice\Core\Query;
 use Ice\Core\Query_Builder;
 use Ice\Core\Query_Result;
@@ -27,30 +28,31 @@ use Ice\Helper\Query as Helper_Query;
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
- * @package Ice
+ * @package    Ice
  * @subpackage Data_Source
  *
  * @version 0.0
- * @since 0.0
+ * @since   0.0
  */
 class Defined extends Data_Source
 {
     /**
      * Execute query select to data source
      *
-     * @param mixed $statement
-     * @param Query $query
+     * @param  Query $query
      * @return array
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
-    public function executeSelect($statement, Query $query)
+    public function executeSelect(Query $query)
     {
-        /** @var Model $modelClass */
-        $modelClass = $query->getModelClass();
-        $rows = $this->getConnection($modelClass);
+        /**
+         * @var Model $modelClass
+         */
+        $modelClass = $query->getQueryBuilder()->getModelClass();
+        $rows = $this->getConnection();
 
         $pkName = $modelClass::getFieldName('/pk');
 
@@ -61,7 +63,7 @@ class Defined extends Data_Source
         foreach ($rows as $pk => &$row) {
             $definedRow = [];
             foreach ($row as $fieldName => $fieldValue) {
-                if (isset($flippedFieldNames[$fieldName])) { // Пока такой костыль.. надо думать //dp
+                if (isset($flippedFieldNames[$fieldName])) {
                     $definedRow[$flippedFieldNames[$fieldName]] = $fieldValue;
                 } else {
                     $definedRow[$fieldName] = $fieldValue;
@@ -104,7 +106,11 @@ class Defined extends Data_Source
                             }
                             break;
                         default:
-                            Defined::getLogger()->exception(['Unknown comparsion operator {$0}', $part[2]], __FILE__, __LINE__);
+                            Defined::getLogger()->exception(
+                                ['Unknown comparsion operator {$0}', $part[2]],
+                                __FILE__,
+                                __LINE__
+                            );
                     }
                 }
 
@@ -123,13 +129,13 @@ class Defined extends Data_Source
     /**
      * Execute query insert to data source
      *
-     * @param Query $query
+     * @param  Query $query
      * @return array
      * @throws \Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public function executeInsert(Query $query)
     {
@@ -139,13 +145,13 @@ class Defined extends Data_Source
     /**
      * Execute query update to data source
      *
-     * @param Query $query
+     * @param  Query $query
      * @return array
      * @throws \Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public function executeUpdate(Query $query)
     {
@@ -155,13 +161,13 @@ class Defined extends Data_Source
     /**
      * Execute query update to data source
      *
-     * @param Query $query
+     * @param  Query $query
      * @return array
      * @throws \Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public function executeDelete(Query $query)
     {
@@ -176,7 +182,7 @@ class Defined extends Data_Source
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public function getDataScheme()
     {
@@ -186,14 +192,15 @@ class Defined extends Data_Source
     /**
      * Get data Scheme from data source
      *
+     * @param Module $module
      * @return array
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
-    public function getTables()
+    public function getTables(Module $module)
     {
         // TODO: Implement getTables() method.
     }
@@ -201,13 +208,13 @@ class Defined extends Data_Source
     /**
      * Get table scheme from source
      *
-     * @param $tableName
+     * @param  $tableName
      * @return array
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public function getColumns($tableName)
     {
@@ -217,15 +224,14 @@ class Defined extends Data_Source
     /**
      * Execute query create table to data source
      *
-     * @param $statement
-     * @param Query $query
+     * @param  Query $query
      * @return array
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
-    public function executeCreate($statement, Query $query)
+    public function executeCreate(Query $query)
     {
         // TODO: Implement executeCreate() method.
     }
@@ -233,15 +239,14 @@ class Defined extends Data_Source
     /**
      * Execute query drop table to data source
      *
-     * @param mixed $statement
-     * @param Query $query
+     * @param  Query $query
      * @return array
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
-    public function executeDrop($statement, Query $query)
+    public function executeDrop(Query $query)
     {
         // TODO: Implement executeDrop() method.
     }
@@ -249,7 +254,7 @@ class Defined extends Data_Source
     /**
      * Get table indexes from source
      *
-     * @param $tableName
+     * @param  $tableName
      * @return array
      *
      * @author anonymous <email>
@@ -257,7 +262,7 @@ class Defined extends Data_Source
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.3
-     * @since 0.3
+     * @since   0.3
      */
     public function getIndexes($tableName)
     {
@@ -267,15 +272,16 @@ class Defined extends Data_Source
     /**
      * Prepare query statement for query
      *
-     * @param Query $query
+     * @param $body
+     * @param array $binds
      * @return mixed
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.2
-     * @since 0.2
+     * @since   0.2
      */
-    public function getStatement(Query $query)
+    public function getStatement($body, array $binds)
     {
         // TODO: Implement getStatement() method.
     }
@@ -288,7 +294,7 @@ class Defined extends Data_Source
      * @author anonymous <email>
      *
      * @version 0
-     * @since 0
+     * @since   0
      */
     public function getDataProviderClass()
     {
@@ -303,7 +309,7 @@ class Defined extends Data_Source
      * @author anonymous <email>
      *
      * @version 0
-     * @since 0
+     * @since   0
      */
     public function getQueryTranslatorClass()
     {
@@ -316,7 +322,7 @@ class Defined extends Data_Source
      * @author anonymous <email>
      *
      * @version 0
-     * @since 0
+     * @since   0
      */
     public function beginTransaction()
     {
@@ -329,7 +335,7 @@ class Defined extends Data_Source
      * @author anonymous <email>
      *
      * @version 0
-     * @since 0
+     * @since   0
      */
     public function commitTransaction()
     {
@@ -342,10 +348,26 @@ class Defined extends Data_Source
      * @author anonymous <email>
      *
      * @version 0
-     * @since 0
+     * @since   0
      */
     public function rollbackTransaction()
     {
         // TODO: Implement rollbackTransaction() method.
+    }
+
+    /**
+     * Get table references from source
+     *
+     * @param  $tableName
+     * @return array
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since   0
+     */
+    public function getReferences($tableName)
+    {
+        // TODO: Implement getReferences() method.
     }
 }

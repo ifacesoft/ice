@@ -2,15 +2,14 @@
 /**
  * Ice code generator implementation smarty view class
  *
- * @link http://www.iceframework.net
+ * @link      http://www.iceframework.net
  * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
- * @license https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
+ * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
 namespace Ice\Code\Generator;
 
 use Ice\Core\Code_Generator;
-use Ice\Core\Loader;
 use Ice\Core\Logger;
 use Ice\Core\Module;
 use Ice\Helper\File;
@@ -27,25 +26,25 @@ use Ice\View\Render\Smarty;
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
- * @package Ice
+ * @package    Ice
  * @subpackage Code_Generator
  *
  * @version 0.0
- * @since 0.0
+ * @since   0.0
  */
 class View_Render_Smarty extends Code_Generator
 {
     /**
      * Generate code and other
      *
-     * @param $class
-     * @param array $data Sended data requered for generate
-     * @param bool $force Force if already generate
+     * @param  $class
+     * @param  array $data Sended data requered for generate
+     * @param  bool $force Force if already generate
      * @return mixed
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public function generate($class, $data = null, $force = false)
     {
@@ -54,9 +53,9 @@ class View_Render_Smarty extends Code_Generator
 
         $path = $module->get(Module::RESOURCE_DIR);
 
-//        if ($namespace) {
-//            $path .= 'Class/';
-//        }
+        //        if ($namespace) {
+        //            $path .= 'Class/';
+        //        }
 
         $filePath = $path . str_replace(['\\', '_'], '/', $class) . Smarty::TEMPLATE_EXTENTION;
 

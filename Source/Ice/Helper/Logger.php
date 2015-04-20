@@ -2,9 +2,9 @@
 /**
  * Ice helper logger class
  *
- * @link http://www.iceframework.net
+ * @link      http://www.iceframework.net
  * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
- * @license https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
+ * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
 namespace Ice\Helper;
@@ -23,11 +23,11 @@ use Ice\View\Render\Php as View_Render_Php;
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
- * @package Ice
+ * @package    Ice
  * @subpackage Helper
  *
  * @version 0.0
- * @since 0.0
+ * @since   0.0
  */
 class Logger
 {
@@ -40,7 +40,7 @@ class Logger
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public static function outputFb(\Exception $exception, $output)
     {
@@ -62,22 +62,23 @@ class Logger
         if (!empty($errcontext)/* && Memory::getVarSize($errcontext) < 3500*/) {
             Core_Logger::fb($errcontext, 'error', 'INFO');
         }
-//            Core_Logger::fb($exception);
-            Core_Logger::fb(explode("\n", $exception->getTraceAsString()), 'error', 'WARN');
+        //            fb($exception, 'EXCEPTION');
+        //        Core_Logger::fb($exception, 'error', 'EXCEPTION');
+        Core_Logger::fb(explode("\n", $exception->getTraceAsString()), 'error', 'WARN');
     }
 
     /**
      * Return message data from exception
      *
-     * @param \Exception $exception
-     * @param null $previousMessage
-     * @param int $level
+     * @param  \Exception $exception
+     * @param  null $previousMessage
+     * @param  int $level
      * @return mixed
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public static function getMessage(\Exception $exception, $previousMessage = null, $level = 1)
     {
@@ -128,7 +129,7 @@ class Logger
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public static function outputFile(\Exception $exception, $output)
     {
@@ -147,8 +148,15 @@ class Logger
         $output['errcontext'] = $errcontext;
         $output['stackTrace'] = $exception->getTraceAsString();
 
-        $logFile = Directory::get(Module::getInstance()->get('logDir') . date('Y-m-d')) . Core_Logger::$errorCodes[$exception->getCode()] . '.log';
+        $logFile = Directory::get(
+                Module::getInstance()->get(Module::LOG_DIR) . date('Y-m-d')
+            ) . Core_Logger::$errorCodes[$exception->getCode()] . '.log';
 
-        File::createData($logFile, View_Render_Php::getInstance()->fetch(Core_Logger::getClass() . '/File', $output), false, FILE_APPEND);
+        File::createData(
+            $logFile,
+            View_Render_Php::getInstance()->fetch(Core_Logger::getClass() . '/File', $output),
+            false,
+            FILE_APPEND
+        );
     }
-} 
+}

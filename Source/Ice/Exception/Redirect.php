@@ -2,9 +2,9 @@
 /**
  * Ice exception redirect class
  *
- * @link http://www.iceframework.net
+ * @link      http://www.iceframework.net
  * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
- * @license https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
+ * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
 namespace Ice\Exception;
@@ -20,15 +20,15 @@ use Ice\Core\Exception;
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
- * @package Ice
+ * @package    Ice
  * @subpackage Exception
  *
  * @version 0.1
- * @since 0.1
+ * @since   0.1
  */
 class Redirect extends Exception
 {
-    private $_redirectUrl = null;
+    private $redirectUrl = null;
 
     /**
      * Constructor for redirect exception
@@ -38,16 +38,15 @@ class Redirect extends Exception
      * @param null $previous
      * @param null $errfile
      * @param null $errline
-     * @param int $errno
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.5
-     * @since 0.1
+     * @since   0.1
      */
-    public function __construct($errstr, $errcontext = [], $previous = null, $errfile = null, $errline = null, $errno = -1)
+    public function __construct($errstr, $errcontext = [], $previous = null, $errfile = null, $errline = null)
     {
-        $this->_redirectUrl = $errstr;
+        $this->redirectUrl = $errstr;
         parent::__construct($errstr, $errcontext, $previous, $errfile, $errline, E_USER_ERROR);
     }
 
@@ -56,6 +55,6 @@ class Redirect extends Exception
      */
     public function getRedirectUrl()
     {
-        return $this->_redirectUrl;
+        return $this->redirectUrl;
     }
 }

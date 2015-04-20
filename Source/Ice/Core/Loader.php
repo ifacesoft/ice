@@ -2,9 +2,9 @@
 /**
  * Ice core loader class
  *
- * @link http://www.iceframework.net
+ * @link      http://www.iceframework.net
  * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
- * @license https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
+ * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
 namespace Ice\Core;
@@ -12,7 +12,7 @@ namespace Ice\Core;
 use Composer\Autoload\ClassLoader;
 use Ice\Core;
 use Ice\Data\Provider\Repository;
-use Ice\Exception\File_Not_Found;
+use Ice\Exception\FileNotFound;
 use Ice\Helper\Object;
 
 /**
@@ -22,43 +22,46 @@ use Ice\Helper\Object;
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
- * @package Ice
+ * @package    Ice
  * @subpackage Core
  *
  * @version 0.0
- * @since 0.0
+ * @since   0.0
  */
 class Loader
 {
     use Core;
 
-    /** @var array Registred autoloaders */
-    private static $_autoLoaders = [];
+    /**
+     * @var array Registred autoloaders
+     */
+    private static $autoLoaders = [];
 
     /**
      * Composer loader
      *
      * @var ClassLoader
      */
-    private static $_loader = null;
+    private static $loader = null;
 
-    private static $_forceLoading = null;
+    private static $forceLoading = null;
 
     /**
      * @var Repository
      */
-    private static $_repository = null;
+    private static $repository = null;
+
     /**
      * Load class
      *
-     * @param $class
-     * @param bool $isRequired
+     * @param  $class
+     * @param  bool $isRequired
      * @return bool
      * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
-     * @since 0.0
+     * @since   0.0
      */
     public static function load($class, $isRequired = true)
     {
@@ -66,27 +69,31 @@ class Loader
             return true;
         }
 
-        if ($fileName = self::$_repository->get($class)) {
-            require_once $fileName;
+        if (self::$repository && $fileName = self::$repository->get($class)) {
+            include_once $fileName;
             return true;
         }
 
         $fileName = self::getFilePath($class, '.php', Module::SOURCE_DIR, $isRequired);
 
         if (file_exists($fileName)) {
-            require_once $fileName;
+            include_once $fileName;
 
             if (class_exists($class, false) || interface_exists($class, false) || trait_exists($class, false)) {
-                self::$_repository->set($class, $fileName);
+                self::$repository->set($class, $fileName);
                 return true;
             }
 
-            if (!self::$_forceLoading && $isRequired) {
-                Loader::getLogger()->exception(['File {$0} exists, but class {$1} not found', [$fileName, $class]], __FILE__, __LINE__);
+            if (!self::$forceLoading && $isRequired) {
+                Loader::getLogger()->exception(
+                    ['File {$0} exists, but class {$1} not found', [$fileName, $class]],
+                    __FILE__,
+                    __LINE__
+                );
             }
         }
 
-        if (!self::$_forceLoading && $isRequired) {
+        if (!self::$forceLoading && $isRequired) {
             Loader::getLogger()->exception(['Class {$0} not found', $class], __FILE__, __LINE__, null);
         }
 
@@ -96,20 +103,20 @@ class Loader
     /**
      * Return class path
      *
-     * @param $class
-     * @param $ext
-     * @param $path
-     * @param bool $isRequired
-     * @param bool $isNotEmpty
-     * @param bool $isOnlyFirst
-     * @param bool $allMatchedPathes
-     * @throws File_Not_Found
+     * @param  $class
+     * @param  $ext
+     * @param  $path
+     * @param  bool $isRequired
+     * @param  bool $isNotEmpty
+     * @param  bool $isOnlyFirst
+     * @param  bool $allMatchedPathes
+     * @throws FileNotFound
      * @return null|string
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public static function getFilePath(
         $class,
@@ -126,7 +133,7 @@ class Loader
         $fullStackPathes = [];
         $matchedPathes = [];
 
-            $modules = $isOnlyFirst
+        $modules = $isOnlyFirst
             ? [Module::getInstance(Object::getModuleAlias($class))]
             : Module::getAll();
 
@@ -144,8 +151,8 @@ class Loader
 
                 $fullStackPathes[] = $fileName;
 
-//                Debuger::dump($fileName . ' ' . (int)file_exists($fileName));
-//                var_dump($fileName . ' ' . (int)file_exists($fileName));
+                //                Debuger::dump($fileName . ' ' . (int)file_exists($fileName));
+                //                var_dump($fileName . ' ' . (int)file_exists($fileName));
                 if (file_exists($fileName)) {
                     $matchedPathes[] = $fileName;
 
@@ -158,7 +165,7 @@ class Loader
 
         if ($isRequired) {
             if (!$allMatchedPathes || empty($matchedPathes)) {
-                if (self::$_loader && $fileName = self::$_loader->findFile($class)) {
+                if (self::$loader && $fileName = self::$loader->findFile($class)) {
                     if (!$allMatchedPathes) {
                         return $fileName;
                     }
@@ -166,10 +173,18 @@ class Loader
                     $fullStackPathes[] = $fileName;
                     $matchedPathes[] = $fileName;
                 } else {
-                    if (self::$_forceLoading) {
+                    if (self::$forceLoading) {
                         return null;
                     } else {
-                        Loader::getLogger()->exception(['Files for {$0} not found', $class], __FILE__, __LINE__, null, $fullStackPathes, -1, 'Ice:File_Not_Found');
+                        Loader::getLogger()->exception(
+                            ['Files for {$0} not found', $class],
+                            __FILE__,
+                            __LINE__,
+                            null,
+                            $fullStackPathes,
+                            -1,
+                            'Ice:FileNotFound'
+                        );
                     }
                 }
             }
@@ -195,14 +210,14 @@ class Loader
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public static function unregister($autholoader)
     {
-        foreach (self::$_autoLoaders as $key => $loader) {
+        foreach (self::$autoLoaders as $key => $loader) {
             if ($loader == $autholoader) {
                 spl_autoload_unregister($autholoader);
-                unset(self::$_autoLoaders[$key]);
+                unset(self::$autoLoaders[$key]);
                 break;
             }
         }
@@ -210,10 +225,10 @@ class Loader
 
     public static function init(ClassLoader $loader, $forceLoading = false)
     {
-        self::$_loader = $loader;
-        self::$_forceLoading = $forceLoading;
+        self::$loader = $loader;
+        self::$forceLoading = $forceLoading;
 
-        self::$_repository = Loader::getRepository();
+        self::$repository = Loader::getRepository();
 
         spl_autoload_unregister([$loader, 'loadClass']);
 
@@ -234,17 +249,17 @@ class Loader
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.2
-     * @since 0.0
+     * @since   0.0
      */
     public static function register($autoLoader)
     {
-        foreach (self::$_autoLoaders as $loader) {
+        foreach (self::$autoLoaders as $loader) {
             spl_autoload_unregister($loader);
         }
 
-        array_unshift(self::$_autoLoaders, $autoLoader);
+        array_unshift(self::$autoLoaders, $autoLoader);
 
-        foreach (self::$_autoLoaders as $loader) {
+        foreach (self::$autoLoaders as $loader) {
             spl_autoload_register($loader);
         }
     }

@@ -2,9 +2,9 @@
 /**
  * Ice action model delete class
  *
- * @link http://www.iceframework.net
+ * @link      http://www.iceframework.net
  * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
- * @license https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
+ * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
 namespace Ice\Action;
@@ -26,11 +26,11 @@ use Ice\Core\Query;
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
- * @package Ice
+ * @package    Ice
  * @subpackage Action
  *
  * @version 0.0
- * @since 0.0
+ * @since   0.0
  */
 class Model_Delete extends Action
 {
@@ -63,12 +63,13 @@ class Model_Delete extends Action
      *      'roles' => []
      *  ];
      * ```
+     *
      * @return array
      *
      * @author anonymous <email>
      *
      * @version 0
-     * @since 0
+     * @since   0
      */
     protected static function config()
     {
@@ -84,17 +85,20 @@ class Model_Delete extends Action
     /**
      * Run action
      *
-     * @param array $input
+     * @param  array $input
      * @return array
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.2
-     * @since 0.0
+     * @since   0.0
      */
     public function run(array $input)
     {
-        return Query::getBuilder(Model::getClass($input['modelClassName']))->deleteQuery($input['pk'])->getQueryResult()->getAffectedRows()
+        return Query::getBuilder(Model::getClass($input['modelClassName']))
+            ->deleteQuery($input['pk'])
+            ->getQueryResult()
+            ->getAffectedRows()
             ? ['success' => Model_Delete::getLogger()->info('Delete successfully', Logger::SUCCESS)]
             : ['error' => Model_Delete::getLogger()->info('Delete failed', Logger::DANGER)];
     }

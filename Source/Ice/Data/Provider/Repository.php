@@ -2,9 +2,9 @@
 /**
  * Ice data provider implementation object class
  *
- * @link http://www.iceframework.net
+ * @link      http://www.iceframework.net
  * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
- * @license https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
+ * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
 namespace Ice\Data\Provider;
@@ -22,7 +22,7 @@ use Ice\Core\Exception;
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
- * @package Ice
+ * @package    Ice
  * @subpackage Data_Provider
  */
 class Repository extends Data_Provider
@@ -38,7 +38,7 @@ class Repository extends Data_Provider
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
-     * @since 0.4
+     * @since   0.4
      */
     protected static function getDefaultDataProviderKey()
     {
@@ -53,7 +53,7 @@ class Repository extends Data_Provider
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
-     * @since 0.4
+     * @since   0.4
      */
     protected static function getDefaultKey()
     {
@@ -63,13 +63,13 @@ class Repository extends Data_Provider
     /**
      * Get data from data provider by key
      *
-     * @param string $key
+     * @param  string $key
      * @return mixed
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public function get($key = null)
     {
@@ -84,7 +84,7 @@ class Repository extends Data_Provider
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public function getConnection()
     {
@@ -94,15 +94,15 @@ class Repository extends Data_Provider
     /**
      * Set data to data provider
      *
-     * @param string $key
-     * @param $value
-     * @param integer $ttl
+     * @param  string $key
+     * @param  $value
+     * @param  integer $ttl
      * @return mixed setted value
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public function set($key, $value = null, $ttl = 0)
     {
@@ -112,15 +112,15 @@ class Repository extends Data_Provider
     /**
      * Delete from data provider by key
      *
-     * @param string $key
-     * @param bool $force if true return boolean else deleted value
+     * @param  string $key
+     * @param  bool $force if true return boolean else deleted value
      * @throws Exception
      * @return mixed|boolean
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public function delete($key, $force = true)
     {
@@ -130,14 +130,14 @@ class Repository extends Data_Provider
     /**
      * Increment value by key with defined step (default 1)
      *
-     * @param $key
-     * @param int $step
+     * @param  $key
+     * @param  int $step
      * @return mixed new value
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public function incr($key, $step = 1)
     {
@@ -147,14 +147,14 @@ class Repository extends Data_Provider
     /**
      * Decrement value by key with defined step (default 1)
      *
-     * @param $key
-     * @param int $step
+     * @param  $key
+     * @param  int $step
      * @return mixed new value
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public function decr($key, $step = 1)
     {
@@ -167,7 +167,7 @@ class Repository extends Data_Provider
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public function flushAll()
     {
@@ -177,13 +177,13 @@ class Repository extends Data_Provider
     /**
      * Return keys by pattern
      *
-     * @param string $pattern
+     * @param  string $pattern
      * @return array
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public function getKeys($pattern = null)
     {
@@ -193,13 +193,13 @@ class Repository extends Data_Provider
     /**
      * Connect to data provider
      *
-     * @param $connection
+     * @param  $connection
      * @return boolean
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.5
-     * @since 0.0
+     * @since   0.0
      */
     protected function connect(&$connection)
     {
@@ -211,7 +211,9 @@ class Repository extends Data_Provider
             return $connection = File::getInstance($this->getKey(), $this->getIndex());
         }
 
-        /** @var Data_Provider $dataProviderClass */
+        /**
+         * @var Data_Provider $dataProviderClass
+         */
         $dataProviderClass = function_exists('apc_store')
             ? Apc::getClass()
             : File::getClass();
@@ -222,19 +224,17 @@ class Repository extends Data_Provider
     /**
      * Close connection with data provider
      *
-     * @param $connection
+     * @param  $connection
      * @return boolean
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     protected function close(&$connection)
     {
         $connection = null;
         return true;
     }
-
-
 }

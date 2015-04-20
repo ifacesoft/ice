@@ -2,9 +2,9 @@
 /**
  * Ice helper version control system class
  *
- * @link http://www.iceframework.net
+ * @link      http://www.iceframework.net
  * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
- * @license https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
+ * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
 namespace Ice\Helper;
@@ -16,11 +16,11 @@ namespace Ice\Helper;
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
- * @package Ice
+ * @package    Ice
  * @subpackage Helper
  *
  * @version 0.0
- * @since 0.0
+ * @since   0.0
  */
 class Vcs
 {
@@ -37,7 +37,7 @@ class Vcs
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.2
-     * @since 0.0
+     * @since   0.0
      */
     public static function init($vcs, $dir)
     {
@@ -68,7 +68,7 @@ class Vcs
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.2
-     * @since 0.0
+     * @since   0.0
      */
     public static function checkout($vcs, $dir, $branch)
     {
@@ -89,13 +89,13 @@ class Vcs
     /**
      * Return default branch
      *
-     * @param $vcs
+     * @param  $vcs
      * @return string
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
-     * @since 0.0
+     * @since   0.0
      */
     public static function getDefaultBranch($vcs)
     {
