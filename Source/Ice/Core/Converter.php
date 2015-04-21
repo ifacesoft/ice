@@ -53,5 +53,5 @@ abstract class Converter extends Container
      * @version 0
      * @since   0
      */
-    abstract function convert($data, $params);
+    abstract public function convert($data, $params);
 }

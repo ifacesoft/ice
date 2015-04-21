@@ -28,49 +28,8 @@ class Table extends Widget_Data
         );
     }
 
-    /**
-     * @param Widget_Data $dataClass
-     * @return array
-     */
-    private function prepareColums($dataClass) {
-        $dataName = 'Data_' . $dataClass::getClassName();
-
-        $columns = $this->getColumns();
-
-        $columnNames = array_keys($columns);
-
-        if ($filterFields = $this->getFilterFields()) {
-            $columnNames = array_intersect($columnNames, $filterFields);
-        }
-
-        $columns = array_intersect_key($columns, array_flip($columnNames));
-
-        foreach ($columns as $columnName => &$column) {
-            $column['dataName'] = $dataName;
-            $column['name'] = $columnName;
-            $column['href'] = $this->getUrl();
-            $column['dataUrl'] = $this->getUrl();
-            $column['dataJson'] = Json::encode($this->getParams());
-            $column['dataAction'] = $this->getAction();
-            $column['dataBlock'] = $this->getBlock();
-            $column['dataValue'] = $this->getValues($columnName);
-
-            if ($this->getValues($columnName) == '') {
-                $ordering = Query_Builder::SQL_ORDERING_ASC;
-            } elseif ($this->getValues($columnName) == Query_Builder::SQL_ORDERING_ASC) {
-                $ordering = Query_Builder::SQL_ORDERING_DESC;
-            } else {
-                $ordering = '';
-            }
-
-            $column['onclick'] = 'Ice_Widget_Data.click($(this), "' . $ordering . '"); return false;';
-        }
-        unset($column); // #^###%@@#@$% PHP
-
-        return $columns;
-    }
-
-    private function prepareRows($dataClass, $columns) {
+    private function prepareRows($dataClass, $columns)
+    {
         $rows = [];
 
         $rows[] = Php::getInstance()->fetch(
@@ -122,5 +81,48 @@ class Table extends Widget_Data
         }
 
         return $rows;
+    }
+
+    /**
+     * @param Widget_Data $dataClass
+     * @return array
+     */
+    private function prepareColums($dataClass)
+    {
+        $dataName = 'Data_' . $dataClass::getClassName();
+
+        $columns = $this->getColumns();
+
+        $columnNames = array_keys($columns);
+
+        if ($filterFields = $this->getFilterFields()) {
+            $columnNames = array_intersect($columnNames, $filterFields);
+        }
+
+        $columns = array_intersect_key($columns, array_flip($columnNames));
+
+        foreach ($columns as $columnName => &$column) {
+            $column['dataName'] = $dataName;
+            $column['name'] = $columnName;
+            $column['href'] = $this->getUrl();
+            $column['dataUrl'] = $this->getUrl();
+            $column['dataJson'] = Json::encode($this->getParams());
+            $column['dataAction'] = $this->getAction();
+            $column['dataBlock'] = $this->getBlock();
+            $column['dataValue'] = $this->getValues($columnName);
+
+            if ($this->getValues($columnName) == '') {
+                $ordering = Query_Builder::SQL_ORDERING_ASC;
+            } elseif ($this->getValues($columnName) == Query_Builder::SQL_ORDERING_ASC) {
+                $ordering = Query_Builder::SQL_ORDERING_DESC;
+            } else {
+                $ordering = '';
+            }
+
+            $column['onclick'] = 'Ice_Widget_Data.click($(this), "' . $ordering . '"); return false;';
+        }
+        unset($column); // #^###%@@#@$% PHP
+
+        return $columns;
     }
 }

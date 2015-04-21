@@ -33,7 +33,7 @@ class Crud extends Action
      *          'template' => _Custom,
      *          'viewRenderClass' => Ice:Twig,
      *      ],
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      *      'input' => [
+     *      'input' => [
      *          Request::DEFAULT_DATA_PROVIDER_KEY => [
      *              'paramFromGETorPOST => [
      *                  'default' => 'defaultValue',

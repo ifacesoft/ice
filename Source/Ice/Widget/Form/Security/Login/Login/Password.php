@@ -2,8 +2,8 @@
 
 namespace Ice\Widget\Form\Security\Login;
 
-use Ice\Core\Form_Security_Login;
 use Ice\Core\Query;
+use Ice\Core\Widget_Form_Security_Login;
 use Ice\Model\Account;
 use Ice\Model\User_Role_Link;
 
@@ -50,5 +50,10 @@ class Login_Password extends Widget_Form_Security_Login
         }
 
         Widget_Form_Security_Login::getLogger()->exception('Authorization failed: login-password incorrect', __FILE__, __LINE__);
+    }
+
+    public function render()
+    {
+        // TODO: Implement render() method.
     }
 }

@@ -40,11 +40,4 @@ return [
         'en' => 'var_export does not handle circular references',
         'ru' => 'var_export не обрабатывает циклические ссылки',
     ],
-    'file_get_contents(https://translate.yandex.net/api/v1.5/tr.json/translate?key=trnsl.1.1.20150207T134028Z.19bab9f8d9228706.89067e4f90535d4a934a39fbaf284d8af968c9a9&text=mongodb - #71: {$0}&lang=en-ru): failed to open stream: HTTP request failed! HTTP/1.1 400 BAD REQUEST
-' => [
-        'en' => 'file_get_contents(https://translate.yandex.net/api/v1.5/tr.json/translate?key=trnsl.1.1.20150207T134028Z.19bab9f8d9228706.89067e4f90535d4a934a39fbaf284d8af968c9a9&text=mongodb - #71: {$0}&lang=en-ru): failed to open stream: HTTP request failed! HTTP/1.1 400 BAD REQUEST
-',
-        'ru' => 'file_get_contents(https://translate.yandex.net/api/v1.5/tr.json/translate?key=trnsl.1.1.20150207T134028Z.19bab9f8d9228706.89067e4f90535d4a934a39fbaf284d8af968c9a9&text=mongodb - #71: {$0}&lang=en-ru): failed to open stream: HTTP request failed! HTTP/1.1 400 BAD REQUEST
-',
-    ],
 ];

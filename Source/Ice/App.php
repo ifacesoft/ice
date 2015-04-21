@@ -6,7 +6,6 @@ use Ice\Action\Front_Ajax;
 use Ice\Action\Http_Status;
 use Ice\Core\Action;
 use Ice\Core\Action_Context;
-use Ice\Core\Debuger;
 use Ice\Core\Logger;
 use Ice\Core\Profiler;
 use Ice\Core\Request;

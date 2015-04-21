@@ -9,7 +9,6 @@
 
 namespace Ice\Core;
 
-use Ice\Action\Widget_Form_Model;
 use Ice\Core;
 use Ice\Helper\Json;
 use Ice\Helper\Model as Helper_Model;
@@ -711,33 +710,6 @@ abstract class Model
     }
 
     /**
-     * Return model validate scheme
-     *
-     * @param  $pluginClass
-     * @return array
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since   0.0
-     */
-    public static function getPlugin($pluginClass)
-    {
-        $repository = self::getRepository('plugins');
-
-        if ($data = $repository->get($pluginClass)) {
-            return $data;
-        }
-
-        $data = [];
-
-        foreach (self::getConfig()->gets('columns') as $column) {
-            $data[$column['fieldName']] = $column[$pluginClass];
-        }
-
-        return $repository->set($pluginClass, $data);
-    }
-
-    /**
      * Return all rows for self model class
      *
      * @param  array $pagination
@@ -835,22 +807,6 @@ abstract class Model
     }
 
     /**
-     * Return localized title of field
-     *
-     * @param  $fieldName
-     * @return string
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since   0.0
-     */
-    public static function getFieldTitle($fieldName)
-    {
-        return self::getResource()->get($fieldName);
-    }
-
-    /**
      * Return localized title of placeholder field
      *
      * @param  $fieldName
@@ -907,6 +863,49 @@ abstract class Model
         }
 
         return $table;
+    }
+
+    /**
+     * Return model validate scheme
+     *
+     * @param  $pluginClass
+     * @return array
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since   0.0
+     */
+    public static function getPlugin($pluginClass)
+    {
+        $repository = self::getRepository('plugins');
+
+        if ($data = $repository->get($pluginClass)) {
+            return $data;
+        }
+
+        $data = [];
+
+        foreach (self::getConfig()->gets('columns') as $column) {
+            $data[$column['fieldName']] = $column[$pluginClass];
+        }
+
+        return $repository->set($pluginClass, $data);
+    }
+
+    /**
+     * Return localized title of field
+     *
+     * @param  $fieldName
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since   0.0
+     */
+    public static function getFieldTitle($fieldName)
+    {
+        return self::getResource()->get($fieldName);
     }
 
     /**

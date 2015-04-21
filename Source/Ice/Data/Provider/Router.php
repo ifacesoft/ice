@@ -276,31 +276,14 @@ class Router extends Data_Provider
     }
 
     /**
-     * Close connection with data provider
-     *
-     * @param  $connection
-     * @return boolean
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since   0.0
-     */
-    protected function close(&$connection)
-    {
-        $connection = null;
-        return true;
-    }
-
-    /**
      * @param $url
      * @param $method
      * @return array
      */
     private function getRoutes($url, $method)
     {
-     $matchedRoutes = [];
-     $foundRoutes = [];
+        $matchedRoutes = [];
+        $foundRoutes = [];
 
         /**
          * @var string $routeName
@@ -337,5 +320,22 @@ class Router extends Data_Provider
         }
 
         return array($matchedRoutes, $foundRoutes);
+    }
+
+    /**
+     * Close connection with data provider
+     *
+     * @param  $connection
+     * @return boolean
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since   0.0
+     */
+    protected function close(&$connection)
+    {
+        $connection = null;
+        return true;
     }
 }

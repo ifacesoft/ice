@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "223bbf74390d31e673d8002565786648",
+    "hash": "b670a24c570f7c27e51301ebc94b1f3d",
     "packages": [
         {
             "name": "michelf/php-markdown",
@@ -1746,12 +1746,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/squizlabs/PHP_CodeSniffer.git",
-                "reference": "0f0678839c143c9923a7d1143fccd31005c5ea8d"
+                "reference": "76853c5707775b17d68c8878a3672c952692ea30"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/0f0678839c143c9923a7d1143fccd31005c5ea8d",
-                "reference": "0f0678839c143c9923a7d1143fccd31005c5ea8d",
+                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/76853c5707775b17d68c8878a3672c952692ea30",
+                "reference": "76853c5707775b17d68c8878a3672c952692ea30",
                 "shasum": ""
             },
             "require": {
@@ -1812,7 +1812,7 @@
                 "phpcs",
                 "standards"
             ],
-            "time": "2015-04-17 00:38:59"
+            "time": "2015-04-21 05:31:04"
         },
         {
             "name": "symfony/console",
