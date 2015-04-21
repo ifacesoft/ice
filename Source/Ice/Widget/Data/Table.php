@@ -17,9 +17,23 @@ class Table extends Widget_Data
          * @var Widget_Data $dataClass
          */
         $dataClass = get_class($this);
-        $dataName = 'Data_' . $dataClass::getClassName();
 
-        $rows = [];
+        return Php::getInstance()->fetch(
+            Widget_Data::getClass($dataClass),
+            [
+                'rows' => $this->prepareRows($dataClass, $this->prepareColums($dataClass)),
+                'classes' => $this->getClasses(),
+                'style' => $this->getStyle()
+            ]
+        );
+    }
+
+    /**
+     * @param Widget_Data $dataClass
+     * @return array
+     */
+    private function prepareColums($dataClass) {
+        $dataName = 'Data_' . $dataClass::getClassName();
 
         $columns = $this->getColumns();
 
@@ -53,6 +67,11 @@ class Table extends Widget_Data
         }
         unset($column); // #^###%@@#@$% PHP
 
+        return $columns;
+    }
+
+    private function prepareRows($dataClass, $columns) {
+        $rows = [];
 
         $rows[] = Php::getInstance()->fetch(
             Widget_Data::getClass($dataClass . '_' . $this->getRowHeaderTemplate()),
@@ -102,13 +121,6 @@ class Table extends Widget_Data
             );
         }
 
-        return Php::getInstance()->fetch(
-            Widget_Data::getClass($dataClass),
-            [
-                'rows' => $rows,
-                'classes' => $this->getClasses(),
-                'style' => $this->getStyle()
-            ]
-        );
+        return $rows;
     }
 }

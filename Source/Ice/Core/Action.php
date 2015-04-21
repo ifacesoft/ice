@@ -246,16 +246,27 @@ abstract class Action implements Cacheable
      */
     public static function getInput(array $data = [])
     {
+        $params = array_merge(self::getConfig()->gets('input', false), ['actions', 'template', 'layout']);
+
+        $input = Action::prepareInput($params, $data);
+
+
+        if (isset($input['redirectUrl'])) {
+            throw new Redirect($input['redirectUrl']);
+        }
+
+        return $input;
+    }
+
+    private static function prepareInput($params, $data) {
         $dataProviderKeyMap = [
             'request' => Data_Provider_Request::DEFAULT_DATA_PROVIDER_KEY,
             'router' => Data_Provider_Router::DEFAULT_DATA_PROVIDER_KEY,
             'session' => Data_Provider_Session::DEFAULT_DATA_PROVIDER_KEY,
             'cli' => Data_Provider_Cli::DEFAULT_DATA_PROVIDER_KEY,
         ];
-
-        $params = array_merge(self::getConfig()->gets('input', false), ['actions', 'template', 'layout']);
-
         $input = [];
+
         foreach ($params as $name => $param) {
             if (is_int($name)) {
                 $name = $param;
@@ -296,12 +307,9 @@ abstract class Action implements Cacheable
             }
         }
 
-        if (isset($input['redirectUrl'])) {
-            throw new Redirect($input['redirectUrl']);
-        }
-
         return $input;
     }
+
 
     /**
      * Get action config
@@ -579,6 +587,34 @@ abstract class Action implements Cacheable
      */
     abstract public function run(array $input);
 
+    private function prepareAction($key, $action) {
+        $params = [];
+
+        if (is_array($action)) {
+            list($class, $key) = each($action);
+
+            if (is_int($class)) {
+                $class = $key;
+                $key = 0;
+            }
+
+            $params = count($action) < 2 ? [] : current($action);
+        } else {
+            if (!is_int($key)) {
+                $class = $key;
+                $key = $action;
+            } else {
+                $class = $action;
+            }
+        }
+
+        $class = $class[0] == '_'
+            ? get_class($this) . $class
+            : Action::getClass($class);
+
+        return [$key, [$class => $params]];
+    }
+
     /**
      * @param array $rawActions
      * @return array
@@ -592,34 +628,12 @@ abstract class Action implements Cacheable
                 continue;
             }
 
-            $params = [];
-
-            if (is_array($action)) {
-                list($class, $key) = each($action);
-
-                if (is_int($class)) {
-                    $class = $key;
-                    $key = 0;
-                }
-
-                $params = count($action) < 2 ? [] : current($action);
-            } else {
-                if (!is_int($key)) {
-                    $class = $key;
-                    $key = $action;
-                } else {
-                    $class = $action;
-                }
-            }
-
-            $class = $class[0] == '_'
-                ? get_class($this) . $class
-                : Action::getClass($class);
+            list($key, $action) = $this->prepareAction($key, $action);
 
             if (!empty($key) && is_string($key)) {
-                $actions[$key] = [$class => $params];
+                $actions[$key] = $action;
             } else {
-                $actions[] = [$class => $params];
+                $actions[] = $action;
             }
         }
 

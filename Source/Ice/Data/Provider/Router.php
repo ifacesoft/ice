@@ -214,15 +214,9 @@ class Router extends Data_Provider
     protected function connect(&$connection)
     {
         $dataProvider = Route::getDataProvider('route');
-
         $key = $this->getKey();
 
-        /**
-         * @var Route $route
-         */
-        $route = $dataProvider->get($key);
-
-        if ($route) {
+        if ($route = $dataProvider->get($key)) {
             $connection = $route;
             return true;
         }
@@ -235,38 +229,7 @@ class Router extends Data_Provider
 
         $url = strstr($key, '/');
 
-        $matchedRoutes = [];
-        $foundRoutes = [];
-
-        foreach (Route::getRoutes() as $routeName => $route) {
-            if (Environment::getInstance()->isDevelopment() && Core_Request::getParam('routing')) {
-                Debuger::dump(
-                    $routeName . ': ' . $url . ' || ' .
-                    $route->get('pattern') . ' || ' .
-                    (int)preg_match($route->get('pattern'), $url)
-                );
-            }
-
-            if (!preg_match($route->get('pattern'), $url)) {
-                continue;
-            }
-
-            $matchedRoutes[] = $routeName;
-
-            if (empty($route->get('request/' . $method))) {
-                continue;
-            }
-
-            $weight = $route->get('weight');
-
-            if (!isset($foundRoutes[$weight])) {
-                $foundRoutes[$weight] = [
-                    $routeName,
-                    $route->get('pattern'),
-                    $route->get('params')
-                ];
-            }
-        }
+        list($matchedRoutes, $foundRoutes) = $this->getRoutes($url, $method);
 
         if (empty($foundRoutes)) {
             if (!empty($matchedRoutes)) {
@@ -307,7 +270,6 @@ class Router extends Data_Provider
             $baseMatches[0][] = '';
         }
 
-
         $data = array_merge($data, array_combine(array_keys((array)$params), array_slice($baseMatches[0], 1)));
 
         return (bool)$connection = $dataProvider->set($key, $data);
@@ -328,5 +290,52 @@ class Router extends Data_Provider
     {
         $connection = null;
         return true;
+    }
+
+    /**
+     * @param $url
+     * @param $method
+     * @return array
+     */
+    private function getRoutes($url, $method)
+    {
+     $matchedRoutes = [];
+     $foundRoutes = [];
+
+        /**
+         * @var string $routeName
+         * @var Route $route
+         */
+        foreach (Route::getRoutes() as $routeName => $route) {
+            if (Environment::getInstance()->isDevelopment() && Core_Request::getParam('routing')) {
+                Debuger::dump(
+                    $routeName . ': ' . $url . ' || ' .
+                    $route->get('pattern') . ' || ' .
+                    (int)preg_match($route->get('pattern'), $url)
+                );
+            }
+
+            if (!preg_match($route->get('pattern'), $url)) {
+                continue;
+            }
+
+            $matchedRoutes[] = $routeName;
+
+            if (empty($route->get('request/' . $method))) {
+                continue;
+            }
+
+            $weight = $route->get('weight');
+
+            if (!isset($foundRoutes[$weight])) {
+                $foundRoutes[$weight] = [
+                    $routeName,
+                    $route->get('pattern'),
+                    $route->get('params')
+                ];
+            }
+        }
+
+        return array($matchedRoutes, $foundRoutes);
     }
 }
