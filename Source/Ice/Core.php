@@ -275,7 +275,8 @@ trait Core
         return $this;
     }
 
-    public function __toString() {
-        return (string) get_class($this);
+    public function __toString()
+    {
+        return (string)get_class($this);
     }
 }

@@ -31,4 +31,8 @@ return [
     'Route file path not found for {$0}' => [
         'ru' => 'Route file path not found for {$0}',
     ],
+    'ice_admin_database' => [
+        'en' => 'Database',
+        'ru' => 'База данных',
+    ],
 ];

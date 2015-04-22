@@ -21,9 +21,7 @@ class Admin extends Action
     {
         return [
             'view' => ['viewRenderClass' => 'Ice:Php'],
-            'input' => [
-                'items' => ['default' => [], 'type' => 'array']
-            ],
+            'input' => [],
             'output' => [],
             'ttl' => -1,
             'roles' => []
@@ -43,19 +41,6 @@ class Admin extends Action
      */
     public function run(array $input)
     {
-        $input['items'][] = [
-            'title' => 'База данных',
-            'desc' => 'Менеджер базы данных.',
-            'routeName' => 'ice_admin_database'
-        ];
 
-        $data = Table::create()
-            ->setColumnCount(5)
-            ->link('title', 'item', ['routeName' => 'routeName'])
-            ->setRows($input['items']);
-
-        return [
-            'table' => $data
-        ];
     }
 }

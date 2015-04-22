@@ -2,7 +2,12 @@
 
 namespace Ice\Action;
 
+use Doctrine\Common\Util\Debug;
 use Ice\Core\Action;
+use Ice\Core\Module;
+use Ice\Core\Request;
+use Ice\Core\Route;
+use Ice\Widget\Menu\Navbar;
 
 class Admin_Navigation extends Action
 {
@@ -21,7 +26,9 @@ class Admin_Navigation extends Action
     {
         return [
             'view' => ['viewRenderClass' => 'Ice:Php'],
-            'input' => [],
+            'input' => [
+                'items' => ['default' => []]
+            ],
             'output' => [],
             'ttl' => -1,
             'roles' => []
@@ -41,6 +48,31 @@ class Admin_Navigation extends Action
      */
     public function run(array $input)
     {
-        // TODO: Implement run() method.
+        $currentUrl = Request::uri();
+        $adminUrl = Route::getInstance('ice_admin')->getUrl();
+
+        $navbarMenu = Navbar::create(Route::getInstance('ice_admin')->getUrl(), __CLASS__)
+            ->setBrand(Module::getInstance()->get('name'))
+            ->setClasses('navbar-inverse navbar-fixed-top')
+            ->link(Route::getInstance(
+                'ice_admin')->getUrl(),
+                'Административная панель',
+                ['active' => $currentUrl == $adminUrl ? true : false]
+            );
+
+        foreach ($input['items'] as $item) {
+            if (isset($item['routeName'])) {
+                $routeUrl = Route::getInstance($item['routeName'])->getUrl();
+                $title = Route::getResource()->get($item['routeName']);
+
+                $navbarMenu->link($routeUrl, $title, ['active' => $currentUrl == $routeUrl ? true : false]);
+            } else {
+                $navbarMenu->link($item['url'], $item['title'], ['active' => $currentUrl == $item['url'] ? true : false]);
+            }
+        }
+
+        return [
+            'navbarMenu' => $navbarMenu
+        ];
     }
 }

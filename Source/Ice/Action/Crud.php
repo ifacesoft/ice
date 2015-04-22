@@ -2,6 +2,7 @@
 namespace Ice\Action;
 
 use Ice\Core\Action;
+use Ice\Core\Debuger;
 use Ice\Core\Model;
 use Ice\Core\Request;
 use Ice\Widget\Menu\Pagination;

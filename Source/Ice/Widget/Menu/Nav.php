@@ -7,11 +7,15 @@ use Ice\View\Render\Php;
 class Nav extends Widget_Menu
 {
     /**
-     * @return Nav
+     * @param $url
+     * @param $action
+     * @param null $block
+     * @param null $event
+     * @return Pagination
      */
-    public static function create()
+    public static function create($url, $action, $block = null, $event = null)
     {
-        return parent::create();
+        return parent::create($url, $action, $block, $event);
     }
 
     /**

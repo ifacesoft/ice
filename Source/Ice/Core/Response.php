@@ -9,6 +9,7 @@
 namespace Ice\Core;
 
 use Ice\Helper\Http;
+use Ice\Helper\Json;
 
 /**
  * Class Response
@@ -23,11 +24,9 @@ use Ice\Helper\Http;
 class Response
 {
     /**
-     * Response content
-     *
-     * @var string
+     * @var View
      */
-    private $content = '';
+    private $view = null;
 
     /**
      * Content type
@@ -49,11 +48,6 @@ class Response
      * @var string|null
      */
     private $redirectUrl = null;
-
-    /**
-     * @var bool
-     */
-    private $isError = false;
 
     /**
      * Private constructor of Request object
@@ -92,8 +86,12 @@ class Response
      */
     public function send()
     {
+        if (!$this->view || !($this->view instanceof View)) {
+            Logger::getInstance(__CLASS__)->exception(['Response broken. View not found {$0}', $this->view], __FILE__, __LINE__);
+        }
+
         if (Request::isCli()) {
-            fwrite($this->isError ? STDERR : STDOUT, $this->content);
+            fwrite(empty($this->view->getErrors()) ? STDOUT : STDERR, $this->view->getContent());
             return;
         }
 
@@ -116,22 +114,9 @@ class Response
             Http::setHeader(Http::getStatusCodeHeader($this->statusCode), true, $this->statusCode);
         }
 
-        echo $this->content;
-    }
-
-    /**
-     * Set response content
-     *
-     * @param string $content
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since   0.4
-     */
-    public function setContent($content)
-    {
-        $this->content = $content;
+        echo Request::isAjax()
+            ? Json::encode($this->view->getResult())
+            : $this->view->getContent();
     }
 
     /**
@@ -182,15 +167,10 @@ class Response
     }
 
     /**
-     * Set flag is error
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since   0.4
+     * @param View $view
      */
-    public function setError()
+    public function setView($view)
     {
-        $this->isError = true;
+        $this->view = $view;
     }
 }

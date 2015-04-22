@@ -1,6 +1,8 @@
 <?php
 namespace Ice\Core;
 
+use Ice\Helper\Object;
+
 abstract class Widget
 {
     use Stored;
@@ -40,7 +42,7 @@ abstract class Widget
 
         $widget->url = $url;
         $widget->action = $action;
-        $widget->block = $block;
+        $widget->block = $block ? $block : Object::getName($action);
         $widget->event = $event;
 
         return $widget;
@@ -179,7 +181,7 @@ abstract class Widget
 
     abstract public function render();
 
-    protected function addValue($key, $value)
+    public function addValue($key, $value)
     {
         $this->values[$key] = $value;
     }

@@ -17,42 +17,20 @@ class Table extends Widget_Data
          * @var Widget_Data $dataClass
          */
         $dataClass = get_class($this);
-        $dataName = 'Data_' . $dataClass::getClassName();
 
+        return Php::getInstance()->fetch(
+            Widget_Data::getClass($dataClass),
+            [
+                'rows' => $this->prepareRows($dataClass, $this->prepareColums($dataClass)),
+                'classes' => $this->getClasses(),
+                'style' => $this->getStyle()
+            ]
+        );
+    }
+
+    private function prepareRows($dataClass, $columns)
+    {
         $rows = [];
-
-        $columns = $this->getColumns();
-
-        $columnNames = array_keys($columns);
-
-        if ($filterFields = $this->getFilterFields()) {
-            $columnNames = array_intersect($columnNames, $filterFields);
-        }
-
-        $columns = array_intersect_key($columns, array_flip($columnNames));
-
-        foreach ($columns as $columnName => &$column) {
-            $column['dataName'] = $dataName;
-            $column['name'] = $columnName;
-            $column['href'] = $this->getUrl();
-            $column['dataUrl'] = $this->getUrl();
-            $column['dataJson'] = Json::encode($this->getParams());
-            $column['dataAction'] = $this->getAction();
-            $column['dataBlock'] = $this->getBlock();
-            $column['dataValue'] = $this->getValues($columnName);
-
-            if ($this->getValues($columnName) == '') {
-                $ordering = Query_Builder::SQL_ORDERING_ASC;
-            } elseif ($this->getValues($columnName) == Query_Builder::SQL_ORDERING_ASC) {
-                $ordering = Query_Builder::SQL_ORDERING_DESC;
-            } else {
-                $ordering = '';
-            }
-
-            $column['onclick'] = 'Ice_Widget_Data.click($(this), "' . $ordering . '"); return false;';
-        }
-        unset($column); // #^###%@@#@$% PHP
-
 
         $rows[] = Php::getInstance()->fetch(
             Widget_Data::getClass($dataClass . '_' . $this->getRowHeaderTemplate()),
@@ -102,13 +80,49 @@ class Table extends Widget_Data
             );
         }
 
-        return Php::getInstance()->fetch(
-            Widget_Data::getClass($dataClass),
-            [
-                'rows' => $rows,
-                'classes' => $this->getClasses(),
-                'style' => $this->getStyle()
-            ]
-        );
+        return $rows;
+    }
+
+    /**
+     * @param Widget_Data $dataClass
+     * @return array
+     */
+    private function prepareColums($dataClass)
+    {
+        $dataName = 'Data_' . $dataClass::getClassName();
+
+        $columns = $this->getColumns();
+
+        $columnNames = array_keys($columns);
+
+        if ($filterFields = $this->getFilterFields()) {
+            $columnNames = array_intersect($columnNames, $filterFields);
+        }
+
+        $columns = array_intersect_key($columns, array_flip($columnNames));
+
+        foreach ($columns as $columnName => &$column) {
+            $column['dataName'] = $dataName;
+            $column['name'] = $columnName;
+            $column['href'] = $this->getUrl();
+            $column['dataUrl'] = $this->getUrl();
+            $column['dataJson'] = Json::encode($this->getParams());
+            $column['dataAction'] = $this->getAction();
+            $column['dataBlock'] = $this->getBlock();
+            $column['dataValue'] = $this->getValues($columnName);
+
+            if ($this->getValues($columnName) == '') {
+                $ordering = Query_Builder::SQL_ORDERING_ASC;
+            } elseif ($this->getValues($columnName) == Query_Builder::SQL_ORDERING_ASC) {
+                $ordering = Query_Builder::SQL_ORDERING_DESC;
+            } else {
+                $ordering = '';
+            }
+
+            $column['onclick'] = 'Ice_Widget_Data.click($(this), "' . $ordering . '"); return false;';
+        }
+        unset($column); // #^###%@@#@$% PHP
+
+        return $columns;
     }
 }

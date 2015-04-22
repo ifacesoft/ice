@@ -116,22 +116,22 @@ class View implements Cacheable
         return Cacher::getInstance(__CLASS__);
     }
 
-    /**
-     * Magic render view
-     *
-     * @see View::getContent()
-     *
-     * @return string
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since   0.0
-     */
-    public function __toString()
-    {
-        return $this->getContent();
-    }
+//    /**
+//     * Magic render view
+//     *
+//     * @see View::getContent()
+//     *
+//     * @return string
+//     *
+//     * @author dp <denis.a.shestakov@gmail.com>
+//     *
+//     * @version 0.5
+//     * @since   0.0
+//     */
+//    public function __toString()
+//    {
+//        return $this->getContent();
+//    }
 
     public function getContent()
     {

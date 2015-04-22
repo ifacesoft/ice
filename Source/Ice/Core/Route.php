@@ -63,7 +63,7 @@ class Route extends Config
     /**
      * Return all routes
      *
-     * @return array
+     * @return Route[]
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *

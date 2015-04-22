@@ -2,22 +2,21 @@
 
 namespace Ice;
 
-use Ice\Action\Front_Ajax;
 use Ice\Action\Http_Status;
 use Ice\Core\Action;
 use Ice\Core\Action_Context;
-use Ice\Core\Debuger;
 use Ice\Core\Logger;
 use Ice\Core\Profiler;
 use Ice\Core\Request;
 use Ice\Core\Response;
 use Ice\Core\Route;
-use Ice\Core\View;
 use Ice\Data\Provider\Cli;
+use Ice\Data\Provider\Request as Data_Provider_Request;
 use Ice\Data\Provider\Router;
 use Ice\Exception\Http_Bad_Request;
 use Ice\Exception\Http_Not_Found;
 use Ice\Exception\Redirect;
+use Ice\Helper\Json;
 
 class App
 {
@@ -35,53 +34,25 @@ class App
         try {
             /**
              * @var Action $actionClass
+             * @var array $input
              */
-            $actionClass = null;
+           list($actionClass, $input) = App::getAction();
 
-            /**
-             * @var View $view
-             */
-            $view = null;
-
-            if (Request::isCli()) {
-                ini_set('memory_limit', '1024M');
-
-                $input = Cli::getInstance()->get();
-                $actionClass = $input['actionClass'];
-                unset($input['actionClass']);
-
-                $view = $actionClass::call($input);
-            } elseif (Request::isAjax()) {
-                $actionClass = Front_Ajax::getClass();
-                $view = $actionClass::call();
-            } else {
-                $router = Router::getInstance();
-                $route = Route::getInstance($router->get('routeName'));
-                $method = $route->gets('request/' . $router->get('method'));
-
-                list($actionClass, $input) = each($method);
-                $actionClass = Action::getClass($actionClass);
-                $view = $actionClass::call($input);
-            }
-
-            App::getResponse()->setContent($view);
+            App::getResponse()->setView($actionClass::call($input));
         } catch (Redirect $e) {
             App::getResponse()->setRedirectUrl($e->getRedirectUrl());
         } catch (Http_Bad_Request $e) {
             $actionClass = Http_Status::getClass();
-            $view = $actionClass::call(['code' => 400, 'exception' => $e]);
-            App::getResponse()->setContent($view);
+            App::getResponse()->setView($actionClass::call(['code' => 400, 'exception' => $e]));
         } catch (Http_Not_Found $e) {
             $actionClass = Http_Status::getClass();
-            $view = $actionClass::call(['code' => 404, 'exception' => $e]);
-            App::getResponse()->setContent($view);
+            App::getResponse()->setView($actionClass::call(['code' => 404, 'exception' => $e]));
         } catch (\Exception $e) {
             if (Request::isCli()) {
                 Logger::getInstance(__CLASS__)->error('Application failure', __FILE__, __LINE__, $e);
             } else {
                 $actionClass = Http_Status::getClass();
-                $view = $actionClass::call(['code' => 500, 'exception' => $e]);
-                App::getResponse()->setContent($view);
+                App::getResponse()->setView($actionClass::call(['code' => 500, 'exception' => $e]));
             }
         }
 
@@ -133,5 +104,29 @@ class App
         }
 
         return App::$context = Action_Context::create();
+    }
+
+    private static function getAction()
+    {
+        if (Request::isCli()) {
+            ini_set('memory_limit', '1024M');
+
+            $input = Cli::getInstance()->get();
+            $actionClass = $input['actionClass'];
+            unset($input['actionClass']);
+        } elseif (Request::isAjax()) {
+            $input = Data_Provider_Request::getInstance()->get();
+            $actionClass = $input['call'];
+            unset($input['actionClass']);
+        } else {
+            $router = Router::getInstance();
+            $route = Route::getInstance($router->get('routeName'));
+            $method = $route->gets('request/' . $router->get('method'));
+
+            list($actionClass, $input) = each($method);
+            $actionClass = Action::getClass($actionClass);
+        }
+
+        return [$actionClass, $input];
     }
 }

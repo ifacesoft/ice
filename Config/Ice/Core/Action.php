@@ -1,5 +1,4 @@
 <?php
-use Ice\Helper\Console;
 
 return [
     'Ice\Action\Resources' => [
@@ -44,22 +43,13 @@ return [
             ],
         ],
     ],
-    'Ice\Action\Front_Cli' => [
-        'inputDefaults' => [
-            'action' => function ($param) {
-                return Console::getInteractive('Ice\Action\Module_Create', $param,
-                    [
-                        'default' => 'Ice:Module_Deploy',
-                        'title' => 'Action [{$0}]: ',
-                        'validators' => [
-                            'Ice:Pattern' => [
-                                'params' => '/^[:a-z]+$/i',
-                                'message' => 'Action mast conteints only letters and sign ":"'
-                            ]
-                        ]
-                    ]
-                );
-            }
+    'Ice\Action\Admin_Navigation' => [
+        'input' => [
+            'items' => [
+                'default' => [
+                    ['routeName' => 'ice_admin_database']
+                ]
+            ]
         ]
     ],
 ];

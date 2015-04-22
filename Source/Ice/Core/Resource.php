@@ -8,6 +8,7 @@
  */
 namespace Ice\Core;
 
+use Doctrine\Common\Util\Debug;
 use Ice\Core;
 use Ice\Exception\FileNotFound;
 use Ice\Helper\Api_Client_Yandex_Translate;
@@ -115,16 +116,22 @@ class Resource
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @todo    need caching
-     * @version 0.0
+     * @version 0.6
      * @since   0.0
      */
     public static function create($class)
     {
-        $resourceFile = Loader::getFilePath($class, '.res.php', Module::RESOURCE_DIR, false);
+        $resources = [];
 
-        return $resourceFile
-            ? new Resource($class, File::loadData($resourceFile))
-            : new Resource($class, []);
+        $resourceFiles = Loader::getFilePath($class, '.res.php', Module::RESOURCE_DIR, false, true, false, true);
+
+        foreach ($resourceFiles as $resourceFile) {
+            if ($resource = File::loadData($resourceFile)) {
+                $resources += $resource;
+            }
+        }
+
+        return new Resource($class, $resources);
     }
 
     public function set($message)

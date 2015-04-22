@@ -246,55 +246,9 @@ abstract class Action implements Cacheable
      */
     public static function getInput(array $data = [])
     {
-        $dataProviderKeyMap = [
-            'request' => Data_Provider_Request::DEFAULT_DATA_PROVIDER_KEY,
-            'router' => Data_Provider_Router::DEFAULT_DATA_PROVIDER_KEY,
-            'session' => Data_Provider_Session::DEFAULT_DATA_PROVIDER_KEY,
-            'cli' => Data_Provider_Cli::DEFAULT_DATA_PROVIDER_KEY,
-        ];
+        $params = array_merge(self::getConfig()->gets('input', false), ['actions', 'template', 'layout', 'viewRenderClass']);
 
-        $params = array_merge(self::getConfig()->gets('input', false), ['actions', 'template', 'layout']);
-
-        $input = [];
-        foreach ($params as $name => $param) {
-            if (is_int($name)) {
-                $name = $param;
-                $param = [];
-            }
-
-            $dataProviderKeys = isset($param['providers'])
-                ? (array)$param['providers']
-                : ['default'];
-
-            foreach ($dataProviderKeys as $dataProviderKey) {
-                if (isset($input[$name])) {
-                    continue;
-                }
-
-                if (isset($dataProviderKeyMap[$dataProviderKey])) {
-                    $dataProviderKey = $dataProviderKeyMap[$dataProviderKey];
-                }
-
-                if ($dataProviderKey == 'default') {
-                    if (array_key_exists($name, $data)) {
-                        $input[$name] = $data[$name];
-                        continue;
-                    }
-
-                    if (isset($param['default'])) {
-                        $input[$name] = $param['default'];
-                    }
-
-                    continue;
-                }
-
-                $input[$name] = Data_Provider::getInstance($dataProviderKey)->get($name);
-            }
-
-            if (array_key_exists($name, $input)) {
-                $input[$name] = Action::getInputParam($name, $input[$name], $param);
-            }
-        }
+        $input = Action::prepareInput($params, $data);
 
         if (isset($input['redirectUrl'])) {
             throw new Redirect($input['redirectUrl']);
@@ -328,7 +282,11 @@ abstract class Action implements Cacheable
 
         $config = Config::create(
             $actionClass,
-            array_merge_recursive($actionClass::config(), Config::getInstance($actionClass, null, false, -1)->gets())
+            array_merge_recursive(
+                $actionClass::config(),
+                Config::getInstance($actionClass, null, false, -1)
+                    ->gets()
+            )
         );
 
         return $repository->set('config', $config);
@@ -389,6 +347,60 @@ abstract class Action implements Cacheable
     protected static function config()
     {
         return [];
+    }
+
+    private static function prepareInput($params, $data)
+    {
+        $dataProviderKeyMap = [
+            'request' => Data_Provider_Request::DEFAULT_DATA_PROVIDER_KEY,
+            'router' => Data_Provider_Router::DEFAULT_DATA_PROVIDER_KEY,
+            'session' => Data_Provider_Session::DEFAULT_DATA_PROVIDER_KEY,
+            'cli' => Data_Provider_Cli::DEFAULT_DATA_PROVIDER_KEY,
+        ];
+
+        $input = [];
+
+        foreach ($params as $name => $param) {
+            if (is_int($name)) {
+                $name = $param;
+                $param = [];
+            }
+
+            $dataProviderKeys = isset($param['providers'])
+                ? (array)$param['providers']
+                : ['default'];
+
+            foreach ($dataProviderKeys as $dataProviderKey) {
+                if (isset($input[$name])) {
+                    continue;
+                }
+
+                if (isset($dataProviderKeyMap[$dataProviderKey])) {
+                    $dataProviderKey = $dataProviderKeyMap[$dataProviderKey];
+                }
+
+                if ($dataProviderKey == 'default') {
+                    if (array_key_exists($name, $data)) {
+                        $input[$name] = $data[$name];
+                        continue;
+                    }
+
+                    if (isset($param['default'])) {
+                        $input[$name] = $param['default'];
+                    }
+
+                    continue;
+                }
+
+                $input[$name] = Data_Provider::getInstance($dataProviderKey)->get($name);
+            }
+
+            if ($value = Action::getInputParam($name, isset($input[$name]) ? $input[$name] : null, $param)) {
+                $input[$name] = $value;
+            }
+        }
+
+        return $input;
     }
 
     /**
@@ -592,38 +604,45 @@ abstract class Action implements Cacheable
                 continue;
             }
 
-            $params = [];
-
-            if (is_array($action)) {
-                list($class, $key) = each($action);
-
-                if (is_int($class)) {
-                    $class = $key;
-                    $key = 0;
-                }
-
-                $params = count($action) < 2 ? [] : current($action);
-            } else {
-                if (!is_int($key)) {
-                    $class = $key;
-                    $key = $action;
-                } else {
-                    $class = $action;
-                }
-            }
-
-            $class = $class[0] == '_'
-                ? get_class($this) . $class
-                : Action::getClass($class);
+            list($key, $action) = $this->prepareAction($key, $action);
 
             if (!empty($key) && is_string($key)) {
-                $actions[$key] = [$class => $params];
+                $actions[$key] = $action;
             } else {
-                $actions[] = [$class => $params];
+                $actions[] = $action;
             }
         }
 
         return $actions;
+    }
+
+    private function prepareAction($key, $action)
+    {
+        $params = [];
+
+        if (is_array($action)) {
+            list($class, $key) = each($action);
+
+            if (is_int($class)) {
+                $class = $key;
+                $key = 0;
+            }
+
+            $params = count($action) < 2 ? [] : current($action);
+        } else {
+            if (!is_int($key)) {
+                $class = $key;
+                $key = $action;
+            } else {
+                $class = $action;
+            }
+        }
+
+        $class = $class[0] == '_'
+            ? get_class($this) . $class
+            : Action::getClass($class);
+
+        return [$key, [$class => $params]];
     }
 
     /**

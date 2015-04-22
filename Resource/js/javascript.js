@@ -89,7 +89,8 @@ var Ice = {
             action,
             actionParams,
             function (result) {
-                $element.closest('.' + block).replaceWith(result.html);
+                console.log('.' + block);
+                $element.closest('.' + block).replaceWith(result.content);
 
                 if (callback) {
                     callback();

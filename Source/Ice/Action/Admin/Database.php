@@ -5,6 +5,7 @@ namespace Ice\Action;
 use Ice\Core\Action;
 use Ice\Core\Data_Scheme;
 use Ice\Core\Module;
+use Ice\Core\Request;
 use Ice\Widget\Menu\Nav;
 
 class Admin_Database extends Action
@@ -43,7 +44,7 @@ class Admin_Database extends Action
      */
     public function run(array $input)
     {
-        $dataSourceKeysMenu = Nav::create()
+        $dataSourceKeysMenu = Nav::create(Request::uri(true), __CLASS__)
             ->setClasses('nav-tabs');
 
         $module = Module::getInstance();
@@ -72,7 +73,7 @@ class Admin_Database extends Action
             ? $input['tableName']
             : reset($tables)['scheme']['tableName'];
 
-        $tablesMenu = Nav::create()
+        $tablesMenu = Nav::create(Request::uri(true), __CLASS__)
             ->setClasses('nav-pills nav-stacked');
 
         foreach ($tables as $table) {
