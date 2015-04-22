@@ -40,8 +40,4 @@ return [
         'en' => 'var_export does not handle circular references',
         'ru' => 'var_export не обрабатывает циклические ссылки',
     ],
-    'file_put_contents(/home/dp/PhpstormProjects/ebs/vendor/ifacesoft/ice/Resource/Ice/Core/Route.res.php): failed to open stream: Permission denied' => [
-        'en' => 'file_put_contents(/home/dp/PhpstormProjects/ebs/vendor/ifacesoft/ice/Resource/Ice/Core/Route.res.php): failed to open stream: Permission denied',
-        'ru' => 'file_put_contents(/home/dp/PhpstormProjects/ebs/vendor/ifacesoft/ice/Resource/Ice/Core/Route.res.php): не удалось открыть поток: Разрешение отказано',
-    ],
 ];
