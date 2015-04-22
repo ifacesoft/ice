@@ -2,21 +2,25 @@
 if (!defined('ICE_BOOTSTRAP')) {
     define('ICE_BOOTSTRAP', true);
 
+    if (!defined('ICE_DIR')) {
+        define('ICE_DIR', __DIR__ . '/');
+    }
+
     if (!defined('MODULE_DIR')) {
         $moduleDir = php_sapi_name() == 'cli'
 //            ? dirname(realpath($_SERVER['argv'][0]))
             ? getcwd()
             : dirname(dirname($_SERVER['SCRIPT_FILENAME']));
 
-        define('MODULE_DIR', $moduleDir . '/');
+        if (file_exists($moduleDir . '/app.php')) {
+            define('MODULE_DIR', $moduleDir . '/');
+        } else {
+            define('MODULE_DIR', ICE_DIR);
+        }
     }
 
     if (!defined('VENDOR_DIR')) {
         define('VENDOR_DIR', dirname(MODULE_DIR) . '/_vendor/');
-    }
-
-    if (!defined('ICE_DIR')) {
-        define('ICE_DIR', __DIR__ . '/');
     }
 
     if (!defined('BOOTSTRAP_CLASS')) {

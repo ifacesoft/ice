@@ -61,7 +61,7 @@ class Config
     /**
      * Get config object by type or key
      *
-     * @param  Core $class
+     * @param  mixed $class
      * @param  null $postfix
      * @param  bool $isRequired
      * @param  integer $ttl

@@ -8,7 +8,6 @@
  */
 namespace Ice\Core;
 
-use Doctrine\Common\Util\Debug;
 use Ice\Core;
 use Ice\Exception\FileNotFound;
 use Ice\Helper\Api_Client_Yandex_Translate;

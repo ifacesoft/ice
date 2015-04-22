@@ -280,7 +280,11 @@ class Data_Scheme
                 Data_Scheme::getLogger()->info(['Removing models from data source {$0}', $dataSourceKey]);
                 foreach ($schemeTables as $tableName => $table) {
                     Data_Scheme::getLogger()->info(['Remove model {$0}', $schemeTables[$tableName]['modelClass']]);
-                    unlink($module->get(Module::SOURCE_DIR) . $table['modelPath']);
+                    $modelFilePath = $module->get(Module::SOURCE_DIR) . $table['modelPath'];
+                    /** @bug @todo Not need delete file if he included in other data source scheme */
+                    if (file_exists($modelFilePath)) {
+                        unlink($modelFilePath);
+                    }
                 }
             }
         }
