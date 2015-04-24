@@ -13,7 +13,7 @@ class Model_Scheme extends Config
         /**
          * @var Model $modelClass
          */
-        $modelClass = $this->getConfigName();
+        $modelClass = $this->getName();
 
         $repository = $modelClass::getRepository('mapping');
         $key = 'fieldColumnMap';
@@ -26,7 +26,7 @@ class Model_Scheme extends Config
         /**
          * @var Model $modelClass
          */
-        $modelClass = $this->getConfigName();
+        $modelClass = $this->getName();
 
         $repository = $modelClass::getRepository('mapping');
         $key = 'columnFieldMap';
@@ -60,7 +60,7 @@ class Model_Scheme extends Config
         /**
          * @var Model $modelClass
          */
-        $modelClass = $this->getConfigName();
+        $modelClass = $this->getName();
 
         $fieldNames = array_values($this->getColumnFieldMap());
 
@@ -117,7 +117,7 @@ class Model_Scheme extends Config
         /**
          * @var Model $modelClass
          */
-        $modelClass = $this->getConfigName();
+        $modelClass = $this->getName();
 
         $repository = $modelClass::getRepository('scheme');
         $key = 'pkFieldNames';

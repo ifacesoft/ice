@@ -110,7 +110,7 @@ class Module extends Config
 
     public function getAlias()
     {
-        return $this->getConfigName();
+        return $this->getName();
     }
 
     /**

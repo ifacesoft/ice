@@ -269,7 +269,7 @@ class Resources extends Action
 
         if (!Request::isCli()) {
             $resourceName = empty($input['routeName'])
-                ? Route::getInstance()->getConfigName()
+                ? Route::getInstance()->getName()
                 : $input['routeName'];
 
             $jsFile = $resourceName . '.pack.js';

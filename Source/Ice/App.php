@@ -2,6 +2,8 @@
 
 namespace Ice;
 
+use Composer\Installer\PackageEvent;
+use Composer\Script\Event;
 use Ice\Action\Http_Status;
 use Ice\Core\Action;
 use Ice\Core\Action_Context;
@@ -16,7 +18,6 @@ use Ice\Data\Provider\Router;
 use Ice\Exception\Http_Bad_Request;
 use Ice\Exception\Http_Not_Found;
 use Ice\Exception\Redirect;
-use Ice\Helper\Json;
 
 class App
 {
@@ -128,5 +129,19 @@ class App
         }
 
         return [$actionClass, $input];
+    }
+
+    public static function install(Event $event)
+    {
+        $composer = $event->getComposer();
+        var_dump($composer);
+        echo 'Ice installation complete';
+    }
+
+    public static function update(Event $event)
+    {
+        $composer = $event->getComposer();
+        var_dump($composer);
+        echo 'Ice installation complete';
     }
 }

@@ -279,8 +279,8 @@ class Config
     public function backup($revision)
     {
         File::move(
-            Loader::getFilePath($this->getConfigName(), '.php', Module::CONFIG_DIR, false, true),
-            Loader::getFilePath($this->getConfigName() . '/' . $revision, '.php', 'Var/Backup/Config/', false, true)
+            Loader::getFilePath($this->getName(), '.php', Module::CONFIG_DIR, false, true),
+            Loader::getFilePath($this->getName() . '/' . $revision, '.php', 'Var/Backup/Config/', false, true)
         );
 
         return $this;
@@ -296,7 +296,7 @@ class Config
      * @version 0.0
      * @since   0.0
      */
-    public function getConfigName()
+    public function getName()
     {
         return $this->configName;
     }
@@ -314,7 +314,7 @@ class Config
     public function save()
     {
         File::createData(
-            Loader::getFilePath($this->getConfigName(), '.php', Module::CONFIG_DIR, false, true),
+            Loader::getFilePath($this->getName(), '.php', Module::CONFIG_DIR, false, true),
             $this->config
         );
 

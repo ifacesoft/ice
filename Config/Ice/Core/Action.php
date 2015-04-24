@@ -34,7 +34,7 @@ return [
                             'module' => [
                                 'path' => 'Ice/',
                                 'js' => ['Helper/String.js', 'Widget/Form.js', 'Widget/Menu.js', 'Widget/Data.js'],
-                                'css' => [],
+                                'css' => ['Widget/Menu.css'],
                                 'isCopy' => false,
                             ],
                         ],

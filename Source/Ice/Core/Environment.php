@@ -103,7 +103,7 @@ class Environment extends Config
      */
     public function isDevelopment()
     {
-        return $this->getConfigName() == Environment::DEVELOPMENT;
+        return $this->getName() == Environment::DEVELOPMENT;
     }
 
     /**
@@ -118,7 +118,7 @@ class Environment extends Config
      */
     public function isProduction()
     {
-        return $this->getConfigName() == Environment::PRODUCTION;
+        return $this->getName() == Environment::PRODUCTION;
     }
 
     /**

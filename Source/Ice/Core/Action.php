@@ -116,6 +116,10 @@ abstract class Action implements Cacheable
 
         $input = $actionClass::getInput($input);
 
+        if (isset($input['env']) && $input['env'] != Environment::getInstance()->getName()) {
+            return View::create($actionClass);
+        }
+
         //        $actionCacher = Action::getCacher();
 
         if ($actionClass::getConfig()->get('ttl', false) == 3600) {
@@ -246,7 +250,10 @@ abstract class Action implements Cacheable
      */
     public static function getInput(array $data = [])
     {
-        $params = array_merge(self::getConfig()->gets('input', false), ['actions', 'template', 'layout', 'viewRenderClass']);
+        $params = array_merge(
+            self::getConfig()->gets('input', false),
+            ['actions', 'template', 'layout', 'viewRenderClass', 'env']
+        );
 
         $input = Action::prepareInput($params, $data);
 
@@ -572,6 +579,7 @@ abstract class Action implements Cacheable
      *  {
      *      return [
      *          'view' => ['template' => '', 'viewRenderClass' => null],
+     *          'actions' => [],
      *          'input' => [],
      *          'output' => [],
      *          'ttl' => -1,

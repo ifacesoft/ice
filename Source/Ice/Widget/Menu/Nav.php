@@ -1,17 +1,20 @@
 <?php
 namespace Ice\Widget\Menu;
 
+use Ice\Core\Debuger;
 use Ice\Core\Widget_Menu;
 use Ice\View\Render\Php;
 
 class Nav extends Widget_Menu
 {
+    private $navClasses = null;
+
     /**
      * @param $url
      * @param $action
      * @param null $block
      * @param null $event
-     * @return Pagination
+     * @return Nav
      */
     public static function create($url, $action, $block = null, $event = null)
     {
@@ -21,12 +24,12 @@ class Nav extends Widget_Menu
     /**
      * @param $name
      * @param $title
-     * @param Nav $nav
+     * @param Widget_Menu $nav
      * @param array $options
      * @param string $template
      * @return Nav
      */
-    public function nav($name, $title, Nav $nav, array $options = [], $template = 'Nav')
+    public function nav($name, $title, Widget_Menu $nav, array $options = [], $template = 'Nav')
     {
         $options['nav'] = $nav;
         return $this->addItem($name, $title, $options, $template);
@@ -54,8 +57,27 @@ class Nav extends Widget_Menu
                 'items' => $items,
                 'menuName' => $menuName,
                 'classes' => $this->getClasses(),
-                'style' => $this->getStyle()
+                'style' => $this->getStyle(),
+                'navClasses' => $this->getNavClasses()
             ]
         );
+    }
+
+    /**
+     * @return string
+     */
+    public function getNavClasses()
+    {
+        return $this->navClasses;
+    }
+
+    /**
+     * @param string $navClasses
+     * @return Nav
+     */
+    public function setNavClasses($navClasses)
+    {
+        $this->navClasses = $navClasses;
+        return $this;
     }
 }

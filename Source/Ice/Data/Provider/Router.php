@@ -235,11 +235,13 @@ class Router extends Data_Provider
             if (!empty($matchedRoutes)) {
                 $this->getLogger()->warning(
                     [
-                        'Route not found for {$0} request of {$1}, but matched routes for pattern {$2}',
-                        [$method, $url, $route->get('pattern')]
+                        'Route not found for {$0} request of {$1}',
+                        [$method, $url]
                     ],
                     __FILE__,
-                    __LINE__
+                    __LINE__,
+                    null,
+                    ['matched' => $matchedRoutes, 'found' => $foundRoutes]
                 );
             }
 
@@ -304,7 +306,7 @@ class Router extends Data_Provider
 
             $matchedRoutes[] = $routeName;
 
-            if (empty($route->get('request/' . $method))) {
+            if (!count($route->gets('request/' . $method))) {
                 continue;
             }
 

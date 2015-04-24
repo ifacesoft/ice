@@ -35,4 +35,12 @@ return [
         'en' => 'Database',
         'ru' => 'База данных',
     ],
+    'ebs_admin_tool' => [
+        'en' => 'ebs_admin_tool',
+        'ru' => 'ebs_admin_tool',
+    ],
+    'ebs_admin_report' => [
+        'en' => 'ebs_admin_report',
+        'ru' => 'ebs_admin_report',
+    ],
 ];

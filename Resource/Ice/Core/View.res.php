@@ -31,5 +31,9 @@ return [
     'Fetch template "{$0}" failed' => [
         'en' => 'Fetch template "{$0}" failed',
         'ru' => 'Извлечение шаблона "{$0}" не удалось',
-    ]
+    ],
+    'Twig: View {$0} not found. Trying generate template {$1}...' => [
+        'en' => 'Twig: View {$0} not found. Trying generate template {$1}...',
+        'ru' => 'Веточка: смотреть {$0} не найдена. Пытаюсь создать шаблон {$1}...',
+    ],
 ];
