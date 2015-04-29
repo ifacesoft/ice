@@ -70,7 +70,7 @@ class Deploy extends Action
             'actions' => [
                 'Ice:Composer_Update',
                 'Ice:Cache_Clear',
-                'Ice:Orm_Scheme_Update',
+                'Ice:Orm_Migrate',
                 'Ice:Resources',
             ]
         ];

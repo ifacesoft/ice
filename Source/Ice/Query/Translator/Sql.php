@@ -229,7 +229,7 @@ class Sql extends Query_Translator
         $deleteClass = array_shift($part);
 
         if ($deleteClass) {
-            $tableAlias = reset($part)[0];
+            $tableAlias = each($part)[0];
 
             $delete = "\n" . self::SQL_STATEMENT_DELETE . ' ' . self::SQL_CLAUSE_FROM .
                 "\n\t" . '`' . $tableAlias . '` USING ' . $deleteClass::getTableName() . ' AS `' . $tableAlias . '`';
