@@ -7,7 +7,7 @@ var Ice_Widget_Form = {
         var data = JSON.parse($element.attr('data-json'));
         data[$element.attr('name')] = $element.val();
 
-        Ice.reRender($element, data, callback, $element.attr('data-url'));
+        Ice.reRender($element, data, callback, $element.attr('data-url'), 'GET');
     },
 
     submit: function ($button, submitActionName, $params, reRenderClosest, reRenderActionNames) {

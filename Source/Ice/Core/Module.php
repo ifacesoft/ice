@@ -10,6 +10,8 @@
 namespace Ice\Core;
 
 use Ice\Core;
+use Ice\Exception\ModuleNotFound;
+use Ice\Helper\Console;
 use Ice\Helper\Directory;
 use Ice\Helper\File;
 use Ice\Helper\String;
@@ -175,7 +177,7 @@ class Module extends Config
      * @param array $modules
      *
      * @param  string $configFilePath
-     * @throws \ErrorException
+     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
@@ -194,10 +196,35 @@ class Module extends Config
 
         $configPath = $modulePath . $configFilePath;
 
-        $moduleConfig = File::loadData($configPath);
+        $moduleConfig = File::loadData($configPath, false);
 
         if (!$moduleConfig) {
-            throw new \ErrorException('Module loading failed. File ' . $configPath . ' not found');
+            $config = [
+                'Ice\\Core\\Request' => [
+                    'multiLocale' => 1,
+                    'locale' => 'en',
+                    'cors' => []
+                ]
+            ];
+
+            Config::create(Config::getClass(), $config)->save('Config/');
+
+            $moduleConfig = [
+                'alias' => 'Draft',
+                'module' => [
+                    'configDir' => 'Config/',
+                    'sourceDir' => 'Source/',
+                    'resourceDir' => 'Resource/',
+                    'logDir' => '../_log/',
+                    'cacheDir' => '../_cache/',
+                    'uploadDir' => '../_upload/',
+                    'compiledResourceDir' => '../_resource/',
+                    'downloadDir' => '../_resource/download/',
+                ],
+                'vendors' => []
+            ];
+
+            Module::create(__CLASS__, $moduleConfig)->save('Config/');
         }
 
         $module = $moduleConfig['module'];

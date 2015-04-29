@@ -38,9 +38,9 @@ class Role extends Model
                     ],
                     'schemeHash' => 708064701,
                     'fieldName' => 'role_pk',
-                    'Ice\\Core\\Ui_Form' => 'Number',
+                    'Ice\\Core\\Widget_Form' => 'Number',
                     'Ice\\Core\\Validator' => [],
-                    'Ice\\Core\\Ui_Data' => 'text',
+                    'Ice\\Core\\Widget_Data' => 'text',
                 ],
                 'role_name' => [
                     'scheme' => [
@@ -55,11 +55,11 @@ class Role extends Model
                     ],
                     'schemeHash' => 1375787174,
                     'fieldName' => 'role_name',
-                    'Ice\\Core\\Ui_Form' => 'Text',
+                    'Ice\\Core\\Widget_Form' => 'Text',
                     'Ice\\Core\\Validator' => [
                         'Ice:Length_Max' => 255,
                     ],
-                    'Ice\\Core\\Ui_Data' => 'text',
+                    'Ice\\Core\\Widget_Data' => 'text',
                 ],
             ],
             'oneToMany' => [],

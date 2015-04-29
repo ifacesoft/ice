@@ -32,8 +32,8 @@ return [
         'ru' => 'Route file path not found for {$0}',
     ],
     'ice_admin_database' => [
-        'en' => 'Database',
-        'ru' => 'База данных',
+        'en' => 'Databases',
+        'ru' => 'Базы данных',
     ],
     'ebs_admin_tool' => [
         'en' => 'ebs_admin_tool',
@@ -42,5 +42,9 @@ return [
     'ebs_admin_report' => [
         'en' => 'ebs_admin_report',
         'ru' => 'ebs_admin_report',
+    ],
+    'Route {$0} not found' => [
+        'en' => 'Route {$0} not found',
+        'ru' => 'Маршрут {$0} не найдена',
     ],
 ];

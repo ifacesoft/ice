@@ -76,14 +76,19 @@ class Pagination extends Widget_Menu
             $item['name'] = $itemName;
             $item['menuName'] = $menuName;
 
-            $item['href'] = $this->getUrl();
-            $item['dataUrl'] = $this->getUrl();
+            $params = $this->getParams();
+            $params['page'] = $page;
+
+            $url = $this->getUrl() . '?' . http_build_query($params);
+
+            $item['href'] = $url;
+            $item['dataUrl'] = $url;
             $item['dataJson'] = Json::encode($this->getParams());
             $item['dataAction'] = $this->getAction();
             $item['dataBlock'] = $this->getBlock();
 
             if (!isset($item['onclick'])) {
-                $item['onclick'] = 'Ice_Widget_Menu.click($(this), ' . $page . '); return false;';
+                $item['onclick'] = 'Ice_Widget_Menu.click($(this)); return false;';
             }
 
             $items[] = Php::getInstance()->fetch($menuClass . '_' . $item['template'], $item);

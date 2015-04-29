@@ -147,8 +147,8 @@ class Resources extends Action
                 ],
                 'js' => ['default' => []],
                 'css' => ['default' => []],
-                'routeName' => ['default' => ''],
-                'context' => ['default' => '/resource/']
+                'routeName' => ['providers' => 'router', 'default' => '/'],
+                'context' => ['default' => '/resource/'],
             ],
             'ttl' => 3600
         ];
@@ -268,9 +268,7 @@ class Resources extends Action
         $cssRes = $moduleAlias . '/css/';
 
         if (!Request::isCli()) {
-            $resourceName = empty($input['routeName'])
-                ? Route::getInstance()->getName()
-                : $input['routeName'];
+            $resourceName = Route::getInstance($input['routeName'])->getName();
 
             $jsFile = $resourceName . '.pack.js';
             $cssFile = $resourceName . '.pack.css';
@@ -408,8 +406,8 @@ class Resources extends Action
         foreach ($handlers as $filePath => $handler) {
             fclose($handler);
 
-            chmod($filePath, 0664);
-            chgrp($filePath, filegroup(dirname($filePath)));
+//            chmod($filePath, 0664);
+//            chgrp($filePath, filegroup(dirname($filePath)));
         }
     }
 }

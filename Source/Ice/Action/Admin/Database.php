@@ -6,6 +6,7 @@ use Ice\Core\Action;
 use Ice\Core\Data_Scheme;
 use Ice\Core\Module;
 use Ice\Core\Request;
+use Ice\Helper\Emmet;
 use Ice\Widget\Menu\Nav;
 
 class Admin_Database extends Action
@@ -25,7 +26,7 @@ class Admin_Database extends Action
         return [
             'view' => ['viewRenderClass' => 'Ice:Php'],
             'input' => [],
-            'output' => [],
+            'output' => ['resource' => 'Ice:Resource/Ice\Action\Admin_Database'],
             'ttl' => -1,
             'roles' => []
         ];
@@ -73,37 +74,21 @@ class Admin_Database extends Action
             ? $input['tableName']
             : reset($tables)['scheme']['tableName'];
 
-        $tablesMenu = Nav::create(Request::uri(true), __CLASS__)
-            ->setClasses('nav-pills nav-stacked');
+        $this->addAction([
+            'Ice:Admin_Database_TablesMenu',
+            [
+                'tables' => $tables,
+                'tableName' => $tableName,
+                'layout' => Emmet::PANEL_BODY
+            ]
+        ]);
 
-        foreach ($tables as $table) {
-            if ($tableName == $table['scheme']['tableName']) {
-                $tablesMenu->link(
-                    $table['scheme']['tableName'],
-                    $table['scheme']['tableName'],
-                    [
-                        'converter' => ['Ice:Resource' => ['class' => 'modelClass']],
-                        'tooltip' => $table['scheme']['comment'],
-                        'active' => true
-                    ]
-                );
-            } else {
-                $tablesMenu->link(
-                    $table['scheme']['tableName'],
-                    $table['scheme']['tableName'],
-                    [
-                        'converter' => ['Ice:Resource' => ['class' => 'modelClass']],
-                        'tooltip' => $table['scheme']['comment'],
-                    ]
-                );
-            }
+        if (!empty($tables)) {
+            $this->addAction(['Ice:Crud', ['modelClassName' => $tables[$tableName]['modelClass']]]);
         }
-
-        $this->addAction(['Ice:Crud', ['modelClassName' => $tables[$tableName]['modelClass']]]);
 
         return [
             'dataSourceKeysMenu' => $dataSourceKeysMenu,
-            'tablesMenu' => $tablesMenu
         ];
     }
 }

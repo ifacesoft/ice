@@ -1,5 +1,5 @@
 <div class="form-group">
-    <label for="<?= $formName . '_' . $fieldName ?>"><?= $title ?></label>
+    <label for="<?= $formName . '_' . $fieldName ?>" class="sr-only"><?= $title ?></label>
     <input type="text" class="form-control" id="<?= $formName . '_' . $fieldName ?>"
            placeholder="<?= $options['placeholder'] ?>"
            name="<?= $fieldName ?>" value="<?= $value ?>" style="width: 100%;"
@@ -9,5 +9,6 @@
            data-action='<?= $dataAction ?>'
            data-block='<?= $dataBlock ?>'
         <?php if ($options['disabled']) : ?> disabled="disabled"<?php endif; ?>
-        <?php if ($options['readonly']) : ?> readonly="readonly" <?php endif; ?>>
+        <?php if ($options['readonly']) : ?> readonly="readonly" <?php endif; ?>
+           required autofocus>
 </div>

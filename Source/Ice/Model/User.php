@@ -44,9 +44,9 @@ class User extends Model
                     ],
                     'schemeHash' => 708064701,
                     'fieldName' => 'user_pk',
-                    'Ice\\Core\\Ui_Form' => 'Number',
+                    'Ice\\Core\\Widget_Form' => 'Number',
                     'Ice\\Core\\Validator' => [],
-                    'Ice\\Core\\Ui_Data' => 'text',
+                    'Ice\\Core\\Widget_Data' => 'text',
                 ],
                 'user_phone' => [
                     'scheme' => [
@@ -61,11 +61,11 @@ class User extends Model
                     ],
                     'schemeHash' => 1706754279,
                     'fieldName' => 'user_phone',
-                    'Ice\\Core\\Ui_Form' => 'Text',
+                    'Ice\\Core\\Widget_Form' => 'Text',
                     'Ice\\Core\\Validator' => [
                         'Ice:Length_Max' => 11,
                     ],
-                    'Ice\\Core\\Ui_Data' => 'text',
+                    'Ice\\Core\\Widget_Data' => 'text',
                 ],
                 'user_email' => [
                     'scheme' => [
@@ -80,11 +80,11 @@ class User extends Model
                     ],
                     'schemeHash' => 1375787174,
                     'fieldName' => 'user_email',
-                    'Ice\\Core\\Ui_Form' => 'Text',
+                    'Ice\\Core\\Widget_Form' => 'Text',
                     'Ice\\Core\\Validator' => [
                         'Ice:Length_Max' => 255,
                     ],
-                    'Ice\\Core\\Ui_Data' => 'text',
+                    'Ice\\Core\\Widget_Data' => 'text',
                 ],
                 'user_name' => [
                     'scheme' => [
@@ -99,11 +99,11 @@ class User extends Model
                     ],
                     'schemeHash' => 1375787174,
                     'fieldName' => 'user_name',
-                    'Ice\\Core\\Ui_Form' => 'Text',
+                    'Ice\\Core\\Widget_Form' => 'Text',
                     'Ice\\Core\\Validator' => [
                         'Ice:Length_Max' => 255,
                     ],
-                    'Ice\\Core\\Ui_Data' => 'text',
+                    'Ice\\Core\\Widget_Data' => 'text',
                 ],
                 'surname' => [
                     'scheme' => [
@@ -118,11 +118,11 @@ class User extends Model
                     ],
                     'schemeHash' => 1375787174,
                     'fieldName' => 'surname',
-                    'Ice\\Core\\Ui_Form' => 'Text',
+                    'Ice\\Core\\Widget_Form' => 'Text',
                     'Ice\\Core\\Validator' => [
                         'Ice:Length_Max' => 255,
                     ],
-                    'Ice\\Core\\Ui_Data' => 'text',
+                    'Ice\\Core\\Widget_Data' => 'text',
                 ],
                 'patronymic' => [
                     'scheme' => [
@@ -137,11 +137,11 @@ class User extends Model
                     ],
                     'schemeHash' => 1375787174,
                     'fieldName' => 'patronymic',
-                    'Ice\\Core\\Ui_Form' => 'Text',
+                    'Ice\\Core\\Widget_Form' => 'Text',
                     'Ice\\Core\\Validator' => [
                         'Ice:Length_Max' => 255,
                     ],
-                    'Ice\\Core\\Ui_Data' => 'text',
+                    'Ice\\Core\\Widget_Data' => 'text',
                 ],
                 'user_active' => [
                     'scheme' => [
@@ -156,11 +156,11 @@ class User extends Model
                     ],
                     'schemeHash' => 360378374,
                     'fieldName' => 'user_active',
-                    'Ice\\Core\\Ui_Form' => 'Checkbox',
+                    'Ice\\Core\\Widget_Form' => 'Checkbox',
                     'Ice\\Core\\Validator' => [
                         0 => 'Ice:Not_Null',
                     ],
-                    'Ice\\Core\\Ui_Data' => 'text',
+                    'Ice\\Core\\Widget_Data' => 'text',
                 ],
                 'user_created' => [
                     'scheme' => [
@@ -175,9 +175,9 @@ class User extends Model
                     ],
                     'schemeHash' => 1401503322,
                     'fieldName' => 'user_created',
-                    'Ice\\Core\\Ui_Form' => 'Date',
+                    'Ice\\Core\\Widget_Form' => 'Date',
                     'Ice\\Core\\Validator' => [],
-                    'Ice\\Core\\Ui_Data' => 'text',
+                    'Ice\\Core\\Widget_Data' => 'text',
                 ],
             ],
             'oneToMany' => [],

@@ -2,8 +2,8 @@
 namespace Ice\Action;
 
 use Ice\Core\Action;
-use Ice\Core\Form_Security_Login;
 use Ice\Core\Widget_Form_Security_Login;
+use Ice\Helper\Emmet;
 
 /**
  * Class Security_Login
@@ -59,9 +59,11 @@ class Security_Login extends Action
         return [
             'view' => ['viewRenderClass' => 'Ice:Php'],
             'input' => [
-                'security' => ['default' => 'Login_Password'],
-                'redirect' => ['default' => '/']
-            ]
+                'security' => ['default' => 'Ice:LoginPassword'],
+                'redirect' => ['default' => '/'],
+                'url' => ['providers' => 'router']
+            ],
+            'output' => ['resource' => 'Ice:Resource/Security_Login'],
         ];
     }
 
@@ -73,16 +75,11 @@ class Security_Login extends Action
      */
     public function run(array $input)
     {
-        $resource = Security_Login::getResource();
+        /** @var Widget_Form_Security_Login $formClass */
+        $formClass = Widget_Form_Security_Login::getClass($input['security']);
 
-        $this->addAction([
-            'Ice:Form',
-            [
-                'form' => Widget_Form_Security_Login::getInstance($input['security']),
-                'submitTitle' => $resource->get('Login'),
-                'redirect' => $input['redirect']
-            ]
-        ]);
-        return ['resource' => $resource];
+        return [
+            'form' => $formClass::create($input['url'], Form_Submit::getClass(), 'Security_Login')
+        ];
     }
 }

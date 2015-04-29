@@ -18,6 +18,7 @@ use Ice\Core\Request as Core_Request;
 use Ice\Core\Route;
 use Ice\Exception\Http_Forbidden;
 use Ice\Exception\Http_Not_Found;
+use Ice\Exception\Redirect;
 
 /**
  * Class Router
@@ -202,13 +203,12 @@ class Router extends Data_Provider
     /**
      * Connect to data provider
      *
-     * @param  $connection
+     * @param $connection
      * @return bool
-     * @throws Http_Forbidden
-     * @throws Http_Not_Found
+     * @throws Redirect
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.4
+     * @version 0.6
      * @since   0.0
      */
     protected function connect(&$connection)
@@ -229,13 +229,37 @@ class Router extends Data_Provider
 
         $url = strstr($key, '/');
 
+        $route = $this->getRoute($url, $method);
+
+        if ($route['redirect']) {
+            $routeName = $route['redirect'][0] == '_'
+                ? $route['routeName'] . $route['redirect']
+                : $route['redirect'];
+
+            throw new Redirect(Route::getInstance($routeName)->getUrl());
+        }
+
+        $baseMatches = [];
+        preg_match_all($route['pattern'], $url, $baseMatches, PREG_SET_ORDER);
+
+        if (count($baseMatches[0]) - 1 < count($route['params'])) {
+            $baseMatches[0][] = '';
+        }
+
+        $route = array_merge($route, array_combine(array_keys((array)$route['params']), array_slice($baseMatches[0], 1)));
+
+        return (bool)$connection = $dataProvider->set($key, $route);
+    }
+
+    private function getRoute($url, $method)
+    {
         list($matchedRoutes, $foundRoutes) = $this->getRoutes($url, $method);
 
         if (empty($foundRoutes)) {
             if (!empty($matchedRoutes)) {
                 $this->getLogger()->warning(
                     [
-                        'Route not found for {$0} request of {$1}',
+                        'Route not found for {$0} request of {$1}, but matched for other method',
                         [$method, $url]
                     ],
                     __FILE__,
@@ -258,23 +282,7 @@ class Router extends Data_Provider
 
         krsort($foundRoutes, SORT_NUMERIC);
 
-        list($routeName, $pattern, $params) = reset($foundRoutes);
-
-        $baseMatches = [];
-        preg_match_all($pattern, $url, $baseMatches, PREG_SET_ORDER);
-
-        $data = [
-            'routeName' => $routeName,
-            'method' => $method
-        ];
-
-        if (count($baseMatches[0]) - 1 < count($params)) {
-            $baseMatches[0][] = '';
-        }
-
-        $data = array_merge($data, array_combine(array_keys((array)$params), array_slice($baseMatches[0], 1)));
-
-        return (bool)$connection = $dataProvider->set($key, $data);
+        return reset($foundRoutes);
     }
 
     /**
@@ -306,7 +314,7 @@ class Router extends Data_Provider
 
             $matchedRoutes[] = $routeName;
 
-            if (!count($route->gets('request/' . $method))) {
+            if (!count($route->gets('request/' . $method, false))) {
                 continue;
             }
 
@@ -314,9 +322,12 @@ class Router extends Data_Provider
 
             if (!isset($foundRoutes[$weight])) {
                 $foundRoutes[$weight] = [
-                    $routeName,
-                    $route->get('pattern'),
-                    $route->get('params')
+                    'routeName' => $routeName,
+                    'pattern' => $route->get('pattern'),
+                    'params' => $route->get('params'),
+                    'url' => $url,
+                    'method' => $method,
+                    'redirect' => $route->get('redirect', false)
                 ];
             }
         }

@@ -59,9 +59,11 @@ class Security_Register extends Action
         return [
             'view' => ['viewRenderClass' => 'Ice:Php'],
             'input' => [
-                'security' => ['default' => 'Login_Password'],
-                'redirect' => ['default' => '/ice/security/login']
-            ]
+                'security' => ['default' => 'Ice:LoginPassword'],
+                'redirect' => ['default' => '/ice/security/login'],
+                'url' => ['providers' => 'router']
+            ],
+            'output' => ['resource' => 'Ice:Resource/Security_Login']
         ];
     }
 
@@ -73,16 +75,11 @@ class Security_Register extends Action
      */
     public function run(array $input)
     {
-        $resource = Security_Register::getResource();
+        /** @var Widget_Form_Security_Register $formClass */
+        $formClass = Widget_Form_Security_Register::getClass($input['security']);
 
-        $this->addAction([
-            'Ice:Form',
-            [
-                'form' => Widget_Form_Security_Register::getInstance($input['security']),
-                'submitTitle' => $resource->get('Register'),
-                'redirect' => $input['redirect']
-            ]
-        ]);
-        return ['resource' => $resource];
+        return [
+            'form' => $formClass::create($input['url'], Form_Submit::getClass(), 'Security_Login')
+        ];
     }
 }

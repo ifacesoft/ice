@@ -120,24 +120,25 @@ class Console
     /**
      * Return interactive output for define variable from input
      *
-     * @param  $class Core
+     * @param  $class
      * @param  $param
+     * @param $desc
      * @param  $data
      * @return string
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.6
      * @since   0.0
      */
-    public static function getInteractive($class, $param, $data)
+    public static function getInteractive($class, $param, $desc, $data)
     {
         /**
          * @var Core_Resource $resource
          */
         $resource = $class::getResource();
 
-        $title = Console::C_YELLOW . $resource->get($data['title'], $data['default']) . Console::C_GRAY_B;
+        $title = $desc . "\n" .
+            Console::C_YELLOW . $resource->get($data['title'], $data['default']) . Console::C_GRAY_B;
 
         fwrite(STDOUT, $title);
 

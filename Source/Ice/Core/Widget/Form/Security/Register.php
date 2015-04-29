@@ -9,31 +9,6 @@ use Ice\Model\User;
 abstract class Widget_Form_Security_Register extends Widget_Form
 {
     /**
-     * Create new instance of form security register
-     *
-     * @param  $key
-     * @return Widget_Form_Security_Register
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.1
-     * @since   0.1
-     */
-    protected static function create($key)
-    {
-        /**
-         * @var Widget_Form_Security_Register $class
-         */
-        $class = self::getClass();
-
-        if ($class == __CLASS__) {
-            $class = 'Ice\Form\Security\Register\\' . $key;
-        }
-
-        return new $class($key);
-    }
-
-    /**
      * Register
      *
      * @author dp <denis.a.shestakov@gmail.com>

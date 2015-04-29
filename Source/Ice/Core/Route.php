@@ -10,6 +10,7 @@
 namespace Ice\Core;
 
 use Ice\Core;
+use Ice\Data\Provider\Router;
 use Ice\Exception\Http_Not_Found;
 use Ice\Helper\File;
 use Ice\View\Render\Replace;
@@ -37,13 +38,9 @@ class Route extends Config
      * @return Route
      * @throws Exception
      */
-    public static function getInstance($routeName = null, $postfix = null, $isRequired = false, $ttl = null)
+    public static function getInstance($routeName, $postfix = null, $isRequired = false, $ttl = null)
     {
         $routes = self::getRoutes();
-
-        if (!$routeName) {
-            return reset($routes);
-        }
 
         if (!isset($routes[$routeName])) {
             Route::getLogger()->exception(
@@ -164,6 +161,10 @@ class Route extends Config
                     View_Render::TEMPLATE_TYPE_STRING
                 );
 
+                if (isset($route['alias'])) {
+                    $route['request'] = $routes[$route['alias']]->gets('request');
+                }
+
                 foreach ($route['request'] as &$request) {
                     if (is_string($request)) {
                         $actionClass = $request;
@@ -248,21 +249,5 @@ class Route extends Config
     public function getRoute()
     {
         return $this->get('route');
-    }
-
-    /**
-     * Return actions includes in layout
-     *
-     * @param  $method
-     * @return array
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since   0.4
-     */
-    public function getActionClassNames($method)
-    {
-        return $this->gets('request/' . $method . '/actions');
     }
 }

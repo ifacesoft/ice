@@ -7,7 +7,7 @@ var Ice = {
     _callbacks: {},
     _lastback: 0,
 
-    call: function (action, data, callback, url) {
+    call: function (action, data, callback, url, method) {
         $('#icePreloader').show();
 
         var back = this._lastback++;
@@ -18,7 +18,7 @@ var Ice = {
         data.back = back;
 
         $.ajax({
-            type: 'POST',
+            type: method ? method : 'POST',
             url: url ? url : location.href,
             data: data,
             //crossDomain: true,
@@ -81,7 +81,7 @@ var Ice = {
         );
     },
 
-    reRender: function ($element, actionParams, callback, url) {
+    reRender: function ($element, actionParams, callback, url, method) {
         var action = $element.attr('data-action');
         var block = $element.attr('data-block');
 
@@ -102,7 +102,8 @@ var Ice = {
 
                 history.pushState({}, title, url);
             },
-            url
+            url,
+            method
         );
     },
 

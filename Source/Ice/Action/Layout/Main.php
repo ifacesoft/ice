@@ -33,7 +33,10 @@ class Layout_Main extends Layout
     {
         return array_merge_recursive(
             [
-                'actions' => 'Ice:Resources',
+                'actions' => [
+                    'Ice:Header',
+                    'Ice:Resources'
+                ],
             ],
             parent::config()
         );

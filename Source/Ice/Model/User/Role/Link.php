@@ -38,9 +38,9 @@ class User_Role_Link extends Model
                     ],
                     'schemeHash' => 2126507909,
                     'fieldName' => 'user__fk',
-                    'Ice\\Core\\Ui_Form' => 'Number',
+                    'Ice\\Core\\Widget_Form' => 'Number',
                     'Ice\\Core\\Validator' => [],
-                    'Ice\\Core\\Ui_Data' => 'text',
+                    'Ice\\Core\\Widget_Data' => 'text',
                 ],
                 'role__fk' => [
                     'scheme' => [
@@ -55,9 +55,9 @@ class User_Role_Link extends Model
                     ],
                     'schemeHash' => 2126507909,
                     'fieldName' => 'role__fk',
-                    'Ice\\Core\\Ui_Form' => 'Number',
+                    'Ice\\Core\\Widget_Form' => 'Number',
                     'Ice\\Core\\Validator' => [],
-                    'Ice\\Core\\Ui_Data' => 'text',
+                    'Ice\\Core\\Widget_Data' => 'text',
                 ],
             ],
             'oneToMany' => [

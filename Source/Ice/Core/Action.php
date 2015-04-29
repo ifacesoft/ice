@@ -373,6 +373,11 @@ abstract class Action implements Cacheable
                 $param = [];
             }
 
+            if (is_string($param)) {
+                $input[$name] = $param;
+                continue;
+            }
+
             $dataProviderKeys = isset($param['providers'])
                 ? (array)$param['providers']
                 : ['default'];

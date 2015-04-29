@@ -7,6 +7,6 @@ var Ice_Widget_Data = {
         var data = JSON.parse($element.attr('data-json'));
         data[$element.attr('data-name')] = ordering;
 
-        Ice.reRender($element, data, callback, $element.attr('data-url'));
+        Ice.reRender($element, data, callback, $element.attr('data-url'), 'GET');
     }
 };

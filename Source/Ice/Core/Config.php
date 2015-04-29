@@ -44,7 +44,7 @@ class Config
      *
      * @var string
      */
-    private $configName = null;
+    private $name = null;
 
     /**
      * Constructor of config object
@@ -91,15 +91,7 @@ class Config
 
         $config = [];
 
-        //        if (Object::isClass($class) && !empty($class::$configDefaults)) {
-        //            $config = array_merge_recursive($class::$configDefaults, $config);
-        //        }
-        //
-        //        if (Object::isClass($class) && !empty($class::$config)) {
-        //            $config = array_merge_recursive($class::$config, $config);
-        //        }
-        //
-        if ($class != __CLASS__ && $coreConfig = self::getConfig()->gets($class, false)) {
+        if ($class != __CLASS__ && $coreConfig = Config::getConfig()->gets($class, false)) {
             $config = array_merge_recursive($coreConfig, $config);
         }
 
@@ -177,7 +169,7 @@ class Config
         /** @var Config $config */
         $config = new $configClass();
 
-        $config->configName = $configRouteName;
+        $config->name = $configRouteName;
         $config->config = $configData;
 
         return $config;
@@ -298,25 +290,26 @@ class Config
      */
     public function getName()
     {
-        return $this->configName;
+        return $this->name;
     }
 
     /**
      * Save config
      *
+     * @param null $path
      * @return Config
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.5
+     * @version 0.6
      * @since   0.5
      */
-    public function save()
+    public function save($path = null)
     {
-        File::createData(
-            Loader::getFilePath($this->getName(), '.php', Module::CONFIG_DIR, false, true),
-            $this->config
-        );
+        $filePath = $path
+            ? MODULE_DIR . $path . str_replace('\\', '/', $this->getName()) . '.php'
+            : Loader::getFilePath($this->getName(), '.php', $path ? $path : Module::CONFIG_DIR, false, true);
+
+        File::createData($filePath, $this->config);
 
         return $this;
     }

@@ -222,12 +222,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/composer.git",
-                "reference": "2e73811211b7ea6de8de578fa50746fe679f2297"
+                "reference": "1cb427ff5c0b977468643a39436f3b0a356fc8eb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/composer/zipball/2e73811211b7ea6de8de578fa50746fe679f2297",
-                "reference": "2e73811211b7ea6de8de578fa50746fe679f2297",
+                "url": "https://api.github.com/repos/composer/composer/zipball/1cb427ff5c0b977468643a39436f3b0a356fc8eb",
+                "reference": "1cb427ff5c0b977468643a39436f3b0a356fc8eb",
                 "shasum": ""
             },
             "require": {
@@ -282,7 +282,7 @@
                 "dependency",
                 "package"
             ],
-            "time": "2015-04-21 20:02:17"
+            "time": "2015-04-26 21:18:04"
         },
         {
             "name": "doctrine/instantiator",
@@ -575,16 +575,16 @@
         },
         {
             "name": "phpspec/prophecy",
-            "version": "1.4.0",
+            "version": "v1.4.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpspec/prophecy.git",
-                "reference": "8724cd239f8ef4c046f55a3b18b4d91cc7f3e4c5"
+                "reference": "3132b1f44c7bf2ec4c7eb2d3cb78fdeca760d373"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpspec/prophecy/zipball/8724cd239f8ef4c046f55a3b18b4d91cc7f3e4c5",
-                "reference": "8724cd239f8ef4c046f55a3b18b4d91cc7f3e4c5",
+                "url": "https://api.github.com/repos/phpspec/prophecy/zipball/3132b1f44c7bf2ec4c7eb2d3cb78fdeca760d373",
+                "reference": "3132b1f44c7bf2ec4c7eb2d3cb78fdeca760d373",
                 "shasum": ""
             },
             "require": {
@@ -631,7 +631,7 @@
                 "spy",
                 "stub"
             ],
-            "time": "2015-03-27 19:31:25"
+            "time": "2015-04-27 22:15:08"
         },
         {
             "name": "phpunit/dbunit",
@@ -990,12 +990,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "bc3ce9ca070f1173bd368bde058a99e0c9ddfb3a"
+                "reference": "27d119a015ceb5c6de35e338ace21c5e732fdf2e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/bc3ce9ca070f1173bd368bde058a99e0c9ddfb3a",
-                "reference": "bc3ce9ca070f1173bd368bde058a99e0c9ddfb3a",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/27d119a015ceb5c6de35e338ace21c5e732fdf2e",
+                "reference": "27d119a015ceb5c6de35e338ace21c5e732fdf2e",
                 "shasum": ""
             },
             "require": {
@@ -1054,7 +1054,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2015-04-16 04:24:23"
+            "time": "2015-04-29 08:10:43"
         },
         {
             "name": "phpunit/phpunit-mock-objects",
@@ -1746,12 +1746,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/squizlabs/PHP_CodeSniffer.git",
-                "reference": "76853c5707775b17d68c8878a3672c952692ea30"
+                "reference": "e96d8579fbed0c95ecf2a0501ec4f307a4aa6404"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/76853c5707775b17d68c8878a3672c952692ea30",
-                "reference": "76853c5707775b17d68c8878a3672c952692ea30",
+                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/e96d8579fbed0c95ecf2a0501ec4f307a4aa6404",
+                "reference": "e96d8579fbed0c95ecf2a0501ec4f307a4aa6404",
                 "shasum": ""
             },
             "require": {
@@ -1812,7 +1812,7 @@
                 "phpcs",
                 "standards"
             ],
-            "time": "2015-04-21 05:31:04"
+            "time": "2015-04-28 23:28:20"
         },
         {
             "name": "symfony/console",

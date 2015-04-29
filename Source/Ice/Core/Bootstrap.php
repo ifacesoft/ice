@@ -60,7 +60,6 @@ class Bootstrap extends Container
 
         date_default_timezone_set('UTC');
 
-
         try {
             Loader::init($loader, $force);
             Logger::init();

@@ -41,9 +41,9 @@ class Account extends Model
                     ],
                     'schemeHash' => 708064701,
                     'fieldName' => 'account_pk',
-                    'Ice\\Core\\Ui_Form' => 'Number',
+                    'Ice\\Core\\Widget_Form' => 'Number',
                     'Ice\\Core\\Validator' => [],
-                    'Ice\\Core\\Ui_Data' => 'text',
+                    'Ice\\Core\\Widget_Data' => 'text',
                 ],
                 'user__fk' => [
                     'scheme' => [
@@ -58,9 +58,9 @@ class Account extends Model
                     ],
                     'schemeHash' => 3262077293,
                     'fieldName' => 'user__fk',
-                    'Ice\\Core\\Ui_Form' => 'Number',
+                    'Ice\\Core\\Widget_Form' => 'Number',
                     'Ice\\Core\\Validator' => [],
-                    'Ice\\Core\\Ui_Data' => 'text',
+                    'Ice\\Core\\Widget_Data' => 'text',
                 ],
                 'login' => [
                     'scheme' => [
@@ -75,11 +75,11 @@ class Account extends Model
                     ],
                     'schemeHash' => 1375787174,
                     'fieldName' => 'login',
-                    'Ice\\Core\\Ui_Form' => 'Text',
+                    'Ice\\Core\\Widget_Form' => 'Text',
                     'Ice\\Core\\Validator' => [
                         'Ice:Length_Max' => 255,
                     ],
-                    'Ice\\Core\\Ui_Data' => 'text',
+                    'Ice\\Core\\Widget_Data' => 'text',
                 ],
                 'password' => [
                     'scheme' => [
@@ -94,11 +94,11 @@ class Account extends Model
                     ],
                     'schemeHash' => 1375787174,
                     'fieldName' => 'password',
-                    'Ice\\Core\\Ui_Form' => 'Text',
+                    'Ice\\Core\\Widget_Form' => 'Text',
                     'Ice\\Core\\Validator' => [
                         'Ice:Length_Max' => 255,
                     ],
-                    'Ice\\Core\\Ui_Data' => 'text',
+                    'Ice\\Core\\Widget_Data' => 'text',
                 ],
                 'account_active' => [
                     'scheme' => [
@@ -113,11 +113,11 @@ class Account extends Model
                     ],
                     'schemeHash' => 360378374,
                     'fieldName' => 'account_active',
-                    'Ice\\Core\\Ui_Form' => 'Checkbox',
+                    'Ice\\Core\\Widget_Form' => 'Checkbox',
                     'Ice\\Core\\Validator' => [
                         0 => 'Ice:Not_Null',
                     ],
-                    'Ice\\Core\\Ui_Data' => 'text',
+                    'Ice\\Core\\Widget_Data' => 'text',
                 ],
             ],
             'oneToMany' => [

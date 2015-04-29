@@ -40,4 +40,68 @@ return [
         'en' => 'var_export does not handle circular references',
         'ru' => 'var_export не обрабатывает циклические ссылки',
     ],
+    'Class name must be a valid object or a string' => [
+        'en' => 'Class name must be a valid object or a string',
+        'ru' => 'Имя класса должно быть допустимым объектом или строкой',
+    ],
+    'explode() expects parameter 2 to be string, array given' => [
+        'en' => 'explode() expects parameter 2 to be string, array given',
+        'ru' => 'взорваться() ожидает параметр 2, чтобы быть строка, массив, учитывая',
+    ],
+    'Call to a member function get() on null' => [
+        'en' => 'Call to a member function get() on null',
+        'ru' => 'Вызов функции-члена Get() на нуль',
+    ],
+    'Array to string conversion' => [
+        'en' => 'Array to string conversion',
+        'ru' => 'Массив для преобразования строк',
+    ],
+    'Call to a member function get() on array' => [
+        'en' => 'Call to a member function get() on array',
+        'ru' => 'Вызов функции-члена Get() на массив',
+    ],
+    'Undefined index: tables' => [
+        'en' => 'Undefined index: tables',
+        'ru' => 'Неопределенный индекс: столы',
+    ],
+    'Undefined index: href' => [
+        'en' => 'Undefined index: href',
+        'ru' => 'Неопределенный индекс: снег',
+    ],
+    'Cannot instantiate abstract class Ice\\Core\\Action' => [
+        'en' => 'Cannot instantiate abstract class Ice\\Core\\Action',
+        'ru' => 'Нельзя создать экземпляр абстрактного класса лед\\ядро\\Боевик',
+    ],
+    'Uninitialized string offset: 0' => [
+        'en' => 'Uninitialized string offset: 0',
+        'ru' => 'Неинициализированная строка смещения: 0',
+    ],
+    'Undefined index: ice_admin' => [
+        'en' => 'Undefined index: ice_admin',
+        'ru' => 'Неопределенный индекс: ice_admin',
+    ],
+    'Cannot redeclare Ice\\Core\\Model::getPlugin()' => [
+        'en' => 'Cannot redeclare Ice\\Core\\Model::getPlugin()',
+        'ru' => 'Не можете льду\\ядро\\модель::getPlugin()',
+    ],
+    'Class \'Ebs:Admin_Report_Count_Book_Published\' not found' => [
+        'en' => 'Class \'Ebs:Admin_Report_Count_Book_Published\' not found',
+        'ru' => 'Класс \'Эбш:Admin_Report_Count_Book_Published\' не найдена',
+    ],
+    'Class \'Ebs\\Action\\Admin_Report_Count_Book_Published\' not found' => [
+        'en' => 'Class \'Ebs\\Action\\Admin_Report_Count_Book_Published\' not found',
+        'ru' => 'Класс \'Ебс\\Боевик\\Admin_Report_Count_Book_Published\' не найдена',
+    ],
+    'Class \'Ebs\\Action\\Admin_Report_Count_Journal_Published\' not found' => [
+        'en' => 'Class \'Ebs\\Action\\Admin_Report_Count_Journal_Published\' not found',
+        'ru' => 'Класс \'Ебс\\Боевик\\Admin_Report_Count_Journal_Published\' не найдена',
+    ],
+    'Class \'Ebs\\Action\\Admin_Report_Book_LibraryActive\' not found' => [
+        'en' => 'Class \'Ebs\\Action\\Admin_Report_Book_LibraryActive\' not found',
+        'ru' => 'Класс \'Ебс\\Боевик\\Admin_Report_Book_LibraryActive\' не найдена',
+    ],
+    'Class \'Ebs\\Action\\Admin_Report_Other_Packet_Private\' not found' => [
+        'en' => 'Class \'Ebs\\Action\\Admin_Report_Other_Packet_Private\' not found',
+        'ru' => 'Класс \'Ебс\\Боевик\\Admin_Report_Other_Packet_Private\' не найдена',
+    ],
 ];

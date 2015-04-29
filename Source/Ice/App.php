@@ -2,11 +2,14 @@
 
 namespace Ice;
 
-use Composer\Installer\PackageEvent;
+use Composer\Config;
 use Composer\Script\Event;
+use Ice\Action\Check;
 use Ice\Action\Http_Status;
+use Ice\Action\Install;
 use Ice\Core\Action;
 use Ice\Core\Action_Context;
+use Ice\Core\Debuger;
 use Ice\Core\Logger;
 use Ice\Core\Profiler;
 use Ice\Core\Request;
@@ -17,6 +20,7 @@ use Ice\Data\Provider\Request as Data_Provider_Request;
 use Ice\Data\Provider\Router;
 use Ice\Exception\Http_Bad_Request;
 use Ice\Exception\Http_Not_Found;
+use Ice\Exception\ModuleNotFound;
 use Ice\Exception\Redirect;
 
 class App
@@ -37,7 +41,7 @@ class App
              * @var Action $actionClass
              * @var array $input
              */
-           list($actionClass, $input) = App::getAction();
+            list($actionClass, $input) = App::getAction();
 
             App::getResponse()->setView($actionClass::call($input));
         } catch (Redirect $e) {
@@ -67,6 +71,28 @@ class App
         if (!Request::isCli() && function_exists('fastcgi_finish_request')) {
             fastcgi_finish_request();
         }
+    }
+
+    private static function getAction()
+    {
+        if (Request::isCli()) {
+            ini_set('memory_limit', '1024M');
+
+            $input = Cli::getInstance()->get();
+            $actionClass = $input['actionClass'];
+            unset($input['actionClass']);
+        } elseif (Request::isAjax()) {
+            $input = Data_Provider_Request::getInstance()->get();
+            $actionClass = $input['call'];
+            unset($input['actionClass']);
+        } else {
+            $router = Router::getInstance();
+            $routeRequest = Route::getInstance($router->get('routeName'))->gets('request/' . $router ->get('method'));
+            list($actionClass, $input) = each($routeRequest);
+            $actionClass = Action::getClass($actionClass);
+        }
+
+        return [$actionClass, $input];
     }
 
     /**
@@ -107,41 +133,19 @@ class App
         return App::$context = Action_Context::create();
     }
 
-    private static function getAction()
-    {
-        if (Request::isCli()) {
-            ini_set('memory_limit', '1024M');
-
-            $input = Cli::getInstance()->get();
-            $actionClass = $input['actionClass'];
-            unset($input['actionClass']);
-        } elseif (Request::isAjax()) {
-            $input = Data_Provider_Request::getInstance()->get();
-            $actionClass = $input['call'];
-            unset($input['actionClass']);
-        } else {
-            $router = Router::getInstance();
-            $route = Route::getInstance($router->get('routeName'));
-            $method = $route->gets('request/' . $router->get('method'));
-
-            list($actionClass, $input) = each($method);
-            $actionClass = Action::getClass($actionClass);
-        }
-
-        return [$actionClass, $input];
-    }
-
-    public static function install(Event $event)
-    {
-        $composer = $event->getComposer();
-        var_dump($composer);
-        echo 'Ice installation complete';
-    }
-
     public static function update(Event $event)
     {
         $composer = $event->getComposer();
-        var_dump($composer);
-        echo 'Ice installation complete';
+
+        /** @var Config $composerConfig */
+        $composerConfig = $composer->getConfig();
+
+        define('ICE_DIR', dirname(dirname(__DIR__)) . '/');
+        define('MODULE_DIR', getcwd() . '/');
+
+        require_once ICE_DIR . 'bootstrap.php';
+
+        Install::call();
+        Check::call();
     }
 }

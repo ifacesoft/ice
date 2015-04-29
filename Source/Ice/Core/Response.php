@@ -86,16 +86,6 @@ class Response
      */
     public function send()
     {
-        if (!$this->view || !($this->view instanceof View)) {
-            Logger::getInstance(__CLASS__)->exception(['Response broken. View not found {$0}', $this->view], __FILE__, __LINE__);
-        }
-
-        if (Request::isCli()) {
-            fwrite(empty($this->view->getErrors()) ? STDOUT : STDERR, $this->view->getContent());
-            return;
-        }
-
-
         if ($this->redirectUrl) {
             if (headers_sent()) {
                 echo '<script type="text/javascript">location.href="' . $this->redirectUrl . '"</script>';
@@ -103,6 +93,15 @@ class Response
             }
 
             Http::setHeader('Location: ' . $this->redirectUrl, false, $this->statusCode);
+            return;
+        }
+
+        if (!$this->view || !($this->view instanceof View)) {
+            Logger::getInstance(__CLASS__)->exception(['Response broken. View not found {$0}', $this->view], __FILE__, __LINE__);
+        }
+
+        if (Request::isCli()) {
+            fwrite(empty($this->view->getErrors()) ? STDOUT : STDERR, $this->view->getContent());
             return;
         }
 
