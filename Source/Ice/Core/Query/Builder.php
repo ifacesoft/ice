@@ -1523,7 +1523,7 @@ class Query_Builder
     {
         $modelClass = $this->modelClass;
 
-        foreach ($modelClass::getConfig()->gets('columns') as $columnName => $column) {
+        foreach ($modelClass::getScheme()->gets('columns') as $columnName => $column) {
             $this->column($columnName, $column['scheme']);
         }
 

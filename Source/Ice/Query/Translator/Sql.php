@@ -9,6 +9,7 @@
 
 namespace Ice\Query\Translator;
 
+use Ice\Core\Debuger;
 use Ice\Core\Exception;
 use Ice\Core\Model;
 use Ice\Core\Query_Builder;
@@ -562,11 +563,28 @@ class Sql extends Query_Translator
         array_walk(
             $scheme['value'],
             function (&$scheme, $columnName) {
+                $type = strtoupper($scheme['type']);
+
+                if (empty($scheme['default']) || $type == 'TEXT') {
+                    $default = '';
+                } else {
+                    switch (strtoupper($scheme['dataType'])) {
+                        case 'VARCHAR':
+                            $default = '\'' . $scheme['default'] . '\'';
+                            break;
+
+                        default:
+                            $default = $scheme['default'];
+                    }
+
+                    $default = 'DEFAULT ' . $default . ' ';
+                }
+
                 $scheme = $columnName . ' ' .
-                    strtoupper($scheme['type']) . ' ' .
+                    $type . ' ' .
                     (empty($scheme['extra']) ? '' : strtoupper($scheme['extra']) . ' ') .
                     ($scheme['extra'] ? 'PRIMARY KEY ' : '') .
-                    (empty($scheme['default']) ? '' : 'DEFAULT ' . $scheme['default'] . ' ') .
+                    $default .
                     ($scheme['nullable'] ? 'NULL' : 'NOT NULL');
             }
         );

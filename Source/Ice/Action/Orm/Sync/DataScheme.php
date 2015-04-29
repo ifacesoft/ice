@@ -6,6 +6,7 @@ use Ice\Core\Action;
 use Ice\Core\Data_Scheme;
 use Ice\Core\Model;
 use Ice\Core\Module;
+use Ice\Exception\DataSource_TableNotFound;
 use Ice\Helper\Json;
 use Ice\Model\Scheme;
 
@@ -46,14 +47,17 @@ class Orm_Sync_DataScheme extends Action
      */
     public function run(array $input)
     {
-        $schemes = Scheme::createQueryBuilder()->getSelectQuery('*')->getRows();
-
         $module = Module::getInstance();
 
         $dataSchemeTables = Data_Scheme::getTables($module);
 
         foreach ($module->getDataSourceTables() as $dataSourceKey => $tables) {
-            Data_Scheme::getLogger()->info(['Checking models from data source {$0}', $dataSourceKey]);
+            try {
+                $schemes = Scheme::createQueryBuilder()->getSelectQuery('*', [], $dataSourceKey)->getRows();
+            } catch (DataSource_TableNotFound $e) {
+                Scheme::createTable($dataSourceKey);
+                $schemes = [];
+            }
 
             $schemeTables = &$dataSchemeTables[$dataSourceKey];
 
@@ -268,20 +272,23 @@ class Orm_Sync_DataScheme extends Action
     {
         Model::getCodeGenerator()->generate($modelClass, $table, $force);
 
-        Scheme::createQueryBuilder()->insertQuery([
-            'table_name' => $table['scheme']['tableName'],
-            'table__json' => Json::encode($table['scheme']),
-            'columns__json' => Json::encode($table['columns']),
-            'indexes__json' => Json::encode($table['indexes']),
-            'references__json' => Json::encode($table['references']),
-            'revision' => $table['revision']
-        ], true)->getQueryResult();
+        Scheme::createQueryBuilder()->insertQuery(
+            [
+                'table_name' => $table['scheme']['tableName'],
+                'table__json' => Json::encode($table['scheme']),
+                'columns__json' => Json::encode($table['columns']),
+                'indexes__json' => Json::encode($table['indexes']),
+                'references__json' => Json::encode($table['references']),
+                'revision' => $table['revision']
+            ],
+            true
+        )->getQueryResult();
 
         Data_Scheme::getLogger()->info(['Model {$0} created', $modelClass]);
     }
 
-    private function deleteModel($modelFilePath, $tableName, $schemeTables) {
-
+    private function deleteModel($modelFilePath, $tableName, $schemeTables)
+    {
         if (file_exists($modelFilePath)) {
             unlink($modelFilePath);
         }

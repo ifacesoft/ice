@@ -156,10 +156,22 @@ class Mysqli extends Data_Source
         $statement = $this->getConnection()->prepare($body);
 
         if (!$statement) {
+            switch ($this->getConnection()->errno) {
+                case 1146:
+                    $exceptionClass = 'Ice:DataSource_TableNotFound';
+                    break;
+                default:
+                    $exceptionClass = 'Ice:DataSource_Error';
+            }
+
             Data_Source::getLogger()->exception(
                 ['#' . $this->getConnection()->errno . ': {$0}', $this->getConnection()->error],
                 __FILE__,
-                __LINE__
+                __LINE__,
+                null,
+                [$body, $binds],
+                -1,
+                $exceptionClass
             );
         }
 
@@ -413,7 +425,7 @@ class Mysqli extends Data_Source
 
                 $data = &$tables[$table['TABLE_NAME']];
 
-                $data['revision'] = date('mdHi') . '_' . strtolower(String::getRandomString(2));
+                $data['revision'] = date('mdHi') . '_' . strtolower(String::getRandomString(3));
 
                 $dataScheme = &$data['scheme'];
                 $dataScheme = [

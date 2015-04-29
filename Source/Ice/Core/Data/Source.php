@@ -341,7 +341,7 @@ abstract class Data_Source extends Container
      * @param Query $query
      * @param $ttl
      * @return Query_Result
-     * @throws Exception
+     * @throws \Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
@@ -416,12 +416,12 @@ abstract class Data_Source extends Container
                     );
             }
         } catch (\Exception $e) {
-            Data_Source::getLogger()->log(
+            Data_Source::getLogger()->log('(error) ' .  $e->getMessage() . ': ' .
                 print_r($query->getBody(), true) . ' (' . print_r($query->getBinds(), true) . ')',
                 Logger::DANGER
             );
-            Data_Source::getLogger()->log($e->getMessage(), Logger::DANGER);
-            Data_Source::getLogger()->exception('Data source execute query failed', __FILE__, __LINE__, $e, $query);
+
+            throw $e;
         }
 
         return null;
