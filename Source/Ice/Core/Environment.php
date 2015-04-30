@@ -81,8 +81,6 @@ class Environment extends Config
             }
         }
 
-        Logger::fb('init environment - ' . $environmentName, 'ice bootstrap', 'LOG');
-
         return Environment::$instance = Environment::create($environmentName, $environment);
     }
 

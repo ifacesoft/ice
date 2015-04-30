@@ -8,7 +8,8 @@
     <link href="/favicon.ico" rel="shortcut icon" type="image/x-icon"/>
     <title><?= $title ?></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <?= $Resources[0] ?>
+    <?= $Resource_Css[0] ?>
+    <?= $Resource_Dynamic[0] ?>
 </head>
 <body>
 <div class="Layout_Admin">
@@ -29,5 +30,6 @@
 
     <?= $Admin_Navigation[0] ?>
     <?= $main ?>
+    <?= $Resource_Js[0] ?>
 </body>
 </html>

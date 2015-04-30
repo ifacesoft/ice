@@ -37,7 +37,7 @@ use JSMin;
  * @version 0.0
  * @since   0.0
  */
-class Resources extends Action
+class Resource_Dynamic extends Action
 {
     /**
      * Runtime append js resource
@@ -100,51 +100,11 @@ class Resources extends Action
         self::append('css', $resource);
     }
 
-    /**
-     * Action config
-     *
-     * example:
-     * ```php
-     *  $config = [
-     *      'actions' => [
-     *          ['Ice:Title', ['title' => 'page title'], 'title'],
-     *          ['Ice:Another_Action, ['param' => 'value']
-     *      ],
-     *      'view' => [
-     *          'layout' => Emmet::PANEL_BODY,
-     *          'template' => _Custom,
-     *          'viewRenderClass' => Ice:Twig,
-     *      ],
-     *      'input' => [
-     *          Request::DEFAULT_DATA_PROVIDER_KEY => [
-     *              'paramFromGETorPOST => [
-     *                  'default' => 'defaultValue',
-     *                  'validators' => ['Ice:PATTERN => PATTERN::LETTERS_ONLY]
-     *                  'type' => 'string'
-     *              ]
-     *          ]
-     *      ],
-     *      'output' => ['Ice:Resource/Ice\Action\Index'],
-     *      'ttl' => 3600,
-     *      'roles' => []
-     *  ];
-     * ```
-     *
-     * @return array
-     *
-     * @author anonymous <email>
-     *
-     * @version 0
-     * @since   0
-     */
     protected static function config()
     {
         return [
             'view' => ['viewRenderClass' => 'Ice:Php', 'layout' => ''],
             'input' => [
-                'resources' => [
-                    'default' => [],
-                ],
                 'js' => ['default' => []],
                 'css' => ['default' => []],
                 'routeName' => ['providers' => 'router', 'default' => '/'],
@@ -173,94 +133,6 @@ class Resources extends Action
         ];
 
         $compiledResourceDir = Module::getInstance()->get('compiledResourceDir');
-
-        foreach (array_keys(Module::getAll()) as $name) {
-            $modulePath = Module::getInstance($name)->get('path');
-            $jsResource = $compiledResourceDir . $name . '/javascript.pack.js';
-            $cssResource = $compiledResourceDir . $name . '/style.pack.css';
-
-            if (file_exists($jsSource = $modulePath . 'Resource/js/javascript.js')) {
-                $resources['js'][] = [
-                    'source' => $jsSource,
-                    'resource' => $jsResource,
-                    'url' => $input['context'] . $name . '/javascript.pack.js',
-                    'pack' => true
-                ];
-            }
-            if (file_exists($cssSource = $modulePath . 'Resource/css/style.css')) {
-                $resources['css'][] = [
-                    'source' => $cssSource,
-                    'resource' => $cssResource,
-                    'url' => $input['context'] . $name . '/style.pack.css',
-                    'pack' => true,
-                    'css_replace' => []
-                ];
-            }
-
-            if (file_exists($imgSource = $modulePath . 'Resource/img')) {
-                Directory::copy($imgSource, Directory::get($compiledResourceDir . 'img'));
-            }
-            if (file_exists($fontSource = $modulePath . 'Resource/font')) {
-                Directory::copy($fontSource, Directory::get($compiledResourceDir . 'font'));
-            }
-            if (file_exists($apiSource = $modulePath . 'Resource/api')) {
-                Directory::copy($apiSource, Directory::get($compiledResourceDir . 'api'));
-            }
-            if (file_exists($umlSource = $modulePath . 'Resource/uml')) {
-                Directory::copy($umlSource, Directory::get($compiledResourceDir . 'uml'));
-            }
-            if (file_exists($docSource = $modulePath . 'Resource/doc')) {
-                Directory::copy($docSource, Directory::get($compiledResourceDir . 'doc'));
-            }
-        }
-
-        foreach ($input['resources'] as $from => $config) {
-            foreach ($config as $name => $configResources) {
-                foreach ($configResources as $resourceKey => $resourceItem) {
-                    $source = $from == 'modules' // else from vendors
-                        ? Module::getInstance($name)->get('path') . 'Resource/'
-                        : VENDOR_DIR . $name . '/';
-
-                    $res = $from == 'modules' // else from vendors
-                        ? $name . '/' . $resourceKey . '/'
-                        : 'vendor/' . $resourceKey . '/';
-
-                    $resourceItemPath = is_array($resourceItem['path'])
-                        ? reset($resourceItem['path'])
-                        : $resourceItem['path'];
-
-                    $source .= $resourceItemPath;
-
-                    if ($resourceItem['isCopy']) {
-                        Directory::copy($source, Directory::get($compiledResourceDir . $res));
-                    }
-
-                    $jsResource = $compiledResourceDir . $res . $resourceKey . '.pack.js';
-                    $cssResource = $compiledResourceDir . $res . $resourceKey . '.pack.css';
-
-                    foreach ($resourceItem['js'] as $resource) {
-                        $resources['js'][] = [
-                            'source' => $source . ltrim($resource, '-'),
-                            'resource' => $jsResource,
-                            'url' => $input['context'] . $res . $resourceKey . '.pack.js',
-                            'pack' => $resource[0] != '-'
-                        ];
-                    }
-
-                    $css_replace = isset($resourceItem['css_replace']) ? $resourceItem['css_replace'] : [];
-
-                    foreach ($resourceItem['css'] as $resource) {
-                        $resources['css'][] = [
-                            'source' => $source . ltrim($resource, '-'),
-                            'resource' => $cssResource,
-                            'url' => $input['context'] . $res . $resourceKey . '.pack.css',
-                            'pack' => $resource[0] != '-',
-                            'css_replace' => $css_replace
-                        ];
-                    }
-                }
-            }
-        }
 
         $moduleAlias = Module::getInstance()->getAlias();
 
@@ -383,7 +255,10 @@ class Resources extends Action
                 ? jsmin(file_get_contents($resource['source']))
                 : file_get_contents($resource['source']);
 
-            fwrite($handlers[$resource['resource']], '/* Ice: ' . $resource['source'] . " */\n" . $pack . "\n\n\n");
+            fwrite(
+                $handlers[$resource['resource']],
+                '/* ' . str_replace(dirname(MODULE_DIR), '', $resource['source']) . " */\n" . $pack . "\n\n\n"
+            );
         }
 
         foreach ($resources['css'] as $resource) {

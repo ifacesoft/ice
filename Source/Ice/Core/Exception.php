@@ -62,11 +62,7 @@ abstract class Exception extends ErrorException
 
         $isExistsResourceClass = class_exists('Ice\Core\Resource', false);
 
-        if (($errno == 0 ||
-                substr(Logger::$errorCodes[$errno], 0, 7) == 'E_USER_' ||
-                Logger::$errorCodes[$errno] == 'FATAL')
-            && $isExistsResourceClass
-        ) {
+        if ($errno == 0 && $isExistsResourceClass) {
             $params = null;
             $class = null;
             if (is_array($message)) {

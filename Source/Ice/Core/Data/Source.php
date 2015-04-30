@@ -47,19 +47,13 @@ abstract class Data_Source extends Container
     /**
      * Private constructor for dat source
      *
-     * @param $key
-     * @param $scheme
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.4
+     * @version 0.6
      * @since   0.0
      */
-    private function __construct($key, $scheme)
+    private function __construct()
     {
-        $this->key = $key;
-        $this->scheme = $scheme;
-        $this->getSourceDataProvider()->setScheme($scheme);
     }
 
     /**
@@ -189,7 +183,15 @@ abstract class Data_Source extends Container
         list($key, $scheme) = explode('.', $key);
 
         $dataSourceClass = self::getClass();
-        return new $dataSourceClass($key, $scheme);
+
+        /** @var Data_Source $dataSource */
+        $dataSource = new $dataSourceClass();
+
+        $dataSource->key = $key;
+        $dataSource->scheme = $scheme;
+        $dataSource->getSourceDataProvider()->setScheme($scheme);
+
+        return $dataSource;
     }
 
     /**
@@ -359,7 +361,7 @@ abstract class Data_Source extends Container
         $queryCommand = 'execute' . ucfirst(strtolower($queryType));
 
         try {
-            if (($queryType == Query_Builder::TYPE_SELECT && !$ttl)
+            if (($queryType == Query_Builder::TYPE_SELECT && $ttl < 0)
                 || $queryType == Query_Builder::TYPE_CREATE
                 || $queryType == Query_Builder::TYPE_DROP
             ) {
@@ -393,17 +395,17 @@ abstract class Data_Source extends Container
                         Logger::SUCCESS
                     );
                     $cacher->set($queryHash, $queryResult, $ttl);
-                    break;
+                    return $queryResult;
 
                 case Query_Builder::TYPE_INSERT:
                 case Query_Builder::TYPE_UPDATE:
                 case Query_Builder::TYPE_DELETE:
                     $queryResult = Query_Result::create($query, $this->$queryCommand($query))->invalidate();
-                Profiler::setPoint($queryResult->__toString(), $startTime, $startMemory);
-                Data_Source::getLogger()->log(
-                    ['(new) {$0}', Profiler::getReport($queryResult->__toString())],
-                    Logger::SUCCESS
-                );
+                    Profiler::setPoint($queryResult->__toString(), $startTime, $startMemory);
+                    Data_Source::getLogger()->log(
+                        ['(new) {$0}', Profiler::getReport($queryResult->__toString())],
+                        Logger::SUCCESS
+                    );
                     return $queryResult;
 
                 default:
@@ -416,7 +418,7 @@ abstract class Data_Source extends Container
                     );
             }
         } catch (\Exception $e) {
-            Data_Source::getLogger()->log('(error) ' .  $e->getMessage() . ': ' .
+            Data_Source::getLogger()->log('(error) ' . $e->getMessage() . ': ' .
                 print_r($query->getBody(), true) . ' (' . print_r($query->getBinds(), true) . ')',
                 Logger::DANGER
             );

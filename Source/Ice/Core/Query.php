@@ -355,10 +355,6 @@ class Query
 
         $params = [];
 
-        /**
-         * @var Ui $ui
-         */
-
         if (isset($this->queryBuilder->getUis()[Simple::getClass()])) {
             foreach ($this->queryBuilder->getUis()[Simple::getClass()] as $ui) {
                 $params += (array)$ui->getValues();

@@ -41,6 +41,7 @@ if (!defined('ICE_BOOTSTRAP')) {
     $startMemory = \Ice\Core\Profiler::getMemoryGetUsage();
 
     require_once ICE_DIR . 'Source/Ice/Core/Data/Provider.php';
+    require_once ICE_DIR . 'Source/Ice/Data/Provider/File.php';
     require_once ICE_DIR . 'Source/Ice/Core/View/Render.php';
     require_once ICE_DIR . 'Source/Ice/Helper/Api/Client/Yandex/Translate.php';
 

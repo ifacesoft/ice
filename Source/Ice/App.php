@@ -10,6 +10,7 @@ use Ice\Action\Install;
 use Ice\Core\Action;
 use Ice\Core\Action_Context;
 use Ice\Core\Debuger;
+use Ice\Core\Environment;
 use Ice\Core\Logger;
 use Ice\Core\Profiler;
 use Ice\Core\Request;
@@ -31,10 +32,16 @@ class App
 
     public static function run()
     {
-        Logger::fb('bootstrapping finished - ' . Profiler::getReport(BOOTSTRAP_CLASS), 'application', 'LOG');
+        Logger::fb(
+            Profiler::getReport(BOOTSTRAP_CLASS, '/' . Environment::getInstance()->getName()),
+            __CLASS__,
+            'LOG'
+        );
 
         $startTime = Profiler::getMicrotime();
         $startMemory = Profiler::getMemoryGetUsage();
+
+        $actionClass = 'unknown';
 
         try {
             /**
@@ -63,8 +70,9 @@ class App
 
         App::getResponse()->send();
 
-        Profiler::setPoint(__CLASS__, $startTime, $startMemory);
-        Logger::fb('running finished - ' . Profiler::getReport(__CLASS__), 'ice application', 'LOG');
+        Profiler::setPoint($actionClass, $startTime, $startMemory);
+
+        Logger::fb(Profiler::getReport($actionClass), __CLASS__, 'LOG');
 
         Logger::renderLog();
 
@@ -87,7 +95,7 @@ class App
             unset($input['actionClass']);
         } else {
             $router = Router::getInstance();
-            $routeRequest = Route::getInstance($router->get('routeName'))->gets('request/' . $router ->get('method'));
+            $routeRequest = Route::getInstance($router->get('routeName'))->gets('request/' . $router->get('method'));
             list($actionClass, $input) = each($routeRequest);
             $actionClass = Action::getClass($actionClass);
         }

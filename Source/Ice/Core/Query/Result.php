@@ -28,7 +28,7 @@ use Ice\Helper\Serializer;
  */
 class Query_Result implements Cacheable
 {
-    use Core;
+    use Stored;
 
     const ROWS = 'rows';
     const NUM_ROWS = 'numRows';
@@ -74,18 +74,13 @@ class Query_Result implements Cacheable
     /**
      * Constructor of data object
      *
-     * @param Query $query
-     * @param array $result
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.5
      * @since   0.0
      */
-    private function __construct(Query $query, array $result)
+    private function __construct()
     {
-        $this->query = $query;
-        $this->result = Arrays::defaults($this->_default, $result);
     }
 
     /**
@@ -96,12 +91,17 @@ class Query_Result implements Cacheable
      * @return Query_Result
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.2
+     * @version 0.6
      * @since   0.0
      */
     public static function create(Query $query, array $result = [])
     {
-        return new Query_Result($query, $result);
+        $queryResult = new Query_Result();
+
+        $queryResult->query = $query;
+        $queryResult->result = Arrays::defaults($queryResult->_default, $result);
+
+        return $queryResult;
     }
 
     public static function invalidateCache($invalidateTags)

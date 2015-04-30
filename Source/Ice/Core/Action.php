@@ -146,11 +146,9 @@ abstract class Action implements Cacheable
 
             $output = (array)$action->run($input);
 
-            Profiler::setPoint($actionClass . ' ' . $inputString, $startTime, $startMemory);
-
-            if (Environment::getInstance()->isDevelopment()) {
-                Logger::fb(Profiler::getReport($actionClass . ' ' . $inputString), 'action', 'INFO');
-            }
+            Profiler::setPoint($actionClass . ' ' . $hash, $startTime, $startMemory);
+            Logger::fb($input, 'action - ' . $actionClass . ' start', 'INFO');
+            Logger::fb(Profiler::getReport($actionClass . ' ' . $hash), 'action finish', 'INFO');
             //            if ($content = $actionContext->getContent()) {
             //                App::getContext()->setContent(null);
             //                return $content;

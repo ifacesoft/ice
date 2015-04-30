@@ -71,7 +71,7 @@ class Deploy extends Action
                 'Ice:Composer_Update',
                 'Ice:Cache_Clear',
                 'Ice:Orm_Migrate',
-                'Ice:Resources',
+                'Ice:Resource',
             ]
         ];
     }

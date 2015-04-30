@@ -10,7 +10,12 @@ class Layout_Admin extends Layout
     {
         return array_merge_recursive(
             [
-                'actions' => ['Ice:Resources', 'Ice:Admin_Navigation']
+                'actions' => [
+                    'Ice:Admin_Navigation',
+                    'Ice:Resource_Css',
+                    'Ice:Resource_Js',
+                    'Ice:Resource_Dynamic'
+                ]
             ],
             parent::config()
         );

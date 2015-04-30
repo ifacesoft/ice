@@ -9,7 +9,7 @@ use Ice\View\Render\Php;
 
 class Pagination extends Widget_Menu
 {
-    private $foundRows = null;
+    protected $foundRows = null;
 
     /**
      * Pagination constructor.

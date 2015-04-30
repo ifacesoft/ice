@@ -22,13 +22,10 @@ use Ice\Core;
  *
  * @package    Ice
  * @subpackage Core
- *
- * @version 0.0
- * @since   0.0
  */
 abstract class Query_Translator extends Container
 {
-    use Core;
+    use Stored;
 
     /**
      * Private constructor for query translator

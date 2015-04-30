@@ -218,13 +218,11 @@ class View implements Cacheable
 
             Profiler::setPoint($this->template . ' (' . $viewRenderClass::getClassName() . ')', $startTime, $startMemory);
 
-            if (Environment::getInstance()->isDevelopment()) {
                 Logger::fb(
                     Profiler::getReport($this->template . ' (' . $viewRenderClass::getClassName() . ')'),
                     'view',
                     'INFO'
                 );
-            }
 
             array_shift(View_Render::$templates);
         } catch (\Exception $e) {
