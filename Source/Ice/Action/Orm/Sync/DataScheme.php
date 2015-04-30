@@ -64,144 +64,73 @@ class Orm_Sync_DataScheme extends Action
             foreach ($tables as $tableName => $table) {
                 if (!isset($schemeTables[$tableName])) {
                     if (!array_key_exists($tableName, $schemes)) {
-                        $this->createModel($module->getModelClass($tableName, $dataSourceKey), $table, $input['force']);
+                        $this->createModel(
+                            $module->getModelClass($tableName, $dataSourceKey),
+                            $table,
+                            $input['force'],
+                            $dataSourceKey
+                        );
                     }
 
                     continue;
                 }
 
-                $updated = false;
+                $isModelSchemeUpdated = $this->updateModelScheme(
+                    $table['scheme'],
+                    $schemeTables[$tableName]['scheme'],
+                    $schemeTables[$tableName]['modelClass'],
+                    $dataSourceKey
+                );
 
-                $tableSchemeHash = &$schemeTables[$tableName]['schemeHash'];
-                $tableScheme = &$schemeTables[$tableName]['scheme'];
+                $isModelIndexesUpdated = $this->updateModelIndexes(
+                    $table['indexes'],
+                    $schemeTables[$tableName]['indexes'],
+                    $schemeTables[$tableName]['modelClass'],
+                    $dataSourceKey
+                );
 
-                if ($table['schemeHash'] != $tableSchemeHash) {
-                    Data_Scheme::getLogger()->info([
-                        'Update scheme for model {$0}: {$1}',
-                        [
-                            $schemeTables[$tableName]['modelClass'],
-                            Json::encode(array_diff($table['scheme'], $tableScheme))
-                        ]
-                    ]);
-                    $tableScheme = $table['scheme'];
-                    $tableSchemeHash = $table['schemeHash'];
-                    $updated = true;
-                }
+                $isModelReferencesUpdated = $this->updateModelReferences(
+                    $table['references'],
+                    $schemeTables[$tableName]['references'],
+                    $schemeTables[$tableName]['modelClass'],
+                    $dataSourceKey
+                );
 
-                $tableIndexesHash = &$schemeTables[$tableName]['indexesHash'];
-                $tableIndexes = &$schemeTables[$tableName]['indexes'];
+                $isModelRelationsOneToManyUpdated = $this->updateModelRelationsOneToMany(
+                    $table['relations']['oneToMany'],
+                    $schemeTables[$tableName]['relations']['oneToMany'],
+                    $schemeTables[$tableName]['modelClass'],
+                    $schemeTables,
+                    $module,
+                    $dataSourceKey
+                );
 
-                if ($table['indexesHash'] != $tableIndexesHash) {
-                    Data_Scheme::getLogger()->info([
-                        'Update indexes for model {$0}: {$1}',
-                        [$schemeTables[$tableName]['modelClass'], Json::encode($table['indexes'])]
-                    ]);
-                    $tableIndexes = $table['indexes'];
-                    $tableIndexesHash = $table['indexesHash'];
-                    $updated = true;
-                }
+                $isModelRelationsManyToOneUpdated = $this->updateModelRelationsManyToOne(
+                    $table['relations']['manyToOne'],
+                    $schemeTables[$tableName]['relations']['manyToOne'],
+                    $schemeTables[$tableName]['modelClass'],
+                    $schemeTables,
+                    $module,
+                    $dataSourceKey
+                );
+
+                $isModelRelationsManyToManyUpdated = $this->updateModelRelationsManyToMany(
+                    $table['relations']['manyToMany'],
+                    $schemeTables[$tableName]['relations']['manyToMany'],
+                    $schemeTables[$tableName]['modelClass'],
+                    $schemeTables,
+                    $module,
+                    $dataSourceKey
+                );
 
 
-                if (!isset($schemeTables[$tableName]['referencesHash'])) {
-                    $schemeTables[$tableName]['referencesHash'] = crc32(Json::encode([]));
-                }
-                if (!isset($table['references'])) {
-                    $table['references'] = [];
-                }
-                if (!isset($table['referencesHash'])) {
-                    $table['referencesHash'] = '';
-                }
-                if ($table['referencesHash'] != $schemeTables[$tableName]['referencesHash']) {
-                    Data_Scheme::getLogger()->info([
-                        'Update references for model {$0}: {$1}',
-                        [$schemeTables[$tableName]['modelClass'], Json::encode($table['references'])]
-                    ]);
-                    $schemeTables[$tableName]['references'] = $table['references'];
-                    $schemeTables[$tableName]['referencesHash'] = $table['referencesHash'];
-                    $updated = true;
-                }
+                $isUpdated = $isModelSchemeUpdated ||
+                    $isModelIndexesUpdated ||
+                    $isModelReferencesUpdated ||
+                    $isModelRelationsOneToManyUpdated ||
+                    $isModelRelationsManyToOneUpdated ||
+                    $isModelRelationsManyToManyUpdated;
 
-                if (!isset($schemeTables[$tableName]['oneToManyHash'])) {
-                    $schemeTables[$tableName]['oneToManyHash'] = crc32(Json::encode([]));
-                }
-                if (!isset($table['oneToMany'])) {
-                    $table['oneToMany'] = [];
-                }
-                $table['oneToManyHash'] = crc32(Json::encode($table['oneToMany']));
-                if ($input['force'] || $table['oneToManyHash'] != $schemeTables[$tableName]['oneToManyHash']) {
-                    $references = [];
-                    foreach ($table['oneToMany'] as $referenceTableName => $columnName) {
-                        $referenceClassName = isset($schemeTables[$referenceTableName])
-                            ? $schemeTables[$referenceTableName]['modelClass']
-                            : $module->getModelClass($referenceTableName, $dataSourceKey);
-
-                        $references[$referenceClassName] = $columnName;
-                    }
-                    $table['oneToMany'] = $references;
-                    Data_Scheme::getLogger()->info([
-                        'Update OneToMany references for model {$0}: {$1}',
-                        [$schemeTables[$tableName]['modelClass'], Json::encode($table['oneToMany'])]
-                    ]);
-                    $schemeTables[$tableName]['oneToMany'] = $table['oneToMany'];
-                    $schemeTables[$tableName]['oneToManyHash'] = $table['oneToManyHash'];
-                    $updated = true;
-                }
-
-                if (!isset($schemeTables[$tableName]['manyToOneHash'])) {
-                    $schemeTables[$tableName]['manyToOneHash'] = crc32(Json::encode([]));
-                }
-                if (!isset($table['manyToOne'])) {
-                    $table['manyToOne'] = [];
-                }
-                $table['manyToOneHash'] = crc32(Json::encode($table['manyToOne']));
-                if ($input['force'] || $table['manyToOneHash'] != $schemeTables[$tableName]['manyToOneHash']) {
-                    $references = [];
-                    foreach ($table['manyToOne'] as $referenceTableName => $columnName) {
-                        $referenceClassName = isset($schemeTables[$referenceTableName])
-                            ? $schemeTables[$referenceTableName]['modelClass']
-                            : $module->getModelClass($referenceTableName, $dataSourceKey);
-
-                        $references[$referenceClassName] = $columnName;
-                    }
-                    $table['manyToOne'] = $references;
-                    Data_Scheme::getLogger()->info([
-                        'Update ManyToOne references for model {$0}: {$1}',
-                        [$schemeTables[$tableName]['modelClass'], Json::encode($table['manyToOne'])]
-                    ]);
-                    $schemeTables[$tableName]['manyToOne'] = $table['manyToOne'];
-                    $schemeTables[$tableName]['manyToOneHash'] = $table['manyToOneHash'];
-                    $updated = true;
-                }
-
-                if (!isset($schemeTables[$tableName]['manyToManyHash'])) {
-                    $schemeTables[$tableName]['manyToManyHash'] = crc32(Json::encode([]));
-                }
-                if (!isset($table['manyToMany'])) {
-                    $table['manyToMany'] = [];
-                }
-                $table['manyToManyHash'] = crc32(Json::encode($table['manyToMany']));
-                if ($input['force'] || $table['manyToManyHash'] != $schemeTables[$tableName]['manyToManyHash']) {
-                    $references = [];
-                    foreach ($table['manyToMany'] as $referenceTableName => $linkTableName) {
-                        $referenceClassName = isset($schemeTables[$referenceTableName])
-                            ? $schemeTables[$referenceTableName]['modelClass']
-                            : $module->getModelClass($referenceTableName, $dataSourceKey);
-
-                        $linkClassName = isset($schemeTables[$linkTableName])
-                            ? $schemeTables[$linkTableName]['modelClass']
-                            : $module->getModelClass($linkTableName, $dataSourceKey);
-
-                        $references[$referenceClassName] = $linkClassName;
-                    }
-                    $table['manyToMany'] = $references;
-                    Data_Scheme::getLogger()->info([
-                        'Update ManyToMany references for model {$0}: {$1}',
-                        [$schemeTables[$tableName]['modelClass'], Json::encode($table['manyToMany'])]
-                    ]);
-                    $schemeTables[$tableName]['manyToMany'] = $table['manyToMany'];
-                    $schemeTables[$tableName]['manyToManyHash'] = $table['manyToManyHash'];
-                    $updated = true;
-                }
 
                 $dataSchemeColumns = $schemeTables[$tableName]['columns'];
 
@@ -215,7 +144,7 @@ class Orm_Sync_DataScheme extends Action
                             'Create field {$0} for model {$1}',
                             [$column['fieldName'], $schemeTables[$tableName]['modelClass']]
                         ]);
-                        $updated = true;
+                        $isUpdated = true;
                         continue;
                     }
 
@@ -233,7 +162,7 @@ class Orm_Sync_DataScheme extends Action
                         ]);
                         $columnScheme = $column['scheme'];
                         $columnSchemeHash = $column['schemeHash'];
-                        $updated = true;
+                        $isUpdated = true;
                     }
 
                     unset($dataSchemeColumns[$columnName]);
@@ -245,10 +174,10 @@ class Orm_Sync_DataScheme extends Action
                         [$column['fieldName'], $schemeTables[$tableName]['modelClass']]
                     ]);
                     unset($schemeTables[$tableName]['columns'][$columnName]);
-                    $updated = true;
+                    $isUpdated = true;
                 }
 
-                if ($updated) {
+                if ($isUpdated) {
                     Model::getCodeGenerator()->generate($schemeTables[$tableName]['modelClass'], $table, $input['force']);
                 }
 
@@ -257,18 +186,22 @@ class Orm_Sync_DataScheme extends Action
         }
 
         foreach ($dataSchemeTables as $dataSourceKey => $schemeTables) {
+            $schemes = Scheme::createQueryBuilder()->getSelectQuery('*', [], $dataSourceKey)->getRows();
+
             foreach ($schemeTables as $tableName => $table) {
                 if (array_key_exists($tableName, $schemes)) {
                     $this->deleteModel(
                         $module->get(Module::SOURCE_DIR) . $table['modelPath'],
                         $tableName,
-                        $schemeTables);
+                        $schemeTables,
+                        $dataSourceKey
+                    );
                 }
             }
         }
     }
 
-    private function createModel($modelClass, $table, $force)
+    private function createModel($modelClass, $table, $force, $dataSourceKey)
     {
         Model::getCodeGenerator()->generate($modelClass, $table, $force);
 
@@ -281,20 +214,209 @@ class Orm_Sync_DataScheme extends Action
                 'references__json' => Json::encode($table['references']),
                 'revision' => $table['revision']
             ],
-            true
+            true,
+            $dataSourceKey
         )->getQueryResult();
 
-        Data_Scheme::getLogger()->info(['Model {$0} created', $modelClass]);
+        Data_Scheme::getLogger()->info(['{$0}: Model {$1} successfully created', [$dataSourceKey, $modelClass]]);
     }
 
-    private function deleteModel($modelFilePath, $tableName, $schemeTables)
+    private function deleteModel($modelFilePath, $tableName, $schemeTables, $dataSourceKey)
     {
         if (file_exists($modelFilePath)) {
             unlink($modelFilePath);
         }
 
-        Scheme::createQueryBuilder()->deleteQuery($tableName)->getQueryResult();
+        Scheme::createQueryBuilder()->deleteQuery($tableName, $dataSourceKey)->getQueryResult();
 
-        Data_Scheme::getLogger()->info(['Model {$0} deleted', $schemeTables[$tableName]['modelClass']]);
+        Data_Scheme::getLogger()->info(
+            ['{$0}: Model {$1} successfully deleted', [$dataSourceKey, $schemeTables[$tableName]['modelClass']]]
+        );
+    }
+
+    private function updateModelScheme(array $tableScheme, array &$modelScheme, $modelClass, $dataSourceKey)
+    {
+        $tableSchemeJson = Json::encode($tableScheme);
+
+        if (crc32($tableSchemeJson) == crc32(Json::encode($modelScheme))) {
+            return false;
+        }
+
+        $diffScheme = Json::encode(array_diff($tableScheme, $modelScheme));
+
+        $modelScheme = $tableScheme;
+
+        Scheme::createQueryBuilder()
+            ->updateQuery(['table__json' => $tableSchemeJson], $dataSourceKey)
+            ->getQueryResult();
+
+        Data_Scheme::getLogger()->info([
+            '{$0}: Scheme of model {$1} successfully updated: {$2}',
+            [$dataSourceKey, $modelClass, $diffScheme]
+        ]);
+
+        return true;
+    }
+
+    private function updateModelIndexes(array $tableIndexes, array &$modelIndexes, $modelClass, $dataSourceKey)
+    {
+        $tableIndexesJson = Json::encode($tableIndexes);
+
+        if (crc32($tableIndexesJson) == crc32(Json::encode($modelIndexes))) {
+            return false;
+        }
+
+        $diffIndexes = Json::encode(array_diff($tableIndexes, $modelIndexes));
+
+        $modelIndexes = $tableIndexes;
+
+        Scheme::createQueryBuilder()
+            ->updateQuery(['indexes__json' => $tableIndexesJson], $dataSourceKey)
+            ->getQueryResult();
+
+        Data_Scheme::getLogger()->info([
+            '{$0}: Indexes of model {$1} successfully updated: {$2}',
+            [$dataSourceKey, $modelClass, $diffIndexes]
+        ]);
+
+        return true;
+    }
+
+    private function updateModelReferences(array $tableReferences, array &$modelReferences, $modelClass, $dataSourceKey)
+    {
+        $tableReferencesJson = Json::encode($tableReferences);
+
+        if (crc32($tableReferencesJson) == crc32(Json::encode($modelReferences))) {
+            return false;
+        }
+
+        $diffReferences = Json::encode(array_diff($tableReferences, $modelReferences));
+
+        $modelReferences = $tableReferences;
+
+        Scheme::createQueryBuilder()
+            ->updateQuery(['references__json' => $tableReferencesJson], $dataSourceKey)
+            ->getQueryResult();
+
+        Data_Scheme::getLogger()->info([
+            '{$0}: References of model {$1} successfully updated: {$2}',
+            [$dataSourceKey, $modelClass, $diffReferences]
+        ]);
+
+        return true;
+    }
+
+    private function updateModelRelationsOneToMany(
+        array $tableOneToMany,
+        array &$modelOneToMany,
+        $modelClass,
+        array $schemeTables,
+        Module $module,
+        $dataSourceKey
+    )
+    {
+        $tableOneToManyJson = Json::encode($tableOneToMany);
+
+        if (crc32($tableOneToManyJson) == crc32(Json::encode($modelOneToMany))) {
+            return false;
+        }
+
+        $diffOneToMany = Json::encode(array_diff($tableOneToMany, $modelOneToMany));
+
+        $relations = [];
+
+        foreach ($tableOneToMany as $referenceTableName => $columnName) {
+            $referenceClassName = isset($schemeTables[$referenceTableName])
+                ? $schemeTables[$referenceTableName]['modelClass']
+                : $module->getModelClass($referenceTableName, $dataSourceKey);
+
+            $relations[$referenceClassName] = $columnName;
+        }
+
+        $modelOneToMany = $relations;
+
+        Data_Scheme::getLogger()->info([
+            '{$0}: OneToMany relations of model {$1} successfully updated: {$2}',
+            [$dataSourceKey, $modelClass, $diffOneToMany]
+        ]);
+
+        return true;
+    }
+
+    private function updateModelRelationsManyToOne(
+        array $tableManyToOne,
+        array &$modelManyToOne,
+        $modelClass,
+        array $schemeTables,
+        Module $module,
+        $dataSourceKey
+    )
+    {
+        $tableManyToOneJson = Json::encode($tableManyToOne);
+
+        if (crc32($tableManyToOneJson) == crc32(Json::encode($modelManyToOne))) {
+            return false;
+        }
+
+        $diffManyToOne = Json::encode(array_diff($tableManyToOne, $modelManyToOne));
+
+        $relations = [];
+
+        foreach ($tableManyToOne as $referenceTableName => $columnName) {
+            $referenceClassName = isset($schemeTables[$referenceTableName])
+                ? $schemeTables[$referenceTableName]['modelClass']
+                : $module->getModelClass($referenceTableName, $dataSourceKey);
+
+            $relations[$referenceClassName] = $columnName;
+        }
+
+        $modelManyToOne = $relations;
+
+        Data_Scheme::getLogger()->info([
+            '{$0}: ManyToOne relations of model {$1} successfully updated: {$2}',
+            [$dataSourceKey, $modelClass, $diffManyToOne]
+        ]);
+
+        return true;
+    }
+
+    private function updateModelRelationsManyToMany(
+        array $tableManyToMany,
+        array &$modelManyToMany,
+        $modelClass,
+        array $schemeTables,
+        Module $module,
+        $dataSourceKey
+    )
+    {
+        $tableManyToOneJson = Json::encode($tableManyToMany);
+
+        if (crc32($tableManyToOneJson) == crc32(Json::encode($modelManyToMany))) {
+            return false;
+        }
+
+        $diffManyToMany = Json::encode(array_diff($tableManyToMany, $modelManyToMany));
+
+        $references = [];
+        foreach ($tableManyToMany as $referenceTableName => $linkTableName) {
+            $referenceClassName = isset($schemeTables[$referenceTableName])
+                ? $schemeTables[$referenceTableName]['modelClass']
+                : $module->getModelClass($referenceTableName, $dataSourceKey);
+
+            $linkClassName = isset($schemeTables[$linkTableName])
+                ? $schemeTables[$linkTableName]['modelClass']
+                : $module->getModelClass($linkTableName, $dataSourceKey);
+
+            $references[$referenceClassName] = $linkClassName;
+        }
+
+        $modelManyToMany = $references;
+
+        Data_Scheme::getLogger()->info([
+            '{$0}: ManyToMany relations of model {$1} successfully updated: {$2}',
+            [$dataSourceKey, $modelClass, $diffManyToMany]
+        ]);
+
+        return true;
     }
 }

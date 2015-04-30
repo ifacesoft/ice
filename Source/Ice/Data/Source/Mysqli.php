@@ -410,11 +410,13 @@ class Mysqli extends Data_Source
             'dataSourceKey' => $this->getDataSourceKey(),
             'scheme' => [],
             'columns' => [],
-            'oneToMany' => [],
-            'manyToOne' => [],
-            'manyToMany' => [],
             'indexes' => [],
-            'references' => []
+            'references' => [],
+            'relations' => [
+                'oneToMany' => [],
+                'manyToOne' => [],
+                'manyToMany' => [],
+            ],
         ];
 
         foreach ($dataProvider->get('TABLES:TABLE_SCHEMA/' . $this->scheme) as $table) {
@@ -434,13 +436,10 @@ class Mysqli extends Data_Source
                     'charset' => $table['TABLE_COLLATION'],
                     'comment' => $table['TABLE_COMMENT']
                 ];
-                $data['schemeHash'] = crc32(Json::encode($dataScheme));
 
                 $data['indexes'] = $this->getIndexes($table['TABLE_NAME']);
-                $data['indexesHash'] = crc32(Json::encode($data['indexes']));
 
                 $data['references'] = $this->getReferences($table['TABLE_NAME']);
-                $data['referencesHash'] = crc32(Json::encode($data['references']));
 
                 foreach ($data['references'] as $tableName => $reference) {
                     foreach ($data['indexes']['FOREIGN KEY'] as $indexes) {
@@ -449,13 +448,13 @@ class Mysqli extends Data_Source
                                 continue;
                             }
 
-                            $data['oneToMany'][$tableName] = $columnNames;
+                            $data['relations']['oneToMany'][$tableName] = $columnNames;
 
                             if (!isset($tables[$tableName])) {
                                 $tables[$tableName] = $tableDefault;
                             }
 
-                            $tables[$tableName]['manyToOne'][$table['TABLE_NAME']] = $columnNames;
+                            $tables[$tableName]['relations']['manyToOne'][$table['TABLE_NAME']] = $columnNames;
 
                             break;
                         }
@@ -466,7 +465,7 @@ class Mysqli extends Data_Source
                     foreach ($data['references'] as $tableName1 => $reference1) {
                         foreach ($data['references'] as $tableName2 => $reference2) {
                             if ($tableName1 != $tableName2) {
-                                $tables[$tableName1]['manyToMany'][$tableName2] = $table['TABLE_NAME'];
+                                $tables[$tableName1]['relations']['manyToMany'][$tableName2] = $table['TABLE_NAME'];
                             }
                         }
                     }
@@ -475,7 +474,6 @@ class Mysqli extends Data_Source
                 $columns = &$data['columns'];
                 foreach ($this->getColumns($table['TABLE_NAME']) as $columnName => $column) {
                     $columns[$columnName]['scheme'] = $column;
-                    $columns[$columnName]['schemeHash'] = crc32(Json::encode($columns[$columnName]['scheme']));
 
                     $columns[$columnName]['fieldName'] = Helper_Model::getFieldNameByColumnName(
                         $columnName,
@@ -488,7 +486,6 @@ class Mysqli extends Data_Source
                             $columnPluginClass::schemeColumnPlugin($columnName, $data);
                     }
                 }
-                //                Model::getCodeGenerator()->generate($data, 1);
             }
         }
 

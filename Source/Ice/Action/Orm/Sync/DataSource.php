@@ -5,6 +5,7 @@ namespace Ice\Action;
 use Ice\Core\Action;
 use Ice\Core\Data_Source;
 use Ice\Core\Data_Scheme;
+use Ice\Core\Debuger;
 use Ice\Core\Model;
 use Ice\Core\Module;
 use Ice\Exception\DataSource_TableNotFound;
@@ -65,7 +66,7 @@ class Orm_Sync_DataSource extends Action
             foreach ($tables as $tableName => $table) {
                 if (!isset($sourceTables[$tableName])) {
                     if (!array_key_exists($tableName, $schemes)) {
-                        $this->createTable($table['modelClass'], $dataSourceKey, $table);
+                        $this->createTable($table['modelClass'], $table, $dataSourceKey);
                     }
 
                     continue;
@@ -274,8 +275,9 @@ class Orm_Sync_DataSource extends Action
      * @param $dataSourceKey
      * @param $table
      */
-    private function createTable($modelClass, $dataSourceKey, $table)
+    private function createTable($modelClass, $table, $dataSourceKey)
     {
+
         $modelClass::createTable($dataSourceKey);
 
         Scheme::createQueryBuilder()->insertQuery(
@@ -287,20 +289,23 @@ class Orm_Sync_DataSource extends Action
                 'references__json' => Json::encode($table['references']),
                 'revision' => $table['revision']
             ],
-            true
+            true,
+            $dataSourceKey
         )->getQueryResult();
 
-        Data_Source::getLogger()->info(['table {$0} created', $modelClass]);
+        Data_Source::getLogger()->info(
+            ['{$0}: Table {$1} successfully created', [$dataSourceKey, $table['scheme']['tableName']]]
+        );
     }
 
-    private function deleteModel($modelFilePath, $tableName, $sourceTables)
+    private function deleteModel($modelFilePath, $tableName, $sourceTables, $dataSourceKey)
     {
 
         if (file_exists($modelFilePath)) {
             unlink($modelFilePath);
         }
 
-        Scheme::createQueryBuilder()->deleteQuery($tableName)->getQueryResult();
+        Scheme::createQueryBuilder()->deleteQuery($tableName, $dataSourceKey)->getQueryResult();
 
         Data_Source::getLogger()->info(['Model {$0} deleted', $sourceTables[$tableName]['modelClass']]);
     }
