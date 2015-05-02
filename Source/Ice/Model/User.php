@@ -140,7 +140,7 @@ class User extends Model
 		        'user_active' => [
 		            'scheme' => [
 		                'extra' => '',
-		                'type' => 'tinyint(4)',
+		                'type' => 'tinyint(1)',
 		                'dataType' => 'tinyint',
 		                'length' => '3,0',
 		                'characterSet' => null,
@@ -192,7 +192,7 @@ class User extends Model
 		            'ice_role' => 'ice_user_role_link',
 		        ],
 		    ],
-		    'revision' => '05021423_5sd',
+		    'revision' => '05021432_dk2',
 		];
     }
 }

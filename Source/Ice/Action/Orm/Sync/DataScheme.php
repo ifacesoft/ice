@@ -80,6 +80,7 @@ class Orm_Sync_DataScheme extends Action
                 $isModelSchemeUpdated = $this->updateModelScheme(
                     $table['scheme'],
                     $schemeTables[$tableName]['scheme'],
+                $tableName,
                     $schemeTables[$tableName]['modelClass'],
                     $dataSourceKey
                 );
@@ -87,6 +88,7 @@ class Orm_Sync_DataScheme extends Action
                 $isModelIndexesUpdated = $this->updateModelIndexes(
                     $table['indexes'],
                     $schemeTables[$tableName]['indexes'],
+                    $tableName,
                     $schemeTables[$tableName]['modelClass'],
                     $dataSourceKey
                 );
@@ -94,6 +96,7 @@ class Orm_Sync_DataScheme extends Action
                 $isModelReferencesUpdated = $this->updateModelReferences(
                     $table['references'],
                     $schemeTables[$tableName]['references'],
+                    $tableName,
                     $schemeTables[$tableName]['modelClass'],
                     $dataSourceKey
                 );
@@ -165,6 +168,13 @@ class Orm_Sync_DataScheme extends Action
                     $isModelFieldsUpdated = true;
                 }
 
+                if ($isModelFieldsUpdated) {
+                    Scheme::createQueryBuilder()
+                        ->pk($tableName)
+                        ->updateQuery(['columns__json' => Json::encode($table['columns'])], $dataSourceKey)
+                        ->getQueryResult();
+                }
+
                 $isUpdated = $isModelSchemeUpdated ||
                     $isModelIndexesUpdated ||
                     $isModelReferencesUpdated ||
@@ -230,7 +240,7 @@ class Orm_Sync_DataScheme extends Action
         );
     }
 
-    private function updateModelScheme(array $tableScheme, array &$modelScheme, $modelClass, $dataSourceKey)
+    private function updateModelScheme(array $tableScheme, array &$modelScheme, $tableName, $modelClass, $dataSourceKey)
     {
         $tableSchemeJson = Json::encode($tableScheme);
 
@@ -243,6 +253,7 @@ class Orm_Sync_DataScheme extends Action
         $modelScheme = $tableScheme;
 
         Scheme::createQueryBuilder()
+            ->pk($tableName)
             ->updateQuery(['table__json' => $tableSchemeJson], $dataSourceKey)
             ->getQueryResult();
 
@@ -254,7 +265,13 @@ class Orm_Sync_DataScheme extends Action
         return true;
     }
 
-    private function updateModelIndexes(array $tableIndexes, array &$modelIndexes, $modelClass, $dataSourceKey)
+    private function updateModelIndexes(
+        array $tableIndexes,
+        array &$modelIndexes,
+        $tableName,
+        $modelClass,
+        $dataSourceKey
+    )
     {
         $tableIndexesJson = Json::encode($tableIndexes);
 
@@ -268,6 +285,7 @@ class Orm_Sync_DataScheme extends Action
         $modelIndexes = $tableIndexes;
 
         Scheme::createQueryBuilder()
+            ->pk($tableName)
             ->updateQuery(['indexes__json' => $tableIndexesJson], $dataSourceKey)
             ->getQueryResult();
 
@@ -279,7 +297,13 @@ class Orm_Sync_DataScheme extends Action
         return true;
     }
 
-    private function updateModelReferences(array $tableReferences, array &$modelReferences, $modelClass, $dataSourceKey)
+    private function updateModelReferences(
+        array $tableReferences,
+        array &$modelReferences,
+        $tableName,
+        $modelClass,
+        $dataSourceKey
+    )
     {
         $tableReferencesJson = Json::encode($tableReferences);
 
@@ -293,6 +317,7 @@ class Orm_Sync_DataScheme extends Action
         $modelReferences = $tableReferences;
 
         Scheme::createQueryBuilder()
+            ->pk($tableName)
             ->updateQuery(['references__json' => $tableReferencesJson], $dataSourceKey)
             ->getQueryResult();
 
