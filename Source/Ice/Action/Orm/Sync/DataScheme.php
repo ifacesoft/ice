@@ -4,9 +4,11 @@ namespace Ice\Action;
 
 use Ice\Core\Action;
 use Ice\Core\Data_Scheme;
+use Ice\Core\Debuger;
 use Ice\Core\Model;
 use Ice\Core\Module;
 use Ice\Exception\DataSource_TableNotFound;
+use Ice\Helper\Arrays;
 use Ice\Helper\Json;
 use Ice\Model\Scheme;
 
@@ -123,46 +125,32 @@ class Orm_Sync_DataScheme extends Action
                     $dataSourceKey
                 );
 
-
-                $isUpdated = $isModelSchemeUpdated ||
-                    $isModelIndexesUpdated ||
-                    $isModelReferencesUpdated ||
-                    $isModelRelationsOneToManyUpdated ||
-                    $isModelRelationsManyToOneUpdated ||
-                    $isModelRelationsManyToManyUpdated;
-
+                $isModelFieldsUpdated = false;
 
                 $dataSchemeColumns = $schemeTables[$tableName]['columns'];
 
                 foreach ($table['columns'] as $columnName => $column) {
                     if (!isset($schemeTables[$tableName]['columns'][$columnName])) {
-                        $schemeTables[$tableName]['columns'][$columnName] = [
-                            'scheme' => $column['scheme'],
-                            'schemeHash' => $column['schemeHash']
-                        ];
-                        Data_Scheme::getLogger()->info([
-                            'Create field {$0} for model {$1}',
-                            [$column['fieldName'], $schemeTables[$tableName]['modelClass']]
-                        ]);
-                        $isUpdated = true;
+                        $this->createModuleField(
+                            $schemeTables[$tableName]['columns'][$columnName],
+                            $column['scheme'],
+                            $schemeTables[$tableName]['modelClass'],
+                            $dataSourceKey
+                        );
+                        $isModelFieldsUpdated = true;
                         continue;
                     }
 
-                    $columnSchemeHash = &$schemeTables[$tableName]['columns'][$columnName]['schemeHash'];
-                    $columnScheme = &$schemeTables[$tableName]['columns'][$columnName]['scheme'];
+                    $isModelFieldUpdated = $this->updateModelField(
+                        $column['scheme'],
+                        $schemeTables[$tableName]['columns'][$columnName]['scheme'],
+                        $schemeTables[$tableName]['columns'][$columnName]['fieldName'],
+                        $schemeTables[$tableName]['modelClass'],
+                        $dataSourceKey
+                    );
 
-                    if ($column['schemeHash'] != $columnSchemeHash) {
-                        Data_Scheme::getLogger()->info([
-                            'Update field {$0} for model {$1}: {$2}',
-                            [
-                                $column['fieldName'],
-                                $schemeTables[$tableName]['modelClass'],
-                                Json::encode(array_diff($column['scheme'], $columnScheme))
-                            ]
-                        ]);
-                        $columnScheme = $column['scheme'];
-                        $columnSchemeHash = $column['schemeHash'];
-                        $isUpdated = true;
+                    if (!$isModelFieldsUpdated) {
+                        $isModelFieldsUpdated = $isModelFieldUpdated;
                     }
 
                     unset($dataSchemeColumns[$columnName]);
@@ -174,8 +162,16 @@ class Orm_Sync_DataScheme extends Action
                         [$column['fieldName'], $schemeTables[$tableName]['modelClass']]
                     ]);
                     unset($schemeTables[$tableName]['columns'][$columnName]);
-                    $isUpdated = true;
+                    $isModelFieldsUpdated = true;
                 }
+
+                $isUpdated = $isModelSchemeUpdated ||
+                    $isModelIndexesUpdated ||
+                    $isModelReferencesUpdated ||
+                    $isModelRelationsOneToManyUpdated ||
+                    $isModelRelationsManyToOneUpdated ||
+                    $isModelRelationsManyToManyUpdated ||
+                    $isModelFieldsUpdated;
 
                 if ($isUpdated) {
                     Model::getCodeGenerator()->generate($schemeTables[$tableName]['modelClass'], $table, $input['force']);
@@ -266,7 +262,8 @@ class Orm_Sync_DataScheme extends Action
             return false;
         }
 
-        $diffIndexes = Json::encode(array_diff($tableIndexes, $modelIndexes));
+        $removedDiffIndexes = Json::encode(Arrays::diffRecursive($tableIndexes, $modelIndexes));
+        $addedDiffIndexes = Json::encode(Arrays::diffRecursive($tableIndexes, $modelIndexes));
 
         $modelIndexes = $tableIndexes;
 
@@ -275,8 +272,8 @@ class Orm_Sync_DataScheme extends Action
             ->getQueryResult();
 
         Data_Scheme::getLogger()->info([
-            '{$0}: Indexes of model {$1} successfully updated: {$2}',
-            [$dataSourceKey, $modelClass, $diffIndexes]
+            '{$0}: Indexes of model {$1} successfully updated! [added: {$2}; removed: {$3}]',
+            [$dataSourceKey, $modelClass, $addedDiffIndexes, $removedDiffIndexes]
         ]);
 
         return true;
@@ -415,6 +412,36 @@ class Orm_Sync_DataScheme extends Action
         Data_Scheme::getLogger()->info([
             '{$0}: ManyToMany relations of model {$1} successfully updated: {$2}',
             [$dataSourceKey, $modelClass, $diffManyToMany]
+        ]);
+
+        return true;
+    }
+
+    private function createModuleField(&$modelField, $modelFieldScheme, $modelClass, $dataSourceKey)
+    {
+        $modelField = ['scheme' => $modelFieldScheme];
+
+        Data_Scheme::getLogger()->info([
+            '{$0}: Field {$1} in model {$2} successfully created',
+            [$dataSourceKey, $modelFieldScheme['fieldName'], $modelClass]
+        ]);
+    }
+
+    private function updateModelField($tableField, &$modelField, $fieldName, $modelClass, $dataSourceKey)
+    {
+        $tableFieldJson = Json::encode($tableField);
+
+        if (crc32($tableFieldJson) == crc32(Json::encode($modelField))) {
+            return false;
+        }
+
+        $diffField = Json::encode(array_diff($tableField, $modelField));
+
+        $modelField = $tableField;
+
+        Data_Scheme::getLogger()->info([
+            '{$0}: Field {$1} in model {$2} successfully updated: {$3}',
+            [$dataSourceKey, $fieldName, $modelClass, $diffField]
         ]);
 
         return true;

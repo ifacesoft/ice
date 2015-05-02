@@ -66,13 +66,13 @@ class Model extends Code_Generator
 
         $isFileExists = file_exists($filePath);
 
-        if (!$force && $isFileExists) {
-            Code_Generator::getLogger()->info(['Model {$0} already created', $class]);
+        if ($isFileExists) {
+            Class_Generator::create($class, Core_Model::getClass())->generate($data);
             return;
         }
 
-        if ($isFileExists) {
-            Class_Generator::create($class, Core_Model::getClass())->generate($data);
+        if (!$force && $isFileExists) {
+            Code_Generator::getLogger()->info(['Model {$0} already created', $class]);
             return;
         }
 
