@@ -184,10 +184,15 @@ class User extends Model
 		    'references' => [],
 		    'relations' => [
 		        'oneToMany' => [],
-		        'manyToOne' => [],
-		        'manyToMany' => [],
+		        'manyToOne' => [
+		            'ice_account' => 'user__fk',
+		            'ice_user_role_link' => 'user__fk',
+		        ],
+		        'manyToMany' => [
+		            'ice_role' => 'ice_user_role_link',
+		        ],
 		    ],
-		    'revision' => '05021408_5wj',
+		    'revision' => '05021423_5sd',
 		];
     }
 }

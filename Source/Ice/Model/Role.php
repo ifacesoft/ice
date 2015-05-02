@@ -17,7 +17,7 @@ class Role extends Model
     protected static function config()
     {
         return [
-		    'dataSourceKey' => 'Ice\\Data\\Source\\Mysqli/default.test',
+		    'dataSourceKey' => 'Ice\Data\Source\Mysqli/default.test',
 		    'scheme' => [
 		        'tableName' => 'ice_role',
 		        'engine' => 'InnoDB',
@@ -37,9 +37,9 @@ class Role extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'role_pk',
-		            'Ice\\Core\\Widget_Form' => 'Number',
-		            'Ice\\Core\\Validator' => [],
-		            'Ice\\Core\\Widget_Data' => 'text',
+		            'Ice\Core\Widget_Form' => 'Number',
+		            'Ice\Core\Validator' => [],
+		            'Ice\Core\Widget_Data' => 'text',
 		        ],
 		        'role_name' => [
 		            'scheme' => [
@@ -53,11 +53,11 @@ class Role extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'role_name',
-		            'Ice\\Core\\Widget_Form' => 'Text',
-		            'Ice\\Core\\Validator' => [
+		            'Ice\Core\Widget_Form' => 'Text',
+		            'Ice\Core\Validator' => [
 		                'Ice:Length_Max' => 255,
 		            ],
-		            'Ice\\Core\\Widget_Data' => 'text',
+		            'Ice\Core\Widget_Data' => 'text',
 		        ],
 		    ],
 		    'indexes' => [
@@ -72,10 +72,14 @@ class Role extends Model
 		    'references' => [],
 		    'relations' => [
 		        'oneToMany' => [],
-		        'manyToOne' => [],
-		        'manyToMany' => [],
+		        'manyToOne' => [
+		            'ice_user_role_link' => 'role__fk',
+		        ],
+		        'manyToMany' => [
+		            'ice_user' => 'ice_user_role_link',
+		        ],
 		    ],
-		    'revision' => '05021408_t9s',
+		    'revision' => '05021423_68a',
 		];
     }
 }

@@ -20,7 +20,7 @@ class Account extends Model
     protected static function config()
     {
         return [
-		    'dataSourceKey' => 'Ice\\Data\\Source\\Mysqli/default.test',
+		    'dataSourceKey' => 'Ice\Data\Source\Mysqli/default.test',
 		    'scheme' => [
 		        'tableName' => 'ice_account',
 		        'engine' => 'InnoDB',
@@ -40,9 +40,9 @@ class Account extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'account_pk',
-		            'Ice\\Core\\Widget_Form' => 'Number',
-		            'Ice\\Core\\Validator' => [],
-		            'Ice\\Core\\Widget_Data' => 'text',
+		            'Ice\Core\Widget_Form' => 'Number',
+		            'Ice\Core\Validator' => [],
+		            'Ice\Core\Widget_Data' => 'text',
 		        ],
 		        'user__fk' => [
 		            'scheme' => [
@@ -56,9 +56,9 @@ class Account extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'user__fk',
-		            'Ice\\Core\\Widget_Form' => 'Number',
-		            'Ice\\Core\\Validator' => [],
-		            'Ice\\Core\\Widget_Data' => 'text',
+		            'Ice\Core\Widget_Form' => 'Number',
+		            'Ice\Core\Validator' => [],
+		            'Ice\Core\Widget_Data' => 'text',
 		        ],
 		        'login' => [
 		            'scheme' => [
@@ -72,11 +72,11 @@ class Account extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'login',
-		            'Ice\\Core\\Widget_Form' => 'Text',
-		            'Ice\\Core\\Validator' => [
+		            'Ice\Core\Widget_Form' => 'Text',
+		            'Ice\Core\Validator' => [
 		                'Ice:Length_Max' => 255,
 		            ],
-		            'Ice\\Core\\Widget_Data' => 'text',
+		            'Ice\Core\Widget_Data' => 'text',
 		        ],
 		        'password' => [
 		            'scheme' => [
@@ -90,11 +90,11 @@ class Account extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'password',
-		            'Ice\\Core\\Widget_Form' => 'Text',
-		            'Ice\\Core\\Validator' => [
+		            'Ice\Core\Widget_Form' => 'Text',
+		            'Ice\Core\Validator' => [
 		                'Ice:Length_Max' => 255,
 		            ],
-		            'Ice\\Core\\Widget_Data' => 'text',
+		            'Ice\Core\Widget_Data' => 'text',
 		        ],
 		        'account_active' => [
 		            'scheme' => [
@@ -108,11 +108,11 @@ class Account extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'account_active',
-		            'Ice\\Core\\Widget_Form' => 'Checkbox',
-		            'Ice\\Core\\Validator' => [
+		            'Ice\Core\Widget_Form' => 'Checkbox',
+		            'Ice\Core\Validator' => [
 		                0 => 'Ice:Not_Null',
 		            ],
-		            'Ice\\Core\\Widget_Data' => 'text',
+		            'Ice\Core\Widget_Data' => 'text',
 		        ],
 		    ],
 		    'indexes' => [
@@ -121,16 +121,28 @@ class Account extends Model
 		                1 => 'account_pk',
 		            ],
 		        ],
-		        'FOREIGN KEY' => [],
+		        'FOREIGN KEY' => [
+		            'fk_ice_account_ice_user' => [
+		                'fk_ice_account_ice_user' => 'user__fk',
+		            ],
+		        ],
 		        'UNIQUE' => [],
 		    ],
-		    'references' => [],
+		    'references' => [
+		        'ice_user' => [
+		            'constraintName' => 'fk_ice_account_ice_user',
+		            'onUpdate' => 'NO ACTION',
+		            'onDelete' => 'NO ACTION',
+		        ],
+		    ],
 		    'relations' => [
-		        'oneToMany' => [],
+		        'oneToMany' => [
+		            'ice_user' => 'user__fk',
+		        ],
 		        'manyToOne' => [],
 		        'manyToMany' => [],
 		    ],
-		    'revision' => '05021408_new',
+		    'revision' => '05021423_mka',
 		];
     }
 }

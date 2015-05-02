@@ -262,8 +262,8 @@ class Orm_Sync_DataScheme extends Action
             return false;
         }
 
-        $removedDiffIndexes = Json::encode(Arrays::diffRecursive($tableIndexes, $modelIndexes));
         $addedDiffIndexes = Json::encode(Arrays::diffRecursive($tableIndexes, $modelIndexes));
+        $removedDiffIndexes = Json::encode(Arrays::diffRecursive($tableIndexes, $tableIndexes));
 
         $modelIndexes = $tableIndexes;
 
@@ -287,7 +287,8 @@ class Orm_Sync_DataScheme extends Action
             return false;
         }
 
-        $diffReferences = Json::encode(array_diff($tableReferences, $modelReferences));
+        $addedDiffReferences = Json::encode(Arrays::diffRecursive($tableReferences, $modelReferences));
+        $removedDiffReferences = Json::encode(Arrays::diffRecursive($modelReferences, $tableReferences));
 
         $modelReferences = $tableReferences;
 
@@ -296,8 +297,8 @@ class Orm_Sync_DataScheme extends Action
             ->getQueryResult();
 
         Data_Scheme::getLogger()->info([
-            '{$0}: References of model {$1} successfully updated: {$2}',
-            [$dataSourceKey, $modelClass, $diffReferences]
+            '{$0}: References of model {$1} successfully updated! [added: {$2}; removed: {$3}]',
+            [$dataSourceKey, $modelClass, $addedDiffReferences, $removedDiffReferences]
         ]);
 
         return true;
