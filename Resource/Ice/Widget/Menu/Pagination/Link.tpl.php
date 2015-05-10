@@ -5,7 +5,7 @@
        data-json='<?= $dataJson ?>'
        data-action='<?= $dataAction ?>'
        data-block='<?= $dataBlock ?>'
-       <?php if (isset($options['style'])) { ?>style="<?= $options['style'] ?>"<?php } ?>>
+       <?php if (isset($options['style'])) : ?>style="<?= $options['style'] ?>"<?php endif; ?>>
         <?= $title ?>
     </a>
 </li>

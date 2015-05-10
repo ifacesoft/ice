@@ -30,7 +30,6 @@ abstract class View_Render extends Container
 {
     use Stored;
 
-    const DEFAULT_KEY = 'instance';
     const TEMPLATE_TYPE_FILE = 'file';
     const TEMPLATE_TYPE_STRING = 'string';
 
@@ -88,7 +87,7 @@ abstract class View_Render extends Container
      */
     protected static function getDefaultKey()
     {
-        return View_Render::DEFAULT_KEY;
+        return 'default';
     }
 
     /**
@@ -103,7 +102,7 @@ abstract class View_Render extends Container
      */
     protected static function getDefaultClassKey()
     {
-        return self::getClass() . '/default';
+        return 'Ice:Php';
     }
 
     /**

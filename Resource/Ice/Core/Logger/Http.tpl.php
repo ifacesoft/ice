@@ -6,7 +6,6 @@ use Ice\Helper\Php;
 <div style="font-size: 12px;font-family: Tahoma, Geneva, sans-serif; background-color: #ffffff; color: #000000;">
     <div class="alert alert-<?= $type ?>">
         <?php if (isset($previous)) { ?>
-            <hr>
             <div style="color: #000000;">
                 <em><?= $time ?></em> -
                 host: <strong><?= $host ?></strong>

@@ -2,6 +2,7 @@
 
 namespace Ice\Widget\Data;
 
+use Ice\Core\Debuger;
 use Ice\Core\Query_Builder;
 use Ice\Core\Route;
 use Ice\Core\Widget_Data;
@@ -10,6 +11,17 @@ use Ice\View\Render\Php;
 
 class Table extends Widget_Data
 {
+    private $headerStyle = '';
+
+    /**
+     * @param string $headerStyle
+     * @return Table
+     */
+    public function setHeaderStyle($headerStyle)
+    {
+        $this->headerStyle = $headerStyle;
+        return $this;
+    }
 
     public function render()
     {
@@ -23,7 +35,7 @@ class Table extends Widget_Data
             [
                 'rows' => $this->prepareRows($dataClass, $this->prepareColums($dataClass)),
                 'classes' => $this->getClasses(),
-                'style' => $this->getStyle()
+                'style' => $this->getStyle(),
             ]
         );
     }
@@ -36,7 +48,8 @@ class Table extends Widget_Data
             Widget_Data::getClass($dataClass . '_' . $this->getRowHeaderTemplate()),
             [
                 'columns' => $columns,
-                'columnCount' => $this->getColumnCount() ? $this->getColumnCount() : count($columns)
+                'columnCount' => $this->getColumnCount() ? $this->getColumnCount() : count($columns),
+                'headerStyle' => $this->headerStyle
             ]
         );
 

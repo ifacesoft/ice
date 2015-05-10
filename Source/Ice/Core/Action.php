@@ -116,8 +116,37 @@ abstract class Action implements Cacheable
 
         $input = $actionClass::getInput($input);
 
-        if (isset($input['env']) && $input['env'] != Environment::getInstance()->getName()) {
+
+        $env = $actionClass::getConfig()->get('access/env', false);
+
+        if (isset($input['env'])) {
+            $env = $input['env'];
+        }
+
+        if ($env && $env != Environment::getInstance()->getName()) {
             return View::create($actionClass);
+        }
+
+        $request = $actionClass::getConfig()->get('access/request', false);
+
+        if (isset($input['request'])) {
+            $request = $input['request'];
+        }
+
+        if ($request) {
+            switch ($request) {
+                case 'cli':
+                    if (!Request::isCli()) {
+                        return View::create($actionClass);
+                    }
+                    break;
+                case 'ajax':
+                    if (!Request::isAjax()) {
+                        return View::create($actionClass);
+                    }
+                    break;
+                default:
+            }
         }
 
         //        $actionCacher = Action::getCacher();
@@ -146,11 +175,9 @@ abstract class Action implements Cacheable
 
             $output = (array)$action->run($input);
 
-            Profiler::setPoint($actionClass . ' ' . $inputString, $startTime, $startMemory);
-
-            if (Environment::getInstance()->isDevelopment()) {
-                Logger::fb(Profiler::getReport($actionClass . ' ' . $inputString), 'action', 'INFO');
-            }
+            Profiler::setPoint($actionClass . ' ' . $hash, $startTime, $startMemory);
+            Logger::fb($input, 'action - ' . $actionClass . ' start', 'INFO');
+            Logger::fb(Profiler::getReport($actionClass . ' ' . $hash), 'action finish', 'INFO');
             //            if ($content = $actionContext->getContent()) {
             //                App::getContext()->setContent(null);
             //                return $content;
@@ -161,51 +188,41 @@ abstract class Action implements Cacheable
 
             $rawActions = array_merge($action->actions, $actionClass::getConfig()->gets('actions', false));
 
+            /**
+             * @var string $actionKey
+             * @var array $actionData
+             * @var Action $subActionClass
+             * @var array $subActionParams
+             */
             foreach ($action->getActions($rawActions) as $actionKey => $actionData) {
-                if (empty($actionData) || count($actionData) > 2) {
-                    Action::getLogger()->exception(
-                        ['Wrong param count ({$0}) in action {$1}', [count($actionData), $actionClass]],
-                        __FILE__,
-                        __LINE__,
-                        null,
-                        $actionData
-                    );
-                }
-
                 $newLevel = $level + 1;
 
-                /**
-                 * @var Action $subActionClass
-                 */
-                list($subActionClass, $subActionParams) = each($actionData);
+                foreach ($actionData as $subActionClass => $actionItem) {
+                    /**
+                     * @var Action $subActionClass
+                     */
+                    list($subActionClass, $subActionParams) = each($actionItem);
 
-                $subView = null;
+                    $subView = null;
 
-                try {
-                    $subView = $subActionClass::call($subActionParams, $newLevel)->getContent();
-                } catch (Redirect $e) {
-                    throw $e;
-                } catch (Http_Bad_Request $e) {
-                    throw $e;
-                } catch (Http_Not_Found $e) {
-                    throw $e;
-                } catch (\Exception $e) {
-                    $subView = Action::getLogger()->error(
-                        ['Calling subAction "{$0}" in action "{$1}" failed', [$subActionClass, $actionClass]],
-                        __FILE__,
-                        __LINE__,
-                        $e
-                    );
-                }
-
-                if (is_int($actionKey)) {
-                    if (!isset($output[$subActionClass::getClassName()])) {
-                        $output[$subActionClass::getClassName()] = [];
+                    try {
+                        $subView = $subActionClass::call($subActionParams, $newLevel)->getContent();
+                    } catch (Redirect $e) {
+                        throw $e;
+                    } catch (Http_Bad_Request $e) {
+                        throw $e;
+                    } catch (Http_Not_Found $e) {
+                        throw $e;
+                    } catch (\Exception $e) {
+                        $subView = Action::getLogger()->error(
+                            ['Calling subAction "{$0}" in action "{$1}" failed', [$subActionClass, $actionClass]],
+                            __FILE__,
+                            __LINE__,
+                            $e
+                        );
                     }
 
-                    $output[$subActionClass::getClassName()][] = $subView;
-                } else {
-                    $output[$actionKey] = $subView;
+                    $output[$actionKey][] = $subView;
                 }
             }
 
@@ -575,11 +592,6 @@ abstract class Action implements Cacheable
      *
      * @return array
      *
-     * @author anonymous <email>
-     *
-     * @version 0
-     * @since   0
-     *
      *  protected static function config()
      *  {
      *      return [
@@ -588,7 +600,11 @@ abstract class Action implements Cacheable
      *          'input' => [],
      *          'output' => [],
      *          'ttl' => -1,
-     *          'roles' => []
+     *          'access' => [
+     *              'roles' => [],
+     *              'request' => null,
+     *              'env' => null
+     *          ]
      *      ];
      *  }
      *
@@ -596,11 +612,6 @@ abstract class Action implements Cacheable
      *
      * @param  array $input
      * @return array
-     *
-     * @author anonymous <email>
-     *
-     * @version 0
-     * @since   0
      */
     abstract public function run(array $input);
 
@@ -617,13 +628,13 @@ abstract class Action implements Cacheable
                 continue;
             }
 
-            list($key, $action) = $this->prepareAction($key, $action);
+            list($key, $class, $params) = $this->prepareAction($key, $action);
 
-            if (!empty($key) && is_string($key)) {
-                $actions[$key] = $action;
-            } else {
-                $actions[] = $action;
+            if (empty($key) || is_int($key)) {
+                $key = $class::getClassName();
             }
+
+            $actions[$key][] = [$class => $params];
         }
 
         return $actions;
@@ -655,7 +666,7 @@ abstract class Action implements Cacheable
             ? get_class($this) . $class
             : Action::getClass($class);
 
-        return [$key, [$class => $params]];
+        return [$key, $class, $params];
     }
 
     /**

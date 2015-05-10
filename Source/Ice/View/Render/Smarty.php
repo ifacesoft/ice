@@ -90,8 +90,6 @@ class Smarty extends View_Render
      */
     public function fetch($template, array $data = [], $templateType = View_Render::TEMPLATE_TYPE_FILE)
     {
-        //        $template = Action::getClass($template);
-
         /**
          * @var \Smarty_Internal_Template $smartyTemplate
          */

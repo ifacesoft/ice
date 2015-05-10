@@ -242,7 +242,10 @@ class Mysqli extends Data_Provider
             Mysqli::getLogger()->exception(
                 ['mysql - #' . $this->getConnection()->errno . ': {$0}', $this->getConnection()->error],
                 __FILE__,
-                __LINE__
+                __LINE__,
+                null,
+                $scheme,
+                0
             );
         }
 

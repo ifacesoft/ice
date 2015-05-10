@@ -133,11 +133,12 @@ class Profiler
      * @version 0.6
      * @since   0.6
      * @param   $name
-     * @return  string
+     * @param $postfix
+     * @return string
      */
-    public static function getReport($name)
+    public static function getReport($name, $postfix = '')
     {
-        $message = $name . ' [';
+        $message = $name . $postfix . ' [';
 
         if (isset(Profiler::$profiler[$name])) {
             $message .= 'Time: ' . Helper_Profiler::getPrettyTime(Profiler::$profiler[$name][Profiler::TIME]) . ' ';

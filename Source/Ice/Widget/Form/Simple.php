@@ -2,6 +2,7 @@
 
 namespace Ice\Widget\Form;
 
+use Ice\Core\Debuger;
 use Ice\Core\Widget_Form;
 use Ice\Helper\Json;
 use Ice\Helper\Object;
@@ -62,7 +63,7 @@ class Simple extends Widget_Form
         foreach ($targetFields as $fieldName => $field) {
             $field['fieldName'] = $fieldName;
             $field['formName'] = $formName;
-            $field['value'] = $values[$fieldName];
+            $field['value'] = isset($values[$fieldName]) ? $values[$fieldName] : '';
 
             $field['dataUrl'] = $this->getUrl();
             $field['dataJson'] = Json::encode($this->getParams());

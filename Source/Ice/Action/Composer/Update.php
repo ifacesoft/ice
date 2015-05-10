@@ -74,6 +74,11 @@ class Composer_Update extends Action
             'input' => [
                 'vendor' => ['default' => 'composer/composer'],
                 'command' => ['default' => '/bin/composer']
+            ],
+            'access' => [
+                'roles' => [],
+                'request' => 'cli',
+                'env' => null
             ]
         ];
     }
@@ -91,7 +96,11 @@ class Composer_Update extends Action
      */
     public function run(array $input)
     {
-        $command = VENDOR_DIR . $input['vendor'] . $input['command'];
+        $composerPharFile = MODULE_DIR . 'composer.phar';
+
+        $command = file_exists($composerPharFile)
+            ? $composerPharFile
+            : VENDOR_DIR . $input['vendor'] . $input['command'];
 
         Console::run(
             [
@@ -100,5 +109,10 @@ class Composer_Update extends Action
                 'php ' . $command . ' show -i'
             ]
         );
+
+        if (file_exists($composerPharFile)) {
+            unlink('composer.phar');
+            Console::getText('For composer update use command "./cli Ice:Deploy" or directly "./cli Ice:Composer_Update"', Console::C_YELLOW);
+        }
     }
 }

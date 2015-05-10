@@ -24,6 +24,9 @@ return [
             '/.*/' => 'production'
         ]
     ],
+    'Ice\Core\Logger' => [
+        'apiHost' => 'http://iceframework.net'
+    ],
     'Ice\Core\Request' => [
         'multiLocale' => 1,
         'locale' => 'en',

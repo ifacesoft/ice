@@ -3,9 +3,8 @@
 namespace Ice\Action;
 
 use Ice\Core\Action;
-use Ice\Widget\Data\Table;
 
-class Admin extends Action
+class Admin_Dashboard extends Action
 {
     /**
      * Action config

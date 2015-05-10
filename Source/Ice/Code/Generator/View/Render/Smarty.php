@@ -46,7 +46,7 @@ class View_Render_Smarty extends Code_Generator
      * @version 0.0
      * @since   0.0
      */
-    public function generate($class, $data = null, $force = false)
+    public function generate($class, array $data = [], $force = false)
     {
         $class = Object::getClass(Action::getClass(), $class);
         $module = Module::getInstance(Object::getModuleAlias($class));

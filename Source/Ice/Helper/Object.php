@@ -10,7 +10,6 @@
 namespace Ice\Helper;
 
 use Ice\Core\Container;
-use Ice\Core\Debuger;
 use Ice\Core\Loader;
 use Ice\Core\Module;
 

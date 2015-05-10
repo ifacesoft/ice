@@ -44,10 +44,10 @@ class Redirect extends Exception
      * @version 0.5
      * @since   0.1
      */
-    public function __construct($errstr, $errcontext = [], $previous = null, $errfile = null, $errline = null)
+    public function __construct($errstr, $errcontext = [], $previous = null, $errfile = null, $errline = null, $errno = 0)
     {
         $this->redirectUrl = $errstr;
-        parent::__construct($errstr, $errcontext, $previous, $errfile, $errline, E_USER_ERROR);
+        parent::__construct($errstr, $errcontext, $previous, $errfile, $errline, $errno);
     }
 
     /**

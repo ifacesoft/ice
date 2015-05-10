@@ -15,117 +15,187 @@ You may fully rely on Ice while developing complex web-applications.
 Ice key features are the built-in cache support of the main components,
 flexible configuration and the ability to easily extend existing functionality.
 
-
-History
-=======
-
-Development of the project since at December 2013.
-
-
-Features
-========
-
-* Easy to learn and use
-* Incredibly fast even at default settings
-* Easily expandable
-* The project is far from the monstrosity
-* Ability to use third-party libraries
-* Built-in support for JQuery, Bootstrap
-* Provides high application security
-* Includes a convenient tools for profiling and debugging
-* Distributed under the copyleft license
-
-
-Architecture
-============
-
-Ice is originally written in the programming language PHP 5.4. Basic functionality is written using namespaces.
-All classes, with rare exceptions, are loaded using the integrated automatic class loading mechanism.
-By default web applications made with the Ice framework use a Model-View-Action approach.
-Framework supports modular structure. Thus, the functional expansion can be achieved by adding new modules to your web project.
-Directory hierarhy is designed so that you could easily find a component or project resource.
-Almost all the key components are cached using a particular data provider.
-All data structures are stored in the configuration files of model schemas.
-Model data fields are based on the model mapping configuration file.
-This ensures adherence to a naming model fields.
-
-
-Abilities
-=========
-
-* Receiving data from data providers Redis, Apcu etc.
-* Data retrieval data from data sources: MariaDB (Mysqli), etc.
-* Retrieval data from data sources is possible as a collection, a model or a simple array
-* Filtering and validation of incoming data
-* Usage of generic query builder for the preparation and execution of queries to data source
-* Renderer of templates via the template engine Smarty (by default - templates for php)
-* Performing the action on the route, defined by the requested address (url)
-* Override the default settings through creation of the configuration file
-
-
-Project structure
-=================
-
-      _cache/                 Cache files for separate projects
-      _log/                   Log files for separate projects
-      _resource/              Resource files (javascript, css, images etc.) for separate projects
-      _storage/               File storage
-      _vendor/                Vendors (loaded via composer)
-
-      MyProject/        Your module
-            Config /          Configuration files (php format)
-                  Ice/              Overridden configuration files for Ice module
-                  Mp/               Configuration files for your module (MyProject)
-            Resource/         Resource files
-                  Ice/              Overridden resource files for Ice module
-                  Mp/               Resource for your module (MyProject) (views, localization files etc.)
-            Source/           Source files
-                  Ice/              Overridden source files for Ice module (not recommended)
-                  Mp/               Source files for your module (MyProject)
-                        Action/           Action classes for your module (MyProject)
-                        Model/            Model classes for your module (MyProject)
-                        ...               Other implementations of core ice classes and interfaces
-            Web/              Web root directory
-                  index.php         Directory index file
-
+Alternative repository on Bitbacket: [Ice](https://bitbucket.org/dp_ifacesoft/ice) (https://bitbucket.org/dp_ifacesoft/ice)
 
 Quick Start Guide
 =================
 
-For Linux:
-----------
+Create a composer.json in the directory workspace/MyProject
+-----------------------------------------------------------
 
-Composer install via shell:
+```shell
+mkdir -p workspace/MyProject && cd workspace/MyProject && touch composer.json
+```
 
-      $ curl -s http://getcomposer.org/installer | php
-      $ php composer.phar create-project ifacesoft/ice Ice dev-master
-      $ ./Ice/cli Ice:Module_Create
+workspace - your working directory (logs, caches etc.);
 
-Zip archive install:
+MyProject - the source code of your project
 
-      1. Download and unpack .zip
-      2. $ ./Ice/cli Ice:Composer_Update
-      3. $ ./Ice/cli Ice:Module_Create
+an example file:
+```json
+{
+    "name": "vendor/my-project",
+    "description": "My project with Ice",
+    "type": "project",
+    "require": {
+        "ifacesoft/ice": "1.0.*"
+    },
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "dp",
+            "email": "denis.a.shestakov@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "config": {
+        "vendor-dir": "../_vendor"
+    },
+    "scripts": {
+        "post-install-cmd": [
+            "Ice\\App::update"
+        ],
+        "post-update-cmd": [
+            "Ice\\App::update"
+        ]
+    }
+}
+```
 
-For Windows:
-------------
-Composer install via command line (require php extensions: openssl):
+Install the project using composer
+----------------------------------
 
-      >set PATH=%PATH%;C:\php;C:\Program Files\Mercurial;C:\Program Files (x86)\Git\bin;C:\Program Files (x86)\Subversion\bin
-      >php -r "readfile('https://getcomposer.org/installer');" | php
-      >php composer.phar create-project ifacesoft/ice Ice dev-master
-      >php .\Ice\app.php Ice:Module_Create
-      >mkdir .\_log\{$YOUR MODULE NAME}
+```shell
+curl -sS https://getcomposer.org/installer | php && php composer.phar install --prefer-source
+```
 
+Configure the web server and /etc/hosts
+---------------------------------------
 
+After successful installation, use the generated configuration.
+
+Ready! Your project should be available at http://myproject.local 
+
+The basics
+==========
+
+Routes
+------
+
+sample /Config/Ice/Core/Route.php:
+
+```php
+<?php
+return [
+    'mp_page' => [
+        'route' => '/page/{$page}',
+        'params' => [
+            'page' => '(\d)'
+        ],
+        'weight' => 10000,
+        'request' => [
+            'GET' => [
+                'Www:Layout_Main' => [
+                    'actions' => [
+                        ['Ice:Title' => 'title', ['title' => 'Ice - Open Source PHP Framework ']],
+                        'Www:Index' => 'main'
+                    ]
+                ]
+            ]
+        ]
+    ]
+]    
+```
+
+Important parts:
+
+* 'mp_page' - Route name, (Uses: Route::getInstance('mp_page')->getUrl(20)) returned '/page/20' etc.)
+* 'weight' - Priority of matched routes. Greater weight - greater priority.
+* 'request' section - Array of available requuest methods (GET, POST etc.)
+* 'request/GET' - Only one item (first) contained layout action class as key and params as value
+
+Actions
+-------
+
+```php
+namespace Mp\Action;
+use Ice\Core\Action;
+class Page extends Action
+{
+    protected static function config()
+    {
+        return [
+            'view' => ['viewRenderClass' => 'Ice:Smarty', 'template' => null, 'layout'],
+            'actions' => [],
+            'input' => [],
+            'output' => [],
+            'ttl' => -1,
+        ];
+    }
+    public function run(array $input)
+    {
+    }
+}
+```
+
+**2 main methods - config and run**
+
+method config - return array:
+
+* 'view' - Define way of render output data ('viewRenderClass' - render class, 'template' - template for render, layout - template-wrapper of rendered content in emmet style)
+* 'actions' - Child actions
+* 'input' - Array of input params with their data providers. Also information of validators, defaults end other.
+* 'output' - Фdditional sources of output (params and their data providers as well as 'input' section)
+* 'ttl' - time stored in cache (now supported only 3600 :) )
+* 'accses' - Information to checks permissions to run action (support environment - one of 'production', 'test' or 'development' and request - one of 'cli' or 'ajax')
+
+Models
+------
+ 
+Select examples:
+
+```php
+// 1.
+$page = Page::getModel(20, ['title', 'desc']); // or Page::getModel(20, '*')
+// 2.
+$page = Page::create(['title' => 'page 20')->find([id, 'desc']);
+// 3.
+$page = Page::createQueryBuilder()->eq(['desc' => '20th page'])->getSelectQuery()->getModel();
+``` 
+
+Insert examples:
+
+```php
+// 1. 
+Page::create(['title' => 'page 20', 'desc' => '20th page'])->save();
+// 2.
+Page::createQueryBuilder()->getInsertQuery(['title' => 'page 20', 'desc' => '20th page'])->getQueryResult();
+```  
+
+Update examples:
+
+```php
+// 1. 
+Page::getModel(20, ['title', 'desc'])->set(['title' => 'another title'])->save();
+// 2.
+Page::createQueryBuilder()->eq(['id' => 20])->getUpdateQuery(['title' => 'another title'])->getQueryResult();
+```   
+
+Update examples:
+ 
+```php
+// 1. 
+Page::getModel(20, '/pk')->remove();
+// 2.
+Page::createQueryBuilder()->getDeleteQuery(20)->getQueryResult();
+```   
+ 
 Documentation
 =============
 
 More info on [iceframework.net](http://iceframework.net) such as:
 
 * [Handbook](http://iceframework.net/handbook)
-* [Cookbook](http://iceframework.net/cookbook)
-* [FAQ](http://iceframework.net/faq)
-* [Api](http://iceframework.net/resource/api/Ice/0.0/)
+* [Api](http://iceframework.net/resource/api/Ice/1.0/)
 
 Good luck! 

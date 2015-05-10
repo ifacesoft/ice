@@ -13,7 +13,9 @@ use Ice\Core\Exception;
 use Ice\Core\Logger as Core_Logger;
 use Ice\Core\Module;
 use Ice\Core\Request as Core_Request;
+use Ice\Core\Request;
 use Ice\Core\View_Render;
+use Ice\Model\Log_Error;
 use Ice\View\Render\Php as View_Render_Php;
 
 /**
@@ -25,9 +27,6 @@ use Ice\View\Render\Php as View_Render_Php;
  *
  * @package    Ice
  * @subpackage Helper
- *
- * @version 0.0
- * @since   0.0
  */
 class Logger
 {
@@ -158,5 +157,38 @@ class Logger
             false,
             FILE_APPEND
         );
+    }
+
+    public static function outputDb($exception)
+    {
+        $params = [
+            'ip' => Request::ip(),
+            'agent' => Request::agent(),
+            'referer' => Request::referer(),
+            'host' => Request::host(),
+            'uri' => Request::uri(),
+            'post__json' => Json::encode(Request::getParams()),
+            'exception__json' => Logger::getMessage($exception)
+        ];
+
+        if (function_exists('curl_init')) {
+            $ch = curl_init();
+
+            curl_setopt($ch, CURLOPT_URL, Core_Logger::getConfig()->get('apiHost') . "/api/log/error");
+            curl_setopt($ch, CURLOPT_POST, 1);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($params));
+
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+            $server_output = curl_exec($ch);
+
+            unset($server_output);
+
+            curl_close($ch);
+        }
+
+        try {
+            Log_Error::create($params)->save();
+        } catch (\Exception $e) {}
     }
 }

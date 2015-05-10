@@ -23,3 +23,15 @@ li {
     position: relative;
     margin: 5px 0;
 }
+
+hr.hrline {
+    background-color: #6f5499;
+    background-image: linear-gradient(to bottom, #563d7c 0px, #6f5499 100%);
+    height: 30px;
+    margin-top: 0;
+}
+
+.pseudo-link {
+    text-decoration: none;
+    border-bottom: 1px dashed;
+}

@@ -355,25 +355,21 @@ class Query
 
         $params = [];
 
-        /**
-         * @var Ui $ui
-         */
-
-        if (isset($this->queryBuilder->getUis()[Simple::getClass()])) {
-            foreach ($this->queryBuilder->getUis()[Simple::getClass()] as $ui) {
-                $params += (array)$ui->getValues();
+        if (isset($this->queryBuilder->getWidgets()[Simple::getClass()])) {
+            foreach ($this->queryBuilder->getWidgets()[Simple::getClass()] as $widget) {
+                $params += (array)$widget->getValues();
             }
         }
 
-        if (isset($this->queryBuilder->getUis()[Pagination::getClass()])) {
-            foreach ($this->queryBuilder->getUis()[Pagination::getClass()] as $ui) {
-                $params += $ui->getValues();
+        if (isset($this->queryBuilder->getWidgets()[Pagination::getClass()])) {
+            foreach ($this->queryBuilder->getWidgets()[Pagination::getClass()] as $widget) {
+                $params += $widget->getValues();
             }
         }
 
-        if (isset($this->queryBuilder->getUis()[Table::getClass()])) {
-            foreach ($this->queryBuilder->getUis()[Table::getClass()] as $ui) {
-                foreach ($ui->getValues() as $key => $value) {
+        if (isset($this->queryBuilder->getWidgets()[Table::getClass()])) {
+            foreach ($this->queryBuilder->getWidgets()[Table::getClass()] as $widget) {
+                foreach ($widget->getValues() as $key => $value) {
                     if ($value) {
                         if (!isset($params[$key])) {
                             $params[$key] = $value;
@@ -385,10 +381,10 @@ class Query
             }
         }
 
-        foreach ($this->queryBuilder->getUis() as $uis) {
-            foreach ($uis as $ui) {
-                $ui->setParams($params);
-                $ui->setQueryResult($queryResult);
+        foreach ($this->queryBuilder->getWidgets() as $uis) {
+            foreach ($uis as $widget) {
+                $widget->setParams($params);
+                $widget->setQueryResult($queryResult);
             }
         }
 

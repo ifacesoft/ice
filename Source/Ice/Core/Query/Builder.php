@@ -25,7 +25,7 @@ use Ice\Widget\Menu\Pagination;
  */
 class Query_Builder
 {
-    use Core;
+    use Stored;
 
     const TYPE_CREATE = 'create';
     const TYPE_DROP = 'drop';
@@ -153,23 +153,13 @@ class Query_Builder
     /**
      * Private constructor of query builder
      *
-     * @param string $modelClass Class of model
-     * @param string|null $tableAlias Alias of table in query (default: class name of model)
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
      * @since   0.0
      */
-    private function __construct($modelClass, $tableAlias = null)
+    private function __construct()
     {
-        $this->modelClass = Model::getClass($modelClass);
-
-        if (!$tableAlias) {
-            $tableAlias = $modelClass;
-        }
-
-        $this->tableAlias = Object::getName($tableAlias);
     }
 
     /**
@@ -181,12 +171,22 @@ class Query_Builder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.6
      * @since   0.0
      */
     public static function create($modelClass, $tableAlias = null)
     {
-        return new Query_Builder($modelClass, $tableAlias);
+        $queryBuilder = new Query_Builder();
+
+        $queryBuilder->modelClass = Model::getClass($modelClass);
+
+        if (!$tableAlias) {
+            $tableAlias = $modelClass;
+        }
+
+        $queryBuilder->tableAlias = Object::getName($tableAlias);
+
+        return $queryBuilder;
     }
 
     /**
@@ -269,7 +269,7 @@ class Query_Builder
 
             $this->appendCacheTag($modelClass, $fieldName, true, false);
 
-            $this->bindParts[Query_Builder::PART_WHERE][] = $value == null
+            $this->bindParts[Query_Builder::PART_WHERE][] = $value === null
                 ? [null]
                 : (array)$value;
         }
@@ -1878,7 +1878,7 @@ class Query_Builder
     /**
      * @return Ui[]
      */
-    public function getUis()
+    public function getWidgets()
     {
         return $this->uis;
     }

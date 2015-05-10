@@ -36,7 +36,7 @@ return [
                 'instance' => 'Ice:Registry/bootstrap',
             ],
             'Ice\Core\Loader' => [
-                'loader' => 'Ice:Repository/loader',
+                'loader' => 'Ice:Registry/loader',
             ],
             'Ice\Core\Action' => [
                 'instance' => 'Ice:Repository/action',
@@ -73,7 +73,7 @@ return [
                 'instance' => 'Ice:Repository/container',
             ],
             'Ice\Core\View_Render' => [
-                'instance' => 'Ice:Repository/view_render',
+                'instance' => 'Ice:Registry/view_render',
             ],
             'Ice\Core\Query_Translator' => [
                 'instance' => 'Ice:Repository/query_translator',
@@ -119,13 +119,89 @@ return [
     ],
     'test' => [
         'dataProviderKeys' => [
+            'Ice\Core\Bootstrap' => [
+                'instance' => 'Ice:Registry/bootstrap',
+            ],
+            'Ice\Core\Loader' => [
+                'loader' => 'Ice:Registry/loader',
+            ],
+            'Ice\Core\Action' => [
+                'instance' => 'Ice:File/action',
+                'cache' => 'Ice:File/action'
+            ],
+            'Ice\Core\Route' => [
+                'instance' => 'Ice:File/route',
+                'route' => 'Ice:File/route',
+                'routes' => 'Ice:File/route',
+            ],
+            'Ice\Core\Config' => [
+                'instance' => 'Ice:File/config',
+                'config' => 'Ice:File/config',
+                'route' => 'Ice:File/config',
+                'routes' => 'Ice:File/config',
+                'model_scheme' => 'Ice:File/config',
+            ],
+            'Ice\Core\Converter' => [
+                'instance' => 'Ice:File/converter',
+            ],
+            'Ice\Core\Widget' => [
+                'instance' => 'Ice:File/widget',
+            ],
+            'Ice\Core\Widget_Form' => [
+                'instance' => 'Ice:File/widget_form',
+            ],
+            'Ice\Core\Widget_Menu' => [
+                'instance' => 'Ice:File/widget_menu',
+            ],
+            'Ice\Core\Widget_Data' => [
+                'instance' => 'Ice:File/widget_data',
+            ],
+            'Ice\Core\Container' => [
+                'instance' => 'Ice:File/container',
+            ],
+            'Ice\Core\View_Render' => [
+                'instance' => 'Ice:Registry/view_render',
+            ],
+            'Ice\Core\Query_Translator' => [
+                'instance' => 'Ice:File/query_translator',
+            ],
             'Ice\Core\Query' => [
+                'instance' => 'Ice:File/query',
                 'sql' => 'Ice:File/query',
                 'query' => 'Ice:File/query',
+            ],
+            'Ice\Core\Code_Generator' => [
+                'instance' => 'Ice:File/code_generator',
+            ],
+            'Ice\Core\Data_Source' => [
+                'instance' => 'Ice:File/data_source',
+                'cache' => 'Ice:File/data_source'
+            ],
+            'Ice\Core\Data_Scheme' => [
+                'data_scheme' => 'Ice:File/data_scheme',
+            ],
+            'Ice\Core\Model_Scheme' => [
+                'model_scheme' => 'Ice:File/model_scheme',
+            ],
+            'Ice\Core\Validator' => [
+                'instance' => 'Ice:File/validator',
             ],
             'Ice\Core\Cache' => [
                 'tags' => 'Ice:File/cache',
             ],
+            'Ice\Core\View' => [
+                'instance' => 'Ice:File/view',
+                'view' => 'Ice:File/view',
+            ],
+            'Ice\Core\Resource' => [
+                'instance' => 'Ice:File/resource'
+            ],
+            'Ice\Core\Module' => [
+                'instance' => 'Ice:File/module'
+            ],
+            'Ice\Core\Session' => [
+                'session' => 'Ice:File/session'
+            ]
         ]
     ],
     'development' => [

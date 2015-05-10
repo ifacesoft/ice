@@ -36,19 +36,7 @@ class Twig extends View_Render
 {
     const TEMPLATE_EXTENTION = '.twig';
 
-    /**
-     * Twig file instance
-     *
-     * @var \Twig_Environment
-     */
-    private $_fileTwig = null;
-
-    /**
-     * Twig string insatance
-     *
-     * @var \Twig_Environment
-     */
-    private $_stringTwig = null;
+    protected $templateDirs = [];
 
     /**
      * Constructor of php view render
@@ -60,8 +48,6 @@ class Twig extends View_Render
      */
     protected function __construct()
     {
-        $config = Twig::getConfig();
-
 //        $twigPath = VENDOR_DIR . $config->get('vendor') . '/lib/';
 //
 //        include_once $twigPath . 'Twig/Environment.php';
@@ -69,28 +55,19 @@ class Twig extends View_Render
 //
 //        Loader::register('Twig_Autoloader::autoload');
 
-        $templateDirs = [];
-
         foreach (Module::getAll() as $module) {
-            $templateDirs[] = $module->get(Module::RESOURCE_DIR);
+            $this->templateDirs[] = $module->get(Module::RESOURCE_DIR);
         }
-
-        $loader = new \Twig_Loader_Filesystem($templateDirs);
-        $this->_fileTwig = new \Twig_Environment(
-            $loader,
-            ['cache' => Module::getInstance()->get('cacheDir') . $config->get('cache')]
-        );
-        $this->_stringTwig = new \Twig_Environment(new \Twig_Loader_String());
     }
 
     /**
      * Render view via current view render
      *
-     * @param  $template
+     * @param $template
      * @param  array $data
-     * @param  string $templateType
+     * @param string $templateType
      * @return mixed
-     *
+     * @throws \Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
@@ -98,12 +75,18 @@ class Twig extends View_Render
      */
     public function fetch($template, array $data = [], $templateType = View_Render::TEMPLATE_TYPE_FILE)
     {
-        //        $template = Action::getClass($template);
-
         try {
-            return $templateType == View_Render::TEMPLATE_TYPE_STRING
-                ? $this->_stringTwig->render($template, $data)
-                : $this->_fileTwig->render(str_replace(['_', '\\'], '/', $template) . Twig::TEMPLATE_EXTENTION, $data);
+            if ($templateType == View_Render::TEMPLATE_TYPE_STRING) {
+                $twig = new \Twig_Environment(new \Twig_Loader_String());
+                return $twig->render($template, $data);
+            } else {
+                $loader = new \Twig_Loader_Filesystem($this->templateDirs);
+                $twig = new \Twig_Environment(
+                    $loader,
+                    ['cache' => Module::getInstance()->get('cacheDir') . Twig::getConfig()->get('cache')]
+                );
+                return $twig->render(str_replace(['_', '\\'], '/', $template) . Twig::TEMPLATE_EXTENTION, $data);
+            }
         } catch (\Exception $e) {
             if (Environment::getInstance()->isDevelopment()) {
                 View::getLogger()->info(
@@ -113,8 +96,8 @@ class Twig extends View_Render
                     ],
                     Logger::WARNING
                 );
-
-                return $this->_stringTwig->render(Twig::getCodeGenerator()->generate($template), $data);
+                $twig = new \Twig_Environment(new \Twig_Loader_String());
+                return $twig->render(Twig::getCodeGenerator()->generate($template), $data);
             } else {
                 return View::getLogger()->error(
                     [Twig::getClassName() . ': View {$0} not found', $template],

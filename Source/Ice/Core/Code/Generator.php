@@ -70,5 +70,5 @@ abstract class Code_Generator extends Container
      * @version 0
      * @since   0
      */
-    abstract public function generate($class, $data = null, $force = false);
+    abstract public function generate($class, array $data = null, $force = false);
 }

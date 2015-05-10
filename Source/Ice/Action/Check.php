@@ -3,6 +3,7 @@
 namespace Ice\Action;
 
 use Ice\Core\Action;
+use Ice\Helper\File;
 
 class Check extends Action
 {
@@ -20,7 +21,7 @@ class Check extends Action
     protected static function config()
     {
         return [
-            'view' => ['template' => '', 'viewRenderClass' => null],
+            'view' => ['template' => ''],
             'actions' => [],
             'input' => [],
             'output' => [],
@@ -41,6 +42,6 @@ class Check extends Action
      */
     public function run(array $input)
     {
-        // TODO: Implement run() method.
+
     }
 }

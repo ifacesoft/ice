@@ -10,9 +10,12 @@
 namespace Ice\Code\Generator;
 
 use Ice\Core\Code_Generator;
+use Ice\Core\Config;
+use Ice\Core\Debuger;
 use Ice\Core\Loader;
 use Ice\Core\Logger;
 use Ice\Core\Module;
+use Ice\Core\View;
 use Ice\Helper\File;
 use Ice\Helper\Object;
 use Ice\View\Render\Php;
@@ -46,7 +49,7 @@ class Action extends Code_Generator
      * @version 0.0
      * @since   0.0
      */
-    public function generate($class, $data = null, $force = false)
+    public function generate($class, array $data = [], $force = false)
     {
         //        $class = Object::getClass(Action::getClass(), $data);
         $namespace = Object::getNamespace(Action::getClass(), $class);
@@ -68,10 +71,12 @@ class Action extends Code_Generator
             return;
         }
 
-        $data = [
-            'namespace' => rtrim($namespace, '\\'),
-            'actionName' => Object::getName($class)
-        ];
+        $data['namespace'] = rtrim($namespace, '\\');
+        $data['actionName'] = Object::getName($class);
+
+        if (!isset($data['defaultViewRenderClass'])) {
+            $data['defaultViewRenderClass'] = Config::getConfig()->get(View::getClass() . '/viewRenderClass');
+        }
 
         $classString = Php::getInstance()->fetch(__CLASS__, $data);
 

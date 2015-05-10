@@ -253,7 +253,12 @@ class Logger
      */
     public static function fb($value, $label = null, $type = 'LOG', $options = [])
     {
-        if (!Request::isCli() && !headers_sent() && Loader::load('FirePHP', false)) {
+        if (
+            !Request::isCli() &&
+            !Environment::getInstance()->isProduction() &&
+            !headers_sent()
+            && Loader::load('FirePHP', false)
+        ) {
             $varSize = Helper_Profiler::getVarSize($value);
 
             if ($varSize > pow(2, 17)) {
@@ -298,13 +303,9 @@ class Logger
      * @version 0.0
      * @since   0.0
      */
-    public function error($message, $file, $line, \Exception $e = null, $errcontext = null, $errno = E_USER_ERROR)
+    public function error($message, $file, $line, \Exception $e = null, $errcontext = null, $errno = 0)
     {
-        if (empty($errno)) {
-            $errno = E_USER_ERROR;
-        }
-
-        $exception = $this->createException($message, $file, $line, $e, $errcontext, $errno);
+        $exception = $this->createException($message, $file, $line, $e, $errcontext, (int) $errno);
 
         $output = [
             'time' => date('H:i:s'),
@@ -315,6 +316,7 @@ class Logger
         ];
 
         Helper_Logger::outputFile($exception, $output);
+        Helper_Logger::outputDb($exception);
         Helper_Logger::outputFb($exception, $output);
 
         $message = Helper_Logger::getMessage($exception);
@@ -349,7 +351,7 @@ class Logger
         $line,
         \Exception $e = null,
         $errcontext = [],
-        $errno = 1,
+        $errno = 0,
         $exceptionClass = 'Ice:Error'
     )
     {

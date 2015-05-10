@@ -35,7 +35,8 @@ class Layout_Main extends Layout
             [
                 'actions' => [
                     'Ice:Header',
-                    'Ice:Resources'
+                    'Ice:Resource_Css',
+                    'Ice:Resource_Js'
                 ],
             ],
             parent::config()

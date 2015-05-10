@@ -46,7 +46,7 @@ abstract class Widget_Menu extends Widget
     {
         if (!isset($options['disable']) || !$options['disable']) {
             $this->items[$name] = [
-                'title' => $title,
+                'title' => Resource::create($this->getAction())->get($title),
                 'options' => $options,
                 'template' => $template
             ];

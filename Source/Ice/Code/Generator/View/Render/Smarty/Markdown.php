@@ -43,7 +43,7 @@ class View_Render_Smarty_Markdown extends View_Render_Smarty
      * @version 0.0
      * @since   0.0
      */
-    public function generate($class, $data = null, $force = false)
+    public function generate($class, array $data = [], $force = false)
     {
         $class = Object::getClass(Action::getClass(), $class);
         $module = Module::getInstance(Object::getModuleAlias($class));

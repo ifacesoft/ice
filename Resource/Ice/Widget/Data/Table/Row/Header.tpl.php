@@ -1,4 +1,5 @@
-<tr>
+<tr<?php if (!empty($headerStyle)) : ?> style="<?= $headerStyle ?>"<?php endif;
+?>>
     <th rowspan="<?= ceil(count($columns) / $columnCount) ?>">#</th>
     <?php
     $count = 0;

@@ -35,35 +35,35 @@ class Cache
     /**
      * Private constructor for cache object
      *
-     * @param Cacheable $cacheable
-     * @param $value
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.5
      * @since   0.5
      */
-    private function __construct(Cacheable $cacheable, $value)
+    private function __construct()
     {
-        $this->value = $value;
-        $this->cacheable = $cacheable;
     }
 
     /**
      * Create cache object
      *
      * @param  $cacheable
-     * @param  $time
+     * @param  $value
      * @return Cache
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.5
+     * @version 0.7
      * @since   0.5
      */
-    public static function create($cacheable, $time)
+    public static function create($cacheable, $value)
     {
-        return new Cache($cacheable, $time);
+        $cache = new Cache();
+
+        $cache->value = $value;
+        $cache->cacheable = $cacheable;
+
+        return $cache;
     }
 
     /**
@@ -188,6 +188,10 @@ class Cache
      */
     public function validate()
     {
-        return $this->cacheable->validate($this->value);
+        if ($this->cacheable instanceof Cacheable) {
+            return $this->cacheable->validate($this->value);
+        }
+
+        return $this->cacheable;
     }
 }

@@ -6,9 +6,11 @@
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="/favicon.ico" rel="shortcut icon" type="image/x-icon"/>
-    <title><?= $title ?></title>
+    <title><?= $title[0] ?></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <?= $Resources[0] ?>
+    <?= $Resource_Css[0] ?>
+    <?= $Resource_Js[0] ?>
+    <?= $Resource_Dynamic[0] ?>
 </head>
 <body>
 <div class="Layout_Admin">
@@ -28,6 +30,6 @@
     <![endif]-->
 
     <?= $Admin_Navigation[0] ?>
-    <?= $main ?>
+    <?= $main[0] ?>
 </body>
 </html>

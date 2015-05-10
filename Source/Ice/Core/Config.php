@@ -126,7 +126,7 @@ class Config
                 $e,
                 null,
                 -1,
-                'Ice:Config_Not_Found'
+                'Ice:ConfigNotFound'
             );
         }
 

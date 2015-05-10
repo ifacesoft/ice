@@ -1,7 +1,6 @@
 <?php
 namespace Ice\Widget\Menu;
 
-use Ice\Core\Debuger;
 use Ice\Core\Widget_Menu;
 use Ice\View\Render\Php;
 
