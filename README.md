@@ -125,11 +125,16 @@ class Page extends Action
     protected static function config()
     {
         return [
-            'view' => ['viewRenderClass' => 'Ice:Smarty', 'template' => null, 'layout'],
+            'view' => ['viewRenderClass' => 'Ice:Smarty', 'template' => null, 'layout' => null],
             'actions' => [],
             'input' => [],
             'output' => [],
             'ttl' => -1,
+            'access' => [
+                'roles' => [],
+                'request' => null,
+                'env' => null
+            ]
         ];
     }
     public function run(array $input)
@@ -147,7 +152,7 @@ method config - return array:
 * 'input' - Array of input params with their data providers. Also information of validators, defaults end other.
 * 'output' - Фdditional sources of output (params and their data providers as well as 'input' section)
 * 'ttl' - time stored in cache (now supported only 3600 :) )
-* 'accses' - Information to checks permissions to run action (support environment - one of 'production', 'test' or 'development' and request - one of 'cli' or 'ajax')
+* 'access' - Information to checks permissions to run action (support environment - one of 'production', 'test' or 'development' and request - one of 'cli' or 'ajax')
 
 Models
 ------
@@ -195,7 +200,7 @@ Documentation
 
 More info on [iceframework.net](http://iceframework.net) such as:
 
-* [Handbook](http://iceframework.net/handbook)
+* [Guide](http://iceframework.net/guide)
 * [Api](http://iceframework.net/resource/api/Ice/1.0/)
 
 Good luck! 
