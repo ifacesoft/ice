@@ -20,7 +20,7 @@ class Account extends Model
     protected static function config()
     {
         return [
-		    'dataSourceKey' => 'Ice\Data\Source\Mysqli/default.test',
+		    'dataSourceKey' => 'Ice\Data\Source\Mysqli/default.www',
 		    'scheme' => [
 		        'tableName' => 'ice_account',
 		        'engine' => 'InnoDB',
@@ -142,7 +142,7 @@ class Account extends Model
 		        'manyToOne' => [],
 		        'manyToMany' => [],
 		    ],
-		    'revision' => '05021423_mka',
+		    'revision' => '05041408_oit',
 		];
     }
 }

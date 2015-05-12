@@ -82,8 +82,10 @@ abstract class Data_Provider
         if ($this->options !== null && $key != Config::getClass() && $key != Environment::getClass()) {
             $dataProviderKey = __CLASS__ . '/' . get_class($this) . '/' . $key;
 
-            foreach (Environment::getInstance()->gets($dataProviderKey, false) as $key => $value) {
-                $this->options[$key] = is_array($value) ? reset($value) : $value;
+            if (Environment::isLoaded()) {
+                foreach (Environment::getInstance()->gets($dataProviderKey, false) as $key => $value) {
+                    $this->options[$key] = is_array($value) ? reset($value) : $value;
+                }
             }
         }
     }

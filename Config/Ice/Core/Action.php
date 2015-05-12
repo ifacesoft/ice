@@ -74,4 +74,11 @@ return [
             ]
         ]
     ],
+    'Ice\Action\Cache_Hit' => [
+        'input' => [
+            'routeNames' => [
+                'default' =>['ice_test']
+            ]
+        ]
+    ],
 ];

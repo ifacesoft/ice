@@ -81,7 +81,7 @@ class Data_Scheme
      * @version 0.5
      * @since   0.5
      */
-    public static function getTables(Module $module)
+    public static function getTables(Module $module1)
     {
         if (self::$tables !== null) {
             return self::$tables;
@@ -89,28 +89,41 @@ class Data_Scheme
 
         self::$tables = [];
 
-        $sourceDir = $module->get(Module::SOURCE_DIR);
+        foreach(Module::getAll() as $module) {
+            $sourceDir = $module->get(Module::SOURCE_DIR);
 
-        $Directory = new RecursiveDirectoryIterator(Directory::get($sourceDir . $module->getAlias() . '/Model'));
-        $Iterator = new RecursiveIteratorIterator($Directory);
-        $Regex = new RegexIterator($Iterator, '/^.+\.php$/i', RecursiveRegexIterator::GET_MATCH);
+            $Directory = new RecursiveDirectoryIterator(Directory::get($sourceDir . $module->getAlias() . '/Model'));
+            $Iterator = new RecursiveIteratorIterator($Directory);
+            $Regex = new RegexIterator($Iterator, '/^.+\.php$/i', RecursiveRegexIterator::GET_MATCH);
 
-        foreach ($Regex as $filePathes) {
-            $modelPath = reset($filePathes);
-            $classNames = Php::getClassNamesFromFile($modelPath);
-            $modelName = reset($classNames);
+            foreach ($Regex as $filePathes) {
+                $modelPath = reset($filePathes);
+                $classNames = Php::getClassNamesFromFile($modelPath);
+                $modelName = reset($classNames);
 
-            $modelClass = str_replace(
-                    '/',
-                    '\\',
-                    substr($modelPath, strlen($sourceDir), -4 - strlen($modelName))
-                ) . $modelName;
+                $modelClass = str_replace(
+                        '/',
+                        '\\',
+                        substr($modelPath, strlen($sourceDir), -4 - strlen($modelName))
+                    ) . $modelName;
 
-            $config = $modelClass::getConfig()->gets();
+                $config = $modelClass::getConfig()->gets();
 
-            $config['modelClass'] = $modelClass;
-            $config['modelPath'] = substr($modelPath, strlen($sourceDir));
-            self::$tables[$config['dataSourceKey']][$config['scheme']['tableName']] = $config;
+                $config['modelClass'] = $modelClass;
+                $config['modelPath'] = substr($modelPath, strlen($sourceDir));
+
+                $dataSourceKey = $config['dataSourceKey'];
+
+                if ($module->getName() != $module1->getName()) {
+                    $dataSourceName = strstr('dataSourceKey', '/', true);
+
+                    if (isset($moduleDefaultDataSourceKeys[$dataSourceName])) {
+                        $dataSourceKey = $moduleDefaultDataSourceKeys[$dataSourceName];
+                    }
+                }
+
+                self::$tables[$dataSourceKey][$config['scheme']['tableName']] = $config;
+            }
         }
 
         return self::$tables;

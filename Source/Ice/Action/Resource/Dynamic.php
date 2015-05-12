@@ -243,8 +243,6 @@ class Resource_Dynamic extends Action
 
         $CSSmin = new CSSMin();
 
-        //        Debuger::dump($resources['css']);
-
         foreach ($resources['js'] as $resource) {
             if (!isset($handlers[$resource['resource']])) {
                 Directory::get(dirname($resource['resource']));

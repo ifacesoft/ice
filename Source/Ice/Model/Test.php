@@ -18,7 +18,7 @@ class Test extends Model
     protected static function config()
     {
         return [
-		    'dataSourceKey' => 'Ice\\Data\\Source\\Mysqli/default.test',
+		    'dataSourceKey' => 'Ice\Data\Source\Mysqli/default.www',
 		    'scheme' => [
 		        'tableName' => 'ice_test',
 		        'engine' => 'InnoDB',
@@ -37,10 +37,10 @@ class Test extends Model
 		                'default' => null,
 		                'comment' => '',
 		            ],
-		            'fieldName' => 'test_pk',
-		            'Ice\\Core\\Widget_Form' => 'Number',
-		            'Ice\\Core\\Validator' => [],
-		            'Ice\\Core\\Widget_Data' => 'text',
+		            'fieldName' => 'ice_test_pk',
+		            'Ice\Core\Widget_Form' => 'Number',
+		            'Ice\Core\Validator' => [],
+		            'Ice\Core\Widget_Data' => 'text',
 		        ],
 		        'test_name' => [
 		            'scheme' => [
@@ -54,12 +54,12 @@ class Test extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'test_name',
-		            'Ice\\Core\\Widget_Form' => 'Text',
-		            'Ice\\Core\\Validator' => [
+		            'Ice\Core\Widget_Form' => 'Text',
+		            'Ice\Core\Validator' => [
 		                'Ice:Length_Max' => 52,
 		                0 => 'Ice:Not_Null',
 		            ],
-		            'Ice\\Core\\Widget_Data' => 'text',
+		            'Ice\Core\Widget_Data' => 'text',
 		        ],
 		        'name2' => [
 		            'scheme' => [
@@ -73,11 +73,11 @@ class Test extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'name2',
-		            'Ice\\Core\\Widget_Form' => 'Text',
-		            'Ice\\Core\\Validator' => [
+		            'Ice\Core\Widget_Form' => 'Text',
+		            'Ice\Core\Validator' => [
 		                'Ice:Length_Max' => 65,
 		            ],
-		            'Ice\\Core\\Widget_Data' => 'text',
+		            'Ice\Core\Widget_Data' => 'text',
 		        ],
 		    ],
 		    'indexes' => [
@@ -95,7 +95,7 @@ class Test extends Model
 		        'manyToOne' => [],
 		        'manyToMany' => [],
 		    ],
-		    'revision' => '05021408_h8a',
+		    'revision' => '05041414_8st',
 		];
     }
 }

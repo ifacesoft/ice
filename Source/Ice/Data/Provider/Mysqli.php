@@ -244,7 +244,8 @@ class Mysqli extends Data_Provider
                 __FILE__,
                 __LINE__,
                 null,
-                $scheme
+                $scheme,
+                0
             );
         }
 

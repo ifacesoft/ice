@@ -9,7 +9,7 @@ use Ice\View\Render\Php;
 
 class Pagination extends Widget_Menu
 {
-    protected $foundRows = null;
+    protected $foundRows = 0;
 
     /**
      * Pagination constructor.
@@ -17,6 +17,7 @@ class Pagination extends Widget_Menu
     protected function __construct()
     {
         $this->bind('page', 1);
+        $this->bind('limit', 1000);
     }
 
     public function bind($key, $value)
@@ -33,6 +34,8 @@ class Pagination extends Widget_Menu
     }
 
     /**
+     * Create paginationMenu
+     *
      * @param $url
      * @param $action
      * @param null $block
@@ -129,7 +132,7 @@ class Pagination extends Widget_Menu
     private function last($page)
     {
         if ($this->getValues('page') < $page) {
-            $this->link('rightSep3', ' &hellip; ', ['classes' => ['disabled'], 'style' => 'border: none;']);
+            $this->link('rightSep3', ' &hellip; ', ['classes' => ['disabled'], 'style' => 'border: none; margin-left: 0; background-color: inherit;']);
             $this->link('last', '&gt;&gt;&gt; ' . $page, ['page' => $page]);
         }
 
@@ -139,7 +142,7 @@ class Pagination extends Widget_Menu
     private function fastFastNext($page, $pageCount)
     {
         if ($page < $pageCount) {
-            $this->link('rightSep2', ' &hellip; ', ['classes' => ['disabled'], 'style' => 'border: none;']);
+            $this->link('rightSep2', ' &hellip; ', ['classes' => ['disabled'], 'style' => 'border: none; margin-left: 0; background-color: inherit;']);
             $this->link('fastNext2', '&gt;&gt; ' . $page, ['page' => $page]);
         }
 
@@ -149,7 +152,7 @@ class Pagination extends Widget_Menu
     private function fastNext($page, $pageCount)
     {
         if ($page < $pageCount) {
-            $this->link('rightSep', ' &hellip; ', ['classes' => ['disabled'], 'style' => 'border: none;']);
+            $this->link('rightSep', ' &hellip; ', ['classes' => ['disabled'], 'style' => 'border: none; margin-left: 0; background-color: inherit;']);
             $this->link('fastNext', '&gt; ' . $page, ['page' => $page]);
         }
 
@@ -207,7 +210,7 @@ class Pagination extends Widget_Menu
     {
         if ($page > 1) {
             $this->link(__FUNCTION__, $page . ' &lt;', ['page' => $page]);
-            $this->link('after_' . __FUNCTION__, ' &hellip; ', ['classes' => ['disabled'], 'style' => 'border: none;']);
+            $this->link('after_' . __FUNCTION__, ' &hellip; ', ['classes' => ['disabled'], 'style' => 'border: none; margin-left: 0; background-color: inherit;']);
         }
 
         return $this;
@@ -217,7 +220,7 @@ class Pagination extends Widget_Menu
     {
         if ($page > 1) {
             $this->link(__FUNCTION__, $page . ' &lt;&lt;', ['page' => $page]);
-            $this->link('after_' . __FUNCTION__, ' &hellip; ', ['classes' => ['disabled'], 'style' => 'border: none;']);
+            $this->link('after_' . __FUNCTION__, ' &hellip; ', ['classes' => ['disabled'], 'style' => 'border: none; margin-left: 0; background-color: inherit;']);
         }
 
         return $this;
@@ -227,7 +230,7 @@ class Pagination extends Widget_Menu
     {
         if ($this->getValues('page') > $page) {
             $this->link(__FUNCTION__, $page . ' &lt;&lt;&lt;', ['page' => $page]);
-            $this->link('after_' . __FUNCTION__, ' &hellip; ', ['classes' => ['disabled'], 'style' => 'border: none;']);
+            $this->link('after_' . __FUNCTION__, ' &hellip; ', ['classes' => ['disabled'], 'style' => 'border: none; margin-left: 0; background-color: inherit;']);
         }
 
         return $this;

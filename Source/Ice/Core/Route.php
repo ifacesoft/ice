@@ -29,7 +29,6 @@ use Ice\View\Render\Replace;
  */
 class Route extends Config
 {
-
     /**
      * @param null $routeName
      * @param null $postfix

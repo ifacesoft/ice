@@ -1,2 +1,2 @@
 Layout Test
-<?= $testAction ?>
+<?= $testAction[0] ?>

@@ -22,7 +22,7 @@ class Orm_Migrate extends Action
             'view' => ['template' => ''],
             'actions' => [
                 'Ice:Orm_Sync_DataScheme',
-                'Ice:Orm_Sync_DataSource'
+//                'Ice:Orm_Sync_DataSource'
             ],
             'input' => ['force' => ['default' => 0]],
             'output' => [],

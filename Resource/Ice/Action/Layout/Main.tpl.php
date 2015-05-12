@@ -6,9 +6,10 @@
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="/favicon.ico" rel="shortcut icon" type="image/x-icon"/>
-    <title><?= $title ?></title>
+    <title><?php if (isset($title[0])) : ?><?= $title[0]?><?php else : ?>Ice PHP Framework<?php endif; ?></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <?= $Resources[0] ?>
+    <?= $Resource_Css[0] ?>
+    <?= $Resource_Js[0] ?>
 </head>
 <body>
 <div id="iceMessages" class='notifications top-right'></div>
@@ -26,10 +27,10 @@
     your browser</a> to improve your experience.</p>
 <![endif]-->
 
-<div id="Layout_Main" class="container">
-    <?= $Header[0] ?>
+<?= $Header[0] ?>
 
-    <?= $main ?>
+<div id="Layout_Main" class="container">
+    <?= $main[0] ?>
 </div>
 <div class="footer">
     <div class="container" style="text-align: right; font-size: 24px;">

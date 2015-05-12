@@ -62,7 +62,7 @@ abstract class Exception extends ErrorException
 
         $isExistsResourceClass = class_exists('Ice\Core\Resource', false);
 
-        if ($errno == 0 && $isExistsResourceClass) {
+        if ($errno <= 0 && $isExistsResourceClass) {
             $params = null;
             $class = null;
             if (is_array($message)) {

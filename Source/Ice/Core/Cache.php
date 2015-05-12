@@ -188,6 +188,10 @@ class Cache
      */
     public function validate()
     {
-        return $this->cacheable->validate($this->value);
+        if ($this->cacheable instanceof Cacheable) {
+            return $this->cacheable->validate($this->value);
+        }
+
+        return $this->cacheable;
     }
 }

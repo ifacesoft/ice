@@ -42,6 +42,8 @@ if (!defined('ICE_BOOTSTRAP')) {
 
     require_once ICE_DIR . 'Source/Ice/Core/Data/Provider.php';
     require_once ICE_DIR . 'Source/Ice/Data/Provider/File.php';
+    require_once ICE_DIR . 'Source/Ice/Data/Provider/Apc.php';
+    require_once ICE_DIR . 'Source/Ice/Data/Provider/Redis.php';
     require_once ICE_DIR . 'Source/Ice/Core/View/Render.php';
     require_once ICE_DIR . 'Source/Ice/Helper/Api/Client/Yandex/Translate.php';
 

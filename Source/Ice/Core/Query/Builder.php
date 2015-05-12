@@ -269,7 +269,7 @@ class Query_Builder
 
             $this->appendCacheTag($modelClass, $fieldName, true, false);
 
-            $this->bindParts[Query_Builder::PART_WHERE][] = $value == null
+            $this->bindParts[Query_Builder::PART_WHERE][] = $value === null
                 ? [null]
                 : (array)$value;
         }
@@ -1878,7 +1878,7 @@ class Query_Builder
     /**
      * @return Ui[]
      */
-    public function getUis()
+    public function getWidgets()
     {
         return $this->uis;
     }

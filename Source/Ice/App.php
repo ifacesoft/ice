@@ -7,6 +7,7 @@ use Composer\Script\Event;
 use Ice\Action\Check;
 use Ice\Action\Http_Status;
 use Ice\Action\Install;
+use Ice\Action\Layout_Main;
 use Ice\Core\Action;
 use Ice\Core\Action_Context;
 use Ice\Core\Debuger;
@@ -21,8 +22,8 @@ use Ice\Data\Provider\Request as Data_Provider_Request;
 use Ice\Data\Provider\Router;
 use Ice\Exception\Http_Bad_Request;
 use Ice\Exception\Http_Not_Found;
-use Ice\Exception\ModuleNotFound;
 use Ice\Exception\Redirect;
+use Ice\Helper\File;
 
 class App
 {
@@ -54,17 +55,17 @@ class App
         } catch (Redirect $e) {
             App::getResponse()->setRedirectUrl($e->getRedirectUrl());
         } catch (Http_Bad_Request $e) {
-            $actionClass = Http_Status::getClass();
-            App::getResponse()->setView($actionClass::call(['code' => 400, 'exception' => $e]));
+            $httpStatusAction = [['Ice:Http_Status' => 'main', ['code' => 400, 'exception' => $e]]];
+            App::getResponse()->setView(Layout_Main::call(['actions' => $httpStatusAction]));
         } catch (Http_Not_Found $e) {
-            $actionClass = Http_Status::getClass();
-            App::getResponse()->setView($actionClass::call(['code' => 404, 'exception' => $e]));
+            $httpStatusAction = [['Ice:Http_Status' => 'main', ['code' => 404, 'exception' => $e]]];
+            App::getResponse()->setView(Layout_Main::call(['actions' => $httpStatusAction]));
         } catch (\Exception $e) {
             if (Request::isCli()) {
                 Logger::getInstance(__CLASS__)->error('Application failure', __FILE__, __LINE__, $e);
             } else {
-                $actionClass = Http_Status::getClass();
-                App::getResponse()->setView($actionClass::call(['code' => 500, 'exception' => $e]));
+                $httpStatusAction = [['Ice:Http_Status' => 'main', ['code' => 500, 'exception' => $e]]];
+                App::getResponse()->setView(Layout_Main::call(['actions' => $httpStatusAction]));
             }
         }
 
@@ -151,9 +152,48 @@ class App
         define('ICE_DIR', dirname(dirname(__DIR__)) . '/');
         define('MODULE_DIR', getcwd() . '/');
 
+        App::check();
+
         require_once ICE_DIR . 'bootstrap.php';
 
-        Install::call();
         Check::call();
+    }
+
+    private static function check()
+    {
+        $moduleConfigFilePath = MODULE_DIR . 'Config/Ice/Core/Module.php';
+        $configFilePath = MODULE_DIR . 'Config/Ice/Core/Config.php';
+        $environmentConfigFilePath = MODULE_DIR . 'Config/Ice/Core/Environment.php';
+
+        if (
+            file_exists($moduleConfigFilePath) &&
+            file_exists($configFilePath) &&
+            file_exists($environmentConfigFilePath)
+        ) {
+            return;
+        }
+
+        $moduleConfig = [
+            'alias' => 'Draft',
+            'module' => [
+                'configDir' => 'Config/',
+                'sourceDir' => 'Source/',
+                'resourceDir' => 'Resource/',
+                'logDir' => '../_log/',
+                'cacheDir' => '../_cache/',
+                'uploadDir' => '../_upload/',
+                'compiledResourceDir' => '../_resource/',
+                'downloadDir' => '../_resource/download/',
+            ],
+            'modules' => [
+                'ifacesoft/ice' => '/ice'
+            ]
+        ];
+
+        File::createData($moduleConfigFilePath, $moduleConfig);
+
+        require_once ICE_DIR . 'bootstrap.php';
+
+        echo Install::call()->getContent();
     }
 }

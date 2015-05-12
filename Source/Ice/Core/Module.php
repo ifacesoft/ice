@@ -46,6 +46,8 @@ class Module extends Config
      */
     private static $modules = null;
 
+    private static $defaultDataSourceKeys = null;
+
     /**
      * Check table belongs to module
      *
@@ -54,12 +56,18 @@ class Module extends Config
      * @return bool
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.5
+     * @version 0.7
      * @since   0.5
      */
     public function checkTableByPrefix($tableName, $dataSourceKey)
     {
-        return String::startsWith($tableName, $this->getDataSourcePrefixes($dataSourceKey));
+        foreach ($this->getDataSourcePrefixes($dataSourceKey) as $prefixes) {
+            if (String::startsWith($tableName, $prefixes)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -70,13 +78,36 @@ class Module extends Config
      * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.6
+     * @version 0.7
      * @since   0.5
      */
     public function getDataSourcePrefixes($dataSourceKey)
     {
-        $dataSources = $this->getDataSources();
-        return (array)$dataSources[$dataSourceKey];
+        $prefixes = [];
+
+        foreach (Module::getAll() as $module) {
+            $isProject = $module->getName() == $this->getName();
+
+            foreach ($module->getDataSources() as $key => $tablePrefixes) {
+               $dataSourceName = strstr($key, '/', true);
+
+                if (
+                    ($isProject && $dataSourceKey == $key) ||
+                    (!$isProject && $dataSourceName == strstr($dataSourceKey, '/', true))
+                ) {
+                    $alias = $module->getAlias();
+
+                    if (!isset($prefixes[$alias])) {
+                        $prefixes[$alias] = [];
+                    }
+
+                    $prefixes[$alias] += (array) $tablePrefixes;
+                }
+            }
+        }
+
+
+        return $prefixes;
     }
 
     public function getDataSources()
@@ -89,11 +120,13 @@ class Module extends Config
         $alias = null;
         $tableNamePart = $tableName;
 
-        foreach ($this->getDataSourcePrefixes($dataSourceKey) as $prefix) {
-            if (String::startsWith($tableName, $prefix)) {
-                $alias = $this->getAlias();
-                $tableNamePart = substr($tableName, strlen($prefix));
-                break;
+        foreach ($this->getDataSourcePrefixes($dataSourceKey) as $moduleAlias => $prefixes) {
+            foreach ($prefixes as $prefix) {
+                if (String::startsWith($tableName, $prefix)) {
+                    $tableNamePart = substr($tableName, strlen($prefix));
+                    $alias = $moduleAlias;
+                    break 2;
+                }
             }
         }
 
@@ -198,35 +231,6 @@ class Module extends Config
 
         $moduleConfig = File::loadData($configPath, false);
 
-        if (!$moduleConfig) {
-            $config = [
-                'Ice\\Core\\Request' => [
-                    'multiLocale' => 1,
-                    'locale' => 'en',
-                    'cors' => []
-                ]
-            ];
-
-            Config::create(Config::getClass(), $config)->save('Config/');
-
-            $moduleConfig = [
-                'alias' => 'Draft',
-                'module' => [
-                    'configDir' => 'Config/',
-                    'sourceDir' => 'Source/',
-                    'resourceDir' => 'Resource/',
-                    'logDir' => '../_log/',
-                    'cacheDir' => '../_cache/',
-                    'uploadDir' => '../_upload/',
-                    'compiledResourceDir' => '../_resource/',
-                    'downloadDir' => '../_resource/download/',
-                ],
-                'vendors' => []
-            ];
-
-            Module::create(__CLASS__, $moduleConfig)->save('Config/');
-        }
-
         $module = $moduleConfig['module'];
 
         $module['path'] = $modulePath;
@@ -256,7 +260,7 @@ class Module extends Config
 
         $modules[$moduleConfig['alias']] = Module::create($moduleConfig['alias'], $module);
 
-        foreach ($moduleConfig['vendors'] as $vendor => $context) {
+        foreach ($moduleConfig['modules'] as $vendor => $context) {
             Module::loadConfig($vendor, $context, $modules);
         }
     }
@@ -275,5 +279,27 @@ class Module extends Config
     public function getDataSourceKeys()
     {
         return array_keys($this->getDataSources());
+    }
+
+    public function getDefaultDataSourceKeys() {
+        if (Module::$defaultDataSourceKeys !== null) {
+            return Module::$defaultDataSourceKeys;
+        }
+
+        Module::$defaultDataSourceKeys = [];
+
+        foreach ($this->getDataSourceKeys() as $dataSourceKey) {
+            $dataSourceName = strstr($dataSourceKey, '/', true);
+
+            if (!isset($moduleDefaultDataSourceKeys[$dataSourceName])) {
+                Module::$defaultDataSourceKeys[$dataSourceName] = $dataSourceKey;
+            }
+        }
+
+        return Module::$defaultDataSourceKeys;
+    }
+
+    public static function modulesClear() {
+        Module::$modules = null;
     }
 }

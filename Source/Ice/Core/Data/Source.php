@@ -367,10 +367,8 @@ abstract class Data_Source extends Container
             ) {
                 $queryResult = Query_Result::create($query, $this->$queryCommand($query));
                 Profiler::setPoint($queryResult->__toString(), $startTime, $startMemory);
-                Data_Source::getLogger()->log(
-                    ['(not cache) {$0}', Profiler::getReport($queryResult->__toString())],
-                    Logger::INFO
-                );
+                Logger::fb(Profiler::getReport($queryResult->__toString()), 'query (not cache)', 'WARN');
+
                 return $queryResult;
             }
 
@@ -381,19 +379,14 @@ abstract class Data_Source extends Container
 
                     if ($queryResult = $cacher->get($queryHash)) {
                         Profiler::setPoint($queryResult->__toString(), $startTime, $startMemory);
-                        Data_Source::getLogger()->log(
-                            ['(cache) {$0}', Profiler::getReport($queryResult->__toString())],
-                            Logger::INFO
-                        );
+                        Logger::fb(Profiler::getReport($queryResult->__toString()), 'query (cache)', 'LOG');
                         return $queryResult;
                     }
 
                     $queryResult = Query_Result::create($query, $this->$queryCommand($query));
                     Profiler::setPoint($queryResult->__toString(), $startTime, $startMemory);
-                    Data_Source::getLogger()->log(
-                        ['(new) {$0}', Profiler::getReport($queryResult->__toString())],
-                        Logger::SUCCESS
-                    );
+                    Logger::fb(Profiler::getReport($queryResult->__toString()), 'query (new)', 'INFO');
+
                     $cacher->set($queryHash, $queryResult, $ttl);
                     return $queryResult;
 
@@ -402,10 +395,7 @@ abstract class Data_Source extends Container
                 case Query_Builder::TYPE_DELETE:
                     $queryResult = Query_Result::create($query, $this->$queryCommand($query))->invalidate();
                     Profiler::setPoint($queryResult->__toString(), $startTime, $startMemory);
-                    Data_Source::getLogger()->log(
-                        ['(new) {$0}', Profiler::getReport($queryResult->__toString())],
-                        Logger::SUCCESS
-                    );
+                    Logger::fb(Profiler::getReport($queryResult->__toString()), 'query (new)', 'INFO');
                     return $queryResult;
 
                 default:
@@ -418,9 +408,11 @@ abstract class Data_Source extends Container
                     );
             }
         } catch (\Exception $e) {
-            Data_Source::getLogger()->log('(error) ' . $e->getMessage() . ': ' .
+            Logger::fb(
+                $e->getMessage() . ': ' .
                 print_r($query->getBody(), true) . ' (' . print_r($query->getBinds(), true) . ')',
-                Logger::DANGER
+                'query (error)',
+                'ERROR'
             );
 
             throw $e;

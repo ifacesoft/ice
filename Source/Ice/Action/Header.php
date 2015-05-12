@@ -4,6 +4,7 @@ namespace Ice\Action;
 
 
 use Ice\Core\Action;
+use Ice\Helper\Api_Client_Yandex_Translate;
 
 class Header extends Action
 {
@@ -22,7 +23,7 @@ class Header extends Action
     {
         return [
             'view' => ['viewRenderClass' => 'Ice:Php'],
-            'actions' => [],
+            'actions' => '_Menu',
             'input' => [],
             'output' => ['resource' => 'Ice:Resource/Ice\Action\Header'],
             'ttl' => -1,
@@ -42,6 +43,6 @@ class Header extends Action
      */
     public function run(array $input)
     {
-
+        return ['flags' => Api_Client_Yandex_Translate::getFlags()];
     }
 }

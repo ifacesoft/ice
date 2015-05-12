@@ -316,6 +316,7 @@ class Logger
         ];
 
         Helper_Logger::outputFile($exception, $output);
+        Helper_Logger::outputDb($exception);
         Helper_Logger::outputFb($exception, $output);
 
         $message = Helper_Logger::getMessage($exception);

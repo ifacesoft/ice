@@ -21,7 +21,7 @@ class Scheme extends Model
     protected static function config()
     {
         return [
-		    'dataSourceKey' => 'Ice\Data\Source\Mysqli/default.test',
+		    'dataSourceKey' => 'Ice\Data\Source\Mysqli/default.www',
 		    'scheme' => [
 		        'tableName' => 'ice_scheme',
 		        'engine' => 'InnoDB',
@@ -40,7 +40,7 @@ class Scheme extends Model
 		                'default' => null,
 		                'comment' => '',
 		            ],
-		            'fieldName' => 'scheme_pk',
+		            'fieldName' => 'ice_scheme_pk',
 		            'Ice\Core\Widget_Form' => 'Text',
 		            'Ice\Core\Validator' => [
 		                'Ice:Length_Max' => 255,
@@ -58,7 +58,7 @@ class Scheme extends Model
 		                'default' => null,
 		                'comment' => '',
 		            ],
-		            'fieldName' => 'scheme_pk',
+		            'fieldName' => 'ice_scheme_pk',
 		            'Ice\Core\Widget_Form' => 'Text',
 		            'Ice\Core\Validator' => [
 		                'Ice:Length_Max' => 12,
@@ -163,7 +163,7 @@ class Scheme extends Model
 		        'manyToOne' => [],
 		        'manyToMany' => [],
 		    ],
-		    'revision' => '05021511_the',
+		    'revision' => '05071812_8et',
 		];
     }
 }

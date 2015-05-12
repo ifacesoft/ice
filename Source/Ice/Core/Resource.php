@@ -9,9 +9,12 @@
 namespace Ice\Core;
 
 use Ice\Core;
+use Ice\Data\Provider\Cacher;
+use Ice\Data\Provider\Repository;
 use Ice\Exception\FileNotFound;
 use Ice\Helper\Api_Client_Yandex_Translate;
 use Ice\Helper\File;
+use Ice\Helper\Json;
 use Ice\Helper\String;
 use Ice\View\Render\Replace;
 
@@ -27,9 +30,9 @@ use Ice\View\Render\Replace;
  * @package    Ice
  * @subpackage Core
  */
-class Resource
+class Resource implements Cacheable
 {
-    use Core;
+    use Stored;
 
     /**
      * Localized resources
@@ -48,18 +51,14 @@ class Resource
     /**
      * Private constructor for resource
      *
-     * @param $class
-     * @param $resource
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
      * @since   0.0
      */
-    private function __construct($class, $resource)
+    private function __construct()
     {
-        $this->resource = $resource;
-        $this->class = $class;
+
     }
 
     /**
@@ -76,33 +75,35 @@ class Resource
      */
     public function get($message, $params = null, $class = null)
     {
-        /**
-         * @var string $message
-         */
-        /**
-         * @var Core $class
-         */
-        $resource = isset($class)
-            ? Resource::create($class)->resource
-            : $this->resource;
-
-        if (!isset($class)) {
-            $class = $this->class;
+        if ($class) {
+            return Resource::create($class)->get($message, $params);
         }
 
         $locale = Request::locale();
 
-        if (!isset($resource[$message]) || !isset($resource[$message][$locale])) {
-            $resource = Resource::create($class);
-            $resource->set(rtrim($message, ';'));
-            $resource = $resource->resource;
+        $cacher = Cacher::getInstance($this->class, __CLASS__);
+        $key = $locale . '/' . crc32(Json::encode([$message, $params]));
+
+        if ($localizedMessage = $cacher->get($key)) {
+            return $localizedMessage;
         }
 
-        if (isset($resource[$message][$locale])) {
-            $message = $resource[$message][$locale];
+        if (!isset($this->resource[$message])) {
+            $this->resource[$message] = [];
         }
 
-        return Replace::getInstance()->fetch($message, (array)$params, View_Render::TEMPLATE_TYPE_STRING);
+        if (!isset($this->resource[$message][$locale])) {
+            $this->resource[$message][$locale] = $this->set(rtrim($message, ';'));
+        }
+
+        return $cacher->set(
+            $key,
+            Replace::getInstance()->fetch(
+                $this->resource[$message][$locale],
+                (array)$params,
+                View_Render::TEMPLATE_TYPE_STRING
+            )
+        );
     }
 
     /**
@@ -114,23 +115,33 @@ class Resource
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @todo    need caching
      * @version 0.6
      * @since   0.0
      */
     public static function create($class)
     {
+        $repository = Resource::getRepository();
+
+        if ($resource = $repository->get($class)) {
+            return $resource;
+        }
+
         $resources = [];
 
         $resourceFiles = Loader::getFilePath($class, '.res.php', Module::RESOURCE_DIR, false, true, false, true);
 
         foreach ($resourceFiles as $resourceFile) {
-            if ($resource = File::loadData($resourceFile)) {
-                $resources += $resource;
+            if ($resourceFromFile = File::loadData($resourceFile)) {
+                $resources += $resourceFromFile;
             }
         }
 
-        return new Resource($class, $resources);
+        $resource = new Resource();
+
+        $resource->resource = $resources;
+        $resource->class = $class;
+
+        return $repository->set($class, $resource);
     }
 
     public function set($message)
@@ -181,5 +192,36 @@ class Resource
         File::createData($resourceFile, $data);
 
         return $message;
+    }
+
+    /**
+     * Validate cacheable object
+     *
+     * @param  $value
+     * @return Cacheable
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since   0
+     */
+    public function validate($value)
+    {
+        return $value;
+    }
+
+    /**
+     * Invalidate cacheable object
+     *
+     * @return Cacheable
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since   0
+     */
+    public function invalidate()
+    {
+        // TODO: Implement invalidate() method.
     }
 }

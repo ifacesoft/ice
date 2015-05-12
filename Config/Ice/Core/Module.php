@@ -33,5 +33,5 @@ return [
         'compiledResourceDir' => '../_resource/',
         'downloadDir' => '../_resource/download/',
     ],
-    'vendors' => []
+    'modules' => []
 ];

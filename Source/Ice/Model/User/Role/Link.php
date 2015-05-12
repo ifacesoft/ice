@@ -17,7 +17,7 @@ class User_Role_Link extends Model
     protected static function config()
     {
         return [
-		    'dataSourceKey' => 'Ice\Data\Source\Mysqli/default.test',
+		    'dataSourceKey' => 'Ice\Data\Source\Mysqli/default.www',
 		    'scheme' => [
 		        'tableName' => 'ice_user_role_link',
 		        'engine' => 'InnoDB',
@@ -25,22 +25,6 @@ class User_Role_Link extends Model
 		        'comment' => '',
 		    ],
 		    'columns' => [
-		        'role__fk' => [
-		            'scheme' => [
-		                'extra' => '',
-		                'type' => 'bigint(20)',
-		                'dataType' => 'bigint',
-		                'length' => '19,0',
-		                'characterSet' => null,
-		                'nullable' => false,
-		                'default' => '0',
-		                'comment' => '',
-		            ],
-		            'fieldName' => 'role__fk',
-		            'Ice\Core\Widget_Form' => 'Number',
-		            'Ice\Core\Validator' => [],
-		            'Ice\Core\Widget_Data' => 'text',
-		        ],
 		        'user__fk' => [
 		            'scheme' => [
 		                'extra' => '',
@@ -49,10 +33,26 @@ class User_Role_Link extends Model
 		                'length' => '19,0',
 		                'characterSet' => null,
 		                'nullable' => false,
-		                'default' => '0',
+		                'default' => null,
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'user__fk',
+		            'Ice\Core\Widget_Form' => 'Number',
+		            'Ice\Core\Validator' => [],
+		            'Ice\Core\Widget_Data' => 'text',
+		        ],
+		        'role__fk' => [
+		            'scheme' => [
+		                'extra' => '',
+		                'type' => 'bigint(20)',
+		                'dataType' => 'bigint',
+		                'length' => '19,0',
+		                'characterSet' => null,
+		                'nullable' => false,
+		                'default' => null,
+		                'comment' => '',
+		            ],
+		            'fieldName' => 'role__fk',
 		            'Ice\Core\Widget_Form' => 'Number',
 		            'Ice\Core\Validator' => [],
 		            'Ice\Core\Widget_Data' => 'text',
@@ -61,15 +61,15 @@ class User_Role_Link extends Model
 		    'indexes' => [
 		        'PRIMARY KEY' => [
 		            'PRIMARY' => [
-		                1 => 'role__fk',
-		                2 => 'user__fk',
+		                1 => 'user__fk',
+		                2 => 'role__fk',
 		            ],
 		        ],
 		        'FOREIGN KEY' => [
-		            'PRIMARY' => [
+		            'fk_ice_user_role_link_ice_role' => [
 		                'fk_ice_user_role_link_ice_role' => 'role__fk',
 		            ],
-		            'fk_ice_user_role_link_ice_user' => [
+		            'PRIMARY' => [
 		                'fk_ice_user_role_link_ice_user' => 'user__fk',
 		            ],
 		        ],
@@ -95,7 +95,7 @@ class User_Role_Link extends Model
 		        'manyToOne' => [],
 		        'manyToMany' => [],
 		    ],
-		    'revision' => '05021423_wlk',
+		    'revision' => '05072044_axg',
 		];
     }
 }

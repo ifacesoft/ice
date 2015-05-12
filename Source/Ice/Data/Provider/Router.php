@@ -16,7 +16,6 @@ use Ice\Core\Environment;
 use Ice\Core\Exception;
 use Ice\Core\Request as Core_Request;
 use Ice\Core\Route;
-use Ice\Exception\Http_Forbidden;
 use Ice\Exception\Http_Not_Found;
 use Ice\Exception\Redirect;
 
@@ -205,7 +204,6 @@ class Router extends Data_Provider
      *
      * @param $connection
      * @return bool
-     * @throws Redirect
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
@@ -231,14 +229,6 @@ class Router extends Data_Provider
 
         $route = $this->getRoute($url, $method);
 
-        if ($route['redirect']) {
-            $routeName = $route['redirect'][0] == '_'
-                ? $route['routeName'] . $route['redirect']
-                : $route['redirect'];
-
-            throw new Redirect(Route::getInstance($routeName)->getUrl());
-        }
-
         $baseMatches = [];
         preg_match_all($route['pattern'], $url, $baseMatches, PREG_SET_ORDER);
 
@@ -246,7 +236,7 @@ class Router extends Data_Provider
             $baseMatches[0][] = '';
         }
 
-        $route = array_merge($route, array_combine(array_keys((array)$route['params']), array_slice($baseMatches[0], 1)));
+        $route = array_merge($route, array_combine(array_keys($route['params']), array_slice($baseMatches[0], 1)));
 
         return (bool)$connection = $dataProvider->set($key, $route);
     }
@@ -289,6 +279,7 @@ class Router extends Data_Provider
      * @param $url
      * @param $method
      * @return array
+     * @throws Redirect
      */
     private function getRoutes($url, $method)
     {
@@ -312,7 +303,12 @@ class Router extends Data_Provider
                 continue;
             }
 
-            $matchedRoutes[] = $routeName;
+            $redirect = $route->get('redirect', false);
+
+            $matchedRoutes[] = [
+                'routeName' => $routeName,
+                'redirect' => $redirect
+            ];
 
             if (!count($route->gets('request/' . $method, false))) {
                 continue;
@@ -324,11 +320,25 @@ class Router extends Data_Provider
                 $foundRoutes[$weight] = [
                     'routeName' => $routeName,
                     'pattern' => $route->get('pattern'),
-                    'params' => $route->get('params'),
+                    'params' => $route->gets('params'),
                     'url' => $url,
                     'method' => $method,
-                    'redirect' => $route->get('redirect', false)
+                    'redirect' => $redirect
                 ];
+            }
+        }
+
+        if (!empty($matchedRoutes)) {
+            $route = !empty($foundRoutes)
+                ? reset($foundRoutes)
+                : reset($matchedRoutes);
+
+            if ($route['redirect']) {
+                $routeName = $route['redirect'][0] == '_'
+                    ? $route['routeName'] . $route['redirect']
+                    : $route['redirect'];
+
+                throw new Redirect(Route::getInstance($routeName)->getUrl());
             }
         }
 

@@ -151,8 +151,6 @@ class Loader
 
                 $fullStackPathes[] = $fileName;
 
-//                Debuger::dump($fileName . ' ' . (int)file_exists($fileName));
-
                 if (file_exists($fileName)) {
                     $matchedPathes[] = $fileName;
 

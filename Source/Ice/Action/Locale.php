@@ -1,6 +1,7 @@
 <?php namespace Ice\Action;
 
 use Ice\Core\Action;
+use Ice\Core\Debuger;
 use Ice\Core\Request;
 use Ice\Exception\Redirect;
 use Ice\Helper\Api_Client_Yandex_Translate;
@@ -79,7 +80,5 @@ class Locale extends Action
         }
 
         throw new Redirect('/');
-
-
     }
 }

@@ -48,7 +48,7 @@ class Model extends Code_Generator
      * @version 0.5
      * @since   0.0
      */
-    public function generate($class, $data = null, $force = false)
+    public function generate($class, array $data = [], $force = false)
     {
         $namespace = Object::getNamespace(Core_Model::getClass(), $class);
 

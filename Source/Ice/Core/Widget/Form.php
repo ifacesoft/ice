@@ -422,7 +422,6 @@ abstract class Widget_Form extends Widget
                 continue;
             }
 
-
             if (empty($params[$fieldName]) && isset($field['options']['default'])) {
                 $this->addValue($fieldName, $field['options']['default']);
                 continue;

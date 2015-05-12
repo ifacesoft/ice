@@ -179,7 +179,7 @@ class Console
         fclose($f);
 
         fwrite(STDOUT, Console::C_GREEN_B . $data['default'] . "\n");
-        Resource::getLogger()->info('...value is accepted!' . "\n", Core_Logger::SUCCESS, true, false);
+        Core_Resource::getLogger()->info('...value is accepted!' . "\n", Core_Logger::SUCCESS, true, false);
 
         return $data['default'];
     }

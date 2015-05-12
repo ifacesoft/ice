@@ -20,7 +20,6 @@ use Ice\Core\Query_Builder;
 use Ice\Core\Query_Result;
 use Ice\Core\Query_Translator;
 use Ice\Helper\Arrays;
-use Ice\Helper\Json;
 use Ice\Helper\Model as Helper_Model;
 use Ice\Helper\String;
 use mysqli_result;
@@ -475,10 +474,16 @@ class Mysqli extends Data_Source
                 foreach ($this->getColumns($table['TABLE_NAME']) as $columnName => $column) {
                     $columns[$columnName]['scheme'] = $column;
 
+                    $tablePrefixes = [];
+
+                    foreach ($module->getDataSourcePrefixes($this->getDataSourceKey()) as $prefixes) {
+                        $tablePrefixes += $prefixes;
+                    }
+
                     $columns[$columnName]['fieldName'] = Helper_Model::getFieldNameByColumnName(
                         $columnName,
                         $data,
-                        $module->getDataSourcePrefixes($this->getDataSourceKey())
+                        $tablePrefixes
                     );
 
                     foreach (Model::getConfig()->gets('schemeColumnPlugins') as $columnPluginClass) {

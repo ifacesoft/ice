@@ -114,8 +114,8 @@ class Response
         }
 
         echo Request::isAjax()
-            ? Json::encode($this->view->getResult())
-            : $this->view->getContent();
+            ? str_replace(dirname(MODULE_DIR), '', Json::encode($this->view->getResult()))
+            : str_replace(dirname(MODULE_DIR), '', $this->view->getContent());
     }
 
     /**
