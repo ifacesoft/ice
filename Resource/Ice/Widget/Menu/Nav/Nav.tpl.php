@@ -1,4 +1,4 @@
 <li>
-    <a id="#<?= $name ?>" href="#"><?= $title ?></a>
+    <a href="<?php if (isset($options['href'])) : ?><?= $options['href'] ?><?php endif; ?>#<?= $name ?>"><?= $title ?></a>
     <?= $options['nav'] ?>
 </li>

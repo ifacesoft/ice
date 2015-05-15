@@ -210,7 +210,7 @@ class Orm_Sync_DataScheme extends Action
     {
         Model::getCodeGenerator()->generate($modelClass, $table, $force);
 
-        Scheme::createQueryBuilder()->insertQuery(
+        Scheme::createQueryBuilder()->getInsertQuery(
             [
                 'table_name' => $table['scheme']['tableName'],
                 'table__json' => Json::encode($table['scheme']),

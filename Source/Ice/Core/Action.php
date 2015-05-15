@@ -21,6 +21,7 @@ use Ice\Data\Provider\Session as Data_Provider_Session;
 use Ice\Exception\Http_Bad_Request;
 use Ice\Exception\Http_Not_Found;
 use Ice\Exception\Redirect;
+use Ice\Exception\Security_AccessDenied;
 use Ice\Helper\Json;
 use Ice\Helper\Php;
 use Ice\Helper\Validator as Helper_Validator;
@@ -213,6 +214,8 @@ abstract class Action implements Cacheable
                         throw $e;
                     } catch (Http_Not_Found $e) {
                         throw $e;
+                    } catch (Security_AccessDenied $e) {
+                        $subView = $e->getMessage();
                     } catch (\Exception $e) {
                         $subView = Action::getLogger()->error(
                             ['Calling subAction "{$0}" in action "{$1}" failed', [$subActionClass, $actionClass]],

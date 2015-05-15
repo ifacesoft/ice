@@ -24,7 +24,7 @@ return [
                             ],
                             'module' => [
                                 'path' => 'Ice/',
-                                'css' => ['Widget/Menu.css'],
+                                'css' => ['Widget/Menu.css', 'Core/Widget/Form/File.css'],
                                 'isCopy' => false,
                             ],
                         ],

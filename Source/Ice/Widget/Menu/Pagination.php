@@ -33,6 +33,19 @@ class Pagination extends Widget_Menu
         return parent::bind($key, $value);
     }
 
+    protected function addItem($name, $title, array $options, $template)
+    {
+        if (!isset($options['disable']) || !$options['disable']) {
+            $this->items[$name] = [
+                'title' => $title,
+                'options' => $options,
+                'template' => $template
+            ];
+        }
+
+        return $this;
+    }
+
     /**
      * Create paginationMenu
      *
@@ -57,10 +70,12 @@ class Pagination extends Widget_Menu
 
     /**
      * @param int $foundRows
+     * @return Pagination
      */
     public function setFoundRows($foundRows)
     {
         $this->foundRows = $foundRows;
+        return $this;
     }
 
     public function render()

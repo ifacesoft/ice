@@ -33,33 +33,6 @@ class Composer_Update extends Action
     /**
      * Action config
      *
-     * example:
-     * ```php
-     *  $config = [
-     *      'actions' => [
-     *          ['Ice:Title', ['title' => 'page title'], 'title'],
-     *          ['Ice:Another_Action, ['param' => 'value']
-     *      ],
-     *      'view' => [
-     *          'layout' => Emmet::PANEL_BODY,
-     *          'template' => _Custom,
-     *          'viewRenderClass' => Ice:Twig,
-     *      ],
-     *      'input' => [
-     *          Request::DEFAULT_DATA_PROVIDER_KEY => [
-     *              'paramFromGETorPOST => [
-     *                  'default' => 'defaultValue',
-     *                  'validators' => ['Ice:PATTERN => PATTERN::LETTERS_ONLY]
-     *                  'type' => 'string'
-     *              ]
-     *          ]
-     *      ],
-     *      'output' => ['Ice:Resource/Ice\Action\Index'],
-     *      'ttl' => 3600,
-     *      'roles' => []
-     *  ];
-     * ```
-     *
      * @return array
      *
      * @author anonymous <email>
@@ -71,10 +44,7 @@ class Composer_Update extends Action
     {
         return [
             'view' => ['template' => ''],
-            'input' => [
-                'vendor' => ['default' => 'composer/composer'],
-                'command' => ['default' => '/bin/composer']
-            ],
+            'input' => [],
             'access' => [
                 'roles' => [],
                 'request' => 'cli',
@@ -98,21 +68,13 @@ class Composer_Update extends Action
     {
         $composerPharFile = MODULE_DIR . 'composer.phar';
 
-        $command = file_exists($composerPharFile)
-            ? $composerPharFile
-            : VENDOR_DIR . $input['vendor'] . $input['command'];
+        Console::run([
+            'php ' . $composerPharFile . ' self-update',
+            'php ' . $composerPharFile . ' clear-cache',
+            'php ' . $composerPharFile . ' update --prefer-source --optimize-autoloader',
+            'php ' . $composerPharFile . ' show -i'
+        ]);
 
-        Console::run(
-            [
-                'php ' . $command . ' clear-cache',
-                'php ' . $command . ' update --prefer-source --optimize-autoloader',
-                'php ' . $command . ' show -i'
-            ]
-        );
-
-        if (file_exists($composerPharFile)) {
-            unlink('composer.phar');
-            Console::getText('For composer update use command "./cli Ice:Deploy" or directly "./cli Ice:Composer_Update"', Console::C_YELLOW);
-        }
+        Console::getText('For composer update use command "./cli Ice:Deploy" or directly "./cli Ice:Composer_Update"', Console::C_YELLOW);
     }
 }

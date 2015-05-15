@@ -11,6 +11,10 @@ namespace Ice\Core;
 
 use Ice\Core;
 use Ice\Helper\Arrays;
+use Ice\Helper\Emmet;
+use Ice\Helper\Json;
+use Ice\Helper\String;
+use Ice\View\Render\Php;
 use Ice\Widget\Form\Model as Widget_Form_Model;
 
 /**
@@ -69,6 +73,8 @@ abstract class Widget_Form extends Widget
         'readonly' => false
     ];
 
+    private $token = null;
+
     public static function schemeColumnPlugin($columnName, $table)
     {
         return isset(Widget_Form_Model::$typeMap[$table['columns'][$columnName]['scheme']['dataType']])
@@ -81,43 +87,27 @@ abstract class Widget_Form extends Widget
         return 'Ice:Simple';
     }
 
-    //    /**
-    //     * Bind value
-    //     *
-    //     * @param $key
-    //     * @param null $value
-    //     * @return Widget_Form
-    //     *
-    //     * @author dp <denis.a.shestakov@gmail.com>
-    //     *
-    //     * @version 0.6
-    //     * @since 0.0
-    //     */
-    //    public function bind($key, $value = null)
-    //    {
-    //        if (is_array($key)) {
-    //            foreach ($key as $v => $k) {
-    //                $this->bind($v, $k);
-    //            }
-    //
-    //            return $this;
-    //        }
-    //
-    //        $this->addValue($key, $value);
-    //
-    //        return $this;
-    //    }
-
     protected static function getDefaultKey()
     {
         return 'default';
     }
 
+    public static function create($url, $action, $block = null, $event = null)
+    {
+        $widget = parent::create($url, $action, $block, $event);
+
+        $widget->token = md5(String::getRandomString());
+
+        $widget->hidden('token', ['default' => $widget->getToken()]);
+
+        return $widget;
+    }
+
+
     /**
      * Add hidden type field
      *
      * @param  $fieldName
-     * @param  $fieldTitle
      * @param  array $options
      * @param  string $template
      * @return Widget_Form
@@ -127,9 +117,9 @@ abstract class Widget_Form extends Widget
      * @version 0.6
      * @since   0.0
      */
-    public function hidden($fieldName, $fieldTitle, array $options = [], $template = 'Hidden')
+    public function hidden($fieldName, array $options = [], $template = 'Hidden')
     {
-        return $this->addField($fieldName, $fieldTitle, $options, $template);
+        return $this->addField($fieldName, 'hidden', $options, $template);
     }
 
     /**
@@ -158,6 +148,10 @@ abstract class Widget_Form extends Widget
             'options' => Arrays::defaults($this->defaultOptions, $options),
             'template' => $template
         ];
+
+        if (isset($this->fields[$fieldName]['options']['default'])) {
+            $this->addValue($fieldName, $this->fields[$fieldName]['options']['default']);
+        }
 
         return $this;
     }
@@ -314,6 +308,16 @@ abstract class Widget_Form extends Widget
         return $this->addField($fieldName, $fieldTitle, $options, $template);
     }
 
+    public function file($fieldName, $fieldTitle, array $options = [], $template = 'File')
+    {
+        return $this->addField($fieldName, $fieldTitle, $options, $template);
+    }
+
+    public function button($fieldName, $fieldTitle, array $options = [], $template = 'Button')
+    {
+        return $this->addField($fieldName, $fieldTitle, $options, $template);
+    }
+
     /**
      * Validate form by validate scheme
      *
@@ -422,11 +426,6 @@ abstract class Widget_Form extends Widget
                 continue;
             }
 
-            if (empty($params[$fieldName]) && isset($field['options']['default'])) {
-                $this->addValue($fieldName, $field['options']['default']);
-                continue;
-            }
-
             $this->addValue($fieldName, isset($params[$fieldName]) ? $params[$fieldName] : null);
         }
 
@@ -451,13 +450,90 @@ abstract class Widget_Form extends Widget
     public function bind($key, $value)
     {
         if (isset($this->fields[$key])) {
-            if (empty($value) && isset($this->fields[$key]['options']['default'])) {
-                $value = $this->fields[$key]['options']['default'];
-            }
-
             $this->addValue($key, $value);
         }
 
         return $value;
+    }
+
+    public function render()
+    {
+        /** @var Widget_Form $formClass */
+        $formClass = get_class($this);
+
+        $formName = 'Form_' . $formClass::getClassName();
+
+        $filterFields = $this->getFilterFields();
+
+        $fields = $this->getFields();
+        $values = $this->getValues();
+
+        $result = [];
+
+        $targetFields = [];
+        foreach ($filterFields as $key => &$value) {
+            if (is_string($key)) {
+                if (is_array($value)) {
+                    list($fields[$key]['type'], $fields[$key]['template']) = $value;
+                } else {
+                    $fields[$key]['type'] = $value;
+                    $fields[$key]['template'] = 'Ice:' . $value;
+                }
+
+                $value = $key;
+            }
+
+            $targetFields[$value] = $fields[$value];
+            unset($fields[$value]);
+        }
+
+        if (empty($targetFields)) {
+            $targetFields = $fields;
+        }
+
+        unset($fields);
+
+        foreach ($targetFields as $fieldName => $field) {
+            $field['fieldName'] = $fieldName;
+            $field['formName'] = $formName;
+            $field['value'] = isset($values[$fieldName]) ? $values[$fieldName] : '';
+
+            $field['dataUrl'] = $this->getUrl();
+            $field['dataJson'] = Json::encode($this->getParams());
+            $field['dataAction'] = $this->getAction();
+            $field['dataBlock'] = $this->getBlock();
+            $field['token'] = $this->getToken();
+
+            if ($this->getEvent() == Widget_Form::SUBMIT_EVENT_ONCHANGE && !isset($field['onchange'])) {
+                $field['onchange'] = 'Ice_Widget_Form.change($(this)); return false;';
+            }
+
+            $templateBaseClass = $field['template'][0] == '_' ? $formClass : Widget_Form::getClass();
+
+            $result[] = Php::getInstance()->fetch($templateBaseClass . '_' . $field['template'], $field);
+        }
+
+        $formHtml = Php::getInstance()->fetch(
+            $formClass,
+            [
+                'fields' => $result,
+                'formName' => $formName,
+                'classes' => $this->getClasses(),
+                'style' => $this->getStyle()
+            ]
+        );
+
+        return $this->getLayout()
+            ? Emmet::translate($this->getLayout() . '{{$formHtml}}', ['formHtml' => $formHtml])
+            : $formHtml;
+    }
+
+
+    /**
+     * @return string
+     */
+    public function getToken()
+    {
+        return $this->token;
     }
 }

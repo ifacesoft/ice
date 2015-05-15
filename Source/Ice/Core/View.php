@@ -318,4 +318,9 @@ class View implements Cacheable
     {
         return $this->getContent();
     }
+
+    public function setContent($content)
+    {
+        $this->result['content'] = $content;
+    }
 }

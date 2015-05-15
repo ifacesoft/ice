@@ -1254,7 +1254,7 @@ abstract class Model
         $this->beforeInsert();
 
         $insertId = Query::getBuilder($modelClass)
-            ->insertQuery($affected, $isSmart, $dataSourceKey)
+            ->getInsertQuery($affected, $isSmart, $dataSourceKey)
             ->getQueryResult()
             ->getInsertId();
 

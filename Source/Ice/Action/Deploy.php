@@ -68,7 +68,6 @@ class Deploy extends Action
         return [
             'view' => ['template' => ''],
             'actions' => [
-                'Ice:Composer_Update',
                 'Ice:Cache_Clear',
                 'Ice:Orm_Migrate',
 //                'Ice:Cache_Hit',

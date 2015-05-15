@@ -26,6 +26,10 @@ return [
             ]
         ]
     ],
+    'ice_widget_form_file_upload' => [
+        'route' => '/widget/form/file/upload',
+        'request' => ['POST' => 'Ice:Widget_Form_File_Upload']
+    ],
     'ice_locale' => [
         'route' => '/locale/{$locale}',
         'params' => [

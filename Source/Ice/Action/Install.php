@@ -32,7 +32,9 @@ class Install extends Action
     {
         return [
             'view' => ['viewRender' => 'Ice:Php', 'layout' => ''],
-            'actions' => [],
+            'actions' => [
+                'Ice:Deploy'
+            ],
             'input' => [
                 'projectName',
                 'alias',
@@ -298,7 +300,7 @@ class Install extends Action
                 'cors' => []
             ],
             'Ice\Helper\Api_Client_Yandex_Translate' => [
-                'translateKey' => ''
+                'translateKey' => null
             ],
             'Ice\Core\View' => [
                 'layout' => null,
@@ -491,13 +493,11 @@ class Install extends Action
 
         $composer['require'] += [
             'php' => '>=5.4.0',
-            'ifacesoft/ice' => '0.6.*',
+            'ifacesoft/ice' => '1.0.*',
             'twbs/bootstrap' => '3.3.*',
             'jquery/jquery-ui' => '1.11.4',
             'mailru/fileapi' => '2.0.10',
-            'firephp/firephp-core' => 'dev-master',
-            'facebook/xhprof' => 'dev-master',
-            'composer/composer' => 'dev-master'
+            'firephp/firephp-core' => 'dev-master'
         ];
 
         $composer['repositories'] = [
@@ -528,8 +528,6 @@ class Install extends Action
         File::createData(MODULE_DIR . 'composer.json', Json::encode($composer, JSON_PRETTY_PRINT), false);
 
         Module::modulesClear();
-
-        Deploy::call();
 
         Action::getCodeGenerator()->generate(
             Action::getClass($input['alias'] . ':Index'),

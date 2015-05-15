@@ -172,4 +172,9 @@ class Response
     {
         $this->view = $view;
     }
+
+    public function setContent($content)
+    {
+        $this->view->setContent($content);
+    }
 }

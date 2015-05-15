@@ -90,18 +90,28 @@ class App
             $input = Cli::getInstance()->get();
             $actionClass = $input['actionClass'];
             unset($input['actionClass']);
-        } elseif (Request::isAjax()) {
-            $input = Data_Provider_Request::getInstance()->get();
-            $actionClass = $input['call'];
-            unset($input['actionClass']);
-        } else {
-            $router = Router::getInstance();
-            $routeRequest = Route::getInstance($router->get('routeName'))->gets('request/' . $router->get('method'));
-            list($actionClass, $input) = each($routeRequest);
-            $actionClass = Action::getClass($actionClass);
+
+            return [Action::getClass($actionClass), $input];
         }
 
-        return [$actionClass, $input];
+        if (Request::isAjax()) {
+            $input = Data_Provider_Request::getInstance()->get();
+
+            Logger::fb($input);
+
+            if (!empty($input['call'])) {
+                $actionClass = $input['call'];
+                unset($input['call']);
+
+                return [Action::getClass($actionClass), $input];
+            }
+        }
+
+        $router = Router::getInstance();
+        $routeRequest = Route::getInstance($router->get('routeName'))->gets('request/' . $router->get('method'));
+        list($actionClass, $input) = each($routeRequest);
+
+        return [Action::getClass($actionClass), $input];
     }
 
     /**
@@ -153,10 +163,6 @@ class App
         define('MODULE_DIR', getcwd() . '/');
 
         App::check();
-
-        require_once ICE_DIR . 'bootstrap.php';
-
-        Check::call();
     }
 
     private static function check()
@@ -170,6 +176,10 @@ class App
             file_exists($configFilePath) &&
             file_exists($environmentConfigFilePath)
         ) {
+            require_once ICE_DIR . 'bootstrap.php';
+
+            echo Check::call();
+
             return;
         }
 

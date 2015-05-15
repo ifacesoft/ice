@@ -1146,7 +1146,7 @@ class Query_Builder
      * @version 0.6
      * @since   0.0
      */
-    public function insertQuery(array $data, $update = false, $dataSourceKey = null)
+    public function getInsertQuery(array $data, $update = false, $dataSourceKey = null)
     {
         $this->queryType = Query_Builder::TYPE_INSERT;
         $this->sqlParts[Query_Builder::PART_VALUES]['_update'] = $update;

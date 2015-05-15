@@ -39,4 +39,12 @@ return [
         'en' => 'Route {$0} not found',
         'ru' => 'Маршрут {$0} не найдена',
     ],
+    'ebs_admin_report' => [
+        'en' => 'ebs_admin_report',
+        'ru' => 'ebs_admin_report',
+    ],
+    'ebs_admin_tool' => [
+        'en' => 'ebs_admin_tool',
+        'ru' => 'ebs_admin_tool',
+    ],
 ];

@@ -187,8 +187,8 @@ class Logger
             curl_close($ch);
         }
 
-        try {
-            Log_Error::create($params)->save();
-        } catch (\Exception $e) {}
+//        try {
+//            Log_Error::create($params)->save();
+//        } catch (\Exception $e) {}
     }
 }

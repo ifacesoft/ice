@@ -16,6 +16,7 @@ abstract class Widget
     private $action = null;
     private $block = null;
     private $event = null;
+    private $layout = '';
 
     protected function __construct()
     {
@@ -184,5 +185,23 @@ abstract class Widget
     public function addValue($key, $value)
     {
         $this->values[$key] = $value;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLayout()
+    {
+        return $this->layout;
+    }
+
+    /**
+     * @param string $layout
+     * @return $this
+     */
+    public function setLayout($layout)
+    {
+        $this->layout = $layout;
+        return $this;
     }
 }

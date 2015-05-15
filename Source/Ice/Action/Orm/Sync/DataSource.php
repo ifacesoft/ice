@@ -279,7 +279,7 @@ class Orm_Sync_DataSource extends Action
 
         $modelClass::createTable($dataSourceKey);
 
-        Scheme::createQueryBuilder()->insertQuery(
+        Scheme::createQueryBuilder()->getInsertQuery(
             [
                 'table_name' => $table['scheme']['tableName'],
                 'table__json' => Json::encode($table['scheme']),
