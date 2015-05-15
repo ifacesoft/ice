@@ -28,11 +28,11 @@ class ActionTest extends PHPUnit_Framework_TestCase
                 ['Ice:Test', ['test' => 'test4']]
             ],
             5 => [
-                ['_My' => 'key', ['test' => 'test5']]
+                ['_Php' => 'key', ['test' => 'test5']]
             ],
             6 => [
                 ['Ice:Title' => 'title', ['title' => 'Hello world']],
-                '_Test',
+                '_NoView',
                 'Ice:Main' => 'main'
             ]
         ];
@@ -40,45 +40,61 @@ class ActionTest extends PHPUnit_Framework_TestCase
         $output = [
             0 => [],
             1 => [
-                0 => [
-                    'Ice\Action\Test' => []
+                'Test' => [
+                    0 => [
+                        'Ice\Action\Test' => []
+                    ]
                 ]
             ],
             2 => [
-                0 => [
-                    'Ice\Action\Test' => []
+                'Test' => [
+                    0 => [
+                        'Ice\Action\Test' => []
+                    ]
                 ]
             ],
             3 => [
                 'key' => [
-                    'Ice\Action\Test' => []
+                    0 => [
+                        'Ice\Action\Test' => []
+                    ]
                 ]
             ],
             4 => [
-                0 => [
-                    'Ice\Action\Test' => [
-                        'test' => 'test4'
+                'Test' => [
+                    0 => [
+                        'Ice\Action\Test' => [
+                            'test' => 'test4'
+                        ]
                     ]
                 ]
             ],
             5 => [
                 'key' => [
-                    'Ice\Action\Test_My' => [
-                        'test' => 'test5'
+                    0 => [
+                        'Ice\Action\Test_Php' => [
+                            'test' => 'test5'
+                        ]
                     ]
                 ]
             ],
             6 => [
                 'title' => [
-                    'Ice\Action\Title' => [
-                        'title' => 'Hello world'
+                    0 => [
+                        'Ice\Action\Title' => [
+                            'title' => 'Hello world'
+                        ]
                     ]
                 ],
-                0 => [
-                    'Ice\Action\Test_Test' => []
+                'Test_NoView' => [
+                    0 => [
+                        'Ice\Action\Test_NoView' => []
+                    ],
                 ],
                 'main' => [
-                    'Ice\Action\Main' => []
+                    0 => [
+                        'Ice\Action\Main' => []
+                    ]
                 ]
             ]
         ];

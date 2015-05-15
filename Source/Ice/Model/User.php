@@ -24,7 +24,12 @@ class User extends Model
     {
         return [
 		    'dataSourceKey' => 'Ice\Data\Source\Mysqli/default.www',
-		    'scheme' => [],
+			'scheme' => [
+				'tableName' => 'ice_user',
+				'engine' => 'InnoDB',
+				'charset' => 'utf8_general_ci',
+				'comment' => '',
+			],
 		    'columns' => [],
 		    'indexes' => [],
 		    'references' => [],
