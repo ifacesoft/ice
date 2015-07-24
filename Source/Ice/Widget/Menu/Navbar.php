@@ -2,7 +2,12 @@
 
 namespace Ice\Widget\Menu;
 
+use Ice\Core\Route;
+use Ice\Core\Widget;
 use Ice\Core\Widget_Menu;
+use Ice\Helper\Emmet;
+use Ice\Helper\Json;
+use Ice\Helper\Object;
 use Ice\View\Render\Php;
 
 class Navbar extends Widget_Menu
@@ -10,67 +15,89 @@ class Navbar extends Widget_Menu
     /**
      * @var string
      */
-    private $brand = null;
+    protected $brand = null;
+
+    protected static function config()
+    {
+        return [
+            'view' => ['template' => null, 'viewRenderClass' => null, 'layout' => null],
+            'input' => [],
+            'access' => ['roles' => [], 'request' => null, 'env' => null]
+        ];
+    }
 
     /**
      * @param $url
      * @param $action
      * @param null $block
-     * @param null $event
+     * @param array $data
      * @return Navbar
      */
-    public static function create($url, $action, $block = null, $event = null)
+    public static function create($url, $action, $block = null, array $data = [])
     {
-        return parent::create($url, $action, $block, $event);
-    }
-
-    /**
-     * Add menu dropdown item
-     *
-     * @param  $name
-     * @param  $title
-     * @param  array $options
-     * @param  string $template
-     * @return Navbar
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.6
-     * @since   0.1
-     */
-    public function dropdown($name, $title, array $options = [], $template = 'Dropdown')
-    {
-        return $this->addItem($name, $title, $options, $template);
+        return parent::create($url, $action, $block, $data);
     }
 
     public function render()
     {
-        /**
-         * @var Nav $menuClass
-         */
-        $menuClass = get_class($this);
-        $menuName = 'Menu_' . $menuClass::getClassName();
+        /** @var Navbar $widgetClass */
+        $widgetClass = get_class($this);
+        $widgetClassName = $widgetClass::getClassName();
+        $widgetBaseClass = Object::getBaseClass($widgetClass, Widget::getClass());
+        $widgetBaseClassName = $widgetBaseClass::getClassName();
 
-        $items = [];
+        $parts = [];
 
-        foreach ($this->getItems() as $itemName => $item) {
-            $item['name'] = $itemName;
-            $position = isset($item['options']['position'])
-                ? $item['options']['position']
+        foreach ($this->getParts() as $partName => $part) {
+            $part['widgetClassName'] = $widgetClassName;
+            $part['widgetBaseClassName'] = $widgetBaseClassName;
+            $part['token'] = $this->getToken();
+
+            $part['name'] = isset($part['options']['name']) ? $part['options']['name'] : $partName;
+            $part['value'] = isset($part['options']['value']);
+
+            if (isset($part['options']['route'])) {
+                if (is_array($part['options']['route'])) {
+                    list($routeName, $params) = each($part['options']['route']);
+                    $part['options']['href'] = Route::getInstance($routeName)->getUrl((array) $params);
+                } else {
+                    $part['options']['href'] = Route::getInstance($part['options']['route'])->getUrl();
+                }
+            }
+
+            $position = isset($part['options']['position'])
+                ? $part['options']['position']
                 : '';
 
-            $items[$position][] = Php::getInstance()->fetch($menuClass . '_' . $item['template'], $item);
+            $template = $part['template'][0] == '_'
+                ? $widgetClass . $part['template']
+                : $widgetBaseClass . '_' . $part['template'];
+
+            $parts[$position][$partName] = Php::getInstance()->fetch($template, $part);
         }
 
-        return Php::getInstance()->fetch(
-            Widget_Menu::getClass($menuClass),
+        $widgetContent = Php::getInstance()->fetch(
+            $widgetClass,
             [
-                'items' => $items,
-                'menuName' => $menuName,
+                'parts' => $parts,
+                'widgetData' => $this->getData(),
+                'widgetClass' => $widgetClass,
+                'widgetClassName' => $widgetClassName,
+                'widgetBaseClassName' => $widgetBaseClassName,
                 'classes' => $this->getClasses(),
                 'style' => $this->getStyle(),
-                'brand' => $this->getBrand()
+                'url' => $this->getUrl(),
+                'token' => $this->getToken(),
+                'dataJson' => Json::encode($this->getParams()),
+                'dataAction' => $this->getAction(),
+                'dataBlock' => $this->getBlock(),
+                'dataUrl' => $this->getUrl() . '?' . http_build_query($this->getParams()),
             ]
         );
+
+        return $this->getLayout()
+            ? Emmet::translate($this->getLayout() . '{{$widgetContent}}', ['widgetContent' => $widgetContent])
+            : $widgetContent;
     }
 
     /**

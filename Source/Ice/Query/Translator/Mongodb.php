@@ -282,11 +282,11 @@ class Mongodb extends Query_Translator
 
         list($modelClass, $items) = each($part);
 
-        list($tableAlias, $fieldNames) = each($items);
+        list($tableAlias, $select) = each($items);
 
         $columnNames = [];
 
-        foreach (Mapping::columnNames($modelClass, array_keys($fieldNames)) as $columnName) {
+        foreach (Mapping::columnNames($modelClass, array_keys($select['columns'])) as $columnName) {
             $columnNames[] = $columnName;
         }
 

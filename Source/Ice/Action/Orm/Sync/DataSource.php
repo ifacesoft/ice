@@ -31,7 +31,7 @@ class Orm_Sync_DataSource extends Action
             'actions' => [],
             'input' => ['force' => ['default' => 0]],
             'output' => [],
-            'ttl' => -1,
+            'cache' => ['ttl' => -1, 'count' => 1000],
             'roles' => []
         ];
     }
@@ -279,7 +279,7 @@ class Orm_Sync_DataSource extends Action
 
         $modelClass::createTable($dataSourceKey);
 
-        Scheme::createQueryBuilder()->insertQuery(
+        Scheme::createQueryBuilder()->getInsertQuery(
             [
                 'table_name' => $table['scheme']['tableName'],
                 'table__json' => Json::encode($table['scheme']),

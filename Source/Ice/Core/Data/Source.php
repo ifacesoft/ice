@@ -23,9 +23,6 @@ use Ice\Data\Source\Mysqli;
  *
  * @package    Ice
  * @subpackage Core
- *
- * @version 0.0
- * @since   0.0
  */
 abstract class Data_Source extends Container
 {
@@ -354,6 +351,7 @@ abstract class Data_Source extends Container
         $startTime = Profiler::getMicrotime();
         $startMemory = Profiler::getMemoryGetUsage();
 
+        /** @var Query_Result $queryResult */
         $queryResult = null;
 
         $queryType = $query->getQueryBuilder()->getQueryType();
@@ -367,25 +365,25 @@ abstract class Data_Source extends Container
             ) {
                 $queryResult = Query_Result::create($query, $this->$queryCommand($query));
                 Profiler::setPoint($queryResult->__toString(), $startTime, $startMemory);
-                Logger::fb(Profiler::getReport($queryResult->__toString()), 'query (not cache)', 'WARN');
+                Logger::log(Profiler::getReport($queryResult->__toString()), 'query (not cache)', 'WARN');
 
                 return $queryResult;
             }
 
             switch ($queryType) {
                 case Query_Builder::TYPE_SELECT:
-                    $cacher = Query_Result::getCacher();
+                    $cacher = Query_Result::getCacher($this->getDataSourceKey());
                     $queryHash = $query->getFullHash();
 
                     if ($queryResult = $cacher->get($queryHash)) {
                         Profiler::setPoint($queryResult->__toString(), $startTime, $startMemory);
-                        Logger::fb(Profiler::getReport($queryResult->__toString()), 'query (cache)', 'LOG');
+                        Logger::log(Profiler::getReport($queryResult->__toString()/* . "\n". print_r($queryResult->getRows(), true)*/), 'query (cache)', 'LOG');
                         return $queryResult;
                     }
 
                     $queryResult = Query_Result::create($query, $this->$queryCommand($query));
                     Profiler::setPoint($queryResult->__toString(), $startTime, $startMemory);
-                    Logger::fb(Profiler::getReport($queryResult->__toString()), 'query (new)', 'INFO');
+                    Logger::log(Profiler::getReport($queryResult->__toString()/* . "\n". print_r($queryResult->getRows(), true)*/), 'query (new)', 'INFO');
 
                     $cacher->set($queryHash, $queryResult, $ttl);
                     return $queryResult;
@@ -395,7 +393,7 @@ abstract class Data_Source extends Container
                 case Query_Builder::TYPE_DELETE:
                     $queryResult = Query_Result::create($query, $this->$queryCommand($query))->invalidate();
                     Profiler::setPoint($queryResult->__toString(), $startTime, $startMemory);
-                    Logger::fb(Profiler::getReport($queryResult->__toString()), 'query (new)', 'INFO');
+                    Logger::log(Profiler::getReport($queryResult->__toString()), 'query (new)', 'INFO');
                     return $queryResult;
 
                 default:
@@ -408,7 +406,7 @@ abstract class Data_Source extends Container
                     );
             }
         } catch (\Exception $e) {
-            Logger::fb(
+            Logger::log(
                 $e->getMessage() . ': ' .
                 print_r($query->getBody(), true) . ' (' . print_r($query->getBinds(), true) . ')',
                 'query (error)',

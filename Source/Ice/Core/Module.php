@@ -36,8 +36,27 @@ class Module extends Config
     const LOG_DIR = 'logDir';
     const CACHE_DIR = 'cacheDir';
     const UPLOAD_DIR = 'uploadDir';
+    const UPLOAD_TEMP_DIR = 'uploadTempDir';
     const DOWNLOAD_DIR = 'downloadDir';
     const COMPILED_RESOURCE_DIR = 'compiledResourceDir';
+
+    public static $defaultConfig = [
+        'alias' => 'Draft',
+        'module' => [
+            Module::CONFIG_DIR => 'Config/',
+            Module::SOURCE_DIR => 'Source/',
+            Module::RESOURCE_DIR => 'Resource/',
+            Module::LOG_DIR => 'Var/log/',
+            Module::CACHE_DIR => 'Var/cache/',
+            Module::UPLOAD_DIR => 'Var/upload/',
+            Module::UPLOAD_TEMP_DIR => 'Var/upload/temp/',
+            Module::COMPILED_RESOURCE_DIR => 'Web/resource/',
+            Module::DOWNLOAD_DIR => 'Web/download/',
+        ],
+        'modules' => [
+            'ifacesoft/ice' => '/ice'
+        ]
+    ];
 
     /**
      * All available modules
@@ -89,7 +108,7 @@ class Module extends Config
             $isProject = $module->getName() == $this->getName();
 
             foreach ($module->getDataSources() as $key => $tablePrefixes) {
-               $dataSourceName = strstr($key, '/', true);
+                $dataSourceName = strstr($key, '/', true);
 
                 if (
                     ($isProject && $dataSourceKey == $key) ||
@@ -101,7 +120,7 @@ class Module extends Config
                         $prefixes[$alias] = [];
                     }
 
-                    $prefixes[$alias] += (array) $tablePrefixes;
+                    $prefixes[$alias] += (array)$tablePrefixes;
                 }
             }
         }
@@ -235,18 +254,27 @@ class Module extends Config
 
         $module['path'] = $modulePath;
 
-        $dirs = [
+        $moduleDirs = [
             MODULE::CONFIG_DIR,
             MODULE::SOURCE_DIR,
             MODULE::RESOURCE_DIR,
-            MODULE::LOG_DIR,
-            MODULE::CACHE_DIR,
-            MODULE::UPLOAD_DIR,
-            MODULE::DOWNLOAD_DIR,
-            MODULE::COMPILED_RESOURCE_DIR
         ];
 
-        foreach ($dirs as $dir) {
+        if ($modulePath == MODULE_DIR) {
+            $moduleDirs = array_merge(
+                $moduleDirs,
+                [
+                    MODULE::LOG_DIR,
+                    MODULE::CACHE_DIR,
+                    MODULE::UPLOAD_DIR,
+                    MODULE::UPLOAD_TEMP_DIR,
+                    MODULE::DOWNLOAD_DIR,
+                    MODULE::COMPILED_RESOURCE_DIR
+                ]
+            );
+        }
+
+        foreach ($moduleDirs as $dir) {
             $module[$dir] = Directory::get($modulePath . $module[$dir]);
         }
 
@@ -281,7 +309,8 @@ class Module extends Config
         return array_keys($this->getDataSources());
     }
 
-    public function getDefaultDataSourceKeys() {
+    public function getDefaultDataSourceKeys()
+    {
         if (Module::$defaultDataSourceKeys !== null) {
             return Module::$defaultDataSourceKeys;
         }
@@ -291,7 +320,7 @@ class Module extends Config
         foreach ($this->getDataSourceKeys() as $dataSourceKey) {
             $dataSourceName = strstr($dataSourceKey, '/', true);
 
-            if (!isset($moduleDefaultDataSourceKeys[$dataSourceName])) {
+            if (!isset(Module::$defaultDataSourceKeys[$dataSourceName])) {
                 Module::$defaultDataSourceKeys[$dataSourceName] = $dataSourceKey;
             }
         }
@@ -299,7 +328,8 @@ class Module extends Config
         return Module::$defaultDataSourceKeys;
     }
 
-    public static function modulesClear() {
+    public static function modulesClear()
+    {
         Module::$modules = null;
     }
 }

@@ -132,7 +132,7 @@ class Cacher extends Data_Provider
             $ttl = isset($options['ttl']) ? $options['ttl'] : 3600;
         }
 
-        $this->getConnection()->set($key, Cache::create($value, time()), $ttl);
+        $this->getConnection()->set($key, Cache::create($value, microtime(true)), $ttl);
 
         return $value;
     }

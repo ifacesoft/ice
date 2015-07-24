@@ -56,7 +56,7 @@ class Http_Status extends Action
      *          ]
      *      ],
      *      'output' => ['Ice:Resource/Ice\Action\Index'],
-     *      'ttl' => 3600,
+     *      'cache' => ['ttl' => -1, 'count' => 1000],
      *      'roles' => []
      *  ];
      * ```
@@ -75,7 +75,8 @@ class Http_Status extends Action
             'input' => [
                 'code' => ['default' => 500],
                 'exception'
-            ]
+            ],
+            'cache' => ['ttl' => -1, 'count' => 1000],
         ];
     }
 

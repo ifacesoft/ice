@@ -60,24 +60,16 @@ class Bootstrap extends Container
 
         date_default_timezone_set('UTC');
 
-        try {
-            Loader::init($loader, $force);
-            Logger::init();
-            Request::init();
+        Loader::init($loader, $force);
+        Logger::init();
+        Request::init();
 
-            if (Request::isOptions()) {
-                exit;
-            }
+        if (Request::isOptions()) {
+            exit;
+        }
 
-            if (!Request::isCli()) {
-                Session::init();
-            }
-        } catch (\Exception $e) {
-            echo '<span style="background-color: red; color:white; font-weight: bold;">Bootstrapping failed: ' .
-                $e->getMessage() .
-                '</span><br>';
-            echo nl2br($e->getTraceAsString());
-            die('Terminated. Bye-bye...' . "\n");
+        if (!Request::isCli()) {
+            Session::init();
         }
     }
 

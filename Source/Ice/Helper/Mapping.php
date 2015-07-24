@@ -2,6 +2,7 @@
 
 namespace Ice\Helper;
 
+use Ice\Core\Debuger;
 use Ice\Core\Model as Core_Model;
 
 class Mapping
@@ -14,7 +15,6 @@ class Mapping
     public static function columnNames($modelClass, $fieldNames)
     {
         $modelMapping = $modelClass::getScheme()->getFieldColumnMap();
-
         return array_map(
             function ($fieldName) use ($modelMapping) {
                 return $modelMapping[$fieldName];

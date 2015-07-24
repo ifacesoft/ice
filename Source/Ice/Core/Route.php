@@ -10,7 +10,6 @@
 namespace Ice\Core;
 
 use Ice\Core;
-use Ice\Data\Provider\Router;
 use Ice\Exception\Http_Not_Found;
 use Ice\Helper\File;
 use Ice\View\Render\Replace;
@@ -161,7 +160,8 @@ class Route extends Config
                 );
 
                 if (isset($route['alias'])) {
-                    $route['request'] = $routes[$route['alias']]->gets('request');
+                    foreach ($route['alias'] as $method => $alias)
+                    $route['request'][$method] = $routes[$route['alias'][$method]]->gets('request/' . $method);
                 }
 
                 foreach ($route['request'] as &$request) {

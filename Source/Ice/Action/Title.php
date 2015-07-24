@@ -54,7 +54,7 @@ class Title extends Action
      *          ]
      *      ],
      *      'output' => ['Ice:Resource/Ice\Action\Index'],
-     *      'ttl' => 3600,
+     *      'cache' => ['ttl' => -1, 'count' => 1000],
      *      'roles' => []
      *  ];
      * ```
@@ -70,7 +70,8 @@ class Title extends Action
     {
         return [
             'view' => ['viewRenderClass' => 'Ice:Php', 'layout' => ''],
-            'input' => 'title'
+            'input' => 'title',
+            'cache' => ['ttl' => -1, 'count' => 1000],
         ];
     }
 

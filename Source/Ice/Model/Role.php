@@ -17,7 +17,7 @@ class Role extends Model
     protected static function config()
     {
         return [
-		    'dataSourceKey' => 'Ice\Data\Source\Mysqli/default.www',
+		    'dataSourceKey' => 'Ice\Data\Source\Mysqli/default.test',
 		    'scheme' => [
 		        'tableName' => 'ice_role',
 		        'engine' => 'InnoDB',
@@ -79,7 +79,7 @@ class Role extends Model
 		            'ice_user' => 'ice_user_role_link',
 		        ],
 		    ],
-		    'revision' => '05041412_2bt',
+		    'revision' => '05201942_kve',
 		];
     }
 }

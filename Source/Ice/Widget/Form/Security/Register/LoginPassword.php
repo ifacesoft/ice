@@ -10,6 +10,15 @@ use Ice\View\Render\Php;
 
 class LoginPassword extends Widget_Form_Security_Register
 {
+    protected static function config()
+    {
+        return [
+            'view' => ['template' => null, 'viewRenderClass' => null, 'layout' => null],
+            'input' => [],
+            'access' => ['roles' => [], 'request' => null, 'env' => null]
+        ];
+    }
+
     protected function __construct()
     {
         parent::__construct();
@@ -37,74 +46,22 @@ class LoginPassword extends Widget_Form_Security_Register
         );
     }
 
-    public function bind($key, $value = null)
+    /**
+     * @param array $params
+     * @return LoginPassword
+     */
+    public function bind(array $params)
     {
-        if ($key == 'password1') {
-            [
-                $this->_validateScheme['password1']['Ice:Equal'] = $this->_values['password']
-            ];
-        }
-
-        return parent::bind($key, $value);
-    }
-
-    public function render()
-    {
-        $formClass = get_class($this);
-
-        $formName = 'Form_' . Object::getName($formClass);
-
-        $filterFields = $this->getFilterFields();
-
-        $fields = $this->getFields();
-        $values = $this->getValues();
-
-        $result = [];
-
-        $targetFields = [];
-        foreach ($filterFields as $key => &$value) {
-            if (is_string($key)) {
-                if (is_array($value)) {
-                    list($fields[$key]['type'], $fields[$key]['template']) = $value;
-                } else {
-                    $fields[$key]['type'] = $value;
-                    $fields[$key]['template'] = 'Ice:' . $value;
-                }
-
-                $value = $key;
+        foreach ($params as $key => $value) {
+            if ($key == 'password1') {
+                [
+                    $this->validateScheme['password1']['Ice:Equal'] = $this->getValue('password')
+                ];
             }
 
-            $targetFields[$value] = $fields[$value];
-            unset($fields[$value]);
+            parent::bind([$key => $value]);
         }
 
-        if (empty($targetFields)) {
-            $targetFields = $fields;
-        }
-
-        unset($fields);
-
-        foreach ($targetFields as $fieldName => $field) {
-            $field['fieldName'] = $fieldName;
-            $field['formName'] = $formName;
-            $field['value'] = isset($values[$fieldName]) ? $values[$fieldName] : '';
-
-            $field['dataUrl'] = $this->getUrl();
-            $field['dataJson'] = Json::encode($this->getParams());
-            $field['dataAction'] = $this->getAction();
-            $field['dataBlock'] = $this->getBlock();
-
-            $result[] = Php::getInstance()->fetch(Widget_Form_Security_Register::getClass($formClass . '_' . $field['template']), $field);
-        }
-
-        return Php::getInstance()->fetch(
-            Widget_Form_Security_Register::getClass($formClass),
-            [
-                'fields' => $result,
-                'formName' => $formName,
-                'classes' => $this->getClasses(),
-                'style' => $this->getStyle()
-            ]
-        );
+        return $this;
     }
 }

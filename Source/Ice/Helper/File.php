@@ -41,7 +41,7 @@ class File
      * @version 0.0
      * @since   0.0
      */
-    public static function createData($path, $data, $phpData = true, $file_put_contents_flag = 0)
+    public static function createData($path, $data, $phpData = true, $file_put_contents_flag = 0, $isPretty = true)
     {
         if (empty($path)) {
             Core_Logger::getInstance()->error('File path is empty', __FILE__, __LINE__);
@@ -49,12 +49,12 @@ class File
 
         $dir = Directory::get(dirname($path));
 
-        $dataString = $phpData ? Php::varToPhpString($data) : $data;
+        $dataString = $phpData ? Php::varToPhpString($data, true, $isPretty) : $data;
         file_put_contents($path, $dataString, $file_put_contents_flag);
 
         if (function_exists('posix_getuid') && posix_getuid() == fileowner($path)) {
-            chmod($path, 0664);
-            chgrp($path, filegroup($dir));
+            chmod($path, 0666);
+//            chgrp($path, filegroup($dir));
         }
 
         return $data;

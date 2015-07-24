@@ -1,1 +1,0 @@
-<input type="hidden" id="<?= $formName . '_' . $fieldName ?>" name="<?= $fieldName ?>" value="<?= $value ?>">

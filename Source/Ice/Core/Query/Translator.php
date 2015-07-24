@@ -90,6 +90,7 @@ abstract class Query_Translator extends Container
             }
 
             $translate = 'translate' . ucfirst($sqlPart);
+
             $result = $this->$translate($part);
 
             if ($body === null) {
@@ -97,9 +98,9 @@ abstract class Query_Translator extends Container
             }
 
             if (is_string($result)) {
-                $body .= $this->$translate($part);
+                $body .= $result;
             } else {
-                $body += $this->$translate($part);
+                $body += $result;
             }
         }
 

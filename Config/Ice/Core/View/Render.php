@@ -9,7 +9,7 @@ return [
         'dataProviderKey' => 'Ice:Registry/view_render',
         'vendor' => 'smarty/smarty',
         'templates_c' => 'smarty/templates_c/',
-        'plugins' => [MODULE_DIR . 'vendor/Smarty/plugins']
+        'plugins' => [VENDOR_DIR . 'Smarty/plugins']
     ],
     'Ice\View\Render\Twig' => [
         'vendor' => 'twig/twig',

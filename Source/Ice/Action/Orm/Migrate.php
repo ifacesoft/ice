@@ -26,7 +26,7 @@ class Orm_Migrate extends Action
             ],
             'input' => ['force' => ['default' => 0]],
             'output' => [],
-            'ttl' => -1,
+            'cache' => ['ttl' => -1, 'count' => 1000],
             'roles' => []
         ];
     }

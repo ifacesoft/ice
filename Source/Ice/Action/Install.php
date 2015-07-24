@@ -32,12 +32,11 @@ class Install extends Action
     {
         return [
             'view' => ['viewRender' => 'Ice:Php', 'layout' => ''],
-            'actions' => [],
+            'actions' => [
+                'Ice:Deploy'
+            ],
             'input' => [
-                'projectName',
                 'alias',
-                'desc',
-                'url',
                 'vcs',
                 'multilocale',
                 'defaultLocale',
@@ -49,7 +48,7 @@ class Install extends Action
                 'database'
             ],
             'output' => [],
-            'ttl' => -1,
+            'cache' => ['ttl' => -1, 'count' => 1000],
             'access' => [
                 'roles' => [],
                 'request' => 'cli',
@@ -70,58 +69,17 @@ class Install extends Action
      */
     public function run(array $input)
     {
-        if (empty($input['projectName'])) {
-            $input['projectName'] = Console::getInteractive(
-                __CLASS__,
-                'ProjectName',
-                'Project name in CamelCase',
-                [
-                    'default' => 'MyProject',
-                    'title' => 'Module name [{$0}]: ',
-                    'validators' => [
-                        'Ice:Pattern' => '/^[a-z]+$/i'
-                    ]
-                ]
-            );
-        }
-
-        $input['projectName'] = ucfirst($input['projectName']);
+        $projectName = basename(MODULE_DIR);
 
         if (empty($input['alias'])) {
             $input['alias'] = Console::getInteractive(
                 __CLASS__,
                 'alias',
-                'Short project name with first uppercase letter',
+                'Short project name (2-5 letters)',
                 [
-                    'default' => 'Mp',
-                    'title' => 'Module alias (short module name, 2-5 letters) [{$0}]: ',
+                    'default' => substr(ucfirst(strtolower($projectName)), 0, 3),
+                    'title' => 'Module alias [{$0}]: ',
                     'validators' => ['Ice:Pattern' => '/^[a-z]+$/i']
-                ]
-            );
-        }
-
-        if (empty($input['desc'])) {
-            $input['desc'] = Console::getInteractive(
-                __CLASS__,
-                'desc',
-                'Short project description',
-                [
-                    'default' => 'My Ice Project',
-                    'title' => 'Project description [{$0}]: ',
-                    'validators' => ['Ice:Pattern' => '(.*)']
-                ]
-            );
-        }
-
-        if (empty($input['url'])) {
-            $input['url'] = Console::getInteractive(
-                __CLASS__,
-                'url',
-                'Production project url',
-                [
-                    'default' => 'localhost',
-                    'title' => 'Project url [{$0}]: ',
-                    'validators' => ['Ice:Pattern' => '(.*)']
                 ]
             );
         }
@@ -267,29 +225,20 @@ class Install extends Action
             }
         }
 
-        $moduleConfig = [
-            'alias' => $input['alias'],
-            'module' => [
-                'name' => $input['projectName'],
-                'description' => $input['desc'],
-                'url' => $input['url'],
+        $moduleConfig['alias'] = $input['alias'];
+        $moduleConfig['module'] = array_merge(
+            [
+                'name' => $projectName,
+                'version' => '0.0',
+                'description' => Json::decode(file_get_contents(MODULE_DIR . 'composer.json'))['description'],
                 'authors' => 'anonymous <email>',
                 'vcs' => $input['vcs'],
-                'sources' => '',
                 'Ice\Core\Data_Source' => [],
-                'configDir' => 'Config/',
-                'sourceDir' => 'Source/',
-                'resourceDir' => 'Resource/',
-                'logDir' => '../_log/',
-                'cacheDir' => '../_cache/',
-                'uploadDir' => '../_upload/',
-                'compiledResourceDir' => '../_resource/',
-                'downloadDir' => '../_resource/download/',
             ],
-            'modules' => [
-                'ifacesoft/ice' => '/ice'
-            ]
-        ];
+            Module::$defaultConfig['module']
+        );
+
+        $moduleConfig['modules'] = ['ifacesoft/ice' => '/ice'];
 
         $config = [
             'Ice\\Core\\Request' => [
@@ -298,7 +247,7 @@ class Install extends Action
                 'cors' => []
             ],
             'Ice\Helper\Api_Client_Yandex_Translate' => [
-                'translateKey' => ''
+                'translateKey' => null
             ],
             'Ice\Core\View' => [
                 'layout' => null,
@@ -306,9 +255,9 @@ class Install extends Action
             ],
             'Ice\Core\Environment' => [
                 'environments' => [
-                    '/' . strtolower($input['projectName']) . '\\.global$/' => 'production',
-                    '/' . strtolower($input['projectName']) . '\\.test$/' => 'test',
-                    '/' . strtolower($input['projectName']) . '\\.local$/' => 'development'
+                    '/' . strtolower($projectName) . '\\.global$/' => 'production',
+                    '/' . strtolower($projectName) . '\\.test$/' => 'test',
+                    '/' . strtolower($projectName) . '\\.local$/' => 'development'
                 ]
             ]
         ];
@@ -334,7 +283,7 @@ class Install extends Action
             }
 
             $moduleConfig['module']['Ice\Core\Data_Source'] = [
-                $dataSourceClass . '/default.' . $input['database'] => '_' . strtolower($input['alias'])
+                $dataSourceClass . '/default.' . $input['database'] => strtolower($input['alias'] . '_')
             ];
 
             $environmentConfig['production']['Ice\\Core\\Data_Provider'] = [
@@ -355,7 +304,7 @@ class Install extends Action
                     'GET' => [
                         'Ice:Layout_Main' => [
                             'actions' => [
-                                ['Ice:Title' => 'title', ['title' => $input['projectName']]],
+                                ['Ice:Title' => 'title', ['title' => $projectName]],
                                 [$input['alias'] . ':Index' => 'main']
                             ]
                         ]
@@ -491,13 +440,11 @@ class Install extends Action
 
         $composer['require'] += [
             'php' => '>=5.4.0',
-            'ifacesoft/ice' => '0.6.*',
+            'ifacesoft/ice' => '1.0.*',
             'twbs/bootstrap' => '3.3.*',
             'jquery/jquery-ui' => '1.11.4',
             'mailru/fileapi' => '2.0.10',
-            'firephp/firephp-core' => 'dev-master',
-            'facebook/xhprof' => 'dev-master',
-            'composer/composer' => 'dev-master'
+            'firephp/firephp-core' => 'dev-master'
         ];
 
         $composer['repositories'] = [
@@ -529,8 +476,6 @@ class Install extends Action
 
         Module::modulesClear();
 
-        Deploy::call();
-
         Action::getCodeGenerator()->generate(
             Action::getClass($input['alias'] . ':Index'),
             ['defaultViewRenderClass' => 'Ice:' . $input['viewRender']]
@@ -539,7 +484,7 @@ class Install extends Action
         Vcs::init($input['vcs'], MODULE_DIR);
 
         return [
-            'moduleName' => $input['projectName'],
+            'moduleName' => $projectName,
             'logDir' => Module::getInstance()->get(Module::LOG_DIR),
             'resourceDir' => Module::getInstance()->get(Module::COMPILED_RESOURCE_DIR)
         ];

@@ -21,7 +21,7 @@ return [
     'Ice\Core\Environment' => [
         'environments' => [
             '/localhost/' => 'development',
-            '/.*/' => 'production'
+            '/.*/' => 'development'
         ]
     ],
     'Ice\Core\Logger' => [

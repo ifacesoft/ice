@@ -10,8 +10,11 @@ syntax: regexp
 
 ^\.idea
 
+^Var/cache
+^Var/log
+^Var/upload
+^Var/vendor
+
+^Web/resource
+
 composer.phar
-
-^Resource/api
-^Resource/uml
-

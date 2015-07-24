@@ -184,7 +184,7 @@ class Console
         return $data['default'];
     }
 
-    public static function run($commands, $toDevNull = false)
+    public static function run($commands, $toDevNull = false, $toBackground = false)
     {
         $commandString = 'cd ' . MODULE_DIR;
 
@@ -196,10 +196,20 @@ class Console
             $commandString .= ' > /dev/null 2>&1';
         }
 
+        if ($toBackground) {
+            $commandString .= ' &';
+        }
+
         if (Core_Request::isCli()) {
             fwrite(STDOUT, Console::getText($commandString, Console::C_GREEN_B) . "\n");
         };
 
+        ob_start();
         passthru($commandString);
+
+        $var = ob_get_contents();
+        ob_end_clean();
+
+        return $var;
     }
 }

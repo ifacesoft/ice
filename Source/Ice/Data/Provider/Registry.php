@@ -11,6 +11,7 @@ namespace Ice\Data\Provider;
 
 use ArrayObject;
 use Ice\Core\Data_Provider;
+use Ice\Core\Debuger;
 use Ice\Core\Exception;
 
 /**
@@ -29,6 +30,8 @@ class Registry extends Data_Provider
 {
     const DEFAULT_DATA_PROVIDER_KEY = 'Ice:Registry/default';
     const DEFAULT_KEY = 'instance';
+
+    private static $count = [];
 
     /**
      * Return default data provider key
@@ -155,15 +158,22 @@ class Registry extends Data_Provider
 
         $keyPrefix = $this->getKeyPrefix();
 
+//        if (!isset(Registry::$count[$keyPrefix])) {
+//            Registry::$count[$keyPrefix] = 0;
+//        }
+
         if (!isset($this->getConnection()->$keyPrefix)) {
             $this->getConnection()->$keyPrefix = [$key => $value];
+//            Registry::$count[$keyPrefix]++;
+//            Debuger::dump($keyPrefix . ': ' . Registry::$count[$keyPrefix]);
             return $value;
         }
 
         $data = $this->getConnection()->$keyPrefix;
         $data[$key] = $value;
         $this->getConnection()->$keyPrefix = $data;
-
+//        Registry::$count[$keyPrefix]++;
+//        Debuger::dump($keyPrefix . ': ' . Registry::$count[$keyPrefix]);
         return $value;
     }
 

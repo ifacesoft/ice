@@ -43,7 +43,7 @@ class Crud extends Action
      *          ]
      *      ],
      *      'output' => ['Ice:Resource/Ice\Action\Index'],
-     *      'ttl' => 3600,
+     *      'cache' => ['ttl' => -1, 'count' => 1000],
      *      'roles' => []
      *  ];
      * ```
@@ -71,7 +71,8 @@ class Crud extends Action
 //                'reRenderClosest' => ['default' => 'Ice:Data_Model'],
 //                'reRenderActionNames' => ['default' => []],
 //                'grouping' => ['default' => 0],
-            ]
+            ],
+            'cache' => ['ttl' => -1, 'count' => 1000],
         ];
     }
 
@@ -94,7 +95,6 @@ class Crud extends Action
         $modelClass::createQueryBuilder()
             ->attachWidget('tableData', $tableData)
             ->attachWidget('paginationMenu', $paginationMenu)
-            ->paginationWidget('paginationMenu', $input['page'], $input['limit'])
             ->getSelectQuery('*')
             ->getQueryResult();
 

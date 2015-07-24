@@ -18,7 +18,7 @@ class Test extends Model
     protected static function config()
     {
         return [
-		    'dataSourceKey' => 'Ice\Data\Source\Mysqli/default.www',
+		    'dataSourceKey' => 'Ice\Data\Source\Mysqli/default.test',
 		    'scheme' => [
 		        'tableName' => 'ice_test',
 		        'engine' => 'InnoDB',
@@ -37,7 +37,7 @@ class Test extends Model
 		                'default' => null,
 		                'comment' => '',
 		            ],
-		            'fieldName' => 'ice_test_pk',
+		            'fieldName' => 'test_pk',
 		            'Ice\Core\Widget_Form' => 'Number',
 		            'Ice\Core\Validator' => [],
 		            'Ice\Core\Widget_Data' => 'text',
@@ -95,7 +95,7 @@ class Test extends Model
 		        'manyToOne' => [],
 		        'manyToMany' => [],
 		    ],
-		    'revision' => '05041414_8st',
+		    'revision' => '05151619_tgn',
 		];
     }
 }

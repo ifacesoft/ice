@@ -12,6 +12,7 @@ namespace Ice\Helper;
 use FilesystemIterator;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
+use Ice\Core\Logger as Core_Logger;
 
 /**
  * Class Directory
@@ -34,12 +35,14 @@ class Directory
      * @param $source
      * @param $dest
      *
+     * @param int $chmod
+     * @throws \Ice\Core\Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 1.0
      * @since   0.0
      */
-    public static function copy($source, $dest)
+    public static function copy($source, $dest, $chmod = 0777)
     {
         /** @var RecursiveDirectoryIterator $iterator */
         $iterator = new RecursiveIteratorIterator(
@@ -53,11 +56,22 @@ class Directory
             if ($item->isDir()) {
                 Directory::get($path);
             } else {
+                if (!is_writable(dirname($path))) {
+                    Core_Logger::getInstance(__CLASS__)->exception(
+                        [
+                            'Copy directory {$0} failed. Permissions is wrong ({$1})',
+                            [$path, substr(sprintf('%o', fileperms(dirname($path))), -4)]
+                        ],
+                        __FILE__,
+                        __LINE__
+                    );
+                }
+
                 copy($item, $path);
 
                 if (function_exists('posix_getuid') && posix_getuid() == fileowner($path)) {
-                    chmod($path, 0664);
-                    chgrp($path, filegroup(dirname($path)));
+                    chmod($path, $chmod);
+//                    chgrp($path, filegroup(dirname($path)));
                 }
             }
         }
@@ -67,14 +81,14 @@ class Directory
      * Recursively create directory
      *
      * @param  $path
+     * @param int $chmod
      * @return string
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 1.0
      * @since   0.0
      */
-    public static function get($path)
+    public static function get($path, $chmod = 0777)
     {
         if (file_exists($path)) {
             return realpath($path) . DIRECTORY_SEPARATOR;
@@ -82,11 +96,23 @@ class Directory
 
         $dir = Directory::get(dirname($path));
 
-        mkdir($path);
+        if (!is_writable($dir)) {
+            Core_Logger::getInstance(__CLASS__)->exception(
+                [
+                    'Make directory {$0} failed. Permissions is wrong ({$1})',
+                    [$path, substr(sprintf('%o', fileperms($dir)), -4)]
+                ],
+                __FILE__,
+                __LINE__
+            );
+        }
+
+        $old = umask(0);
+        mkdir($path, $chmod);
+        umask($old);
 
         if (function_exists('posix_getuid') && posix_getuid() == fileowner($path)) {
-            chmod($path, 0775);
-            chgrp($path, filegroup($dir));
+//            chgrp($path, filegroup($dir));
         }
 
         return realpath($path) . DIRECTORY_SEPARATOR;
@@ -105,7 +131,7 @@ class Directory
     public static function remove($dirPath)
     {
         if (!file_exists($dirPath)) {
-            return;
+            return $dirPath;
         }
 
         $iterator = new RecursiveIteratorIterator(
@@ -118,5 +144,12 @@ class Directory
         }
 
         rmdir($dirPath);
+
+        return $dirPath;
+    }
+
+    public static function getFileNames($path)
+    {
+        return array_diff(scandir($path), ['..', '.']);
     }
 }

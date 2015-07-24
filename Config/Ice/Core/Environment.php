@@ -35,12 +35,18 @@ return [
             'Ice\Core\Bootstrap' => [
                 'instance' => 'Ice:Registry/bootstrap',
             ],
+            'Ice\Core\Security' => [
+                'instance' => 'Ice:Registry/security',
+            ],
             'Ice\Core\Loader' => [
                 'loader' => 'Ice:Registry/loader',
             ],
             'Ice\Core\Action' => [
                 'instance' => 'Ice:Repository/action',
                 'cache' => 'Ice:Repository/action'
+            ],
+            'Ice\Core\Router' => [
+                'instance' => 'Ice:Registry/router',
             ],
             'Ice\Core\Route' => [
                 'instance' => 'Ice:Repository/route',
@@ -77,6 +83,9 @@ return [
             ],
             'Ice\Core\Query_Translator' => [
                 'instance' => 'Ice:Repository/query_translator',
+            ],
+            'Ice\Core\Query_Scope' => [
+                'instance' => 'Ice:Repository/query_scope',
             ],
             'Ice\Core\Query' => [
                 'instance' => 'Ice:Repository/query',
@@ -165,6 +174,9 @@ return [
             'Ice\Core\Query_Translator' => [
                 'instance' => 'Ice:File/query_translator',
             ],
+            'Ice\Core\Query_Scope' => [
+                'instance' => 'Ice:File/query_scope',
+            ],
             'Ice\Core\Query' => [
                 'instance' => 'Ice:File/query',
                 'sql' => 'Ice:File/query',
@@ -251,6 +263,9 @@ return [
             ],
             'Ice\Core\Query_Translator' => [
                 'instance' => 'Ice:Registry/query_translator',
+            ],
+            'Ice\Core\Query_Scope' => [
+                'instance' => 'Ice:Registry/query_scope',
             ],
             'Ice\Core\Query' => [
                 'instance' => 'Ice:Registry/query',

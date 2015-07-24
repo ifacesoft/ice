@@ -23,7 +23,7 @@
     }
   ],
   "config": {
-    "vendor-dir": "../_vendor"
+    "vendor-dir": "Var/vendor"
   },
   "autoload": {
     "psr-4": {"Ice\\": "Source/Ice/"},

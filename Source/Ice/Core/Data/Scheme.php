@@ -74,7 +74,7 @@ class Data_Scheme
     /**
      * Return tables
      *
-     * @param  Module $module
+     * @param  Module $module1
      * @return array
      * @author dp <denis.a.shestakov@gmail.com>
      *
@@ -88,6 +88,8 @@ class Data_Scheme
         }
 
         self::$tables = [];
+
+        $moduleDefaultDataSourceKeys = Module::getInstance()->getDefaultDataSourceKeys();
 
         foreach(Module::getAll() as $module) {
             $sourceDir = $module->get(Module::SOURCE_DIR);
@@ -115,7 +117,7 @@ class Data_Scheme
                 $dataSourceKey = $config['dataSourceKey'];
 
                 if ($module->getName() != $module1->getName()) {
-                    $dataSourceName = strstr('dataSourceKey', '/', true);
+                    $dataSourceName = strstr($dataSourceKey, '/', true);
 
                     if (isset($moduleDefaultDataSourceKeys[$dataSourceName])) {
                         $dataSourceKey = $moduleDefaultDataSourceKeys[$dataSourceName];

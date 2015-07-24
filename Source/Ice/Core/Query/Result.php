@@ -112,16 +112,16 @@ class Query_Result implements Cacheable
     /**
      * Return query result cacher
      *
+     * @param string $index
      * @return Cacher
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.5
+     * @version 1.0
      * @since   0.5
      */
-    public static function getCacher()
+    public static function getCacher($index = 'default')
     {
-        return Cacher::getInstance(__CLASS__);
+        return Cacher::getInstance(__CLASS__, $index);
     }
 
     /**

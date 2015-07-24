@@ -38,7 +38,7 @@ class Resource_Css extends Action
                 'resources' => ['default' => []],
                 'context' => ['default' => '/resource/'],
             ],
-            'ttl' => 3600
+            'cache' => ['ttl' => 3600, 'count' => 1000],
         ];
     }
 
@@ -152,8 +152,10 @@ class Resource_Css extends Action
         foreach ($handlers as $filePath => $handler) {
             fclose($handler);
 
-//            chmod($filePath, 0664);
-//            chgrp($filePath, filegroup(dirname($filePath)));
+            if (function_exists('posix_getuid') && posix_getuid() == fileowner($filePath)) {
+                chmod($filePath, 0666);
+                chgrp($filePath, filegroup(dirname($filePath)));
+            }
         }
     }
 }

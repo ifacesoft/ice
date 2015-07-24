@@ -51,7 +51,7 @@ class Deploy extends Action
      *          ]
      *      ],
      *      'output' => ['Ice:Resource/Ice\Action\Index'],
-     *      'ttl' => 3600,
+     *      'cache' => ['ttl' => -1, 'count' => 1000],
      *      'roles' => []
      *  ];
      * ```
@@ -73,7 +73,8 @@ class Deploy extends Action
                 'Ice:Orm_Migrate',
 //                'Ice:Cache_Hit',
                 'Ice:Resource',
-            ]
+            ],
+            'cache' => ['ttl' => -1, 'count' => 1000],
         ];
     }
 

@@ -10,6 +10,7 @@
 namespace Ice\Action;
 
 use Ice\Core\Action;
+use Ice\Core\Container;
 use Ice\Core\Environment;
 use Ice\Core\Logger;
 
@@ -56,7 +57,7 @@ class Cache_Clear extends Action
      *          ]
      *      ],
      *      'output' => ['Ice:Resource/Ice\Action\Index'],
-     *      'ttl' => 3600,
+     *      'cache' => ['ttl' => -1, 'count' => 1000],
      *      'roles' => []
      *  ];
      * ```
@@ -71,7 +72,8 @@ class Cache_Clear extends Action
     protected static function config()
     {
         return [
-            'view' => ['template' => '']
+            'view' => ['template' => ''],
+            'cache' => ['ttl' => -1, 'count' => 1000],
         ];
     }
 
@@ -90,6 +92,10 @@ class Cache_Clear extends Action
     {
         $logger = Cache_Clear::getLogger();
 
+        /**
+         * @var Container $class
+         * @var  $dataProviderKeys
+         */
         foreach (Environment::getInstance()->gets('dataProviderKeys') as $class => $dataProviderKeys) {
             foreach ($dataProviderKeys as $key => $dataProviderKey) {
                 $class::getDataProvider($key)->flushAll();

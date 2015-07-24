@@ -9,6 +9,8 @@
 
 namespace Ice\Helper;
 
+use Ice\Core\Logger as Core_Logger;
+
 /**
  * Class Json
  *
@@ -51,13 +53,7 @@ class Json
             case JSON_ERROR_CTRL_CHAR:
                 throw new \Exception('JSON - Некорректный управляющий символ', print_r($json, true));
             case JSON_ERROR_SYNTAX:
-                throw new \Exception(
-                    'JSON - Синтаксическая ошибка, не корректный JSON',
-                    print_r(
-                        $json,
-                        true
-                    )
-                );
+                throw new \Exception('JSON - Синтаксическая ошибка, не корректный JSON', print_r($json, true));
             case JSON_ERROR_UTF8:
                 throw new \Exception('JSON - Некорректные символы UTF-8, возможно неверная кодировка', print_r($json, true));
             default:
@@ -69,9 +65,9 @@ class Json
      * Encode data to json string
      *
      * @param  mixed $data
-     * @param  int $options
+     * @param int $options
      * @return string
-     *
+     * @throws \Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
@@ -79,6 +75,16 @@ class Json
      */
     public static function encode($data, $options = JSON_UNESCAPED_UNICODE)
     {
-        return json_encode($data, $options);
+        $json = json_encode($data, $options);
+
+        $error = json_last_error();
+
+        if (!$error) {
+            return $json;
+        }
+
+        Core_Logger::getInstance(__CLASS__)
+            ->exception('#' . $error . ': ' . json_last_error_msg(), __FILE__, __LINE__, null, print_r($data, true));
+        return null;
     }
 }

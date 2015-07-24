@@ -1,5 +1,5 @@
 <tr>
-    <td rowspan="<?= ceil(count($columns) / $columnCount) ?>"><?= $id ?></td>
+    <?php if ($isShowCount) : ?><td rowspan="<?= ceil(count($columns) / $columnCount) ?>"><?= $id ?></td><?php endif; ?>
     <?php
     $count = 0;
     foreach ($columns as $columnName => $column) :

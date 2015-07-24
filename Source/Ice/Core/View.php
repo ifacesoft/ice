@@ -12,6 +12,8 @@ namespace Ice\Core;
 use Ice\Core;
 use Ice\Data\Provider\Cacher;
 use Ice\Helper\Emmet;
+use Ice\Helper\Hash;
+use Ice\Helper\Json;
 
 /**
  * Class View
@@ -95,26 +97,28 @@ class View implements Cacheable
     {
         $view = new View();
 
-        $view->actionClass = $actionClass;
-        $view->result['actionName'] = $actionClass::getClassName();
+        if ($actionClass) {
+            $view->actionClass = $actionClass;
+            $view->result['actionName'] = $actionClass::getClassName();
+        }
 
         return $view;
     }
-
-    /**
-     * Return view cacher
-     *
-     * @return Cacher
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since   0.5
-     */
-    public static function getCacher()
-    {
-        return Cacher::getInstance(__CLASS__);
-    }
+//
+//    /**
+//     * Return view cacher
+//     *
+//     * @return Cacher
+//     *
+//     * @author dp <denis.a.shestakov@gmail.com>
+//     *
+//     * @version 0.5
+//     * @since   0.5
+//     */
+//    public static function getCacher()
+//    {
+//        return Cacher::getInstance(__CLASS__);
+//    }
 
 //    /**
 //     * Magic render view
@@ -191,9 +195,31 @@ class View implements Cacheable
         array_unshift(View_Render::$templates, $this->template);
 
         try {
-            $this->result['content'] = $viewRenderClass::getInstance()->fetch(
-                $this->template,
-                $this->result['data']
+            $cacher = View::getCacher($this->template);
+            $key = crc32(Json::encode($this->result['data']));
+
+//            if ($this->result['content'] = $cacher->get($key)) {
+//
+//                Profiler::setPoint(
+//                    $this->template . ' (' . $viewRenderClass::getClassName() . ')',
+//                    $startTime,
+//                    $startMemory
+//                );
+//
+//                Logger::fb(
+//                    Profiler::getReport($this->template . ' (' . $viewRenderClass::getClassName() . ')'),
+//                    'view (cache)',
+//                    'LOG'
+//                );
+//
+//
+//                array_shift(View_Render::$templates);
+//                return;
+//            }
+
+            $this->result['content'] = $cacher->set(
+                $key,
+                $viewRenderClass::getInstance()->fetch($this->template, $this->result['data'])
             );
 
             //            if  (isset($this->_result['data']['data'])) {
@@ -220,12 +246,14 @@ class View implements Cacheable
 
             Logger::fb(
                 Profiler::getReport($this->template . ' (' . $viewRenderClass::getClassName() . ')'),
-                'view',
+                'view (new)',
                 'INFO'
             );
 
             array_shift(View_Render::$templates);
         } catch (\Exception $e) {
+            echo ($e->getMessage());
+
             $this->result['content'] = $this->getLogger()->error(
                 ['Fetch template "{$0}" failed', $this->template],
                 __FILE__,
@@ -316,6 +344,15 @@ class View implements Cacheable
 
     public function __toString()
     {
-        return $this->getContent();
+        try {
+            return $this->getContent();
+        } catch (\Exception $e) {
+            return $e->getMessage() . ' (' . $e->getFile() . ':' . $e->getLine() . ')';
+        }
+    }
+
+    public function setContent($content)
+    {
+        $this->result['content'] = $content;
     }
 }

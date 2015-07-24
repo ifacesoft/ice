@@ -54,7 +54,7 @@ abstract class Layout extends Action
      *          ]
      *      ],
      *      'output' => ['Ice:Resource/Ice\Action\Index'],
-     *      'ttl' => 3600,
+     *      'cache' => ['ttl' => -1, 'count' => 1000],
      *      'roles' => []
      *  ];
      * ```
@@ -69,7 +69,9 @@ abstract class Layout extends Action
     protected static function config()
     {
         return [
-            'view' => ['viewRenderClass' => 'Ice:Php', 'layout' => '']
+            'view' => ['viewRenderClass' => 'Ice:Php', 'layout' => ''],
+            'cache' => ['ttl' => -1, 'count' => 1000],
+            'access' => ['roles' => [], 'request' => null, 'env' => null]
         ];
     }
 

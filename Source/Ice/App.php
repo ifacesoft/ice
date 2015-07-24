@@ -4,15 +4,14 @@ namespace Ice;
 
 use Composer\Config;
 use Composer\Script\Event;
-use Ice\Action\Check;
-use Ice\Action\Http_Status;
 use Ice\Action\Install;
 use Ice\Action\Layout_Main;
+use Ice\Action\Upgrade;
 use Ice\Core\Action;
 use Ice\Core\Action_Context;
-use Ice\Core\Debuger;
 use Ice\Core\Environment;
 use Ice\Core\Logger;
+use Ice\Core\Module;
 use Ice\Core\Profiler;
 use Ice\Core\Request;
 use Ice\Core\Response;
@@ -90,18 +89,26 @@ class App
             $input = Cli::getInstance()->get();
             $actionClass = $input['actionClass'];
             unset($input['actionClass']);
-        } elseif (Request::isAjax()) {
-            $input = Data_Provider_Request::getInstance()->get();
-            $actionClass = $input['call'];
-            unset($input['actionClass']);
-        } else {
-            $router = Router::getInstance();
-            $routeRequest = Route::getInstance($router->get('routeName'))->gets('request/' . $router->get('method'));
-            list($actionClass, $input) = each($routeRequest);
-            $actionClass = Action::getClass($actionClass);
+
+            return [Action::getClass($actionClass), $input];
         }
 
-        return [$actionClass, $input];
+        if (Request::isAjax()) {
+            $input = Data_Provider_Request::getInstance()->get();
+
+            if (!empty($input['call'])) {
+                $actionClass = $input['call'];
+                unset($input['call']);
+
+                return [Action::getClass($actionClass), $input];
+            }
+        }
+
+        $router = Router::getInstance();
+        $routeRequest = Route::getInstance($router->get('routeName'))->gets('request/' . $router->get('method'));
+        list($actionClass, $input) = each($routeRequest);
+
+        return [Action::getClass($actionClass), $input];
     }
 
     /**
@@ -144,23 +151,15 @@ class App
 
     public static function update(Event $event)
     {
-        $composer = $event->getComposer();
-
-        /** @var Config $composerConfig */
-        $composerConfig = $composer->getConfig();
+//        $composer = $event->getComposer();
+//
+//        /** @var Config $composerConfig */
+//        $composerConfig = $composer->getConfig();
 
         define('ICE_DIR', dirname(dirname(__DIR__)) . '/');
+        define('VENDOR_DIR', dirname(dirname(ICE_DIR)) . '/');
         define('MODULE_DIR', getcwd() . '/');
 
-        App::check();
-
-        require_once ICE_DIR . 'bootstrap.php';
-
-        Check::call();
-    }
-
-    private static function check()
-    {
         $moduleConfigFilePath = MODULE_DIR . 'Config/Ice/Core/Module.php';
         $configFilePath = MODULE_DIR . 'Config/Ice/Core/Config.php';
         $environmentConfigFilePath = MODULE_DIR . 'Config/Ice/Core/Environment.php';
@@ -170,27 +169,14 @@ class App
             file_exists($configFilePath) &&
             file_exists($environmentConfigFilePath)
         ) {
+            require_once ICE_DIR . 'bootstrap.php';
+
+            echo Upgrade::call()->getContent();
+
             return;
         }
 
-        $moduleConfig = [
-            'alias' => 'Draft',
-            'module' => [
-                'configDir' => 'Config/',
-                'sourceDir' => 'Source/',
-                'resourceDir' => 'Resource/',
-                'logDir' => '../_log/',
-                'cacheDir' => '../_cache/',
-                'uploadDir' => '../_upload/',
-                'compiledResourceDir' => '../_resource/',
-                'downloadDir' => '../_resource/download/',
-            ],
-            'modules' => [
-                'ifacesoft/ice' => '/ice'
-            ]
-        ];
-
-        File::createData($moduleConfigFilePath, $moduleConfig);
+        File::createData($moduleConfigFilePath, Module::$defaultConfig);
 
         require_once ICE_DIR . 'bootstrap.php';
 

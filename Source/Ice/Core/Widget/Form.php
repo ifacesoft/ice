@@ -10,7 +10,10 @@
 namespace Ice\Core;
 
 use Ice\Core;
-use Ice\Helper\Arrays;
+use Ice\Helper\Directory;
+use Ice\Helper\Emmet;
+use Ice\Helper\Json;
+use Ice\View\Render\Php;
 use Ice\Widget\Form\Model as Widget_Form_Model;
 
 /**
@@ -27,9 +30,6 @@ use Ice\Widget\Form\Model as Widget_Form_Model;
  */
 abstract class Widget_Form extends Widget
 {
-    const SUBMIT_EVENT_ONCHANGE = 'onchange';
-    const SUBMIT_EVENT_ONSUBMIT = 'onsubmit';
-
     const FIELD_HIDDEN = 'Hidden';
     const FIELD_TEXT = 'Text';
     const FIELD_DATE = 'Date';
@@ -42,18 +42,6 @@ abstract class Widget_Form extends Widget
     const NAME_SIMPLE = 'Simple';
 
     /**
-     * Fields - form parts
-     *
-     * @var array
-     */
-    protected $fields = [];
-    /**
-     * Not ignored fields
-     *
-     * @var array
-     */
-    protected $filterFields = [];
-    /**
      * Validate scheme for validate fields
      *
      * @var array
@@ -63,11 +51,14 @@ abstract class Widget_Form extends Widget
     /**
      * Default field options
      */
-    private $defaultOptions = [
-        'placeholder' => 'Enter value...',
+    protected $defaultOptions = [
         'disabled' => false,
-        'readonly' => false
+        'readonly' => false,
+        'required' => false,
+        'autofocus' => false
     ];
+
+    protected $onsubmit = null;
 
     public static function schemeColumnPlugin($columnName, $table)
     {
@@ -81,33 +72,6 @@ abstract class Widget_Form extends Widget
         return 'Ice:Simple';
     }
 
-    //    /**
-    //     * Bind value
-    //     *
-    //     * @param $key
-    //     * @param null $value
-    //     * @return Widget_Form
-    //     *
-    //     * @author dp <denis.a.shestakov@gmail.com>
-    //     *
-    //     * @version 0.6
-    //     * @since 0.0
-    //     */
-    //    public function bind($key, $value = null)
-    //    {
-    //        if (is_array($key)) {
-    //            foreach ($key as $v => $k) {
-    //                $this->bind($v, $k);
-    //            }
-    //
-    //            return $this;
-    //        }
-    //
-    //        $this->addValue($key, $value);
-    //
-    //        return $this;
-    //    }
-
     protected static function getDefaultKey()
     {
         return 'default';
@@ -116,27 +80,26 @@ abstract class Widget_Form extends Widget
     /**
      * Add hidden type field
      *
-     * @param  $fieldName
-     * @param  $fieldTitle
+     * @param $fieldName
+     * @param $fieldTitle
      * @param  array $options
      * @param  string $template
      * @return Widget_Form
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
      * @since   0.0
      */
-    public function hidden($fieldName, $fieldTitle, array $options = [], $template = 'Hidden')
+    public function hidden($fieldName, $fieldTitle = 'hidden', array $options = [], $template = 'Ice\Core\Widget_Form_Hidden')
     {
-        return $this->addField($fieldName, $fieldTitle, $options, $template);
+        return $this->addPart($fieldName, $fieldTitle, $options, $template);
     }
 
     /**
      * Add field as form part
      *
-     * @param  $fieldName
-     * @param  $fieldTitle
+     * @param  $partName
+     * @param  $partTitle
      * @param  array $options
      * @param  $template
      * @return Widget_Form
@@ -146,20 +109,15 @@ abstract class Widget_Form extends Widget
      * @version 0.6
      * @since   0.0
      */
-    private function addField($fieldName, $fieldTitle, array $options, $template)
+    protected function addPart($partName, $partTitle, array $options, $template)
     {
         if (!empty($options['validators'])) {
-            $this->validateScheme[$fieldName] = $options['validators'];
+            $this->validateScheme[$partName] = $options['validators'];
             unset($options['validators']);
         }
 
-        $this->fields[$fieldName] = [
-            'title' => $fieldTitle,
-            'options' => Arrays::defaults($this->defaultOptions, $options),
-            'template' => $template
-        ];
 
-        return $this;
+        return parent::addPart($partName, $partTitle, $options, $template);
     }
 
     /**
@@ -176,9 +134,9 @@ abstract class Widget_Form extends Widget
      * @version 0.6
      * @since   0.1
      */
-    public function password($fieldName, $fieldTitle, array $options = [], $template = 'Password')
+    public function password($fieldName, $fieldTitle, array $options = [], $template = 'Ice\Core\Widget_Form_Password')
     {
-        return $this->addField($fieldName, $fieldTitle, $options, $template);
+        return $this->addPart($fieldName, $fieldTitle, $options, $template);
     }
 
     /**
@@ -195,9 +153,9 @@ abstract class Widget_Form extends Widget
      * @version 0.6
      * @since   0.0
      */
-    public function number($fieldName, $fieldTitle, array $options = [], $template = 'Number')
+    public function number($fieldName, $fieldTitle, array $options = [], $template = 'Ice\Core\Widget_Form_Number')
     {
-        return $this->addField($fieldName, $fieldTitle, $options, $template);
+        return $this->addPart($fieldName, $fieldTitle, $options, $template);
     }
 
     /**
@@ -214,9 +172,9 @@ abstract class Widget_Form extends Widget
      * @version 0.6
      * @since   0.0
      */
-    public function text($fieldName, $fieldTitle, array $options = [], $template = 'Text')
+    public function text($fieldName, $fieldTitle, array $options = [], $template = 'Ice\Core\Widget_Form_Text')
     {
-        return $this->addField($fieldName, $fieldTitle, $options, $template);
+        return $this->addPart($fieldName, $fieldTitle, $options, $template);
     }
 
     /**
@@ -233,9 +191,9 @@ abstract class Widget_Form extends Widget
      * @version 0.6
      * @since   0.0
      */
-    public function date($fieldName, $fieldTitle, array $options = [], $template = 'Date')
+    public function date($fieldName, $fieldTitle, array $options = [], $template = 'Ice\Core\Widget_Form_Date')
     {
-        return $this->addField($fieldName, $fieldTitle, $options, $template);
+        return $this->addPart($fieldName, $fieldTitle, $options, $template);
     }
 
     /**
@@ -252,9 +210,28 @@ abstract class Widget_Form extends Widget
      * @version 0.6
      * @since   0.0
      */
-    public function checkbox($fieldName, $fieldTitle, array $options = [], $template = 'Checkbox')
+    public function checkbox($fieldName, $fieldTitle, array $options = [], $template = 'Ice\Core\Widget_Form_Checkbox')
     {
-        return $this->addField($fieldName, $fieldTitle, $options, $template);
+        return $this->addPart($fieldName, $fieldTitle, $options, $template);
+    }
+
+    /**
+     * Add radio button type field
+     *
+     * @param  $fieldName
+     * @param  $fieldTitle
+     * @param  array $options
+     * @param  string $template
+     * @return Widget_Form
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 1.0
+     * @since   0.0
+     */
+    public function radio($fieldName, $fieldTitle, array $options = [], $template = 'Ice\Core\Widget_Form_Radio')
+    {
+        return $this->addPart($fieldName, $fieldTitle, $options, $template);
     }
 
     /**
@@ -271,9 +248,9 @@ abstract class Widget_Form extends Widget
      * @version 0.6
      * @since   0.0
      */
-    public function combobox($fieldName, $fieldTitle, array $options = [], $template = 'Combobox')
+    public function combobox($fieldName, $fieldTitle, array $options = [], $template = 'Ice\Core\Widget_Form_Combobox')
     {
-        return $this->addField($fieldName, $fieldTitle, $options, $template);
+        return $this->addPart($fieldName, $fieldTitle, $options, $template);
     }
 
     /**
@@ -290,9 +267,9 @@ abstract class Widget_Form extends Widget
      * @version 0.6
      * @since   0.0
      */
-    public function geo($fieldName, $fieldTitle, array $options = [], $template = 'Geo')
+    public function geo($fieldName, $fieldTitle, array $options = [], $template = 'Ice\Core\Widget_Form_Geo')
     {
-        return $this->addField($fieldName, $fieldTitle, $options, $template);
+        return $this->addPart($fieldName, $fieldTitle, $options, $template);
     }
 
     /**
@@ -309,9 +286,14 @@ abstract class Widget_Form extends Widget
      * @version 0.6
      * @since   0.0
      */
-    public function textarea($fieldName, $fieldTitle, array $options = [], $template = 'Textarea')
+    public function textarea($fieldName, $fieldTitle, array $options = [], $template = 'Ice\Core\Widget_Form_Textarea')
     {
-        return $this->addField($fieldName, $fieldTitle, $options, $template);
+        return $this->addPart($fieldName, $fieldTitle, $options, $template);
+    }
+
+    public function file($fieldName, $fieldTitle, array $options = [], $template = 'Ice\Core\Widget_Form_File')
+    {
+        return $this->addPart($fieldName, $fieldTitle, $options, $template);
     }
 
     /**
@@ -321,33 +303,12 @@ abstract class Widget_Form extends Widget
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 1.0
      * @since   0.0
      */
     public function validate()
     {
-        $var = $this->getFilterFields();
-
-        $validateScheme = empty($var)
-            ? $this->getValidateScheme()
-            : array_intersect_key($this->getValidateScheme(), array_flip($var));
-
-        return Validator::validateByScheme($this->getValues(), $validateScheme);
-    }
-
-    /**
-     * Return not ignored form fields
-     *
-     * @return array
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since   0.0
-     */
-    public function getFilterFields()
-    {
-        return $this->filterFields;
+        return Validator::validateByScheme($this->getValues(), $this->getValidateScheme());
     }
 
     /**
@@ -357,107 +318,69 @@ abstract class Widget_Form extends Widget
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 1.0
      * @since   0.0
      */
     public function getValidateScheme()
     {
-        return $this->validateScheme;
+        $filterParts = $this->getFilterParts();
+
+        return empty($filterParts)
+            ? $this->validateScheme
+            : array_intersect_key($this->validateScheme, array_flip($filterParts));
     }
 
-    /**
-     * @param null $name
-     * @return null|string
-     */
-    public function getValues($name = null)
+    public function setQueryResult(Query_Result $queryResult)
     {
-        $var = $this->getFilterFields();
+    }
 
-        return empty($var)
-            ? parent::getValues($name)
-            : array_intersect_key(parent::getValues($name), array_flip($var));
+    public static function create($url, $action, $block = null, array $data = [])
+    {
+        $form = parent::create($url, $action, $block, $data);
+
+        /** @var Widget_Form $formClass */
+        $formClass = get_class($form);
+
+        $uploadTempDir = Module::getInstance()->get(Module::UPLOAD_TEMP_DIR) . '/' . $formClass::getClassName();
+
+        foreach (array_keys($form->getParts()) as $key) {
+            if (isset($params[$key])) {
+                continue;
+            }
+
+            $path = implode('/', [$uploadTempDir, $key, $form->getToken()]);
+
+            if (file_exists($path)) {
+                $form->addValue($key, Directory::getFileNames($path));
+            }
+        }
+
+        return $form;
     }
 
     /**
-     * Add accepted fields
+     *  protected static function config()
+     *  {
+     *      return [
+     *          'view' => ['template' => null, 'viewRenderClass' => null, 'layout' => null],
+     *          'input' => ['author' => 'request'],
+     *          'access' => ['roles' => [], 'request' => null, 'env' => null]
+     *      ];
+     *  }
      *
-     * @param  array $filterFields
+     * @param Query_Builder $queryBuilder
+     */
+    public function queryBuilderPart(Query_Builder $queryBuilder)
+    {
+    }
+
+    /**
+     * @param string $onsubmit
      * @return Widget_Form
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since   0.0
      */
-    public function addFilterFields(array $filterFields)
+    public function setOnsubmit($onsubmit)
     {
-        if (empty($filterFields)) {
-            return $this;
-        }
-
-        $this->filterFields = array_merge($this->filterFields, $filterFields);
+        $this->onsubmit = $onsubmit;
         return $this;
-    }
-
-    /**
-     * Submit form
-     *
-     * @author anonymous <email>
-     *
-     * @version 0
-     * @since   0
-     */
-    abstract public function submit();
-
-    public function setInput($params)
-    {
-        foreach ($this->getFields() as $fieldName => $field) {
-            if ($param = strstr($params[$fieldName], '/' . Query_Builder::SQL_ORDERING_ASC, false) !== false) {
-                $this->addValue($fieldName, $param);
-                continue;
-            }
-
-            if ($param = strstr($params[$fieldName], '/' . Query_Builder::SQL_ORDERING_DESC, false) !== false) {
-                $this->addValue($fieldName, $param);
-                continue;
-            }
-
-            if (empty($params[$fieldName]) && isset($field['options']['default'])) {
-                $this->addValue($fieldName, $field['options']['default']);
-                continue;
-            }
-
-            $this->addValue($fieldName, isset($params[$fieldName]) ? $params[$fieldName] : null);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Return fields - form parts
-     *
-     * @return array
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since   0.0
-     */
-    public function getFields()
-    {
-        return $this->fields;
-    }
-
-    public function bind($key, $value)
-    {
-        if (isset($this->fields[$key])) {
-            if (empty($value) && isset($this->fields[$key]['options']['default'])) {
-                $value = $this->fields[$key]['options']['default'];
-            }
-
-            $this->addValue($key, $value);
-        }
-
-        return $value;
     }
 }

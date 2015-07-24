@@ -31,8 +31,8 @@
     </div>
 </div>
 <div
-    style="background-color: #6f5499; background-image: linear-gradient(to bottom, #563d7c 0px, #6f5499 100%); height: 30px;">
-    <div class="container" style="padding-top: 5px;">
+    style="background-color: #6f5499; background-image: linear-gradient(to bottom, #563d7c 0px, #6f5499 100%)">
+    <div class="container" style="padding: 5px;">
         <?php foreach ($flags as $flag) : ?>
             <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
                  class="flag flag-<?= $flag['country'] ?>" style="cursor: pointer;"

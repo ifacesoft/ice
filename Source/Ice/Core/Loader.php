@@ -13,6 +13,7 @@ use Composer\Autoload\ClassLoader;
 use Ice\Core;
 use Ice\Data\Provider\Repository;
 use Ice\Exception\FileNotFound;
+use Ice\Helper\Hash;
 use Ice\Helper\Object;
 
 /**
@@ -133,9 +134,16 @@ class Loader
         $fullStackPathes = [];
         $matchedPathes = [];
 
-        $modules = $isOnlyFirst
-            ? [Module::getInstance(Object::getModuleAlias($class))]
-            : Module::getAll();
+        if ($isOnlyFirst) {
+            try {
+                $modules = [Module::getInstance(Object::getModuleAlias($class))];
+            } catch (\Exception $e) {
+                $modules = [Module::getInstance()];
+            }
+
+        } else {
+            $modules = Module::getAll();
+        }
 
         foreach ($modules as $module) {
             $typePathes = $module->gets($path, false);

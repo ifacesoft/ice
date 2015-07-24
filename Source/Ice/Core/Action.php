@@ -11,16 +11,16 @@ namespace Ice\Core;
 
 use Ice\App;
 use Ice\Core;
-use Ice\Data\Provider\Cli as Data_Provider_Cli;
 use Ice\Data\Provider\File;
 use Ice\Data\Provider\Registry;
 use Ice\Data\Provider\Repository;
-use Ice\Data\Provider\Request as Data_Provider_Request;
-use Ice\Data\Provider\Router as Data_Provider_Router;
-use Ice\Data\Provider\Session as Data_Provider_Session;
+
 use Ice\Exception\Http_Bad_Request;
 use Ice\Exception\Http_Not_Found;
 use Ice\Exception\Redirect;
+use Ice\Exception\Security_AccessDenied;
+use Ice\Helper\Hash;
+use Ice\Helper\Input;
 use Ice\Helper\Json;
 use Ice\Helper\Php;
 use Ice\Helper\Validator as Helper_Validator;
@@ -149,10 +149,8 @@ abstract class Action implements Cacheable
             }
         }
 
-        //        $actionCacher = Action::getCacher();
-
-        if ($actionClass::getConfig()->get('ttl', false) == 3600) {
-            $actionCacher = File::getInstance($actionClass);
+        if ($actionClass::getConfig()->get('cache/ttl') != -1) {
+            $actionCacher = Action::getCacher($actionClass);
         }
 
         $inputString = Json::encode($input);
@@ -162,84 +160,84 @@ abstract class Action implements Cacheable
         App::getContext()->initAction($actionClass, $hash);
         $action = null;
 
-        if (isset($actionCacher)) {
-            /**
-             * @var Action $action
-             */
-            $action = $actionCacher->get($actionHash);
+        if (isset($actionCacher) && $action = $actionCacher->get($actionHash)) {
+            return $action->getView();
         }
-        if (!$action) {
-            $action = $actionClass::create();
 
-            $action->setInput($input);
+        $action = $actionClass::create();
 
-            $output = (array)$action->run($input);
+        $action->setInput($input);
 
-            Profiler::setPoint($actionClass . ' ' . $hash, $startTime, $startMemory);
-            Logger::fb($input, 'action - ' . $actionClass . ' start', 'INFO');
-            Logger::fb(Profiler::getReport($actionClass . ' ' . $hash), 'action finish', 'INFO');
-            //            if ($content = $actionContext->getContent()) {
-            //                App::getContext()->setContent(null);
-            //                return $content;
-            //            }
+        $output = (array)$action->run($input);
 
-            $startTimeAfter = Profiler::getMicrotime();
-            $startMemoryAfter = Profiler::getMemoryGetUsage();
+        Profiler::setPoint($actionClass . ' ' . $hash, $startTime, $startMemory);
+        Logger::fb($input, 'action - ' . $actionClass . ' start', 'INFO');
+        Logger::fb(Profiler::getReport($actionClass . ' ' . $hash), 'action finish', 'INFO');
+        //            if ($content = $actionContext->getContent()) {
+        //                App::getContext()->setContent(null);
+        //                return $content;
+        //            }
 
-            $rawActions = array_merge($action->actions, $actionClass::getConfig()->gets('actions', false));
+        $startTimeAfter = Profiler::getMicrotime();
+        $startMemoryAfter = Profiler::getMemoryGetUsage();
 
-            /**
-             * @var string $actionKey
-             * @var array $actionData
-             * @var Action $subActionClass
-             * @var array $subActionParams
-             */
-            foreach ($action->getActions($rawActions) as $actionKey => $actionData) {
-                $newLevel = $level + 1;
+        $rawActions = array_merge($action->actions, $actionClass::getConfig()->gets('actions', false));
 
-                foreach ($actionData as $subActionClass => $actionItem) {
-                    /**
-                     * @var Action $subActionClass
-                     */
-                    list($subActionClass, $subActionParams) = each($actionItem);
+        /**
+         * @var string $actionKey
+         * @var array $actionData
+         * @var Action $subActionClass
+         * @var array $subActionParams
+         */
+        foreach ($action->getActions($rawActions) as $actionKey => $actionData) {
+            $newLevel = $level + 1;
 
-                    $subView = null;
+            foreach ($actionData as $subActionClass => $actionItem) {
+                /**
+                 * @var Action $subActionClass
+                 */
+                list($subActionClass, $subActionParams) = each($actionItem);
 
-                    try {
-                        $subView = $subActionClass::call($subActionParams, $newLevel)->getContent();
-                    } catch (Redirect $e) {
-                        throw $e;
-                    } catch (Http_Bad_Request $e) {
-                        throw $e;
-                    } catch (Http_Not_Found $e) {
-                        throw $e;
-                    } catch (\Exception $e) {
-                        $subView = Action::getLogger()->error(
-                            ['Calling subAction "{$0}" in action "{$1}" failed', [$subActionClass, $actionClass]],
-                            __FILE__,
-                            __LINE__,
-                            $e
-                        );
-                    }
+                $subView = null;
 
-                    $output[$actionKey][] = $subView;
+                try {
+                    $subView = $subActionClass::call($subActionParams, $newLevel)->getContent();
+                } catch (Redirect $e) {
+                    throw $e;
+                } catch (Http_Bad_Request $e) {
+                    throw $e;
+                } catch (Http_Not_Found $e) {
+                    throw $e;
+                } catch (Security_AccessDenied $e) {
+                    $subView = $e->getMessage();
+                } catch (\Exception $e) {
+                    $subView = Action::getLogger()->error(
+                        ['Calling subAction "{$0}" in action "{$1}" failed', [$subActionClass, $actionClass]],
+                        __FILE__,
+                        __LINE__,
+                        $e
+                    );
                 }
-            }
 
-            Profiler::setPoint('Action ' . $actionClass . ' (childs)', $startTimeAfter, $startMemoryAfter);
-
-            $action->setOutput($output);
-
-            $action->getView()->render();
-            if (isset($actionCacher)) {
-                $actionCacher->set($actionHash, $action, $action->getTtl());
+                $output[$actionKey][] = $subView;
             }
-            if (Request::isCli()) {
-                Action::getLogger()->info(
-                    ['{$0}{$1} complete!', [str_repeat("\t", $level), $actionClass::getClassName()]],
-                    Logger::MESSAGE
-                );
-            }
+        }
+
+        Profiler::setPoint('Action ' . $actionClass . ' (childs)', $startTimeAfter, $startMemoryAfter);
+
+        $action->setOutput($output);
+
+        $action->getView()->render();
+
+        if (isset($actionCacher)) {
+            $actionCacher->set($actionHash, $action, $action->getTtl());
+        }
+
+        if (Request::isCli()) {
+            Action::getLogger()->info(
+                ['{$0}{$1} complete!', [str_repeat("\t", $level), $actionClass::getClassName()]],
+                Logger::MESSAGE
+            );
         }
 
         return $action->getView();
@@ -267,12 +265,7 @@ abstract class Action implements Cacheable
      */
     public static function getInput(array $data = [])
     {
-        $params = array_merge(
-            self::getConfig()->gets('input', false),
-            ['actions', 'template', 'layout', 'viewRenderClass', 'env']
-        );
-
-        $input = Action::prepareInput($params, $data);
+        $input = Input::get(self::getClass(), $data, ['actions', 'template', 'layout', 'viewRenderClass', 'env']);
 
         if (isset($input['redirectUrl'])) {
             throw new Redirect($input['redirectUrl']);
@@ -356,7 +349,7 @@ abstract class Action implements Cacheable
      *          ]
      *      ],
      *      'output' => ['Ice:Resource/Ice\Action\Index'],
-     *      'ttl' => 3600,
+     *      'cache' => ['ttl' => -1, 'count' => 1000],
      *      'roles' => []
      *  ];
      * ```
@@ -371,110 +364,6 @@ abstract class Action implements Cacheable
     protected static function config()
     {
         return [];
-    }
-
-    private static function prepareInput($params, $data)
-    {
-        $dataProviderKeyMap = [
-            'request' => Data_Provider_Request::DEFAULT_DATA_PROVIDER_KEY,
-            'router' => Data_Provider_Router::DEFAULT_DATA_PROVIDER_KEY,
-            'session' => Data_Provider_Session::DEFAULT_DATA_PROVIDER_KEY,
-            'cli' => Data_Provider_Cli::DEFAULT_DATA_PROVIDER_KEY,
-        ];
-
-        $input = [];
-
-        foreach ($params as $name => $param) {
-            if (is_int($name)) {
-                $name = $param;
-                $param = [];
-            }
-
-            if (is_string($param)) {
-                $input[$name] = $param;
-                continue;
-            }
-
-            $dataProviderKeys = isset($param['providers'])
-                ? (array)$param['providers']
-                : ['default'];
-
-            foreach ($dataProviderKeys as $dataProviderKey) {
-                if (isset($input[$name])) {
-                    continue;
-                }
-
-                if (isset($dataProviderKeyMap[$dataProviderKey])) {
-                    $dataProviderKey = $dataProviderKeyMap[$dataProviderKey];
-                }
-
-                if ($dataProviderKey == 'default') {
-                    if (array_key_exists($name, $data)) {
-                        $input[$name] = $data[$name];
-                        continue;
-                    }
-
-                    if (isset($param['default'])) {
-                        $input[$name] = $param['default'];
-                    }
-
-                    continue;
-                }
-
-                $input[$name] = Data_Provider::getInstance($dataProviderKey)->get($name);
-            }
-
-            if ($value = Action::getInputParam($name, isset($input[$name]) ? $input[$name] : null, $param)) {
-                $input[$name] = $value;
-            }
-        }
-
-        return $input;
-    }
-
-    /**
-     * Return valid input value
-     *
-     * @param  $name
-     * @param  $value
-     * @param  $param
-     * @return mixed
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since   0.5
-     */
-    public static function getInputParam($name, $value, $param)
-    {
-        if (empty($param)) {
-            return $value;
-        }
-
-        if ($value === null && isset($param['default'])) {
-            $value = $param['default'];
-        }
-
-        if (isset($param['type'])) {
-            $value = Php::castTo($param['type'], $value);
-        }
-
-        if (isset($param['validators'])) {
-            foreach ((array)$param['validators'] as $validatorClass => $validatorParams) {
-                if (is_int($validatorClass)) {
-                    $validatorClass = $validatorParams;
-                    $validatorParams = null;
-                }
-
-                Helper_Validator::validate($validatorClass, $validatorParams, $name, $value);
-            }
-        }
-
-        //        if (isset($param['converter']) && is_callable($param['converter'])) {
-        //            $value = $param['converter']($value);
-        //        }
-
-        return $value;
     }
 
     /**
@@ -595,16 +484,12 @@ abstract class Action implements Cacheable
      *  protected static function config()
      *  {
      *      return [
-     *          'view' => ['template' => '', 'viewRenderClass' => null],
+     *          'view' => ['template' => '', 'viewRenderClass' => null, 'layout' => null],
      *          'actions' => [],
      *          'input' => [],
      *          'output' => [],
-     *          'ttl' => -1,
-     *          'access' => [
-     *              'roles' => [],
-     *              'request' => null,
-     *              'env' => null
-     *          ]
+     *          'cache' => ['ttl' => -1, 'count' => 1000],
+     *          'access' => ['roles' => [], 'request' => null, 'env' => null]
      *      ];
      *  }
      *

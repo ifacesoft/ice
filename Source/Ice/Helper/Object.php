@@ -9,7 +9,7 @@
 
 namespace Ice\Helper;
 
-use Ice\Core\Container;
+use Ice\Core\Debuger;
 use Ice\Core\Loader;
 use Ice\Core\Module;
 
@@ -158,22 +158,22 @@ class Object
      * Return base class (class extends Container)
      *
      * @param  $class
+     * @param string $markerClass
      * @return mixed
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.6
+     * @version 1.0
      * @since   0.0
      */
-    public static function getBaseClass($class)
+    public static function getBaseClass($class, $markerClass = 'Ice\Core\Container')
     {
         if (!Object::isClass($class)) {
             return $class;
         }
 
         foreach (class_parents($class) as $parentClass) {
-            if ($parentClass == Container::getClass()) {
-                break;
+            if ($parentClass == $markerClass) {
+                return $class;
             }
 
             $class = $parentClass;

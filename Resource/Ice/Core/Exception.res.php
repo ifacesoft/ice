@@ -175,4 +175,11 @@ return [
         'en' => 'Validator:Is_Widget_Form -> param \'{$0}\' with value \'{$1}\' is not valid',
         'ru' => 'Validator:Is_Widget_Form -> param \'{$0}\' with value \'{$1}\' is not valid',
     ],
+    'Доступ запрещен!' => [
+        'ru' => 'Доступ запрещен!',
+    ],
+    'deprecated value option' => [
+        'en' => 'deprecated value option',
+        'ru' => 'устаревший параметр значение',
+    ],
 ];

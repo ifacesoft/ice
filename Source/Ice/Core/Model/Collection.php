@@ -393,7 +393,7 @@ class Model_Collection implements IteratorAggregate, Countable
     {
         $modelClass = $this->getModelClass();
         $this->rows = Query::getBuilder($modelClass)
-            ->insertQuery($this->getRows(), $update, $dataSourceKey)
+            ->getInsertQuery($this->getRows(), $update, $dataSourceKey)
             ->getRows();
 
         return $this;

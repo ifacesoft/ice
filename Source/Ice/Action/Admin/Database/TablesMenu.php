@@ -26,7 +26,7 @@ class Admin_Database_TablesMenu extends Action {
                'actions' => [],
                'input' => ['tables', 'tableName'],
                'output' => [],
-               'ttl' => -1,
+               'cache' => ['ttl' => -1, 'count' => 1000],
                'roles' => []
            ];
        }

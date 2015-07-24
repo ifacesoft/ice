@@ -12,9 +12,11 @@ namespace Ice\Data\Source;
 use Ice\Core\Converter;
 use Ice\Core\Data_Provider;
 use Ice\Core\Data_Source;
+use Ice\Core\Debuger;
 use Ice\Core\Exception;
 use Ice\Core\Model;
 use Ice\Core\Module;
+use Ice\Core\Profiler;
 use Ice\Core\Query;
 use Ice\Core\Query_Builder;
 use Ice\Core\Query_Result;
@@ -73,7 +75,7 @@ class Mysqli extends Data_Source
                 __LINE__
             );
         }
-        //            $statement->store_result(); // Так почемуто не работает
+
         /**
          * @var mysqli_result $result
          */
@@ -98,7 +100,16 @@ class Mysqli extends Data_Source
 
         $pkFieldNames = $modelClass::getScheme()->getPkFieldNames();
 
-        $data[Query_Result::NUM_ROWS] = $result->num_rows;
+//        $statementResultMetadata = $statement->result_metadata();
+//
+//        $bindResultVars = [];
+//        $row = [];
+//        while($field = $statementResultMetadata->fetch_field()) {
+//            $bindResultVars[] = &$row[$field->name];
+//        }
+//
+//        call_user_func_array(array($statement, 'bind_result'), $bindResultVars);
+
         $data[Query_Result::ROWS] = [];
 
         while ($row = $result->fetch_assoc()) {
@@ -114,12 +125,23 @@ class Mysqli extends Data_Source
                 }
             }
 
-            $data[Query_Result::ROWS][implode('_', array_intersect_key($row, array_flip($pkFieldNames)))] = $row;
+            $id = implode('_', array_intersect_key($row, array_flip($pkFieldNames)));
+
+            if ($id) {
+                $data[Query_Result::ROWS][$id] = $row;
+            } else {
+                $data[Query_Result::ROWS][] = $row;
+            }
         }
 
-        $result->close();
+        $result->free_result();
         $statement->free_result();
         $statement->close();
+
+        unset($result);
+        unset($statement);
+
+        $data[Query_Result::NUM_ROWS] = count($data[Query_Result::ROWS]);
 
         if ($query->isCalcFoundRows()) {
             $result = $this->getConnection()->query('SELECT FOUND_ROWS()');

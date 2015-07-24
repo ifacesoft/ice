@@ -33,6 +33,7 @@ class Resource extends Action
         return [
             'view' => ['template' => ''],
             'actions' => ['Ice:Resource_Css', 'Ice:Resource_Js'],
+            'cache' => ['ttl' => -1, 'count' => 1000],
         ];
     }
 

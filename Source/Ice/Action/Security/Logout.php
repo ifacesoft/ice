@@ -44,7 +44,7 @@ class Security_Logout extends Action
      *          ]
      *      ],
      *      'output' => ['Ice:Resource/Ice\Action\Index'],
-     *      'ttl' => 3600,
+     *      'cache' => ['ttl' => -1, 'count' => 1000],
      *      'roles' => []
      *  ];
      * ```
@@ -60,6 +60,7 @@ class Security_Logout extends Action
     {
         return [
             'view' => ['template' => ''],
+            'cache' => ['ttl' => -1, 'count' => 1000],
         ];
     }
 

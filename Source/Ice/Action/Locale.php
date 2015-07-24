@@ -33,7 +33,7 @@ class Locale extends Action
      *          ]
      *      ],
      *      'output' => ['Ice:Resource/Ice\Action\Index'],
-     *      'ttl' => 3600,
+     *      'cache' => ['ttl' => -1, 'count' => 1000],
      *      'roles' => []
      *  ];
      * ```
@@ -54,7 +54,8 @@ class Locale extends Action
                     'providers' => 'router',
                     'default' => ''
                 ]
-            ]
+            ],
+            'cache' => ['ttl' => -1, 'count' => 1000],
         ];
     }
 

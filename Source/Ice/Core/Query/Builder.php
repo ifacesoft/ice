@@ -9,9 +9,9 @@
 
 namespace Ice\Core;
 
+use Doctrine\Common\Util\Debug;
 use Ice\Core;
 use Ice\Helper\Object;
-use Ice\Widget\Menu\Pagination;
 
 /**
  * Class Query_Builder
@@ -41,6 +41,7 @@ class Query_Builder
     const PART_JOIN = 'join';
     const PART_WHERE = 'where';
     const PART_GROUP = 'group';
+    const PART_HAVING = 'having';
     const PART_ORDER = 'order';
     const PART_LIMIT = 'limit';
     const SQL_CLAUSE_INNER_JOIN = 'INNER JOIN';
@@ -107,8 +108,9 @@ class Query_Builder
         self::PART_JOIN => [],
         self::PART_WHERE => ['_delete' => null],
         self::PART_GROUP => [],
+        self::PART_HAVING => [],
         self::PART_ORDER => [],
-        self::PART_LIMIT => ['offset' => 0]
+        self::PART_LIMIT => ['offset' => 0, 'limit' => 0]
     ];
 
     private $triggers = [
@@ -129,9 +131,11 @@ class Query_Builder
      * @var    array
      */
     private $bindParts = [
+        self::PART_SELECT => [],
         self::PART_VALUES => [],
         self::PART_SET => [],
         self::PART_WHERE => [],
+        self::PART_HAVING => [],
         self::PART_LIMIT => []
     ];
 
@@ -146,7 +150,10 @@ class Query_Builder
         Cache::INVALIDATE => []
     ];
 
-    private $uis = [];
+    /**
+     * @var Widget[]
+     */
+    private $widgets = [];
 
     private $transforms = [];
 
@@ -256,7 +263,7 @@ class Query_Builder
                 $fieldName .= '__fk';
             }
 
-            $where = [$sqlLogical, $fieldName, $sqlComparison, count((array)$value)];
+            $where = [$sqlLogical, $fieldName, $sqlComparison, $value === null ? 1 : count((array)$value)];
 
             if (isset($this->sqlParts[Query_Builder::PART_WHERE][$tableAlias])) {
                 $this->sqlParts[Query_Builder::PART_WHERE][$tableAlias]['data'][] = $where;
@@ -269,9 +276,11 @@ class Query_Builder
 
             $this->appendCacheTag($modelClass, $fieldName, true, false);
 
-            $this->bindParts[Query_Builder::PART_WHERE][] = $value === null
-                ? [null]
-                : (array)$value;
+            if ($sqlComparison != Query_Builder::SQL_COMPARISON_KEYWORD_IS_NULL && $sqlComparison != Query_Builder::SQL_COMPARISON_KEYWORD_IS_NOT_NULL) {
+                $this->bindParts[Query_Builder::PART_WHERE][] = $value === null
+                    ? [null]
+                    : (array)$value;
+            }
         }
 
         return $this;
@@ -290,12 +299,15 @@ class Query_Builder
      */
     public function getModelClassTableAlias($modelTableData)
     {
+        if (is_object($modelTableData)) {
+            $modelTableData = [$modelTableData];
+        }
+
         if (empty($modelTableData)) {
             $modelClass = null;
             $tableAlias = null;
         } else {
             $modelTableData = (array)$modelTableData;
-
             if (count($modelTableData) > 1) {
                 $modelTableData = [array_shift($modelTableData) => array_shift($modelTableData)];
             }
@@ -310,10 +322,10 @@ class Query_Builder
 
         $modelClass = !$modelClass
             ? $this->getModelClass()
-            : Model::getClass($modelClass);
+            : (is_object($modelClass) ? $modelClass : Model::getClass($modelClass));
 
         if ($tableAlias === null) {
-            $tableAlias = $modelClass;
+            $tableAlias = (is_object($modelClass) ? $modelClass->getModelClass() : $modelClass);
         }
 
         if ($tableAlias !== '') {
@@ -510,6 +522,30 @@ class Query_Builder
             $sqlLogical,
             [$fieldName => $fieldValue],
             Query_Builder::SQL_COMPARISON_KEYWORD_REGEXP,
+            $modelTableData
+        );
+    }
+
+    /**
+     * Set in query part where expression 'REGEXP ?'
+     *
+     * @param  $fieldName
+     * @param  $fieldRangeValue
+     * @param  array $modelTableData
+     * @param  string $sqlLogical
+     * @return Query_Builder
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 1.1
+     * @since   1.1
+     */
+    public function between($fieldName, array $fieldRangeValue, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
+    {
+        return $this->where(
+            $sqlLogical,
+            [$fieldName => $fieldRangeValue],
+            Query_Builder::SQL_COMPARISON_KEYWORD_BETWEEN,
             $modelTableData
         );
     }
@@ -884,7 +920,7 @@ class Query_Builder
 
         $joinModelScheme = $joinModelClass::getScheme();
 
-        $oneToMany = $joinModelScheme->gets(Model_Scheme::ONE_TO_MANY);
+        $oneToMany = $joinModelScheme->gets('relations/' . Model_Scheme::ONE_TO_MANY);
 
         if (isset($oneToMany[$modelClass])) {
             $this->sqlParts[self::PART_JOIN][$tableAlias] = [
@@ -897,7 +933,7 @@ class Query_Builder
             return true;
         }
 
-        $manyToOne = $joinModelScheme->gets(Model_Scheme::MANY_TO_ONE);
+        $manyToOne = $joinModelScheme->gets('relations/' . Model_Scheme::MANY_TO_ONE);
 
         if (isset($manyToOne[$modelClass])) {
             $this->sqlParts[self::PART_JOIN][$tableAlias] = [
@@ -910,7 +946,7 @@ class Query_Builder
             return true;
         }
 
-        $manyToMany = $joinModelScheme->gets(Model_Scheme::MANY_TO_MANY);
+        $manyToMany = $joinModelScheme->gets('relations/' . Model_Scheme::MANY_TO_MANY);
 
         if (isset($manyToMany[$modelClass])) {
             return $this->addJoin(
@@ -920,7 +956,7 @@ class Query_Builder
                 $joinModelClass,
                 $joinTableAlias
             ) && $this->addJoin(
-                $joinType,
+                Query_Builder::SQL_CLAUSE_INNER_JOIN,
                 $modelClass,
                 $tableAlias,
                 $manyToMany[$modelClass],
@@ -955,7 +991,7 @@ class Query_Builder
             $this->sqlParts[self::PART_JOIN][$tableAlias] = [
                 'type' => $joinType,
                 'class' => $modelClass,
-                'on' => $tableAlias . '.' . $joinModelScheme->getFieldColumnMap()[$modelNamePk] . ' = ' .
+                'on' => $tableAlias . '.' . $modelClass::getScheme()->getFieldColumnMap()[$modelNamePk] . ' = ' .
                     $joinTableAlias . '.' . $joinFieldNames[$modelNameFk]
             ];
 
@@ -985,20 +1021,34 @@ class Query_Builder
          */
         list($modelClass, $tableAlias) = $this->getModelClassTableAlias($modelTableData);
 
+
+        if ($modelClass instanceof Query) {
+            $modelClass = $modelClass->getQueryBuilder();
+        }
+
+        if ($modelClass instanceof Query_Builder) {
+            $table = $modelClass;
+            $modelClass = $modelClass->getModelClass();
+        } else {
+            $table = $modelClass;
+        }
+
         if ($tableAlias && !isset($this->sqlParts[self::PART_SELECT][$modelClass][$tableAlias])) {
             $pkFieldNames = $modelClass::getScheme()->getPkFieldNames();
+            $this->sqlParts[self::PART_SELECT][$modelClass][$tableAlias] = [
+                'table' => $table,
+                'columns' => $table instanceof Query_Builder ? [] : array_combine($pkFieldNames, $pkFieldNames)
+            ];
+        }
 
-            $this->sqlParts[self::PART_SELECT][$modelClass][$tableAlias] = array_combine($pkFieldNames, $pkFieldNames);
+        if ($fieldName == '/pk') {
+            return $this;
         }
 
         if ($fieldName == '*') {
             $fieldName = $modelClass::getScheme()->getFieldNames();
         }
-
-        if ($fieldName == '/pk') {
-            $fieldName = $modelClass::getScheme()->getPkFieldNames();
-        }
-
+//
         if (is_array($fieldName)) {
             foreach ($fieldName as $field => $fieldAlias) {
                 if (is_numeric($field)) {
@@ -1027,17 +1077,29 @@ class Query_Builder
             $fieldAlias = $fieldName;
         }
 
-        //        if (!isset($this->_sqlParts[self::PART_SELECT][$modelClass])) {
-        //            $pkNames = $modelClass::getScheme()->getPkFieldNames();
-        //
-        //            $this->_sqlParts[self::PART_SELECT][$modelClass] = [
-        //                $tableAlias, array_combine($pkNames, $pkNames)
-        //            ];
-        //        }
-
-        $this->sqlParts[self::PART_SELECT][$modelClass][$tableAlias][$fieldName] = $fieldAlias;
+        $this->sqlParts[self::PART_SELECT][$modelClass][$tableAlias]['columns'][$fieldName] = $fieldAlias;
 
         $this->appendCacheTag($modelClass, $fieldName, true, false);
+
+        if ($table instanceof Query_Builder) {
+
+            // TODO: This duplicate from Query::getBinds.. fix it
+            $binds = [];
+
+            foreach ($table->getBindParts() as $bindPart) {
+                if (!is_array(reset($bindPart))) {
+                    $binds = array_merge($binds, array_values($bindPart));
+                    continue;
+                }
+
+                foreach ($bindPart as $values) {
+                    $binds = array_merge($binds, array_values($values));
+                    continue;
+                }
+            }
+
+            $this->bindParts[Query_Builder::PART_SELECT] = $binds;
+        }
 
         return $this;
     }
@@ -1146,7 +1208,7 @@ class Query_Builder
      * @version 0.6
      * @since   0.0
      */
-    public function insertQuery(array $data, $update = false, $dataSourceKey = null)
+    public function getInsertQuery(array $data, $update = false, $dataSourceKey = null)
     {
         $this->queryType = Query_Builder::TYPE_INSERT;
         $this->sqlParts[Query_Builder::PART_VALUES]['_update'] = $update;
@@ -1246,7 +1308,9 @@ class Query_Builder
         $this->queryType = Query_Builder::TYPE_DELETE;
         $this->sqlParts[Query_Builder::PART_WHERE]['_delete'] = $this->modelClass;
 
-        $this->inPk((array)$pkValues);
+        if (!empty($pkValues)) {
+            $this->inPk((array)$pkValues);
+        }
 
         return $this->getQuery($dataSourceKey);
     }
@@ -1341,7 +1405,7 @@ class Query_Builder
             $fieldAlias = strtolower($modelClass::getClassName()) . '__count';
         }
 
-        $this->select('count(' . implode(',', $fieldNames) . ')', $fieldAlias, [$modelClass => '']);
+        $this->select('COUNT(' . implode(',', $fieldNames) . ')', $fieldAlias, [$modelClass => '']);
 
         return $this;
     }
@@ -1397,7 +1461,7 @@ class Query_Builder
      * @version 0.6
      * @since   0.0
      */
-    public function asc($fieldName, $modelTableData = [])
+    public function asc($fieldName = '/pk', $modelTableData = [])
     {
         return $this->order($fieldName, Query_Builder::SQL_ORDERING_ASC, $modelTableData);
     }
@@ -1503,7 +1567,7 @@ class Query_Builder
      * @version 0.6
      * @since   0.0
      */
-    public function desc($fieldName, $modelTableData = [])
+    public function desc($fieldName = '/pk', $modelTableData = [])
     {
         return $this->order($fieldName, Query_Builder::SQL_ORDERING_DESC, $modelTableData);
     }
@@ -1663,15 +1727,16 @@ class Query_Builder
 
     public function attachWidget($name, Widget $widget)
     {
-        $this->uis[get_class($widget)][$name] = $widget;
+        $widget->queryBuilderPart($this);
+        $this->widgets[$name] = $widget;
+
         return $this;
     }
 
     public function orderWidget($widgetName, $key, $value, $fieldName = null, $modelTableData = [])
     {
-        $widget = $this->findWidget($widgetName);
-
-        $value = $widget->bind($key, $value);
+        $widget = $this->widgets[$widgetName]->bind([$key => $value]);
+        $value = $widget->getValue($key);
 
         if (!empty($value)) {
             if (!$fieldName) {
@@ -1680,36 +1745,6 @@ class Query_Builder
 
             $this->order($fieldName, $value, $modelTableData);
         }
-
-        return $this;
-    }
-
-    /**
-     * @param $uiName
-     * @return Widget
-     * @throws Exception
-     */
-    private function findWidget($uiName)
-    {
-        foreach ($this->uis as $uis) {
-            foreach ($uis as $name => $ui) {
-                if ($uiName == $name) {
-                    return $ui;
-                }
-            }
-        }
-
-        Query_Builder::getLogger()->exception(['Widget {$0} not found', $uiName], __FILE__, __LINE__);
-
-        return null;
-    }
-
-    public function paginationWidget($widgetName, $page, $limit)
-    {
-        /** @var Pagination $widget */
-        $widget = $this->findWidget($widgetName);
-
-        $this->setPagination($widget->bind('page', $page), $widget->bind('limit', $limit));
 
         return $this;
     }
@@ -1732,8 +1767,8 @@ class Query_Builder
             $page = 1;
         }
 
-        if (empty($limit)) {
-            $limit = 1000;
+        if (!isset($limit)) {
+            $limit = 0;
         }
 
         return $this->calcFoundRows()->limit($limit, ($page - 1) * $limit);
@@ -1786,9 +1821,10 @@ class Query_Builder
         $modelTableData = []
     )
     {
-        $widget = $this->findWidget($widgetName);
+        /** @var Widget_Form $widget */
+        $widget = $this->widgets[$widgetName]->bind([$key => $value]);
 
-        $value = $widget->bind($key, $value);
+        $value = $widget->getValue($key);
 
         if (!empty($value)) {
             if (!$fieldName) {
@@ -1801,11 +1837,10 @@ class Query_Builder
         return $this;
     }
 
-    public function addTransformUi($uiName, $key, $value, $fieldName, $transform)
+    public function addTransformUi($widgetName, $key, $value, $fieldName, $transform)
     {
-        $ui = $this->findWidget($uiName);
-
-        $value = $ui->bind($key, $value);
+        $widget = $this->widgets[$widgetName]->bind([$key => $value]);
+        $value = $widget->getValue($key);
 
         if (!empty($value)) {
             if (!$fieldName) {
@@ -1824,7 +1859,7 @@ class Query_Builder
         return $this;
     }
 
-    public function addTransform($transform, $data)
+    public function addTransform($transform, array $data = [])
     {
         $this->transforms[] = [$transform, $data];
         return $this;
@@ -1876,10 +1911,141 @@ class Query_Builder
     }
 
     /**
-     * @return Ui[]
+     * @return Widget[]
      */
     public function getWidgets()
     {
-        return $this->uis;
+        return $this->widgets;
+    }
+
+    /**
+     * @param $funcName
+     * @param argumentString
+     * @param array $modelTableData
+     * @return Query_Builder
+     */
+    public function func($funcName, $argumentString, $modelTableData = [])
+    {
+        /**
+         * @var Model $modelClass
+         */
+        list($modelClass, $tableAlias) = $this->getModelClassTableAlias($modelTableData);
+        list($fieldName, $fieldAlias) = $this->getFieldNameAlias($funcName, $modelClass);
+
+// TODO: Это доработать когда смогу брать кеш теги из сабквери билдер
+// Проблема: ->groupConcat(['CONCAT(" ",author_surname," ",author_name,".",author_patronymic,".")' => 'authors'])
+//        $fieldColumnMap = $modelClass::getScheme()->getFieldColumnMap();
+//            if (isset($fieldColumnMap[$fieldName])) {
+//                $name = $fieldColumnMap[$fieldName];
+//                $this->appendCacheTag($modelClass, $name, true, false);
+//                $fieldName = '`' . $tableAlias . '`.`' . $modelClass::getFieldName($name) . '`';
+//            }
+
+        if (!$fieldAlias) {
+            $fieldAlias = strtolower($modelClass::getClassName()) . '__' . strtolower($funcName);
+        }
+
+        $this->select(strtoupper($fieldName) . '(' . $argumentString . ')', $fieldAlias, [$modelClass => '']);
+
+        return $this;
+    }
+
+    /**
+     * @param $part
+     * @param $path
+     *
+     * @todo not tested
+     *
+     * @return Query_Builder
+     */
+    public function reset($part, $path)
+    {
+        $values = &$this->sqlParts;
+
+        foreach ($path as $key) {
+            $values = &$values[$part];
+            $part = $key;
+        }
+
+        unset($values[$part]);
+
+        return $this;
+    }
+
+    private function getBindParts()
+    {
+        return $this->bindParts;
+    }
+
+    public function havingLike($fieldName, $fieldValue, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
+    {
+        return $this->having(
+            $sqlLogical,
+            [$fieldName => $fieldValue],
+            Query_Builder::SQL_COMPARISON_KEYWORD_LIKE,
+            $modelTableData
+        );
+    }
+
+    private function having($sqlLogical, array $fieldNameValues, $sqlComparison, $modelTableData = [])
+    {
+        /**
+         * @var Model $modelClass
+         */
+        list($modelClass, $tableAlias) = $this->getModelClassTableAlias($modelTableData);
+
+        foreach ($fieldNameValues as $fieldName => $value) {
+            $fieldName = $modelClass::getFieldName($fieldName);
+
+            if ($value instanceof Model) {
+                $value = $value->getPk();
+                $fieldName .= '__fk';
+            }
+
+            $having = [$sqlLogical, $fieldName, $sqlComparison, count((array)$value)];
+
+            if (isset($this->sqlParts[Query_Builder::PART_HAVING][$tableAlias])) {
+                $this->sqlParts[Query_Builder::PART_HAVING][$tableAlias]['data'][] = $having;
+            } else {
+                $this->sqlParts[Query_Builder::PART_HAVING][$tableAlias] = [
+                    'class' => $modelClass,
+                    'data' => [$having]
+                ];
+            }
+
+            $this->appendCacheTag($modelClass, $fieldName, true, false);
+
+            $this->bindParts[Query_Builder::PART_HAVING][] = $value;
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param $scope
+     * @param array $data
+     * @param Model $modelClass
+     * @return $this
+     */
+    public function scope($scope, array $data = [], $modelClass = null)
+    {
+        $modelClass = $modelClass
+            ? Model::getClass($modelClass)
+            : $this->getModelClass();
+
+        $modelClass::getQueryScope()->$scope($this, $data);
+
+        return $this;
+    }
+
+    /**
+     * @param $model
+     * @param $fieldNames
+     * @return $this
+     * @todo
+     */
+    public function with($model, $fieldNames)
+    {
+        return $this;
     }
 }

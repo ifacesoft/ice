@@ -10,6 +10,7 @@
 namespace Ice\View\Render;
 
 use Ice\Core\Action;
+use Ice\Core\Debuger;
 use Ice\Core\Environment;
 use Ice\Core\Loader;
 use Ice\Core\Logger;
@@ -55,11 +56,11 @@ class Smarty extends View_Render
     {
         $config = Smarty::getConfig();
 
-        include_once VENDOR_DIR . $config->get('vendor') . '/libs/Smarty.class.php';
+//        include_once VENDOR_DIR . $config->get('vendor') . '/libs/Smarty.class.php';
 
         $this->_smarty = new \Smarty();
 
-        Loader::register('\smartyAutoload');
+//        Loader::register('\smartyAutoload');
 
         $templateDirs = [];
 
@@ -72,7 +73,7 @@ class Smarty extends View_Render
         $this->_smarty->addPluginsDir($config->gets('plugins', false));
         //        $this->_smarty->setCacheDir('/web/www.example.com/smarty/cache');
         //        $this->_smarty->setConfigDir('/web/www.example.com/smarty/configs');
-        $this->_smarty->debugging = true;
+        $this->_smarty->debugging = false;
     }
 
     /**
@@ -105,7 +106,6 @@ class Smarty extends View_Render
             return $smartyTemplate->fetch();
         } catch (\Exception $e) {
             if (Environment::getInstance()->isDevelopment()) {
-                View::getLogger()->info(Smarty::getClassName() . ': ' . $e->getMessage(), Logger::WARNING);
                 View::getLogger()->info(
                     ['View {$0} not found. Trying generate template {$1}...', [$template, Smarty::getClassName()]],
                     Logger::WARNING

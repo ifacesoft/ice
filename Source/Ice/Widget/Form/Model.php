@@ -27,6 +27,15 @@ use Ice\Core\Widget_Form;
  */
 class Model extends Widget_Form
 {
+    protected static function config()
+    {
+        return [
+            'view' => ['template' => null, 'viewRenderClass' => null, 'layout' => null],
+            'input' => [],
+            'access' => ['roles' => [], 'request' => null, 'env' => null]
+        ];
+    }
+
     /**
      * Field type map
      *
@@ -122,10 +131,5 @@ class Model extends Widget_Form
          */
         $modelClass = $this->getValues();
         $modelClass::create($this->validate())->save(true);
-    }
-
-    public function render()
-    {
-        // TODO: Implement render() method.
     }
 }

@@ -14,6 +14,7 @@ return [
     'alias' => 'Ice',
     'module' => [
         'name' => 'Ice',
+        'version' => '1.0.6',
         'description' => 'Ice Open Source PHP Framework',
         'url' => 'http://iceframework.net',
         'type' => 'module',
@@ -27,11 +28,12 @@ return [
         'configDir' => 'Config/',
         'sourceDir' => 'Source/',
         'resourceDir' => 'Resource/',
-        'logDir' => '../_log/',
-        'cacheDir' => '../_cache/',
-        'uploadDir' => '../_upload/',
-        'compiledResourceDir' => '../_resource/',
-        'downloadDir' => '../_resource/download/',
+        'logDir' => 'Var/log/',
+        'cacheDir' => 'Var/cache/',
+        'uploadDir' => 'Var/upload/',
+        'uploadTempDir' => 'Var/upload/temp/',
+        'compiledResourceDir' => 'Web/resource/',
+        'downloadDir' => 'Web/download/',
     ],
     'modules' => []
 ];

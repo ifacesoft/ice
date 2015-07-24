@@ -3,67 +3,39 @@
 namespace Ice\Core;
 
 use Ice\Core;
+use Ice\Helper\Emmet;
+use Ice\Helper\Json;
+use Ice\View\Render\Php;
 
 abstract class Widget_Menu extends Widget
 {
-    protected $items = null;
+    protected $defaultOptions = [];
 
-    /**
-     * Return Widget_Menu items
-     *
-     * @return array
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.1
-     * @since   0.1
-     */
-    public function getItems()
+    public function link($name, $title, array $options = [], $template = 'Ice\Core\Widget_Menu_Link')
     {
-        return (array)$this->items;
+        return $this->addPart($name, $title, $options, $template);
     }
 
-    public function link($name, $title, array $options = [], $template = 'Link')
+    public function collapse($name, $title, array $options = [], $template = 'Ice\Core\Widget_Menu_Collapse')
     {
-        return $this->addItem($name, $title, $options, $template);
+        return $this->addPart($name, $title, $options, $template);
     }
 
-    /**
-     * Add menu item
-     *
-     * @param  $name
-     * @param  $title
-     * @param  $options
-     * @param  $template
-     * @return Widget_Menu
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.6
-     * @since   0.1
-     */
-    protected function addItem($name, $title, array $options, $template)
+    public function button($name, $title, array $options = [], $template = 'Ice\Core\Widget_Menu_Button')
     {
-        if (!isset($options['disable']) || !$options['disable']) {
-            $this->items[$name] = [
-                'title' => Resource::create($this->getAction())->get($title),
-                'options' => $options,
-                'template' => $template
-            ];
-        }
-
-        return $this;
+        return $this->addPart($name, $title, $options, $template);
     }
 
-    public function button($name, $title, array $options = [], $template = 'Button')
+    public function dropdown($name, $title, array $options = [], $template = 'Ice\Core\Widget_Menu_Dropdown')
     {
-        return $this->addItem($name, $title, $options, $template);
+        return $this->addPart($name, $title, $options, $template);
     }
 
-    public function bind($key, $value)
+    public function setQueryResult(Query_Result $queryResult)
     {
-        $this->addValue($key, $value);
+    }
 
-        return $value;
+    public function queryBuilderPart(Query_Builder $queryBuilder)
+    {
     }
 }

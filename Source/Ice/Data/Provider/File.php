@@ -10,7 +10,9 @@
 namespace Ice\Data\Provider;
 
 use Ice\Core\Data_Provider;
+use Ice\Core\Debuger;
 use Ice\Core\Exception;
+use Ice\Core\Loader;
 use Ice\Core\Module;
 use Ice\Helper\Directory;
 use Ice\Helper\File as Helper_File;
@@ -189,7 +191,13 @@ class File extends Data_Provider
             $ttl = isset($options['ttl']) ? $options['ttl'] : 3600;
         }
 
-        Helper_File::createData($this->getFileName($key), [$ttl, Hash::get($value, Hash::HASH_CRC32), $value]);
+        Helper_File::createData(
+            $this->getFileName($key),
+            [$ttl, Hash::get($value, Hash::HASH_CRC32), $value],
+            true,
+            0,
+            false
+        );
 
         return $value;
     }
@@ -222,7 +230,7 @@ class File extends Data_Provider
      */
     public function flushAll()
     {
-        Directory::remove($this->getConnection());
+        Directory::get(Directory::remove($this->getConnection()));
     }
 
     /**

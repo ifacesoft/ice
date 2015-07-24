@@ -59,7 +59,7 @@ class Model_Defined_Sync extends Action
      *          ]
      *      ],
      *      'output' => ['Ice:Resource/Ice\Action\Index'],
-     *      'ttl' => 3600,
+     *      'cache' => ['ttl' => -1, 'count' => 1000],
      *      'roles' => []
      *  ];
      * ```
@@ -74,7 +74,8 @@ class Model_Defined_Sync extends Action
     protected static function config()
     {
         return [
-            'view' => ['template' => '']
+            'view' => ['template' => ''],
+            'cache' => ['ttl' => -1, 'count' => 1000],
         ];
     }
 
@@ -95,7 +96,7 @@ class Model_Defined_Sync extends Action
         /**
          * @var Model[] $modelClasses
          */
-        $modelClasses = array_keys(Data_Scheme::getInstance()->getModelClasses());
+        $modelClasses = array_keys(Data_Scheme::create('Ice:Mysqli/default')->getModelClasses());
 
         foreach ($modelClasses as $modelClass) {
             $modelClass = Model::getClass($modelClass);

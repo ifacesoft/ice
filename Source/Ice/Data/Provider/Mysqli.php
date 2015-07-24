@@ -10,6 +10,7 @@
 namespace Ice\Data\Provider;
 
 use Ice\Core\Data_Provider;
+use Ice\Core\Debuger;
 use Ice\Core\Exception;
 use Ice\Core\Logger;
 
@@ -299,7 +300,7 @@ class Mysqli extends Data_Provider
 //                __FILE__,
 //                __LINE__
 //            );
-            Mongodb::getLogger()
+            Mysqli::getLogger()
                 ->info(['mysql - #' . $connection->errno . ': {$0}', $connection->error], Logger::WARNING);
             return false;
         }

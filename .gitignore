@@ -1,11 +1,15 @@
 *.orig
 
-.git
 .hg
+.git
 
 .idea
 
-Resource/api
-Resource/uml
-
 composer.phar
+
+Var/cache
+Var/log
+Var/upload
+Var/vendor
+
+Web/resource

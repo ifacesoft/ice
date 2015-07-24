@@ -1,6 +1,5 @@
-<tr<?php if (!empty($headerStyle)) : ?> style="<?= $headerStyle ?>"<?php endif;
-?>>
-    <th rowspan="<?= ceil(count($columns) / $columnCount) ?>">#</th>
+<tr<?php if (!empty($headerStyle)) : ?> style="<?= $headerStyle ?>"<?php endif; ?>>
+    <?php if ($isShowCount) : ?><th rowspan="<?= ceil(count($columns) / $columnCount) ?>">#</th><?php endif; ?>
     <?php
     $count = 0;
     foreach ($columns as $column) :
@@ -27,7 +26,7 @@
                data-action='<?= $column['dataAction'] ?>'
                data-block='<?= $column['dataBlock'] ?>'
                data-name='<?= $column['name'] ?>'
-               data-value='<?= $column['dataValue'] ?>'
+               data-params='<?= $column['dataParams'] ?>'
                class="btn btn-default btn-sm<?php if ($column['dataValue']) : ?> active<?php endif; ?>">
                 <?php if ($column['dataValue'] == 'ASC') : ?>
                     &darr;

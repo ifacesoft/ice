@@ -2,7 +2,6 @@
 namespace Ice\Action;
 
 use Ice\Core\Action;
-use Ice\Core\Form_Security_Register;
 use Ice\Core\Widget_Form_Security_Register;
 
 /**
@@ -42,7 +41,7 @@ class Security_Register extends Action
      *          ]
      *      ],
      *      'output' => ['Ice:Resource/Ice\Action\Index'],
-     *      'ttl' => 3600,
+     *      'cache' => ['ttl' => -1, 'count' => 1000],
      *      'roles' => []
      *  ];
      * ```
@@ -63,7 +62,8 @@ class Security_Register extends Action
                 'redirect' => ['default' => '/ice/security/login'],
                 'url' => ['providers' => 'router']
             ],
-            'output' => ['resource' => 'Ice:Resource/Security_Login']
+            'output' => ['resource' => 'Ice:Resource/Security_Login'],
+            'cache' => ['ttl' => -1, 'count' => 1000],
         ];
     }
 
@@ -79,7 +79,7 @@ class Security_Register extends Action
         $formClass = Widget_Form_Security_Register::getClass($input['security']);
 
         return [
-            'form' => $formClass::create($input['url'], Form_Submit::getClass(), 'Security_Login')
+            'form' => $formClass::create($input['url'], Widget_Form_Submit::getClass(), 'Security_Login')
         ];
     }
 }

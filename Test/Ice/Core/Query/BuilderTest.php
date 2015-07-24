@@ -13,7 +13,7 @@ class BuilderTest extends PHPUnit_Framework_TestCase
         Query::getBuilder(Test::getClass())->createTableQuery()->getQueryResult();
 
         $userRow = Query::getBuilder(Test::getClass())
-            ->insertQuery([
+            ->getInsertQuery([
                 '/name' => 'name',
                 'name2' => 'test'
             ])->getRow();

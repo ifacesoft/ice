@@ -24,7 +24,7 @@ return [
                             ],
                             'module' => [
                                 'path' => 'Ice/',
-                                'css' => ['Widget/Menu.css'],
+                                'css' => ['Core/Widget/Form/File.css'],
                                 'isCopy' => false,
                             ],
                         ],
@@ -56,7 +56,7 @@ return [
                             ],
                             'module' => [
                                 'path' => 'Ice/',
-                                'js' => ['Helper/String.js', 'Widget/Form.js', 'Widget/Menu.js', 'Widget/Data.js'],
+                                'js' => ['Helper/String.js', 'Core/Widget.js'],
                                 'isCopy' => false,
                             ],
                         ],

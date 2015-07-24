@@ -144,6 +144,7 @@ class Logger
 
         ini_set('xdebug.var_display_max_depth', -1);
         ini_set('xdebug.profiler_enable', 1);
+        ini_set('xdebug.max_nesting_level', 200);
         ini_set('xdebug.profiler_output_dir', Module::getInstance()->get('logDir') . 'xdebug');
 
         ob_start();
@@ -250,24 +251,31 @@ class Logger
      * @param string $type (LOG|INFO|WARN|ERROR|DUMP|TRACE|EXCEPTION|TABLE|GROUP_START|GROUP_END)
      * @param string $label
      * @param array $options
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 1.0
+     * @since   0.0
      */
     public static function fb($value, $label = null, $type = 'LOG', $options = [])
     {
         if (
-            !Request::isCli() &&
-            !Environment::getInstance()->isProduction() &&
-            !headers_sent()
-            && Loader::load('FirePHP', false)
+            Request::isCli() ||
+            Environment::getInstance()->isProduction() ||
+            headers_sent() ||
+            !Loader::load('FirePHP', false)
         ) {
-            $varSize = Helper_Profiler::getVarSize($value);
-
-            if ($varSize > pow(2, 17)) {
-                FirePHP::getInstance(true)->fb('Too big data: ' . $varSize . ' bytes (max: ' . pow(2, 17) . ')', $label, 'WARN', $options);
-                return;
-            }
-
-            FirePHP::getInstance(true)->fb($value, $label, $type, $options);
+            return;
         }
+
+        $varSize = Helper_Profiler::getVarSize($value);
+
+        if ($varSize > pow(2, 17)) {
+            FirePHP::getInstance(true)->fb('Too big data: ' . $varSize . ' bytes (max: ' . pow(2, 17) . ')', $label, 'WARN', $options);
+            return;
+        }
+
+        FirePHP::getInstance(true)->fb($value, $label, $type, $options);
     }
 
     /**
@@ -305,7 +313,7 @@ class Logger
      */
     public function error($message, $file, $line, \Exception $e = null, $errcontext = null, $errno = 0)
     {
-        $exception = $this->createException($message, $file, $line, $e, $errcontext, (int) $errno);
+        $exception = $this->createException($message, $file, $line, $e, $errcontext, (int)$errno);
 
         $output = [
             'time' => date('H:i:s'),
@@ -488,25 +496,30 @@ class Logger
         throw $this->createException($message, $file, $line, $e, $errcontext, $errno, $exceptionClass);
     }
 
-    /**
-     * Log
-     *
-     * @param $message
-     *
-     * @param  string $type
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since   0.4
-     */
-    public function log($message, $type = Logger::SUCCESS)
+    public static function log($value, $label = null, $type = 'LOG', $options = [])
     {
-        if (!Environment::getInstance()->isProduction()) {
-            //            if (Request::isCli()) {
-            $this->info(Helper_Resource::getMessage($message), $type, false);
-            //            } else {
-            //                Logger::fb($message, 'log', 'LOG');
-            //            }
+        $value = str_replace(["\n", "\t"] , ' ', $value);
+
+        if (Environment::getInstance()->isProduction()) {
+            return;
+        }
+
+        $logFile = Directory::get(Module::getInstance()->get('logDir')) . date('Y-m-d') . '/Log.log';
+        File::createData($logFile, $label . ': ' . $value . "\n", false, FILE_APPEND);
+
+        if (Request::isCli()) {
+            $colors = [
+                'INFO' => Console::C_GREEN,
+                'DUMP' => Console::C_CYAN,
+                'WARN' => Console::C_YELLOW,
+                'ERROR' => Console::C_RED,
+                'LOG' => Console::C_CYAN,
+            ];
+
+            $message = Console::getText($label . ': ' . $value, Console::C_BLACK, $colors[$type]) . "\n";
+            fwrite(STDOUT, $message);
+        } else {
+            Logger::fb($value, $label, $type, $options);
         }
     }
 }

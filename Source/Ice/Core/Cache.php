@@ -71,7 +71,7 @@ class Cache
      *
      * @param  Cacheable $cacheable
      * @param  $cacheTime
-     * @param  array $tags
+     * @param  array $validateTags
      * @return Cacheable|null
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -79,26 +79,35 @@ class Cache
      * @version 0.5
      * @since   0.5
      */
-    public static function validateTimeTags(Cacheable $cacheable, array $tags, $cacheTime)
+    public static function validateTimeTags(Cacheable $cacheable, array $validateTags, $cacheTime)
     {
-        if (empty($tags)) {
+        if (empty($validateTags)) {
             return null;
         }
 
         $repository = Cache::getRepository($cacheable);
 
-        foreach (Cache::getKeys($cacheable) as $key) {
+//        Debuger::dump(Cache::getKeys($validateTags));
+
+        foreach (Cache::getKeys($validateTags) as $key) {
             $time = $repository->get($key);
 
+//            Debuger::dump($time);
+
             if (!$time) {
-                $time = time();
+                $time = microtime(true);
                 $repository->set($key, $time);
             }
 
+//            Debuger::dump([$time, $cacheTime, $time >= $cacheTime]);
+
             if ($time >= $cacheTime) {
+//                Debuger::dump([$time => $cacheTime, $validateTags, $key => '2invalid!!!!']);
                 return null;
             }
         }
+
+//        Debuger::dump([$validateTags, 'valid!!!!']);
 
         return $cacheable;
     }
@@ -167,7 +176,7 @@ class Cache
     {
         $repository = Cache::getRepository($cacheable);
 
-        $time = time();
+        $time = microtime(true);
 
         foreach (self::getKeys($invalidateTags) as $key) {
             $repository->set($key, $time);

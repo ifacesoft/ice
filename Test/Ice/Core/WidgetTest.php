@@ -70,9 +70,10 @@ class WidgetTest extends PHPUnit_Framework_TestCase
         $paginationMenu = Pagination::create('/', __CLASS__)
             ->setClasses('pagination-sm');
 
-        $paginationMenu->setPage(5)
-            ->setLimit(10)
-            ->setFoundRows(100);
+        $paginationMenu->bind([
+            'page' => 5,
+            'limit' => 10
+            ])->setFoundRows(100);
 
         $this->assertEquals(
             $paginationMenu->render(),

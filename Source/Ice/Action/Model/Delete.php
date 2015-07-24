@@ -59,7 +59,7 @@ class Model_Delete extends Action
      *          ]
      *      ],
      *      'output' => ['Ice:Resource/Ice\Action\Index'],
-     *      'ttl' => 3600,
+     *      'cache' => ['ttl' => -1, 'count' => 1000],
      *      'roles' => []
      *  ];
      * ```
@@ -78,7 +78,8 @@ class Model_Delete extends Action
             'input' => [
                 'modelClassName' => ['validators' => 'Ice:Not_Empty'],
                 'pk' => ['validators' => 'Ice:Numeric_Positive']
-            ]
+            ],
+            'cache' => ['ttl' => -1, 'count' => 1000],
         ];
     }
 

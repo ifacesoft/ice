@@ -27,7 +27,8 @@ class Sami extends Action
                 'vendor' => ['default' => 'sami/sami'],
                 'command' => ['default' => '/sami.php'],
                 'config' => ['default' => 'vendor/sami.php']
-            ]
+            ],
+            'cache' => ['ttl' => -1, 'count' => 1000],
         ];
     }
 

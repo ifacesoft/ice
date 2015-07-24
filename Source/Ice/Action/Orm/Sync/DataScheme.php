@@ -4,6 +4,7 @@ namespace Ice\Action;
 
 use Ice\Core\Action;
 use Ice\Core\Data_Scheme;
+use Ice\Core\Debuger;
 use Ice\Core\Model;
 use Ice\Core\Module;
 use Ice\Exception\DataSource_TableNotFound;
@@ -31,7 +32,7 @@ class Orm_Sync_DataScheme extends Action
             'actions' => [],
             'input' => ['force' => ['default' => 0]],
             'output' => [],
-            'ttl' => -1,
+            'cache' => ['ttl' => -1, 'count' => 1000],
             'roles' => []
         ];
     }
@@ -79,7 +80,7 @@ class Orm_Sync_DataScheme extends Action
                 $isModelSchemeUpdated = $this->updateModelScheme(
                     $table['scheme'],
                     $schemeTables[$tableName]['scheme'],
-                $tableName,
+                    $tableName,
                     $schemeTables[$tableName]['modelClass'],
                     $dataSourceKey
                 );
@@ -106,7 +107,8 @@ class Orm_Sync_DataScheme extends Action
                     $schemeTables[$tableName]['modelClass'],
                     $schemeTables,
                     $module,
-                    $dataSourceKey
+                    $dataSourceKey,
+                    $input['force']
                 );
 
                 $isModelRelationsManyToOneUpdated = $this->updateModelRelationsManyToOne(
@@ -115,7 +117,8 @@ class Orm_Sync_DataScheme extends Action
                     $schemeTables[$tableName]['modelClass'],
                     $schemeTables,
                     $module,
-                    $dataSourceKey
+                    $dataSourceKey,
+                    $input['force']
                 );
 
                 $isModelRelationsManyToManyUpdated = $this->updateModelRelationsManyToMany(
@@ -124,7 +127,8 @@ class Orm_Sync_DataScheme extends Action
                     $schemeTables[$tableName]['modelClass'],
                     $schemeTables,
                     $module,
-                    $dataSourceKey
+                    $dataSourceKey,
+                    $input['force']
                 );
 
                 $isModelFieldsUpdated = false;
@@ -135,7 +139,7 @@ class Orm_Sync_DataScheme extends Action
                     if (!isset($schemeTables[$tableName]['columns'][$columnName])) {
                         $this->createModuleField(
                             $schemeTables[$tableName]['columns'][$columnName],
-                            $column['scheme'],
+                            $column,
                             $schemeTables[$tableName]['modelClass'],
                             $dataSourceKey
                         );
@@ -183,7 +187,11 @@ class Orm_Sync_DataScheme extends Action
                     $isModelFieldsUpdated;
 
                 if ($isUpdated) {
-                    Model::getCodeGenerator()->generate($schemeTables[$tableName]['modelClass'], $table, $input['force']);
+                    Model::getCodeGenerator()->generate(
+                        $schemeTables[$tableName]['modelClass'],
+                        $schemeTables[$tableName],
+                        $input['force']
+                    );
                 }
 
                 unset($schemeTables[$tableName]);
@@ -210,7 +218,7 @@ class Orm_Sync_DataScheme extends Action
     {
         Model::getCodeGenerator()->generate($modelClass, $table, $force);
 
-        Scheme::createQueryBuilder()->insertQuery(
+        Scheme::createQueryBuilder()->getInsertQuery(
             [
                 'table_name' => $table['scheme']['tableName'],
                 'table__json' => Json::encode($table['scheme']),
@@ -334,12 +342,13 @@ class Orm_Sync_DataScheme extends Action
         $modelClass,
         array $schemeTables,
         Module $module,
-        $dataSourceKey
+        $dataSourceKey,
+        $force
     )
     {
         $tableOneToManyJson = Json::encode($tableOneToMany);
 
-        if (crc32($tableOneToManyJson) == crc32(Json::encode($modelOneToMany))) {
+        if (!$force && crc32($tableOneToManyJson) == crc32(Json::encode($modelOneToMany))) {
             return false;
         }
 
@@ -371,12 +380,13 @@ class Orm_Sync_DataScheme extends Action
         $modelClass,
         array $schemeTables,
         Module $module,
-        $dataSourceKey
+        $dataSourceKey,
+        $force
     )
     {
         $tableManyToOneJson = Json::encode($tableManyToOne);
 
-        if (crc32($tableManyToOneJson) == crc32(Json::encode($modelManyToOne))) {
+        if (!$force && crc32($tableManyToOneJson) == crc32(Json::encode($modelManyToOne))) {
             return false;
         }
 
@@ -408,18 +418,20 @@ class Orm_Sync_DataScheme extends Action
         $modelClass,
         array $schemeTables,
         Module $module,
-        $dataSourceKey
+        $dataSourceKey,
+        $force
     )
     {
         $tableManyToOneJson = Json::encode($tableManyToMany);
 
-        if (crc32($tableManyToOneJson) == crc32(Json::encode($modelManyToMany))) {
+        if (!$force && crc32($tableManyToOneJson) == crc32(Json::encode($modelManyToMany))) {
             return false;
         }
 
         $diffManyToMany = Json::encode(array_diff($tableManyToMany, $modelManyToMany));
 
         $references = [];
+
         foreach ($tableManyToMany as $referenceTableName => $linkTableName) {
             $referenceClassName = isset($schemeTables[$referenceTableName])
                 ? $schemeTables[$referenceTableName]['modelClass']
@@ -444,7 +456,7 @@ class Orm_Sync_DataScheme extends Action
 
     private function createModuleField(&$modelField, $modelFieldScheme, $modelClass, $dataSourceKey)
     {
-        $modelField = ['scheme' => $modelFieldScheme];
+        $modelField = $modelFieldScheme;
 
         Data_Scheme::getLogger()->info([
             '{$0}: Field {$1} in model {$2} successfully created',

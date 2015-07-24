@@ -27,7 +27,7 @@ class Admin_Database extends Action
             'view' => ['viewRenderClass' => 'Ice:Php'],
             'input' => [],
             'output' => ['resource' => 'Ice:Resource/Ice\Action\Admin_Database'],
-            'ttl' => -1,
+            'cache' => ['ttl' => -1, 'count' => 1000],
             'roles' => []
         ];
     }

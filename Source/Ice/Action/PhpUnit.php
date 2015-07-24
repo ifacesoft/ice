@@ -56,7 +56,7 @@ class PhpUnit extends Action
      *          ]
      *      ],
      *      'output' => ['Ice:Resource/Ice\Action\Index'],
-     *      'ttl' => 3600,
+     *      'cache' => ['ttl' => -1, 'count' => 1000],
      *      'roles' => []
      *  ];
      * ```
@@ -75,7 +75,8 @@ class PhpUnit extends Action
             'input' => [
                 'vendor' => ['default' => 'phpunit/phpunit'],
                 'command' => ['default' => '/phpunit']
-            ]
+            ],
+            'cache' => ['ttl' => -1, 'count' => 1000],
         ];
     }
 

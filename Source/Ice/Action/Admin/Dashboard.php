@@ -22,7 +22,7 @@ class Admin_Dashboard extends Action
             'view' => ['viewRenderClass' => 'Ice:Php'],
             'input' => [],
             'output' => [],
-            'ttl' => -1,
+            'cache' => ['ttl' => -1, 'count' => 1000],
             'roles' => []
         ];
     }

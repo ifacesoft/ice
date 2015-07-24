@@ -22,7 +22,7 @@ class SocialNetwork_Facebook_Widget_Group extends Action
             'actions' => [],
             'input' => ['groupId' => ['validators' => 'Ice:Not_Empty']],
             'output' => [],
-            'ttl' => -1,
+            'cache' => ['ttl' => -1, 'count' => 1000],
             'roles' => []
         ];
     }

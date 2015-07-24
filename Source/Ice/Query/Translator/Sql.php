@@ -9,8 +9,10 @@
 
 namespace Ice\Query\Translator;
 
+use Ice\Core\Debuger;
 use Ice\Core\Exception;
 use Ice\Core\Model;
+use Ice\Core\Query;
 use Ice\Core\Query_Builder;
 use Ice\Core\Query_Translator;
 use Ice\Helper\Mapping;
@@ -42,6 +44,7 @@ class Sql extends Query_Translator
     const SQL_CLAUSE_VALUES = 'VALUES';
     const SQL_CLAUSE_WHERE = 'WHERE';
     const SQL_CLAUSE_GROUP = 'GROUP';
+    const SQL_CLAUSE_HAVING = 'HAVING';
     const SQL_CLAUSE_ORDER = 'ORDER';
     const SQL_CLAUSE_LIMIT = 'LIMIT';
     const ON_DUPLICATE_KEY_UPDATE = 'ON DUPLICATE KEY UPDATE';
@@ -249,72 +252,91 @@ class Sql extends Query_Translator
         foreach ($part as $tableAlias => $where) {
             $modelClass = $where['class'];
 
+            $fields = $modelClass::getScheme()->getFieldColumnMap();
+
             foreach ($where['data'] as $fieldNameArr) {
                 list($logicalOperator, $fieldName, $comparisonOperator, $count) = $fieldNameArr;
+
+                if (isset($fields[$fieldName])) {
+                    $fieldName = $fields[$fieldName];
+                }
 
                 $sql .= $sql
                     ? ' ' . $logicalOperator . "\n\t"
                     : "\n" . self::SQL_CLAUSE_WHERE . "\n\t";
-                $sql .= $this->buildWhere(
-                    $modelClass::getScheme()->getFieldColumnMap(),
-                    $fieldName,
-                    $comparisonOperator,
-                    $tableAlias,
-                    $count
-                );
+
+                $sql .= $tableAlias . '.' . '`' . $fieldName . '` ' .
+                    $this->buildWhere($comparisonOperator, $fieldName, $count);
             }
         }
 
         return empty($delete) ? $sql : $delete . $sql;
     }
 
+    protected function translateHaving(array $part) {
+        $sql = '';
+
+        /**
+         * @var Model $modelClass
+         * @var array $having
+         */
+        foreach ($part as $tableAlias => $having) {
+            $modelClass = $having['class'];
+
+            $fields = $modelClass::getScheme()->getFieldColumnMap();
+
+            foreach ($having['data'] as $fieldNameArr) {
+                list($logicalOperator, $fieldName, $comparisonOperator, $count) = $fieldNameArr;
+
+                if (isset($fields[$fieldName])) {
+                    $fieldName = $fields[$fieldName];
+                }
+
+                $sql .= $sql
+                    ? ' ' . $logicalOperator . "\n\t"
+                    : "\n" . self::SQL_CLAUSE_HAVING . "\n\t";
+
+                $sql .= '`' . $fieldName . '` ' .
+                    $this->buildWhere($comparisonOperator, $fieldName, $count);
+            }
+        }
+
+        return $sql;
+    }
+
     /**
      * Build where part string
      *
-     * @param  array $fields
-     * @param  $fieldName
-     * @param  $comparisonOperator
-     * @param  $tableAlias
-     * @param  $count
+     * @param $comparisonOperator
+     * @param $fieldName
+     * @param $count
      * @return string
      * @throws Exception
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.3
      * @since   0.3
      */
-    private function buildWhere(array $fields, $fieldName, $comparisonOperator, $tableAlias, $count)
+    private function buildWhere($comparisonOperator, $fieldName, $count)
     {
-        if (isset($fields[$fieldName])) {
-            $fieldName = $fields[$fieldName];
-        }
-
         switch ($comparisonOperator) {
             case Query_Builder::SQL_COMPARISON_OPERATOR_EQUAL:
-                return $tableAlias . '.' . '`' . $fieldName . '` ' . Query_Builder::SQL_COMPARISON_OPERATOR_EQUAL . ' ?';
             case Query_Builder::SQL_COMPARISON_OPERATOR_GREATER:
-                return $tableAlias . '.' . '`' . $fieldName . '` ' . Query_Builder::SQL_COMPARISON_OPERATOR_GREATER . ' ?';
             case Query_Builder::SQL_COMPARISON_OPERATOR_LESS:
-                return $tableAlias . '.' . '`' . $fieldName . '` ' . Query_Builder::SQL_COMPARISON_OPERATOR_LESS . ' ?';
             case Query_Builder::SQL_COMPARISON_OPERATOR_GREATER_OR_EQUAL:
-                return $tableAlias . '.' . '`' . $fieldName . '` ' . Query_Builder::SQL_COMPARISON_OPERATOR_GREATER_OR_EQUAL . ' ?';
             case Query_Builder::SQL_COMPARISON_OPERATOR_LESS_OR_EQUAL:
-                return $tableAlias . '.' . '`' . $fieldName . '` ' . Query_Builder::SQL_COMPARISON_OPERATOR_LESS_OR_EQUAL . ' ?';
             case Query_Builder::SQL_COMPARISON_KEYWORD_REGEXP:
-                return $tableAlias . '.' . '`' . $fieldName . '` ' . Query_Builder::SQL_COMPARISON_KEYWORD_REGEXP . ' ?';
             case Query_Builder::SQL_COMPARISON_OPERATOR_NOT_EQUAL:
-                return $tableAlias . '.' . $fieldName . ' ' . Query_Builder::SQL_COMPARISON_OPERATOR_NOT_EQUAL . ' ?';
-            case Query_Builder::SQL_COMPARISON_KEYWORD_IN:
-                return $tableAlias . '.' . $fieldName . ' IN (?' . ($count > 1 ? str_repeat(',?', $count - 1) : '') . ')';
-            case Query_Builder::SQL_COMPARISON_KEYWORD_IS_NULL:
-                return $tableAlias . '.' . $fieldName . ' ' . Query_Builder::SQL_COMPARISON_KEYWORD_IS_NULL;
-            case Query_Builder::SQL_COMPARISON_KEYWORD_IS_NOT_NULL:
-                return $tableAlias . '.' . $fieldName . ' ' . Query_Builder::SQL_COMPARISON_KEYWORD_IS_NOT_NULL;
             case Query_Builder::SQL_COMPARISON_KEYWORD_LIKE:
-                return $tableAlias . '.' . $fieldName . ' ' . Query_Builder::SQL_COMPARISON_KEYWORD_LIKE . ' ?';
             case Query_Builder::SQL_COMPARISON_KEYWORD_RLIKE:
-                return $tableAlias . '.' . $fieldName . ' ' . Query_Builder::SQL_COMPARISON_KEYWORD_RLIKE . ' ?';
+                return $comparisonOperator . ' ?';
+            case Query_Builder::SQL_COMPARISON_KEYWORD_BETWEEN:
+                return $comparisonOperator .' ? AND ?';
+            case Query_Builder::SQL_COMPARISON_KEYWORD_IN:
+                return $comparisonOperator .' (?' . ($count > 1 ? str_repeat(',?', $count - 1) : '') . ')';
+            case Query_Builder::SQL_COMPARISON_KEYWORD_IS_NULL:
+            case Query_Builder::SQL_COMPARISON_KEYWORD_IS_NOT_NULL:
+                return $comparisonOperator;
             case Query_Builder::SQL_COMPARISON_KEYWORD_RLIKE_REVERSE:
                 return '? ' . Query_Builder::SQL_COMPARISON_KEYWORD_RLIKE . ' ' . $fieldName;
             default:
@@ -354,10 +376,10 @@ class Sql extends Query_Translator
         $tableAlias = null;
 
         foreach ($part as $modelClass => $tableAliases) {
-            foreach ($tableAliases as $tableAlias => $fieldNames) {
+            foreach ($tableAliases as $tableAlias => $select) {
                 $fieldColumnMap = $modelClass::getScheme()->getFieldColumnMap();
 
-                foreach ($fieldNames as $fieldName => &$fieldAlias) {
+                foreach ($select['columns'] as $fieldName => $fieldAlias) {
                     $isSpatial = (boolean)strpos($fieldName, '__geo');
 
                     if (isset($fieldColumnMap[$fieldName])) {
@@ -379,9 +401,9 @@ class Sql extends Query_Translator
                             ? $fieldName . ' AS `' . $fieldAlias . '`'
                             : '`' . $tableAlias . '`.`' . $fieldName . '` AS `' . $fieldAlias . '`';
                     }
-                }
 
-                $fields = array_merge($fields, $fieldNames);
+                    $fields[] = $fieldAlias;
+                }
             }
         }
 
@@ -389,10 +411,18 @@ class Sql extends Query_Translator
             return $sql;
         }
 
+        if (isset($select['table']) && $select['table'] instanceof Query_Builder) {
+            $select['table'] = $select['table']->getSelectQuery('*'); // todo Не доджно быть никаких Query, только Query_Builder
+        }
+
+        $table = isset($select['table']) && $select['table'] instanceof Query
+            ? '(' . $select['table']->getBody() . ')'
+            : '`' . $modelClass::getTableName() . '`';
+
         $sql .= "\n" . self::SQL_STATEMENT_SELECT . ($calcFoundRows ? ' ' . self::SQL_CALC_FOUND_ROWS . ' ' : '') .
             "\n\t" . implode(',' . "\n\t", $fields) .
             "\n" . self::SQL_CLAUSE_FROM .
-            "\n\t`" . $modelClass::getTableName() . '` `' . $tableAlias . '`';
+            "\n\t" . $table . ' `' . $tableAlias . '`';
 
         return $sql;
     }
@@ -423,8 +453,8 @@ class Sql extends Query_Translator
             $joinModelClass = $joinTable['class'];
 
             $sql .= "\n" . $joinTable['type'] . "\n\t`" .
-                $joinModelClass::getTableName() . '` AS `' . $tableAlias .
-                '` ON (' . $joinTable['on'] . ')';
+                $joinModelClass::getTableName() . '` `' . $tableAlias . '` ON (' . $joinTable['on'] . ')';
+
         }
 
         return $sql;
@@ -461,7 +491,9 @@ class Sql extends Query_Translator
             $fieldColumnMap = $modelClass::getScheme()->getFieldColumnMap();
 
             foreach ($fieldNames as $fieldName => $ascending) {
-                $orders[] = $tableAlias . '.' . $fieldColumnMap[$fieldName] . ' ' . $ascending;
+                $orders[] = isset($fieldColumnMap[$fieldName])
+                    ? '`' . $tableAlias . '`.`' . $fieldColumnMap[$fieldName] . '` ' . $ascending
+                    : '`' . $fieldName . '` ' . $ascending;
             }
         }
 
@@ -502,7 +534,9 @@ class Sql extends Query_Translator
             $fieldColumnMap = $modelClass::getScheme()->getFieldColumnMap();
 
             foreach ($fieldNames as $fieldName) {
-                $groups[] = '`' . $tableAlias . '`.`' . $fieldColumnMap[$fieldName] . '`';
+                $groups[] = isset($fieldColumnMap[$fieldName])
+                    ? '`' . $tableAlias . '`.`' . $fieldColumnMap[$fieldName] . '`'
+                    : $fieldName; // custom field (check yourself)
             }
         }
 

@@ -31,5 +31,6 @@
 
     <?= $Admin_Navigation[0] ?>
     <?= $main[0] ?>
+</div>
 </body>
 </html>

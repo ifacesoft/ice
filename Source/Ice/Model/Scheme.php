@@ -21,7 +21,7 @@ class Scheme extends Model
     protected static function config()
     {
         return [
-		    'dataSourceKey' => 'Ice\Data\Source\Mysqli/default.www',
+		    'dataSourceKey' => 'Ice\Data\Source\Mysqli/tunnel.binardi',
 		    'scheme' => [
 		        'tableName' => 'ice_scheme',
 		        'engine' => 'InnoDB',
@@ -40,10 +40,11 @@ class Scheme extends Model
 		                'default' => null,
 		                'comment' => '',
 		            ],
-		            'fieldName' => 'ice_scheme_pk',
+		            'fieldName' => 'table_name',
 		            'Ice\Core\Widget_Form' => 'Text',
 		            'Ice\Core\Validator' => [
 		                'Ice:Length_Max' => 255,
+		                0 => 'Ice:Not_Null',
 		            ],
 		            'Ice\Core\Widget_Data' => 'text',
 		        ],
@@ -58,10 +59,11 @@ class Scheme extends Model
 		                'default' => null,
 		                'comment' => '',
 		            ],
-		            'fieldName' => 'ice_scheme_pk',
+		            'fieldName' => 'revision',
 		            'Ice\Core\Widget_Form' => 'Text',
 		            'Ice\Core\Validator' => [
 		                'Ice:Length_Max' => 12,
+		                0 => 'Ice:Not_Null',
 		            ],
 		            'Ice\Core\Widget_Data' => 'text',
 		        ],
@@ -144,18 +146,10 @@ class Scheme extends Model
 		    ],
 		    'indexes' => [
 		        'PRIMARY KEY' => [
-		            'PRIMARY' => [
-		                1 => 'table_name',
-		                2 => 'revision',
-		            ],
+		            'PRIMARY' => [],
 		        ],
 		        'FOREIGN KEY' => [],
-		        'UNIQUE' => [
-		            'table_name_revision' => [
-		                1 => 'table_name',
-		                2 => 'revision',
-		            ],
-		        ],
+		        'UNIQUE' => [],
 		    ],
 		    'references' => [],
 		    'relations' => [
@@ -163,7 +157,7 @@ class Scheme extends Model
 		        'manyToOne' => [],
 		        'manyToMany' => [],
 		    ],
-		    'revision' => '05071812_8et',
+		    'revision' => '07231557_rjn',
 		];
     }
 }

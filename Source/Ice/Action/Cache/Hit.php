@@ -20,7 +20,7 @@ class Cache_Hit extends Action
                'actions' => [],
                'input' => ['routeNames' => ['default' => []]],
                'output' => [],
-               'ttl' => -1,
+               'cache' => ['ttl' => -1, 'count' => 1000],
                'access' => [
                    'roles' => [],
                    'request' => 'cli',

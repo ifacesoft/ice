@@ -2,49 +2,25 @@
 
 namespace Ice\Widget\Menu;
 
+use Ice\Core\Query_Builder;
 use Ice\Core\Query_Result;
 use Ice\Core\Widget_Menu;
-use Ice\Helper\Json;
-use Ice\View\Render\Php;
 
 class Pagination extends Widget_Menu
 {
     protected $foundRows = 0;
+    private $isShort = false;
 
-    /**
-     * Pagination constructor.
-     */
-    protected function __construct()
+    protected static function config()
     {
-        $this->bind('page', 1);
-        $this->bind('limit', 1000);
-    }
-
-    public function bind($key, $value)
-    {
-        if ($key == 'page' && empty($value)) {
-            $value = 1;
-        }
-
-        if ($key == 'limit' && empty($value)) {
-            $value = 1000;
-        }
-
-        return parent::bind($key, $value);
-    }
-
-    /**
-     * Create paginationMenu
-     *
-     * @param $url
-     * @param $action
-     * @param null $block
-     * @param null $event
-     * @return Pagination
-     */
-    public static function create($url, $action, $block = null, $event = null)
-    {
-        return parent::create($url, $action, $block, $event);
+        return [
+            'view' => ['template' => null, 'viewRenderClass' => null, 'layout' => null],
+            'input' => [
+                'page' => ['providers' => 'request', 'default' => 1],
+                'limit' => ['providers' => 'request', 'default' => 15],
+            ],
+            'access' => ['roles' => [], 'request' => null, 'env' => null]
+        ];
     }
 
     /**
@@ -57,180 +33,275 @@ class Pagination extends Widget_Menu
 
     /**
      * @param int $foundRows
+     * @return Pagination
      */
     public function setFoundRows($foundRows)
     {
         $this->foundRows = $foundRows;
+        return $this;
     }
 
     public function render()
     {
-        $this->buildItems();
-
-        $menuClass = get_class($this);
-        $menuName = 'Menu_' . $menuClass::getClassName();
-
-        $items = [];
-
-        foreach ($this->getItems() as $itemName => $item) {
-            $page = isset($item['options']['page'])
-                ? $item['options']['page'] : 0;
-
-            $item['name'] = $itemName;
-            $item['menuName'] = $menuName;
-
-            $params = $this->getParams();
-            $params['page'] = $page;
-
-            $url = $this->getUrl() . '?' . http_build_query($params);
-
-            $item['href'] = $url;
-            $item['dataUrl'] = $url;
-            $item['dataJson'] = Json::encode($this->getParams());
-            $item['dataAction'] = $this->getAction();
-            $item['dataBlock'] = $this->getBlock();
-
-            if (!isset($item['onclick'])) {
-                $item['onclick'] = 'Ice_Widget_Menu.click($(this)); return false;';
-            }
-
-            $items[] = Php::getInstance()->fetch($menuClass . '_' . $item['template'], $item);
+        if (ceil($this->foundRows / $this->getValue('limit')) < 2) {
+            return '';
         }
 
-        return Php::getInstance()->fetch(
-            Widget_Menu::getClass($menuClass),
-            [
-                'items' => $items,
-                'menuName' => $menuName,
-                'classes' => $this->getClasses(),
-                'style' => $this->getStyle()
-            ]
+        $page = $this->getValue('page');
+
+        $pageCount = (int) ceil($this->foundRows / $this->getValue('limit'));
+
+        if ($page > $pageCount) {
+            $page = $pageCount;
+        }
+
+        $this->first(1, $page)
+            ->fastFastPrev($page - 100, $page)
+            ->fastPrev($page - 10, $page)
+            ->prevPrev($page - 2)
+            ->prev($page - 1)
+            ->curr($page, $pageCount)
+            ->next($page + 1, $pageCount)
+            ->nextNext($page + 2, $pageCount)
+            ->fastNext($page + 10, $pageCount)
+            ->fastFastNext($page + 100, $pageCount)
+            ->last($page, $pageCount);
+
+        return parent::render();
+    }
+
+    public function item($name, $title, array $options = [], $template = 'Ice\Widget\Menu\Pagination_Item')
+    {
+        return $this->addPart(
+            $name,
+            $title,
+            array_merge($options, ['onclick' => true, 'href' => $this->getUrl()]),
+            $template
         );
     }
 
-    private function buildItems()
+    /**
+     * @param $page
+     * @param $pageCount
+     * @return Pagination
+     */
+    private function last($page, $pageCount)
     {
-        if ($this->items === null) {
-            $page = $this->getValues('page');
+        if ($page < $pageCount) {
+            $isHellip =
+                $pageCount - ($page + 100) != 1 &&
+                $pageCount - ($page + 10) != 1 &&
+                $pageCount - ($page + 2) != 1 &&
+                $pageCount - ($page + 1) != 1 &&
+                $pageCount - ($page + 0) != 1;
 
-            $pageCount = ceil($this->foundRows / $this->getValues('limit'));
-
-            $this->first(1)
-                ->fastFastPrev($page - 100)
-                ->fastPrev($page - 10)
-                ->prevPrev($page - 2)
-                ->prev($page - 1)
-                ->curr($page, $pageCount)
-                ->next($page + 1, $pageCount)
-                ->nextNext($page + 2, $pageCount)
-                ->fastNext($page + 10, $pageCount)
-                ->fastFastNext($page + 100, $pageCount)
-                ->last($pageCount);
-        }
-    }
-
-    private function last($page)
-    {
-        if ($this->getValues('page') < $page) {
-            $this->link('rightSep3', ' &hellip; ', ['classes' => ['disabled'], 'style' => 'border: none; margin-left: 0; background-color: inherit;']);
-            $this->link('last', '&gt;&gt;&gt; ' . $page, ['page' => $page]);
+            $title = $this->isShort ? $pageCount : '&gt;&gt;&gt; ' . $pageCount;
+            $this->item(
+                __FUNCTION__,
+                $title,
+                ['params' => ['page' => $pageCount], 'prev' => $isHellip ? ' &hellip; ' : '']
+            );
         }
 
         return $this;
     }
 
+    /**
+     * @param $page
+     * @param $pageCount
+     * @return Pagination
+     */
     private function fastFastNext($page, $pageCount)
     {
         if ($page < $pageCount) {
-            $this->link('rightSep2', ' &hellip; ', ['classes' => ['disabled'], 'style' => 'border: none; margin-left: 0; background-color: inherit;']);
-            $this->link('fastNext2', '&gt;&gt; ' . $page, ['page' => $page]);
+            $isHellip =
+                $pageCount - ($page + 10) != 1 &&
+                $pageCount - ($page + 2) != 1 &&
+                $pageCount - ($page + 1) != 1 &&
+                $pageCount - ($page + 0) != 1;
+
+            $title = $this->isShort ? $page : '&gt;&gt; ' . $page;
+            $this->item(
+                __FUNCTION__,
+                $title,
+                ['params' => ['page' => $page], 'prev' => $isHellip ? ' &hellip; ' : '']
+            );
         }
 
         return $this;
     }
 
+    /**
+     * @param $page
+     * @param $pageCount
+     * @return Pagination
+     */
     private function fastNext($page, $pageCount)
     {
         if ($page < $pageCount) {
-            $this->link('rightSep', ' &hellip; ', ['classes' => ['disabled'], 'style' => 'border: none; margin-left: 0; background-color: inherit;']);
-            $this->link('fastNext', '&gt; ' . $page, ['page' => $page]);
+            $isHellip = $pageCount - ($page + 2) != 1 &&
+                $pageCount - ($page + 1) != 1 &&
+                $pageCount - ($page + 0) != 1;
+
+            $title = $this->isShort ? $page : '&gt; ' . $page;
+            $this->item(
+                __FUNCTION__,
+                $title,
+                ['params' => ['page' => $page], 'prev' => $isHellip ? ' &hellip; ' : '']
+            );
         }
 
         return $this;
     }
 
+    /**
+     * @param $page
+     * @param $pageCount
+     * @return Pagination
+     */
     private function nextNext($page, $pageCount)
     {
         if ($page < $pageCount) {
-            $this->link('after2', $page, ['page' => $page]);
+            $this->item(__FUNCTION__, $page, ['params' => ['page' => $page]]);
         }
 
         return $this;
     }
 
+    /**
+     * @param $page
+     * @param $pageCount
+     * @return Pagination
+     */
     private function next($page, $pageCount)
     {
         if ($page < $pageCount) {
-            $this->link('after1', $page, ['page' => $page]);
+            $this->item(__FUNCTION__, $page, ['params' => ['page' => $page]]);
         }
 
         return $this;
     }
 
+    /**
+     * @param $page
+     * @param $pageCount
+     * @return Pagination
+     */
     private function curr($page, $pageCount)
     {
         $limit = $page == $pageCount
-            ? $this->foundRows - ($pageCount - 1) * $this->getValues('limit')
-            : $this->getValues('limit');
+            ? $this->foundRows - ($pageCount - 1) * $this->getValue('limit')
+            : $this->getValue('limit');
 
-        $this->link('current', $page . ' ( ' . $limit . ' / ' . $this->foundRows . ' )', ['page' => $page, 'classes' => ['active'], 'style' => 'z-index: 0;']);
+        $title = $this->isShort ? $page : $page . ' ( ' . $limit . ' / ' . $this->foundRows . ' )';
+        $this->item(
+            __FUNCTION__,
+            $title,
+            ['params' => ['page' => $page], 'active' => true, 'style' => 'z-index: 0;']
+        );
 
         return $this;
     }
 
+    /**
+     * @param $page
+     * @return Pagination
+     */
     private function prev($page)
     {
         if ($page > 1) {
-            $this->link(__FUNCTION__, $page, ['page' => $page]);
+            $this->item(__FUNCTION__, $page, ['params' => ['page' => $page]]);
         }
 
         return $this;
     }
 
+    /**
+     * @param $page
+     * @return Pagination
+     */
     private function prevPrev($page)
     {
         if ($page > 1) {
-            $this->link(__FUNCTION__, $page, ['page' => $page]);
+            $this->item(__FUNCTION__, $page, ['params' => ['page' => $page]]);
         }
 
         return $this;
     }
 
-    private function fastPrev($page)
+    /**
+     * @param $page
+     * @param $currentPage
+     * @return Pagination
+     */
+    private function fastPrev($page, $currentPage)
     {
         if ($page > 1) {
-            $this->link(__FUNCTION__, $page . ' &lt;', ['page' => $page]);
-            $this->link('after_' . __FUNCTION__, ' &hellip; ', ['classes' => ['disabled'], 'style' => 'border: none; margin-left: 0; background-color: inherit;']);
+            $isHellip =
+                $currentPage - 0 - $page != 1 &&
+                $currentPage - 1 - $page != 1 &&
+                $currentPage - 2 - $page != 1 &&
+                $currentPage - 10 - $page != 1 &&
+                $currentPage - 100 - $page != 1;
+
+            $title = $this->isShort ? $page : $page . ' &lt;';
+            $this->item(
+                __FUNCTION__,
+                $title,
+                ['params' => ['page' => $page], 'next' => $isHellip ? ' &hellip; ' : '']
+            );
         }
 
         return $this;
     }
 
-    private function fastFastPrev($page)
+    /**
+     * @param $page
+     * @param $currentPage
+     * @return Pagination
+     */
+    private function fastFastPrev($page, $currentPage)
     {
         if ($page > 1) {
-            $this->link(__FUNCTION__, $page . ' &lt;&lt;', ['page' => $page]);
-            $this->link('after_' . __FUNCTION__, ' &hellip; ', ['classes' => ['disabled'], 'style' => 'border: none; margin-left: 0; background-color: inherit;']);
+            $isHellip =
+                $currentPage - 0 - $page != 1 &&
+                $currentPage - 1 - $page != 1 &&
+                $currentPage - 2 - $page != 1 &&
+                $currentPage - 10 - $page != 1 &&
+                $currentPage - 100 - $page != 1;
+
+            $title = $this->isShort ? $page : $page . ' &lt;&lt;';
+            $this->item(
+                __FUNCTION__,
+                $title,
+                ['params' => ['page' => $page], 'next' => $isHellip ? ' &hellip; ' : '']
+            );
         }
 
         return $this;
     }
 
-    private function first($page)
+    /**
+     * @param $page
+     * @param $currentPage
+     * @return Pagination
+     */
+    private function first($page, $currentPage)
     {
-        if ($this->getValues('page') > $page) {
-            $this->link(__FUNCTION__, $page . ' &lt;&lt;&lt;', ['page' => $page]);
-            $this->link('after_' . __FUNCTION__, ' &hellip; ', ['classes' => ['disabled'], 'style' => 'border: none; margin-left: 0; background-color: inherit;']);
+        if ($this->getValue('page') > $page) {
+            $isHellip =
+                $currentPage - 0 - $page != 1 &&
+                $currentPage - 1 - $page != 1 &&
+                $currentPage - 2 - $page != 1 &&
+                $currentPage - 10 - $page != 1 &&
+                $currentPage - 100 - $page != 1;
+
+            $title = $this->isShort ? $page : $page . ' &lt;&lt;&lt;';
+            $this->item(
+                __FUNCTION__,
+                $title,
+                ['params' => ['page' => $page], 'next' => $isHellip ? ' &hellip; ' : '']
+            );
         }
 
         return $this;
@@ -242,17 +313,18 @@ class Pagination extends Widget_Menu
         return $this;
     }
 
-    public function setLimit($limit)
+    /**
+     * @param boolean $isShort
+     * @return Pagination
+     */
+    public function setIsShort($isShort)
     {
-        $this->bind('limit', $limit);
-
+        $this->isShort = $isShort;
         return $this;
     }
 
-    public function setPage($page)
+    public function queryBuilderPart(Query_Builder $queryBuilder)
     {
-        $this->bind('page', $page);
-
-        return $this;
+        $queryBuilder->setPagination($this->getValue('page'), $this->getValue('limit'));
     }
 }

@@ -23,7 +23,7 @@ class Seo_Yandex_Metrika_Informer extends Action
                'actions' => [],
                'input' => ['counterNumber' => ['validators' => 'Ice:Not_Empty']],
                'output' => [],
-               'ttl' => -1,
+               'cache' => ['ttl' => -1, 'count' => 1000],
                'roles' => []
            ];
        }

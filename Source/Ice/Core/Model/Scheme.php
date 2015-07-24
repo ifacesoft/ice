@@ -36,6 +36,7 @@ class Model_Scheme extends Config
         }
 
         $columns = [];
+
         foreach ($this->gets('columns') as $columnName => $column) {
             $columns[$columnName] = $column['fieldName'];
         }

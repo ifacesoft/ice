@@ -26,7 +26,7 @@ class Code_Generator extends Action{
                    'class',
                ],
                'output' => [],
-               'ttl' => -1,
+               'cache' => ['ttl' => -1, 'count' => 1000],
                'access' => [
                    'roles' => [],
                    'request' => 'cli',

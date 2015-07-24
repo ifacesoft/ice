@@ -13,7 +13,7 @@
 if (file_exists(__DIR__ . '/bootstrap.php')) {
     require_once __DIR__ . '/bootstrap.php';
 } else {
-    define('VENDOR_DIR', realpath(__DIR__ . '/../_vendor') . '/');
+    define('VENDOR_DIR', realpath(__DIR__ . '/Var/vendor') . '/');
 
     require_once VENDOR_DIR . 'ifacesoft/ice/bootstrap.php';
 }

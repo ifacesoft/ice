@@ -30,7 +30,8 @@ class CodeSniffer extends Action
                         'phpcs' => '/scripts/phpcs'
                     ]
                 ]
-            ]
+            ],
+            'cache' => ['ttl' => -1, 'count' => 1000],
         ];
     }
 

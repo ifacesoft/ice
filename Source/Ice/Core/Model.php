@@ -50,7 +50,7 @@ abstract class Model
      *
      * @var array
      */
-    private $row = [];
+    protected $row = [];
 
     /**
      * Extended fields json
@@ -159,7 +159,7 @@ abstract class Model
      * @version 0.1
      * @since   0.0
      */
-    public static function getClass($modelClass = null)
+    public static function getClass($modelClass = null, $required = true)
     {
         if (!$modelClass) {
             /**
@@ -171,7 +171,11 @@ abstract class Model
         $modelClass = Object::getClass(__CLASS__, $modelClass);
 
         if (!Loader::load($modelClass, false)) {
-            Model::getLogger()->exception(['Model class {$0} not found', $modelClass], __FILE__, __LINE__);
+            if ($required) {
+                Model::getLogger()->exception(['Model class {$0} not found', $modelClass], __FILE__, __LINE__);
+            }
+
+            return $modelClass;
         }
 
         if (in_array('Ice\Core\Model\Factory_Delegate', class_implements($modelClass))) {
@@ -308,6 +312,24 @@ abstract class Model
     public function getPk()
     {
         return $this->pk;
+    }
+
+    /**
+     * @return Query_Scope
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 1.1
+     * @since   1.1
+     */
+    public static function getQueryScope()
+    {
+        return Query_Scope::getInstance(self::getModuleAlias() . ':' . self::getClassName());
+    }
+
+    public function  getPkValue()
+    {
+        return implode('_', $this->getPk());
     }
 
     /**
@@ -495,7 +517,8 @@ abstract class Model
             }
         }
 
-        $fieldValue = Json::encode(array_merge($this->get($fieldName), $this->json[$fieldName]));
+        $fieldValue = Json::encode($this->get($fieldName));
+//        $fieldValue = Json::encode(array_merge($this->get($fieldName), $this->json[$fieldName]));
 
         $this->set($jsonFieldName, $fieldValue, $isAffected);
 
@@ -570,56 +593,54 @@ abstract class Model
             return $this->geo[$fieldName];
         }
 
-        try {
-            /**
-             * @var Model $fieldName
-             */
-            $fieldName = Model::getClass($fieldName);
+        /**
+         * @var Model $fieldName
+         */
+        $fieldModelName = Model::getClass($fieldName, false);
 
-            // one-to-many
-            $foreignKeyName = strtolower(Object::getName($fieldName)) . '__fk';
-            if ($this->isFieldName($foreignKeyName)) {
-                $key = $this->row[$foreignKeyName];
+        // one-to-many
+        $foreignKeyName = strtolower(Object::getName($fieldModelName)) . '__fk';
+        if ($this->isFieldName($foreignKeyName)) {
+            $key = $this->row[$foreignKeyName];
 
-                if (!$key) {
-                    Model::getLogger()->exception(
-                        ['Model::__get: Foreign key is missing - {$0} in model {$1}', [$foreignKeyName, $modelName]],
-                        __FILE__,
-                        __LINE__
-                    );
-                }
-
-                $row = array_merge($this->data, [strtolower(Object::getName($fieldName)) . '_pk' => $key]);
-                $joinModel = $fieldName::create($row);
-
-                if (!$joinModel) {
-                    Model::getLogger()->exception(
-                        [
-                            'Model::__get: Foreign key is missing - {$0} = "{$1}" in model {$2}',
-                            [$foreignKeyName, $key, $modelName]
-                        ],
-                        __FILE__,
-                        __LINE__
-                    );
-                }
-
-                $this->fk[$fieldName] = $joinModel;
-                return $this->fk[$fieldName];
+            if (!$key) {
+                Model::getLogger()->exception(
+                    ['Model::__get: Foreign key is missing - {$0} in model {$1}', [$foreignKeyName, $modelName]],
+                    __FILE__,
+                    __LINE__
+                );
             }
 
-            // TODO: Пока лениво подгружаем
-            // many-to-one
-            $foreignKeyName = strtolower($modelName) . '__fk';
-            if (array_key_exists($foreignKeyName, $fieldName::getScheme()->getFieldColumnMap())) {
-                $this->fk[$fieldName] = Query::getBuilder($fieldName)
-                    ->eq([$foreignKeyName => $this->getPk()])
-                    ->getSelectQuery('*')
-                    ->getModelCollection();
+            $row = array_merge($this->data, [strtolower(Object::getName($fieldModelName)) . '_pk' => $key]);
+            $joinModel = $fieldModelName::create($row);
 
-                return $this->fk[$fieldName];
+            if (!$joinModel) {
+                Model::getLogger()->exception(
+                    [
+                        'Model::__get: Foreign key is missing - {$0} = "{$1}" in model {$2}',
+                        [$foreignKeyName, $key, $modelName]
+                    ],
+                    __FILE__,
+                    __LINE__
+                );
             }
-        } catch (\Exception $e) {
-            // $fieldName not model // todo: refactoring
+
+            $this->fk[$fieldName] = $joinModel;
+            return $this->fk[$fieldName];
+        }
+
+//        // TODO: Пока лениво подгружаем
+//        // many-to-one
+//        $foreignKeyName = strtolower($modelName) . '__fk';
+//        if (array_key_exists($foreignKeyName, $fieldName::getScheme()->getFieldColumnMap())) {
+//            $this->fk[$fieldName] = $fieldName::getSelectQuery('*', [$foreignKeyName => $this->getPk()])
+//                ->getModelCollection();
+//
+//            return $this->fk[$fieldName];
+//        }
+
+        if (isset($this->data[$fieldName])) {
+            return $this->data[$fieldName];
         }
 
         Model::getLogger()->exception(
@@ -627,6 +648,7 @@ abstract class Model
             __FILE__,
             __LINE__
         );
+
         return null;
     }
 
@@ -710,61 +732,18 @@ abstract class Model
     }
 
     /**
-     * Return all rows for self model class
-     *
-     * @param  array $pagination
-     * @param  string $fieldNames
-     * @param  string|null $dataSourceKey
-     * @param  int $ttl
-     * @return array
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.2
-     * @since   0.0
+     * @param string $fieldNames
+     * @param array $fields
+     * @param array $pagination
+     * @param null $dataSourceKey
+     * @return Query
      */
-    public static function getRows(array $pagination = [], $fieldNames = '*', $dataSourceKey = null, $ttl = null)
+    public static function getSelectQuery($fieldNames, array $fields = [], array $pagination = ['page' => 1, 'limit' => 0], $dataSourceKey = null)
     {
-        $page = isset($pagination['page'])
-            ? $pagination['page']
-            : 1;
-
-        $limit = isset($pagination['limit'])
-            ? $pagination['limit']
-            : 1000;
-
         return Query::getBuilder(self::getClass())
-            ->setPagination($page, $limit)
-            ->getSelectQuery($fieldNames, [], $dataSourceKey)
-            ->getRows();
-    }
-
-    /**
-     * Return collection of current model class name
-     *
-     * @param  array $pagination
-     * @param  string $fieldNames
-     * @param  string|null $dataSourceKey
-     * @param  int $ttl
-     * @return Model_Collection
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.6
-     * @since   0.0
-     */
-    public static function getCollection($fieldNames, array $pagination = [], $dataSourceKey = null, $ttl = null)
-    {
-        $page = isset($pagination['page'])
-            ? $pagination['page']
-            : 1;
-
-        $limit = isset($pagination['limit'])
-            ? $pagination['limit']
-            : 1000;
-
-        return Query::getBuilder(self::getClass())
-            ->setPagination($page, $limit)
-            ->getSelectQuery($fieldNames, [], $dataSourceKey)
-            ->getModelCollection();
+            ->eq($fields)
+            ->setPagination($pagination['page'], $pagination['limit'])
+            ->getSelectQuery($fieldNames, [], $dataSourceKey);
     }
 
     /**
@@ -921,16 +900,15 @@ abstract class Model
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.6
+     * @version 1.0
      * @since   0.0
      */
     public static function getModelBy(array $fieldValueNames, $fieldNames, $dataSourceKey = null, $ttl = null)
     {
-        return Query::getBuilder(self::getClass())
-            ->eq($fieldValueNames)
-            ->limit(1)
-            ->getSelectQuery($fieldNames, [], $dataSourceKey)
-            ->getModel($ttl);
+        $modelClass = self::getClass();
+
+        return $modelClass::getSelectQuery($fieldNames, $fieldValueNames, ['page' => 1, 'limit' => 1], $dataSourceKey)
+            ->getModel(null, $ttl);
     }
 
     /**
@@ -943,22 +921,18 @@ abstract class Model
      * @return Model|null
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.2
+     * @version 1.0
      * @since   0.0
      */
     public static function getModel($pk, $fieldNames, $dataSourceKey = null, $ttl = null)
     {
-        return Query::getBuilder(self::getClass())
-            ->pk($pk)
-            ->limit(1)
-            ->getSelectQuery($fieldNames, [], $dataSourceKey)
-            ->getModel(null, $ttl);
+        return self::getModelBy(['/pk' => $pk], $fieldNames, $dataSourceKey, $ttl);
     }
 
     /**
      * Return all rows for self model class
      *
-     * @param  array $pk
+     * @param  $pk
      * @param  string $fieldNames
      * @param  string|null $dataSourceKey
      * @param  int $ttl
@@ -966,15 +940,15 @@ abstract class Model
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.2
+     * @version 1.0
      * @since   0.2
      */
-    public static function getRow($pk = [], $fieldNames = '*', $dataSourceKey = null, $ttl = null)
+    public static function getRow($pk, $fieldNames, $dataSourceKey = null, $ttl = null)
     {
-        return Query::getBuilder(self::getClass())
-            ->pk($pk)
-            ->getSelectQuery($fieldNames, [], $dataSourceKey)
-            ->getRow($pk);
+        $modelClass = self::getClass();
+
+        return $modelClass::getSelectQuery($fieldNames, ['/pk' => $pk], ['page' => 1, 'limit' => 1], $dataSourceKey)
+            ->getRow($pk, $ttl);
     }
 
     /**
@@ -1048,11 +1022,12 @@ abstract class Model
     }
 
     /**
+     * @param null $tableAlias
      * @return Query_Builder
      */
-    public static function createQueryBuilder()
+    public static function createQueryBuilder($tableAlias = null)
     {
-        return Query::getBuilder(self::getClass());
+        return Query::getBuilder(self::getClass(), $tableAlias);
     }
 
     /**
@@ -1092,7 +1067,11 @@ abstract class Model
      */
     public static function getDataSourceKey()
     {
-        return self::getConfig()->get('dataSourceKey');
+        if ($dataSourceKey = self::getConfig()->get('dataSourceKey', false)) {
+            return $dataSourceKey;
+        }
+
+        return $dataSourceKey = Module::getInstance()->getDataSourceKeys()[0];
     }
 
     /**
@@ -1173,17 +1152,16 @@ abstract class Model
 
             return $this->clearAffected();
         }
-
+//
         if (!$isSetPk) {
-            if ($this->find('/pk')) {
-                return $this;
-            }
-
-            $this->insert($modelClass, $affected, false, $dataSourceKey);
-            return $this->clearAffected();
+            $this->find('/pk');
+//                $this->insert($modelClass, $affected, false, $dataSourceKey);
+//
+//                return $this->clearAffected();
         }
 
         $this->insert($modelClass, $affected, true, $dataSourceKey);
+
         return $this->clearAffected();
     }
 
@@ -1254,11 +1232,17 @@ abstract class Model
         $this->beforeInsert();
 
         $insertId = Query::getBuilder($modelClass)
-            ->insertQuery($affected, $isSmart, $dataSourceKey)
+            ->getInsertQuery($affected, $isSmart, $dataSourceKey)
             ->getQueryResult()
             ->getInsertId();
 
-        $this->set(reset($insertId));
+        if ($isSmart && $model = $modelClass::create(array_filter($this->row))->find('/pk')) {
+            $this->set($model->getPk());
+        }
+
+        if ($this->pk === null) {
+            $this->set(reset($insertId));
+        }
 
         $this->afterInsert();
     }
@@ -1326,10 +1310,13 @@ abstract class Model
 
         $selectFields = array_merge($modelClass::getScheme()->getFieldNames($fieldNames), array_keys($affected));
 
-        $row = Query::getBuilder($modelClass)
-            ->eq($affected)
-            ->getSelectQuery($selectFields, [], $dataSourceKey)
-            ->getRow($ttl);
+        $row = $modelClass::getSelectQuery(
+            $selectFields,
+            empty($this->getPk()) ? $affected : array_merge($this->getPk(), $affected),
+            ['page' => 1, 'limit' => 1],
+            $dataSourceKey
+        )
+            ->getRow(null, $ttl);
 
         if (!$row) {
             return null;
@@ -1417,21 +1404,6 @@ abstract class Model
     }
 
     /**
-     * Casts model to string
-     *
-     * @return string
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since   0.0
-     */
-    public function __toString()
-    {
-        return (string)self::getClass();
-    }
-
-    /**
      * Return link of model
      *
      * @param  Model $modelClass
@@ -1469,15 +1441,15 @@ abstract class Model
                 : $namespace . $className . '_' . $selfClassName . '_Link';
         }
 
-        return Query::getBuilder($linkModelClass)
-            ->eq(
-                [
-                    strtolower($selfClassName) . '__fk' => $this->getPk(),
-                    strtolower($className) . '__fk' => $modelPk
-                ]
-            )
-            ->getSelectQuery('*', null, $dataSourceKey)
-            ->getModel();
+        return $linkModelClass::getSelectQuery(
+            '*',
+            [
+                strtolower($selfClassName) . '__fk' => $this->getPk(),
+                strtolower($className) . '__fk' => $modelPk
+            ],
+            ['page' => 1, 'limit' => 1],
+            $dataSourceKey
+        )->getModel(null, $ttl);
     }
 
     /**
@@ -1502,5 +1474,81 @@ abstract class Model
                 ->pk($this->getPk(), $selfModelClass)
             : Query::getBuilder($selfModelClass)
                 ->pk($this->getPk());
+    }
+
+    public function fetchOne($modelClass, $fieldNames, $lazy = false)
+    {
+        $modelClass = Model::getClass($modelClass);
+        $modelName = $modelClass::getClassName();
+
+        $field = strtolower($modelName);
+
+        $fieldFk = $field . '__fk';
+
+        if (!isset($this->row[$fieldFk])) {
+            return null;
+        }
+
+        $data = empty($this->fk[$fieldFk])
+            ? $this->data
+            : array_merge($this->data, $this->fk[$fieldFk]);
+
+        return $lazy
+            ? $modelClass::getModel($this->row[$fieldFk], $fieldNames)
+            : $modelClass::create($data);
+    }
+
+    /**
+     * @param Model $modelClass
+     * @param $fieldNames
+     * @param bool|false $lazy
+     * @return mixed
+     */
+    public function fetchMany($modelClass, $fieldNames, $lazy = false)
+    {
+        /** @var Model $selfModelClass */
+        $selfModelClass = get_class($this);
+        $selfModelName = $selfModelClass::getClassName();
+
+        $modelScheme = $selfModelClass::getScheme();
+
+        $modelClass = Model::getClass($modelClass);
+        $modelName = $modelClass::getClassName();
+        $modelClassFieldColumnMap = $modelClass::getScheme()->getFieldColumnMap();
+
+//        foreach ($modelScheme->gets('relations/manyToOne') as $relationClass => $relationField) {
+//            if ($relationClass == $modelClass) {
+//                return $modelClass::createQueryBuilder()
+//                    ->inner($selfModelClass, null, $selfModelName . '.')
+//            }
+//        }
+
+        /**
+         * @var Model $relationClass
+         * @var Model $relationClassLink
+         */
+        foreach ($modelScheme->gets('relations/manyToMany') as $relationClass => $relationClassLink) {
+            if ($relationClass == $modelClass) {
+                $relationClassLinkName = $relationClassLink::getClassName();
+
+                $relationClassLinkFieldColumnMap = $relationClassLink::getScheme()->getFieldColumnMap();
+
+                return $modelClass::createQueryBuilder()
+                    ->inner($relationClassLink, '/pk', $relationClassLinkName . '.' .
+                        $relationClassLinkFieldColumnMap[strtolower($modelName) . '__fk'] . '=' . $modelName . '.' .
+                        $modelClassFieldColumnMap[strtolower($modelName) . '_pk'] . ' AND ' . $relationClassLinkName . '.' .
+                        $relationClassLinkFieldColumnMap[strtolower($selfModelName) . '__fk'] . '=' . $this->getPkValue())
+                    ->getSelectQuery($fieldNames)
+                    ->getModelCollection();
+            }
+        }
+
+        Model::getLogger()->exception(
+            ['Fetch many of {$0} for {$1} failed. Relations not found.', [$modelClass, $selfModelClass]],
+            __FILE__,
+            __LINE__
+        );
+
+        return null;
     }
 }

@@ -34,11 +34,15 @@ class Php
      * @version 0.0
      * @since   0.0
      */
-    public static function varToPhpString($var, $withPhpTag = true)
+    public static function varToPhpString($var, $withPhpTag = true, $isPretty = true)
     {
         $string = $withPhpTag
             ? '<?php' . "\n" . 'return ' . var_export($var, true) . ';'
             : var_export($var, true) . ';';
+
+        if (!$isPretty) {
+            return $string;
+        }
 
         $string = str_replace('array (', '[', $string);
         $string = str_replace('(array(', '([', $string);

@@ -42,7 +42,7 @@ class Security_Login extends Action
      *          ]
      *      ],
      *      'output' => ['Ice:Resource/Ice\Action\Index'],
-     *      'ttl' => 3600,
+     *      'cache' => ['ttl' => -1, 'count' => 1000],
      *      'roles' => []
      *  ];
      * ```
@@ -64,6 +64,7 @@ class Security_Login extends Action
                 'url' => ['providers' => 'router']
             ],
             'output' => ['resource' => 'Ice:Resource/Security_Login'],
+            'cache' => ['ttl' => -1, 'count' => 1000],
         ];
     }
 
@@ -79,7 +80,7 @@ class Security_Login extends Action
         $formClass = Widget_Form_Security_Login::getClass($input['security']);
 
         return [
-            'form' => $formClass::create($input['url'], Form_Submit::getClass(), 'Security_Login')
+            'form' => $formClass::create($input['url'], Widget_Form_Submit::getClass(), 'Security_Login')
         ];
     }
 }

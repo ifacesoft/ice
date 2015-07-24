@@ -3,14 +3,14 @@ use Ice\Helper\Console;
 
 ?>
 
-<?= Console::getText(' Please modify your hosts file (\'/etc/hosts\' or \'%SystemRoot%\system32\drivers\etc\host\') ', Console::C_BLACK_B, Console::BG_GREEN) ?>
+<?= Console::getText(' Please modify your hosts file (\'/etc/hosts\' or \'%SystemRoot%\system32\drivers\etc\host\') ', Console::C_RED_B, Console::BG_GREEN) ?>
 
 
 127.0.0.1       <?= strtolower($moduleName) . '.global' ?> <?= strtolower($moduleName) . '.test' ?> <?= strtolower($moduleName) . '.local' ?>
 
 
 
-<?= Console::getText(' For nginx web-server add new \'server\' section ', Console::C_BLACK_B, Console::BG_GREEN) ?>
+<?= Console::getText(' For nginx web-server add new \'server\' section ', Console::C_RED_B, Console::BG_GREEN) ?>
 
 
 upstream <?= strtolower($moduleName)?>_phpfcgi {
@@ -36,10 +36,6 @@ server {
         try_files $uri @rewriteapp;
     }
 
-    location ~ ^/resource($|/.*) {
-        alias <?= dirname($resourceDir) ?>/_resource$1;
-    }
-
     location @rewriteapp {
         rewrite ^(.*)$ /index.php/$1 last;
     }
@@ -53,13 +49,14 @@ server {
         fastcgi_param  SCRIPT_FILENAME $document_root$fastcgi_script_name;
         fastcgi_param  HTTPS off;
 
-        fastcgi_buffers 32 32k;
-        fastcgi_buffer_size 32k;
+        fastcgi_buffers 64 128k;
+        fastcgi_buffer_size 4096k;
+        fastcgi_busy_buffers_size 4096k;
     }
 }
 
 
-<?= Console::getText(' For apache web-server add new \'vhost\' directive ', Console::C_BLACK_B, Console::BG_GREEN) ?>
+<?= Console::getText(' For apache web-server add new \'vhost\' directive ', Console::C_RED_B, Console::BG_GREEN) ?>
 
 
 <VirtualHost *:80>
@@ -68,9 +65,6 @@ server {
 
     DocumentRoot <?= MODULE_DIR ?>Web
     DirectoryIndex index.php
-
-    Alias /resource/ <?= $resourceDir ?>
-
 
     CustomLog <?= $logDir ?>access.log combined
     ErrorLog <?= $logDir ?>error.log

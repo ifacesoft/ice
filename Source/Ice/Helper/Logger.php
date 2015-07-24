@@ -61,9 +61,8 @@ class Logger
         if (!empty($errcontext)/* && Memory::getVarSize($errcontext) < 3500*/) {
             Core_Logger::fb($errcontext, 'error', 'INFO');
         }
-        //            fb($exception, 'EXCEPTION');
-        //        Core_Logger::fb($exception, 'error', 'EXCEPTION');
-        Core_Logger::fb(explode("\n", $exception->getTraceAsString()), 'error', 'WARN');
+
+        Core_Logger::fb($exception, 'error', 'EXCEPTION');
     }
 
     /**
@@ -187,8 +186,8 @@ class Logger
             curl_close($ch);
         }
 
-        try {
-            Log_Error::create($params)->save();
-        } catch (\Exception $e) {}
+//        try {
+//            Log_Error::create($params)->save();
+//        } catch (\Exception $e) {}
     }
 }

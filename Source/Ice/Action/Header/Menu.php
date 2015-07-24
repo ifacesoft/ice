@@ -20,7 +20,7 @@ class Header_Menu extends Action
             'actions' => [],
             'input' => [],
             'output' => [],
-            'ttl' => -1,
+            'cache' => ['ttl' => -1, 'count' => 1000],
             'access' => [
                 'roles' => [],
                 'request' => null,

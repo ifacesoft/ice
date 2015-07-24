@@ -12,9 +12,6 @@ namespace Ice\Core;
 use Ice\Core;
 use Ice\Helper\Arrays;
 use Ice\Helper\Json;
-use Ice\Widget\Data\Table;
-use Ice\Widget\Form\Simple;
-use Ice\Widget\Menu\Pagination;
 
 /**
  * Class Query
@@ -263,8 +260,17 @@ class Query
 
     public function getBody()
     {
+        $repository = Query::getRepository($this->getDataSource()->getDataSourceKey());
+        $key = 'body_' . md5(Json::encode($this->getBodyParts()));
+
+        if ($body = $repository->get($key)) {
+            return $body;
+        }
+
         $queryTranslatorClass = $this->getDataSource()->getQueryTranslatorClass();
-        return $queryTranslatorClass::getInstance()->translate($this->getBodyParts());
+        $body = $queryTranslatorClass::getInstance()->translate($this->getBodyParts());
+
+        return $repository->set($key, $body);
     }
 
     /**
@@ -355,37 +361,15 @@ class Query
 
         $params = [];
 
-        if (isset($this->queryBuilder->getWidgets()[Simple::getClass()])) {
-            foreach ($this->queryBuilder->getWidgets()[Simple::getClass()] as $widget) {
-                $params += (array)$widget->getValues();
+        foreach ($this->queryBuilder->getWidgets() as $widget) {
+            foreach ($widget->getValues() as $key => $value) {
+                $params[$key] = $value;
             }
         }
 
-        if (isset($this->queryBuilder->getWidgets()[Pagination::getClass()])) {
-            foreach ($this->queryBuilder->getWidgets()[Pagination::getClass()] as $widget) {
-                $params += $widget->getValues();
-            }
-        }
-
-        if (isset($this->queryBuilder->getWidgets()[Table::getClass()])) {
-            foreach ($this->queryBuilder->getWidgets()[Table::getClass()] as $widget) {
-                foreach ($widget->getValues() as $key => $value) {
-                    if ($value) {
-                        if (!isset($params[$key])) {
-                            $params[$key] = $value;
-                        } else {
-                            $params[$key] .= '/' . $value;
-                        }
-                    }
-                }
-            }
-        }
-
-        foreach ($this->queryBuilder->getWidgets() as $uis) {
-            foreach ($uis as $widget) {
-                $widget->setParams($params);
-                $widget->setQueryResult($queryResult);
-            }
+        foreach ($this->queryBuilder->getWidgets() as $widget) {
+            $widget->setParams($params);
+            $widget->setQueryResult($queryResult);
         }
 
         return $queryResult;
@@ -404,18 +388,23 @@ class Query
      *
      * @desc Результат запроса - единственное значение.
      *
-     * @param  null $columnName
+     * @param  null $fieldName
      * @param  null $ttl
      * @return mixed
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.6
+     * @version 1.1
      * @since   0.0
      */
-    public function getValue($columnName = null, $ttl = null)
+    public function getValue($fieldName = null, $ttl = null)
     {
         $row = $this->getRow(null, $ttl);
-        return $row ? ($columnName ? $row[$columnName] : reset($row)) : null;
+
+        $modelClass = $this->getQueryBuilder()->getModelClass();
+
+        $fieldName = $modelClass::getFieldName($fieldName);
+
+        return $row ? ($fieldName ? $row[$fieldName] : reset($row)) : null;
     }
 
     /**
@@ -494,14 +483,16 @@ class Query
      * @return array
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.6
+     * @version 1.0
      * @since   0.0
      */
     public function getColumn($fieldName = null, $indexKey = null, $ttl = null)
     {
+        $modelClass = $this->getQueryBuilder()->getModelClass();
+
         return empty($fieldName)
             ? $this->getKeys()
-            : Arrays::column($this->getRows($ttl), $fieldName, $indexKey);
+            : Arrays::column($this->getRows($ttl), $modelClass::getFieldName($fieldName), $indexKey);
     }
 
     /**
@@ -517,5 +508,9 @@ class Query
     public function getKeys($ttl = null)
     {
         return array_keys($this->getRows($ttl));
+    }
+
+    public function getModelClass() {
+        return $this->getQueryBuilder()->getModelClass();
     }
 }

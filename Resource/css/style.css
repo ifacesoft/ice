@@ -3,10 +3,6 @@
     padding: 0;
 }
 
-li {
-    list-style: none;
-}
-
 .notifications {
     position: fixed;
     z-index: 9999;
