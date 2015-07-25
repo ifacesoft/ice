@@ -399,7 +399,7 @@ class Sql extends Query_Translator
                     } else {
                         $fieldAlias = $tableAlias === ''
                             ? $fieldName . ' AS `' . $fieldAlias . '`'
-                            : '`' . $tableAlias . '`.`' . $fieldName . '` AS `' . $fieldAlias . '`';
+                            : '`' . $tableAlias . '`.`' . trim($fieldName, '`') . '` AS `' . trim($fieldAlias, '`') . '`';
                     }
 
                     $fields[] = $fieldAlias;
