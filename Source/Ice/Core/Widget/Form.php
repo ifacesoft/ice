@@ -60,6 +60,10 @@ abstract class Widget_Form extends Widget
 
     protected $onsubmit = null;
 
+    protected static function config() {
+        return ['input' => []];
+    }
+
     public static function schemeColumnPlugin($columnName, $table)
     {
         return isset(Widget_Form_Model::$typeMap[$table['columns'][$columnName]['scheme']['dataType']])
