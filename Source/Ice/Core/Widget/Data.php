@@ -253,7 +253,7 @@ abstract class Widget_Data extends Widget
             ? $limit * ($this->getParams()['page'] - 1)
             : $limitQueryPart['offset'];
 
-        if ($limit < $queryResult->getNumRows()) {
+        if ($limit && $limit < $queryResult->getNumRows()) {
             $this->setRows(array_slice($queryResult->getRows(), $offset, $limit));
         } else {
             $this->setRows($queryResult->getRows());

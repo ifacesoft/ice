@@ -43,13 +43,19 @@ class Pagination extends Widget_Menu
 
     public function render()
     {
-        if (ceil($this->foundRows / $this->getValue('limit')) < 2) {
+        $limit = $this->getValue('limit');
+
+        if (!$limit) {
+            $limit = $this->foundRows;
+        }
+
+        if (ceil($this->foundRows / $limit) < 2) {
             return '';
         }
 
         $page = $this->getValue('page');
 
-        $pageCount = (int) ceil($this->foundRows / $this->getValue('limit'));
+        $pageCount = (int) ceil($this->foundRows / $limit);
 
         if ($page > $pageCount) {
             $page = $pageCount;
