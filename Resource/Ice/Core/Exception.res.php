@@ -182,8 +182,4 @@ return [
         'en' => 'deprecated value option',
         'ru' => 'устаревший параметр значение',
     ],
-    'test' => [
-        'en' => 'test',
-        'ru' => 'тест',
-    ],
 ];

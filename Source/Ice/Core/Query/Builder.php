@@ -1945,7 +1945,17 @@ class Query_Builder
             $fieldAlias = strtolower($modelClass::getClassName()) . '__' . strtolower($funcName);
         }
 
-        $this->select(strtoupper($fieldName) . '(' . $argumentString . ')', $fieldAlias, [$modelClass => '']);
+        $modelScheme = $modelClass::getScheme();
+
+        $fieldColumns = $modelScheme->getFieldColumnMap();
+
+        $this->select(
+            strtoupper($fieldName) . '(' .
+            (isset($fieldColumns[$argumentString]) ? $tableAlias . '.' . $fieldColumns[$argumentString] : $argumentString) .
+            ')',
+            $fieldAlias,
+            [$modelClass => '']
+        );
 
         return $this;
     }
