@@ -9,6 +9,7 @@
 
 namespace Ice\Helper;
 
+use Ice\Core\Debuger;
 use Ice\Core\Exception;
 use Ice\Core\Logger as Core_Logger;
 use Ice\Core\Module;
@@ -148,7 +149,7 @@ class Logger
 
         $logFile = Directory::get(
                 Module::getInstance()->get(Module::LOG_DIR) . date('Y-m-d')
-            ) . Core_Logger::$errorCodes[$exception->getCode()] . '.log';
+            ) . Core_Logger::$errorCodes[$exception->getCode()] . '/' . urlencode(Request::uri()) .'.log';
 
         File::createData(
             $logFile,

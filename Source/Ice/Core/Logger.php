@@ -230,7 +230,7 @@ class Logger
             $message = $class::getResource()->get($message, $params);
         }
 
-        $logFile = Directory::get(Module::getInstance()->get('logDir')) . date('Y-m-d') . '/INFO.log';
+        $logFile = Directory::get(Module::getInstance()->get('logDir')) . date('Y-m-d') . '/INFO/' . urlencode(Request::uri()) .'.log';
         File::createData($logFile, $message . "\n", false, FILE_APPEND);
 
         Logger::fb($message, 'info', 'INFO');
@@ -504,7 +504,7 @@ class Logger
             return;
         }
 
-        $logFile = Directory::get(Module::getInstance()->get('logDir')) . date('Y-m-d') . '/Log.log';
+        $logFile = Directory::get(Module::getInstance()->get('logDir')) . date('Y-m-d') . '/LOG/' . urlencode(Request::uri()) .'.log';
         File::createData($logFile, $label . ': ' . $value . "\n", false, FILE_APPEND);
 
         if (Request::isCli()) {

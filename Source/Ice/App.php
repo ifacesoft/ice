@@ -86,6 +86,8 @@ class App
         if (Request::isCli()) {
             ini_set('memory_limit', '1024M');
 
+            $_SERVER['REQUEST_URI'] = implode(' ', $_SERVER['argv']);
+
             $input = Cli::getInstance()->get();
             $actionClass = $input['actionClass'];
             unset($input['actionClass']);
