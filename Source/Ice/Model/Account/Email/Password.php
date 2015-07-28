@@ -1,4 +1,4 @@
-<?php namespace Ebs\Model;
+<?php namespace Ice\Model;
 
 use Ice\Core\Model;
 
