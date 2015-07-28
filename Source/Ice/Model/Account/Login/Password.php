@@ -1,34 +1,33 @@
-<?php namespace Ice\Model;
+<?php namespace Ebs\Model;
 
 use Ice\Core\Model;
 
 /**
- * Class Account
+ * Class Account_Login_Password
  *
- * @property mixed account_pk
- * @property mixed user__fk
+ * @property mixed account_login_password_pk
  * @property mixed login
  * @property mixed password
- * @property mixed account_active
+ * @property mixed user__fk
  *
  * @see Ice\Core\Model
  *
- * @package Ice\Model
+ * @package Ebs\Model
  */
-class Account extends Model
+class Account_Login_Password extends Model
 {
     protected static function config()
     {
         return [
-		    'dataSourceKey' => 'Ice\Data\Source\Mysqli/default.test',
+		    'dataSourceKey' => 'Ice\\Data\\Source\\Mysqli/default.lan',
 		    'scheme' => [
-		        'tableName' => 'ice_account',
+		        'tableName' => 'ice_account_login_password',
 		        'engine' => 'InnoDB',
 		        'charset' => 'utf8_general_ci',
 		        'comment' => '',
 		    ],
 		    'columns' => [
-		        'account_pk' => [
+		        'id' => [
 		            'scheme' => [
 		                'extra' => 'auto_increment',
 		                'type' => 'bigint(20)',
@@ -39,26 +38,10 @@ class Account extends Model
 		                'default' => null,
 		                'comment' => '',
 		            ],
-		            'fieldName' => 'account_pk',
-		            'Ice\Core\Widget_Form' => 'Number',
-		            'Ice\Core\Validator' => [],
-		            'Ice\Core\Widget_Data' => 'text',
-		        ],
-		        'user__fk' => [
-		            'scheme' => [
-		                'extra' => '',
-		                'type' => 'bigint(20)',
-		                'dataType' => 'bigint',
-		                'length' => '19,0',
-		                'characterSet' => null,
-		                'nullable' => true,
-		                'default' => null,
-		                'comment' => '',
-		            ],
-		            'fieldName' => 'user__fk',
-		            'Ice\Core\Widget_Form' => 'Number',
-		            'Ice\Core\Validator' => [],
-		            'Ice\Core\Widget_Data' => 'text',
+		            'fieldName' => 'account_login_password_pk',
+		            'Ice\\Core\\Widget_Form' => 'Number',
+		            'Ice\\Core\\Validator' => [],
+		            'Ice\\Core\\Widget_Data' => 'text',
 		        ],
 		        'login' => [
 		            'scheme' => [
@@ -72,11 +55,11 @@ class Account extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'login',
-		            'Ice\Core\Widget_Form' => 'Text',
-		            'Ice\Core\Validator' => [
+		            'Ice\\Core\\Widget_Form' => 'Text',
+		            'Ice\\Core\\Validator' => [
 		                'Ice:Length_Max' => 255,
 		            ],
-		            'Ice\Core\Widget_Data' => 'text',
+		            'Ice\\Core\\Widget_Data' => 'text',
 		        ],
 		        'password' => [
 		            'scheme' => [
@@ -90,59 +73,61 @@ class Account extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'password',
-		            'Ice\Core\Widget_Form' => 'Text',
-		            'Ice\Core\Validator' => [
+		            'Ice\\Core\\Widget_Form' => 'Text',
+		            'Ice\\Core\\Validator' => [
 		                'Ice:Length_Max' => 255,
 		            ],
-		            'Ice\Core\Widget_Data' => 'text',
+		            'Ice\\Core\\Widget_Data' => 'text',
 		        ],
-		        'account_active' => [
+		        'user_id' => [
 		            'scheme' => [
 		                'extra' => '',
-		                'type' => 'tinyint(4)',
-		                'dataType' => 'tinyint',
-		                'length' => '3,0',
+		                'type' => 'int(11)',
+		                'dataType' => 'int',
+		                'length' => '10,0',
 		                'characterSet' => null,
-		                'nullable' => false,
-		                'default' => '1',
+		                'nullable' => true,
+		                'default' => null,
 		                'comment' => '',
 		            ],
-		            'fieldName' => 'account_active',
-		            'Ice\Core\Widget_Form' => 'Checkbox',
-		            'Ice\Core\Validator' => [
-		                0 => 'Ice:Not_Null',
-		            ],
-		            'Ice\Core\Widget_Data' => 'text',
+		            'fieldName' => 'user__fk',
+		            'Ice\\Core\\Widget_Form' => 'Number',
+		            'Ice\\Core\\Validator' => [],
+		            'Ice\\Core\\Widget_Data' => 'text',
 		        ],
 		    ],
 		    'indexes' => [
 		        'PRIMARY KEY' => [
 		            'PRIMARY' => [
-		                1 => 'account_pk',
+		                1 => 'id',
 		            ],
 		        ],
 		        'FOREIGN KEY' => [
-		            'fk_ice_account_ice_user' => [
-		                'fk_ice_account_ice_user' => 'user__fk',
+		            'fk_ebs_account_login_password_fos_user_user' => [
+		                'fk_ebs_account_login_password_fos_user_user' => 'user_id',
 		            ],
 		        ],
-		        'UNIQUE' => [],
+		        'UNIQUE' => [
+		            'login' => [
+		                1 => 'login',
+		            ],
+		        ],
 		    ],
 		    'references' => [
-		        'ice_user' => [
-		            'constraintName' => 'fk_ice_account_ice_user',
+		        'fos_user_user' => [
+		            'constraintName' => 'fk_ebs_account_login_password_fos_user_user',
 		            'onUpdate' => 'NO ACTION',
 		            'onDelete' => 'NO ACTION',
 		        ],
 		    ],
 		    'relations' => [
 		        'oneToMany' => [
-		            'ice_user' => 'user__fk',
+		            'fos_user_user' => 'user_id',
 		        ],
 		        'manyToOne' => [],
 		        'manyToMany' => [],
 		    ],
-		    'revision' => '05102017_ame',
+		    'revision' => '07281126_spu',
 		];
     }
 }
