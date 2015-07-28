@@ -64,6 +64,40 @@ class Orm_Sync_DataScheme extends Action
             $schemeTables = &$dataSchemeTables[$dataSourceKey];
 
             foreach ($tables as $tableName => $table) {
+                $relations = [];
+                foreach ($table['relations']['oneToMany'] as $referenceTableName => $columnName) {
+                    $referenceClassName = isset($schemeTables[$referenceTableName])
+                        ? $schemeTables[$referenceTableName]['modelClass']
+                        : $module->getModelClass($referenceTableName, $dataSourceKey);
+
+                    $relations[$referenceClassName] = $columnName;
+                }
+                $table['relations']['oneToMany'] = $relations;
+
+                $relations = [];
+                foreach ($table['relations']['manyToOne'] as $referenceTableName => $columnName) {
+                    $referenceClassName = isset($schemeTables[$referenceTableName])
+                        ? $schemeTables[$referenceTableName]['modelClass']
+                        : $module->getModelClass($referenceTableName, $dataSourceKey);
+
+                    $relations[$referenceClassName] = $columnName;
+                }
+                $table['relations']['manyToOne'] = $relations;
+
+                $relations = [];
+                foreach ($table['relations']['manyToMany'] as $referenceTableName => $linkTableName) {
+                    $referenceClassName = isset($schemeTables[$referenceTableName])
+                        ? $schemeTables[$referenceTableName]['modelClass']
+                        : $module->getModelClass($referenceTableName, $dataSourceKey);
+
+                    $linkClassName = isset($schemeTables[$linkTableName])
+                        ? $schemeTables[$linkTableName]['modelClass']
+                        : $module->getModelClass($linkTableName, $dataSourceKey);
+
+                    $relations[$referenceClassName] = $linkClassName;
+                }
+                $table['relations']['manyToMany'] = $relations;
+
                 if (!isset($schemeTables[$tableName])) {
                     if (!array_key_exists($tableName, $schemes)) {
                         $this->createModel(
@@ -105,8 +139,6 @@ class Orm_Sync_DataScheme extends Action
                     $table['relations']['oneToMany'],
                     $schemeTables[$tableName]['relations']['oneToMany'],
                     $schemeTables[$tableName]['modelClass'],
-                    $schemeTables,
-                    $module,
                     $dataSourceKey,
                     $input['force']
                 );
@@ -115,8 +147,6 @@ class Orm_Sync_DataScheme extends Action
                     $table['relations']['manyToOne'],
                     $schemeTables[$tableName]['relations']['manyToOne'],
                     $schemeTables[$tableName]['modelClass'],
-                    $schemeTables,
-                    $module,
                     $dataSourceKey,
                     $input['force']
                 );
@@ -125,8 +155,6 @@ class Orm_Sync_DataScheme extends Action
                     $table['relations']['manyToMany'],
                     $schemeTables[$tableName]['relations']['manyToMany'],
                     $schemeTables[$tableName]['modelClass'],
-                    $schemeTables,
-                    $module,
                     $dataSourceKey,
                     $input['force']
                 );
@@ -340,8 +368,6 @@ class Orm_Sync_DataScheme extends Action
         array $tableOneToMany,
         array &$modelOneToMany,
         $modelClass,
-        array $schemeTables,
-        Module $module,
         $dataSourceKey,
         $force
     )
@@ -354,17 +380,7 @@ class Orm_Sync_DataScheme extends Action
 
         $diffOneToMany = Json::encode(array_diff($tableOneToMany, $modelOneToMany));
 
-        $relations = [];
-
-        foreach ($tableOneToMany as $referenceTableName => $columnName) {
-            $referenceClassName = isset($schemeTables[$referenceTableName])
-                ? $schemeTables[$referenceTableName]['modelClass']
-                : $module->getModelClass($referenceTableName, $dataSourceKey);
-
-            $relations[$referenceClassName] = $columnName;
-        }
-
-        $modelOneToMany = $relations;
+        $modelOneToMany = $tableOneToMany;
 
         Data_Scheme::getLogger()->info([
             '{$0}: OneToMany relations of model {$1} successfully updated: {$2}',
@@ -378,8 +394,6 @@ class Orm_Sync_DataScheme extends Action
         array $tableManyToOne,
         array &$modelManyToOne,
         $modelClass,
-        array $schemeTables,
-        Module $module,
         $dataSourceKey,
         $force
     )
@@ -392,17 +406,7 @@ class Orm_Sync_DataScheme extends Action
 
         $diffManyToOne = Json::encode(array_diff($tableManyToOne, $modelManyToOne));
 
-        $relations = [];
-
-        foreach ($tableManyToOne as $referenceTableName => $columnName) {
-            $referenceClassName = isset($schemeTables[$referenceTableName])
-                ? $schemeTables[$referenceTableName]['modelClass']
-                : $module->getModelClass($referenceTableName, $dataSourceKey);
-
-            $relations[$referenceClassName] = $columnName;
-        }
-
-        $modelManyToOne = $relations;
+        $modelManyToOne = $tableManyToOne;
 
         Data_Scheme::getLogger()->info([
             '{$0}: ManyToOne relations of model {$1} successfully updated: {$2}',
@@ -416,8 +420,6 @@ class Orm_Sync_DataScheme extends Action
         array $tableManyToMany,
         array &$modelManyToMany,
         $modelClass,
-        array $schemeTables,
-        Module $module,
         $dataSourceKey,
         $force
     )
@@ -430,21 +432,7 @@ class Orm_Sync_DataScheme extends Action
 
         $diffManyToMany = Json::encode(array_diff($tableManyToMany, $modelManyToMany));
 
-        $references = [];
-
-        foreach ($tableManyToMany as $referenceTableName => $linkTableName) {
-            $referenceClassName = isset($schemeTables[$referenceTableName])
-                ? $schemeTables[$referenceTableName]['modelClass']
-                : $module->getModelClass($referenceTableName, $dataSourceKey);
-
-            $linkClassName = isset($schemeTables[$linkTableName])
-                ? $schemeTables[$linkTableName]['modelClass']
-                : $module->getModelClass($linkTableName, $dataSourceKey);
-
-            $references[$referenceClassName] = $linkClassName;
-        }
-
-        $modelManyToMany = $references;
+        $modelManyToMany = $tableManyToMany;
 
         Data_Scheme::getLogger()->info([
             '{$0}: ManyToMany relations of model {$1} successfully updated: {$2}',

@@ -19,7 +19,7 @@ class Account_Login_Password extends Model
     protected static function config()
     {
         return [
-		    'dataSourceKey' => 'Ice\\Data\\Source\\Mysqli/default.lan',
+		    'dataSourceKey' => 'Ice\Data\Source\Mysqli/default.lan',
 		    'scheme' => [
 		        'tableName' => 'ice_account_login_password',
 		        'engine' => 'InnoDB',
@@ -39,9 +39,9 @@ class Account_Login_Password extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'account_login_password_pk',
-		            'Ice\\Core\\Widget_Form' => 'Number',
-		            'Ice\\Core\\Validator' => [],
-		            'Ice\\Core\\Widget_Data' => 'text',
+		            'Ice\Core\Widget_Form' => 'Number',
+		            'Ice\Core\Validator' => [],
+		            'Ice\Core\Widget_Data' => 'text',
 		        ],
 		        'login' => [
 		            'scheme' => [
@@ -55,11 +55,11 @@ class Account_Login_Password extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'login',
-		            'Ice\\Core\\Widget_Form' => 'Text',
-		            'Ice\\Core\\Validator' => [
+		            'Ice\Core\Widget_Form' => 'Text',
+		            'Ice\Core\Validator' => [
 		                'Ice:Length_Max' => 255,
 		            ],
-		            'Ice\\Core\\Widget_Data' => 'text',
+		            'Ice\Core\Widget_Data' => 'text',
 		        ],
 		        'password' => [
 		            'scheme' => [
@@ -73,11 +73,11 @@ class Account_Login_Password extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'password',
-		            'Ice\\Core\\Widget_Form' => 'Text',
-		            'Ice\\Core\\Validator' => [
+		            'Ice\Core\Widget_Form' => 'Text',
+		            'Ice\Core\Validator' => [
 		                'Ice:Length_Max' => 255,
 		            ],
-		            'Ice\\Core\\Widget_Data' => 'text',
+		            'Ice\Core\Widget_Data' => 'text',
 		        ],
 		        'user_id' => [
 		            'scheme' => [
@@ -91,9 +91,9 @@ class Account_Login_Password extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'user__fk',
-		            'Ice\\Core\\Widget_Form' => 'Number',
-		            'Ice\\Core\\Validator' => [],
-		            'Ice\\Core\\Widget_Data' => 'text',
+		            'Ice\Core\Widget_Form' => 'Number',
+		            'Ice\Core\Validator' => [],
+		            'Ice\Core\Widget_Data' => 'text',
 		        ],
 		    ],
 		    'indexes' => [
@@ -122,12 +122,14 @@ class Account_Login_Password extends Model
 		    ],
 		    'relations' => [
 		        'oneToMany' => [
-		            'fos_user_user' => 'user_id',
+		            'Ebs\Model\User' => 'user_id',
 		        ],
 		        'manyToOne' => [],
 		        'manyToMany' => [],
 		    ],
 		    'revision' => '07281126_spu',
+		    'modelClass' => 'Ice\Model\Account_Login_Password',
+		    'modelPath' => 'Ice/Model/Account/Login/Password.php',
 		];
     }
 }
