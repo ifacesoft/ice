@@ -265,7 +265,15 @@ abstract class Action implements Cacheable
      */
     public static function getInput(array $data = [])
     {
+        $extendFields = ['actions', 'template', 'layout', 'viewRenderClass', 'env'];
+
         $input = Input::get(self::getClass(), $data, ['actions', 'template', 'layout', 'viewRenderClass', 'env']);
+
+        foreach ($extendFields as $extendField) {
+            if ($input[$extendField] === null) {
+                unset($input[$extendField]);
+            }
+        }
 
         if (isset($input['redirectUrl'])) {
             throw new Redirect($input['redirectUrl']);

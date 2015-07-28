@@ -12,7 +12,8 @@ use Ice\Data\Provider\Cli as Data_Provider_Cli;
 
 class Input
 {
-    public static function get($class, array $data = [], array $params = []) {
+    public static function get($class, array $data = [], array $params = [])
+    {
         $params = array_merge($class::getConfig()->gets('input', false), $params);
 
         $dataProviderKeyMap = [
@@ -41,7 +42,7 @@ class Input
 
             foreach ($dataProviderKeys as $dataProviderKey) {
                 if (isset($input[$name])) {
-                    continue;
+                    break;
                 }
 
                 if (isset($dataProviderKeyMap[$dataProviderKey])) {
@@ -49,26 +50,14 @@ class Input
                 }
 
                 if ($dataProviderKey == 'default') {
-                    if (array_key_exists($name, $data)) {
-                        $input[$name] = $data[$name];
-                        continue;
-                    }
-
-                    if (isset($param['default'])) {
-                        $input[$name] = $param['default'];
-                    }
-
+                    $input[$name] = array_key_exists($name, $data) ? $data[$name] : null;
                     continue;
                 }
 
                 $input[$name] = Data_Provider::getInstance($dataProviderKey)->get($name);
             }
 
-            $value = Input::getParam($name, isset($input[$name]) ? $input[$name] : null, $param);
-
-            if ($value !== null) {
-                $input[$name] = $value;
-            }
+            $input[$name] = Input::getParam($name, $input[$name], $param);
         }
 
         return $input;
