@@ -9,7 +9,9 @@ class Symfony extends Ice
         $url = $securityAuthorizationChecker = $kernel->getContainer()->get('router')->generate($routeName, $params);
 
         if (!$url) {
-            return parent::getUrl($routeName, $params);
+            $url = parent::getUrl($routeName, $params);
         }
+
+        return $url;
     }
 }
