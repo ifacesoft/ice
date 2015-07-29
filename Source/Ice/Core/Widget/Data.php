@@ -346,9 +346,7 @@ abstract class Widget_Data extends Widget
                         }
                     }
                 } else {
-                    if (isset($values[$part['name']])) {
-                        $params = [$part['name'] => $values[$part['name']]];
-                    }
+                    $params = [$part['name'] => isset($values[$part['name']]) ? $values[$part['name']] : null];
                 }
 
                 if (isset($part['options']['title'])) {

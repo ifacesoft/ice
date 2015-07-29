@@ -1,7 +1,7 @@
 <div id="<?= $widgetBaseClassName ?>_<?= $widgetClassName ?>_<?= $token ?>_<?= $name ?>" class="checkbox">
     <label>
         <input type="checkbox"
-               <?php if (!empty($options['classes'])) : ?>class="<?= $options['classes'] ?>"<?php endif; ?>
+               class="<?= $element ?> <?= $name ?><?php if (isset($options['classes'])) : ?> <?= $options['classes'] ?><?php endif; ?>"
                name="<?= $name ?>"
                <?php if (isset($onchange)) : ?>onchange='<?= $onchange ?>'<?php endif; ?>
                <?php if (isset($params[$name])) { ?>checked="checked" <?php } ?>

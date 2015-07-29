@@ -37,7 +37,7 @@ class User_Role_Link extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'role__fk',
-		            'Ice\Core\Widget_Form' => 'Number',
+		            'Ice\Core\Widget_Form' => 'Field_Number',
 		            'Ice\Core\Validator' => [
 		                0 => 'Ice:Not_Null',
 		            ],
@@ -55,7 +55,7 @@ class User_Role_Link extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'user__fk',
-		            'Ice\Core\Widget_Form' => 'Number',
+		            'Ice\Core\Widget_Form' => 'Field_Number',
 		            'Ice\Core\Validator' => [
 		                0 => 'Ice:Not_Null',
 		            ],

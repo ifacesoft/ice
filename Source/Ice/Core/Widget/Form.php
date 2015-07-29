@@ -30,16 +30,22 @@ use Ice\Widget\Form\Model as Widget_Form_Model;
  */
 abstract class Widget_Form extends Widget
 {
-    const FIELD_HIDDEN = 'Hidden';
-    const FIELD_TEXT = 'Text';
-    const FIELD_DATE = 'Date';
-    const FIELD_CHECKBOX = 'Checkbox';
-    const FIELD_GEO = 'Geo';
-    const FIELD_NUMBER = 'Number';
-    const FIELD_PASSWORD = 'Password';
-    const FIELD_TEXTAREA = 'Textarea';
+    const FIELD_HIDDEN = 'Field_Hidden';
+    const FIELD_TEXT = 'Field_Text';
+    const FIELD_DATE = 'Field_Date';
+    const FIELD_CHECKBOX = 'Field_Checkbox';
+    const FIELD_RADIOBUTTON = 'Field_Radiobutton';
+    const FIELD_NUMBER = 'Field_Number';
+    const FIELD_PASSWORD = 'Field_Password';
+    const FIELD_TEXTAREA = 'Field_Textarea';
+    const FIELD_MAP = 'Field_Map';
+    const FIELD_COMBOBOX = 'Field_Combobox';
+    const FIELD_FILE = 'Field_File';
+    const ELEMENT_BUTTON = 'Element_Button';
+
     const NAME_MODEL = 'Model';
     const NAME_SIMPLE = 'Simple';
+
 
     /**
      * Validate scheme for validate fields
@@ -96,32 +102,36 @@ abstract class Widget_Form extends Widget
      */
     public function hidden($fieldName, $fieldTitle = 'hidden', array $options = [], $template = 'Ice\Core\Widget_Form_Hidden')
     {
-        return $this->addPart($fieldName, $fieldTitle, $options, $template);
+        return $this->addPart($fieldName, $fieldTitle, $options, $template, Widget_Form::FIELD_HIDDEN);
+    }
+
+    public function button($fieldName, $fieldTitle, array $options = [], $template = 'Ice\Core\Widget_Form_Button')
+    {
+        return $this->addPart($fieldName, $fieldTitle, $options, $template, Widget_Form::ELEMENT_BUTTON);
     }
 
     /**
      * Add field as form part
      *
-     * @param  $partName
-     * @param  $partTitle
+     * @param $partName
+     * @param $partTitle
      * @param  array $options
-     * @param  $template
+     * @param $template
+     * @param $element
      * @return Widget_Form
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
      * @since   0.0
      */
-    protected function addPart($partName, $partTitle, array $options, $template)
+    protected function addPart($partName, $partTitle, array $options, $template, $element)
     {
         if (!empty($options['validators'])) {
             $this->validateScheme[$partName] = $options['validators'];
             unset($options['validators']);
         }
 
-
-        return parent::addPart($partName, $partTitle, $options, $template);
+        return parent::addPart($partName, $partTitle, $options, $template, $element);
     }
 
     /**
@@ -140,7 +150,7 @@ abstract class Widget_Form extends Widget
      */
     public function password($fieldName, $fieldTitle, array $options = [], $template = 'Ice\Core\Widget_Form_Password')
     {
-        return $this->addPart($fieldName, $fieldTitle, $options, $template);
+        return $this->addPart($fieldName, $fieldTitle, $options, $template, Widget_Form::FIELD_PASSWORD);
     }
 
     /**
@@ -159,7 +169,7 @@ abstract class Widget_Form extends Widget
      */
     public function number($fieldName, $fieldTitle, array $options = [], $template = 'Ice\Core\Widget_Form_Number')
     {
-        return $this->addPart($fieldName, $fieldTitle, $options, $template);
+        return $this->addPart($fieldName, $fieldTitle, $options, $template, Widget_Form::FIELD_NUMBER);
     }
 
     /**
@@ -178,7 +188,7 @@ abstract class Widget_Form extends Widget
      */
     public function text($fieldName, $fieldTitle, array $options = [], $template = 'Ice\Core\Widget_Form_Text')
     {
-        return $this->addPart($fieldName, $fieldTitle, $options, $template);
+        return $this->addPart($fieldName, $fieldTitle, $options, $template, Widget_Form::FIELD_TEXT);
     }
 
     /**
@@ -197,7 +207,7 @@ abstract class Widget_Form extends Widget
      */
     public function date($fieldName, $fieldTitle, array $options = [], $template = 'Ice\Core\Widget_Form_Date')
     {
-        return $this->addPart($fieldName, $fieldTitle, $options, $template);
+        return $this->addPart($fieldName, $fieldTitle, $options, $template, Widget_Form::FIELD_DATE);
     }
 
     /**
@@ -216,7 +226,7 @@ abstract class Widget_Form extends Widget
      */
     public function checkbox($fieldName, $fieldTitle, array $options = [], $template = 'Ice\Core\Widget_Form_Checkbox')
     {
-        return $this->addPart($fieldName, $fieldTitle, $options, $template);
+        return $this->addPart($fieldName, $fieldTitle, $options, $template, Widget_Form::FIELD_CHECKBOX);
     }
 
     /**
@@ -233,9 +243,9 @@ abstract class Widget_Form extends Widget
      * @version 1.0
      * @since   0.0
      */
-    public function radio($fieldName, $fieldTitle, array $options = [], $template = 'Ice\Core\Widget_Form_Radio')
+    public function radio($fieldName, $fieldTitle, array $options = [], $template = 'Ice\Core\Widget_Form_Radiobutton')
     {
-        return $this->addPart($fieldName, $fieldTitle, $options, $template);
+        return $this->addPart($fieldName, $fieldTitle, $options, $template, Widget_Form::FIELD_RADIOBUTTON);
     }
 
     /**
@@ -254,7 +264,7 @@ abstract class Widget_Form extends Widget
      */
     public function combobox($fieldName, $fieldTitle, array $options = [], $template = 'Ice\Core\Widget_Form_Combobox')
     {
-        return $this->addPart($fieldName, $fieldTitle, $options, $template);
+        return $this->addPart($fieldName, $fieldTitle, $options, $template, Widget_Form::FIELD_COMBOBOX);
     }
 
     /**
@@ -271,9 +281,9 @@ abstract class Widget_Form extends Widget
      * @version 0.6
      * @since   0.0
      */
-    public function geo($fieldName, $fieldTitle, array $options = [], $template = 'Ice\Core\Widget_Form_Geo')
+    public function map($fieldName, $fieldTitle, array $options = [], $template = 'Ice\Core\Widget_Form_Map')
     {
-        return $this->addPart($fieldName, $fieldTitle, $options, $template);
+        return $this->addPart($fieldName, $fieldTitle, $options, $template, Widget_Form::FIELD_MAP);
     }
 
     /**
@@ -292,12 +302,12 @@ abstract class Widget_Form extends Widget
      */
     public function textarea($fieldName, $fieldTitle, array $options = [], $template = 'Ice\Core\Widget_Form_Textarea')
     {
-        return $this->addPart($fieldName, $fieldTitle, $options, $template);
+        return $this->addPart($fieldName, $fieldTitle, $options, $template, Widget_Form::FIELD_TEXTAREA);
     }
 
     public function file($fieldName, $fieldTitle, array $options = [], $template = 'Ice\Core\Widget_Form_File')
     {
-        return $this->addPart($fieldName, $fieldTitle, $options, $template);
+        return $this->addPart($fieldName, $fieldTitle, $options, $template, Widget_Form::FIELD_FILE);
     }
 
     /**

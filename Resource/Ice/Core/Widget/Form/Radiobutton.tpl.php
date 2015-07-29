@@ -2,7 +2,7 @@
 <div class="radio">
     <label for="<?= $widgetClassName . '_' . $token . '_' . $name ?>">
         <input type="radio"
-               <?php if (!empty($options['classes'])) : ?>class="<?= $options['classes'] ?>"<?php endif; ?>
+               class="<?= $element ?> <?= $name ?><?php if (isset($options['classes'])) : ?> <?= $options['classes'] ?><?php endif; ?>"
                id="<?= $widgetClassName . '_' . $token . '_' . $name ?>"
                name="<?= $name ?>" value="<?= $key ?>"
                <?php if (isset($onchange)) : ?>onchange='<?= $onchange ?>'<?php endif; ?>

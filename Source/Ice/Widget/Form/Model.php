@@ -47,7 +47,7 @@ class Model extends Widget_Form
         'datetime' => Widget_Form::FIELD_DATE,
         'timestamp' => Widget_Form::FIELD_DATE,
         'tinyint' => Widget_Form::FIELD_CHECKBOX,
-        'point' => Widget_Form::FIELD_GEO,
+        'point' => Widget_Form::FIELD_MAP,
         'bigint' => Widget_Form::FIELD_NUMBER,
         'text' => Widget_Form::FIELD_TEXTAREA,
         'double' => Widget_Form::FIELD_TEXT,

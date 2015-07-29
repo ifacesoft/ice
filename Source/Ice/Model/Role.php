@@ -37,7 +37,7 @@ class Role extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'role_pk',
-		            'Ice\Core\Widget_Form' => 'Number',
+		            'Ice\Core\Widget_Form' => 'Field_Number',
 		            'Ice\Core\Validator' => [],
 		            'Ice\Core\Widget_Data' => 'text',
 		        ],
@@ -53,7 +53,7 @@ class Role extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'role_name',
-		            'Ice\Core\Widget_Form' => 'Text',
+		            'Ice\Core\Widget_Form' => 'Field_Text',
 		            'Ice\Core\Validator' => [
 		                'Ice:Length_Max' => 255,
 		            ],

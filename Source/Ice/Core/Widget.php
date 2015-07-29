@@ -338,9 +338,7 @@ abstract class Widget
                     }
                 }
             } else {
-                if (isset($values[$part['name']])) {
-                    $params = [$part['name'] => $values[$part['name']]];
-                }
+                $params = [$part['name'] => isset($values[$part['name']]) ? $values[$part['name']] : null];
             }
 
             $part['params'] = $params;
@@ -480,23 +478,26 @@ abstract class Widget
         $this->token = $token;
     }
 
-
-    public function button($fieldName, $fieldTitle, array $options = [], $template = 'Ice\Core\Widget_Button')
-    {
-        return $this->addPart($fieldName, $fieldTitle, $options, $template);
-    }
-
     public function link($fieldName, $fieldTitle, array $options = [], $template = 'Ice\Core\Widget_Link')
     {
         return $this->addPart($fieldName, $fieldTitle, $options, $template);
     }
 
-    protected function addPart($partName, $partTitle, array $options, $template)
+    /**
+     * @param $partName
+     * @param $partTitle
+     * @param array $options
+     * @param $template
+     * @param $element
+     * @return $this
+     */
+    protected function addPart($partName, $partTitle, array $options, $template, $element)
     {
         $this->parts[$partName] = [
             'title' => $partTitle,
             'options' => Arrays::defaults($this->defaultOptions, $options),
-            'template' => $template
+            'template' => $template,
+            'element' => $element
         ];
 
         if (isset($this->parts[$partName]['options']['default']) && $this->getValue($partName) === null) {

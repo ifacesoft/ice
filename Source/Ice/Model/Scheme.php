@@ -41,7 +41,7 @@ class Scheme extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'table_name',
-		            'Ice\Core\Widget_Form' => 'Text',
+		            'Ice\Core\Widget_Form' => 'Field_Text',
 		            'Ice\Core\Validator' => [
 		                'Ice:Length_Max' => 255,
 		                0 => 'Ice:Not_Null',
@@ -60,7 +60,7 @@ class Scheme extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'revision',
-		            'Ice\Core\Widget_Form' => 'Text',
+		            'Ice\Core\Widget_Form' => 'Field_Text',
 		            'Ice\Core\Validator' => [
 		                'Ice:Length_Max' => 12,
 		                0 => 'Ice:Not_Null',
@@ -79,7 +79,7 @@ class Scheme extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'table__json',
-		            'Ice\Core\Widget_Form' => 'Text',
+		            'Ice\Core\Widget_Form' => 'Field_Text',
 		            'Ice\Core\Validator' => [
 		                'Ice:Length_Max' => 1023,
 		                0 => 'Ice:Not_Null',
@@ -98,7 +98,7 @@ class Scheme extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'columns__json',
-		            'Ice\Core\Widget_Form' => 'Textarea',
+		            'Ice\Core\Widget_Form' => 'Field_Textarea',
 		            'Ice\Core\Validator' => [
 		                'Ice:Length_Max' => 65535,
 		                0 => 'Ice:Not_Null',
@@ -117,7 +117,7 @@ class Scheme extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'references__json',
-		            'Ice\Core\Widget_Form' => 'Text',
+		            'Ice\Core\Widget_Form' => 'Field_Text',
 		            'Ice\Core\Validator' => [
 		                'Ice:Length_Max' => 1023,
 		                0 => 'Ice:Not_Null',
@@ -136,7 +136,7 @@ class Scheme extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'indexes__json',
-		            'Ice\Core\Widget_Form' => 'Text',
+		            'Ice\Core\Widget_Form' => 'Field_Text',
 		            'Ice\Core\Validator' => [
 		                'Ice:Length_Max' => 1023,
 		                0 => 'Ice:Not_Null',

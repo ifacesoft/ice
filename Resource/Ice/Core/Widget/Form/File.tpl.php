@@ -1,4 +1,5 @@
-<div id="<?= $widgetBaseClassName ?>_<?= $widgetClassName ?>_<?= $token ?>_<?= $name ?>" class="form-group">
+<div id="<?= $widgetBaseClassName ?>_<?= $widgetClassName ?>_<?= $token ?>_<?= $name ?>"
+     <?php if (!isset($options['resetFormClass'])) : ?>class="form-group"<?php endif; ?>>
     <div id="<?= $widgetClassName ?>_<?= $token ?>_<?= $name ?>" class="b-upload b-upload_dnd">
         <div class="b-upload__dnd"><?= $title ?></div>
         <div class="b-upload__dnd-not-supported" style="display: none;">

@@ -38,7 +38,7 @@ class Test extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'test_pk',
-		            'Ice\Core\Widget_Form' => 'Number',
+		            'Ice\Core\Widget_Form' => 'Field_Number',
 		            'Ice\Core\Validator' => [],
 		            'Ice\Core\Widget_Data' => 'text',
 		        ],
@@ -54,7 +54,7 @@ class Test extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'test_name',
-		            'Ice\Core\Widget_Form' => 'Text',
+		            'Ice\Core\Widget_Form' => 'Field_Text',
 		            'Ice\Core\Validator' => [
 		                'Ice:Length_Max' => 52,
 		                0 => 'Ice:Not_Null',
@@ -73,7 +73,7 @@ class Test extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'name2',
-		            'Ice\Core\Widget_Form' => 'Text',
+		            'Ice\Core\Widget_Form' => 'Field_Text',
 		            'Ice\Core\Validator' => [
 		                'Ice:Length_Max' => 65,
 		            ],
