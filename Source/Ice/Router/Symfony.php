@@ -1,13 +1,15 @@
 <?php
 namespace Ice\Router;
 
-use Ice\Core\Router;
-
-class Symfony extends Router
+class Symfony extends Ice
 {
     public function getUrl($routeName, array $params = [])
     {
         global $kernel;
-        return $securityAuthorizationChecker = $kernel->getContainer()->get('router')->generate($routeName, $params);
+        $url = $securityAuthorizationChecker = $kernel->getContainer()->get('router')->generate($routeName, $params);
+
+        if (!$url) {
+            return parent::getUrl($routeName, $params);
+        }
     }
 }
