@@ -51,6 +51,6 @@ return [
             ]
         ]
     ],
-    '_Security' => '/security',
+//    '_Security' => '/security',
     '_Admin' => '/admin',
 ];
