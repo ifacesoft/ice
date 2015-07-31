@@ -34,6 +34,9 @@ return [
         'uploadTempDir' => 'Var/upload/temp/',
         'compiledResourceDir' => 'Web/resource/',
         'downloadDir' => 'Web/download/',
+        'bootstrapClass' => 'Ice\Bootstrap\Ice',
+        'securityClass' => 'Ice\Security\Ice',
+        'routerClass' => 'Ice\Router\Ice'
     ],
     'modules' => []
 ];

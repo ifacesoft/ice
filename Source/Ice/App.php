@@ -32,12 +32,6 @@ class App
 
     public static function run()
     {
-        Logger::fb(
-            Profiler::getReport(BOOTSTRAP_CLASS, '/' . Environment::getInstance()->getName()),
-            __CLASS__,
-            'LOG'
-        );
-
         $startTime = Profiler::getMicrotime();
         $startMemory = Profiler::getMemoryGetUsage();
 

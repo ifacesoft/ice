@@ -6,6 +6,32 @@ abstract class Security extends Container
 {
     private static $defaultClassKey = null;
 
+    protected function autologin() {
+        return null;
+    }
+
+    /**
+     * @return Security_User
+     */
+    abstract public function getUser();
+
+    /**
+     * Check logged in
+     *
+     * @return bool
+     */
+    abstract public function isAuth();
+
+    /**
+     * @param null $key
+     * @param null $ttl
+     * @return Security
+     */
+    public static function getInstance($key = null, $ttl = null)
+    {
+        return parent::getInstance($key, $ttl);
+    }
+
     protected static function create($key)
     {
         $class = self::getClass();
@@ -13,7 +39,8 @@ abstract class Security extends Container
         return new $class($key);
     }
 
-    public function init() {
+    public function init()
+    {
         if (Security::$defaultClassKey === null) {
             Security::$defaultClassKey = get_class($this);
             return;
@@ -32,6 +59,12 @@ abstract class Security extends Container
         return 'default';
     }
 
+    /**
+     * Check access by roles
+     *
+     * @param array $access
+     * @return bool
+     */
     abstract public function check(array $access);
 
 //    public static function checkAccess($roles, $permission)

@@ -3,6 +3,7 @@
 namespace Ice\Core;
 
 use Ice\Core;
+use Ice\Helper\Emmet;
 use Ice\Helper\Json;
 use Ice\Helper\Object;
 use Ice\Helper\String;
@@ -304,7 +305,7 @@ abstract class Widget_Data extends Widget
             ]
         );
 
-        return Php::getInstance()->fetch(
+        $widgetContent = Php::getInstance()->fetch(
             empty($this->getTemplate()) ? $widgetClass : $this->getTemplate(),
             [
                 'widgetData' => $this->getData(),
@@ -321,6 +322,10 @@ abstract class Widget_Data extends Widget
                 'bottomRow' => $this->getBottomRow()
             ]
         );
+
+        return $this->getLayout()
+            ? Emmet::translate($this->getLayout() . '{{$widgetContent}}', ['widgetContent' => $widgetContent])
+            : $widgetContent;
     }
 
     private function prepareRows($dataClass, $parts)

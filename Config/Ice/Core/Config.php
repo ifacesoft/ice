@@ -27,6 +27,9 @@ return [
     'Ice\Core\Logger' => [
         'apiHost' => 'http://iceframework.net'
     ],
+    'Ice\Core\Security' => [
+        'userModelClass' => 'Ice\Model\User'
+    ],
     'Ice\Core\Request' => [
         'multiLocale' => 1,
         'locale' => 'en',

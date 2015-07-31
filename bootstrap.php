@@ -26,10 +26,6 @@ if (!defined('VENDOR_DIR')) {
     define('VENDOR_DIR', MODULE_DIR . 'Var/vendor/');
 }
 
-if (!defined('BOOTSTRAP_CLASS')) {
-    define('BOOTSTRAP_CLASS', 'Ice:Ice');
-}
-
 if (!defined('MODULE_CONFIG_PATH')) {
     define('MODULE_CONFIG_PATH', 'Config/Ice/Core/Module.php');
 }
@@ -51,9 +47,8 @@ require_once ICE_DIR . 'Source/Ice/Core/View/Render.php';
 require_once ICE_DIR . 'Source/Ice/Helper/Api/Client/Yandex/Translate.php';
 
 try {
-    \Ice\Core\Bootstrap::getInstance(BOOTSTRAP_CLASS)->init($loader);
-
-    \Ice\Core\Profiler::setPoint(BOOTSTRAP_CLASS, $startTime, $startMemory);
+    $config = require MODULE_DIR . MODULE_CONFIG_PATH;
+    \Ice\Core\Bootstrap::getInstance($config['module']['bootstrapClass'])->init($loader);
 } catch (Exception $e) {
     echo '<span style="font-weight: bold;">Bootstrapping failed: ' .
         str_replace(MODULE_DIR, '', $e->getMessage()) .

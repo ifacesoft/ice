@@ -4,6 +4,7 @@ namespace Ice\Bootstrap;
 
 use Composer\Autoload\ClassLoader;
 use Ice\Core\Bootstrap;
+use Ice\Core\Module;
 use Ice\Security\Symfony as Security_Symfony;
 use Ice\Router\Symfony as Router_Symfony;
 
@@ -20,7 +21,13 @@ class Symfony extends Bootstrap
 //        set_error_handler('Ice\Core\Logger::errorHandler');
 //        register_shutdown_function('Ice\Core\Logger::shutdownHandler');
 
-        Security_Symfony::getInstance()->init();
-        Router_Symfony::getInstance()->init();
+        $module = Module::getInstance();
+
+        $securityClass = $module->get('securityClass');
+        $securityClass::getInstance()->init();
+
+
+        $routerClass = $module->get('routerClass');
+        $routerClass::getInstance()->init();
     }
 }

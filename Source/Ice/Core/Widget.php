@@ -96,7 +96,7 @@ abstract class Widget
 
         $widget->url = $url;
         $widget->action = $action;
-        $widget->block = $block ? $block : Object::getName($action);
+        $widget->block = $block === null ? Object::getName($action) : $block;
         $widget->data = $data;
         $widget->values = Input::get($class);
 

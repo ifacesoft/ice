@@ -38,7 +38,7 @@ class Nav extends Widget_Menu
      */
     public function nav($name, $title, array $options = [], $template = 'Ice\Widget\Menu\Nav_Nav')
     {
-        return $this->addPart($name, $title, $options, $template);
+        return $this->addPart($name, $title, $options, $template, 'Nav_Subnav');
     }
 
 //    public function render()

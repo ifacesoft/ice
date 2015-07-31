@@ -4,7 +4,6 @@ namespace Ice\Helper;
 
 use Ice\Core\Action;
 use Ice\Core\Data_Provider;
-use Ice\Core\Debuger;
 use Ice\Data\Provider\Request as Data_Provider_Request;
 use Ice\Data\Provider\Router as Data_Provider_Router;
 use Ice\Data\Provider\Session as Data_Provider_Session;

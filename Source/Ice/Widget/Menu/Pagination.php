@@ -82,7 +82,8 @@ class Pagination extends Widget_Menu
             $name,
             $title,
             array_merge($options, ['onclick' => true, 'href' => $this->getUrl()]),
-            $template
+            $template,
+            'Pagination_Item'
         );
     }
 
