@@ -12,4 +12,6 @@ abstract class Widget_Form_Security_Login extends Widget_Form
             'access' => ['roles' => [], 'request' => null, 'env' => null]
         ];
     }
+
+   abstract function login();
 }

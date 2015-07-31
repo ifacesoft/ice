@@ -11,7 +11,7 @@ use Ice\Model\Account;
 use Ice\Model\User_Role_Link;
 use Ice\View\Render\Php;
 
-class LoginPassword extends Widget_Form_Security_Login
+class Security_EmailPassword_Login extends Widget_Form_Security_Login
 {
     protected static function config()
     {
@@ -26,7 +26,7 @@ class LoginPassword extends Widget_Form_Security_Login
     {
         parent::__construct();
 
-        $resource = LoginPassword::getResource();
+        $resource = Security_LoginPassword_Login::getResource();
 
         $this->text(
             'login',
@@ -53,7 +53,7 @@ class LoginPassword extends Widget_Form_Security_Login
      * @version 0.1
      * @since   0.1
      */
-    public function submit()
+    public function login()
     {
         foreach (Query::getBuilder(Account::getClass())->eq(['login' => $this->getValues()['login']])->getSelectQuery(['password', 'user__fk'])->getRows() as $accountRow) {
             if (password_verify($this->validate()['password'], $accountRow['password'])) {

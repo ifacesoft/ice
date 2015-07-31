@@ -8,7 +8,7 @@ use Ice\Helper\Json;
 use Ice\Helper\Object;
 use Ice\View\Render\Php;
 
-class LoginPassword extends Widget_Form_Security_Register
+class Security_EmailPassword_Register extends Widget_Form_Security_Register
 {
     protected static function config()
     {
@@ -23,7 +23,7 @@ class LoginPassword extends Widget_Form_Security_Register
     {
         parent::__construct();
 
-        $resource = LoginPassword::getResource();
+        $resource = Security_LoginPassword_Register::getResource();
 
         $this->text(
             'login',
@@ -48,7 +48,7 @@ class LoginPassword extends Widget_Form_Security_Register
 
     /**
      * @param array $params
-     * @return LoginPassword
+     * @return Security_LoginPassword_Register
      */
     public function bind(array $params)
     {
