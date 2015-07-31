@@ -78,7 +78,7 @@ abstract class Exception extends ErrorException
                 }
             }
 
-            $message = Exception::getResource()->get($message, $params, $class);
+            $message = Resource::create(Exception::getClass())->get($message, $params, $class);
         } else {
             if (is_array($message)) {
                 if (!$isExistsResourceClass && !empty($message[1])) {

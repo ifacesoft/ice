@@ -1,7 +1,6 @@
 <?php
 
-namespace Ice\Widget\Form\Security\Register;
-
+namespace Ice\Widget\Form;
 
 use Ice\Core\Widget_Form_Security_Register;
 use Ice\Helper\Json;
@@ -22,8 +21,6 @@ class Security_LoginPassword_Register extends Widget_Form_Security_Register
     protected function __construct()
     {
         parent::__construct();
-
-        $resource = Security_LoginPassword_Register::getResource();
 
         $this->text(
             'login',

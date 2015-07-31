@@ -763,7 +763,7 @@ abstract class Model
             $tableName = self::getTableName();
         }
 
-        return self::getResource()->get($tableName);
+        return Resource::create(self::getClass())->get($tableName);
     }
 
     /**
@@ -798,7 +798,7 @@ abstract class Model
      */
     public static function getFieldPlaceholder($fieldName)
     {
-        return self::getResource()->get($fieldName . '_placeholder');
+        return Resource::create(self::getClass())->get($fieldName . '_placeholder');
     }
 
     /**
@@ -886,7 +886,7 @@ abstract class Model
      */
     public static function getFieldTitle($fieldName)
     {
-        return self::getResource()->get($fieldName);
+        return Resource::create(self::getClass())->get($fieldName);
     }
 
     /**

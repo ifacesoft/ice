@@ -182,4 +182,8 @@ return [
         'en' => 'deprecated value option',
         'ru' => 'устаревший параметр значение',
     ],
+    'empty message' => [
+        'en' => 'empty message',
+        'ru' => 'пустые сообщения',
+    ],
 ];

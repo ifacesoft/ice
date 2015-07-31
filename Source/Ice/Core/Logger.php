@@ -227,7 +227,7 @@ class Logger
                 list($message, $params) = $message;
             }
 
-            $message = $class::getResource()->get($message, $params);
+            $message = Resource::create($class)->get($message, $params);
         }
 
         $logFile = Directory::get(Module::getInstance()->get('logDir')) . date('Y-m-d') . '/INFO/' . urlencode(Request::uri()) .'.log';

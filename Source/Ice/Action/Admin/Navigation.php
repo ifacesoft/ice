@@ -66,7 +66,7 @@ class Admin_Navigation extends Action
         foreach ($input['items'] as $item) {
             $navbarMenu->link(
                 $item['routeName'],
-                Route::getResource()->get($item['routeName']),
+                Resource::create(Route::getClass())->get($item['routeName']),
                 [
                     'active' => String::startsWith($currentUrl, Route::getInstance($item['routeName'])->getUrl()),
                     'route' => $item['routeName']

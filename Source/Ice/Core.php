@@ -66,21 +66,6 @@ trait Core
     }
 
     /**
-     * Return instance of resource for self class
-     *
-     * @return Resource
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since   0.0
-     */
-    public static function getResource()
-    {
-        return Resource::create(self::getClass());
-    }
-
-    /**
      * Return config of self class
      *
      * @param  null $postfix

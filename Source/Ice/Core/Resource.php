@@ -11,6 +11,7 @@ namespace Ice\Core;
 use Ice\Core;
 use Ice\Data\Provider\Cacher;
 use Ice\Data\Provider\Repository;
+use Ice\Exception\Error;
 use Ice\Exception\FileNotFound;
 use Ice\Helper\Api_Client_Yandex_Translate;
 use Ice\Helper\File;
@@ -146,6 +147,15 @@ class Resource implements Cacheable
 
     public function set($message)
     {
+        if (empty($message)) {
+//            $e = new \Exception();
+//            print_r($e->getTraceAsString());die();
+
+            Resource::getLogger()->warning('Empty resource message', __FILE__, __LINE__);
+
+            return $message;
+        }
+
         $resourceFile = Loader::getFilePath($this->class, '.res.php', Module::RESOURCE_DIR, false, true, true);
 
         $data = file_exists($resourceFile)

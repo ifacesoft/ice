@@ -273,6 +273,54 @@ abstract class Widget
         return $url . ($queryString ? '?' . $queryString : '');
     }
 
+    /**
+     * ```php
+     * ->setResource(true)
+     *
+     * ->setResource(Resource::create(My\Class))
+     *
+     * ->setResource(My\Class)
+     * ```
+     *
+     * @param Resource|string|boolean $resource
+     * @return Widget_Data|Widget_Form|Widget_Menu
+     */
+    public function setResource($resource)
+    {
+        if ($resource instanceof Resource) {
+            $this->resource = $resource;
+        } else {
+            if ($resource === true) {
+                $resource = $this->getTemplate();
+            }
+
+            $this->resource = Resource::create($resource);
+        }
+
+        return $this;
+    }
+
+    public function getResource($resource = null)
+    {
+        if ($resource instanceof Resource) {
+            return $resource;
+        }
+
+        if ($resource === true || (is_array($resource) && !isset($resource['class']))) {
+            $resource = ['class' => $this->getTemplate()];
+        }
+
+        if (is_string($resource)) {
+            $resource = ['class' => $resource];
+        }
+
+        if (isset($resource['class'])) {
+            return Resource::create($resource['class']);
+        }
+
+        return $this->resource;
+    }
+
     public function getCompiledParts()
     {
         if ($this->compiledParts !== null) {
@@ -300,24 +348,32 @@ abstract class Widget
             $part['widgetBaseClassName'] = $widgetBaseClassName;
             $part['token'] = $this->getToken();
 
-            if (!empty($part['options']['resource'])) {
-                if ($part['options']['resource'] instanceof Resource) {
-                    $part['title'] = $part['options']['resource']->get($part['title']);
-                } else if (is_array($part['options']['resource'])) {
+            $part['resource'] = $this->getResource();
+            $resourceParams = [];
+
+            if (isset($part['options']['resource'])) {
+                $part['resource'] = $this->getResource($part['options']['resource']);
+
+                if (is_array($part['options']['resource'])) {
                     if (isset($part['options']['resource']['class'])) {
-                        $value = isset($part['options']['resource']['params'])
+                        $resourceParams = isset($part['options']['resource']['params'])
                             ? (array)$part['options']['resource']['params']
                             : [];
-
-                        $part['title'] = $widgetClass::getResource()
-                            ->get($part['title'], $value, $part['options']['resource']['class']);
                     } else {
-                        $part['title'] = $widgetClass::getResource()
-                            ->get($part['title'], $part['options']['resource'], $this->getTemplate());
+                        $resourceParams = isset($part['options']['resource']['params'])
+                            ? (array)$part['options']['resource']['params']
+                            : (array)$part['options']['resource'];
                     }
-                } else {
-                    $part['title'] = $widgetClass::getResource()
-                        ->get($part['title'], (array)$part['options']['resource'], $this->getTemplate());
+                }
+
+                unset($part['options']['resource']);
+            }
+
+            if ($part['resource']) {
+                $part['title'] = $part['resource']->get($part['title'], $resourceParams);
+
+                if (isset($part['options']['placeholder'])) {
+                    $part['options']['placeholder'] = $part['resource']->get($part['options']['placeholder']);
                 }
             }
 
@@ -409,6 +465,7 @@ abstract class Widget
                 'widgetClass' => $widgetClass,
                 'widgetClassName' => $widgetClassName,
                 'widgetBaseClassName' => $widgetBaseClassName,
+                'widgetResource' => $this->getResource(),
                 'classes' => $this->getClasses(),
                 'style' => $this->getStyle(),
                 'header' => $this->getHeader(),
@@ -419,7 +476,6 @@ abstract class Widget
                 'dataAction' => $this->getAction(),
                 'dataBlock' => $this->getBlock(),
                 'dataUrl' => $this->getFullUrl($this->getUrl()),
-                'onsubmit' => isset($this->onsubmit) ? $this->onsubmit : null
             ]
         );
 
@@ -477,11 +533,11 @@ abstract class Widget
     {
         $this->token = $token;
     }
-
-    public function link($fieldName, $fieldTitle, array $options = [], $template = 'Ice\Core\Widget_Link')
-    {
-        return $this->addPart($fieldName, $fieldTitle, $options, $template);
-    }
+//
+//    public function link($fieldName, $fieldTitle, array $options = [], $template = 'Ice\Core\Widget_Link')
+//    {
+//        return $this->addPart($fieldName, $fieldTitle, $options, $template, );
+//    }
 
     /**
      * @param $partName
@@ -621,7 +677,7 @@ abstract class Widget
      */
     public function getHeader()
     {
-        return $this->resource instanceof Resource ? $this->resource->get($this->header) : $this->header;
+        return $this->resource instanceof Resource && $this->header? $this->resource->get($this->header) : '';
     }
 
     /**
@@ -649,24 +705,6 @@ abstract class Widget
     public function setDescription($description)
     {
         $this->description = $description;
-        return $this;
-    }
-
-    /**
-     * @return Resource
-     */
-    public function getWidgetResource()
-    {
-        return $this->resource;
-    }
-
-    /**
-     * @param Resource $resource
-     * @return Widget_Data|Widget_Form|Widget_Menu
-     */
-    public function setResource($resource)
-    {
-        $this->resource = $resource;
         return $this;
     }
 

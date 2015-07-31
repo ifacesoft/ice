@@ -1,6 +1,6 @@
 <?php
 
-namespace Ice\Widget\Form\Security\Login;
+namespace Ice\Widget\Form;
 
 use Ice\Core\Query;
 use Ice\Core\Resource;
@@ -17,32 +17,38 @@ class Security_LoginPassword_Login extends Widget_Form_Security_Login
     {
         return [
             'view' => ['template' => null, 'viewRenderClass' => null, 'layout' => null],
-            'input' => [],
+            'input' => [
+                'login' => ['providers' => 'request'],
+                'password' => ['providers' => 'request']
+            ],
             'access' => ['roles' => [], 'request' => null, 'env' => null]
         ];
     }
 
-    protected function __construct()
+    public static function create($url, $action, $block = null, array $data = [])
     {
-        parent::__construct();
-
-        $resource = Security_LoginPassword_Login::getResource();
-
-        $this->text(
-            'login',
-            $resource->get('login'),
-            [
-                'placeholder' => $resource->get('login_placeholder'),
-                'validators' => ['Ice:Length_Min' => 2, 'Ice:LettersNumbers']
-            ]
-        )->password(
-            'password',
-            $resource->get('password'),
-            [
-                'placeholder' => $resource->get('password_placeholder'),
-                'validators' => ['Ice:Length_Min' => 5]
-            ]
-        );
+        return parent::create($url, $action, $block, $data)
+            ->setResource(__CLASS__)
+            ->setTemplate(Simple::class)
+            ->text(
+                'login',
+                'Login',
+                [
+                    'required' => true,
+                    'placeholder' => 'login_placeholder',
+                    'validators' => ['Ice:Length_Min' => 2, 'Ice:LettersNumbers']
+                ]
+            )
+            ->password(
+                'password',
+                'Password',
+                [
+                'required' => true,
+                    'placeholder' => 'password_placeholder',
+                    'validators' => ['Ice:Length_Min' => 5]
+                ]
+            )
+            ->button('submit', 'Sign in', ['onclick' => 'POST']);
     }
 
     /**

@@ -135,7 +135,7 @@ class Console
         /**
          * @var Core_Resource $resource
          */
-        $resource = $class::getResource();
+        $resource = Resource::create($class);
 
         $title = $desc . "\n" .
             Console::C_YELLOW . $resource->get($data['title'], $data['default']) . Console::C_GRAY_B;
