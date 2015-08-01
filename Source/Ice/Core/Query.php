@@ -513,4 +513,10 @@ class Query
     public function getModelClass() {
         return $this->getQueryBuilder()->getModelClass();
     }
+
+    public function dumpQuery() {
+        Debuger::dump($this->getBody(), $this->getBinds());
+
+        return $this;
+    }
 }

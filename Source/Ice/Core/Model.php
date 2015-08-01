@@ -152,8 +152,9 @@ abstract class Model
      * @param Model $modelClass
      *  class of short class (for example: Ice:User -> /Ice/Model/Ice/User)
      *
-     * @return string|Model
-     *
+     * @param bool $required
+     * @return Model|string
+     * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.1
@@ -738,8 +739,12 @@ abstract class Model
      * @param null $dataSourceKey
      * @return Query
      */
-    public static function getSelectQuery($fieldNames, array $fields = [], array $pagination = ['page' => 1, 'limit' => 0], $dataSourceKey = null)
+    public static function getSelectQuery($fieldNames, array $fields = [], array $pagination = null, $dataSourceKey = null)
     {
+        if (!$pagination) {
+            $pagination = ['page' => 1, 'limit' => 0];
+        }
+
         return Query::getBuilder(self::getClass())
             ->eq($fields)
             ->setPagination($pagination['page'], $pagination['limit'])
@@ -890,28 +895,6 @@ abstract class Model
     }
 
     /**
-     * Return model by custom field
-     *
-     * @param  array $fieldValueNames
-     * @param  $fieldNames
-     * @param  string|null $dataSourceKey
-     * @param  int $ttl
-     * @return Model|null
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 1.0
-     * @since   0.0
-     */
-    public static function getModelBy(array $fieldValueNames, $fieldNames, $dataSourceKey = null, $ttl = null)
-    {
-        $modelClass = self::getClass();
-
-        return $modelClass::getSelectQuery($fieldNames, $fieldValueNames, ['page' => 1, 'limit' => 1], $dataSourceKey)
-            ->getModel(null, $ttl);
-    }
-
-    /**
      * Return model by primary key
      *
      * @param  $pk
@@ -921,12 +904,19 @@ abstract class Model
      * @return Model|null
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 1.0
+     * @version 1.1
      * @since   0.0
      */
     public static function getModel($pk, $fieldNames, $dataSourceKey = null, $ttl = null)
     {
-        return self::getModelBy(['/pk' => $pk], $fieldNames, $dataSourceKey, $ttl);
+        if (!$pk) {
+            return null;
+        }
+
+        $modelClass = self::getClass();
+
+        return $modelClass::getSelectQuery($fieldNames, ['/pk' => $pk], ['page' => 1, 'limit' => 1], $dataSourceKey)
+            ->getModel(null, $ttl);
     }
 
     /**
@@ -940,15 +930,19 @@ abstract class Model
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 1.0
+     * @version 1.1
      * @since   0.2
      */
     public static function getRow($pk, $fieldNames, $dataSourceKey = null, $ttl = null)
     {
+        if (!$pk) {
+            return null;
+        }
+
         $modelClass = self::getClass();
 
         return $modelClass::getSelectQuery($fieldNames, ['/pk' => $pk], ['page' => 1, 'limit' => 1], $dataSourceKey)
-            ->getRow($pk, $ttl);
+            ->getRow(null, $ttl);
     }
 
     /**

@@ -54,7 +54,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
             $test3 = Test::getModel($test1->getPk(), '*', $dataSourceKey);
             $this->assertEquals($test3, $test1);
 
-            $test3 = Test::getModelBy(['/name' => 'name2'], '*', $dataSourceKey);
+            $test3 = Test::getSelectQuery('*', ['/name' => 'name2'], null, $dataSourceKey);
             $this->assertEquals($test3, $test2);
 
             // INSERT
@@ -62,7 +62,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
                 '/name' => 'name3',
                 'name2' => 'test3'
             ])->save(false, $dataSourceKey);
-            $test5 = Test::getModelBy(['name2' => 'test3'], '*', $dataSourceKey);
+            $test5 = Test::getSelectQuery('*', ['name2' => 'test3'], null, $dataSourceKey);
             $this->assertEquals($test4, $test5);
 
             if ($dataSourceKey == 'Ice\Data\Source\Mongodb/default.test') {
@@ -75,10 +75,10 @@ class ModelTest extends PHPUnit_Framework_TestCase
                 'test_pk' => reset($pk),
                 'name2' => 'test4'
             ])->save(false, $dataSourceKey);
-            $test6 = Test::getModelBy(['name2' => 'test3'], '*', $dataSourceKey);
+            $test6 = Test::getSelectQuery('*', ['name2' => 'test3'], null, $dataSourceKey);
             $this->assertNull($test6);
 
-            $test6 = Test::getModelBy(['/name' => 'name3'], '*', $dataSourceKey);
+            $test6 = Test::getSelectQuery('*', ['/name' => 'name3'], null, $dataSourceKey);
             $this->assertEquals($test6->get('name2'), 'test4');
             $this->assertEquals($test6->getPk(), $test4->getPk());
 
@@ -98,7 +98,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
 //
 //            $this->assertEquals($user1, $user2);
 //
-//            $user4 = Test::getModelBy(['/name' => 'test name'], ['/name', 'name2'], $dataSourceKey);
+//            $user4 = Test::getSelectQuery(['/name', 'name2'], ['/name' => 'test name'], null, $dataSourceKey);
 //
 //            $this->assertEquals($user2->test_name, $user4->test_name);
 //
