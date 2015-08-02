@@ -19,22 +19,7 @@ class Ice extends Security
     public function init()
     {
         parent::init();
-
-        $userModelClass = Config::getInstance(Security::getClass())->get('userModelClass');
-
-        $user = $userModelClass::getModel(Session::getInstance()->get(Ice::SESSION_USER_KEY), '*');
-
-        if (!$user) {
-            $user = $this->autologin();
-
-            if ($user) {
-                Session::getInstance()->set(Ice::SESSION_USER_KEY, $user->getPkValue());
-            }
-        }
-
-        Data_Provider_Security::getInstance()->set(Ice::USER, $user);
     }
-
 
     /**
      * Check access by roles
@@ -96,5 +81,24 @@ class Ice extends Security
         Data_Provider_Security::getInstance()->delete(Ice::USER);
 
         Session::getInstance()->flushAll();
+
+        $this->autologin();
+    }
+
+    protected function autologin()
+    {
+        Debuger::dump('!!!AUTOLOGIN');
+
+        $userModelClass = Config::getInstance(Security::getClass())->get('userModelClass');
+
+        $userKey = Session::getInstance()->get(Ice::SESSION_USER_KEY);
+
+        if (!$userKey) {
+            $userKey = 1;
+        }
+
+        $user = $userModelClass::getModel($userKey, '*');
+
+        Data_Provider_Security::getInstance()->set(Ice::USER, $user);
     }
 }

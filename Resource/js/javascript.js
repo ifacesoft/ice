@@ -86,7 +86,13 @@ var Ice = {
             action,
             actionParams,
             function (result) {
-                $tagetBlock.replaceWith(result.content);
+                if (result.error || result.data.error) {
+                    if (result.data.error) {
+                        $tagetBlock.find('.ice-error').replaceWith(result.data.error)
+                    }
+                } else {
+                    $tagetBlock.replaceWith(result.content);
+                }
 
                 if (callback) {
                     callback(result);

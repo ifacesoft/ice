@@ -6,7 +6,6 @@ use Ice\Core;
 use Ice\Helper\Emmet;
 use Ice\Helper\Json;
 use Ice\Helper\Object;
-use Ice\Helper\String;
 use Ice\View\Render\Php;
 
 abstract class Widget_Data extends Widget
@@ -93,26 +92,13 @@ abstract class Widget_Data extends Widget
         return $this;
     }
 
-    /**
-     * Build column part
-     *
-     * @param  $columnName
-     * @param  $columnTitle
-     * @param  array $options
-     * @param  string $template
-     * @return Widget_Data
-     */
-    public function text($columnName, $columnTitle, $options = [], $template = 'Ice\Core\Widget_Text')
-    {
-        return $this->addColumn($columnName, $columnTitle, $options, $template);
-    }
-
-    protected function addColumn($columnName, $columnTitle, $options, $template)
+    protected function addColumn($columnName, $columnTitle, $options, $template, $element)
     {
         $this->columns[$columnName] = [
             'title' => $columnTitle,
             'options' => $options,
-            'template' => $template
+            'template' => $template,
+            'element' => $element
         ];
 
         return $this;
@@ -137,34 +123,6 @@ abstract class Widget_Data extends Widget
 
         $this->filterFields = array_merge($this->filterFields, $filterFields);
         return $this;
-    }
-
-    /**
-     * Build link part
-     *
-     * @param  $columnName
-     * @param  $columnTitle
-     * @param  array $options
-     * @param  string $template
-     * @return Widget_Data
-     */
-    public function a($columnName, $columnTitle, array $options = [], $template = 'Ice\Core\Widget_A')
-    {
-        return $this->addColumn($columnName, $columnTitle, $options, $template);
-    }
-
-    /**
-     * Build button part
-     *
-     * @param  $columnName
-     * @param  $columnTitle
-     * @param  array $options
-     * @param  string $template
-     * @return Widget_Data
-     */
-    public function button($columnName, $columnTitle, array $options = [], $template = 'Ice\Core\Widget_Button')
-    {
-        return $this->addColumn($columnName, $columnTitle, $options, $template);
     }
 
     /**
@@ -505,5 +463,47 @@ abstract class Widget_Data extends Widget
     public function setBottomRow(array $bottomRow)
     {
         $this->bottomRow = $bottomRow;
+    }
+
+    /**
+     * Build link part
+     *
+     * @param  $columnName
+     * @param  $columnTitle
+     * @param  array $options
+     * @param  string $template
+     * @return Widget_Data
+     */
+    public function cellA($columnName, $columnTitle, array $options = [], $template = 'Ice\Core\Widget_Data_A')
+    {
+        return $this->addColumn($columnName, $columnTitle, $options, $template, 'Cell_A');
+    }
+
+    /**
+     * Build column part
+     *
+     * @param  $columnName
+     * @param  $columnTitle
+     * @param  array $options
+     * @param  string $template
+     * @return Widget_Data
+     */
+    public function cellText($columnName, $columnTitle, $options = [], $template = 'Ice\Core\Widget_Data_Text')
+    {
+        return $this->addColumn($columnName, $columnTitle, $options, $template, 'Cell_Text');
+    }
+
+    /**
+     * Build button part
+     *
+     * @param  $columnName
+     * @param  $columnTitle
+     * @param  array $options
+     * @param  string $template
+     * @return Widget_Data
+     */
+    public function cellButton($columnName, $columnTitle, array $options = [], $template = 'Ice\Core\Widget_Data_Button')
+    {
+        return $this->addColumn($columnName, $columnTitle, $options, $template, 'Cell_Button');
     }
 }

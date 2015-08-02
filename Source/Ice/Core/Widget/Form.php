@@ -105,11 +105,6 @@ abstract class Widget_Form extends Widget
         return $this->addPart($fieldName, $fieldTitle, $options, $template, Widget_Form::FIELD_HIDDEN);
     }
 
-    public function button($fieldName, $fieldTitle, array $options = [], $template = 'Ice\Core\Widget_Form_Button')
-    {
-        return $this->addPart($fieldName, $fieldTitle, $options, $template, Widget_Form::ELEMENT_BUTTON);
-    }
-
     /**
      * Add field as form part
      *

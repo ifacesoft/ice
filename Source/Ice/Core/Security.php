@@ -6,9 +6,7 @@ abstract class Security extends Container
 {
     private static $defaultClassKey = null;
 
-    protected function autologin() {
-        return null;
-    }
+    abstract protected function autologin();
 
     /**
      * @return Security_User
@@ -51,6 +49,9 @@ abstract class Security extends Container
     {
         if (Security::$defaultClassKey === null) {
             Security::$defaultClassKey = get_class($this);
+
+            $this->autologin();
+
             return;
         }
 

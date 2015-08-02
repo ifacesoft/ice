@@ -190,4 +190,12 @@ return [
         'en' => 'Validator:Email -> param \'{$0}\' with value \'{$1}\' is not valid',
         'ru' => 'Валидатор:Электронная почта -> параметр \'{$0}\' со значением \'{$1}\' не является допустимым',
     ],
+    'Validator:Length_Min -> param \'{$0}\' with value \'{$1}\' is not valid' => [
+        'en' => 'Validator:Length_Min -> param \'{$0}\' with value \'{$1}\' is not valid',
+        'ru' => 'Валидатор:Length_Min -> параметр \'{$0}\' со значением \'{$1}\' не является допустимым',
+    ],
+    'Validator:LettersNumbers -> param \'{$0}\' with value \'{$1}\' is not valid' => [
+        'en' => 'Validator:LettersNumbers -> param \'{$0}\' with value \'{$1}\' is not valid',
+        'ru' => 'Валидатор:LettersNumbers -> параметр \'{$0}\' со значением \'{$1}\' не является допустимым',
+    ],
 ];

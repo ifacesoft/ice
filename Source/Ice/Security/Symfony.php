@@ -115,6 +115,10 @@ class Symfony extends Ice
         $this->getKernel()->getContainer()->get('security.token_storage')->setToken(null);
 
         parent::logout();
+    }
 
+    protected function autologin()
+    {
+        parent::autologin();
     }
 }

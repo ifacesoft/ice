@@ -725,4 +725,46 @@ abstract class Widget
         $this->event = $event;
         return $this;
     }
+
+    /**
+     * Build link part
+     *
+     * @param  $columnName
+     * @param  $columnTitle
+     * @param  array $options
+     * @param  string $template
+     * @return Widget_Data
+     */
+    public function a($columnName, $columnTitle, array $options = [], $template = 'Ice\Core\Widget_A')
+    {
+        return $this->addPart($columnName, $columnTitle, $options, $template, 'Tag_A');
+    }
+
+    /**
+     * Build column part
+     *
+     * @param  $columnName
+     * @param  $columnTitle
+     * @param  array $options
+     * @param  string $template
+     * @return Widget_Data
+     */
+    public function span($columnName, $columnTitle, $options = [], $template = 'Ice\Core\Widget_Span')
+    {
+        return $this->addPart($columnName, $columnTitle, $options, $template, 'Tag_Span');
+    }
+
+    /**
+     * Build button part
+     *
+     * @param  $columnName
+     * @param  $columnTitle
+     * @param  array $options
+     * @param  string $template
+     * @return Widget_Data
+     */
+    public function button($columnName, $columnTitle, array $options = [], $template = 'Ice\Core\Widget_Button')
+    {
+        return $this->addPart($columnName, $columnTitle, $options, $template, 'Tag_Button');
+    }
 }
