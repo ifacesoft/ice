@@ -41,6 +41,20 @@ var Ice_Core_Widget = {
             $targetBlock = $('.' + block);
         }
 
-        Ice.reRender($targetBlock, $baseElement.attr('data-action'), data, callback, url);
+        var widgetCallback = function(result) {
+            if (callback) {
+                callback(result);
+            }
+
+            if (method == 'GET') {
+                var title = result.title
+                    ? result.title
+                    : document.title;
+
+                history.pushState({}, title, url);
+            }
+        };
+
+        Ice.reRender($targetBlock, $baseElement.attr('data-action'), data, widgetCallback, url);
     }
 };

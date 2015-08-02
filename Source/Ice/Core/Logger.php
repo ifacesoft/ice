@@ -477,6 +477,7 @@ class Logger
      * @param  null $errcontext
      * @param  int $errno
      * @param  string $exceptionClass
+     * @return null
      * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
@@ -494,6 +495,8 @@ class Logger
     )
     {
         throw $this->createException($message, $file, $line, $e, $errcontext, $errno, $exceptionClass);
+
+        return null; // dummy
     }
 
     public static function log($value, $label = null, $type = 'LOG', $options = [])

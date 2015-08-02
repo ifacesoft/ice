@@ -2,10 +2,13 @@
 
 namespace Ice\Security;
 
+use Application\Sonata\UserBundle\Entity\User;
+use Doctrine\ORM\EntityManager;
 use Ice\Core\Debuger;
 use Ice\Data\Provider\Security as Data_Provider_Security;
-use Symfony\Component\Debug\Debug;
+use Ice\Data\Provider\Session;
 use Symfony\Component\HttpKernel\Kernel;
+use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
 class Symfony extends Ice
 {
@@ -52,16 +55,66 @@ class Symfony extends Ice
      */
     public function isAuth()
     {
-        $securityContext = $this->getKernel()->getContainer()->get('security.context');
+        $securityContext = $this->getKernel()->getContainer()->get('security.authorization_checker');
 
-        return (
-            $securityContext->isGranted('IS_AUTHENTICATED_FULLY') ||
-            $securityContext->isGranted('IS_AUTHENTICATED_REMEMBERED')
-        ) && parent::isAuth();
+        return parent::isAuth() && ($securityContext->isGranted('IS_AUTHENTICATED_FULLY') ||
+            $securityContext->isGranted('IS_AUTHENTICATED_REMEMBERED'));
     }
 
     public function getSymfonyUser()
     {
-        return $securityContext = $this->getKernel()->getContainer()->get('security.context')->getToken()->getUser();
+        return $securityContext = $this->getKernel()->getContainer()->get('security.token_storage')->getToken()->getUser();
+    }
+
+    /**
+     * @param $userKey
+     * @return bool
+     */
+    public function login($userKey)
+    {
+        parent::login($userKey);
+
+        try {
+            Data_Provider_Security::getInstance()->set(Symfony::SYMFONY_USER,  $this->auth());
+        } catch (\Exception $e) {
+            $this->logout();
+            $this->autologin();
+
+            return Symfony::getLogger()->exception('Symfony security login failed', __FILE__, __LINE__, $e);
+        }
+
+        return true;
+    }
+
+    private function auth()
+    {
+        /** @var EntityManager $doctrine */
+        $entityManager = $this->getKernel()->getContainer()->get('doctrine')->getEntityManager();
+
+        /** @var User $user */
+        $user = $entityManager->find(
+            User::class,
+            Session::getInstance()->get(Ice::SESSION_USER_KEY)
+        );
+
+        $firewall = 'main';
+        $token = new UsernamePasswordToken($user->getUsernameCanonical(), null, $firewall, $user->getRoles());
+        $this->getKernel()->getContainer()->get('security.token_storage')->setToken($token);
+//            $this->getKernel()->getContainer()->get('security.authentication.manager')->authenticate($token);
+//            $session = $this->getKernel()->getContainer()->get('session');
+//            $session->set('_security_' . $firewall, serialize($token));
+//            $session->save();
+
+        return $user;
+    }
+
+    public function logout()
+    {
+        Data_Provider_Security::getInstance()->delete(Symfony::SYMFONY_USER);
+
+        $this->getKernel()->getContainer()->get('security.token_storage')->setToken(null);
+
+        parent::logout();
+
     }
 }

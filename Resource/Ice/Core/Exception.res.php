@@ -186,4 +186,8 @@ return [
         'en' => 'empty message',
         'ru' => 'пустые сообщения',
     ],
+    'Validator:Email -> param \'{$0}\' with value \'{$1}\' is not valid' => [
+        'en' => 'Validator:Email -> param \'{$0}\' with value \'{$1}\' is not valid',
+        'ru' => 'Валидатор:Электронная почта -> параметр \'{$0}\' со значением \'{$1}\' не является допустимым',
+    ],
 ];

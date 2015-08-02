@@ -36,6 +36,16 @@ class Router extends Data_Provider
     const DEFAULT_DATA_PROVIDER_KEY = 'Ice:Router/default';
 
     /**
+     * @param string $key
+     * @param string $index
+     * @return Router
+     */
+    public static function getInstance($key = null, $index = 'default')
+    {
+        return parent::getInstance($key, $index);
+    }
+
+    /**
      * Return default data provider key
      *
      * @return string
@@ -69,7 +79,7 @@ class Router extends Data_Provider
      * Get data from data provider by key
      *
      * @param  string $key
-     * @return mixed
+     * @return Route|Route[]
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
@@ -260,7 +270,7 @@ class Router extends Data_Provider
             }
 
             Router::getLogger()->exception(
-                ['route for url \'{$0}\' not found', $url],
+                ['Route for url \'{$0}\' not found', $url],
                 __FILE__,
                 __LINE__,
                 null,

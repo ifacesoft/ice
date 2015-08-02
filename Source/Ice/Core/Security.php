@@ -16,6 +16,14 @@ abstract class Security extends Container
     abstract public function getUser();
 
     /**
+     * @param $userKey
+     * @return bool
+     */
+    abstract public function login($userKey);
+
+    abstract public function logout();
+
+    /**
      * Check logged in
      *
      * @return bool

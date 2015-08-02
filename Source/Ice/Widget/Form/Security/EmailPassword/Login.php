@@ -5,10 +5,13 @@ namespace Ice\Widget\Form;
 use Ice\Core\Query;
 use Ice\Core\Resource;
 use Ice\Core\Widget_Form_Security_Login;
+use Ice\Data\Provider\Session;
 use Ice\Helper\Json;
 use Ice\Helper\Object;
 use Ice\Model\Account;
+use Ice\Model\Account_Email_Password;
 use Ice\Model\User_Role_Link;
+use Ice\Security\Ice;
 use Ice\View\Render\Php;
 
 class Security_EmailPassword_Login extends Widget_Form_Security_Login
@@ -31,11 +34,11 @@ class Security_EmailPassword_Login extends Widget_Form_Security_Login
             ->setResource(__CLASS__)
             ->setTemplate(Simple::class)
             ->text(
-                'login',
-                'Login',
+                'email',
+                'Email',
                 [
                     'required' => true,
-                    'placeholder' => 'login_placeholder',
+                    'placeholder' => 'email_placeholder',
                     'validators' => 'Ice:Email'
                 ]
             )
@@ -56,22 +59,31 @@ class Security_EmailPassword_Login extends Widget_Form_Security_Login
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.1
+     * @version 1.1
      * @since   0.1
      */
     public function login()
     {
-        foreach (Query::getBuilder(Account::getClass())->eq(['login' => $this->getValues()['login']])->getSelectQuery(['password', 'user__fk'])->getRows() as $accountRow) {
-            if (password_verify($this->validate()['password'], $accountRow['password'])) {
-                $_SESSION['userPk'] = $accountRow['user__fk'];
-                $_SESSION['roleNames'] = Query::getBuilder(User_Role_Link::getClass())
-                    ->inner('Ice:Role', 'role_name')
-                    ->eq(['user__fk', $accountRow['user__fk']])
-                    ->getSelectQuery('role_name')->getColumn();
-                return;
-            }
+        $values = $this->validate();
+
+        $account = Account_Email_Password::getSelectQuery(
+            ['user__fk', 'password'],
+            ['login' => $this->getValue('login')],
+            ['page' => 1, 'limit' => 1]
+        )->getRow();
+
+        if (isset($account['password']) && password_verify($values['password'], $account['password'])) {
+            Session::getInstance()->set(Ice::SESSION_USER_KEY, $account['user__fk']);
+            Session::getInstance()->set(Ice::SESSION_AUTH_FLAG, 1);
+
+            return;
         }
 
-        Widget_Form_Security_Login::getLogger()->exception('Authorization failed: login-password incorrect', __FILE__, __LINE__);
+        Widget_Form_Security_Login::getLogger()
+            ->exception(
+                ['Authorization failed: login-password incorrect', [], $this->getResource()],
+                __FILE__,
+                __LINE__
+            );
     }
 }

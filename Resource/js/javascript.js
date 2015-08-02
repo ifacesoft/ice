@@ -89,14 +89,8 @@ var Ice = {
                 $tagetBlock.replaceWith(result.content);
 
                 if (callback) {
-                    callback();
+                    callback(result);
                 }
-
-                var title = result.title
-                    ? result.title
-                    : document.title;
-
-                history.pushState({}, title, url);
             },
             url,
             method

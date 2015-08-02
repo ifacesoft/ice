@@ -13,6 +13,8 @@ use Ice\Data\Provider\Security as Data_Provider_Security;
 class Ice extends Security
 {
     const USER = 'user';
+    const SESSION_USER_KEY = 'user_pk';
+    const SESSION_AUTH_FLAG = 'isAuth';
 
     public function init()
     {
@@ -20,13 +22,13 @@ class Ice extends Security
 
         $userModelClass = Config::getInstance(Security::getClass())->get('userModelClass');
 
-        $user = $userModelClass::getModel(Session::getInstance()->get('user_pk'), '*');
+        $user = $userModelClass::getModel(Session::getInstance()->get(Ice::SESSION_USER_KEY), '*');
 
         if (!$user) {
             $user = $this->autologin();
 
             if ($user) {
-                Session::getInstance()->set('user_pk', $user->getPkValue());
+                Session::getInstance()->set(Ice::SESSION_USER_KEY, $user->getPkValue());
             }
         }
 
@@ -52,7 +54,7 @@ class Ice extends Security
      */
     public function isAuth()
     {
-        return Session::getInstance()->get('isAuth');
+        return Session::getInstance()->get(Ice::SESSION_AUTH_FLAG);
     }
 
     /**
@@ -61,5 +63,38 @@ class Ice extends Security
     public function getUser()
     {
         return Data_Provider_Security::getInstance()->get(Ice::USER);
+    }
+
+    /**
+     * @param $userKey
+     * @return bool
+     * @throws \Exception
+     */
+    public function login($userKey)
+    {
+        try {
+            Session::getInstance()->set(Ice::SESSION_USER_KEY, $userKey);
+            Session::getInstance()->set(Ice::SESSION_AUTH_FLAG, 1);
+
+            $userModelClass = Config::getInstance(Security::getClass())->get('userModelClass');
+
+            Data_Provider_Security::getInstance()->set(
+                Ice::USER, $userModelClass::getModel(Session::getInstance()->get(Ice::SESSION_USER_KEY), '*')
+            );
+        } catch (\Exception $e) {
+            $this->logout();
+            $this->autologin();
+
+            return Ice::getLogger()->exception('Ice security login failed', __FILE__, __LINE__, $e);
+        }
+
+        return true;
+    }
+
+    public function logout()
+    {
+        Data_Provider_Security::getInstance()->delete(Ice::USER);
+
+        Session::getInstance()->flushAll();
     }
 }

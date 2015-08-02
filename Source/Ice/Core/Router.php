@@ -6,6 +6,16 @@ abstract class Router extends Container
 {
     private static $defaultClassKey = null;
 
+    /**
+     * @param string $key
+     * @param int $ttl
+     * @return Router
+     */
+    public static function getInstance($key = null, $ttl = null)
+    {
+        return parent::getInstance($key, $ttl);
+    }
+
     protected static function create($key)
     {
         $class = self::getClass();
