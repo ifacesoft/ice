@@ -3,10 +3,10 @@
 namespace Ice\Widget\Form;
 
 
+use Ice\Core\Config;
+use Ice\Core\Security;
 use Ice\Core\Widget_Form_Security_Register;
-use Ice\Helper\Json;
-use Ice\Helper\Object;
-use Ice\View\Render\Php;
+use Ice\Model\Account_Email_Password;
 
 class Security_EmailPassword_Register extends Widget_Form_Security_Register
 {
@@ -14,34 +14,43 @@ class Security_EmailPassword_Register extends Widget_Form_Security_Register
     {
         return [
             'view' => ['template' => null, 'viewRenderClass' => null, 'layout' => null],
-            'input' => [],
+            'input' => [
+                'email' => ['providers' => 'request'],
+                'password' => ['providers' => 'request']
+            ],
             'access' => ['roles' => [], 'request' => null, 'env' => null]
         ];
     }
 
-    protected function __construct()
+    public static function create($url, $action, $block = null, array $data = [])
     {
-        parent::__construct();
-
-        $this->text(
-            'login',
-            $resource->get('login'),
-            [
-                'placeholder' => $resource->get('login_placeholder'),
-                'validators' => ['Ice:Length_Min' => 2, 'Ice:LettersNumbers']
-            ]
-        )->password(
-            'password',
-            $resource->get('password'),
-            [
-                'placeholder' => $resource->get('password_placeholder'),
-                'validators' => ['Ice:Length_Min' => 5]
-            ]
-        )->password(
-            'password1',
-            $resource->get('password1'),
-            ['placeholder' => $resource->get('password1_placeholder')]
-        );
+        return parent::create($url, $action, $block, $data)
+            ->setResource(__CLASS__)
+            ->setTemplate(Simple::class)
+            ->text(
+                'email',
+                'Email',
+                [
+                    'required' => true,
+                    'placeholder' => 'email_placeholder',
+                    'validators' => 'Ice:Email'
+                ]
+            )
+            ->password(
+                'password',
+                'Password',
+                [
+                    'required' => true,
+                    'placeholder' => 'password_placeholder',
+                    'validators' => ['Ice:Length_Min' => 5]
+                ]
+            )
+            ->password(
+                'password1',
+                'Password1',
+                ['placeholder' => 'password1_placeholder']
+            )
+            ->button('submit', 'Sign up', ['onclick' => 'POST']);
     }
 
     /**
@@ -61,5 +70,25 @@ class Security_EmailPassword_Register extends Widget_Form_Security_Register
         }
 
         return $this;
+    }
+
+    /**
+     * Register
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 1.1
+     * @since   0.1
+     */
+    public function register()
+    {
+        $values = $this->validate();
+
+        $userModelClass = Config::getInstance(Security::getClass())->get('userModelClass');
+
+        $values['user'] = $userModelClass::create()->save();
+        $values['password'] = password_hash($values['password'], PASSWORD_DEFAULT);
+
+        Account_Email_Password::create($values)->save();
     }
 }

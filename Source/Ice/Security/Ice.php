@@ -87,8 +87,6 @@ class Ice extends Security
 
     protected function autologin()
     {
-        Debuger::dump('!!!AUTOLOGIN');
-
         $userModelClass = Config::getInstance(Security::getClass())->get('userModelClass');
 
         $userKey = Session::getInstance()->get(Ice::SESSION_USER_KEY);

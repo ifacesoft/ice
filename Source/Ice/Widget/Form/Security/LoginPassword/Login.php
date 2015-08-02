@@ -77,7 +77,7 @@ class Security_LoginPassword_Login extends Widget_Form_Security_Login
             return Security::getInstance()->login($userKey);
         }
 
-        Widget_Form_Security_Login::getLogger()
+        return Widget_Form_Security_Login::getLogger()
             ->exception(
                 ['Authorization failed: login-password incorrect', [], $this->getResource()],
                 __FILE__,

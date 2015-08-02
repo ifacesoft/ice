@@ -88,7 +88,7 @@ var Ice = {
             function (result) {
                 if (result.error || result.data.error) {
                     if (result.data.error) {
-                        $tagetBlock.find('.ice-error').replaceWith(result.data.error)
+                        $tagetBlock.find('.ice-error').html(result.data.error)
                     }
                 } else {
                     $tagetBlock.replaceWith(result.content);

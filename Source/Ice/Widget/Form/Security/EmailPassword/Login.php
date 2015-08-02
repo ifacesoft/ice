@@ -4,6 +4,7 @@ namespace Ice\Widget\Form;
 
 use Ice\Core\Query;
 use Ice\Core\Resource;
+use Ice\Core\Security;
 use Ice\Core\Widget_Form_Security_Login;
 use Ice\Data\Provider\Session;
 use Ice\Helper\Json;
@@ -68,18 +69,15 @@ class Security_EmailPassword_Login extends Widget_Form_Security_Login
 
         $account = Account_Email_Password::getSelectQuery(
             ['user__fk', 'password'],
-            ['login' => $this->getValue('login')],
+            ['email' => $values['email']],
             ['page' => 1, 'limit' => 1]
         )->getRow();
 
         if (isset($account['password']) && password_verify($values['password'], $account['password'])) {
-            Session::getInstance()->set(Ice::SESSION_USER_KEY, $account['user__fk']);
-            Session::getInstance()->set(Ice::SESSION_AUTH_FLAG, 1);
-
-            return;
+            return Security::getInstance()->login($account['user__fk']);
         }
 
-        Widget_Form_Security_Login::getLogger()
+        return Widget_Form_Security_Login::getLogger()
             ->exception(
                 ['Authorization failed: login-password incorrect', [], $this->getResource()],
                 __FILE__,

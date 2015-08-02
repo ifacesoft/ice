@@ -767,4 +767,18 @@ abstract class Widget
     {
         return $this->addPart($columnName, $columnTitle, $options, $template, 'Tag_Button');
     }
+
+    /**
+     * Build div part
+     *
+     * @param  $columnName
+     * @param  $columnTitle
+     * @param  array $options
+     * @param  string $template
+     * @return Widget_Data
+     */
+    public function div($columnName, $columnTitle, array $options = [], $template = 'Ice\Core\Widget_Div')
+    {
+        return $this->addPart($columnName, $columnTitle, $options, $template, 'Tag_Div');
+    }
 }
