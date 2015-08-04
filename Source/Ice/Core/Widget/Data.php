@@ -245,8 +245,6 @@ abstract class Widget_Data extends Widget
 
     public function render()
     {
-
-
         /** @var Widget_Data $widgetClass */
         $widgetClass = get_class($this);
         $widgetClassName = $widgetClass::getClassName();

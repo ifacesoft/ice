@@ -71,6 +71,9 @@ abstract class Widget
      */
     protected $defaultOptions = [];
 
+
+    protected $onsubmit = null;
+
     protected function __construct()
     {
     }
@@ -476,6 +479,7 @@ abstract class Widget
                 'dataAction' => $this->getAction(),
                 'dataBlock' => $this->getBlock(),
                 'dataUrl' => $this->getFullUrl($this->getUrl()),
+                'onsubmit' => $this->getOnsubmit()
             ]
         );
 
@@ -783,4 +787,25 @@ abstract class Widget
     {
         return $this->addPart($columnName, $columnTitle, $options, $template, 'Tag_Div');
     }
+
+
+    /**
+     * @param string $onsubmit
+     * @return Widget_Form
+     */
+    public function setOnsubmit($onsubmit)
+    {
+        $this->onsubmit = $onsubmit;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getOnsubmit()
+    {
+        return $this->onsubmit;
+    }
+
+
 }

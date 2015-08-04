@@ -64,8 +64,6 @@ abstract class Widget_Form extends Widget
         'autofocus' => false
     ];
 
-    protected $onsubmit = null;
-
     protected static function config() {
         return ['input' => []];
     }
@@ -381,15 +379,5 @@ abstract class Widget_Form extends Widget
      */
     public function queryBuilderPart(Query_Builder $queryBuilder)
     {
-    }
-
-    /**
-     * @param string $onsubmit
-     * @return Widget_Form
-     */
-    public function setOnsubmit($onsubmit)
-    {
-        $this->onsubmit = $onsubmit;
-        return $this;
     }
 }

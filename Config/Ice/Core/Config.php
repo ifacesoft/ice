@@ -33,6 +33,11 @@ return [
     'Ice\Core\Request' => [
         'multiLocale' => 1,
         'locale' => 'en',
+//        'locale' => [
+//            'language' => 'en',
+//            'region' => 'Ru',
+//            'encoding' => 'UTF-8'
+//        ],
         'cors' => [
 //            'host' => [
 //                'methods' => [], // Permitted types of request ('POST', 'OPTIONS')

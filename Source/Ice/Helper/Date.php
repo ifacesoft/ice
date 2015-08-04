@@ -9,6 +9,10 @@
 
 namespace Ice\Helper;
 
+use Ice\Core\Debuger;
+use Locale;
+use Ice\Core\Request as Core_Request;
+
 /**
  * Class Date
  *
@@ -58,5 +62,33 @@ class Date
     public static function get($time = null, $format = Date::FORMAT_MYSQL)
     {
         return $time ? date($format, $time) : date($format);
+    }
+
+    public static function getMonth($time)
+    {
+        return Date::strftime('%B', $time, 'ru_RU.UTF-8');
+    }
+
+    public static function getMonthShort($time)
+    {
+        return Date::strftime('%b', $time, 'ru_RU.UTF-8');
+    }
+
+    public static function getDayShort($time)
+    {
+        return Date::strftime('%a', $time, 'ru_RU.UTF-8');
+    }
+
+    public static function getDay($time)
+    {
+        return Date::strftime('%A', $time, 'ru_RU.UTF-8');
+    }
+
+    private static function strftime($format, $time, $locale) {
+        $defaultLocale = setlocale(LC_TIME, 0);
+        setlocale(LC_TIME, $locale);
+        $time = strftime($format, $time);
+        setlocale(LC_TIME, $defaultLocale);
+        return $time;
     }
 }

@@ -55,6 +55,7 @@ class Bootstrap extends Container
      */
     public function init(ClassLoader $loader, $force = false)
     {
+
         setlocale(LC_ALL, 'en_US.UTF-8');
         setlocale(LC_NUMERIC, 'C');
 
