@@ -51,10 +51,14 @@ var Ice_Core_Widget = {
                     ? result.title
                     : document.title;
 
-                history.pushState({}, title, url);
+                history.pushState(data, title, url);
+                //window.onpopstate = function() {
+                //    Ice.reRender($targetBlock, $baseElement.attr('data-action'), history.state, widgetCallback, url);
+                //};
             }
         };
 
         Ice.reRender($targetBlock, $baseElement.attr('data-action'), data, widgetCallback, url);
     }
 };
+
