@@ -56,6 +56,12 @@ class Debuger
                 }
 
                 $logFile = Directory::get(Module::getInstance()->get(Module::LOG_DIR)) . date('Y-m-d') . '/DEBUG/' . urlencode(Request::uri()) .'.log';
+
+                if (strlen($logFile) > 255) {
+                    $logFilename = substr($logFile, 0, 255 - 11);
+                    $logFile = $logFilename . '_' . crc32(substr($logFile, 255 - 11));
+                }
+
                 File::createData($logFile, $var, false, FILE_APPEND);
             }
 

@@ -151,6 +151,11 @@ class Logger
                 Module::getInstance()->get(Module::LOG_DIR) . date('Y-m-d')
             ) . Core_Logger::$errorCodes[$exception->getCode()] . '/' . urlencode(Request::uri()) .'.log';
 
+        if (strlen($logFile) > 255) {
+            $logFilename = substr($logFile, 0, 255 - 11);
+            $logFile = $logFilename . '_' . crc32(substr($logFile, 255 - 11));
+        }
+
         File::createData(
             $logFile,
             View_Render_Php::getInstance()->fetch(Core_Logger::getClass() . '/File', $output),

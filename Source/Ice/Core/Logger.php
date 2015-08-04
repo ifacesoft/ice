@@ -230,7 +230,13 @@ class Logger
             $message = Resource::create($class)->get($message, $params);
         }
 
-        $logFile = Directory::get(Module::getInstance()->get('logDir')) . date('Y-m-d') . '/INFO/' . urlencode(Request::uri()) .'.log';
+        $logFile = Directory::get(Module::getInstance()->get('logDir')) . date('Y-m-d') . '/INFO/' . urlencode(Request::uri()) . '.log';
+
+        if (strlen($logFile) > 255) {
+            $logFilename = substr($logFile, 0, 255 - 11);
+            $logFile = $logFilename . '_' . crc32(substr($logFile, 255 - 11));
+        }
+
         File::createData($logFile, $message . "\n", false, FILE_APPEND);
 
         Logger::fb($message, 'info', 'INFO');
@@ -501,13 +507,19 @@ class Logger
 
     public static function log($value, $label = null, $type = 'LOG', $options = [])
     {
-        $value = str_replace(["\n", "\t"] , ' ', $value);
+        $value = str_replace(["\n", "\t"], ' ', $value);
 
         if (Environment::getInstance()->isProduction()) {
             return;
         }
 
-        $logFile = Directory::get(Module::getInstance()->get('logDir')) . date('Y-m-d') . '/LOG/' . urlencode(Request::uri()) .'.log';
+        $logFile = Directory::get(Module::getInstance()->get('logDir')) . date('Y-m-d') . '/LOG/' . urlencode(Request::uri()) . '.log';
+
+        if (strlen($logFile) > 255) {
+            $logFilename = substr($logFile, 0, 255 - 11);
+            $logFile = $logFilename . '_' . crc32(substr($logFile, 255 - 11));
+        }
+
         File::createData($logFile, $label . ': ' . $value . "\n", false, FILE_APPEND);
 
         if (Request::isCli()) {
