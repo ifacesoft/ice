@@ -677,7 +677,9 @@ abstract class Widget
      */
     public function getHeader()
     {
-        return $this->resource instanceof Resource && $this->header? $this->resource->get($this->header) : '';
+        return $this->resource instanceof Resource && $this->header
+            ? $this->resource->get($this->header)
+            : $this->header;
     }
 
     /**

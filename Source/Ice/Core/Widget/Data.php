@@ -245,6 +245,8 @@ abstract class Widget_Data extends Widget
 
     public function render()
     {
+
+
         /** @var Widget_Data $widgetClass */
         $widgetClass = get_class($this);
         $widgetClassName = $widgetClass::getClassName();
@@ -270,8 +272,8 @@ abstract class Widget_Data extends Widget
                 'widgetClass' => $widgetClass,
                 'widgetClassName' => $widgetClassName,
                 'widgetBaseClassName' => $widgetBaseClassName,
-                'headerRow' => $headerRow,
-                'rows' => $this->prepareRows($widgetClass, $columns),
+                'headerRow' => empty($this->getRows()) ? '' : $headerRow,
+                'rows' => empty($this->getRows()) ? [] : $this->prepareRows($widgetClass, $columns),
                 'classes' => $this->getClasses(),
                 'style' => $this->getStyle(),
                 'header' => $this->getHeader(),
@@ -474,7 +476,7 @@ abstract class Widget_Data extends Widget
      * @param  string $template
      * @return Widget_Data
      */
-    public function cellA($columnName, $columnTitle, array $options = [], $template = 'Ice\Core\Widget_Data_A')
+    public function a($columnName, $columnTitle, array $options = [], $template = 'Ice\Core\Widget_Data_A')
     {
         return $this->addColumn($columnName, $columnTitle, $options, $template, 'Cell_A');
     }
@@ -488,7 +490,7 @@ abstract class Widget_Data extends Widget
      * @param  string $template
      * @return Widget_Data
      */
-    public function cellText($columnName, $columnTitle, $options = [], $template = 'Ice\Core\Widget_Data_Text')
+    public function text($columnName, $columnTitle, $options = [], $template = 'Ice\Core\Widget_Data_Text')
     {
         return $this->addColumn($columnName, $columnTitle, $options, $template, 'Cell_Text');
     }
@@ -502,7 +504,7 @@ abstract class Widget_Data extends Widget
      * @param  string $template
      * @return Widget_Data
      */
-    public function cellButton($columnName, $columnTitle, array $options = [], $template = 'Ice\Core\Widget_Data_Button')
+    public function button($columnName, $columnTitle, array $options = [], $template = 'Ice\Core\Widget_Data_Button')
     {
         return $this->addColumn($columnName, $columnTitle, $options, $template, 'Cell_Button');
     }
