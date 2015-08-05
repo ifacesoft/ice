@@ -358,7 +358,13 @@ abstract class Widget
                 $part['resource'] = $this->getResource($part['options']['resource']);
 
                 if (is_array($part['options']['resource'])) {
-                    if (isset($part['options']['resource']['class'])) {
+                    if (isset($part['options']['resource'][0])) {
+                        $part['resource'] = Resource::create($part['options']['resource'][0]);
+                        if (array_key_exists(1, $part['options']['resource'])) {
+                            $resourceParams = $part['options']['resource'][1];
+                        }
+                    } else if (isset($part['options']['resource']['class'])) {
+                        $part['resource'] = Resource::create($part['options']['resource']['class']);
                         $resourceParams = isset($part['options']['resource']['params'])
                             ? (array)$part['options']['resource']['params']
                             : [];
