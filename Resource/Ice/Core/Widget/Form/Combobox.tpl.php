@@ -13,7 +13,7 @@
         <?php if ($options['disabled']) : ?> disabled="disabled"<?php endif; ?>>
         <?php foreach ($options['items'] as $option => $title) : ?>
             <option value="<?= $option ?>"
-                <?php if ($value == $option) : ?> selected="selected"<?php endif; ?>
+                <?php if ($params[$name] == $option) : ?> selected="selected"<?php endif; ?>
                 ><?= $title ?></option>
         <?php endforeach; ?>
     </select>

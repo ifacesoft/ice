@@ -4,9 +4,10 @@
         <input type="radio"
                class="<?= $element ?> <?= $name ?><?php if (isset($options['classes'])) : ?> <?= $options['classes'] ?><?php endif; ?>"
                id="<?= $widgetClassName . '_' . $token . '_' . $name ?>"
-               name="<?= $name ?>" value="<?= $key ?>"
+               name="<?= $name ?>"
+               value="<?= $key ?>"
                <?php if (isset($onchange)) : ?>onchange='<?= $onchange ?>'<?php endif; ?>
-               <?php if ($value == $key) { ?>checked="checked" <?php } ?>
+               <?php if ($params[$name] == $key) { ?>checked="checked" <?php } ?>
                data-for="<?= $widgetBaseClassName ?>_<?= $widgetClassName ?>_<?= $token ?>"
             <?php if ($options['disabled']) : ?> disabled="disabled"<?php endif; ?>
             <?php if ($options['readonly']) : ?> readonly="readonly" <?php endif; ?>>
