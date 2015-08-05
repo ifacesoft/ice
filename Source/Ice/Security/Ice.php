@@ -2,9 +2,7 @@
 
 namespace Ice\Security;
 
-use Doctrine\Common\Util\Debug;
 use Ice\Core\Config;
-use Ice\Core\Debuger;
 use Ice\Core\Security;
 use Ice\Core\Security_User;
 use Ice\Data\Provider\Session;
@@ -13,7 +11,6 @@ use Ice\Data\Provider\Security as Data_Provider_Security;
 class Ice extends Security
 {
     const USER = 'user';
-    const SESSION_USER_KEY = 'user_pk';
     const SESSION_AUTH_FLAG = 'isAuth';
 
     public function init()
@@ -58,13 +55,13 @@ class Ice extends Security
     public function login($userKey)
     {
         try {
-            Session::getInstance()->set(Ice::SESSION_USER_KEY, $userKey);
+            Session::getInstance()->set(Security::SESSION_USER_KEY, $userKey);
             Session::getInstance()->set(Ice::SESSION_AUTH_FLAG, 1);
 
             $userModelClass = Config::getInstance(Security::getClass())->get('userModelClass');
 
             Data_Provider_Security::getInstance()->set(
-                Ice::USER, $userModelClass::getModel(Session::getInstance()->get(Ice::SESSION_USER_KEY), '*')
+                Ice::USER, $userModelClass::getModel(Session::getInstance()->get(Security::SESSION_USER_KEY), '*')
             );
         } catch (\Exception $e) {
             $this->logout();
@@ -87,16 +84,15 @@ class Ice extends Security
 
     protected function autologin()
     {
-        $userModelClass = Config::getInstance(Security::getClass())->get('userModelClass');
-
-        $userKey = Session::getInstance()->get(Ice::SESSION_USER_KEY);
+        $userKey = Session::getInstance()->get(Security::SESSION_USER_KEY);
 
         if (!$userKey) {
             $userKey = 1;
         }
 
-        $user = $userModelClass::getModel($userKey, '*');
+        $userModelClass = Config::getInstance(Security::getClass())->get('userModelClass');
 
-        Data_Provider_Security::getInstance()->set(Ice::USER, $user);
+        Data_Provider_Security::getInstance()->set(Ice::USER, $userModelClass::getModel($userKey, '*'));
+        Session::getInstance()->set(Security::SESSION_USER_KEY, $userKey);
     }
 }

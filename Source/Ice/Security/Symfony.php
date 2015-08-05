@@ -75,7 +75,7 @@ class Symfony extends Ice
         parent::login($userKey);
 
         try {
-            Data_Provider_Security::getInstance()->set(Symfony::SYMFONY_USER,  $this->auth());
+            $this->auth();
         } catch (\Exception $e) {
             $this->logout();
             $this->autologin();
@@ -105,7 +105,7 @@ class Symfony extends Ice
 //            $session->set('_security_' . $firewall, serialize($token));
 //            $session->save();
 
-        return $user;
+        Data_Provider_Security::getInstance()->set(Symfony::SYMFONY_USER,  $user);
     }
 
     public function logout()
@@ -115,10 +115,5 @@ class Symfony extends Ice
         $this->getKernel()->getContainer()->get('security.token_storage')->setToken(null);
 
         parent::logout();
-    }
-
-    protected function autologin()
-    {
-        parent::autologin();
     }
 }
