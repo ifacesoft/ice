@@ -36,18 +36,24 @@ if (!$loader) {
     $loader = require VENDOR_DIR . 'autoload.php';
 }
 
-$startTime = \Ice\Core\Profiler::getMicrotime();
-$startMemory = \Ice\Core\Profiler::getMemoryGetUsage();
 
-require_once ICE_DIR . 'Source/Ice/Core/Data/Provider.php';
-require_once ICE_DIR . 'Source/Ice/Data/Provider/File.php';
-require_once ICE_DIR . 'Source/Ice/Data/Provider/Apc.php';
-require_once ICE_DIR . 'Source/Ice/Data/Provider/Redis.php';
-require_once ICE_DIR . 'Source/Ice/Core/View/Render.php';
-require_once ICE_DIR . 'Source/Ice/Helper/Api/Client/Yandex/Translate.php';
 
 try {
     $config = require MODULE_DIR . MODULE_CONFIG_PATH;
+
+    foreach($config['module']['ignorePatterns'] as $ignorePattern) {
+        if (preg_match($ignorePattern, \Ice\Core\Request::uri(true))) {
+            return;
+        }
+    }
+
+    require_once ICE_DIR . 'Source/Ice/Core/Data/Provider.php';
+    require_once ICE_DIR . 'Source/Ice/Data/Provider/File.php';
+    require_once ICE_DIR . 'Source/Ice/Data/Provider/Apc.php';
+    require_once ICE_DIR . 'Source/Ice/Data/Provider/Redis.php';
+    require_once ICE_DIR . 'Source/Ice/Core/View/Render.php';
+    require_once ICE_DIR . 'Source/Ice/Helper/Api/Client/Yandex/Translate.php';
+
     \Ice\Core\Bootstrap::getInstance($config['module']['bootstrapClass'])->init($loader);
 } catch (Exception $e) {
     echo '<span style="font-weight: bold;">Bootstrapping failed: ' .

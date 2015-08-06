@@ -52,6 +52,11 @@ class Module extends Config
             Module::UPLOAD_TEMP_DIR => 'Var/upload/temp/',
             Module::COMPILED_RESOURCE_DIR => 'Web/resource/',
             Module::DOWNLOAD_DIR => 'Web/download/',
+            'ignorePatterns' => [],
+            'bootstrapClass' => 'Ice\Bootstrap\Ice',
+            'securityClass' => 'Ice\Security\Ice',
+            'routerClass' => 'Ice\Router\Ice'
+
         ],
         'modules' => [
             'ifacesoft/ice' => '/ice'
