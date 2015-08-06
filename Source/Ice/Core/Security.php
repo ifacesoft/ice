@@ -2,8 +2,6 @@
 
 namespace Ice\Core;
 
-use Ice\Data\Provider\Session as Data_Provider_Session;
-
 abstract class Security extends Container
 {
     const SESSION_USER_KEY = 'user_pk';
@@ -11,6 +9,13 @@ abstract class Security extends Container
     private static $defaultClassKey = null;
 
     abstract protected function autologin();
+
+    /**
+     * All user roles
+     *
+     * @return string[]
+     */
+    abstract public function getRoles();
 
     /**
      * @return Security_User

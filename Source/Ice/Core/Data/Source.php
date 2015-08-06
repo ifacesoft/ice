@@ -364,6 +364,7 @@ abstract class Data_Source extends Container
                 || $queryType == Query_Builder::TYPE_DROP
             ) {
                 $queryResult = Query_Result::create($query, $this->$queryCommand($query));
+
                 Profiler::setPoint($queryResult->__toString(), $startTime, $startMemory);
                 Logger::log(Profiler::getReport($queryResult->__toString()), 'query (not cache)', 'WARN');
 

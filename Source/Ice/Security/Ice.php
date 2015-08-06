@@ -95,4 +95,14 @@ class Ice extends Security
         Data_Provider_Security::getInstance()->set(Ice::USER, $userModelClass::getModel($userKey, '*'));
         Session::getInstance()->set(Security::SESSION_USER_KEY, $userKey);
     }
+
+    /**
+     * All user roles
+     *
+     * @return string[]
+     */
+    public function getRoles()
+    {
+        return [];
+    }
 }

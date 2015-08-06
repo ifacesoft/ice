@@ -534,7 +534,11 @@ class Query_Result implements Cacheable
 
         try {
             $string = print_r($this->getQuery()->getBody(), true) .
-                ' (' . implode(', ', $this->getQuery()->getBinds()) . ')';
+                ' (' . implode(', ', $this->getQuery()->getBinds()) . ') result: \'' .
+                Query_Result::NUM_ROWS . '\' => ' . $this->getNumRows() . ', \'' .
+                Query_Result::AFFECTED_ROWS . '\' => ' . $this->getAffectedRows() . ', \'' .
+                Query_Result::FOUND_ROWS . '\' => ' . $this->getFoundRows() . ', \'' .
+                Query_Result::INSERT_ID . '\' => ' . print_r($this->getInsertId(), true);
         } catch (\Exception $e) {
             Query_Result::getLogger()->error('fail', __FILE__, __LINE__, $e);
         }

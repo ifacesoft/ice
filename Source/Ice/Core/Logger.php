@@ -329,7 +329,7 @@ class Logger
             'lastTemplate' => View_Render::getLastTemplate()
         ];
 
-        Helper_Logger::outputFile($exception, $output);
+        Helper_Logger::outputFile($exception, $output, $this->class);
         Helper_Logger::outputDb($exception);
         Helper_Logger::outputFb($exception, $output);
 

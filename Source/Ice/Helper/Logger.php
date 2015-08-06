@@ -130,12 +130,12 @@ class Logger
      * @version 0.0
      * @since   0.0
      */
-    public static function outputFile(\Exception $exception, $output)
+    public static function outputFile(\Exception $exception, $output, $class)
     {
         $e = $exception->getPrevious();
 
         if ($e) {
-            self::outputFile($e, $output);
+            self::outputFile($e, $output, $class);
         }
 
         $errcontext = $exception instanceof Exception
@@ -149,7 +149,7 @@ class Logger
 
         $logFile = Directory::get(
                 Module::getInstance()->get(Module::LOG_DIR) . date('Y-m-d')
-            ) . Core_Logger::$errorCodes[$exception->getCode()] . '/' . urlencode(Request::uri()) .'.log';
+            ) . Core_Logger::$errorCodes[$exception->getCode()] . '/' . Object::getName($class) . '/' . urlencode(Request::uri()) .'.log';
 
         if (strlen($logFile) > 255) {
             $logFilename = substr($logFile, 0, 255 - 11);

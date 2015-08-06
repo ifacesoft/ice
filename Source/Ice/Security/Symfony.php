@@ -5,6 +5,7 @@ namespace Ice\Security;
 use Application\Sonata\UserBundle\Entity\User;
 use Doctrine\ORM\EntityManager;
 use Ice\Core\Debuger;
+use Ice\Core\Logger;
 use Ice\Data\Provider\Security as Data_Provider_Security;
 use Ice\Data\Provider\Session;
 use Symfony\Component\HttpKernel\Kernel;
@@ -61,6 +62,9 @@ class Symfony extends Ice
             $securityContext->isGranted('IS_AUTHENTICATED_REMEMBERED'));
     }
 
+    /**
+     * @return User
+     */
     public function getSymfonyUser()
     {
         return $securityContext = $this->getKernel()->getContainer()->get('security.token_storage')->getToken()->getUser();
@@ -98,14 +102,14 @@ class Symfony extends Ice
         );
 
         $firewall = 'main';
-        $token = new UsernamePasswordToken($user->getUsernameCanonical(), null, $firewall, $user->getRoles());
+        $token = new UsernamePasswordToken($user, null, $firewall, $user->getRoles());
         $this->getKernel()->getContainer()->get('security.token_storage')->setToken($token);
 //            $this->getKernel()->getContainer()->get('security.authentication.manager')->authenticate($token);
 //            $session = $this->getKernel()->getContainer()->get('session');
 //            $session->set('_security_' . $firewall, serialize($token));
 //            $session->save();
 
-        Data_Provider_Security::getInstance()->set(Symfony::SYMFONY_USER,  $user);
+        Data_Provider_Security::getInstance()->set(Symfony::SYMFONY_USER, $user);
     }
 
     public function logout()
@@ -115,5 +119,15 @@ class Symfony extends Ice
         $this->getKernel()->getContainer()->get('security.token_storage')->setToken(null);
 
         parent::logout();
+    }
+
+    /**
+     * All user roles
+     *
+     * @return string[]
+     */
+    public function getRoles()
+    {
+        return array_merge(parent::getRoles(), $this->getSymfonyUser()->getRoles());
     }
 }
