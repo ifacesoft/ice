@@ -25,7 +25,7 @@ use Ice\Core\Widget_Form;
  * @package    Ice
  * @subpackage Widget_Form
  */
-class _Model extends Widget_Form
+class Model extends Widget_Form
 {
     protected static function config()
     {
