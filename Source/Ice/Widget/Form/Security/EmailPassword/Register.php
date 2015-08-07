@@ -1,14 +1,14 @@
 <?php
 
-namespace Ice\Widget\Form;
-
+namespace Ice\Widget\Form\Security;
 
 use Ice\Core\Config;
 use Ice\Core\Security;
-use Ice\Core\Widget_Form_Security_Register;
+use Ice\Core\Widget_Form_Security;
 use Ice\Model\Account_Email_Password;
+use Ice\Widget\Form\Simple;
 
-class Security_EmailPassword_Register extends Widget_Form_Security_Register
+class EmailPassword_Register extends Widget_Form_Security
 {
     protected static function config()
     {
@@ -55,7 +55,7 @@ class Security_EmailPassword_Register extends Widget_Form_Security_Register
 
     /**
      * @param array $params
-     * @return Security_LoginPassword_Register
+     * @return EmailPassword_Register
      */
     public function bind(array $params)
     {

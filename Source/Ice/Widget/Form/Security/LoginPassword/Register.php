@@ -1,13 +1,10 @@
 <?php
 
-namespace Ice\Widget\Form;
+namespace Ice\Widget\Form\Security;
 
-use Ice\Core\Widget_Form_Security_Register;
-use Ice\Helper\Json;
-use Ice\Helper\Object;
-use Ice\View\Render\Php;
+use Ice\Core\Widget_Form_Security;
 
-class Security_LoginPassword_Register extends Widget_Form_Security_Register
+class LoginPassword_Register extends Widget_Form_Security
 {
     protected static function config()
     {

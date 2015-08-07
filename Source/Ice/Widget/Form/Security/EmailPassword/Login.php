@@ -1,21 +1,14 @@
 <?php
 
-namespace Ice\Widget\Form;
+namespace Ice\Widget\Form\Security;
 
-use Ice\Core\Query;
-use Ice\Core\Resource;
+use Ice\Core\Model;
 use Ice\Core\Security;
-use Ice\Core\Widget_Form_Security_Login;
-use Ice\Data\Provider\Session;
-use Ice\Helper\Json;
-use Ice\Helper\Object;
-use Ice\Model\Account;
-use Ice\Model\Account_Email_Password;
-use Ice\Model\User_Role_Link;
-use Ice\Security\Ice;
-use Ice\View\Render\Php;
+use Ice\Core\Security_Account;
+use Ice\Core\Widget_Form_Security;
+use Ice\Widget\Form\Simple;
 
-class Security_EmailPassword_Login extends Widget_Form_Security_Login
+class EmailPassword_Login extends Widget_Form_Security
 {
     protected static function config()
     {
@@ -65,23 +58,46 @@ class Security_EmailPassword_Login extends Widget_Form_Security_Login
      */
     public function login()
     {
-        $values = $this->validate();
+        /** @var Model $accountModelClass */
+        $accountModelClass = $this->getAccountModelClass();
 
-        $account = Account_Email_Password::getSelectQuery(
-            ['user__fk', 'password'],
-            ['email' => $values['email']],
-            ['page' => 1, 'limit' => 1]
-        )->getRow();
-
-        if (isset($account['password']) && password_verify($values['password'], $account['password'])) {
-            return Security::getInstance()->login($account['user__fk']);
+        if (!$accountModelClass) {
+            return Widget_Form_Security::getLogger()
+                ->exception(
+                    ['Unknown accountModelClass', [], $this->getResource()],
+                    __FILE__,
+                    __LINE__
+                );
         }
 
-        return Widget_Form_Security_Login::getLogger()
-            ->exception(
-                ['Authorization failed: login-password incorrect', [], $this->getResource()],
-                __FILE__,
-                __LINE__
-            );
+        $values = $this->validate();
+
+        /** @var Security_Account|Model $account */
+        $account = $accountModelClass::createQueryBuilder()
+            ->eq(['email' => $values['email']])
+            ->limit(1)
+            ->getSelectQuery(['password', '/expired', 'user__fk'])
+            ->getModel();
+
+        return $this->verify($account, $values)
+            ? Security::getInstance()->login($this->authenticate($account))
+            : Widget_Form_Security::getLogger()
+                ->exception(
+                    ['Log in failure', [], $this->getResource()],
+                    __FILE__,
+                    __LINE__
+                );
+    }
+
+    /**
+     * Verify account
+     *
+     * @param Security_Account|Model $account
+     * @param array $values
+     * @return boolean
+     */
+    protected function verify(Security_Account $account, $values)
+    {
+        return password_verify($values['password'], $account->get('password'));
     }
 }

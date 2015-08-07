@@ -2,7 +2,7 @@
 
 namespace Ice\Core;
 
-interface Security_User
+interface Security_Account
 {
     public function isExpired();
 
