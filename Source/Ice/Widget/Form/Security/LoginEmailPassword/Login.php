@@ -52,17 +52,20 @@ class LoginEmailPassword_Login extends Widget_Form_Security
 
     public function login()
     {
-        try {
+//        try {
             LoginPassword_Login::create($this->getUrl(), $this->getAction())
                 ->setAccountModelClass($this->accountLoginPasswordModelClass)
                 ->bind(['login' => $this->getValue('username')])
                 ->login();
-        } catch (\Exception $e) {
-            EmailPassword_Login::create($this->getUrl(), $this->getAction())
-                ->setAccountModelClass($this->accountEmailPasswordModelClass)
-                ->bind(['email' => $this->getValue('username')])
-                ->login();
-        }
+//        } catch (\Exception $e) {
+////            Widget_Form_Security::getLogger()->exception('error', __FILE__,__LINE__, $e);
+//
+//
+//            EmailPassword_Login::create($this->getUrl(), $this->getAction())
+//                ->setAccountModelClass($this->accountEmailPasswordModelClass)
+//                ->bind(['email' => $this->getValue('username')])
+//                ->login();
+//        }
     }
 
     /**

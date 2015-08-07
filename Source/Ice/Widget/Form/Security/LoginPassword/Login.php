@@ -75,7 +75,7 @@ class LoginPassword_Login extends Widget_Form_Security
         $account = $accountModelClass::createQueryBuilder()
             ->eq(['login' => $values['login']])
             ->limit(1)
-            ->getSelectQuery(['password', '/active', '/expired', 'user__fk'])
+            ->getSelectQuery(['password', '/expired', 'user__fk'])
             ->getModel();
 
         return $this->verify($account, $values)

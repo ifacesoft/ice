@@ -46,15 +46,6 @@ abstract class Widget_Form_Security extends Widget_Form
      */
     protected function authenticate(Security_Account $account)
     {
-        if (!$account->isActive()) {
-            return Widget_Form_Security::getLogger()
-                ->exception(
-                    ['Account is blocked', [], $this->getResource()],
-                    __FILE__,
-                    __LINE__
-                );
-        }
-
         if ($account->isExpired()) {
             return Widget_Form_Security::getLogger()
                 ->exception(
