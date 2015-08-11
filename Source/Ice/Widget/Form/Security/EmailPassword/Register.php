@@ -50,7 +50,7 @@ class EmailPassword_Register extends Widget_Form_Security
                 'Password1',
                 ['placeholder' => 'password1_placeholder']
             )
-            ->button('submit', 'Sign up', ['onclick' => 'POST']);
+            ->button('register', 'Sign up', ['onclick' => 'POST']);
     }
 
     /**

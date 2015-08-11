@@ -559,6 +559,10 @@ abstract class Widget
      */
     protected function addPart($partName, $partTitle, array $options, $template, $element)
     {
+        if (!empty($options['rewrite']) && isset($this->parts[$partName])) {
+            unset($this->parts[$partName]);
+        }
+
         $this->parts[$partName] = [
             'title' => $partTitle,
             'options' => Arrays::defaults($this->defaultOptions, $options),
@@ -761,7 +765,7 @@ abstract class Widget
      * @param  string $template
      * @return Widget_Data|Widget_Form|Widget_Menu
      */
-    public function span($columnName, $columnTitle, $options = [], $template = 'Ice\Core\Widget_Span')
+    public function span($columnName, $columnTitle = '&nbsp;', $options = [], $template = 'Ice\Core\Widget_Span')
     {
         return $this->addPart($columnName, $columnTitle, $options, $template, 'Tag_Span');
     }
@@ -789,7 +793,7 @@ abstract class Widget
      * @param  string $template
      * @return Widget_Data|Widget_Form|Widget_Menu
      */
-    public function div($columnName, $columnTitle, array $options = [], $template = 'Ice\Core\Widget_Div')
+    public function div($columnName, $columnTitle = '&nbsp;', array $options = [], $template = 'Ice\Core\Widget_Div')
     {
         return $this->addPart($columnName, $columnTitle, $options, $template, 'Tag_Div');
     }

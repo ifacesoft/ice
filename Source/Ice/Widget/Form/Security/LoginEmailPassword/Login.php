@@ -47,7 +47,7 @@ class LoginEmailPassword_Login extends Widget_Form_Security
                     'resetFormClass' => true
                 ]
             )
-            ->button('submit', 'Sign in', ['classes' => 'button-blue', 'onclick' => 'POST']);
+            ->button('login', 'Sign in', ['classes' => 'button-blue', 'onclick' => 'POST']);
     }
 
     public function login()
