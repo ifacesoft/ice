@@ -99,7 +99,7 @@ abstract class Widget
 
         $widget->url = $url;
         $widget->action = $action;
-        $widget->block = $block === null ? Object::getName($action) : $block;
+        $widget->block = $block === null ? Object::getClassName($action) : $block;
         $widget->data = $data;
         $widget->values = Input::get($class);
 
@@ -745,7 +745,7 @@ abstract class Widget
      * @param  $columnTitle
      * @param  array $options
      * @param  string $template
-     * @return Widget_Data
+     * @return Widget_Data|Widget_Form|Widget_Menu
      */
     public function a($columnName, $columnTitle, array $options = [], $template = 'Ice\Core\Widget_A')
     {
@@ -759,7 +759,7 @@ abstract class Widget
      * @param  $columnTitle
      * @param  array $options
      * @param  string $template
-     * @return Widget_Data
+     * @return Widget_Data|Widget_Form|Widget_Menu
      */
     public function span($columnName, $columnTitle, $options = [], $template = 'Ice\Core\Widget_Span')
     {
@@ -773,7 +773,7 @@ abstract class Widget
      * @param  $columnTitle
      * @param  array $options
      * @param  string $template
-     * @return Widget_Data
+     * @return Widget_Data|Widget_Form|Widget_Menu
      */
     public function button($columnName, $columnTitle, array $options = [], $template = 'Ice\Core\Widget_Button')
     {
@@ -787,7 +787,7 @@ abstract class Widget
      * @param  $columnTitle
      * @param  array $options
      * @param  string $template
-     * @return Widget_Data
+     * @return Widget_Data|Widget_Form|Widget_Menu
      */
     public function div($columnName, $columnTitle, array $options = [], $template = 'Ice\Core\Widget_Div')
     {
@@ -813,5 +813,19 @@ abstract class Widget
         return $this->onsubmit;
     }
 
+    /**
+     * @param $scope
+     * @param array $data
+     * @param Widget $widgetClass
+     * @return Widget_Data|Widget_Form|Widget_Menu
+     */
+    public function scope($scope, array $data = [], $widgetClass = null)
+    {
+        /** @var Widget $widgetClass */
+        $widgetClass = $widgetClass
+            ? Widget::getClass($widgetClass)
+            : get_class($this);
 
+        return Widget_Scope::getInstance($widgetClass)->$scope($this, $data);
+    }
 }

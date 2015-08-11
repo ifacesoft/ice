@@ -215,7 +215,7 @@ class Resource extends Data_Provider
             return $this->resourceKey;
         }
 
-        return $this->resourceKey = Object::getName($this->getKey());
+        return $this->resourceKey = Object::getClassName($this->getKey());
     }
 
     /**

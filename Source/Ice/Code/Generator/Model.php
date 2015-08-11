@@ -79,7 +79,7 @@ class Model extends Code_Generator
         $data = [
             'fields' => $fieldNames,
             'namespace' => rtrim($namespace, '\\'),
-            'modelName' => Object::getName($class),
+            'modelName' => Object::getClassName($class),
             'config' => str_replace("\n", "\n\t\t", Helper_Php::varToPhpString($data, false))
         ];
 

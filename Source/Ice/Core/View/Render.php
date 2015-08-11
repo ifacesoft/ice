@@ -72,6 +72,7 @@ abstract class View_Render extends Container
     protected static function create($key)
     {
         $viewRenderClass = self::getClass();
+
         return new $viewRenderClass();
     }
 

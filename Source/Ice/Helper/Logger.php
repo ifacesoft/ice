@@ -149,7 +149,7 @@ class Logger
 
         $logFile = Directory::get(
                 Module::getInstance()->get(Module::LOG_DIR) . date('Y-m-d')
-            ) . Core_Logger::$errorCodes[$exception->getCode()] . '/' . Object::getName($class) . '/' . urlencode(Request::uri()) .'.log';
+            ) . Core_Logger::$errorCodes[$exception->getCode()] . '/' . Object::getClassName($class) . '/' . urlencode(Request::uri()) .'.log';
 
         if (strlen($logFile) > 255) {
             $logFilename = substr($logFile, 0, 255 - 11);

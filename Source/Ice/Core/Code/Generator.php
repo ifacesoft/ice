@@ -44,10 +44,10 @@ abstract class Code_Generator extends Container
     protected static function create($key)
     {
         $class = self::getClass();
-
-        if ($key) {
-            $class .= '_' . $key;
-        }
+//
+//        if ($key) {
+//            $class .= '_' . $key;
+//        }
 
         return new $class($key);
     }

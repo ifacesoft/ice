@@ -66,6 +66,9 @@ return [
             'Ice\Core\Widget' => [
                 'instance' => 'Ice:Repository/widget',
             ],
+            'Ice\Core\Widget_Scope' => [
+                'instance' => 'Ice:Repository/widget_scope',
+            ],
             'Ice\Core\Widget_Form' => [
                 'instance' => 'Ice:Repository/widget_form',
             ],
@@ -156,6 +159,9 @@ return [
             'Ice\Core\Widget' => [
                 'instance' => 'Ice:File/widget',
             ],
+            'Ice\Core\Widget_Scope' => [
+                'instance' => 'Ice:File/widget_scope',
+            ],
             'Ice\Core\Widget_Form' => [
                 'instance' => 'Ice:File/widget_form',
             ],
@@ -245,6 +251,9 @@ return [
             ],
             'Ice\Core\Widget' => [
                 'instance' => 'Ice:Registry/widget',
+            ],
+            'Ice\Core\Widget_Scope' => [
+                'instance' => 'Ice:Registry/widget_scope',
             ],
             'Ice\Core\Widget_Form' => [
                 'instance' => 'Ice:Registry/widget_form',

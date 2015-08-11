@@ -114,7 +114,7 @@ trait Core
      */
     public static function getClassName()
     {
-        return Object::getName(self::getClass());
+        return Object::getClassName(self::getClass());
     }
 
     /**

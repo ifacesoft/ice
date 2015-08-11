@@ -48,8 +48,6 @@ class View_Render_Twig extends Code_Generator
      */
     public function generate($class, array $data = [], $force = false)
     {
-        $class = Object::getClass(Action::getClass(), $class);
-
         $module = Module::getInstance(Object::getModuleAlias($class));
 
         $path = $module->get(Module::RESOURCE_DIR);

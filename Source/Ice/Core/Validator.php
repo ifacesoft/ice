@@ -147,6 +147,7 @@ abstract class Validator extends Container
     protected static function create($key)
     {
         $class = self::getClass();
+
         return new $class();
     }
 

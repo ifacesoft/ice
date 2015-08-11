@@ -163,9 +163,7 @@ abstract class Model
     public static function getClass($modelClass = null, $required = true)
     {
         if (!$modelClass) {
-            /**
-             * @var Model $modelClass
-             */
+            /** @var Model $modelClass */
             $modelClass = get_called_class();
         }
 
@@ -173,7 +171,7 @@ abstract class Model
 
         if (!Loader::load($modelClass, false)) {
             if ($required) {
-                Model::getLogger()->exception(['Model class {$0} not found', $modelClass], __FILE__, __LINE__);
+                Logger::getInstance($modelClass)->exception(['Model class {$0} not found', $modelClass], __FILE__, __LINE__);
             }
 
             return $modelClass;
@@ -325,10 +323,10 @@ abstract class Model
      */
     public static function getQueryScope()
     {
-        return Query_Scope::getInstance(self::getModuleAlias() . ':' . self::getClassName());
+        return Query_Scope::getInstance(self::getClass());
     }
 
-    public function  getPkValue()
+    public function getPkValue()
     {
         return implode('_', $this->getPk());
     }
@@ -600,7 +598,7 @@ abstract class Model
         $fieldModelName = Model::getClass($fieldName, false);
 
         // one-to-many
-        $foreignKeyName = strtolower(Object::getName($fieldModelName)) . '__fk';
+        $foreignKeyName = strtolower(Object::getClassName($fieldModelName)) . '__fk';
         if ($this->isFieldName($foreignKeyName)) {
             $key = $this->row[$foreignKeyName];
 
@@ -612,7 +610,7 @@ abstract class Model
                 );
             }
 
-            $row = array_merge($this->data, [strtolower(Object::getName($fieldModelName)) . '_pk' => $key]);
+            $row = array_merge($this->data, [strtolower(Object::getClassName($fieldModelName)) . '_pk' => $key]);
             $joinModel = $fieldModelName::create($row);
 
             if (!$joinModel) {
@@ -669,11 +667,11 @@ abstract class Model
         /**
          * @var Model $modelClass
          */
-        $modelClass = get_called_class();
+        $modelClass = self::getClass();
 
-        if (isset(class_parents($modelClass)[Model_Factory::getClass()])) {
-            $modelClass = $modelClass . '_' . $row[$modelClass::getFieldName('/delegate_name')];
-        }
+//        if (isset(class_parents($modelClass)[Model_Factory::getClass()])) {
+//            $modelClass = $modelClass . '_' . $row[$modelClass::getFieldName('/delegate_name')];
+//        }
 
         return new $modelClass($row);
     }
@@ -1043,7 +1041,7 @@ abstract class Model
         $parentModelName = get_parent_class($modelClass);
 
         if ($parentModelName == Model_Defined::getClass() || $parentModelName == Model_Factory::getClass()) {
-            return Data_Source::getInstance(Object::getName($parentModelName) . ':model/' . $modelClass);
+            return Data_Source::getInstance(Object::getClassName($parentModelName) . ':model/' . $modelClass);
         }
 
         return Data_Source::getInstance($modelClass::getDataSourceKey());

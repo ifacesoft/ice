@@ -72,7 +72,7 @@ class Action extends Code_Generator
         }
 
         $data['namespace'] = rtrim($namespace, '\\');
-        $data['actionName'] = Object::getName($class);
+        $data['actionName'] = Object::getClassName($class);
 
         if (!isset($data['defaultViewRenderClass'])) {
             $data['defaultViewRenderClass'] = Config::getConfig()->get(View::getClass() . '/viewRenderClass');

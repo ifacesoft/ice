@@ -191,7 +191,7 @@ class Query_Builder
             $tableAlias = $modelClass;
         }
 
-        $queryBuilder->tableAlias = Object::getName($tableAlias);
+        $queryBuilder->tableAlias = Object::getClassName($tableAlias);
 
         return $queryBuilder;
     }
@@ -329,7 +329,7 @@ class Query_Builder
         }
 
         if ($tableAlias !== '') {
-            $tableAlias = Object::getName($tableAlias);
+            $tableAlias = Object::getClassName($tableAlias);
         }
 
         return [$modelClass, $tableAlias];
@@ -952,7 +952,7 @@ class Query_Builder
             return $this->addJoin(
                 $joinType,
                 $manyToMany[$modelClass],
-                Object::getName($manyToMany[$modelClass]),
+                Object::getClassName($manyToMany[$modelClass]),
                 $joinModelClass,
                 $joinTableAlias
             ) && $this->addJoin(
@@ -960,13 +960,13 @@ class Query_Builder
                 $modelClass,
                 $tableAlias,
                 $manyToMany[$modelClass],
-                Object::getName($manyToMany[$modelClass])
+                Object::getClassName($manyToMany[$modelClass])
             );
         }
 
         $joinFieldNames = $joinModelClass::getScheme()->getFieldColumnMap();
 
-        $joinModelName = Object::getName($joinModelClass);
+        $joinModelName = Object::getClassName($joinModelClass);
 
         $joinModelNameFk = strtolower($joinModelName . '__fk');
         $joinModelNamePk = strtolower($joinModelName) . '_pk';
@@ -982,7 +982,7 @@ class Query_Builder
             return true;
         }
 
-        $modelName = Object::getName($modelClass);
+        $modelName = Object::getClassName($modelClass);
 
         $modelNameFk = strtolower($modelName . '__fk');
         $modelNamePk = strtolower($modelName) . '_pk';

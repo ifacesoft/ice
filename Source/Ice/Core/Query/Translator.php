@@ -65,6 +65,7 @@ abstract class Query_Translator extends Container
     protected static function create($key)
     {
         $queryTranslatorClass = self::getClass();
+
         return new $queryTranslatorClass();
     }
 

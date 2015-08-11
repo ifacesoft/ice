@@ -47,7 +47,6 @@ class View_Render_Php extends Code_Generator
      */
     public function generate($class, array $data = [], $force = false)
     {
-        $class = Object::getClass(Action::getClass(), $class);
         $module = Module::getInstance(Object::getModuleAlias($class));
 
         $path = $module->get(Module::RESOURCE_DIR);
@@ -57,8 +56,6 @@ class View_Render_Php extends Code_Generator
         //        }
 
         $filePath = $path . str_replace(['\\', '_'], '/', $class) . Php::TEMPLATE_EXTENTION;
-
-        $isFileExists = file_exists($filePath);
 
         $isFileExists = file_exists($filePath);
 

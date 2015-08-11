@@ -40,7 +40,7 @@ abstract class Container
     public static function getDataProvider($postfix = null)
     {
         if (empty($postfix)) {
-            $postfix = strtolower(Object::getName(self::getClass()));
+            $postfix = strtolower(Object::getClassName(self::getClass()));
         }
 
         return Environment::getInstance()->getProvider(self::getBaseClass(), $postfix);
@@ -83,14 +83,10 @@ abstract class Container
      */
     public static function getInstance($key = null, $ttl = null)
     {
-        /**
-         * @var Container|Core $class
-         */
+        /** @var Container|Core $class */
         $class = self::getClass();
 
-        /**
-         * @var Container|Core $baseClass
-         */
+        /** @var Container|Core $baseClass */
         $baseClass = $class::getBaseClass();
 
         if ($class == $baseClass) {
@@ -100,10 +96,11 @@ abstract class Container
                 $parts = explode('/', $key);
 
                 if (count($parts) == 1) {
-                    $class = reset($parts);
+                    $class = $key;
                     $key = 'default';
                 } else {
-                    list($class, $key) = explode('/', $key);
+                    $class = $parts[0];
+                    $key = $parts[1];
                 }
 
                 $class = Object::getClass($baseClass, $class);

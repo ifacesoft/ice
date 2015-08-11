@@ -3,6 +3,7 @@
 namespace Ice\Security;
 
 use Ice\Core\Config;
+use Ice\Core\Debuger;
 use Ice\Core\Security;
 use Ice\Core\Security_User;
 use Ice\Data\Provider\Session;

@@ -9,8 +9,9 @@
 
 namespace Ice\Helper;
 
-use Ice\Core\Debuger;
+use Ice\Core;
 use Ice\Core\Loader;
+use Ice\Core\Logger as Core_Logger;
 use Ice\Core\Module;
 
 /**
@@ -40,30 +41,35 @@ class Object
     public static function getNamespace($baseClass, $className)
     {
         $class = self::getClass($baseClass, $className);
-        return strstr($class, Object::getName($class), true);
+        return strstr($class, Object::getClassName($class), true);
     }
 
     /**
      * Return class by base class
      *
      * @param  $baseClass
-     * @param  $name
+     * @param  $class
      * @return string
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 1.1
      * @since   0.0
      */
-    public static function getClass($baseClass, $name)
+    public static function getClass($baseClass, $class)
     {
-        if (!self::isShortName($name)) {
-            return $name;
+        if ($baseClass == $class) {
+            Core_Logger::getInstance()->exception(['Base class and class {$0} are equal', $class], __FILE__, __LINE__);
         }
 
-        list($moduleAlias, $objectName) = explode(':', $name);
+        if (self::isShortName($class)) {
+            list($moduleAlias, $className) = explode(':', $class);
+        } else {
+            $moduleAlias = Object::getModuleAlias($class);
+            $className = Object::getClassName($class);
+        }
 
-        return $moduleAlias . '\\' . str_replace('_', '\\', Object::getName($baseClass)) . '\\' . $objectName;
+        return $moduleAlias . '\\' . str_replace('_', '\\', Object::getClassName($baseClass)) . '\\' . $className;
     }
 
     /**
@@ -93,7 +99,7 @@ class Object
      * @version 0.0
      * @since   0.0
      */
-    public static function getName($class)
+    public static function getClassName($class)
     {
         if (!strpos(ltrim($class, '\\'), '\\')) {
             return $class;
@@ -151,7 +157,7 @@ class Object
      */
     public static function getShortName($class)
     {
-        return self::getModuleAlias($class) . ':' . self::getName($class);
+        return self::getModuleAlias($class) . ':' . self::getClassName($class);
     }
 
     /**

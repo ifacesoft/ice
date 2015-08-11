@@ -72,7 +72,7 @@ class Validator extends Code_Generator
 
         $data = [
             'namespace' => rtrim($namespace, '\\'),
-            'validatorName' => Object::getName($class)
+            'validatorName' => Object::getClassName($class)
         ];
 
         $classString = Php::getInstance()->fetch(__CLASS__, $data);
