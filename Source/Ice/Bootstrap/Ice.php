@@ -27,7 +27,6 @@ class Ice extends Bootstrap
         $securityClass = $module->get('securityClass');
         $securityClass::getInstance()->init();
 
-
         $routerClass = $module->get('routerClass');
         $routerClass::getInstance()->init();
     }
