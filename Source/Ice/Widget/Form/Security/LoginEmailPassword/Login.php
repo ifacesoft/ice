@@ -2,9 +2,9 @@
 namespace Ice\Widget\Form\Security;
 
 use Ice\Core\Security_Account;
-use Ice\Core\Widget_Form_Security;
+use Ice\Core\Widget_Form_Security_Login;
 
-class LoginEmailPassword_Login extends Widget_Form_Security
+class LoginEmailPassword_Login extends Widget_Form_Security_Login
 {
     private $accountLoginPasswordModelClass = null;
     private $accountEmailPasswordModelClass = null;
@@ -52,20 +52,17 @@ class LoginEmailPassword_Login extends Widget_Form_Security
 
     public function login()
     {
-//        try {
+        try {
             LoginPassword_Login::create($this->getUrl(), $this->getAction())
                 ->setAccountModelClass($this->accountLoginPasswordModelClass)
                 ->bind(['login' => $this->getValue('username')])
                 ->login();
-//        } catch (\Exception $e) {
-////            Widget_Form_Security::getLogger()->exception('error', __FILE__,__LINE__, $e);
-//
-//
-//            EmailPassword_Login::create($this->getUrl(), $this->getAction())
-//                ->setAccountModelClass($this->accountEmailPasswordModelClass)
-//                ->bind(['email' => $this->getValue('username')])
-//                ->login();
-//        }
+        } catch (\Exception $e) {
+            EmailPassword_Login::create($this->getUrl(), $this->getAction())
+                ->setAccountModelClass($this->accountEmailPasswordModelClass)
+                ->bind(['email' => $this->getValue('username')])
+                ->login();
+        }
     }
 
     /**

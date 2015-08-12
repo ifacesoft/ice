@@ -264,7 +264,7 @@ abstract class Model
              */
             $modelClass = get_class($this);
 
-            Model::getLogger()->exception(
+            $modelClass::getLogger()->exception(
                 [
                     'Could not set value: Field "{$0}" not found in Model "{$1}"',
                     [$fieldName, $modelClass::getClassName()]
@@ -558,7 +558,7 @@ abstract class Model
         foreach (array($this->row, $this->json, $this->fk) as $fields) {
             if (array_key_exists($fieldName, $fields)) {
                 if ($isNotNull && $fields[$fieldName] === null) {
-                    Model::getLogger()->exception(
+                    $modelClass::getLogger()->exception(
                         ['field "{$0}" of model "{$1}" is null', [$fieldName, $modelName]],
                         __FILE__,
                         __LINE__

@@ -2,13 +2,13 @@
 
 namespace Ice\Widget\Form\Security;
 
-use Ice\Core\Config;
-use Ice\Core\Security;
+use Ice\Core\Model;
+use Ice\Core\Security_Account;
 use Ice\Core\Widget_Form_Security;
-use Ice\Model\Account_Email_Password;
+use Ice\Core\Widget_Form_Security_Register;
 use Ice\Widget\Form\Simple;
 
-class EmailPassword_Register extends Widget_Form_Security
+class EmailPassword_Register extends Widget_Form_Security_Register
 {
     protected static function config()
     {
@@ -16,7 +16,8 @@ class EmailPassword_Register extends Widget_Form_Security
             'view' => ['template' => null, 'viewRenderClass' => null, 'layout' => null],
             'input' => [
                 'email' => ['providers' => 'request'],
-                'password' => ['providers' => 'request']
+                'password' => ['providers' => 'request'],
+                'password1' => ['providers' => 'request']
             ],
             'access' => ['roles' => [], 'request' => null, 'env' => null]
         ];
@@ -77,18 +78,29 @@ class EmailPassword_Register extends Widget_Form_Security
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
+     * @return Security_Account
+     *
      * @version 1.1
      * @since   0.1
      */
     public function register()
     {
+        /** @var Model $accountModelClass */
+        $accountModelClass = $this->getAccountModelClass();
+
+        if (!$accountModelClass) {
+            return Widget_Form_Security::getLogger()
+                ->exception(
+                    ['Unknown accountModelClass', [], $this->getResource()],
+                    __FILE__,
+                    __LINE__
+                );
+        }
+
         $values = $this->validate();
 
-        $userModelClass = Config::getInstance(Security::getClass())->get('userModelClass');
-
-        $values['user'] = $userModelClass::create()->save();
         $values['password'] = password_hash($values['password'], PASSWORD_DEFAULT);
 
-        Account_Email_Password::create($values)->save();
+        return $this->singUp($accountModelClass::create($values)->save());
     }
 }

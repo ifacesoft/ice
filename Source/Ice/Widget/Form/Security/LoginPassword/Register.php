@@ -2,9 +2,9 @@
 
 namespace Ice\Widget\Form\Security;
 
-use Ice\Core\Widget_Form_Security;
+use Ice\Core\Widget_Form_Security_Register;
 
-class LoginPassword_Register extends Widget_Form_Security
+class LoginPassword_Register extends Widget_Form_Security_Register
 {
     protected static function config()
     {

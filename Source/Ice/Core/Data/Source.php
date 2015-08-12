@@ -151,13 +151,9 @@ abstract class Data_Source extends Container
             return $defaultClassKey;
         }
 
-        if ($dataSourceClass == __CLASS__) {
-            $dataSourceClass = Mysqli::getClass();
-        }
+        $defaultDataSourceKeys = Module::getInstance()->getDefaultDataSourceKeys();
 
-        $schemes = Data_Source::getConfig()->gets($dataSourceClass . '/default');
-
-        return $repository->set($key, $dataSourceClass . '/default.' . reset($schemes), 0);
+        return $repository->set($key, reset($defaultDataSourceKeys), 0);
     }
 
     /**

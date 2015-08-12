@@ -6,9 +6,10 @@ use Ice\Core\Model;
 use Ice\Core\Security;
 use Ice\Core\Security_Account;
 use Ice\Core\Widget_Form_Security;
+use Ice\Core\Widget_Form_Security_Login;
 use Ice\Widget\Form\Simple;
 
-class LoginPassword_Login extends Widget_Form_Security
+class LoginPassword_Login extends Widget_Form_Security_Login
 {
     protected static function config()
     {
@@ -32,7 +33,7 @@ class LoginPassword_Login extends Widget_Form_Security
                 [
                     'required' => true,
                     'placeholder' => 'login_placeholder',
-                    'validators' => ['Ice:Length_Min' => 2, 'Ice:LettersNumbers']
+                    'validators' => ['Ice:Length_Min' => 2]
                 ]
             )
             ->password(

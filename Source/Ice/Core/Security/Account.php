@@ -10,4 +10,6 @@ interface Security_Account
      * @return bool
      */
     public function isExpired();
+
+    public function getUser();
 }
