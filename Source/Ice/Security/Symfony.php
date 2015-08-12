@@ -67,7 +67,20 @@ class Symfony extends Ice
      */
     public function getSymfonyUser()
     {
-        return $securityContext = $this->getKernel()->getContainer()->get('security.token_storage')->getToken()->getUser();
+        if ($symfonyUser = Data_Provider_Security::getInstance()->get(Symfony::SYMFONY_USER)) {
+            return $symfonyUser;
+        }
+
+        $symfonyUser = $this->getKernel()->getContainer()->get('security.token_storage')->getToken()->getUser();
+
+        if (!is_object($symfonyUser)) {
+            $symfonyUser = $this->getEntityManager()->find(
+                User::class,
+                Session::getInstance()->get(Ice::SESSION_USER_KEY)
+            );
+        }
+
+        return Data_Provider_Security::getInstance()->set(Symfony::SYMFONY_USER, $symfonyUser);
     }
 
     /**
@@ -92,11 +105,8 @@ class Symfony extends Ice
 
     private function auth()
     {
-        /** @var EntityManager $doctrine */
-        $entityManager = $this->getKernel()->getContainer()->get('doctrine')->getEntityManager();
-
         /** @var User $user */
-        $user = $entityManager->find(
+        $user = $this->getEntityManager()->find(
             User::class,
             Session::getInstance()->get(Ice::SESSION_USER_KEY)
         );
@@ -129,5 +139,13 @@ class Symfony extends Ice
     public function getRoles()
     {
         return array_merge(parent::getRoles(), $this->getSymfonyUser()->getRoles());
+    }
+
+    /**
+     * @return EntityManager
+     *
+     */
+    private function getEntityManager() {
+        return $this->getKernel()->getContainer()->get('doctrine')->getEntityManager();
     }
 }
