@@ -132,4 +132,8 @@ return [
         'en' => 'Undefined variable: result',
         'ru' => 'Неопределенной переменной: результат',
     ],
+    'Base class and class {$0} are equal' => [
+        'en' => 'Base class and class {$0} are equal',
+        'ru' => 'Базовый класс и класс {$0} равны',
+    ],
 ];
