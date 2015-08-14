@@ -1,6 +1,7 @@
 <?php
 namespace Ice\Widget\Form\Security;
 
+use Ice\Core\Model;
 use Ice\Core\Security_Account;
 use Ice\Core\Widget_Form_Security_Login;
 
@@ -53,12 +54,12 @@ class LoginEmailPassword_Login extends Widget_Form_Security_Login
     public function login()
     {
         try {
-            LoginPassword_Login::create($this->getUrl(), $this->getAction())
+            return LoginPassword_Login::create($this->getUrl(), $this->getAction())
                 ->setAccountModelClass($this->accountLoginPasswordModelClass)
                 ->bind(['login' => $this->getValue('username')])
                 ->login();
         } catch (\Exception $e) {
-            EmailPassword_Login::create($this->getUrl(), $this->getAction())
+            return EmailPassword_Login::create($this->getUrl(), $this->getAction())
                 ->setAccountModelClass($this->accountEmailPasswordModelClass)
                 ->bind(['email' => $this->getValue('username')])
                 ->login();
@@ -83,5 +84,17 @@ class LoginEmailPassword_Login extends Widget_Form_Security_Login
     {
         $this->accountEmailPasswordModelClass = $accountEmailPasswordModelClass;
         return $this;
+    }
+
+    /**
+     * Verify account by form values
+     *
+     * @param Security_Account|Model $account
+     * @param array $values
+     * @return boolean
+     */
+    protected function verify(Security_Account $account, $values)
+    {
+        return false;
     }
 }

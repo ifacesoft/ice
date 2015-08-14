@@ -333,16 +333,26 @@ abstract class Data_Source extends Container
     abstract public function getReferences($tableName);
 
     /**
+     * Execute native query
+     *
+     * @param $query
+     * @return Query_Result
+     */
+    abstract public function executeNativeQuery($query);
+
+    /**
+     * Execute query
+     *
      * @param Query $query
      * @param $ttl
      * @return Query_Result
      * @throws \Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.4
+     * @version 1.1
      * @since 0.2
      */
-    public function execute(Query $query, $ttl)
+    public function executeQuery(Query $query, $ttl)
     {
         $startTime = Profiler::getMicrotime();
         $startMemory = Profiler::getMemoryGetUsage();
@@ -448,8 +458,10 @@ abstract class Data_Source extends Container
      *
      * @version 0
      * @since   0
+     * @param string $isolationLevel
+     * @return
      */
-    abstract public function beginTransaction();
+    abstract public function beginTransaction($isolationLevel = null);
 
     /**
      * Commit transaction
@@ -470,6 +482,42 @@ abstract class Data_Source extends Container
      * @since   0
      */
     abstract public function rollbackTransaction();
+
+    /**
+     * Create save point
+     *
+     * @param $savePoint
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since   0
+     */
+    abstract public function savePoint($savePoint);
+
+    /**
+     * Rollback save point
+     *
+     * @param $savePoint
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since   0
+     */
+    abstract public function rollbackSavePoint($savePoint);
+
+    /**
+     * Commit save point
+     *
+     * @param $savePoint
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since   0
+     */
+    abstract public function releaseSavePoint($savePoint);
 
     /**
      * Return data source key

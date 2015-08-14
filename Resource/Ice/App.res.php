@@ -28,4 +28,8 @@ return [
         'tr' => 'Uygulama hatası',
         'uk' => 'Збій програми',
     ],
+    'Implement {$0} for {$1}' => [
+        'en' => 'Implement {$0} for {$1}',
+        'ru' => 'Реализовать {$0} для {$1}',
+    ],
 ];

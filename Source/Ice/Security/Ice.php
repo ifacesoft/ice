@@ -4,20 +4,18 @@ namespace Ice\Security;
 
 use Ice\Core\Config;
 use Ice\Core\Debuger;
+use Ice\Core\Model;
 use Ice\Core\Security;
+use Ice\Core\Security_Account;
 use Ice\Core\Security_User;
 use Ice\Data\Provider\Session;
 use Ice\Data\Provider\Security as Data_Provider_Security;
 
 class Ice extends Security
 {
-    const USER = 'user';
-    const SESSION_AUTH_FLAG = 'isAuth';
-
-    public function init()
-    {
-        parent::init();
-    }
+    const SECURITY_USER = 'user';
+    const SESSION_USER_KEY = 'userKey';
+    const SESSION_ACCOUNT_KEY = 'accountKey';
 
     /**
      * Check access by roles
@@ -37,7 +35,7 @@ class Ice extends Security
      */
     public function isAuth()
     {
-        return Session::getInstance()->get(Ice::SESSION_AUTH_FLAG);
+        return Session::getInstance()->get(Ice::SESSION_ACCOUNT_KEY);
     }
 
     /**
@@ -45,25 +43,22 @@ class Ice extends Security
      */
     public function getUser()
     {
-        return Data_Provider_Security::getInstance()->get(Ice::USER);
+        return Data_Provider_Security::getInstance()->get(Ice::SECURITY_USER);
     }
 
     /**
-     * @param $userKey
+     * @param Security_Account|Model $account
      * @return bool
-     * @throws \Exception
      */
-    public function login($userKey)
+    public function login(Security_Account $account)
     {
         try {
-            Session::getInstance()->set(Security::SESSION_USER_KEY, $userKey);
-            Session::getInstance()->set(Ice::SESSION_AUTH_FLAG, 1);
+            $user = $account->getUser();
 
-            $userModelClass = Config::getInstance(Security::getClass())->get('userModelClass');
+            Session::getInstance()->set(Ice::SESSION_USER_KEY, $user->getPkValue());
+            Session::getInstance()->set(Ice::SESSION_ACCOUNT_KEY, $account->getPkValue());
 
-            Data_Provider_Security::getInstance()->set(
-                Ice::USER, $userModelClass::getModel(Session::getInstance()->get(Security::SESSION_USER_KEY), '*')
-            );
+            Data_Provider_Security::getInstance()->set(Ice::SECURITY_USER, $user);
         } catch (\Exception $e) {
             $this->logout();
             $this->autologin();
@@ -76,7 +71,7 @@ class Ice extends Security
 
     public function logout()
     {
-        Data_Provider_Security::getInstance()->delete(Ice::USER);
+        Data_Provider_Security::getInstance()->delete(Ice::SECURITY_USER);
 
         Session::getInstance()->flushAll();
 
@@ -85,7 +80,7 @@ class Ice extends Security
 
     protected function autologin()
     {
-        $userKey = Session::getInstance()->get(Security::SESSION_USER_KEY);
+        $userKey = Session::getInstance()->get(Ice::SESSION_USER_KEY);
 
         if (!$userKey) {
             $userKey = 1;
@@ -93,8 +88,8 @@ class Ice extends Security
 
         $userModelClass = Config::getInstance(Security::getClass())->get('userModelClass');
 
-        Data_Provider_Security::getInstance()->set(Ice::USER, $userModelClass::getModel($userKey, '*'));
-        Session::getInstance()->set(Security::SESSION_USER_KEY, $userKey);
+        Data_Provider_Security::getInstance()->set(Ice::SECURITY_USER, $userModelClass::getModel($userKey, '*'));
+        Session::getInstance()->set(Ice::SESSION_USER_KEY, $userKey);
     }
 
     /**

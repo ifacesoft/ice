@@ -4,8 +4,8 @@ namespace Ice\Security;
 
 use Application\Sonata\UserBundle\Entity\User;
 use Doctrine\ORM\EntityManager;
-use Ice\Core\Debuger;
-use Ice\Core\Logger;
+use Ice\Core\Model;
+use Ice\Core\Security_Account;
 use Ice\Data\Provider\Security as Data_Provider_Security;
 use Ice\Data\Provider\Session;
 use Symfony\Component\HttpKernel\Kernel;
@@ -13,7 +13,7 @@ use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
 class Symfony extends Ice
 {
-    const SYMFONY_USER = 'symfonyUser';
+    const SECURITY_USER_SYMFONY = 'symfonyUser';
 
     /**
      * @return Kernel
@@ -67,7 +67,7 @@ class Symfony extends Ice
      */
     public function getSymfonyUser()
     {
-        if ($symfonyUser = Data_Provider_Security::getInstance()->get(Symfony::SYMFONY_USER)) {
+        if ($symfonyUser = Data_Provider_Security::getInstance()->get(Symfony::SECURITY_USER_SYMFONY)) {
             return $symfonyUser;
         }
 
@@ -80,19 +80,37 @@ class Symfony extends Ice
             );
         }
 
-        return Data_Provider_Security::getInstance()->set(Symfony::SYMFONY_USER, $symfonyUser);
+        return Data_Provider_Security::getInstance()->set(Symfony::SECURITY_USER_SYMFONY, $symfonyUser);
     }
 
     /**
-     * @param $userKey
+     * @param Security_Account|Model $account
      * @return bool
      */
-    public function login($userKey)
+    public function login(Security_Account $account)
     {
-        parent::login($userKey);
+        parent::login($account);
 
         try {
-            $this->auth();
+            /** @var User $user */
+            $user = $this->getEntityManager()->find(
+                User::class,
+                Session::getInstance()->get(Ice::SESSION_USER_KEY)
+            );
+
+            if (!$user) {
+                Symfony::getLogger()->exception('Symfony user not found', __FILE__, __LINE__);
+            }
+
+            $firewall = 'main';
+            $token = new UsernamePasswordToken($user, null, $firewall, $user->getRoles());
+            $this->getKernel()->getContainer()->get('security.token_storage')->setToken($token);
+//            $this->getKernel()->getContainer()->get('security.authentication.manager')->authenticate($token);
+//            $session = $this->getKernel()->getContainer()->get('session');
+//            $session->set('_security_' . $firewall, serialize($token));
+//            $session->save();
+
+            Data_Provider_Security::getInstance()->set(Symfony::SECURITY_USER_SYMFONY, $user);
         } catch (\Exception $e) {
             $this->logout();
             $this->autologin();
@@ -100,31 +118,12 @@ class Symfony extends Ice
             return Symfony::getLogger()->exception('Symfony security login failed', __FILE__, __LINE__, $e);
         }
 
-        return true;
-    }
-
-    private function auth()
-    {
-        /** @var User $user */
-        $user = $this->getEntityManager()->find(
-            User::class,
-            Session::getInstance()->get(Ice::SESSION_USER_KEY)
-        );
-
-        $firewall = 'main';
-        $token = new UsernamePasswordToken($user, null, $firewall, $user->getRoles());
-        $this->getKernel()->getContainer()->get('security.token_storage')->setToken($token);
-//            $this->getKernel()->getContainer()->get('security.authentication.manager')->authenticate($token);
-//            $session = $this->getKernel()->getContainer()->get('session');
-//            $session->set('_security_' . $firewall, serialize($token));
-//            $session->save();
-
-        Data_Provider_Security::getInstance()->set(Symfony::SYMFONY_USER, $user);
+        return $account;
     }
 
     public function logout()
     {
-        Data_Provider_Security::getInstance()->delete(Symfony::SYMFONY_USER);
+        Data_Provider_Security::getInstance()->delete(Symfony::SECURITY_USER_SYMFONY);
 
         $this->getKernel()->getContainer()->get('security.token_storage')->setToken(null);
 
@@ -145,7 +144,8 @@ class Symfony extends Ice
      * @return EntityManager
      *
      */
-    private function getEntityManager() {
+    private function getEntityManager()
+    {
         return $this->getKernel()->getContainer()->get('doctrine')->getEntityManager();
     }
 }

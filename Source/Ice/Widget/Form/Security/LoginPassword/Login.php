@@ -3,7 +3,6 @@
 namespace Ice\Widget\Form\Security;
 
 use Ice\Core\Model;
-use Ice\Core\Security;
 use Ice\Core\Security_Account;
 use Ice\Core\Widget_Form_Security;
 use Ice\Core\Widget_Form_Security_Login;
@@ -80,7 +79,7 @@ class LoginPassword_Login extends Widget_Form_Security_Login
             ->getModel();
 
         return $this->verify($account, $values)
-            ? Security::getInstance()->login($this->authenticate($account))
+            ? $this->signIn($account)
             : Widget_Form_Security::getLogger()
                 ->exception(
                     ['Log in failure', [], $this->getResource()],

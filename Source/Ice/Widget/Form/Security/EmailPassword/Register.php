@@ -101,6 +101,6 @@ class EmailPassword_Register extends Widget_Form_Security_Register
 
         $values['password'] = password_hash($values['password'], PASSWORD_DEFAULT);
 
-        return $this->singUp($accountModelClass::create($values)->save());
+        return $this->signUp($accountModelClass::create($values)->save());
     }
 }

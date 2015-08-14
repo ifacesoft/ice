@@ -14,6 +14,7 @@ use Ice\Core\Data_Provider;
 use Ice\Core\Data_Source;
 use Ice\Core\Debuger;
 use Ice\Core\Exception;
+use Ice\Core\Logger;
 use Ice\Core\Model;
 use Ice\Core\Module;
 use Ice\Core\Profiler;
@@ -44,6 +45,14 @@ class Mysqli extends Data_Source
     const DATA_PROVIDER_CLASS = 'Ice\Data\Provider\Mysqli';
     const QUERY_TRANSLATOR_CLASS = 'Ice\Query\Translator\Sql';
 
+    const TRANSACTION_REPEATABLE_READ = 'REPEATABLE READ';
+    const TRANSACTION_READ_COMMITTED = 'READ COMMITTED';
+    const TRANSACTION_READ_UNCOMMITTED = 'READ UNCOMMITTED';
+    const TRANSACTION_SERIALIZABLE = 'SERIALIZABLE';
+
+
+    private $savePointLevel = null;
+
     /**
      * Execute query select to data source
      *
@@ -66,7 +75,7 @@ class Mysqli extends Data_Source
             $error = $statement->error;
             $statement->close();
 
-            Data_Source::getLogger()->exception(
+            Mysqli::getLogger()->exception(
                 [
                     '#' . $errno . ': {$0} - {$1} [{$2}]',
                     [$error, print_r($query->getBody(), true), implode(', ', $query->getBinds())]
@@ -86,7 +95,7 @@ class Mysqli extends Data_Source
             $error = $statement->error;
             $statement->close();
 
-            Data_Source::getLogger()->exception(
+            Mysqli::getLogger()->exception(
                 [
                     '#' . $errno . ': {$0} - {$1} [{$2}]',
                     [$error, print_r($query->getBody(), true), implode(', ', $query->getBinds())]
@@ -185,7 +194,7 @@ class Mysqli extends Data_Source
                     $exceptionClass = 'Ice:DataSource_Error';
             }
 
-            Data_Source::getLogger()->exception(
+            Mysqli::getLogger()->exception(
                 ['#' . $this->getConnection()->errno . ': {$0}', $this->getConnection()->error],
                 __FILE__,
                 __LINE__,
@@ -278,7 +287,7 @@ class Mysqli extends Data_Source
             $error = $statement->error;
             $statement->close();
 
-            Data_Source::getLogger()->exception(
+            Mysqli::getLogger()->exception(
                 [
                     '#' . $errno . ': {$0} - {$1} [{$2}]',
                     [$error, print_r($query->getBody(), true), implode(', ', $query->getBinds())]
@@ -343,7 +352,7 @@ class Mysqli extends Data_Source
             $error = $statement->error;
             $statement->close();
 
-            Data_Source::getLogger()->exception(
+            Mysqli::getLogger()->exception(
                 [
                     '#' . $errno . ': {$0} - {$1} [{$2}]',
                     [$error, print_r($query->getBody(), true), implode(', ', $query->getBinds())]
@@ -393,7 +402,7 @@ class Mysqli extends Data_Source
             $error = $statement->error;
             $statement->close();
 
-            Data_Source::getLogger()->exception(
+            Mysqli::getLogger()->exception(
                 [
                     '#' . $errno . ': {$0} - {$1} [{$2}]',
                     [$error, print_r($query->getBody(), true), implode(', ', $query->getBinds())]
@@ -695,7 +704,7 @@ class Mysqli extends Data_Source
             $error = $statement->error;
             $statement->close();
 
-            Data_Source::getLogger()->exception(
+            Mysqli::getLogger()->exception(
                 [
                     '#' . $errno . ': {$0} - {$1} [{$2}]',
                     [$error, print_r($query->getBody(), true), implode(', ', $query->getBinds())]
@@ -734,7 +743,7 @@ class Mysqli extends Data_Source
             $error = $statement->error;
             $statement->close();
 
-            Data_Source::getLogger()->exception(
+            Mysqli::getLogger()->exception(
                 [
                     '#' . $errno . ': {$0} - {$1} [{$2}]',
                     [$error, print_r($query->getBody(), true), implode(', ', $query->getBinds())]
@@ -786,12 +795,30 @@ class Mysqli extends Data_Source
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.5
+     * @version 1.1
      * @since   0.5
+     * @param string $isolationLevel SET TRANSACTION ISOLATION LEVEL (REPEATABLE READ|READ COMMITTED|READ UNCOMMITTED|SERIALIZABLE)
      */
-    public function beginTransaction()
+    public function beginTransaction($isolationLevel = null)
     {
-        $this->getConnection()->autocommit(false);
+        if ($this->savePointLevel === null) {
+            $this->savePointLevel = 0;
+
+            if ($isolationLevel) {
+                $this->getConnection()->query('SET TRANSACTION ISOLATION LEVEL ' . $isolationLevel);
+                Logger::log($isolationLevel, 'mysql transaction isolation level', 'INFO');
+            }
+
+            $this->getConnection()->autocommit(false);
+            Logger::log('false', 'mysql autocommit', 'INFO');
+
+//            $this->getConnection()->begin_transaction(0, 'level_' . $this->savePointLevel);
+            Logger::log('level_' . $this->savePointLevel, 'mysql transaction', 'INFO');
+        } else {
+            $this->savePointLevel++;
+
+            $this->savePoint('transaction');
+        }
     }
 
     /**
@@ -799,26 +826,127 @@ class Mysqli extends Data_Source
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.5
+     * @version 1.1
      * @since   0.5
      */
     public function commitTransaction()
     {
-        $this->getConnection()->commit();
-        $this->getConnection()->autocommit(true);
+        if ($this->savePointLevel === 0) {
+            $this->getConnection()->commit();
+            Logger::log('level_' . $this->savePointLevel, 'mysql commit', 'INFO');
+
+            $this->savePointLevel = null;
+
+            $this->getConnection()->autocommit(true);
+            Logger::log('true', 'mysql autocommit', 'INFO');
+
+            $this->getConnection()->query('SET TRANSACTION ISOLATION LEVEL ' . Mysqli::TRANSACTION_REPEATABLE_READ);
+            Logger::log(Mysqli::TRANSACTION_REPEATABLE_READ, 'mysql transaction isolation level', 'INFO');
+        } else {
+            $this->releaseSavePoint('transaction');
+
+            $this->savePointLevel--;
+        }
     }
 
     /**
      * Rollback transaction
-     *
+
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.5
+     * @version 1.1
      * @since   0.5
      */
     public function rollbackTransaction()
     {
-        $this->getConnection()->rollback();
-        $this->getConnection()->autocommit(true);
+        if ($this->savePointLevel === 0) {
+                $this->getConnection()->rollback();
+                Logger::log('level_' . $this->savePointLevel, 'mysql rollback', 'INFO');
+
+            $this->savePointLevel = null;
+
+            $this->getConnection()->autocommit(true);
+            Logger::log('true', 'mysql autocommit', 'INFO');
+
+            $this->getConnection()->query('SET TRANSACTION ISOLATION LEVEL ' . Mysqli::TRANSACTION_REPEATABLE_READ);
+            Logger::log(Mysqli::TRANSACTION_REPEATABLE_READ, 'mysql transaction isolation level', 'INFO');
+        } else {
+            $this->rollbackSavePoint('transaction');
+
+            $this->savePointLevel--;
+        }
+    }
+
+    /**
+     * Create save point transactions
+     *
+     * @param $savePoint
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 1.1
+     * @since   1.1
+     */
+    public function savePoint($savePoint)
+    {
+        $this->executeNativeQuery('SAVEPOINT ' . 'level_' . $this->savePointLevel . '_' . $savePoint);
+    }
+
+    /**
+     * Rollback save point transactions
+     *
+     * @param $savePoint
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 1.1
+     * @since   1.1
+     */
+    public function rollbackSavePoint($savePoint)
+    {
+        $this->executeNativeQuery('ROLLBACK TO SAVEPOINT ' . 'level_' . $this->savePointLevel . '_' . $savePoint);
+    }
+
+    /**
+     * Release save point transactions
+     *
+     * @param $savePoint
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 1.1
+     * @since   1.1
+     */
+    public function releaseSavePoint($savePoint)
+    {
+        $this->executeNativeQuery('RELEASE SAVEPOINT ' . 'level_' . $this->savePointLevel . '_' . $savePoint);
+    }
+
+    /**
+     * Execute native query
+     *
+     * @param string $query
+     * @return Query_Result
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 1.1
+     * @since   1.1
+     */
+    public function executeNativeQuery($query)
+    {
+        if ($this->getConnection()->query($query) === false) {
+            $errno = $this->getConnection()->errno;
+            $error = $this->getConnection()->error;
+
+            Logger::log(
+                '#' . $errno . ': ' . $error . ' - ' . $query,
+                'native query (error)',
+                'ERROR'
+            );
+            Mysqli::getLogger()->exception(['#' . $errno . ': {$0} - {$1}', [$error, $query]], __FILE__, __LINE__);
+        } else {
+            Logger::log($query, 'native query (new)', 'INFO');
+        }
     }
 }

@@ -357,7 +357,7 @@ class Query
      */
     public function getQueryResult($ttl = null)
     {
-        $queryResult = $this->getDataSource()->execute($this, $ttl);
+        $queryResult = $this->getDataSource()->executeQuery($this, $ttl);
 
         $params = [];
 

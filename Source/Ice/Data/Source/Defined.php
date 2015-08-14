@@ -319,12 +319,14 @@ class Defined extends Data_Source
     /**
      * Begin transaction
      *
+     * @param string $isolationLevel
+     *
      * @author anonymous <email>
      *
      * @version 0
      * @since   0
      */
-    public function beginTransaction()
+    public function beginTransaction($isolationLevel = null)
     {
         // TODO: Implement beginTransaction() method.
     }
@@ -369,5 +371,50 @@ class Defined extends Data_Source
     public function getReferences($tableName)
     {
         // TODO: Implement getReferences() method.
+    }
+
+    /**
+     * Create save point
+     *
+     * @param $savePoint
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since   0
+     */
+    public function savePoint($savePoint)
+    {
+        // TODO: Implement savePointTransaction() method.
+    }
+
+    /**
+     * Rollback save point
+     *
+     * @param $savePoint
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since   0
+     */
+    public function rollbackSavePoint($savePoint)
+    {
+        // TODO: Implement rollbackSavePoint() method.
+    }
+
+    /**
+     * Commit save point
+     *
+     * @param $savePoint
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since   0
+     */
+    public function releaseSavePoint($savePoint)
+    {
+        // TODO: Implement releaseSavePoint() method.
     }
 }

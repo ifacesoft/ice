@@ -9,6 +9,7 @@
 
 namespace Ice\Core;
 
+use Ice\App;
 use Ice\Core;
 use Ice\Helper\Json;
 use Ice\Helper\Model as Helper_Model;
@@ -165,9 +166,9 @@ abstract class Model
         if (!$modelClass) {
             /** @var Model $modelClass */
             $modelClass = get_called_class();
+        } else {
+            $modelClass = Object::getClass(__CLASS__, $modelClass);
         }
-
-        $modelClass = Object::getClass(__CLASS__, $modelClass);
 
         if (!Loader::load($modelClass, false)) {
             if ($required) {
@@ -264,7 +265,7 @@ abstract class Model
              */
             $modelClass = get_class($this);
 
-            $modelClass::getLogger()->exception(
+            Logger::getInstance()->exception(
                 [
                     'Could not set value: Field "{$0}" not found in Model "{$1}"',
                     [$fieldName, $modelClass::getClassName()]
@@ -501,7 +502,8 @@ abstract class Model
         }
 
         if (!is_array($fieldValue)) {
-            Model::getLogger()->exception('Supported only arrays in json field in model ', __FILE__, __LINE__);
+            Logger::getInstance()
+                ->exception(['Supported only arrays in json field in model {0}', get_class($this)], __FILE__, __LINE__);
         }
 
         if (empty($this->json[$fieldName])) {
@@ -558,7 +560,7 @@ abstract class Model
         foreach (array($this->row, $this->json, $this->fk) as $fields) {
             if (array_key_exists($fieldName, $fields)) {
                 if ($isNotNull && $fields[$fieldName] === null) {
-                    $modelClass::getLogger()->exception(
+                    Logger::getInstance()->exception(
                         ['field "{$0}" of model "{$1}" is null', [$fieldName, $modelName]],
                         __FILE__,
                         __LINE__
@@ -603,7 +605,7 @@ abstract class Model
             $key = $this->row[$foreignKeyName];
 
             if (!$key) {
-                Model::getLogger()->exception(
+                Logger::getInstance()->exception(
                     ['Model::__get: Foreign key is missing - {$0} in model {$1}', [$foreignKeyName, $modelName]],
                     __FILE__,
                     __LINE__
@@ -614,7 +616,7 @@ abstract class Model
             $joinModel = $fieldModelName::create($row);
 
             if (!$joinModel) {
-                Model::getLogger()->exception(
+                Logger::getInstance()->exception(
                     [
                         'Model::__get: Foreign key is missing - {$0} = "{$1}" in model {$2}',
                         [$foreignKeyName, $key, $modelName]
@@ -642,7 +644,7 @@ abstract class Model
             return $this->data[$fieldName];
         }
 
-        Model::getLogger()->exception(
+        Logger::getInstance()->exception(
             ['Field {$0} not found in Model {$1}', [$fieldName, $modelName]],
             __FILE__,
             __LINE__
@@ -1535,7 +1537,7 @@ abstract class Model
             }
         }
 
-        Model::getLogger()->exception(
+        Logger::getInstance()->exception(
             ['Fetch many of {$0} for {$1} failed. Relations not found.', [$modelClass, $selfModelClass]],
             __FILE__,
             __LINE__

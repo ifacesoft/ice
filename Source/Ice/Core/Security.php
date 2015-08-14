@@ -4,8 +4,6 @@ namespace Ice\Core;
 
 abstract class Security extends Container
 {
-    const SESSION_USER_KEY = 'user_pk';
-
     private static $defaultClassKey = null;
 
     abstract protected function autologin();
@@ -23,10 +21,10 @@ abstract class Security extends Container
     abstract public function getUser();
 
     /**
-     * @param $userKey
+     * @param $account
      * @return bool
      */
-    abstract public function login($userKey);
+    abstract public function login(Security_Account $account);
 
     abstract public function logout();
 
@@ -60,7 +58,6 @@ abstract class Security extends Container
             Security::$defaultClassKey = get_class($this);
 
             $this->autologin();
-
             return;
         }
 

@@ -11,5 +11,8 @@ interface Security_Account
      */
     public function isExpired();
 
+    /**
+     * @return Security_User|Model
+     */
     public function getUser();
 }

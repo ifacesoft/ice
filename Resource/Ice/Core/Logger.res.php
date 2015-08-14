@@ -136,4 +136,8 @@ return [
         'en' => 'Base class and class {$0} are equal',
         'ru' => 'Базовый класс и класс {$0} равны',
     ],
+    'Field {$0} not found in Model {$1}' => [
+        'en' => 'Field {$0} not found in Model {$1}',
+        'ru' => 'Поле {$0} не найдена в модели {$1}',
+    ],
 ];
