@@ -146,6 +146,6 @@ class Symfony extends Ice
      */
     private function getEntityManager()
     {
-        return $this->getKernel()->getContainer()->get('doctrine')->getEntityManager();
+        return $this->getKernel()->getContainer()->get('doctrine')->getManager();
     }
 }
