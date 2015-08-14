@@ -7,7 +7,8 @@ abstract class Widget_Form_Security_Register extends Widget_Form_Security
     /**
      * Register by input form data
      *
-     * @return Security_Account|Model
+     * @param array $user User defaults
+     * @return Model|Security_Account
      */
-    public abstract function register();
+    abstract public function register(array $user = []);
 }

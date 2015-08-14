@@ -137,13 +137,12 @@ abstract class Widget_Form_Security extends Widget_Form
      * Sing up by account
      *
      * @param Security_Account $account
-     * @return Security_Account|Model
+     * @param array $user user defaults
+     * @return Model|Security_Account
      */
-    protected function signUp(Security_Account $account)
+    protected function signUp(Security_Account $account, array $user = [])
     {
         $userModelClass = Config::getInstance(Security::getClass())->get('userModelClass');
-
-        $user = [];
 
         if ($this->confirm) {
             $account->set($this->sendConfirm());
@@ -174,7 +173,7 @@ abstract class Widget_Form_Security extends Widget_Form
             $dataSource->rollbackTransaction();
         }
 
-        if ($this->autologin) {
+        if ((!$this->confirm || ($this->confirm && !$this->confirmRequired)) && $this->autologin) {
             return $this->signIn($account);
         }
 
@@ -264,5 +263,21 @@ abstract class Widget_Form_Security extends Widget_Form
     public function setConfirmRequired($confirmRequired)
     {
         $this->confirmRequired = $confirmRequired;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getRedirect()
+    {
+        return $this->redirect;
+    }
+
+    /**
+     * @return int
+     */
+    public function getRedirectTimeout()
+    {
+        return $this->redirectTimeout;
     }
 }

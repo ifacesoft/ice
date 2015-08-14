@@ -805,8 +805,7 @@ class Mysqli extends Data_Source
             $this->savePointLevel = 0;
 
             if ($isolationLevel) {
-                $this->getConnection()->query('SET TRANSACTION ISOLATION LEVEL ' . $isolationLevel);
-                Logger::log($isolationLevel, 'mysql transaction isolation level', 'INFO');
+                $this->executeNativeQuery('SET TRANSACTION ISOLATION LEVEL ' . $isolationLevel);
             }
 
             $this->getConnection()->autocommit(false);
@@ -840,8 +839,7 @@ class Mysqli extends Data_Source
             $this->getConnection()->autocommit(true);
             Logger::log('true', 'mysql autocommit', 'INFO');
 
-            $this->getConnection()->query('SET TRANSACTION ISOLATION LEVEL ' . Mysqli::TRANSACTION_REPEATABLE_READ);
-            Logger::log(Mysqli::TRANSACTION_REPEATABLE_READ, 'mysql transaction isolation level', 'INFO');
+            $this->executeNativeQuery('SET TRANSACTION ISOLATION LEVEL ' . Mysqli::TRANSACTION_REPEATABLE_READ);
         } else {
             $this->releaseSavePoint('transaction');
 
@@ -868,8 +866,7 @@ class Mysqli extends Data_Source
             $this->getConnection()->autocommit(true);
             Logger::log('true', 'mysql autocommit', 'INFO');
 
-            $this->getConnection()->query('SET TRANSACTION ISOLATION LEVEL ' . Mysqli::TRANSACTION_REPEATABLE_READ);
-            Logger::log(Mysqli::TRANSACTION_REPEATABLE_READ, 'mysql transaction isolation level', 'INFO');
+            $this->executeNativeQuery('SET TRANSACTION ISOLATION LEVEL ' . Mysqli::TRANSACTION_REPEATABLE_READ);
         } else {
             $this->rollbackSavePoint('transaction');
 

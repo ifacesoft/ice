@@ -78,12 +78,13 @@ class EmailPassword_Register extends Widget_Form_Security_Register
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
+     * @param array $user
      * @return Security_Account
-     *
+     * @throws \Ice\Core\Exception
      * @version 1.1
      * @since   0.1
      */
-    public function register()
+    public function register(array $user = [])
     {
         /** @var Model $accountModelClass */
         $accountModelClass = $this->getAccountModelClass();
@@ -101,6 +102,6 @@ class EmailPassword_Register extends Widget_Form_Security_Register
 
         $values['password'] = password_hash($values['password'], PASSWORD_DEFAULT);
 
-        return $this->signUp($accountModelClass::create($values)->save());
+        return $this->signUp($accountModelClass::create($values)->save(), $user);
     }
 }

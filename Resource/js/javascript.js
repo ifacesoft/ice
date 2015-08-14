@@ -88,14 +88,30 @@ var Ice = {
             function (result) {
                 if (result.error || result.data.error) {
                     if (result.data.error) {
-                        $tagetBlock.find('.ice-error').html(result.data.error)
+                        $tagetBlock.find('.ice-message').html(result.data.error)
                     }
                 } else {
-                    $tagetBlock.replaceWith(result.content);
-                }
+                    if (result.success || result.data.success) {
+                        if (result.data.success) {
+                            $tagetBlock.find('.ice-message').html(result.data.success)
+                        }
+                    }
 
-                if (callback) {
-                    callback(result);
+                    if (result.data.redirect) {
+                        var redirectTimeout = result.data.redirectTimeout ? result.data.redirectTimeout : 0;
+
+                        setTimeout(function () {
+                            window.location.href = result.data.redirect;
+                        }, redirectTimeout);
+                    } else {
+                        if (result.content) {
+                            $tagetBlock.replaceWith(result.content);
+                        }
+
+                        if (callback) {
+                            callback(result);
+                        }
+                    }
                 }
             },
             url,
