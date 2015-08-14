@@ -55,6 +55,25 @@ abstract class Widget
 
     private $compiledParts = null;
 
+
+    /**
+     * Redirect url
+     *
+     * If is null use referrer url
+     *
+     * @var string|null
+     */
+    private $redirect = null;
+
+
+    /**
+     * Timeout redirect after success registration
+     *
+     * @var int
+     */
+    private $timeout = 0;
+
+
     /**
      * Not ignored parts
      *
@@ -831,5 +850,46 @@ abstract class Widget
             : get_class($this);
 
         return Widget_Scope::getInstance($widgetClass)->$scope($this, $data);
+    }
+
+
+    /**
+     * @param string $redirect
+     * @param int $timeout
+     * @return Widget_Form_Security
+     */
+    public function setRedirect($redirect, $timeout = 0)
+    {
+        $this->redirect = $redirect;
+        $this->setTimeout($timeout);
+
+        return $this;
+    }
+
+    /**
+     * @param int $timeout
+     * @return Widget_Form_Security
+     */
+    public function setTimeout($timeout)
+    {
+        $this->timeout = $timeout;
+        return $this;
+    }
+
+
+    /**
+     * @return null|string
+     */
+    public function getRedirect()
+    {
+        return $this->redirect;
+    }
+
+    /**
+     * @return int
+     */
+    public function getTimeout()
+    {
+        return $this->timeout;
     }
 }

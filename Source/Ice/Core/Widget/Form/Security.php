@@ -14,22 +14,6 @@ abstract class Widget_Form_Security extends Widget_Form
     private $autologin = false;
 
     /**
-     * Redirect url
-     *
-     * If is null use referrer url
-     *
-     * @var string|null
-     */
-    private $redirect = null;
-
-    /**
-     * Timeout redirect after success registration
-     *
-     * @var int
-     */
-    private $redirectTimeout = 0;
-
-    /**
      * Confirmation is needed
      *
      * @var bool
@@ -201,29 +185,6 @@ abstract class Widget_Form_Security extends Widget_Form
     }
 
     /**
-     * @param string $redirect
-     * @param int $redirectTimeout
-     * @return Widget_Form_Security
-     */
-    public function setRedirect($redirect, $redirectTimeout = 0)
-    {
-        $this->redirect = $redirect;
-        $this->setRedirectTimeout($redirectTimeout);
-
-        return $this;
-    }
-
-    /**
-     * @param int $redirectTimeout
-     * @return Widget_Form_Security
-     */
-    public function setRedirectTimeout($redirectTimeout)
-    {
-        $this->redirectTimeout = $redirectTimeout;
-        return $this;
-    }
-
-    /**
      * @param boolean $confirm
      * @param string $confirmExpired
      * @param bool $confirmRequired
@@ -263,21 +224,5 @@ abstract class Widget_Form_Security extends Widget_Form
     public function setConfirmRequired($confirmRequired)
     {
         $this->confirmRequired = $confirmRequired;
-    }
-
-    /**
-     * @return null|string
-     */
-    public function getRedirect()
-    {
-        return $this->redirect;
-    }
-
-    /**
-     * @return int
-     */
-    public function getRedirectTimeout()
-    {
-        return $this->redirectTimeout;
     }
 }
