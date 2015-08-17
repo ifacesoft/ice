@@ -7,6 +7,7 @@ use Ice\Helper\Emmet;
 use Ice\Helper\Json;
 use Ice\Helper\Object;
 use Ice\View\Render\Php;
+use Ice\View\Render\Replace;
 
 abstract class Widget_Data extends Widget
 {
@@ -313,7 +314,7 @@ abstract class Widget_Data extends Widget
                 }
 
                 if (isset($part['options']['title'])) {
-                    $part['title'] = implode($part['options']['title'], $params);
+                    $part['title'] = Replace::getInstance()->fetch($part['options']['title'], $params, View_Render::TEMPLATE_TYPE_STRING);
                 } else {
                     if (array_key_exists($partName, $values)) {
                         $part['title'] = $values[$partName];
