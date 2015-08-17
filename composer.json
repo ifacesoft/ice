@@ -36,7 +36,8 @@
     "smarty/smarty": "3.1.*",
     "michelf/php-markdown": "1.5.*",
     "mrclay/minify": "2.2.*",
-    "oyejorge/less.php": "1.7.*"
+    "oyejorge/less.php": "1.7.*",
+    "phpmailer/phpmailer": "5.2.*"
   },
   "require-dev": {
     "sami/sami": "3.0.*@dev",

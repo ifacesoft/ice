@@ -2,34 +2,23 @@
 
 namespace Ice\Core;
 
-abstract class Message extends Container
+abstract class Message
 {
-    private static $defaultClassKey = null;
+    use Stored;
 
-    /**
-     * @param null $key
-     * @param null $ttl
-     * @return Message
-     */
-    public static function getInstance($key = null, $ttl = null)
+    protected static function config()
     {
-        return parent::getInstance($key, $ttl);
-    }
-
-    protected static function create($key)
-    {
-        $class = self::getClass();
-
-        return new $class($key);
-    }
-
-    protected static function getDefaultClassKey()
-    {
-        return Message::$defaultClassKey;
-    }
-
-    protected static function getDefaultKey()
-    {
-        return 'default';
+//        return [
+//            'view' => ['template' => null, 'viewRenderClass' => null, 'layout' => null],
+//            'input' => [
+//                'from' => ['providers' => ]
+//                'host' => ['providers' => 'config'],
+//                'username' => ['providers' => 'config'],
+//                'password' => ['providers' => 'config'],
+//                'secure' => ['providers' => 'config'],
+//                'port' => ['providers' => 'config']
+//            ],
+//            'access' => ['roles' => [], 'request' => null, 'env' => null]
+//        ];
     }
 }
