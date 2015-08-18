@@ -93,7 +93,7 @@ abstract class Widget
 
     protected $onsubmit = null;
 
-    protected function __construct()
+    private function __construct()
     {
     }
 

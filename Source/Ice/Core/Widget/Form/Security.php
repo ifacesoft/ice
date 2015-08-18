@@ -120,48 +120,60 @@ abstract class Widget_Form_Security extends Widget_Form
     /**
      * Sing up by account
      *
-     * @param Security_Account $account
+     * @param $accountModelClass
+     * @param array $accountData
      * @param array $user user defaults
+     * @param Data_Source|string|null $dataSource
+     *
      * @return Model|Security_Account
      */
-    protected function signUp(Security_Account $account, array $user = [])
+    protected function signUp($accountModelClass, array $accountData, array $user = [], $dataSource = null)
     {
-        $userModelClass = Config::getInstance(Security::getClass())->get('userModelClass');
-
-        if ($this->confirm) {
-            $account->set($this->sendConfirm());
-
-            if ($this->confirmRequired) {
-                $account->set(['/expired' => '0000-00-00']);
-                $user['/active'] = 0;
-            } else {
-                $account->set(['/expired' => Date::get(strtotime($this->confirmExpired))]);
-                $user['/active'] = 1;
-            }
-        } else {
-            $account->set(['/expired' => Date::get(strtotime($this->expired))]);
-            $user['/active'] = 1;
-        }
-
         /** @var Data_Source $dataSource */
-        $dataSource = $account->getDataSource();
+        $dataSource = Data_Source::getInstance($dataSource);
+
         try {
             $dataSource->beginTransaction();
+
+            $account = $accountModelClass::create($accountData)->save();
+
+            if ($this->confirm) {
+                $account->set($this->sendConfirm());
+
+                if ($this->confirmRequired) {
+                    $account->set(['/expired' => '0000-00-00']);
+                    $user['/active'] = 0;
+                } else {
+                    $account->set(['/expired' => Date::get(strtotime($this->confirmExpired))]);
+                    $user['/active'] = 1;
+                }
+            } else {
+                $account->set(['/expired' => Date::get(strtotime($this->expired))]);
+                $user['/active'] = 1;
+            }
+
+            $userModelClass = Config::getInstance(Security::getClass())->get('userModelClass');
 
             $account = $account->set([
                 'user' => $userModelClass::create($user)->save()
             ])->save();
 
             $dataSource->commitTransaction();
+
+            return (!$this->confirm || ($this->confirm && !$this->confirmRequired)) && $this->autologin
+                ? $this->signIn($account)
+                : $account;
         } catch (\Exception $e) {
             $dataSource->rollbackTransaction();
-        }
 
-        if ((!$this->confirm || ($this->confirm && !$this->confirmRequired)) && $this->autologin) {
-            return $this->signIn($account);
+            return Widget_Form_Security::getLogger()
+                ->exception(
+                    ['Sign up failed', [], $this->getResource()],
+                    __FILE__,
+                    __LINE__,
+                    $e
+                );
         }
-
-        return $account;
     }
 
     /**
@@ -169,7 +181,8 @@ abstract class Widget_Form_Security extends Widget_Form
      *
      * @return array
      */
-    public function sendConfirm() {
+    public function sendConfirm()
+    {
         return Logger::getInstance('Ice\App')
             ->exception(['Implement {$0} for {$1}', [__FUNCTION__, get_class($this)]], __FILE__, __LINE__);
     }

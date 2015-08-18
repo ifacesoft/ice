@@ -24,4 +24,8 @@ return [
         'en' => 'User is expired',
         'ru' => 'Пользователь истек',
     ],
+    'Sign up failed' => [
+        'en' => 'Sign up failed',
+        'ru' => 'Зарегистрироваться не удалось',
+    ],
 ];

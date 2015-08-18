@@ -140,4 +140,8 @@ return [
         'en' => 'Field {$0} not found in Model {$1}',
         'ru' => 'Поле {$0} не найдена в модели {$1}',
     ],
+    'field "{$0}" of model "{$1}" is null' => [
+        'en' => 'field "{$0}" of model "{$1}" is null',
+        'ru' => 'поле "{$0}" модели "{$1}" является нулем',
+    ],
 ];

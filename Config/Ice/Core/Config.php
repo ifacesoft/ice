@@ -30,6 +30,17 @@ return [
     'Ice\Core\Security' => [
         'userModelClass' => 'Ice\Model\User'
     ],
+    'Ice\Message\PHPMailer' => [
+        'fromName' => 'ice',
+        'fromAddress' => 'message@iceframework.net',
+        'smtpHost' => null, // Specify main and backup SMTP servers
+        'smtpPort' => null, // TCP port to connect to
+        'smtpUsername' => null, // SMTP username
+        'smtpPassword' => null, // SMTP password
+        'smtpSecure' => 'tls' // Enable TLS encryption, `ssl` also accepted
+    ],
+    'Ice\Message\Smsru' => [
+    ],
     'Ice\Core\Request' => [
         'multiLocale' => 1,
         'locale' => 'en',

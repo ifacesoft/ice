@@ -94,7 +94,7 @@ abstract class Data_Source extends Container
     /**
      * Return instance of data source
      *
-     * @param  null $key
+     * @param  Data_Source|string|null $key
      * @param  null $ttl
      * @return Data_Source
      *

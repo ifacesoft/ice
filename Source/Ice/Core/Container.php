@@ -74,11 +74,11 @@ abstract class Container
      * @param  string $key
      * @param  null $ttl
      * @throws Exception
-     * @return mixed
+     * @return object|string|null
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.4
+     * @version 1.1
      * @since   0.0
      */
     public static function getInstance($key = null, $ttl = null)
@@ -88,6 +88,10 @@ abstract class Container
 
         /** @var Container|Core $baseClass */
         $baseClass = $class::getBaseClass();
+
+        if (is_object($key) && $key instanceof $baseClass) {
+            return $key;
+        }
 
         if ($class == $baseClass) {
             if (!$key) {
