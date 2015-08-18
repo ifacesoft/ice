@@ -28,4 +28,8 @@ return [
         'en' => 'Sign up failed',
         'ru' => 'Зарегистрироваться не удалось',
     ],
+    'Log in failure' => [
+        'en' => 'Log in failure',
+        'ru' => 'Вход в провал',
+    ],
 ];

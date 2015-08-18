@@ -20,17 +20,12 @@ abstract class Message_Transport extends Container
     {
         $class = self::getClass();
 
-        return new $class($key);
+        return new $class();
     }
 
     protected static function getDefaultClassKey()
     {
         return Message_Transport::$defaultClassKey;
-    }
-
-    protected static function getDefaultKey()
-    {
-        return 'default';
     }
 
     abstract public function send(Message $message);

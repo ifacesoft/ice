@@ -38,6 +38,9 @@ return [
             'Ice\Core\Security' => [
                 'instance' => 'Ice:Registry/security',
             ],
+            'Ice\Core\Message_Transport' => [
+                'instance' => 'Ice:Repository/message_transport',
+            ],
             'Ice\Core\Loader' => [
                 'loader' => 'Ice:Registry/loader',
             ],
@@ -134,6 +137,9 @@ return [
             'Ice\Core\Bootstrap' => [
                 'instance' => 'Ice:Registry/bootstrap',
             ],
+            'Ice\Core\Message_Transport' => [
+                'instance' => 'Ice:File/message_transport',
+            ],
             'Ice\Core\Loader' => [
                 'loader' => 'Ice:Registry/loader',
             ],
@@ -226,6 +232,9 @@ return [
         'dataProviderKeys' => [
             'Ice\Core\Bootstrap' => [
                 'instance' => 'Ice:Registry/bootstrap',
+            ],
+            'Ice\Core\Message_Transport' => [
+                'instance' => 'Ice:Registry/message_transport',
             ],
             'Ice\Core\Loader' => [
                 'loader' => 'Ice:Registry/loader',
