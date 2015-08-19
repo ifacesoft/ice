@@ -2,8 +2,10 @@
 
 namespace Ice\Core;
 
+use Ebs\Model\Log_Security;
 use Ice\Helper\Date;
 use Ice\Helper\String;
+use Ice\Helper\Logger as Helper_Logger;
 
 abstract class Widget_Form_Security extends Widget_Form
 {
@@ -90,13 +92,22 @@ abstract class Widget_Form_Security extends Widget_Form
      */
     protected function signIn(Security_Account $account)
     {
-        if (!$account || $account->isExpired()) {
-            return Widget_Form_Security::getLogger()
-                ->exception(
-                    ['Account is expired', [], $this->getResource()],
-                    __FILE__,
-                    __LINE__
-                );
+        $log = Log_Security::create([
+            'account_class' => get_class($account),
+            'account_key' => $account->getPkValue(),
+            'form_class' => get_class($this)
+        ]);
+
+        $logger = Widget_Form_Security::getLogger();
+
+        if ($account->isExpired()) {
+            $error = 'Account is expired';
+
+            $log->set('error', $error);
+
+            $logger->save($log);
+
+            return $logger->exception([$error, [], $this->getResource()], __FILE__, __LINE__);
         }
 
         $userModelClass = Config::getInstance(Security::getClass())->get('userModelClass');
@@ -105,15 +116,20 @@ abstract class Widget_Form_Security extends Widget_Form
         $user = $account->fetchOne($userModelClass, '/active', true);
 
         if (!$user || !$user->isActive()) {
-            return Widget_Form_Security::getLogger()
-                ->exception(
-                    ['User is blocked', [], $this->getResource()],
-                    __FILE__,
-                    __LINE__
-                );
+            $error = 'User is blocked or not found';
+
+            $log->set('error', $error);
+
+            $logger->save($log);
+
+            return $logger->exception([$error, [], $this->getResource()], __FILE__, __LINE__);
         }
 
+        $logger->save($log);
+
         Security::getInstance()->login($account);
+
+        $logger->save($log);
 
         return $account;
     }
@@ -128,27 +144,36 @@ abstract class Widget_Form_Security extends Widget_Form
      *
      * @return Model|Security_Account
      */
-    protected function signUp($accountModelClass, array $accountData, array $userData = [], $dataSource = null)
+    protected function signUp($accountModelClass, array $accountData, array $userData, $dataSource = null)
     {
-        if ($this->confirm) {
-            $accountData = $this->sendConfirm($accountData);
+        $account = null;
 
-            if ($this->confirmRequired) {
-                $accountData['/expired'] = '0000-00-00';
-                $userData['/active'] = 0;
-            } else {
-                $accountData['/expired'] = $this->getConfirmationExpired();
-                $userData['/active'] = 1;
-            }
-        } else {
-            $accountData['/expired'] = $this->getExpired();
-            $userData['/active'] = 1;
-        }
+        $logger = Widget_Form_Security::getLogger();
+
+        $log = Log_Security::create([
+            'account_class' => $accountModelClass,
+            'form_class' => get_class($this)
+        ]);
 
         /** @var Data_Source $dataSource */
         $dataSource = Data_Source::getInstance($dataSource);
 
         try {
+            if ($this->confirm) {
+                $accountData = $this->sendConfirm($accountData);
+
+                if ($this->confirmRequired) {
+                    $accountData['/expired'] = '0000-00-00';
+                    $userData['/active'] = 0;
+                } else {
+                    $accountData['/expired'] = $this->getConfirmationExpired();
+                    $userData['/active'] = 1;
+                }
+            } else {
+                $accountData['/expired'] = $this->getExpired();
+                $userData['/active'] = 1;
+            }
+
             $dataSource->beginTransaction();
 
             /** @var Security_User|Model $userModelClass */
@@ -159,20 +184,21 @@ abstract class Widget_Form_Security extends Widget_Form
 
             $dataSource->commitTransaction();
 
-            return (!$this->confirm || ($this->confirm && !$this->confirmRequired)) && $this->autologin
-                ? $this->signIn($account)
-                : $account;
+            $log->set('account_key', $account->getPkValue());
+            $logger->save($log);
         } catch (\Exception $e) {
             $dataSource->rollbackTransaction();
 
-            return Widget_Form_Security::getLogger()
-                ->exception(
-                    ['Sign up failed', [], $this->getResource()],
-                    __FILE__,
-                    __LINE__,
-                    $e
-                );
+            $log->set('error', Helper_Logger::getMessage($e));
+            $logger->save($log);
+
+            return $logger->exception(['Sign up failed', [], $this->getResource()], __FILE__, __LINE__, $e);
         }
+
+        return (!$this->confirm || ($this->confirm && !$this->confirmRequired)) && $this->autologin
+            ? $this->signIn($account)
+            : $account;
+
     }
 
     /**
@@ -184,10 +210,8 @@ abstract class Widget_Form_Security extends Widget_Form
      */
     public function sendConfirm(array $accountData)
     {
-        $accountData['confirmation_token'] =  md5(String::getRandomString());
-        $accountData['confirmation_expired'] = $this->getConfirmationExpired();
-
-        return $accountData;
+        return Logger::getInstance('Ice\App')
+            ->exception(['Implement {$0} for {$1}', [__FUNCTION__, get_class($this)]], __FILE__, __LINE__);
     }
 
     /**

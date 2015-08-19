@@ -20,9 +20,6 @@ use Ice\Core;
  *
  * @package    Ice
  * @subpackage Core
- *
- * @version 0.0
- * @since   0.0
  */
 class Session
 {
@@ -182,5 +179,9 @@ class Session
     public static function write($session_id, $session_data)
     {
         Session::getDataProvider()->set($session_id, $session_data);
+    }
+
+    public static function id() {
+        return session_id();
     }
 }

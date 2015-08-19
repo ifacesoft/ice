@@ -65,9 +65,8 @@ return [
             'smtpPass' => null, // required
             'fromAddress' => 'robot@iceframework.net',
             'fromName' => 'ice robot :)',
-            'replyTo' => null, //['null@iceframework.net' => '/dev/null'],
-            'cc' => null,
-            'bcc' => null
+            'replyToAddress' => 'reply@iceframework.net',
+            'replyToName' => 'Test'
         ]
     ]
 ];

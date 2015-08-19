@@ -2,7 +2,9 @@
 
 namespace Ice\Core;
 
+use Ebs\Model\Log_Message;
 use Ice\Core;
+use Ice\Helper\Date;
 
 abstract class Message
 {
@@ -22,6 +24,56 @@ abstract class Message
      * @var array|string
      */
     private $recipients = null;
+
+    /**
+     * Carbon copy addresses
+     *
+     * @var array|string|null
+     */
+    private $cc = null;
+
+    /**
+     * Blind carbon copy
+     *
+     * @var array|string|null
+     */
+    private $bcc = null;
+
+    /**
+     * @return array
+     */
+    public function getCc()
+    {
+        return (array)$this->cc;
+    }
+
+    /**
+     * @param array|string $cc
+     * @return Message
+     */
+    public function setCc($cc)
+    {
+        $this->cc = $cc;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getBcc()
+    {
+        return (array)$this->bcc;
+    }
+
+    /**
+     * @param array|string $bcc
+     * @return Message
+     */
+    public function setBcc($bcc)
+    {
+        $this->bcc = $bcc;
+        return $this;
+    }
 
     /**
      * Message subject
@@ -55,11 +107,45 @@ abstract class Message
         return $message;
     }
 
+    /**
+     * @param Message_Transport|string|null $messageTransport
+     */
     public function send($messageTransport = null)
     {
         $messageTransport = Message_Transport::getInstance($messageTransport);
 
+        $logger = $messageTransport->getLogger();
+
+        $recipients = $this->getRecipients();
+
+        $address = key($recipients);
+
+        if (is_int($address)) {
+            $address = array_shift($recipients);
+            $name = '';
+        } else {
+            $name = array_shift($recipients);
+        }
+
+        $log = Log_Message::create([
+            'message_class' => get_class($this),
+            'from_address' => $messageTransport->getFromAddress(),
+            'from_name' => $messageTransport->getFromName(),
+            'address' => $address,
+            'name' => $name,
+            'subject' => $this->getSubject(),
+            'body' => $this->getBody(),
+            'to' => $recipients,
+            'cc' => $this->getCc(),
+            'bcc' => $this->getBcc(),
+            'recipient_count' => 1 + count($recipients) + count($this->getCc()) + count($this->getBcc())
+        ]);
+
+        $logger->save($log);
+
         $messageTransport->send($this);
+
+        $log->set(['success_time' => Date::get()])->save();
     }
 
     /**
@@ -99,11 +185,11 @@ abstract class Message
     }
 
     /**
-     * @return array|string
+     * @return array
      */
     public function getRecipients()
     {
-        return $this->recipients;
+        return (array)$this->recipients;
     }
 
     /**

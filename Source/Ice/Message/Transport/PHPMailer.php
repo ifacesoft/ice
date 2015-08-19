@@ -3,8 +3,6 @@
 namespace Ice\Message\Transport;
 
 use Ice\Core\Config;
-use Ice\Core\Debuger;
-use Ice\Core\Environment;
 use Ice\Core\Message;
 use Ice\Core\Message_Transport;
 use Ice\Message\Mail;
@@ -39,19 +37,8 @@ class PHPMailer extends Message_Transport
         $messageTransport->phpMailer->Username = $config->get($key . '/smtpUser');
         $messageTransport->phpMailer->Password = $config->get($key . '/smtpPass');
 
-        $messageTransport->phpMailer->setFrom($config->get($key . '/fromAddress'), $config->get($key . '/fromName'));
-
-        if ($replyTo = $config->gets($key . '/replyTo')) {
-            PHPMailer::replyTo($messageTransport->phpMailer, $replyTo);
-        }
-
-        if ($cc = $config->gets($key . '/cc')) {
-            PHPMailer::cc($messageTransport->phpMailer, $cc);
-        }
-
-        if ($bcc = $config->gets($key . '/bcc')) {
-            PHPMailer::bcc($messageTransport->phpMailer, $bcc);
-        }
+        $messageTransport->phpMailer->setFrom($messageTransport->getFromAddress(), $messageTransport->getFromName());
+        $messageTransport->phpMailer->addReplyTo($messageTransport->getReplyToAddress(), $messageTransport->getReplyToName());
 
         $messageTransport->phpMailer->isHTML(true);
 
@@ -65,7 +52,22 @@ class PHPMailer extends Message_Transport
     {
         $phpMailer = clone $this->phpMailer;
 
-        foreach ((array) $message->getRecipients() as $address => $name) {
+        $phpMailer->Subject = $message->getSubject();
+
+        $phpMailer->msgHTML($message->getBody());
+
+        PHPMailer::to($phpMailer, $message->getRecipients());
+        PHPMailer::cc($phpMailer, $message->getCc());
+        PHPMailer::bcc($phpMailer, $message->getBcc());
+
+            if (!$phpMailer->send()) {
+            PHPMailer::getLogger()->exception($phpMailer->ErrorInfo, __FILE__, __LINE__);
+        }
+    }
+
+    private static function to(\PHPMailer $phpMailer, array $value)
+    {
+        foreach ($value as $address => $name) {
             if (empty($name)) {
                 continue;
             }
@@ -76,45 +78,11 @@ class PHPMailer extends Message_Transport
                 $phpMailer->addAddress($address, $name);
             }
         }
-
-        if ($replyTo = $message->getReplyTo()) {
-            PHPMailer::replyTo($phpMailer, $replyTo);
-        }
-
-        if ($replyTo = $message->getCc()) {
-            PHPMailer::cc($phpMailer, $replyTo);
-        }
-        if ($replyTo = $message->getBcc()) {
-            PHPMailer::bcc($phpMailer, $replyTo);
-        }
-
-        $phpMailer->Subject = $message->getSubject();
-
-        $phpMailer->msgHTML($message->getBody());
-
-        if (!$phpMailer->send()) {
-            PHPMailer::getLogger()->exception($phpMailer->ErrorInfo, __FILE__, __LINE__);
-        }
     }
 
-    private static function replyTo(\PHPMailer $phpMailer, $value)
+    private static function cc(\PHPMailer $phpMailer, array $value)
     {
-        foreach ((array)$value as $address => $name) {
-            if (empty($name)) {
-                continue;
-            }
-
-            if (is_int($address)) {
-                $phpMailer->addReplyTo($name);
-            } else {
-                $phpMailer->addReplyTo($address, $name);
-            }
-        }
-    }
-
-    private static function cc(\PHPMailer $phpMailer, $value)
-    {
-        foreach ((array)$value as $address => $name) {
+        foreach ($value as $address => $name) {
             if (empty($name)) {
                 continue;
             }
@@ -127,9 +95,9 @@ class PHPMailer extends Message_Transport
         }
     }
 
-    private static function bcc(\PHPMailer $phpMailer, $value)
+    private static function bcc(\PHPMailer $phpMailer, array $value)
     {
-        foreach ((array)$value as $address => $name) {
+        foreach ($value as $address => $name) {
             if (empty($name)) {
                 continue;
             }

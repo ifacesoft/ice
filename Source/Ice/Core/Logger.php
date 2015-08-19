@@ -9,6 +9,7 @@
 
 namespace Ice\Core;
 
+use Ebs\Model\Log_User_Session;
 use FirePHP;
 use Ice\Core;
 use Ice\Helper\Console;
@@ -18,7 +19,7 @@ use Ice\Helper\Http;
 use Ice\Helper\Logger as Helper_Logger;
 use Ice\Helper\Object;
 use Ice\Helper\Profiler as Helper_Profiler;
-use Ice\Helper\Resource as Helper_Resource;
+use Ebs\Model\Log_Error;
 
 /**
  * Class Logger
@@ -109,7 +110,7 @@ class Logger
      *
      * @var string
      */
-    private $class;
+    private $class = null;
 
     /**
      * Private constructor for logger object
@@ -330,10 +331,19 @@ class Logger
         ];
 
         Helper_Logger::outputFile($exception, $output, $this->class);
-        Helper_Logger::outputDb($exception);
+//        Helper_Logger::outputDb($exception);
         Helper_Logger::outputFb($exception, $output);
 
         $message = Helper_Logger::getMessage($exception);
+
+        $logError = Log_Error::create([
+            '/message' => $exception->getMessage(),
+            'exception' => $message,
+            'environment' => Environment::getInstance()->getName(),
+            'error_type' => Logger::$errorCodes[$exception->getCode()]
+        ]);
+
+        $this->save($logError);
 
         if (Request::isCli()) {
             fwrite(STDOUT, $message . "\n");
@@ -535,6 +545,31 @@ class Logger
             fwrite(STDOUT, $message);
         } else {
             Logger::fb($value, $label, $type, $options);
+        }
+    }
+
+    /**
+     * @param Model $log
+     */
+    public function save($log)
+    {
+        $logUserSession = Log_User_Session::create([
+            'ip' => Request::ip(),
+            'agent' => Request::agent(),
+            'session' => Session::id(),
+            'user' => Security::getInstance()->getUser()
+        ])->save(true);
+
+        $logUserSession__fk = $log->get('log_user_session__fk', false);
+
+        if ($logUserSession__fk && $logUserSession__fk != $logUserSession->getPkValue()) {
+            $logUserSession->set(['log_user_session__fk' => $logUserSession__fk])->save();
+            $log->set(['log_user_session' => $logUserSession])->save();
+        } else {
+            $log->set([
+                'logger_class' => $this->class,
+                'log_user_session' => $logUserSession
+            ])->save();
         }
     }
 }
