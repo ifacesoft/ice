@@ -59,7 +59,6 @@ class LoginEmailPassword_Login extends Widget_Form_Security_Login
                 ->bind(['login' => $this->getValue('username')])
                 ->login();
         } catch (\Exception $e) {
-            throw $e;
             return EmailPassword_Login::create($this->getUrl(), $this->getAction())
                 ->setAccountModelClass($this->accountEmailPasswordModelClass)
                 ->bind(['email' => $this->getValue('username')])

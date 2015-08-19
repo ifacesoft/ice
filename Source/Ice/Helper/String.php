@@ -142,4 +142,11 @@ class String
         }
         return $randomString;
     }
+
+    public static function properText($text){
+        $text = mb_convert_encoding($text, "HTML-ENTITIES", "UTF-8");
+        $text = preg_replace('~^(&([a-zA-Z0-9]);)~',htmlentities('${1}'),$text);
+        return($text);
+    }
+
 }

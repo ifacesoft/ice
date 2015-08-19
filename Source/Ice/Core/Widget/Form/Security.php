@@ -3,6 +3,7 @@
 namespace Ice\Core;
 
 use Ice\Helper\Date;
+use Ice\Helper\String;
 
 abstract class Widget_Form_Security extends Widget_Form
 {
@@ -120,43 +121,41 @@ abstract class Widget_Form_Security extends Widget_Form
     /**
      * Sing up by account
      *
-     * @param $accountModelClass
+     * @param Security_Account|Model $accountModelClass
      * @param array $accountData
-     * @param array $user user defaults
+     * @param array $userData user defaults
      * @param Data_Source|string|null $dataSource
      *
      * @return Model|Security_Account
      */
-    protected function signUp($accountModelClass, array $accountData, array $user = [], $dataSource = null)
+    protected function signUp($accountModelClass, array $accountData, array $userData = [], $dataSource = null)
     {
+        if ($this->confirm) {
+            $accountData = $this->sendConfirm($accountData);
+
+            if ($this->confirmRequired) {
+                $accountData['/expired'] = '0000-00-00';
+                $userData['/active'] = 0;
+            } else {
+                $accountData['/expired'] = $this->getConfirmationExpired();
+                $userData['/active'] = 1;
+            }
+        } else {
+            $accountData['/expired'] = $this->getExpired();
+            $userData['/active'] = 1;
+        }
+
         /** @var Data_Source $dataSource */
         $dataSource = Data_Source::getInstance($dataSource);
 
         try {
             $dataSource->beginTransaction();
 
-            $account = $accountModelClass::create($accountData)->save();
-
-            if ($this->confirm) {
-                $account->set($this->sendConfirm());
-
-                if ($this->confirmRequired) {
-                    $account->set(['/expired' => '0000-00-00']);
-                    $user['/active'] = 0;
-                } else {
-                    $account->set(['/expired' => Date::get(strtotime($this->confirmExpired))]);
-                    $user['/active'] = 1;
-                }
-            } else {
-                $account->set(['/expired' => Date::get(strtotime($this->expired))]);
-                $user['/active'] = 1;
-            }
-
+            /** @var Security_User|Model $userModelClass */
             $userModelClass = Config::getInstance(Security::getClass())->get('userModelClass');
 
-            $account = $account->set([
-                'user' => $userModelClass::create($user)->save()
-            ])->save();
+            $accountData['user'] = $userModelClass::create($userData)->save();
+            $account = $accountModelClass::create($accountData)->save();
 
             $dataSource->commitTransaction();
 
@@ -179,12 +178,16 @@ abstract class Widget_Form_Security extends Widget_Form
     /**
      * Return confirm token and confirm token expired
      *
+     * @param array $accountData
      * @return array
+     * @throws Exception
      */
-    public function sendConfirm()
+    public function sendConfirm(array $accountData)
     {
-        return Logger::getInstance('Ice\App')
-            ->exception(['Implement {$0} for {$1}', [__FUNCTION__, get_class($this)]], __FILE__, __LINE__);
+        $accountData['confirmation_token'] =  md5(String::getRandomString());
+        $accountData['confirmation_expired'] = $this->getConfirmationExpired();
+
+        return $accountData;
     }
 
     /**
@@ -237,5 +240,15 @@ abstract class Widget_Form_Security extends Widget_Form
     public function setConfirmRequired($confirmRequired)
     {
         $this->confirmRequired = $confirmRequired;
+    }
+
+    protected function getConfirmationExpired()
+    {
+        return Date::get(strtotime($this->confirmExpired));
+    }
+
+    protected function getExpired()
+    {
+        return Date::get(strtotime($this->expired));
     }
 }

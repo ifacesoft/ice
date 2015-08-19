@@ -4,7 +4,8 @@ namespace Ice\Core;
 
 abstract class Message_Transport extends Container
 {
-    private static $defaultClassKey = 'Ice\Message\Transport\PHPMailer/smtp';
+    private static $defaultClassKey = 'Ice\Message\Transport\PHPMailer/default';
+    private static $defaultKey = 'default';
 
     /**
      * @param string $key
@@ -26,6 +27,11 @@ abstract class Message_Transport extends Container
     protected static function getDefaultClassKey()
     {
         return Message_Transport::$defaultClassKey;
+    }
+
+    protected static function getDefaultKey()
+    {
+        return Message_Transport::$defaultKey;
     }
 
     abstract public function send(Message $message);
