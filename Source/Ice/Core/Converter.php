@@ -23,7 +23,7 @@ use Ice\Core;
  */
 abstract class Converter extends Container
 {
-    use Core;
+    use Stored;
 
     public static function getInstance($key = null, $ttl = null)
     {

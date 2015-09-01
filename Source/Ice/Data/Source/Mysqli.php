@@ -51,7 +51,7 @@ class Mysqli extends Data_Source
     const TRANSACTION_SERIALIZABLE = 'SERIALIZABLE';
 
 
-    private $savePointLevel = null;
+    protected $savePointLevel = null;
 
     /**
      * Execute query select to data source

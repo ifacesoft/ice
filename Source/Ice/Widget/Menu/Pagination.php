@@ -9,7 +9,7 @@ use Ice\Core\Widget_Menu;
 class Pagination extends Widget_Menu
 {
     protected $foundRows = 0;
-    private $isShort = false;
+    protected $isShort = false;
 
     protected static function config()
     {
