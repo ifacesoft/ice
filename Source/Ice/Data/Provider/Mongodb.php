@@ -222,6 +222,5 @@ class Mongodb extends Data_Provider
      */
     protected function close(&$connection)
     {
-        // TODO: Implement close() method.
     }
 }
