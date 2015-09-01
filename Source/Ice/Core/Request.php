@@ -134,14 +134,15 @@ class Request
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 1.1
      * @since   0.0
      */
     public static function host()
     {
         if (!isset($_SERVER['HTTP_HOST'])) {
-            $_SERVER['HTTP_HOST'] = 'localhost';
-            $_SERVER['SERVER_NAME'] = 'localhost';
+
+            $_SERVER['HTTP_HOST'] = gethostname();
+            $_SERVER['SERVER_NAME'] = gethostname();
         }
 
         return $_SERVER['HTTP_HOST'];

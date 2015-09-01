@@ -195,10 +195,8 @@ class Mongodb extends Data_Provider
 
         try {
             $connection = new \MongoClient('mongodb://' . $options['host'] . ':' . $options['port']);
-        } catch (\MongoConnectionException $e) {
-//            Mongodb::getLogger()->exception('mongodb - ' . $e->getMessage(), __FILE__, __LINE__, $e);
-            Mongodb::getLogger()
-                ->info(['mongodb - #' . $e->getCode() . ': {$0}', $e->getMessage()], Logger::WARNING);
+        } catch (\Exception $e) {
+            Mongodb::getLogger()->info(['mongodb - #' . $e->getCode() . ': {$0}', $e->getMessage()], Logger::WARNING);
             return false;
         }
 

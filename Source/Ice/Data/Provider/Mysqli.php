@@ -13,6 +13,7 @@ use Ice\Core\Data_Provider;
 use Ice\Core\Debuger;
 use Ice\Core\Exception;
 use Ice\Core\Logger;
+use Ice\Exception\Error;
 
 /**
  * Class Mysqli
@@ -286,23 +287,26 @@ class Mysqli extends Data_Provider
 
         $connection = mysqli_init();
 
-        $isConnected = $connection->real_connect(
-            $options['host'],
-            $options['username'],
-            $options['password'],
-            null,
-            $options['port']
-        );
+        $isConnected = false;
 
-        if (!$isConnected) {
-//            Mysqli::getLogger()->exception(
-//                ['mysql - #' . $connection->errno . ': {$0}', $connection->error],
-//                __FILE__,
-//                __LINE__
-//            );
-            Mysqli::getLogger()
-                ->info(['mysql - #' . $connection->errno . ': {$0}', $connection->error], Logger::WARNING);
-            return false;
+        try {
+            $isConnected = $connection->real_connect(
+                $options['host'],
+                $options['username'],
+                $options['password'],
+                null,
+                $options['port']
+            );
+
+            if (!$isConnected) {
+                throw new Error('Connect failed');
+            }
+        } catch (\Exception $e) {
+            Mysqli::getLogger()->info(
+                    ['mysql - #' . $connection->errno . ': {$0}', $connection->error . ' - ' . $e->getMessage()],
+                    Logger::WARNING
+                );
+            return $isConnected;
         }
 
         $connection->set_charset($options['charset']);
