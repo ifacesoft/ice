@@ -302,8 +302,13 @@ class Mysqli extends Data_Provider
                 throw new Error('Connect failed');
             }
         } catch (\Exception $e) {
-            Mysqli::getLogger()->info(
-                    ['mysql - #' . $connection->errno . ': {$0}', $connection->error . ' - ' . $e->getMessage()],
+            Mysqli::getLogger()
+                ->info(
+                    [
+                        'mysql - #' . $connection->errno . ': {$0}',
+                        $connection->error . ' - ' . $e->getMessage() .
+                        ' (' . $options['username'] . '@' . $options['host'] . ':' . $options['port'] . ')'
+                    ],
                     Logger::WARNING
                 );
             return $isConnected;
