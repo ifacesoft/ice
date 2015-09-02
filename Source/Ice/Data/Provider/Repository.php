@@ -104,7 +104,7 @@ class Repository extends Data_Provider
      * @version 0.0
      * @since   0.0
      */
-    public function set($key, $value = null, $ttl = 0)
+    public function set($key, $value = null, $ttl = null)
     {
         return $this->getConnection()->set($key, $value, $ttl);
     }

@@ -84,11 +84,17 @@ class Date
         return Date::strftime('%A', $time, 'ru_RU.UTF-8');
     }
 
-    private static function strftime($format, $time, $locale) {
+    private static function strftime($format, $time, $locale)
+    {
         $defaultLocale = setlocale(LC_TIME, 0);
         setlocale(LC_TIME, $locale);
         $time = strftime($format, $time);
         setlocale(LC_TIME, $defaultLocale);
         return $time;
+    }
+
+    public static function expired($time, $ttl)
+    {
+        return time() - $time > $ttl;
     }
 }

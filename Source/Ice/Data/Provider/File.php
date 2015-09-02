@@ -14,6 +14,7 @@ use Ice\Core\Debuger;
 use Ice\Core\Exception;
 use Ice\Core\Loader;
 use Ice\Core\Module;
+use Ice\Helper\Date;
 use Ice\Helper\Directory;
 use Ice\Helper\File as Helper_File;
 use Ice\Helper\Hash;
@@ -134,7 +135,7 @@ class File extends Data_Provider
 
         list($ttl, $hash, $value) = Helper_File::loadData($fileName);
 
-        if (time() - filemtime($fileName) > $ttl) {
+        if (Date::expired(filemtime($fileName), $ttl)) {
             return null;
         }
 
@@ -164,7 +165,7 @@ class File extends Data_Provider
      *
      * @param  string $key
      * @param  $value
-     * @param  null $ttl
+     * @param  null|int $ttl
      * @return mixed setted value
      *
      * @author dp <denis.a.shestakov@gmail.com>
