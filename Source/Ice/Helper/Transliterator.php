@@ -38,7 +38,7 @@ class Transliterator
      */
     public static function transliterate($string)
     {
-        $string = transliterator_transliterate(
+        $string = \transliterator_transliterate(
             "Any-Latin; NFD; [:Nonspacing Mark:] Remove; NFC; [:Punctuation:] Remove; Lower();",
             $string
         );
