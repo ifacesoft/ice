@@ -519,10 +519,6 @@ class Logger
     {
         $value = str_replace(["\n", "\t"], ' ', $value);
 
-        if (Environment::getInstance()->isProduction()) {
-            return;
-        }
-
         $logFile = Directory::get(Module::getInstance()->get('logDir')) . date('Y-m-d') . '/LOG/' . urlencode(Request::uri()) . '.log';
 
         if (strlen($logFile) > 255) {
@@ -531,6 +527,10 @@ class Logger
         }
 
         File::createData($logFile, $label . ': ' . $value . "\n", false, FILE_APPEND);
+
+        if (Environment::getInstance()->isProduction()) {
+            return;
+        }
 
         if (Request::isCli()) {
             $colors = [

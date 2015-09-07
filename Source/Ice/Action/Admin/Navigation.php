@@ -8,6 +8,7 @@ use Ice\Core\Request;
 use Ice\Core\Route;
 use Ice\Helper\String;
 use Ice\Widget\Menu\Navbar;
+use Ice\Core\Resource as Core_Resource;
 
 class Admin_Navigation extends Action
 {
@@ -66,7 +67,7 @@ class Admin_Navigation extends Action
         foreach ($input['items'] as $item) {
             $navbarMenu->link(
                 $item['routeName'],
-                Resource::create(Route::getClass())->get($item['routeName']),
+                Core_Resource::create(Route::getClass())->get($item['routeName']),
                 [
                     'active' => String::startsWith($currentUrl, Route::getInstance($item['routeName'])->getUrl()),
                     'route' => $item['routeName']
