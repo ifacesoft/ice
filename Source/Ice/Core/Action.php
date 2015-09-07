@@ -15,10 +15,12 @@ use Ice\Data\Provider\File;
 use Ice\Data\Provider\Registry;
 use Ice\Data\Provider\Repository;
 
+use Ice\Exception\Access_Denied;
 use Ice\Exception\Http_Bad_Request;
 use Ice\Exception\Http_Not_Found;
 use Ice\Exception\Redirect;
 use Ice\Exception\Security_AccessDenied;
+use Ice\Helper\Access;
 use Ice\Helper\Hash;
 use Ice\Helper\Input;
 use Ice\Helper\Json;
@@ -116,38 +118,19 @@ abstract class Action implements Cacheable
 
         $input = $actionClass::getInput($input);
 
+        $env = isset($input['env'])
+            ? $input['env']
+            : $actionClass::getConfig()->get('access/env', false);
 
-        $env = $actionClass::getConfig()->get('access/env', false);
+        $request = isset($input['request'])
+            ? $input['request']
+            : $actionClass::getConfig()->get('access/request', false);
 
-        if (isset($input['env'])) {
-            $env = $input['env'];
-        }
+        $roles = isset($input['roles'])
+            ? $input['roles']
+            : $actionClass::getConfig()->get('access/roles', false);
 
-        if ($env && $env != Environment::getInstance()->getName()) {
-            return View::create($actionClass);
-        }
-
-        $request = $actionClass::getConfig()->get('access/request', false);
-
-        if (isset($input['request'])) {
-            $request = $input['request'];
-        }
-
-        if ($request) {
-            switch ($request) {
-                case 'cli':
-                    if (!Request::isCli()) {
-                        return View::create($actionClass);
-                    }
-                    break;
-                case 'ajax':
-                    if (!Request::isAjax()) {
-                        return View::create($actionClass);
-                    }
-                    break;
-                default:
-            }
-        }
+        Access::check(['env' => $env, 'roles' => $roles, 'request' => $request]);
 
         if ($actionClass::getConfig()->get('cache/ttl') != -1) {
             $actionCacher = Action::getCacher($actionClass);
@@ -208,8 +191,8 @@ abstract class Action implements Cacheable
                     throw $e;
                 } catch (Http_Not_Found $e) {
                     throw $e;
-                } catch (Security_AccessDenied $e) {
-                    $subView = $e->getMessage();
+                } catch (Access_Denied $e) {
+                    $subView = View::create($actionClass);
                 } catch (\Exception $e) {
                     $subView = Action::getLogger()->error(
                         ['Calling subAction "{$0}" in action "{$1}" failed', [$subActionClass, $actionClass]],
@@ -497,7 +480,7 @@ abstract class Action implements Cacheable
      *          'input' => [],
      *          'output' => [],
      *          'cache' => ['ttl' => -1, 'count' => 1000],
-     *          'access' => ['roles' => [], 'request' => null, 'env' => null]
+     *          'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'Access denied!']
      *      ];
      *  }
      *

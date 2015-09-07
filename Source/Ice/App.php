@@ -19,6 +19,7 @@ use Ice\Core\Route;
 use Ice\Data\Provider\Cli;
 use Ice\Data\Provider\Request as Data_Provider_Request;
 use Ice\Data\Provider\Router;
+use Ice\Exception\Access_Denied;
 use Ice\Exception\Http_Bad_Request;
 use Ice\Exception\Http_Not_Found;
 use Ice\Exception\Redirect;
@@ -49,6 +50,9 @@ class App
             App::getResponse()->setRedirectUrl($e->getRedirectUrl());
         } catch (Http_Bad_Request $e) {
             $httpStatusAction = [['Ice:Http_Status' => 'main', ['code' => 400, 'exception' => $e]]];
+            App::getResponse()->setView(Layout_Main::call(['actions' => $httpStatusAction]));
+        } catch (Access_Denied $e) {
+            $httpStatusAction = [['Ice:Http_Status' => 'main', ['code' => 403, 'exception' => $e]]];
             App::getResponse()->setView(Layout_Main::call(['actions' => $httpStatusAction]));
         } catch (Http_Not_Found $e) {
             $httpStatusAction = [['Ice:Http_Status' => 'main', ['code' => 404, 'exception' => $e]]];

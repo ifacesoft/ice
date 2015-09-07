@@ -65,6 +65,25 @@ class Navbar extends Widget_Menu
                 }
             }
 
+            $part['name'] = isset($part['options']['name']) ? $part['options']['name'] : $partName;
+
+            $params = [];
+
+            if (isset($part['options']['params'])) {
+                foreach ((array)$part['options']['params'] as $key => $param) {
+                    if (is_int($key)) {
+                        $params[$param] = $values[$param];
+                    } else {
+                        $params[$key] = array_key_exists($param, $values) ? $values[$param] : $param;
+                    }
+                }
+            } else {
+                $params = [$part['name'] => isset($values[$part['name']]) ? $values[$part['name']] : null];
+            }
+
+            $part['params'] = $params;
+            $part['dataParams'] = Json::encode($params);
+
             $position = isset($part['options']['position'])
                 ? $part['options']['position']
                 : '';

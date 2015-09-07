@@ -4,6 +4,6 @@ namespace Ice\Exception;
 
 use Ice\Core\Exception;
 
-class Security_AccessDenied extends Exception {
+class Access_Denied extends Exception {
 
 }

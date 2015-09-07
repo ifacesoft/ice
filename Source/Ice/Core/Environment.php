@@ -10,6 +10,7 @@
 namespace Ice\Core;
 
 use Ice\Core;
+use Ice\Exception\Access_Denied_Environment;
 
 /**
  * Class Environment
@@ -87,6 +88,15 @@ class Environment extends Config
     public static function isLoaded()
     {
         return Environment::$instance;
+    }
+
+    public static function checkAccess($environments, $message)
+    {
+        if (!$environments || in_array(Environment::getInstance()->getName(), (array) $environments)) {
+            return;
+        }
+
+        throw new Access_Denied_Environment($message);
     }
 
     /**

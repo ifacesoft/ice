@@ -13,22 +13,22 @@ abstract class Widget_Menu extends Widget
 
     protected $defaultOptions = [];
 
-    public function link($name, $title, array $options = [], $template = 'Ice\Core\Widget_Menu_Link')
+    public function link($name, $title, array $options = [], $template = 'Link')
     {
         return $this->addPart($name, $title, $options, $template, Widget_Menu::ITEM_LINK);
     }
 
-    public function collapse($name, $title, array $options = [], $template = 'Ice\Core\Widget_Menu_Collapse')
+    public function collapse($name, $title, array $options = [], $template = 'Collapse')
     {
         return $this->addPart($name, $title, $options, $template, Widget_Menu::ITEM_COLLAPSE);
     }
 
-    public function button($name, $title, array $options = [], $template = 'Ice\Core\Widget_Menu_Button')
+    public function button($name, $title, array $options = [], $template = 'Button')
     {
         return $this->addPart($name, $title, $options, $template, Widget_Menu::ITEM_BUTTON);
     }
 
-    public function dropdown($name, $title, array $options = [], $template = 'Ice\Core\Widget_Menu_Dropdown')
+    public function dropdown($name, $title, array $options = [], $template = 'Dropdown')
     {
         return $this->addPart($name, $title, $options, $template, Widget_Menu::ITEM_DROPDOWN);
     }

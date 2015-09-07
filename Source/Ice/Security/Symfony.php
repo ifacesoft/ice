@@ -27,26 +27,26 @@ class Symfony extends Ice
     /**
      * Check access by roles
      *
-     * @param array $access
+     * @param array $roles
      * @return bool
      */
-    public function check(array $access)
+    public function check(array $roles)
     {
         $denied = false;
 
-        if (isset($access['roles'])) {
+        if (isset($roles)) {
             $denied = true;
 
             $securityAuthorizationChecker = $this->getKernel()->getContainer()->get('security.authorization_checker');
 
-            foreach ((array)$access['roles'] as $role) {
+            foreach ((array)$roles as $role) {
                 if (true === $securityAuthorizationChecker->isGranted($role)) {
                     $denied = false;
                 }
             }
         }
 
-        return !$denied || parent::check($access);
+        return !$denied || parent::check($roles);
     }
 
     /**

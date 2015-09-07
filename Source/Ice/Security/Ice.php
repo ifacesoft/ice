@@ -20,10 +20,10 @@ class Ice extends Security
     /**
      * Check access by roles
      *
-     * @param array $access
+     * @param array $roles
      * @return bool
      */
-    public function check(array $access)
+    public function check(array $roles)
     {
         return false;
     }

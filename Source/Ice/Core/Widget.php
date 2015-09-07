@@ -7,6 +7,7 @@ use Ice\Data\Provider\Router as Data_Provider_Router;
 use Ice\Data\Provider\Request as Data_Provider_Request;
 use Ice\Data\Provider\Session as Data_Provider_Session;
 use Ice\Exception\Error;
+use Ice\Helper\Access;
 use Ice\Helper\Arrays;
 use Ice\Helper\Emmet;
 use Ice\Helper\Input;
@@ -360,10 +361,8 @@ abstract class Widget
         $values = $this->getValues();
 
         foreach ($this->getParts() as $partName => $part) {
-            if (isset($part['options']['access'])) {
-                if (!Security::getInstance()->check($part['options']['access'])) {
-                    continue;
-                }
+            if (isset($part['options']['access']) && !Access::check($part['options']['access'])) {
+               continue;
             }
 
             $part['widgetClassName'] = $widgetClassName;

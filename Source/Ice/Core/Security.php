@@ -2,9 +2,20 @@
 
 namespace Ice\Core;
 
+use Ice\Exception\Access_Denied_Security;
+
 abstract class Security extends Container
 {
     private static $defaultClassKey = null;
+
+    public static function checkAccess($roles, $message)
+    {
+        if (!$roles || Security::getInstance()->check((array)$roles)) {
+            return;
+        }
+
+        throw new Access_Denied_Security($message);
+    }
 
     abstract protected function autologin();
 
@@ -77,10 +88,10 @@ abstract class Security extends Container
     /**
      * Check access by roles
      *
-     * @param array $access
+     * @param array $roles
      * @return bool
      */
-    abstract public function check(array $access);
+    abstract public function check(array $roles);
 
 //    public static function checkAccess($roles, $permission)
 //    {

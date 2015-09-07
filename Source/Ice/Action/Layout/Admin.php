@@ -12,10 +12,13 @@ class Layout_Admin extends Layout
             [
                 'actions' => [
                     'Ice:Admin_Navigation',
+                    'Ice:Admin_Menu',
                     'Ice:Resource_Css',
                     'Ice:Resource_Js',
                     'Ice:Resource_Dynamic'
-                ]
+                ],
+                'access' => ['roles' => ['ROLE_ICE_ADMIN']]
+
             ],
             parent::config()
         );

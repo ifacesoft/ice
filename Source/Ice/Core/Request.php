@@ -11,6 +11,7 @@ namespace Ice\Core;
 
 use Ice\Core;
 use Ice\Data\Provider\Request as Data_Provider_Request;
+use Ice\Exception\Access_Denied_Request;
 use Ice\Helper\Http;
 use Locale;
 
@@ -277,5 +278,19 @@ class Request
     public static function isOptions()
     {
         return isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] == 'OPTIONS';
+    }
+
+    public static function checkAccess($requests, $message)
+    {
+        if (
+            !$requests ||
+            (Request::isCli() && in_array('cli', (array)$requests)) ||
+            (Request::isAjax() && in_array('ajax', (array)$requests)) ||
+            in_array('http', (array)$requests)
+        ) {
+            return;
+        }
+
+        throw new Access_Denied_Request($message);
     }
 }
