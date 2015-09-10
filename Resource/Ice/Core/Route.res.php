@@ -39,4 +39,16 @@ return [
         'en' => 'Route {$0} not found',
         'ru' => 'Маршрут {$0} не найдена',
     ],
+    'ice_admin_dashboard' => [
+        'en' => 'Dashboard',
+        'ru' => 'Панель администрирования',
+    ],
+    'ice_private' => [
+        'en' => 'Private office',
+        'ru' => 'Личный кабинет',
+    ],
+    'ice_private_profile' => [
+        'en' => 'Profile',
+        'ru' => 'Профиль',
+    ],
 ];
