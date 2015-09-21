@@ -51,4 +51,16 @@ return [
         'en' => 'Profile',
         'ru' => 'Профиль',
     ],
+    'ice_security_logout' => [
+        'en' => 'ice_security_logout',
+        'ru' => 'Выйти',
+    ],
+    'ice_admin_database_dashboard' => [
+        'en' => 'ice_admin_database_dashboard',
+        'ru' => 'Административная панель',
+    ],
+    'ice_admin' => [
+        'en' => 'ice_admin',
+        'ru' => 'Администрирование',
+    ],
 ];
