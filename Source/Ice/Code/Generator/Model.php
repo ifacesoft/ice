@@ -19,7 +19,7 @@ use Ice\Helper\Arrays;
 use Ice\Helper\File;
 use Ice\Helper\Object;
 use Ice\Helper\Php as Helper_Php;
-use Ice\View\Render\Php;
+use Ice\Render\Php;
 
 /**
  * Class Model

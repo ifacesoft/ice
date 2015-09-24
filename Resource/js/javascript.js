@@ -7,15 +7,17 @@ var Ice = {
     _callbacks: {},
     _lastback: 0,
 
-    call: function (action, data, callback, url, method) {
+    call: function (actionClass, data, callback, url, method) {
         $('#icePreloader').show();
 
         var back = this._lastback++;
 
         Ice._callbacks [back] = callback;
 
-        data.call = action;
+        data.actionClass = actionClass;
         data.back = back;
+
+        var result;
 
         $.ajax({
             type: method ? method : 'POST',
@@ -41,17 +43,24 @@ var Ice = {
                 callback(result);
                 $('#icePreloader').hide();
             },
-            error: function (result) {
-                console.error(result);
+            error: function (data) {
+                if (data.responseJSON) {
+                    result = data.responseJSON;
+                    if (result.error) {
+                        console.error(result.error)
+                        Ice.notify($('#iceMessages'), result.error, 5000);
+                    }
+                }
+
                 $('#icePreloader').hide();
             },
             dataType: 'json'
         });
     },
 
-    reRenderClosest: function ($element, actionClassName, actionParams, callback, container) {
+    reRenderClosest: function ($element, actionClass, actionParams, callback, container) {
         Ice.call(
-            actionClassName,
+            actionClass,
             actionParams,
             function (result) {
                 if (result.actionName) {
@@ -81,16 +90,16 @@ var Ice = {
         );
     },
 
-    reRender: function ($tagetBlock, action, actionParams, callback, url, method) {
+    reRender: function (viewClass, actionClass, actionParams, callback, url, method) {
         Ice.call(
-            action,
+            actionClass,
             actionParams,
             function (result) {
                 if (result.data.error) {
-                    $tagetBlock.find('.ice-message').html(result.data.error)
+                    viewClass.find('.ice-message').html(result.data.error)
                 } else {
                     if (result.data.success) {
-                        $tagetBlock.find('.ice-message').html(result.data.success)
+                        viewClass.find('.ice-message').html(result.data.success)
                     }
 
                     setTimeout(
@@ -98,8 +107,8 @@ var Ice = {
                             if (result.data.redirect) {
                                 location.href = result.data.redirect;
                             } else {
-                                if (result.content) {
-                                    $tagetBlock.replaceWith(result.content);
+                                if (result.data.content) {
+                                    viewClass.replaceWith(result.data.content);
                                 }
 
                                 if (callback) {

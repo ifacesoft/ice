@@ -9,15 +9,13 @@
 
 namespace Ice\Helper;
 
-use Ice\Core\Debuger;
 use Ice\Core\Exception;
 use Ice\Core\Logger as Core_Logger;
 use Ice\Core\Module;
 use Ice\Core\Request as Core_Request;
 use Ice\Core\Request;
-use Ice\Core\View_Render;
-use Ice\Model\Log_Error;
-use Ice\View\Render\Php as View_Render_Php;
+use Ice\Core\Render;
+use Ice\Render\Php as View_Render_Php;
 
 /**
  * Class Logger
@@ -98,7 +96,7 @@ class Logger
             'host' => Core_Request::host(),
             'uri' => Core_Request::uri(),
             'referer' => Core_Request::referer(),
-            'lastTemplate' => View_Render::getLastTemplate(),
+            'lastTemplate' => Render::getLastTemplate(),
             'message' => Core_Logger::$errorCodes[$exception->getCode()] . ': ' . $exception->getMessage(),
             'errPoint' => $exception->getFile() . ':' . $exception->getLine(),
             'errcontext' => $errcontext,

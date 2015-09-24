@@ -218,7 +218,7 @@ abstract class Container
      */
     protected static function create($key)
     {
-        Resource::getLogger()->exception(
+        return Resource::getLogger()->exception(
             ['Implementation {$0} is required for {$1}', [__FUNCTION__, self::getClass()]],
             __FILE__,
             __LINE__,

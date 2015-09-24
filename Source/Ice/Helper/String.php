@@ -143,10 +143,15 @@ class String
         return $randomString;
     }
 
-    public static function properText($text){
+    public static function properText($text)
+    {
         $text = mb_convert_encoding($text, "HTML-ENTITIES", "UTF-8");
-        $text = preg_replace('~^(&([a-zA-Z0-9]);)~',htmlentities('${1}'),$text);
-        return($text);
+        $text = preg_replace('~^(&([a-zA-Z0-9]);)~', htmlentities('${1}'), $text);
+        return ($text);
     }
 
+    public static function truncate($string, $length = 100, $append = "&hellip;")
+    {
+        return mb_strimwidth($string, 0, $length, $append);
+    }
 }

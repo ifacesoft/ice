@@ -1,4 +1,4 @@
-<tr<?php if (!empty($headerStyle)) : ?> style="<?= $headerStyle ?>"<?php endif; ?>>
+<tr>
     <?php if ($isShowCount) : ?><th rowspan="<?= ceil(count($columns) / $columnCount) ?>">#</th><?php endif; ?>
     <?php
     $count = 0;
@@ -22,9 +22,11 @@
         <?php if (isset($column['options']['sortable']) && $column['options']['sortable'] === true) : ?>
             <a href="<?= $column['href'] ?>" onclick='<?= $column['onclick'] ?>'
                data-url='<?= $column['dataUrl'] ?>'
-               data-json='<?= $column['dataJson'] ?>'
                data-action='<?= $column['dataAction'] ?>'
-               data-block='<?= $column['dataBlock'] ?>'
+               data-view='<?= $column['dataView'] ?>'
+               data-widget='<?= $dataWidget ?>'
+               data-token="<?= $dataToken ?>"
+               data-for="<?= $dataFor ?>"
                data-name='<?= $column['name'] ?>'
                data-params='<?= $column['dataParams'] ?>'
                class="btn btn-default btn-sm<?php if ($column['dataValue']) : ?> active<?php endif; ?>">

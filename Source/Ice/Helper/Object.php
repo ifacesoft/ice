@@ -13,6 +13,7 @@ use Ice\Core;
 use Ice\Core\Loader;
 use Ice\Core\Logger as Core_Logger;
 use Ice\Core\Module;
+use ReflectionClass;
 
 /**
  * Class object
@@ -59,6 +60,7 @@ class Object
     public static function getClass($baseClass, $class)
     {
         if ($baseClass == $class) {
+//            return $class;
             Core_Logger::getInstance()->exception(['Base class and class {$0} are equal', $class], __FILE__, __LINE__);
         }
 
@@ -101,6 +103,10 @@ class Object
      */
     public static function getClassName($class)
     {
+//        $reflect = new ReflectionClass($class);
+//
+//        return $reflect->getShortName();
+
         if (!strpos(ltrim($class, '\\'), '\\')) {
             return $class;
         }

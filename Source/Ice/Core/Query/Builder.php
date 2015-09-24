@@ -863,10 +863,8 @@ class Query_Builder
                 $this->sqlParts[self::PART_JOIN]
             );
 
-            foreach ($joins as $joinTableAlias => $join) {
-                if ($this->addJoin($joinType, $modelClass, $tableAlias, $join['class'], $joinTableAlias)) {
-                    return $this;
-                }
+            if ($this->addJoin($joinType, $modelClass, $tableAlias, $joins)) {
+                return $this;
             }
         }
 
@@ -908,94 +906,111 @@ class Query_Builder
      * @param $joinType
      * @param Model $modelClass
      * @param $tableAlias
-     * @param Model $joinModelClass
-     * @param $joinTableAlias
+     * @param array $joins
      * @return bool
      */
-    private function addJoin($joinType, $modelClass, $tableAlias, $joinModelClass, $joinTableAlias)
+    private function addJoin($joinType, $modelClass, $tableAlias, array $joins)
     {
         if (isset($this->sqlParts[self::PART_JOIN][$tableAlias])) {
-            return false;
+            return false; // todo: may be exception?
         }
 
-        $joinModelScheme = $joinModelClass::getScheme();
+        foreach ($joins as $joinTableAlias => $join) {
+            $joinModelScheme = $join['class']::getScheme();
 
-        $oneToMany = $joinModelScheme->gets('relations/' . Model_Scheme::ONE_TO_MANY);
+            $oneToMany = $joinModelScheme->gets('relations/' . Model_Scheme::ONE_TO_MANY);
 
-        if (isset($oneToMany[$modelClass])) {
-            $this->sqlParts[self::PART_JOIN][$tableAlias] = [
-                'type' => $joinType,
-                'class' => $modelClass,
-                'on' => $joinTableAlias . '.' . $oneToMany[$modelClass] . ' = ' .
-                    $tableAlias . '.' . $modelClass::getPkColumnName()
-            ];
+            if (isset($oneToMany[$modelClass])) {
+                $this->sqlParts[self::PART_JOIN][$tableAlias] = [
+                    'type' => $joinType,
+                    'class' => $modelClass,
+                    'on' => $joinTableAlias . '.' . $oneToMany[$modelClass] . ' = ' .
+                        $tableAlias . '.' . $modelClass::getPkColumnName()
+                ];
 
-            return true;
+                return true;
+            }
         }
 
-        $manyToOne = $joinModelScheme->gets('relations/' . Model_Scheme::MANY_TO_ONE);
+        foreach ($joins as $joinTableAlias => $join) {
+            $joinModelScheme = $join['class']::getScheme();
 
-        if (isset($manyToOne[$modelClass])) {
-            $this->sqlParts[self::PART_JOIN][$tableAlias] = [
-                'type' => $joinType,
-                'class' => $modelClass,
-                'on' => $tableAlias . '.' . $manyToOne[$modelClass] . ' = ' .
-                    $joinTableAlias . '.' . $joinModelClass::getPkColumnName()
-            ];
+            $manyToOne = $joinModelScheme->gets('relations/' . Model_Scheme::MANY_TO_ONE);
 
-            return true;
+            if (isset($manyToOne[$modelClass])) {
+                $this->sqlParts[self::PART_JOIN][$tableAlias] = [
+                    'type' => $joinType,
+                    'class' => $modelClass,
+                    'on' => $tableAlias . '.' . $manyToOne[$modelClass] . ' = ' .
+                        $joinTableAlias . '.' . $join['class']::getPkColumnName()
+                ];
+
+                return true;
+            }
         }
 
-        $manyToMany = $joinModelScheme->gets('relations/' . Model_Scheme::MANY_TO_MANY);
+        foreach ($joins as $joinTableAlias => $join) {
+            $joinModelScheme = $join['class']::getScheme();
 
-        if (isset($manyToMany[$modelClass])) {
-            return $this->addJoin(
-                $joinType,
-                $manyToMany[$modelClass],
-                Object::getClassName($manyToMany[$modelClass]),
-                $joinModelClass,
-                $joinTableAlias
-            ) && $this->addJoin(
-                Query_Builder::SQL_CLAUSE_INNER_JOIN,
-                $modelClass,
-                $tableAlias,
-                $manyToMany[$modelClass],
-                Object::getClassName($manyToMany[$modelClass])
-            );
+            $manyToMany = $joinModelScheme->gets('relations/' . Model_Scheme::MANY_TO_MANY);
+
+            if (isset($manyToMany[$modelClass])) {
+                return $this->addJoin(
+                    $joinType,
+                    $manyToMany[$modelClass],
+                    Object::getClassName($manyToMany[$modelClass]),
+                    [$joinTableAlias => $join]
+                ) && $this->addJoin(
+                    Query_Builder::SQL_CLAUSE_INNER_JOIN,
+                    $modelClass,
+                    $tableAlias,
+                    [Object::getClassName($manyToMany[$modelClass]) => $manyToMany[$modelClass]]
+                );
+            }
         }
 
-        $joinFieldNames = $joinModelClass::getScheme()->getFieldColumnMap();
+        foreach ($joins as $joinTableAlias => $join) {
+            $joinModelScheme = $join['class']::getScheme();
 
-        $joinModelName = Object::getClassName($joinModelClass);
+            $joinFieldNames = $joinModelScheme->getFieldColumnMap();
 
-        $joinModelNameFk = strtolower($joinModelName . '__fk');
-        $joinModelNamePk = strtolower($joinModelName) . '_pk';
+            $joinModelName = Object::getClassName($join['class']);
 
-        if (in_array($joinModelNameFk, $modelClass::getScheme()->getFieldNames())) {
-            $this->sqlParts[self::PART_JOIN][$tableAlias] = [
-                'type' => $joinType,
-                'class' => $modelClass,
-                'on' => $tableAlias . '.' . $modelClass::getScheme()->getFieldColumnMap()[$joinModelNameFk] . ' = ' .
-                    $joinTableAlias . '.' . $joinFieldNames[$joinModelNamePk]
-            ];
+            $joinModelNameFk = strtolower($joinModelName . '__fk');
+            $joinModelNamePk = strtolower($joinModelName) . '_pk';
 
-            return true;
+            if (in_array($joinModelNameFk, $modelClass::getScheme()->getFieldNames())) {
+                $this->sqlParts[self::PART_JOIN][$tableAlias] = [
+                    'type' => $joinType,
+                    'class' => $modelClass,
+                    'on' => $tableAlias . '.' . $modelClass::getScheme()->getFieldColumnMap()[$joinModelNameFk] . ' = ' .
+                        $joinTableAlias . '.' . $joinFieldNames[$joinModelNamePk]
+                ];
+
+                return true;
+            }
         }
 
-        $modelName = Object::getClassName($modelClass);
+        foreach ($joins as $joinTableAlias => $join) {
+            $joinModelScheme = $join['class']::getScheme();
 
-        $modelNameFk = strtolower($modelName . '__fk');
-        $modelNamePk = strtolower($modelName) . '_pk';
+            $joinFieldNames = $joinModelScheme->getFieldColumnMap();
 
-        if (in_array($modelNameFk, $joinModelScheme->getFieldNames())) {
-            $this->sqlParts[self::PART_JOIN][$tableAlias] = [
-                'type' => $joinType,
-                'class' => $modelClass,
-                'on' => $tableAlias . '.' . $modelClass::getScheme()->getFieldColumnMap()[$modelNamePk] . ' = ' .
-                    $joinTableAlias . '.' . $joinFieldNames[$modelNameFk]
-            ];
+            $modelName = Object::getClassName($modelClass);
 
-            return true;
+            $modelNameFk = strtolower($modelName . '__fk');
+            $modelNamePk = strtolower($modelName) . '_pk';
+
+            if (in_array($modelNameFk, $joinModelScheme->getFieldNames())) {
+                $this->sqlParts[self::PART_JOIN][$tableAlias] = [
+                    'type' => $joinType,
+                    'class' => $modelClass,
+                    'on' => $tableAlias . '.' . $modelClass::getScheme()->getFieldColumnMap()[$modelNamePk] . ' = ' .
+                        $joinTableAlias . '.' . $joinFieldNames[$modelNameFk]
+                ];
+
+                return true;
+            }
         }
 
         return false;
@@ -1725,10 +1740,22 @@ class Query_Builder
         return $this->addTrigger('beforeDelete', $method, $params);
     }
 
-    public function attachWidget($name, Widget $widget)
+    /**
+     * @param $widgets
+     * @return Query_Builder
+     */
+    public function attachWidgets($widgets)
     {
-        $widget->queryBuilderPart($this);
-        $this->widgets[$name] = $widget;
+        if (!is_array($widgets)) {
+            $widgets->queryBuilderPart($this);
+            $this->widgets[] = $widgets;
+            return $this;
+        }
+
+        foreach ($widgets as $widget) {
+            $widget->queryBuilderPart($this);
+            $this->widgets[] = $widget;
+        }
 
         return $this;
     }

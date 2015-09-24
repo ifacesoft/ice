@@ -59,7 +59,9 @@ class Environment extends Config
 
         $host = Request::host();
 
-        foreach (Environment::getConfig(null, true, -1)->gets('environments') as $hostPattern => $name) {
+        $config = Config::getInstance(__CLASS__, null, true);
+
+        foreach ($config->gets('environments') as $hostPattern => $name) {
             $matches = [];
             preg_match($hostPattern, $host, $matches);
 
@@ -71,12 +73,12 @@ class Environment extends Config
 
         $environment = [];
 
-        foreach (Environment::getConfig()->gets() as $name => $config) {
+        foreach ($config->gets() as $name => $env) {
             if ($name == 'environments') {
                 continue;
             }
 
-            $environment = array_merge_recursive($config, $environment);
+            $environment = array_merge_recursive($env, $environment);
             if ($name == $environmentName) {
                 break;
             }

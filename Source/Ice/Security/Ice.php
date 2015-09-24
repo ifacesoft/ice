@@ -25,7 +25,7 @@ class Ice extends Security
      */
     public function check(array $roles)
     {
-        return false;
+        return array_intersect($roles, $this->getRoles());
     }
 
     /**

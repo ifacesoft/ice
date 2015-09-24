@@ -2,7 +2,9 @@
 
 namespace Ice\Helper;
 
+use Ice\Core\Debuger;
 use Ice\Core\Logger;
+use Symfony\Component\Debug\Debug;
 
 class Config
 {
@@ -24,9 +26,19 @@ class Config
             return $config;
         }
 
-        $params = Config::isSetKey($config, $key);
+        try {
+            $params = $config;
 
-        if ($params === false) {
+            foreach (explode('/', $key) as $keyPart) {
+                if (!array_key_exists($keyPart, $params)) {
+                    throw new \Exception('Param ' . $key . ' not found');
+                }
+
+                $params = $params[$keyPart];
+            }
+
+            return (array) $params;
+        } catch (\Exception $e) {
             if ($isRequired) {
                 Logger::getInstance(__CLASS__)->exception(
                     ['Could not found required param {$0}', $key],
@@ -39,34 +51,6 @@ class Config
 
             return [];
         }
-
-        return (array)$params;
-    }
-
-    /**
-     * Check is set key in config
-     *
-     * @param  array $config
-     * @param  $key
-     * @return array|bool
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since   0.4
-     */
-    private static function isSetKey(array $config, $key)
-    {
-        $params = $config;
-
-        foreach (explode('/', $key) as $keyPart) {
-            if (!array_key_exists($keyPart, $params)) {
-                return false;
-            }
-
-            $params = $params[$keyPart];
-        }
-
-        return $params;
     }
 
     /**

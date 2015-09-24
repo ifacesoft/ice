@@ -32,12 +32,4 @@ abstract class Widget_Menu extends Widget
     {
         return $this->addPart($name, $title, $options, $template, Widget_Menu::ITEM_DROPDOWN);
     }
-
-    public function setQueryResult(Query_Result $queryResult)
-    {
-    }
-
-    public function queryBuilderPart(Query_Builder $queryBuilder)
-    {
-    }
 }

@@ -1,19 +1,20 @@
 <?php
 
-namespace Ice\Widget\Form\Security;
+namespace Ice\Widget;
 
 use Ice\Core\Model;
 use Ice\Core\Security_Account;
 use Ice\Core\Widget_Form_Security;
 use Ice\Core\Widget_Form_Security_Login;
+use Ice\Widget\Form;
 use Ice\Widget\Form\Simple;
 
-class EmailPassword_Login extends Widget_Form_Security_Login
+class Form_Security_EmailPassword_Login extends Widget_Form_Security_Login
 {
     protected static function config()
     {
         return [
-            'view' => ['template' => null, 'viewRenderClass' => null, 'layout' => null],
+            'render' => ['template' => true, 'class' => 'Ice:Php', 'layout' => null],
             'input' => [
                 'email' => ['providers' => 'request'],
                 'password' => ['providers' => 'request']
@@ -22,15 +23,15 @@ class EmailPassword_Login extends Widget_Form_Security_Login
         ];
     }
 
-    public static function create($url, $action, $block = null, array $data = [])
+    public static function create()
     {
-        return parent::create($url, $action, $block, $data)
+        return parent::create()
             ->setResource(__CLASS__)
-            ->setTemplate(Simple::class)
+            ->setTemplate(Form::getClass())
             ->text(
                 'email',
-                'Email',
                 [
+                    'label' => 'Email',
                     'required' => true,
                     'placeholder' => 'email_placeholder',
                     'validators' => 'Ice:Email'
@@ -38,14 +39,14 @@ class EmailPassword_Login extends Widget_Form_Security_Login
             )
             ->password(
                 'password',
-                'Password',
                 [
+                    'label' => 'Password',
                     'required' => true,
                     'placeholder' => 'password_placeholder',
                     'validators' => ['Ice:Length_Min' => 5]
                 ]
             )
-            ->button('submit', 'Sign in', ['onclick' => 'POST']);
+            ->button('submit', ['label' => 'Sign in', 'onclick' => 'POST']);
     }
 
     /**
@@ -55,9 +56,14 @@ class EmailPassword_Login extends Widget_Form_Security_Login
      *
      * @version 1.1
      * @since   0.1
+     * @param $token
+     * @return array|null|string
+     * @throws \Ice\Core\Exception
      */
-    public function login()
+    public function action($token)
     {
+        $result = parent::action($token);
+
         /** @var Model $accountModelClass */
         $accountModelClass = $this->getAccountModelClass();
 
@@ -79,7 +85,7 @@ class EmailPassword_Login extends Widget_Form_Security_Login
             ->getSelectQuery(['password', '/expired', 'user__fk'])
             ->getModel();
 
-        return $this->verify($account, $values)
+        $result['account'] = $account && $this->verify($account, $values)
             ? $this->signIn($account)
             : Widget_Form_Security::getLogger()
                 ->exception(
@@ -87,6 +93,8 @@ class EmailPassword_Login extends Widget_Form_Security_Login
                     __FILE__,
                     __LINE__
                 );
+
+        return $result;
     }
 
     /**

@@ -15,10 +15,10 @@ use Ice\Core\Debuger;
 use Ice\Core\Loader;
 use Ice\Core\Logger;
 use Ice\Core\Module;
-use Ice\Core\View;
+use Ice\Core\ViiewOld;
 use Ice\Helper\File;
 use Ice\Helper\Object;
-use Ice\View\Render\Php;
+use Ice\Render\Php;
 
 /**
  * Class Action
@@ -75,7 +75,7 @@ class Action extends Code_Generator
         $data['actionName'] = Object::getClassName($class);
 
         if (!isset($data['defaultViewRenderClass'])) {
-            $data['defaultViewRenderClass'] = Config::getConfig()->get(View::getClass() . '/viewRenderClass');
+            $data['defaultViewRenderClass'] = Config::getInstance(Config::getClass())->get(ViiewOld::getClass() . '/viewRenderClass');
         }
 
         $classString = Php::getInstance()->fetch(__CLASS__, $data);

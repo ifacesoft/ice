@@ -16,7 +16,7 @@ use Ice\Core\Module;
 use Ice\Core\Validator as Core_Validator;
 use Ice\Helper\File;
 use Ice\Helper\Object;
-use Ice\View\Render\Php;
+use Ice\Render\Php;
 
 /**
  * Class Validator

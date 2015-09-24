@@ -3,6 +3,7 @@
 namespace Ice\Helper;
 
 use Ice\Core\Config as Core_Config;
+use Ice\Core\Config;
 use Ice\Core\Request as Core_Request;
 use Ice\Data\Provider\Repository;
 
@@ -82,7 +83,7 @@ class Api_Client_Yandex_Translate
         $yaKey = Core_Config::getInstance(__CLASS__)->get('translateKey');
 
         if (empty($yaKey)) {
-            return Core_Request::getConfig()->get('locale');
+            return Core_Config::getInstance(Core_Request::class)->get('locale');
         }
 
         $url = Api_Client_Yandex_Translate::URL . 'detect?key=' . $yaKey . '&text=' . $text;
@@ -91,7 +92,7 @@ class Api_Client_Yandex_Translate
             return $detect;
         }
 
-        return Core_Request::getConfig()->get('locale');
+        return Core_Config::getInstance(Core_Request::class)->get('locale');
     }
 
     /**
@@ -166,7 +167,7 @@ class Api_Client_Yandex_Translate
     public static function getLocales($locale = null)
     {
         if (!$locale) {
-            $locale = Core_Request::getConfig()->get('locale');
+            $locale = Core_Config::getInstance(Core_Request::class)->get('locale');
         }
 
         $locales = [];
@@ -204,7 +205,7 @@ class Api_Client_Yandex_Translate
             return [];
         }
 
-        $requestLocale = Core_Request::getConfig()->get('locale');
+        $requestLocale = Config::getInstance(Core_Request::getClass())->get('locale');
 
         $url = Api_Client_Yandex_Translate::URL . 'getLangs?key=' . $yaKey . '&ui=' . $requestLocale;
 

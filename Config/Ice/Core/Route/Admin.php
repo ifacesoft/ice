@@ -4,6 +4,7 @@ return [
     'ice_admin' => [
         'route' => '',
         'redirect' => '_dashboard',
+        'parent' => 'ice_main'
     ],
     'ice_admin_dashboard' => [
         'route' => '/dashboard',
@@ -16,7 +17,8 @@ return [
                     ]
                 ]
             ]
-        ]
+        ],
+        'parent' => 'ice_admin'
     ],
     '_Database' => '/database',
 ];

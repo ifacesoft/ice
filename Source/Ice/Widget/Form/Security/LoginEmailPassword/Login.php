@@ -1,11 +1,13 @@
 <?php
-namespace Ice\Widget\Form\Security;
+namespace Ice\Widget;
 
+use Ice\Core\Debuger;
 use Ice\Core\Model;
 use Ice\Core\Security_Account;
 use Ice\Core\Widget_Form_Security_Login;
+use Ice\Widget\Form_Security_LoginPassword_Login;
 
-class LoginEmailPassword_Login extends Widget_Form_Security_Login
+class Form_Security_LoginEmailPassword_Login extends Widget_Form_Security_Login
 {
     private $accountLoginPasswordModelClass = null;
     private $accountEmailPasswordModelClass = null;
@@ -13,7 +15,7 @@ class LoginEmailPassword_Login extends Widget_Form_Security_Login
     protected static function config()
     {
         return [
-            'view' => ['template' => null, 'viewRenderClass' => null, 'layout' => null],
+            'render' => ['template' => true, 'class' => 'Ice:Php', 'layout' => null],
             'input' => [
                 'username' => ['providers' => 'request'],
                 'password' => ['providers' => 'request']
@@ -22,14 +24,23 @@ class LoginEmailPassword_Login extends Widget_Form_Security_Login
         ];
     }
 
-    public static function create($url, $action, $block = null, array $data = [])
+    /**
+     * @return Form_Security_LoginEmailPassword_Login
+     */
+    public static function create()
     {
-        return parent::create($url, $action, $block, $data)
-            ->setResource(__CLASS__)
+        return parent::create();
+    }
+
+    public function init(array $input)
+    {
+        parent::init($input);
+
+        $this
             ->text(
                 'username',
-                'Username',
                 [
+                    'label' => 'Username',
                     'required' => true,
                     'placeholder' => 'username_placeholder',
                     'validators' => ['Ice:Length_Min' => 2, 'Ice:LettersNumbers'],
@@ -39,8 +50,8 @@ class LoginEmailPassword_Login extends Widget_Form_Security_Login
             )
             ->password(
                 'password',
-                'Password',
                 [
+                    'label' => 'Password',
                     'required' => true,
                     'placeholder' => 'password_placeholder',
                     'validators' => ['Ice:Length_Min' => 5],
@@ -48,27 +59,27 @@ class LoginEmailPassword_Login extends Widget_Form_Security_Login
                     'resetFormClass' => true
                 ]
             )
-            ->button('login', 'Sign in', ['classes' => 'button-blue', 'onclick' => 'POST']);
+            ->submit('signin', ['label' => 'Sign in']);
     }
 
-    public function login()
+    public function action($token)
     {
         try {
-            return LoginPassword_Login::create($this->getUrl(), $this->getAction())
+            return $this->createWidget(Form_Security_LoginPassword_Login::getClass())
                 ->setAccountModelClass($this->accountLoginPasswordModelClass)
                 ->bind(['login' => $this->getValue('username')])
-                ->login();
+                ->action($token);
         } catch (\Exception $e) {
-            return EmailPassword_Login::create($this->getUrl(), $this->getAction())
+            return $this->createWidget(Form_Security_EmailPassword_Login::getClass())
                 ->setAccountModelClass($this->accountEmailPasswordModelClass)
                 ->bind(['email' => $this->getValue('username')])
-                ->login();
+                ->action($token);
         }
     }
 
     /**
      * @param Security_Account $accountLoginPasswordModelClass
-     * @return LoginEmailPassword_Login
+     * @return $this
      */
     public function setAccountLoginPasswordModelClass($accountLoginPasswordModelClass)
     {
@@ -78,7 +89,7 @@ class LoginEmailPassword_Login extends Widget_Form_Security_Login
 
     /**
      * @param Security_Account $accountEmailPasswordModelClass
-     * @return LoginEmailPassword_Login
+     * @return $this
      */
     public function setAccountEmailPasswordModelClass($accountEmailPasswordModelClass)
     {

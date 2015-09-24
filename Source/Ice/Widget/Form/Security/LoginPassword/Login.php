@@ -1,19 +1,20 @@
 <?php
 
-namespace Ice\Widget\Form\Security;
+namespace Ice\Widget;
 
 use Ice\Core\Model;
 use Ice\Core\Security_Account;
 use Ice\Core\Widget_Form_Security;
 use Ice\Core\Widget_Form_Security_Login;
+use Ice\Widget\Form;
 use Ice\Widget\Form\Simple;
 
-class LoginPassword_Login extends Widget_Form_Security_Login
+class Form_Security_LoginPassword_Login extends Widget_Form_Security_Login
 {
     protected static function config()
     {
         return [
-            'view' => ['template' => null, 'viewRenderClass' => null, 'layout' => null],
+            'render' => ['template' => true, 'class' => 'Ice:Php', 'layout' => null],
             'input' => [
                 'login' => ['providers' => 'request'],
                 'password' => ['providers' => 'request']
@@ -22,14 +23,14 @@ class LoginPassword_Login extends Widget_Form_Security_Login
         ];
     }
 
-    public static function create($url, $action, $block = null, array $data = [])
+    public static function create()
     {
-        return parent::create($url, $action, $block, $data)
-            ->setTemplate(Simple::class)
+        return parent::create()
+            ->setTemplate(Form::getClass())
             ->text(
                 'login',
-                'Login',
                 [
+                    'label' => 'Login',
                     'required' => true,
                     'placeholder' => 'login_placeholder',
                     'validators' => ['Ice:Length_Min' => 2]
@@ -37,14 +38,14 @@ class LoginPassword_Login extends Widget_Form_Security_Login
             )
             ->password(
                 'password',
-                'Password',
                 [
+                    'label' => 'Password',
                     'required' => true,
                     'placeholder' => 'password_placeholder',
                     'validators' => ['Ice:Length_Min' => 5]
                 ]
             )
-            ->button('submit', 'Sign in', ['onclick' => 'POST']);
+            ->button('submit', ['label' => 'Sign in', 'onclick' => 'POST']);
     }
 
     /**
@@ -54,9 +55,14 @@ class LoginPassword_Login extends Widget_Form_Security_Login
      *
      * @version 1.1
      * @since   0.1
+     * @param $token
+     * @return array|null
+     * @throws \Ice\Core\Exception
      */
-    public function login()
+    public function action($token)
     {
+        $result = parent::action($token);
+
         /** @var Model $accountModelClass */
         $accountModelClass = $this->getAccountModelClass();
 
@@ -78,7 +84,7 @@ class LoginPassword_Login extends Widget_Form_Security_Login
             ->getSelectQuery(['password', '/expired', 'user__fk'])
             ->getModel();
 
-        return $this->verify($account, $values)
+        $result['account'] = $account && $this->verify($account, $values)
             ? $this->signIn($account)
             : Widget_Form_Security::getLogger()
                 ->exception(
@@ -86,6 +92,8 @@ class LoginPassword_Login extends Widget_Form_Security_Login
                     __FILE__,
                     __LINE__
                 );
+
+        return $result;
     }
 
     /**

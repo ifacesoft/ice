@@ -12,7 +12,8 @@ namespace Ice\Core;
 use Ice\Core;
 use Ice\Exception\Http_Not_Found;
 use Ice\Helper\File;
-use Ice\View\Render\Replace;
+use Ice\Render\Replace;
+use Ice\Data\Provider\Router as Data_Provider_Router;
 
 /**
  * Class Route
@@ -53,6 +54,16 @@ class Route extends Config
         }
 
         return $routes[$routeName];
+    }
+
+    /**
+     * @param $configRouteName
+     * @param array $configData
+     * @return Route
+     */
+    public static function create($configRouteName, array $configData = [])
+    {
+        return parent::create($configRouteName, $configData);
     }
 
     /**
@@ -120,15 +131,6 @@ class Route extends Config
                 $route = array_merge_recursive($route, $defaultConfig);
                 $route['route'] = $context . $route['route'];
 
-                if (isset($routes[$routeName])) {
-                    Route::getLogger()->warning(
-                        ['Route name "{$0}" already defined in other route config', $routeName],
-                        __FILE__,
-                        __LINE__
-                    );
-                    continue;
-                }
-
                 if (substr_count($route['route'], '{$') != count($route['params'])) {
                     Route::getLogger()->warning(
                         ['Count of params in {$0} not equal with count of defined params', $route['route']],
@@ -156,12 +158,12 @@ class Route extends Config
                 $route['pattern'] = Replace::getInstance()->fetch(
                     '#^' . $route['route'] . '$#',
                     $patterns,
-                    View_Render::TEMPLATE_TYPE_STRING
+                    Render::TEMPLATE_TYPE_STRING
                 );
 
                 if (isset($route['alias'])) {
                     foreach ($route['alias'] as $method => $alias)
-                    $route['request'][$method] = $routes[$route['alias'][$method]]->gets('request/' . $method);
+                    $route['request'][$method] = $routes[$route['alias'][$method]]->gets('request/' . $method, false);
                 }
 
                 foreach ($route['request'] as &$request) {
@@ -181,7 +183,14 @@ class Route extends Config
                     $request = [Action::getClass($actionClass) => $actionParams];
                 }
 
-                $routes[$routeName] = Route::create($routeName, $route);
+                $route = Route::create($routeName, $route);
+
+                if (isset($routes[$routeName])) {
+                    $route->set($routes[$routeName]->gets());
+                    unset($routes[$routeName]);
+                }
+
+                $routes[$routeName] = $route;
             }
         }
 
@@ -211,7 +220,7 @@ class Route extends Config
      */
     public function getUrl(array $params = [])
     {
-        return Replace::getInstance()->fetch($this->getRoute(), $params, View_Render::TEMPLATE_TYPE_STRING);
+        return Replace::getInstance()->fetch($this->getRoute(), $params, Render::TEMPLATE_TYPE_STRING);
     }
     //
     //    /**
@@ -248,5 +257,16 @@ class Route extends Config
     public function getRoute()
     {
         return $this->get('route');
+    }
+
+    /**
+     * @return Route|null
+     */
+    public function getParentRoute() {
+        if ($parentRouteName = $this->get('parent', false)) {
+            return Route::getInstance($parentRouteName);
+        }
+
+        return null;
     }
 }

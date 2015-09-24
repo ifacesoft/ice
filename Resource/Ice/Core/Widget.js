@@ -3,28 +3,36 @@
  */
 var Ice_Core_Widget = {
     click: function ($element, callback, method) {
-        var $baseElement = $element.prop('tagName') == 'FORM'
+        var $form = $element.prop('tagName') == 'FORM'
             ? $element
+            : null;
+
+        var $widget = $form
+            ? $form
             : $element.closest('#' + $element.attr('data-for'));
 
-        var data = Ice.jsonToObject($baseElement.attr('data-json'));
+        if (!$form && $widget.prop('tagName') == 'FORM') {
+            $form = $widget;
+        }
+
+        var data = Ice.jsonToObject($widget.closest('#' + $widget.attr('data-for')).attr('data-params'));
 
         if ($element.attr('data-params')) {
             data = Ice.objectMerge(data, Ice.jsonToObject($element.attr('data-params')));
         }
 
-        if ($baseElement.prop('tagName') == 'FORM') {
-            data = Ice.objectMerge(data, Ice.querystringToObject($baseElement.serialize()));
+        if ($form) {
+            data = Ice.objectMerge(data, Ice.querystringToObject($form.serialize()));
         }
 
         var url = $element.attr('href');
 
-        if (typeof url == 'undefined' && $baseElement.prop('tagName') == 'FORM') {
-            url = $baseElement.attr('action');
+        if (typeof url == 'undefined' && $form) {
+            url = $form.attr('action');
         }
 
         if (typeof url == 'undefined') {
-            url = $baseElement.attr('data-url');
+            url = $widget.attr('data-url');
         } else {
             if (method == 'GET') {
                 var a = document.createElement('a');
@@ -33,15 +41,29 @@ var Ice_Core_Widget = {
             }
         }
 
-        var block = $baseElement.attr('data-block');
+        data.widgetClass = $widget.attr('data-widget');
+        data.token = $widget.attr('data-token');
 
-        var $targetBlock = $baseElement.closest('.' + block);
-
-        if (!$targetBlock.length) {
-            $targetBlock = $('.' + block);
+        data.viewClass = $element.attr('data-view');
+        if (!data.viewClass) {
+            data.viewClass = $widget.attr('data-view');
         }
 
-        var widgetCallback = function(result) {
+        var action = $element.attr('data-action');
+        if (!action) {
+            action = $widget.attr('data-action');
+        }
+
+        var block = data.viewClass.split('\\').pop();
+
+        if (!block) {
+            alert('viewClass not found!');
+            return;
+        }
+
+        var $view = $('#' + $widget.attr('data-for'));
+
+        var widgetCallback = function (result) {
             if (callback) {
                 callback(result);
             }
@@ -56,9 +78,18 @@ var Ice_Core_Widget = {
                 //    Ice.reRender($targetBlock, $baseElement.attr('data-action'), history.state, widgetCallback, url);
                 //};
             }
+
+            var observers = Ice.jsonToObject($view.attr('data-observers'));
+            var $observer;
+
+            for (var forId in observers) {
+                $observer = $('#' + forId);
+
+                Ice.reRender($observer, 'Ice:View_Render', {viewClass: observers[forId]}, null, url);
+            }
         };
 
-        Ice.reRender($targetBlock, $baseElement.attr('data-action'), data, widgetCallback, url);
+        Ice.reRender($view, action, data, widgetCallback, url);
     }
 };
 

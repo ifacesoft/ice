@@ -91,7 +91,7 @@ class Config
 
         $config = [];
 
-        if ($class != __CLASS__ && $coreConfig = Config::getConfig()->gets($class, false)) {
+        if ($class != __CLASS__ && $coreConfig = Config::getInstance(__CLASS__)->gets($class, false)) {
             $config = array_merge_recursive($coreConfig, $config);
         }
 
@@ -188,7 +188,7 @@ class Config
      */
     public static function getDefault($key)
     {
-        return Config::getConfig()->gets('defaults/' . $key, false);
+        return Config::getInstance(__CLASS__)->gets('defaults/' . $key, false);
     }
 
     /**
@@ -235,11 +235,18 @@ class Config
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.5
+     * @version 2.0
      * @since   0.5
      */
-    public function set($key, $value, $force = false)
+    public function set($key, $value = null, $force = false)
     {
+        if (is_array($key)) {
+            foreach ($key as $param => $value) {
+                Helper_Config::set($this->config, $param, $value, $force);
+            }
+            return;
+        }
+
         Helper_Config::set($this->config, $key, $value, $force);
     }
 

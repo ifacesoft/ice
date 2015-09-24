@@ -5,11 +5,6 @@ namespace Ice\Core;
 abstract class Widget_Form_Security_Login extends Widget_Form_Security
 {
     /**
-     * @return Security_Account|Model
-     */
-    public abstract function login();
-
-    /**
      * Verify account by form values
      *
      * @param Security_Account|Model $account
@@ -17,4 +12,11 @@ abstract class Widget_Form_Security_Login extends Widget_Form_Security
      * @return boolean
      */
     protected abstract function verify(Security_Account $account, $values);
+
+    public function init(array $input)
+    {
+        parent::init($input);
+
+        $this->setUrl(Router::getInstance()->getUrl('ice_security_login'));
+    }
 }

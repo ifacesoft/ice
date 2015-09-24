@@ -2,8 +2,8 @@
 
 namespace Ice\Helper;
 
-use Ice\Core\View_Render;
-use Ice\View\Render\Replace;
+use Ice\Core\Render;
+use Ice\Render\Replace;
 
 class Resource
 {
@@ -18,7 +18,7 @@ class Resource
         return str_replace(
             ["\t", "\n"],
             ' ',
-            Replace::getInstance()->fetch($message, (array)$params, View_Render::TEMPLATE_TYPE_STRING)
+            Replace::getInstance()->fetch($message, (array)$params, Render::TEMPLATE_TYPE_STRING)
         );
     }
 }

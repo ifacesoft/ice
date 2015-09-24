@@ -198,4 +198,8 @@ return [
         'en' => 'Validator:LettersNumbers -> param \'{$0}\' with value \'{$1}\' is not valid',
         'ru' => 'Валидатор:LettersNumbers -> параметр \'{$0}\' со значением \'{$1}\' не является допустимым',
     ],
+    'Forbidden' => [
+        'en' => 'Forbidden',
+        'ru' => 'Запрещено',
+    ],
 ];

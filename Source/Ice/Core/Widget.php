@@ -1,61 +1,59 @@
 <?php
 namespace Ice\Core;
 
-use Doctrine\Common\Util\Debug;
-use Ice\Data\Provider\Cli as Data_Provider_Cli;
-use Ice\Data\Provider\Router as Data_Provider_Router;
-use Ice\Data\Provider\Request as Data_Provider_Request;
-use Ice\Data\Provider\Session as Data_Provider_Session;
-use Ice\Exception\Error;
+use Ice\Exception\Access_Denied;
 use Ice\Helper\Access;
 use Ice\Helper\Arrays;
 use Ice\Helper\Emmet;
 use Ice\Helper\Input;
 use Ice\Helper\Json;
-use Ice\Helper\Object;
 use Ice\Helper\String;
-use Ice\View\Render\Php;
+use Ice\Render\Php;
+use Ice\Render\Replace;
 
 abstract class Widget
 {
     use Stored;
+    use Rendered;
 
     /**
-     * Values of current widget
-     *
-     * @var array
+     * @var array rows of values
      */
-    private $values = [];
+    private $rows = [];
+
+    /**
+     * @var int
+     */
+    private $offset = 0;
 
     /**
      * Widget parts (fields for Form, columns for Data, items for Menu)
      *
      * @var array
      */
-    private $parts = [];
+    protected $parts = [];
     private $classes = '';
-    private $style = '';
-    private $header = '';
-    private $description = '';
-    private $template = null;
 
-    /**
-     * Merged values from others widgets (widget known values of other widgets)
-     *
-     * @var array
-     */
-    private $params = [];
+    private $template = null;
+    private $renderClass = null;
+    private $layout = null;
+
+    private $dataParams = null;
+
     private $url = null;
-    private $action = null;
-    private $block = null;
-    private $layout = '';
+    private $actionClass = null;
+    private $viewClass = null;
+
     private $token = null;
     private $data = [];
     private $resource = null;
     private $event = 'Ice_Core_Widget.click($(this), null, \'GET\');';
 
-    private $compiledParts = null;
+    private $result = null;
+    private $compiledResult = null;
 
+    private $name = null;
+    private $forViewId = null;
 
     /**
      * Redirect url
@@ -65,7 +63,6 @@ abstract class Widget
      * @var string|null
      */
     private $redirect = null;
-
 
     /**
      * Timeout redirect after success registration
@@ -89,43 +86,155 @@ abstract class Widget
      *
      * @var array
      */
-    protected $defaultOptions = [];
-
-
-    protected $onsubmit = null;
+    protected $defaultOptions = [
+        'disabled' => false,
+        'readonly' => false,
+        'required' => false,
+        'autofocus' => false,
+        'input' => []
+    ];
 
     private function __construct()
     {
     }
 
     /**
-     * Create new instance of ui component
+     * Widget config
      *
-     * @param $url
-     * @param $action
-     * @param null $block
-     * @param array $data
-     * @return Widget_Data|Widget_Form|Widget_Menu
+     * @return array
+     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.6
+     * @version 2.0
+     * @since   1.1
+     */
+    protected static function config()
+    {
+        return [
+            'render' => ['template' => null, 'class' => 'Ice:Php', 'layout' => ''],
+            'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'Widget: Access denied!'],
+            'cache' => ['ttl' => -1, 'count' => 1000],
+            'actions' => [],
+            'input' => [],
+            'output' => []
+        ];
+    }
+
+    /**
+     * Create new instance of ui component
+     *
+     * @return $this
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 2.0
      * @since   0.1
      */
-    public static function create($url, $action, $block = null, array $data = [])
+    public static function create()
     {
         $class = self::getClass();
 
+        /** @var Widget $widget */
         $widget = new $class();
 
-        $widget->url = $url;
-        $widget->action = $action;
-        $widget->block = $block === null ? Object::getClassName($action) : $block;
-        $widget->data = $data;
-        $widget->values = Input::get($class);
+        if ($input = Input::get($class)) {
+            $widget->rows = [$input];
+        }
 
         $widget->token = crc32(String::getRandomString());
 
         return $widget;
+    }
+
+    /**
+     * Widget config
+     *
+     * @return array
+     *
+     *  protected static function config()
+     *  {
+     *      return [
+     *          'render' => ['template' => null, 'class' => 'Ice:Php', 'layout' => ''],
+     *          'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'Widget: Access denied!'],
+     *          'cache' => ['ttl' => -1, 'count' => 1000],
+     *          'actions' => [],
+     *          'input' => [],
+     *          'output' => []
+     *      ];
+     *  }
+     *
+     * /**
+     * Init widget parts and other
+     *
+     * @param array $input
+     */
+    public abstract function init(array $input);
+
+    /**
+     * @return null
+     */
+    public function getForViewId()
+    {
+        return $this->forViewId;
+    }
+
+    /**
+     * @param null $forViewId
+     * @return $this
+     */
+    public function setForViewId($forViewId)
+    {
+        $this->forViewId = $forViewId;
+        return $this;
+    }
+
+    public function getName()
+    {
+        if ($this->name !== null) {
+            return $this->name;
+        }
+
+        return $this->name = $this->getToken();
+    }
+
+    /**
+     * @param string $name
+     * @return $this
+     */
+    public function setName($name)
+    {
+        if ($this->name === null) {
+            $this->name = $name;
+            return $this;
+        }
+
+        Logger::getInstance(__CLASS__)
+            ->warning(
+                [
+                    'Name for view already defined as {$0}. Name {$1} not define',
+                    [$this->name, $name]
+                ],
+                __FILE__,
+                __LINE__
+            );
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getOffset()
+    {
+        return $this->offset;
+    }
+
+    /**
+     * @param int $offset
+     */
+    public function setOffset($offset)
+    {
+        $this->offset = $offset;
     }
 
     /**
@@ -139,7 +248,7 @@ abstract class Widget
     /**
      * @param string $classes
      *
-     * @return Widget_Menu|Widget_Data|Widget_Form
+     * @return $this
      */
     public function setClasses($classes)
     {
@@ -148,60 +257,31 @@ abstract class Widget
     }
 
     /**
-     * @return string
+     * @return array
      */
-    public function getStyle()
+    public function getRows()
     {
-        return $this->style;
+        return $this->rows;
     }
 
     /**
-     * @param string $style
-     * @return Widget_Menu|Widget_Data|Widget_Form
+     * @param array $rows
+     * @return $this
      */
-    public function setStyle($style)
+    public function setRows(array $rows)
     {
-        $this->style = $style;
+        $this->rows = $rows;
         return $this;
     }
 
     /**
-     * @return string
-     */
-    public function getTemplate()
-    {
-        return $this->template;
-    }
-
-    /**
      * @param string $template
-     * @return Widget_Menu|Widget_Data|Widget_Form
+     * @return $this
      */
     public function setTemplate($template)
     {
         $this->template = $template;
         return $this;
-    }
-
-    /**
-     * @return array
-     */
-    public function getParams()
-    {
-        return $this->params;
-    }
-
-    public function getParam($key)
-    {
-        return isset($this->params[$key]) ? $this->params[$key] : null;
-    }
-
-    /**
-     * @param array $params
-     */
-    public function setParams(array $params)
-    {
-        $this->params = $params;
     }
 
     /**
@@ -214,7 +294,7 @@ abstract class Widget
 
     /**
      * @param string $url
-     * @return Widget_Menu|Widget_Data|Widget_Form
+     * @return $this
      */
     public function setUrl($url)
     {
@@ -225,59 +305,70 @@ abstract class Widget
     /**
      * @return string
      */
-    public function getAction()
+    public function getActionClass()
     {
-        return $this->action;
+        return $this->actionClass;
+    }
+
+    /**
+     * @param string $actionClass
+     * @return $this
+     */
+    public function setActionClass($actionClass)
+    {
+        $this->actionClass = Action::getClass($actionClass);
+        return $this;
     }
 
     /**
      * @return string
      */
-    public function getBlock()
+    public function getViewClass()
     {
-        return $this->block;
+        return $this->viewClass;
     }
 
+    /**
+     * @param string $viewClass
+     * @return $this
+     */
+    public function setViewClass($viewClass)
+    {
+        $this->viewClass = View::getClass($viewClass);
+        return $this;
+    }
+
+    /**
+     * @param array $params
+     * @return $this
+     */
     public function bind(array $params)
     {
-        if (isset($params['token'])) {
-            $this->setToken($params['token']);
-            unset($params['token']);
-        }
-
-        foreach ($params as $key => $value) {
-            $this->addValue($key, $value);
+        if (empty($this->rows)) {
+            $this->rows = [$params];
+        } else {
+            $this->rows[0] = array_merge($this->rows[0], $params);
         }
 
         return $this;
     }
 
-    abstract public function setQueryResult(Query_Result $queryResult);
-
-    abstract public function queryBuilderPart(Query_Builder $queryBuilder);
-
-    public static function getConfig()
+    public function setQueryResult(Query_Result $queryResult)
     {
-        $repository = self::getRepository();
-
-        if ($config = $repository->get('config')) {
-            return $config;
+        foreach ($this->getParts() as $part) {
+            if (isset($part['options']['widget'])) {
+                $part['options']['widget']->setQueryResult($queryResult);
+            }
         }
+    }
 
-        /**
-         * @var Widget $widgetClass
-         */
-        $widgetClass = self::getClass();
-
-        $config = Config::create(
-            $widgetClass,
-            array_merge_recursive(
-                $widgetClass::config(),
-                Config::getInstance($widgetClass, null, false, -1)->gets()
-            )
-        );
-
-        return $repository->set('config', $config);
+    public function queryBuilderPart(Query_Builder $queryBuilder)
+    {
+        foreach ($this->getParts() as $part) {
+            if (isset($part['options']['widget'])) {
+                $part['options']['widget']->queryBuilderPart($queryBuilder);
+            }
+        }
     }
 
     public function __toString()
@@ -285,13 +376,14 @@ abstract class Widget
         try {
             return $this->render();
         } catch (\Exception $e) {
-            return $e->getMessage() . ' - ' . $this->getClass() . ' (' . $e->getFile() . ':' . $e->getLine() . ')';
+            return $e->getMessage() . ' - ' . $this->getClass() . ' (' . $e->getFile() . ':' . $e->getLine() . ')<br>' .
+            nl2br($e->getTraceAsString());
         }
     }
 
     public function getFullUrl($url)
     {
-        $queryString = http_build_query($this->getParams());
+        $queryString = http_build_query($this->getDataParams());
 
         return $url . ($queryString ? '?' . $queryString : '');
     }
@@ -306,7 +398,7 @@ abstract class Widget
      * ```
      *
      * @param Resource|string|boolean $resource
-     * @return Widget_Data|Widget_Form|Widget_Menu
+     * @return $this
      */
     public function setResource($resource)
     {
@@ -314,7 +406,7 @@ abstract class Widget
             $this->resource = $resource;
         } else {
             if ($resource === true) {
-                $resource = $this->getTemplate();
+                $resource = $this->getTemplate($this->template);
             }
 
             $this->resource = Resource::create($resource);
@@ -330,7 +422,7 @@ abstract class Widget
         }
 
         if ($resource === true || (is_array($resource) && !isset($resource['class']))) {
-            $resource = ['class' => $this->getTemplate()];
+            $resource = ['class' => $this->getTemplate($this->template)];
         }
 
         if (is_string($resource)) {
@@ -344,130 +436,168 @@ abstract class Widget
         return $this->resource;
     }
 
-    public function getCompiledParts()
+    public function getResult()
     {
-        if ($this->compiledParts !== null) {
-            return $this->compiledParts;
+        if ($this->result !== null) {
+            return $this->result;
         }
 
-        $this->compiledParts = [];
+        $this->result = [];
 
         /** @var Widget $widgetClass */
         $widgetClass = get_class($this);
         $widgetClassName = $widgetClass::getClassName();
-        $widgetBaseClass = Object::getBaseClass($widgetClass, __CLASS__);
-        $widgetBaseClassName = $widgetBaseClass::getClassName();
+        $widgetName = $this->getName();
 
-        $values = $this->getValues();
+        $rows = $this->rows ? $this->rows : [[]];
 
-        foreach ($this->getParts() as $partName => $part) {
-            if (isset($part['options']['access']) && !Access::check($part['options']['access'])) {
-               continue;
-            }
+        $offset = $this->getOffset();
 
-            $part['widgetClassName'] = $widgetClassName;
-            $part['widgetBaseClassName'] = $widgetBaseClassName;
-            $part['token'] = $this->getToken();
+        foreach ($rows as $values) {
+            $row = [];
 
-            $part['resource'] = $this->getResource();
-            $resourceParams = [];
+            foreach ($this->getParts() as $partName => $part) {
+                try {
+                    if (isset($part['options']['access'])) {
+                        Access::check($part['options']['access']);
+                    }
+                } catch (Access_Denied $e) {
+                    continue;
+                }
 
-            if (isset($part['options']['resource'])) {
-                $part['resource'] = $this->getResource($part['options']['resource']);
+                $part['widgetClassName'] = $widgetClassName;
+                $part['widgetName'] = $widgetName;
 
-                if (is_array($part['options']['resource'])) {
-                    if (isset($part['options']['resource'][0])) {
-                        $part['resource'] = Resource::create($part['options']['resource'][0]);
-                        if (array_key_exists(1, $part['options']['resource'])) {
-                            $resourceParams = $part['options']['resource'][1];
+                $part['resource'] = $this->getResource();
+
+                $resourceParams = [];
+
+                if (isset($part['options']['resource'])) {
+                    $part['resource'] = $this->getResource($part['options']['resource']);
+
+                    if (is_array($part['options']['resource'])) {
+                        if (isset($part['options']['resource'][0])) {
+                            $part['resource'] = Resource::create($part['options']['resource'][0]);
+                            if (array_key_exists(1, $part['options']['resource'])) {
+                                $resourceParams = $part['options']['resource'][1];
+                            }
+                        } else if (isset($part['options']['resource']['class'])) {
+                            $part['resource'] = Resource::create($part['options']['resource']['class']);
+                            $resourceParams = isset($part['options']['resource']['params'])
+                                ? (array)$part['options']['resource']['params']
+                                : [];
+                        } else {
+                            $resourceParams = isset($part['options']['resource']['params'])
+                                ? (array)$part['options']['resource']['params']
+                                : (array)$part['options']['resource'];
                         }
-                    } else if (isset($part['options']['resource']['class'])) {
-                        $part['resource'] = Resource::create($part['options']['resource']['class']);
-                        $resourceParams = isset($part['options']['resource']['params'])
-                            ? (array)$part['options']['resource']['params']
-                            : [];
-                    } else {
-                        $resourceParams = isset($part['options']['resource']['params'])
-                            ? (array)$part['options']['resource']['params']
-                            : (array)$part['options']['resource'];
                     }
+
+                    unset($part['options']['resource']);
                 }
 
-                unset($part['options']['resource']);
-            }
+                $part['name'] = isset($part['options']['name']) ? $part['options']['name'] : $partName;
+                $part['value'] = isset($part['options']['value']) ? $part['options']['value'] : $part['name'];
 
-            if ($part['resource']) {
-                $part['title'] = $part['resource']->get($part['title'], $resourceParams);
+                $params = [];
 
-                if (isset($part['options']['placeholder'])) {
-                    $part['options']['placeholder'] = $part['resource']->get($part['options']['placeholder']);
-                }
-            }
-
-            if (isset($part['options']['value'])) {
-                throw new Error('deprecated value option');
-            }
-
-            $part['name'] = isset($part['options']['name']) ? $part['options']['name'] : $partName;
-
-            $params = [];
-
-            if (isset($part['options']['params'])) {
-                foreach ((array)$part['options']['params'] as $key => $param) {
-                    if (is_int($key)) {
-                        $params[$param] = $values[$param];
-                    } else {
-                        $params[$key] = array_key_exists($param, $values) ? $values[$param] : $param;
+                if (isset($part['options']['params'])) {
+                    foreach ((array)$part['options']['params'] as $key => $param) {
+                        if (is_int($key)) {
+                            $params[$param] = $values[$param];
+                        } else {
+                            $params[$key] = array_key_exists($param, $values) ? $values[$param] : $param;
+                        }
                     }
-                }
-            } else {
-                $params = [$part['name'] => isset($values[$part['name']]) ? $values[$part['name']] : null];
-            }
-
-            $part['params'] = $params;
-            $part['dataParams'] = Json::encode($params);
-
-            if (!empty($part['options']['route'])) {
-                if (is_array($part['options']['route'])) {
-                    list($routeName, $routeParams) = each($part['options']['route']);
-
-                    $routeParams = array_merge($part['params'], (array)$routeParams);
                 } else {
-                    $routeParams = $part['params'];
-
-                    $routeName = $part['options']['route'] === true
-                        ? $partName
-                        : $part['options']['route'];
+                    $params = [$part['name'] => isset($values[$part['name']]) ? $values[$part['name']] : null];
                 }
 
-                $part['options']['href'] = $this->getFullUrl(Router::getInstance()->getUrl($routeName, $routeParams));
+                $part['params'] = $params;
+                $part['dataParams'] = Json::encode($params);
 
-                if (isset($part['options']['href']) && !array_key_exists('active', $part['options'])) {
-                    $part['options']['active'] = String::startsWith(Request::uri(), $part['options']['href']);
-                }
-            }
+                if (!empty($part['options']['route'])) {
+                    if (is_array($part['options']['route'])) {
+                        list($routeName, $routeParams) = each($part['options']['route']);
 
-            foreach (['onclick', 'onchange', 'onsubmit'] as $event) {
-                if (array_key_exists($event, $part['options'])) {
-                    if ($part['options'][$event] === true) {
-                        $part['options'][$event] = $this->event;
-                        continue;
+                        $routeParams = array_merge($part['params'], (array)$routeParams);
+                    } else {
+                        $routeParams = $part['params'];
+
+                        $routeName = $part['options']['route'] === true
+                            ? $partName
+                            : $part['options']['route'];
                     }
 
-                    if (in_array($part['options'][$event], ['GET', 'POST'])) {
-                        $part['options'][$event] = 'Ice_Core_Widget.click($(this), null, \'' . $part['options'][$event] . '\');';
+                    if (!array_key_exists('href', $part['options'])) {
+                        $part['options']['href'] = $this->getFullUrl(Router::getInstance()->getUrl($routeName, $routeParams));
+                    }
+
+                    if (!array_key_exists('active', $part['options'])) {
+                        $part['options']['active'] = String::startsWith(Request::uri(), $part['options']['href']);
+                    }
+
+                    if (!array_key_exists('label', $part['options'])) {
+                        $part['label'] = $routeName;
+                        $part['options']['label'] = Resource::create(Route::getClass())->get($routeName, $routeParams);
+                    }
+                } else {
+                    if (!array_key_exists('label', $part['options'])) {
+                        if (isset($part['options']['template'])) {
+                            $part['label'] = $part['options']['template'];
+
+                            $template = $part['resource']
+                                ? $part['resource']->get($part['label'], $resourceParams)
+                                : $part['label'];
+
+                            $part['options']['label'] =
+                                Replace::getInstance()->fetch($template, $params, Render::TEMPLATE_TYPE_STRING);
+                        } else {
+                            $part['label'] = $part['name'];
+
+                            $part['options']['label'] = $part['resource']
+                                ? $part['resource']->get($part['label'], $resourceParams)
+                                : $part['label'];
+                        }
+                    } else {
+                        $part['label'] = $part['options']['label'];
+
+                        if ($part['resource']) {
+                            $part['options']['label'] = $part['resource']->get($part['label'], $resourceParams);
+                        }
+                    }
+
+                    if ($part['resource'] && array_key_exists('placeholder', $part['options'])) {
+                        $part['options']['placeholder'] = $part['resource']->get($part['options']['placeholder']);
                     }
                 }
+                foreach (['onclick', 'onchange'] as $event) {
+                    if (array_key_exists($event, $part['options'])) {
+                        if ($part['options'][$event] === true) {
+                            $part['options'][$event] = $this->getEvent();
+                            continue;
+                        }
+
+                        if (in_array($part['options'][$event], ['GET', 'POST'])) {
+                            $part['options'][$event] = 'Ice_Core_Widget.click($(this), null, \'' . $part['options'][$event] . '\');';
+                        }
+                    }
+                }
+
+                $template = $part['template'][0] == '_'
+                    ? $widgetClass . $part['template']
+                    : $part['template'];
+
+                $part['offset'] = $offset + 1;
+                $part['content'] = Php::getInstance()->fetch($template, $part);
+
+                $row[$partName] = $part;
             }
 
-            $template = $part['template'][0] == '_'
-                ? $widgetClass . $part['template']
-                : $part['template'];
-
-            $this->compiledParts[$partName] = Php::getInstance()->fetch($template, $part);
+            $this->result[++$offset] = $row;
         }
 
-        return $this->compiledParts;
+        return $this->result;
     }
 
     public function walkOptions($function, $option)
@@ -476,59 +606,79 @@ abstract class Widget
         return $this;
     }
 
+    protected function getCompiledResult()
+    {
+        if ($this->compiledResult !== null) {
+            return $this->compiledResult;
+        }
+
+        /** @var Widget $widgetClass */
+        $widgetClass = get_class($this);
+        $widgetClassName = $widgetClass::getClassName();
+
+        return $this->compiledResult = [
+            'result' => $this->getResult(),
+            'widgetName' => $this->getName(),
+            'widgetData' => $this->getData(),
+            'widgetClassName' => $widgetClassName,
+            'widgetResource' => $this->getResource(),
+            'classes' => $this->getClasses(),
+            'url' => $this->getUrl(),
+            'dataToken' => $this->getToken(),
+            'dataAction' => $this->getActionClass(),
+            'dataView' => $this->getViewClass(),
+            'dataWidget' => $widgetClass,
+            'dataUrl' => $this->getFullUrl($this->getUrl()),
+            'dataFor' => $this->getForViewId()
+        ];
+    }
+
     public function render()
     {
         /** @var Widget $widgetClass */
         $widgetClass = get_class($this);
-        $widgetClassName = $widgetClass::getClassName();
-        $widgetBaseClass = Object::getBaseClass($widgetClass, __CLASS__);
-        $widgetBaseClassName = $widgetBaseClass::getClassName();
 
-        $widgetContent = Php::getInstance()->fetch(
-            empty($this->getTemplate()) ? $widgetClass : $this->getTemplate(),
-            [
-                'parts' => $this->getCompiledParts(),
-                'widgetData' => $this->getData(),
-                'widgetClass' => $widgetClass,
-                'widgetClassName' => $widgetClassName,
-                'widgetBaseClassName' => $widgetBaseClassName,
-                'widgetResource' => $this->getResource(),
-                'classes' => $this->getClasses(),
-                'style' => $this->getStyle(),
-                'header' => $this->getHeader(),
-                'description' => $this->getDescription(),
-                'url' => $this->getUrl(),
-                'token' => $this->getToken(),
-                'dataJson' => Json::encode($this->getParams()),
-                'dataAction' => $this->getAction(),
-                'dataBlock' => $this->getBlock(),
-                'dataUrl' => $this->getFullUrl($this->getUrl()),
-                'onsubmit' => $this->getOnsubmit()
-            ]
-        );
+        $template = $widgetClass::getTemplate($this->template);
 
-        return $this->getLayout()
-            ? Emmet::translate($this->getLayout() . '{{$widgetContent}}', ['widgetContent' => $widgetContent])
+        $widgetContent = $widgetClass::getRender($this->renderClass)
+            ->fetch($template, $this->getCompiledResult());
+
+        $layout = $widgetClass::getLayout($this->layout);
+
+        return $layout
+            ? Emmet::translate($layout . '{{$widgetContent}}', ['widgetContent' => $widgetContent])
             : $widgetContent;
     }
 
-    public function addValue($key, $value)
+    public function getDataParams()
     {
-        if (is_array($value)) {
-            $this->values = array_merge($this->values, $value);
-        } else {
-            $this->values[$key] = $value;
+        if ($this->dataParams !== null) {
+            return $this->dataParams;
         }
 
-        return $this;
+        $this->dataParams = $this->getValues();
+
+        foreach ($this->getParts() as $part) {
+            if (isset($part['options']['widget'])) {
+                $this->dataParams = array_merge($part['options']['widget']->getDataParams(), $this->dataParams);
+            }
+        }
+
+        return $this->dataParams;
     }
 
     /**
-     * @return string
+     * @param array $dataParams
      */
-    public function getLayout()
+    public function setDataParams(array $dataParams)
     {
-        return $this->layout;
+        foreach ($this->getParts() as $part) {
+            if (isset($part['options']['widget'])) {
+                $part['options']['widget']->setDataParams($dataParams);
+            }
+        }
+
+        $this->dataParams = $dataParams;
     }
 
     /**
@@ -543,7 +693,7 @@ abstract class Widget
 
     public function getValue($key)
     {
-        return isset($this->values[$key]) ? $this->values[$key] : null;
+        return isset($this->getValues()[$key]) ? $this->getValues()[$key] : null;
     }
 
     /**
@@ -555,41 +705,28 @@ abstract class Widget
     }
 
     /**
-     * @param string $token
-     */
-    protected function setToken($token)
-    {
-        $this->token = $token;
-    }
-//
-//    public function link($fieldName, $fieldTitle, array $options = [], $template = 'Ice\Core\Widget_Link')
-//    {
-//        return $this->addPart($fieldName, $fieldTitle, $options, $template, );
-//    }
-
-    /**
-     * @param $partName
-     * @param $partTitle
+     * @param string $partName
      * @param array $options
      * @param $template
      * @param $element
      * @return $this
      */
-    protected function addPart($partName, $partTitle, array $options, $template, $element)
+    protected function addPart($partName, array $options, $template, $element)
     {
         if (!empty($options['rewrite']) && isset($this->parts[$partName])) {
             unset($this->parts[$partName]);
         }
 
+        $widgetClass = get_class($this);
+
         $this->parts[$partName] = [
-            'title' => $partTitle,
             'options' => Arrays::defaults($this->defaultOptions, $options),
             'template' => $template,
-            'element' => $element
+            'element' => $widgetClass::getClassName() . '_' . $element
         ];
 
         if (isset($this->parts[$partName]['options']['default']) && $this->getValue($partName) === null) {
-            $this->addValue($partName, $this->parts[$partName]['options']['default']);
+            $this->bind([$partName => $this->parts[$partName]['options']['default']]);
         }
 
         return $this;
@@ -644,7 +781,7 @@ abstract class Widget
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 1.0
+     * @version 2.0
      * @since   1.0
      */
     public function getValues()
@@ -653,7 +790,9 @@ abstract class Widget
 
         $filterParts = $this->getFilterParts();
 
-        foreach ($this->values as $partName => $value) {
+        $row = empty($this->rows) ? [] : reset($this->rows);
+
+        foreach ($row as $partName => $value) {
             if (!empty($filterParts) && !isset($filterParts[$partName])) {
                 continue;
             }
@@ -669,7 +808,7 @@ abstract class Widget
             $values[$partName] = $value;
         }
 
-        return $this->values;
+        return $values;
     }
 
     /**
@@ -707,44 +846,6 @@ abstract class Widget
     /**
      * @return string
      */
-    public function getHeader()
-    {
-        return $this->resource instanceof Resource && $this->header
-            ? $this->resource->get($this->header)
-            : $this->header;
-    }
-
-    /**
-     * @param string $header
-     * @return Widget_Data|Widget_Form|Widget_Menu
-     */
-    public function setHeader($header)
-    {
-        $this->header = $header;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getDescription()
-    {
-        return $this->description;
-    }
-
-    /**
-     * @param string $description
-     * @return Widget_Data|Widget_Form|Widget_Menu
-     */
-    public function setDescription($description)
-    {
-        $this->description = $description;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
     public function getEvent()
     {
         return $this->event;
@@ -752,7 +853,7 @@ abstract class Widget
 
     /**
      * @param string $event
-     * @return Widget_Data|Widget_Form|Widget_Menu
+     * @return $this
      */
     public function setEvent($event)
     {
@@ -761,85 +862,78 @@ abstract class Widget
     }
 
     /**
-     * Build link part
+     * Build a tag part
      *
      * @param  $columnName
-     * @param  $columnTitle
      * @param  array $options
      * @param  string $template
-     * @return Widget_Data|Widget_Form|Widget_Menu
+     * @return $this
      */
-    public function a($columnName, $columnTitle, array $options = [], $template = 'Ice\Core\Widget_A')
+    public function a($columnName, array $options = [], $template = 'Ice\Widget\A')
     {
-        return $this->addPart($columnName, $columnTitle, $options, $template, 'Tag_A');
+        return $this->addPart($columnName, $options, $template, __FUNCTION__);
     }
 
     /**
      * Build column part
      *
      * @param  $columnName
-     * @param  $columnTitle
      * @param  array $options
      * @param  string $template
-     * @return Widget_Data|Widget_Form|Widget_Menu
+     * @return Widget $this_Data
      */
-    public function span($columnName, $columnTitle = '&nbsp;', $options = [], $template = 'Ice\Core\Widget_Span')
+    public function span($columnName, $options = [], $template = 'Ice\Widget\Span')
     {
-        return $this->addPart($columnName, $columnTitle, $options, $template, 'Tag_Span');
-    }
-
-    /**
-     * Build button part
-     *
-     * @param  $columnName
-     * @param  $columnTitle
-     * @param  array $options
-     * @param  string $template
-     * @return Widget_Data|Widget_Form|Widget_Menu
-     */
-    public function button($columnName, $columnTitle, array $options = [], $template = 'Ice\Core\Widget_Button')
-    {
-        return $this->addPart($columnName, $columnTitle, $options, $template, 'Tag_Button');
+        return $this->addPart($columnName, $options, $template, __FUNCTION__);
     }
 
     /**
      * Build div part
      *
      * @param  $columnName
-     * @param  $columnTitle
      * @param  array $options
      * @param  string $template
-     * @return Widget_Data|Widget_Form|Widget_Menu
+     * @return $this
      */
-    public function div($columnName, $columnTitle = '&nbsp;', array $options = [], $template = 'Ice\Core\Widget_Div')
+    public function div($columnName, array $options = [], $template = 'Ice\Widget\Div')
     {
-        return $this->addPart($columnName, $columnTitle, $options, $template, 'Tag_Div');
+        return $this->addPart($columnName, $options, $template, __FUNCTION__);
+    }
+
+    /**
+     * Build img part
+     *
+     * @param  $columnName
+     * @param  array $options
+     * @param  string $template
+     * @return $this
+     */
+    public function img($columnName, array $options = [], $template = 'Ice\Widget\Img')
+    {
+        return $this->addPart($columnName, $options, $template, __FUNCTION__);
     }
 
 
     /**
-     * @param string $onsubmit
-     * @return Widget_Form
+     * @param $fieldName
+     * @param array $options
+     * @param string $template
+     * @return $this
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 1.1
+     * @since   1.0
      */
-    public function setOnsubmit($onsubmit)
+    public function button($fieldName, array $options = [], $template = 'Ice\Widget\Button')
     {
-        $this->onsubmit = $onsubmit;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getOnsubmit()
-    {
-        return $this->onsubmit;
+        return $this->addPart($fieldName, $options, $template, __FUNCTION__);
     }
 
     /**
      * @param $scope
      * @param array $data
      * @param Widget $widgetClass
-     * @return Widget_Data|Widget_Form|Widget_Menu
+     * @return $this
      */
     public function scope($scope, array $data = [], $widgetClass = null)
     {
@@ -855,7 +949,7 @@ abstract class Widget
     /**
      * @param string $redirect
      * @param int $timeout
-     * @return Widget_Form_Security
+     * @return $this Widget_Form_Security
      */
     public function setRedirect($redirect, $timeout = 0)
     {
@@ -875,7 +969,6 @@ abstract class Widget
         return $this;
     }
 
-
     /**
      * @return null|string
      */
@@ -890,5 +983,45 @@ abstract class Widget
     public function getTimeout()
     {
         return $this->timeout;
+    }
+
+    /**
+     * @param $name
+     * @param array $options
+     * @param string $template
+     * @return $this
+     */
+    public function widget($name, array $options = [], $template = 'Ice\Widget\Widget')
+    {
+        if ($options['widget']->getResource()) {
+            $options['widget']->setResource($this->getResource());
+        }
+
+        if ($options['widget']->getUrl()) {
+            $options['widget']->setUrl($this->getUrl());
+        }
+
+        $options['widget']->setActionClass($this->getActionClass());
+        $options['widget']->setViewClass($this->getViewClass());
+
+        $options['widget']->init($options['widget']->getValues());
+
+        return $this->addPart($name, $options, $template, __FUNCTION__);
+    }
+
+    /**
+     * @param $widgetClass
+     * @return $this
+     */
+    protected function createWidget($widgetClass)
+    {
+        /** @var Widget $widgetClass */
+        $widgetClass = Widget::getClass($widgetClass);
+
+        return $widgetClass::create()
+            ->setResource($this->getResource())
+            ->setUrl($this->getUrl())
+            ->setViewClass($this->getViewClass())
+            ->setActionClass($this->getActionClass());
     }
 }

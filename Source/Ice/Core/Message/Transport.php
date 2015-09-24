@@ -4,6 +4,8 @@ namespace Ice\Core;
 
 abstract class Message_Transport extends Container
 {
+    use Stored;
+
     private static $defaultClassKey = 'Ice\Message\Transport\PHPMailer/default';
     private static $defaultKey = 'default';
 

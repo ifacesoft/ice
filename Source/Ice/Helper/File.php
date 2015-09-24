@@ -9,6 +9,7 @@
 
 namespace Ice\Helper;
 
+use Ice\Core\Debuger;
 use Ice\Core\Exception;
 use Ice\Core\Logger as Core_Logger;
 
@@ -43,8 +44,9 @@ class File
      */
     public static function createData($path, $data, $phpData = true, $file_put_contents_flag = 0, $isPretty = true)
     {
-        if (empty($path)) {
+        if (!$path) {
             Core_Logger::getInstance()->error('File path is empty', __FILE__, __LINE__);
+            return $data;
         }
 
         $dir = Directory::get(dirname($path));

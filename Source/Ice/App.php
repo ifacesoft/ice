@@ -9,6 +9,7 @@ use Ice\Action\Layout_Main;
 use Ice\Action\Upgrade;
 use Ice\Core\Action;
 use Ice\Core\Action_Context;
+use Ice\Core\Debuger;
 use Ice\Core\Environment;
 use Ice\Core\Logger;
 use Ice\Core\Module;
@@ -20,6 +21,7 @@ use Ice\Data\Provider\Cli;
 use Ice\Data\Provider\Request as Data_Provider_Request;
 use Ice\Data\Provider\Router;
 use Ice\Exception\Access_Denied;
+use Ice\Exception\Error;
 use Ice\Exception\Http_Bad_Request;
 use Ice\Exception\Http_Not_Found;
 use Ice\Exception\Redirect;
@@ -62,7 +64,10 @@ class App
                 Logger::getInstance(__CLASS__)->error('Application failure', __FILE__, __LINE__, $e);
             } else {
                 $httpStatusAction = [['Ice:Http_Status' => 'main', ['code' => 500, 'exception' => $e]]];
-                App::getResponse()->setView(Layout_Main::call(['actions' => $httpStatusAction]));
+                $view = Layout_Main::call(['actions' => $httpStatusAction]);
+                $view->setError($e->getMessage());
+
+                App::getResponse()->setView($view);
             }
         }
 
@@ -96,19 +101,26 @@ class App
         if (Request::isAjax()) {
             $input = Data_Provider_Request::getInstance()->get();
 
-            if (!empty($input['call'])) {
-                $actionClass = $input['call'];
-                unset($input['call']);
+            if (!empty($input['actionClass'])) {
+                $actionClass = $input['actionClass'];
+                unset($input['actionClass']);
 
                 return [Action::getClass($actionClass), $input];
             }
         }
 
         $router = Router::getInstance();
-        $routeRequest = Route::getInstance($router->get('routeName'))->gets('request/' . $router->get('method'));
-        list($actionClass, $input) = each($routeRequest);
+        $route = Route::getInstance($router->get('routeName'));
+        if ($route && $routeRequest = $route->gets('request/' . $router->get('method'), false)) {
+            list($actionClass, $input) = each($routeRequest);
 
-        return [Action::getClass($actionClass), $input];
+            return [Action::getClass($actionClass), $input];
+        }
+
+        throw new Http_Not_Found([
+            'Route not found for {$0} request of {$1}, but matched for other method',
+            [$router->get('method'), $router->get('url')]
+        ]);
     }
 
     /**

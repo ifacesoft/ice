@@ -194,7 +194,7 @@ abstract class Widget_Data extends Widget
 //                    $value = $this->columns[$key]['options']['default'];
 //                }
 //
-//                $this->addValue($key, $value);
+//                $this->bind([$key => $value]);
 //            }
 //        }
 //
@@ -238,10 +238,6 @@ abstract class Widget_Data extends Widget
     {
         $this->columnCount = $columnCount;
         return $this;
-    }
-
-    public function queryBuilderPart(Query_Builder $queryBuilder)
-    {
     }
 
     public function render()
@@ -397,9 +393,9 @@ abstract class Widget_Data extends Widget
             $column['name'] = $columnName;
             $column['href'] = $this->getUrl();
             $column['dataUrl'] = $this->getUrl();
-            $column['dataJson'] = Json::encode($this->getParams());
-            $column['dataAction'] = $this->getAction();
-            $column['dataBlock'] = $this->getBlock();
+            $column['dataParams'] = Json::encode($this->getDataParams());
+            $column['dataAction'] = $this->getActionClass();
+            $column['dataView'] = $this->getViewClass();
             $column['dataValue'] = $this->getValue($columnName);
 
             if ($this->getValue($columnName) == '') {

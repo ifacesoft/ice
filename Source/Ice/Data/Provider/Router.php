@@ -256,28 +256,21 @@ class Router extends Data_Provider
         list($matchedRoutes, $foundRoutes) = $this->getRoutes($url, $method);
 
         if (empty($foundRoutes)) {
-            if (!empty($matchedRoutes)) {
-                $this->getLogger()->warning(
-                    [
-                        'Route not found for {$0} request of {$1}, but matched for other method',
-                        [$method, $url]
-                    ],
+            if (empty($matchedRoutes)) {
+                Router::getLogger()->exception(
+                    ['Route for url \'{$0}\' not found', $url],
                     __FILE__,
                     __LINE__,
                     null,
-                    ['matched' => $matchedRoutes, 'found' => $foundRoutes]
+                    null,
+                    -1,
+                    Http_Not_Found::getClass()
                 );
             }
 
-            Router::getLogger()->exception(
-                ['Route for url \'{$0}\' not found', $url],
-                __FILE__,
-                __LINE__,
-                null,
-                null,
-                -1,
-                Http_Not_Found::getClass()
-            );
+            krsort($matchedRoutes, SORT_NUMERIC);
+
+            return reset($matchedRoutes);
         }
 
         krsort($foundRoutes, SORT_NUMERIC);
@@ -315,19 +308,10 @@ class Router extends Data_Provider
 
             $redirect = $route->get('redirect', false);
 
-            $matchedRoutes[] = [
-                'routeName' => $routeName,
-                'redirect' => $redirect
-            ];
-
-            if (!count($route->gets('request/' . $method, false))) {
-                continue;
-            }
-
             $weight = $route->get('weight');
 
-            if (!isset($foundRoutes[$weight])) {
-                $foundRoutes[$weight] = [
+            if (!isset($matchedRoutes[$weight])) {
+                $matchedRoutes[$weight] = [
                     'routeName' => $routeName,
                     'pattern' => $route->get('pattern'),
                     'params' => $route->gets('params'),
@@ -335,6 +319,14 @@ class Router extends Data_Provider
                     'method' => $method,
                     'redirect' => $redirect
                 ];
+            }
+
+            if (!count($route->gets('request/' . $method, false))) {
+                continue;
+            }
+
+            if (!isset($foundRoutes[$weight])) {
+                $foundRoutes[$weight] = $matchedRoutes[$weight];
             }
         }
 

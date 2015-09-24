@@ -42,6 +42,7 @@ use Ice\Helper\Validator as Helper_Validator;
 abstract class Action implements Cacheable
 {
     use Stored;
+    use Configured;
 
     /**
      * Child Actions
@@ -69,7 +70,7 @@ abstract class Action implements Cacheable
     /**
      * Action view
      *
-     * @var View
+     * @var ViiewOld
      */
     private $view = null;
 
@@ -129,6 +130,7 @@ abstract class Action implements Cacheable
         $roles = isset($input['roles'])
             ? $input['roles']
             : $actionClass::getConfig()->get('access/roles', false);
+
 
         Access::check(['env' => $env, 'roles' => $roles, 'request' => $request]);
 
@@ -192,7 +194,7 @@ abstract class Action implements Cacheable
                 } catch (Http_Not_Found $e) {
                     throw $e;
                 } catch (Access_Denied $e) {
-                    $subView = View::create($actionClass);
+                    $subView = ViiewOld::create($actionClass);
                 } catch (\Exception $e) {
                     $subView = Action::getLogger()->error(
                         ['Calling subAction "{$0}" in action "{$1}" failed', [$subActionClass, $actionClass]],
@@ -266,41 +268,6 @@ abstract class Action implements Cacheable
     }
 
     /**
-     * Get action config
-     *
-     * @return Config
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since   0.5
-     */
-    public static function getConfig()
-    {
-        $repository = self::getRepository();
-
-        if ($config = $repository->get('config')) {
-            return $config;
-        }
-
-        /**
-         * @var Action $actionClass
-         */
-        $actionClass = self::getClass();
-
-        $config = Config::create(
-            $actionClass,
-            array_merge_recursive(
-                $actionClass::config(),
-                Config::getInstance($actionClass, null, false, -1)
-                    ->gets()
-            )
-        );
-
-        return $repository->set('config', $config);
-    }
-
-    /**
      * Return action repository
      *
      * @return Repository
@@ -317,44 +284,24 @@ abstract class Action implements Cacheable
 
     /**
      * Action config
-     *
-     * example:
-     * ```php
-     *  $config = [
-     *      'actions' => [
-     *          ['Ice:Title', ['title' => 'page title'], 'title'],
-     *          ['Ice:Another_Action, ['param' => 'value']
-     *      ],
-     *      'view' => [
-     *          'layout' => Emmet::PANEL_BODY,
-     *          'template' => _Custom,
-     *          'viewRenderClass' => Ice:Twig,
-     *      ],
-     *      'input' => [
-     *          Request::DEFAULT_DATA_PROVIDER_KEY => [
-     *              'paramFromGETorPOST => [
-     *                  'default' => 'defaultValue',
-     *                  'validators' => ['Ice:PATTERN => PATTERN::LETTERS_ONLY]
-     *                  'type' => 'string'
-     *              ]
-     *          ]
-     *      ],
-     *      'output' => ['Ice:Resource/Ice\Action\Index'],
-     *      'cache' => ['ttl' => -1, 'count' => 1000],
-     *      'roles' => []
-     *  ];
-     * ```
-     *
+
      * @return array
      *
-     * @author anonymous <email>
+     * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0
-     * @since   0
+     * @version 0.5
+     * @since   0.5
      */
     protected static function config()
     {
-        return [];
+        return [
+            'view' => ['template' => '', 'viewRenderClass' => null, 'layout' => null],
+            'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'Action: Access denied!'],
+            'cache' => ['ttl' => -1, 'count' => 1000],
+            'actions' => [],
+            'input' => [],
+            'output' => []
+        ];
     }
 
     /**
@@ -446,7 +393,7 @@ abstract class Action implements Cacheable
     }
 
     /**
-     * @return View
+     * @return ViiewOld
      */
     public function getView()
     {
@@ -454,7 +401,7 @@ abstract class Action implements Cacheable
             return $this->view;
         }
 
-        return $this->view = View::create(get_class($this));
+        return $this->view = ViiewOld::create(get_class($this));
     }
 
     private function initTtl(&$input)
@@ -475,12 +422,12 @@ abstract class Action implements Cacheable
      *  protected static function config()
      *  {
      *      return [
-     *          'view' => ['template' => '', 'viewRenderClass' => null, 'layout' => null],
+     *          'view' => ['template' => null, 'viewRenderClass' => 'Ice:Php', 'layout' => true],
+     *          'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'Action: Access denied!'],
+     *          'cache' => ['ttl' => -1, 'count' => 1000],
      *          'actions' => [],
      *          'input' => [],
-     *          'output' => [],
-     *          'cache' => ['ttl' => -1, 'count' => 1000],
-     *          'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'Access denied!']
+     *          'output' => []
      *      ];
      *  }
      *

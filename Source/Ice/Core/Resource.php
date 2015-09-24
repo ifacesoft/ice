@@ -10,14 +10,12 @@ namespace Ice\Core;
 
 use Ice\Core;
 use Ice\Data\Provider\Cacher;
-use Ice\Data\Provider\Repository;
-use Ice\Exception\Error;
 use Ice\Exception\FileNotFound;
 use Ice\Helper\Api_Client_Yandex_Translate;
 use Ice\Helper\File;
 use Ice\Helper\Json;
 use Ice\Helper\String;
-use Ice\View\Render\Replace;
+use Ice\Render\Replace;
 
 /**
  * Class Resource
@@ -59,7 +57,6 @@ class Resource implements Cacheable
      */
     private function __construct()
     {
-
     }
 
     /**
@@ -102,7 +99,7 @@ class Resource implements Cacheable
             Replace::getInstance()->fetch(
                 $this->resource[$message][$locale],
                 (array)$params,
-                View_Render::TEMPLATE_TYPE_STRING
+                Render::TEMPLATE_TYPE_STRING
             )
         );
     }
@@ -127,6 +124,16 @@ class Resource implements Cacheable
             return $resource;
         }
 
+        $resource = new Resource();
+
+        $resource->resource = Resource::getResources($class);
+        $resource->class = $class;
+
+        return $repository->set($class, $resource);
+    }
+
+    private static function getResources($class)
+    {
         $resources = [];
 
         $resourceFiles = Loader::getFilePath($class, '.res.php', Module::RESOURCE_DIR, false, true, false, true);
@@ -137,12 +144,7 @@ class Resource implements Cacheable
             }
         }
 
-        $resource = new Resource();
-
-        $resource->resource = $resources;
-        $resource->class = $class;
-
-        return $repository->set($class, $resource);
+        return $resources;
     }
 
     public function set($message)
@@ -156,15 +158,13 @@ class Resource implements Cacheable
             return $message;
         }
 
-        $resourceFile = Loader::getFilePath($this->class, '.res.php', Module::RESOURCE_DIR, false, true, true);
+        $oldData = Resource::getResources($this->class);
 
-        $data = file_exists($resourceFile)
-            ? File::loadData($resourceFile)
+        $data = [];
+
+        $data[$message] = isset($oldData[$message])
+            ? $oldData[$message]
             : [];
-
-        if (!isset($data[$message])) {
-            $data[$message] = [];
-        }
 
         try {
             $from = Api_Client_Yandex_Translate::detect($message);
@@ -173,7 +173,7 @@ class Resource implements Cacheable
                 $data[$message][$from] = $message;
             }
 
-            $requestConfig = Request::getConfig();
+            $requestConfig = Config::getInstance(Request::getClass());
 
             if ($requestConfig->get('multiLocale')) {
                 foreach (Api_Client_Yandex_Translate::getLangs($from) as $lang) {
@@ -199,7 +199,14 @@ class Resource implements Cacheable
             $data[$message][Request::locale()] = $message;
         }
 
-        File::createData($resourceFile, $data);
+        $moduleResourceFile =
+            Module::getInstance()->get(Module::RESOURCE_DIR) . str_replace(['\\', '_'], '/', $this->class) . '.res.php';
+
+        $moduleResourceData = file_exists($moduleResourceFile)
+            ? File::loadData($moduleResourceFile)
+            : [];
+
+        File::createData($moduleResourceFile, array_merge($moduleResourceData, array_diff_key($data, $moduleResourceData)));
 
         return $message;
     }

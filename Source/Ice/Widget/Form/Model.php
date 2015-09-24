@@ -7,7 +7,7 @@
  * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
-namespace Ice\Widget\Form;
+namespace Ice\Widget;
 
 use Ice\Core\Model as Core_Model;
 use Ice\Core\Validator;
@@ -25,12 +25,12 @@ use Ice\Core\Widget_Form;
  * @package    Ice
  * @subpackage Widget_Form
  */
-class Model extends Widget_Form
+class Form_Model extends Form
 {
     protected static function config()
     {
         return [
-            'view' => ['template' => null, 'viewRenderClass' => null, 'layout' => null],
+            'render' => ['template' => true, 'class' => 'Ice:Php', 'layout' => null],
             'input' => [],
             'access' => ['roles' => [], 'request' => null, 'env' => null]
         ];

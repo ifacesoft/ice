@@ -12,8 +12,16 @@ class Access
     {
         $message = isset($access['message']) ? $access['message'] : 'Forbidden';
 
-        Environment::checkAccess($access['env'], $message);
-        Request::checkAccess($access['request'], $message);
-        Security::checkAccess($access['roles'], $message);
+        if (isset($access['env'])) {
+            Environment::checkAccess($access['env'], $message);
+        }
+
+        if (isset($access['request'])) {
+            Request::checkAccess($access['request'], $message);
+        }
+
+        if (isset($access['roles'])) {
+            Security::checkAccess($access['roles'], $message);
+        }
     }
 }

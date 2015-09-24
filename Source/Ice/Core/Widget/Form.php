@@ -337,10 +337,6 @@ abstract class Widget_Form extends Widget
             : array_intersect_key($this->validateScheme, array_flip($filterParts));
     }
 
-    public function setQueryResult(Query_Result $queryResult)
-    {
-    }
-
     public static function create($url, $action, $block = null, array $data = [])
     {
         $form = parent::create($url, $action, $block, $data);
@@ -358,26 +354,10 @@ abstract class Widget_Form extends Widget
             $path = implode('/', [$uploadTempDir, $key, $form->getToken()]);
 
             if (file_exists($path)) {
-                $form->addValue($key, Directory::getFileNames($path));
+                $form->bind([$key => Directory::getFileNames($path)]);
             }
         }
 
         return $form;
-    }
-
-    /**
-     *  protected static function config()
-     *  {
-     *      return [
-     *          'view' => ['template' => null, 'viewRenderClass' => null, 'layout' => null],
-     *          'input' => ['author' => 'request'],
-     *          'access' => ['roles' => [], 'request' => null, 'env' => null]
-     *      ];
-     *  }
-     *
-     * @param Query_Builder $queryBuilder
-     */
-    public function queryBuilderPart(Query_Builder $queryBuilder)
-    {
     }
 }

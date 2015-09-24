@@ -93,8 +93,8 @@ class Crud extends Action
         $paginationMenu = Pagination::create(Request::uri(true), __CLASS__);
 
         $modelClass::createQueryBuilder()
-            ->attachWidget('tableData', $tableData)
-            ->attachWidget('paginationMenu', $paginationMenu)
+            ->attachWidgets('tableData', $tableData)
+            ->attachWidgets('paginationMenu', $paginationMenu)
             ->getSelectQuery('*')
             ->getQueryResult();
 

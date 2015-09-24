@@ -327,7 +327,7 @@ class Logger
             'host' => Request::host(),
             'uri' => Request::uri(),
             'referer' => Request::referer(),
-            'lastTemplate' => View_Render::getLastTemplate()
+            'lastTemplate' => Render::getLastTemplate()
         ];
 
         Helper_Logger::outputFile($exception, $output, $this->class);

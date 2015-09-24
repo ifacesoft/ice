@@ -7,7 +7,6 @@ use Ice\Core\Data_Scheme;
 use Ice\Core\Module;
 use Ice\Core\Request;
 use Ice\Helper\Emmet;
-use Ice\Widget\Menu\Nav;
 
 class Admin_Database extends Action
 {

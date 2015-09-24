@@ -24,7 +24,7 @@ return [
                             ],
                             'module' => [
                                 'path' => 'Ice/',
-                                'css' => ['Core/Widget/Form/File.css'],
+                                'css' => ['Widget/Form/File.css'],
                                 'isCopy' => false,
                             ],
                         ],
@@ -67,9 +67,16 @@ return [
     ],
     'Ice\Action\Admin_Navigation' => [
         'input' => [
-            'items' => [
+            'routeNames' => [
+                'default' => ['ice_admin_database']
+            ]
+        ]
+    ],
+    'Ice\Action\Admin_Sidebar' => [
+        'input' => [
+            'routeNames' => [
                 'default' => [
-                    ['routeName' => 'ice_admin_database']
+                    'ice_admin_database' => ['ice_admin_database_dashboard']
                 ]
             ]
         ]

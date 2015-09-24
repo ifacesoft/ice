@@ -148,4 +148,8 @@ return [
         'en' => 'Could not set value: Field "{$0}" not found in Model "{$1}"',
         'ru' => 'Не удалось задать значение: поле "{$0}" не найден в модели "{$1}"',
     ],
+    'File path is empty' => [
+        'en' => 'File path is empty',
+        'ru' => 'Путь к файлу пуст',
+    ],
 ];

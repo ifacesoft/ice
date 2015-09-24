@@ -39,7 +39,7 @@ return [
                 'instance' => 'Ice:Registry/security',
             ],
             'Ice\Core\Message_Transport' => [
-                'instance' => 'Ice:Repository/message_transport',
+                'instance' => 'Ice:Registry/message_transport',
             ],
             'Ice\Core\Loader' => [
                 'loader' => 'Ice:Registry/loader',
@@ -84,8 +84,8 @@ return [
             'Ice\Core\Container' => [
                 'instance' => 'Ice:Repository/container',
             ],
-            'Ice\Core\View_Render' => [
-                'instance' => 'Ice:Registry/view_render',
+            'Ice\Core\Render' => [
+                'instance' => 'Ice:Registry/render',
             ],
             'Ice\Core\Query_Translator' => [
                 'instance' => 'Ice:Repository/query_translator',
@@ -117,9 +117,12 @@ return [
             'Ice\Core\Cache' => [
                 'tags' => 'Ice:Repository/cache',
             ],
+            'Ice\Core\ViiewOld' => [
+                'instance' => 'Ice:Repository/view_old',
+                'view' => 'Ice:Repository/view_old',
+            ],
             'Ice\Core\View' => [
                 'instance' => 'Ice:Repository/view',
-                'view' => 'Ice:Repository/view',
             ],
             'Ice\Core\Resource' => [
                 'instance' => 'Ice:Repository/resource'
@@ -138,7 +141,7 @@ return [
                 'instance' => 'Ice:Registry/bootstrap',
             ],
             'Ice\Core\Message_Transport' => [
-                'instance' => 'Ice:File/message_transport',
+                'instance' => 'Ice:Registry/message_transport',
             ],
             'Ice\Core\Loader' => [
                 'loader' => 'Ice:Registry/loader',
@@ -180,8 +183,8 @@ return [
             'Ice\Core\Container' => [
                 'instance' => 'Ice:File/container',
             ],
-            'Ice\Core\View_Render' => [
-                'instance' => 'Ice:Registry/view_render',
+            'Ice\Core\Render' => [
+                'instance' => 'Ice:Registry/render',
             ],
             'Ice\Core\Query_Translator' => [
                 'instance' => 'Ice:File/query_translator',
@@ -213,9 +216,12 @@ return [
             'Ice\Core\Cache' => [
                 'tags' => 'Ice:File/cache',
             ],
+            'Ice\Core\ViiewOld' => [
+                'instance' => 'Ice:File/view_old',
+                'view' => 'Ice:File/view_old',
+            ],
             'Ice\Core\View' => [
                 'instance' => 'Ice:File/view',
-                'view' => 'Ice:File/view',
             ],
             'Ice\Core\Resource' => [
                 'instance' => 'Ice:File/resource'
@@ -276,8 +282,8 @@ return [
             'Ice\Core\Container' => [
                 'instance' => 'Ice:Registry/container',
             ],
-            'Ice\Core\View_Render' => [
-                'instance' => 'Ice:Registry/config'
+            'Ice\Core\Render' => [
+                'instance' => 'Ice:Registry/render'
             ],
             'Ice\Core\Query_Translator' => [
                 'instance' => 'Ice:Registry/query_translator',
@@ -309,9 +315,12 @@ return [
             'Ice\Core\Cache' => [
                 'tags' => 'Ice:File/cache',
             ],
+            'Ice\Core\ViiewOld' => [
+                'instance' => 'Ice:Registry/view_old',
+                'view' => 'Ice:Registry/view_old',
+            ],
             'Ice\Core\View' => [
                 'instance' => 'Ice:Registry/view',
-                'view' => 'Ice:Registry/view',
             ],
             'Ice\Core\Resource' => [
                 'instance' => 'Ice:Registry/resource',

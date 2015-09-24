@@ -1,48 +1,47 @@
 <?php
 
-namespace Ice\Widget\Form\Security;
+namespace Ice\Widget;
 
+use Ice\Core\Model;
+use Ice\Core\Security_Account;
 use Ice\Core\Widget_Form_Security_Register;
 
-class LoginPassword_Register extends Widget_Form_Security_Register
+class Form_Security_LoginPassword_Register extends Widget_Form_Security_Register
 {
     protected static function config()
     {
         return [
-            'view' => ['template' => null, 'viewRenderClass' => null, 'layout' => null],
+            'render' => ['template' => true, 'class' => 'Ice:Php', 'layout' => null],
             'input' => [],
             'access' => ['roles' => [], 'request' => null, 'env' => null]
         ];
     }
 
-    protected function __construct()
+    public function init(array $input)
     {
-        parent::__construct();
+        parent::init($input);
 
         $this->text(
             'login',
-            $resource->get('login'),
             [
-                'placeholder' => $resource->get('login_placeholder'),
+                'placeholder' => 'login_placeholder',
                 'validators' => ['Ice:Length_Min' => 2, 'Ice:LettersNumbers']
             ]
         )->password(
             'password',
-            $resource->get('password'),
             [
-                'placeholder' => $resource->get('password_placeholder'),
+                'placeholder' => 'password_placeholder',
                 'validators' => ['Ice:Length_Min' => 5]
             ]
         )->password(
             'password1',
-            $resource->get('password1'),
-            ['placeholder' => $resource->get('password1_placeholder')]
+            ['placeholder' => 'password1_placeholder']
         );
     }
 
     /**
      * @param array $params
-     * @return Security_LoginPassword_Register
+     * @return $this
      */
     public function bind(array $params)
     {
@@ -57,5 +56,17 @@ class LoginPassword_Register extends Widget_Form_Security_Register
         }
 
         return $this;
+    }
+
+
+    /**
+     * Register by input form data
+     *
+     * @param array $userData User defaults
+     * @return Model|Security_Account
+     */
+    public function register(array $userData = [])
+    {
+        // TODO: Implement register() method.
     }
 }

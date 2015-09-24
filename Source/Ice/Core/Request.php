@@ -24,9 +24,6 @@ use Locale;
  *
  * @package    Ice
  * @subpackage Core
- *
- * @version 0.0
- * @since   0.0
  */
 class Request
 {
@@ -76,7 +73,7 @@ class Request
      */
     public static function locale()
     {
-        $config = Request::getConfig();
+        $config = Config::getInstance(__CLASS__);
 
         if (!$config->get('multiLocale')) {
             return $config->get('locale');
@@ -259,7 +256,7 @@ class Request
 
     public static function init()
     {
-        $cors = Request::getConfig()->gets('cors');
+        $cors = Config::getInstance(__CLASS__)->gets('cors');
 
         if (isset($_SERVER['HTTP_ORIGIN']) && isset($cors[$_SERVER['HTTP_ORIGIN']])) {
             Http::setHeader('Access-Control-Allow-Origin: ' . $_SERVER['HTTP_ORIGIN']);

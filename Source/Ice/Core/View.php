@@ -1,358 +1,331 @@
 <?php
-/**
- * Ice core view class
- *
- * @link      http://www.iceframework.net
- * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
- * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
- */
-
 namespace Ice\Core;
 
-use Ice\Core;
-use Ice\Data\Provider\Cacher;
+use Ice\Action\View_Render;
+use Ice\Exception\Error;
 use Ice\Helper\Emmet;
-use Ice\Helper\Hash;
+use Ice\Helper\Input;
 use Ice\Helper\Json;
+use Ice\Helper\Object;
+use Ice\Helper\String;
+use Zend\Code\Generator\DocBlock\Tag\ReturnTag;
 
-/**
- * Class View
- *
- * Core view class
- *
- * @see Ice\Core\Container
- *
- * @author dp <denis.a.shestakov@gmail.com>
- *
- * @package    Ice
- * @subpackage Core
- */
-class View implements Cacheable
+abstract class View extends Container
 {
     use Stored;
+    use Rendered;
 
     /**
-     * Action class
-     *
-     * @var Action
-     */
-    private $actionClass = null;
-
-    /**
-     * View render class
-     *
-     * @var View_Render
-     */
-    private $viewRenderClass = null;
-
-    /**
-     * View template
-     *
      * @var string
      */
     private $template = null;
 
     /**
-     * View layout
-     *
+     * @var string
+     */
+    private $renderClass = null;
+
+    /**
      * @var string
      */
     private $layout = null;
 
+    private $dataParams = null;
+
     /**
-     * View render result
-     *
      * @var string
      */
-    private $result = [
-        'actionName' => '',
-        'data' => [],
-        'error' => '',
-        'success' => '',
-        'redirect' => '',
-        'content' => ''
-    ];
+    private $actionClass = null;
 
     /**
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since 0.0
+     * @var string
      */
-    private function __construct()
+    private $viewClass = null;
+
+    /**
+     * @var string
+     */
+    private $dataUrl = null;
+
+    /**
+     * @var string
+     */
+    private $result = null;
+
+    private $name = null;
+
+    /**
+     * @var Widget[]
+     */
+    private $widgets = [];
+
+    /**
+     * @var View[]
+     */
+    private $observers = [];
+
+    /**
+     * @param null $key
+     * @param null $ttl
+     * @return View
+     */
+    public static function getInstance($key = null, $ttl = null)
     {
+        return parent::getInstance($key, $ttl);
     }
 
-    /**
-     * Return new instance of view
-     *
-     * @param  Action $actionClass
-     * @return View
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since   0.0
-     */
-    public static function create($actionClass)
+    public function getName()
     {
-        $view = new View();
-
-        if ($actionClass) {
-            $view->actionClass = $actionClass;
-            $view->result['actionName'] = $actionClass::getClassName();
+        if ($this->name !== null) {
+            return $this->name;
         }
 
-        return $view;
+        return $this->name = crc32(String::getRandomString());
     }
-//
-//    /**
-//     * Return view cacher
-//     *
-//     * @return Cacher
-//     *
-//     * @author dp <denis.a.shestakov@gmail.com>
-//     *
-//     * @version 0.5
-//     * @since   0.5
-//     */
-//    public static function getCacher()
-//    {
-//        return Cacher::getInstance(__CLASS__);
-//    }
 
-//    /**
-//     * Magic render view
-//     *
-//     * @see View::getContent()
-//     *
-//     * @return string
-//     *
-//     * @author dp <denis.a.shestakov@gmail.com>
-//     *
-//     * @version 0.5
-//     * @since   0.0
-//     */
-//    public function __toString()
-//    {
-//        return $this->getContent();
-//    }
+    /**
+     * @param View $view
+     * @param $viewClass
+     * @return $this
+     */
+    public function addObserver(View $view, $viewClass) {
+        $this->observers[$view->getForViewId()] = $viewClass;
 
-    public function getContent()
+        return $this;
+    }
+
+    /**
+     * @param string $name
+     */
+    public function setName($name)
     {
-        return $this->getResult()['content'];
+        if ($this->name === null) {
+            $this->name = $name;
+            return;
+        }
+
+        Logger::getInstance(__CLASS__)
+            ->warning(
+                [
+                    'Name for view already defined as {$0}. Name {$1} not define',
+                    [$this->name, $name]
+                ],
+                __FILE__,
+                __LINE__
+            );
+    }
+
+    /**
+     * @param null $template
+     */
+    public function setTemplate($template)
+    {
+        $this->template = $template;
+    }
+
+    /**
+     * @param null $layout
+     */
+    public function setLayout($layout)
+    {
+        $this->layout = $layout;
+    }
+
+    /**
+     * @param null $renderClass
+     */
+    public function setRenderClass($renderClass)
+    {
+        $this->renderClass = $renderClass;
     }
 
     /**
      * @return string
      */
-    public function getResult()
+    public function getViewClass()
     {
-        return $this->result;
+        if ($this->viewClass !== null) {
+            return $this->viewClass;
+        }
+
+        return $this->viewClass = get_class($this);
     }
 
     /**
-     * Validate cacheable object
-     *
-     * @param  $value
-     * @return Cacheable
-     *
-     * @author anonymous <email>
-     *
-     * @version 0
-     * @since   0
+     * @return string
      */
-    public function validate($value)
+    public function getActionClass()
     {
-        return $this;
+        if ($this->actionClass !== null) {
+            return $this->actionClass;
+        }
+
+        return $this->viewClass = View_Render::getClass();
     }
 
     /**
-     * Invalidate cacheable object
-     *
-     * @return Cacheable
-     *
-     * @author anonymous <email>
-     *
-     * @version 0
-     * @since   0
+     * @return string
      */
-    public function invalidate()
+    public function getDataUrl()
     {
-        return $this;
-    }
-
-    public function render()
-    {
-        $startTime = Profiler::getMicrotime();
-        $startMemory = Profiler::getMemoryGetUsage();
-
-        if (empty($this->template)) {
-            return;
+        if ($this->dataUrl !== null) {
+            return $this->dataUrl;
         }
 
-        $viewRenderClass = $this->viewRenderClass;
-
-        array_unshift(View_Render::$templates, $this->template);
-
-        try {
-            $cacher = View::getCacher($this->template);
-            $key = crc32(Json::encode($this->result['data']));
-
-//            if ($this->result['content'] = $cacher->get($key)) {
-//
-//                Profiler::setPoint(
-//                    $this->template . ' (' . $viewRenderClass::getClassName() . ')',
-//                    $startTime,
-//                    $startMemory
-//                );
-//
-//                Logger::fb(
-//                    Profiler::getReport($this->template . ' (' . $viewRenderClass::getClassName() . ')'),
-//                    'view (cache)',
-//                    'LOG'
-//                );
-//
-//
-//                array_shift(View_Render::$templates);
-//                return;
-//            }
-
-            $this->result['content'] = $cacher->set(
-                $key,
-                $viewRenderClass::getInstance()->fetch($this->template, $this->result['data'])
-            );
-
-            //            if  (isset($this->_result['data']['data'])) {
-            //                $this->setData($this->_result['data']['data']);
-            //            } else {
-            //                $this->setData([]);
-            //            }
-
-            if (!empty($this->layout)) {
-                $emmetedResult = Emmet::translate($this->layout . '{{$view}}', ['view' => $this->result['content']]);
-
-                if (empty($emmetedResult)) {
-                    $this->result['content'] = $this->getLogger()->error(
-                        ['Defined emmet layout string "{$0}" is corrupt', $this->layout],
-                        __FILE__,
-                        __LINE__
-                    );
-                }
-
-                $this->result['content'] = $emmetedResult;
-            }
-
-            Profiler::setPoint($this->template . ' (' . $viewRenderClass::getClassName() . ')', $startTime, $startMemory);
-
-            Logger::fb(
-                Profiler::getReport($this->template . ' (' . $viewRenderClass::getClassName() . ')'),
-                'view (new)',
-                'INFO'
-            );
-
-            array_shift(View_Render::$templates);
-        } catch (\Exception $e) {
-            echo ($e->getMessage());
-
-            $this->result['content'] = $this->getLogger()->error(
-                ['Fetch template "{$0}" failed', $this->template],
-                __FILE__,
-                __LINE__,
-                $e
-            );
-
-            array_shift(View_Render::$templates);
-        }
+        return $this->dataUrl = Request::uri(true);
     }
 
-    /**
-     * @param string $template
-     */
-    public function setTemplate($template)
+    protected static function create($key)
     {
-        $actionClass = $this->actionClass;
+        $class = self::getClass();
 
-        if ($template === null) {
-            $this->template = $actionClass;
-            return;
-        }
+        $view = new $class();
+        $view->dataParams = Input::get($class);
 
-        if ($template === '') {
-            $this->template = $template;
-            return;
-        }
-
-        if ($template[0] == '_') {
-            $this->template = $actionClass . $template;
-            return;
-        }
-
-        $this->template = $template;
-    }
-
-    /**
-     * @param View_Render $viewRenderClass
-     */
-    public function setViewRenderClass($viewRenderClass)
-    {
-        $this->viewRenderClass = View_Render::getClass($viewRenderClass);
-    }
-
-    /**
-     * @param string $layout
-     */
-    public function setLayout($layout)
-    {
-        if ($layout === null) {
-            $this->layout = 'div.' . $this->getActionName();
-
-            return;
-        }
-
-        if ($layout === '') {
-            $this->layout = $layout;
-            return;
-        }
-
-        if ($layout[0] == '_') {
-            $this->layout = 'div.' . $this->getActionName() . $layout;
-            return;
-        }
-
-        $this->layout = $layout;
-    }
-
-    public function getActionName()
-    {
-        return $this->getResult()['actionName'];
-    }
-
-    public function setData($output)
-    {
-        $this->result['data'] = $output;
-    }
-
-    public function getData()
-    {
-        return $this->getResult()['data'];
-    }
-
-    public function getErrors()
-    {
-        return $this->getResult()['error'];
+        return $view;
     }
 
     public function __toString()
     {
         try {
-            return $this->getContent();
+            return $this->render();
         } catch (\Exception $e) {
-            return $e->getMessage() . ' (' . $e->getFile() . ':' . $e->getLine() . ')';
+            return $e->getMessage() . ' - ' . $this->getClass() . ' (' . $e->getFile() . ':' . $e->getLine() . ')<br>' .
+            nl2br($e->getTraceAsString());
         }
     }
 
-    public function setContent($content)
+    public function render()
     {
-        $this->result['content'] = $content;
+        if ($this->result !== null) {
+            return $this->result;
+        }
+
+        $this->result = '';
+
+        $output = (array) $this->init($this->dataParams);
+
+        $dataParams = $this->dataParams;
+
+        foreach ($this->widgets as $widget) {
+            $dataParams = array_merge($widget->getDataParams(), $dataParams);
+        }
+
+        /** @var View $viewClass */
+        $viewClass = get_class($this);
+
+        $template = $viewClass::getTemplate($this->template);
+
+        if (!$template) {
+            foreach ($this->widgets as $widget) {
+                $widget->setDataParams($dataParams);
+                $this->result .= $widget->render();
+            }
+        } else {
+            $data = [];
+
+            foreach ($this->widgets as $widget) {
+                $widget->setDataParams($dataParams);
+                $data[$widget->getName()] = $widget->render();
+            }
+
+            $this->result = $viewClass::getRender($this->renderClass)
+                ->fetch($template, array_merge($output, $data));
+        }
+
+        $layout = $this->getLayout(
+            $this->layout,
+            '[data-action="' . $this->getActionClass() .
+            '" data-view="' . $this->getViewClass() .
+            '" data-params="' . Json::encode($dataParams) .
+            '" data-url="' . $this->getDataUrl() . '"]'
+        );
+//
+//        require_once VENDOR_DIR . 'ifacesoft/ice/Source/artem_c/emmet/Emmet.php';
+//        require_once VENDOR_DIR . 'ifacesoft/ice/Source/Ice/Helper/Emmet.php';
+//
+//        return $layout
+//            ? $emmet->create(['viewContent' => $this->result])
+//            : $this->result;
+//
+//        return $layout
+//            ? Emmet::translate($layout . '{{$viewContent}}', ['viewContent' => $this->result])
+//            : $this->result;
+
+        return $layout
+            ? '<div id="' . $this->getForViewId() . '" class="View"' .
+//            ' data-url="' . $this->getDataUrl() . '"' .
+//            ' data-action="' . $this->getActionClass() . '"' .
+//            ' data-view="' . $this->getViewClass() . '"' .
+            ' data-params=\'' . Json::encode($dataParams) . '\'' .
+            ' data-observers=\'' . Json::encode($this->observers) . '\'' .
+            '>' . $this->result . '</div>'
+            : $this->result;
+    }
+
+    /**
+     * Widget config
+     *
+     * @return array
+     *
+     *  protected static function config()
+     *  {
+     *      return [
+     *          'render' => ['template' => null, 'class' => 'Ice:Php', 'layout' => true],
+     *          'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'View: Access denied!'],
+     *          'cache' => ['ttl' => -1, 'count' => 1000],
+     *          'input' => [],
+     *          'output' => []
+     *      ];
+     *  }
+     *
+     * /**
+     * init widgets in view
+     *
+     * @param array $input
+     * @return array
+     */
+    public abstract function init(array $input);
+
+    /**
+     * @param $widgetClass
+     * @param $name
+     * @return Widget
+     */
+    protected function initWidget($widgetClass, $name)
+    {
+        /** @var Widget $widgetClass */
+        $widgetClass = Widget::getClass($widgetClass);
+
+        $widget = $widgetClass::create();
+
+        $widget
+            ->setName($name)
+            ->setForViewId($this->getForViewId())
+            ->setResource(get_class($this))
+            ->setUrl(Request::uri(true))
+            ->setViewClass(get_class($this))
+            ->setActionClass('Ice:View_Render');
+
+        $widget->init($widget->getValues());
+
+        $this->widgets[$name] = $widget;
+
+        return $widget;
+    }
+
+    private function getForViewId() {
+        return 'View_' . Object::getClassName(get_class($this)) . '_' . $this->getName();
+    }
+
+    protected function getWidgetClass($widgetClass)
+    {
+        if ($widgetClass[0] == '_') {
+            /** @var View viewClass */
+            $viewClass = get_class($this);
+            $widgetClass = $viewClass::getModuleAlias() . ':' . $viewClass::getClassName() . $widgetClass;
+        }
+
+        return Widget::getClass($widgetClass);
     }
 }

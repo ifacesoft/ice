@@ -1,8 +1,6 @@
 <?php
 namespace Ice\Core;
 
-use Ice\Widget\Menu\Nav;
-use Ice\Widget\Menu\Navbar;
 use Ice\Widget\Menu\Pagination;
 use PHPUnit_Framework_TestCase;
 
@@ -86,7 +84,7 @@ class WidgetTest extends PHPUnit_Framework_TestCase
        data-url=\'/\'
        data-json=\'{"page":5,"limit":10}\'
        data-action=\'Ice\Core\WidgetTest\'
-       data-block=\'WidgetTest\'
+       data-view=\'WidgetTest\'
        >
         1 &lt;&lt;&lt;    </a>
 </li>            <li id="Menu_Pagination_after_first"
@@ -95,7 +93,7 @@ class WidgetTest extends PHPUnit_Framework_TestCase
        data-url=\'/\'
        data-json=\'{"page":5,"limit":10}\'
        data-action=\'Ice\Core\WidgetTest\'
-       data-block=\'WidgetTest\'
+       data-view=\'WidgetTest\'
        style="border: none;">
          &hellip;     </a>
 </li>            <li id="Menu_Pagination_prevPrev"
@@ -104,7 +102,7 @@ class WidgetTest extends PHPUnit_Framework_TestCase
        data-url=\'/\'
        data-json=\'{"page":5,"limit":10}\'
        data-action=\'Ice\Core\WidgetTest\'
-       data-block=\'WidgetTest\'
+       data-view=\'WidgetTest\'
        >
         3    </a>
 </li>            <li id="Menu_Pagination_prev"
@@ -113,7 +111,7 @@ class WidgetTest extends PHPUnit_Framework_TestCase
        data-url=\'/\'
        data-json=\'{"page":5,"limit":10}\'
        data-action=\'Ice\Core\WidgetTest\'
-       data-block=\'WidgetTest\'
+       data-view=\'WidgetTest\'
        >
         4    </a>
 </li>            <li id="Menu_Pagination_current"
@@ -122,7 +120,7 @@ class WidgetTest extends PHPUnit_Framework_TestCase
        data-url=\'/\'
        data-json=\'{"page":5,"limit":10}\'
        data-action=\'Ice\Core\WidgetTest\'
-       data-block=\'WidgetTest\'
+       data-view=\'WidgetTest\'
        style="z-index: 0;">
         5 ( 10 / 100 )    </a>
 </li>            <li id="Menu_Pagination_after1"
@@ -131,7 +129,7 @@ class WidgetTest extends PHPUnit_Framework_TestCase
        data-url=\'/\'
        data-json=\'{"page":5,"limit":10}\'
        data-action=\'Ice\Core\WidgetTest\'
-       data-block=\'WidgetTest\'
+       data-view=\'WidgetTest\'
        >
         6    </a>
 </li>            <li id="Menu_Pagination_after2"
@@ -140,7 +138,7 @@ class WidgetTest extends PHPUnit_Framework_TestCase
        data-url=\'/\'
        data-json=\'{"page":5,"limit":10}\'
        data-action=\'Ice\Core\WidgetTest\'
-       data-block=\'WidgetTest\'
+       data-view=\'WidgetTest\'
        >
         7    </a>
 </li>            <li id="Menu_Pagination_rightSep3"
@@ -149,7 +147,7 @@ class WidgetTest extends PHPUnit_Framework_TestCase
        data-url=\'/\'
        data-json=\'{"page":5,"limit":10}\'
        data-action=\'Ice\Core\WidgetTest\'
-       data-block=\'WidgetTest\'
+       data-view=\'WidgetTest\'
        style="border: none;">
          &hellip;     </a>
 </li>            <li id="Menu_Pagination_last"
@@ -158,7 +156,7 @@ class WidgetTest extends PHPUnit_Framework_TestCase
        data-url=\'/\'
        data-json=\'{"page":5,"limit":10}\'
        data-action=\'Ice\Core\WidgetTest\'
-       data-block=\'WidgetTest\'
+       data-view=\'WidgetTest\'
        >
         &gt;&gt;&gt; 10    </a>
 </li>    </ul>

@@ -1,6 +1,7 @@
 <?php namespace Ice\Helper;
 
 use Ice\Core\Exception;
+use Ice\Core\Logger as Core_Logger;
 use Ice\Core\Validator as Core_Validator;
 
 class Validator
@@ -26,6 +27,6 @@ class Validator
             ? Exception::getClass('Ice:Not_Valid')
             : Exception::getClass($validatorParams['exception']);
 
-        throw new $exceptionClass($message);
+        throw new $exceptionClass(Core_Logger::getInstance(__CLASS__)->info($message, Core_Logger::DANGER));
     }
 }

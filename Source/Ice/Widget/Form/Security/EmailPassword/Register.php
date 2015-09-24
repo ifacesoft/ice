@@ -1,19 +1,20 @@
 <?php
 
-namespace Ice\Widget\Form\Security;
+namespace Ice\Widget;
 
 use Ice\Core\Model;
 use Ice\Core\Security_Account;
 use Ice\Core\Widget_Form_Security;
 use Ice\Core\Widget_Form_Security_Register;
+use Ice\Widget\Form;
 use Ice\Widget\Form\Simple;
 
-class EmailPassword_Register extends Widget_Form_Security_Register
+class Form_Security_EmailPassword_Register extends Widget_Form_Security_Register
 {
     protected static function config()
     {
         return [
-            'view' => ['template' => null, 'viewRenderClass' => null, 'layout' => null],
+            'render' => ['template' => true, 'class' => 'Ice:Php', 'layout' => null],
             'input' => [
                 'email' => ['providers' => 'request'],
                 'password' => ['providers' => 'request'],
@@ -23,15 +24,15 @@ class EmailPassword_Register extends Widget_Form_Security_Register
         ];
     }
 
-    public static function create($url, $action, $block = null, array $data = [])
+    public static function create()
     {
-        return parent::create($url, $action, $block, $data)
+        return parent::create()
             ->setResource(__CLASS__)
-            ->setTemplate(Simple::class)
+            ->setTemplate(Form::getClass())
             ->text(
                 'email',
-                'Email',
                 [
+                    'label' => 'Email',
                     'required' => true,
                     'placeholder' => 'email_placeholder',
                     'validators' => 'Ice:Email'
@@ -39,8 +40,8 @@ class EmailPassword_Register extends Widget_Form_Security_Register
             )
             ->password(
                 'password',
-                'Password',
                 [
+                    'label' => 'Password',
                     'required' => true,
                     'placeholder' => 'password_placeholder',
                     'validators' => ['Ice:Length_Min' => 5]
@@ -48,10 +49,9 @@ class EmailPassword_Register extends Widget_Form_Security_Register
             )
             ->password(
                 'password1',
-                'Password1',
-                ['placeholder' => 'password1_placeholder']
+                ['label' => 'Password1', 'placeholder' => 'password1_placeholder']
             )
-            ->button('register', 'Sign up', ['onclick' => 'POST']);
+            ->button('register', ['label' => 'Sign up', 'onclick' => 'POST']);
     }
 
     /**

@@ -24,7 +24,7 @@ use Ice\Helper\Json;
 class Response
 {
     /**
-     * @var View
+     * @var ViiewOld
      */
     private $view = null;
 
@@ -96,7 +96,7 @@ class Response
             return;
         }
 
-        if (!$this->view || !($this->view instanceof View)) {
+        if (!$this->view || !($this->view instanceof ViiewOld)) {
             Logger::getInstance(__CLASS__)->exception(['Response broken. View not found {$0}', $this->view], __FILE__, __LINE__);
         }
 
@@ -168,7 +168,7 @@ class Response
     }
 
     /**
-     * @param View $view
+     * @param ViiewOld $view
      */
     public function setView($view)
     {

@@ -4,10 +4,10 @@ namespace Ice\Core;
 
 use Ebs\Model\Log_Security;
 use Ice\Helper\Date;
-use Ice\Helper\String;
 use Ice\Helper\Logger as Helper_Logger;
+use Ice\Widget\Form;
 
-abstract class Widget_Form_Security extends Widget_Form
+abstract class Widget_Form_Security extends Form
 {
     /**
      * Is login after success sign up

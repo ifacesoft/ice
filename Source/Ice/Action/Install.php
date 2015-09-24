@@ -249,7 +249,7 @@ class Install extends Action
             'Ice\Helper\Api_Client_Yandex_Translate' => [
                 'translateKey' => null
             ],
-            'Ice\Core\View' => [
+            'Ice\Core\ViiewOld' => [
                 'layout' => null,
                 'viewRenderClass' => 'Ice:' . $input['viewRender']
             ],

@@ -3,6 +3,7 @@ namespace Ice\Action;
 
 use Ice\Core\Action;
 use Ice\Core\Request;
+use Ice\Core\View;
 use Ice\Exception\Redirect;
 
 /**
@@ -61,6 +62,10 @@ class Security_Logout extends Action
         return [
             'view' => ['template' => ''],
             'cache' => ['ttl' => -1, 'count' => 1000],
+            'input' => [
+                'viewClass' => ['providers' => 'request', 'default' => null],
+                'redirect' => ['providers' => 'request', 'default' => true]
+            ]
         ];
     }
 
@@ -74,6 +79,12 @@ class Security_Logout extends Action
     public function run(array $input)
     {
         session_destroy();
-        throw new Redirect(Request::referer());
+
+        if ($input['viewClass']) {
+            $this->addAction(['Ice:View_Render' => 'content', ['viewClass' => View::getClass($input['viewClass'])]]);
+            return [];
+        }
+
+        return ['redirect' => $input['redirect'] === true ? Request::referer() : $input['redirect']];
     }
 }

@@ -351,24 +351,14 @@ class Query
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @todo    костылькостылем погоняет((
-     * @version 0.6
+     * @version 2.0
      * @since   0.4
      */
     public function getQueryResult($ttl = null)
     {
         $queryResult = $this->getDataSource()->executeQuery($this, $ttl);
 
-        $params = [];
-
         foreach ($this->queryBuilder->getWidgets() as $widget) {
-            foreach ($widget->getValues() as $key => $value) {
-                $params[$key] = $value;
-            }
-        }
-
-        foreach ($this->queryBuilder->getWidgets() as $widget) {
-            $widget->setParams($params);
             $widget->setQueryResult($queryResult);
         }
 

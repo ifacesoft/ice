@@ -66,23 +66,6 @@ trait Core
     }
 
     /**
-     * Return config of self class
-     *
-     * @param  null $postfix
-     * @param  bool $isRequired
-     * @param  null $ttl
-     * @return Config
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since   0.0
-     */
-    public static function getConfig($postfix = null, $isRequired = false, $ttl = null)
-    {
-        return Config::getInstance(self::getClass(), $postfix, $isRequired, $ttl);
-    }
-
-    /**
      * Return dat provider for self class
      *
      * @param  string|null $postfix

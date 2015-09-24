@@ -140,7 +140,6 @@ class Loader
             } catch (\Exception $e) {
                 $modules = [Module::getInstance()];
             }
-
         } else {
             $modules = Module::getAll();
         }

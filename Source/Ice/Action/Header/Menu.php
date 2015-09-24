@@ -4,7 +4,6 @@ namespace Ice\Action;
 
 use Ice\Core\Action;
 use Ice\Core\Request;
-use Ice\Widget\Menu\Nav;
 
 class Header_Menu extends Action
 {

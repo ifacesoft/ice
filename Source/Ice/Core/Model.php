@@ -9,7 +9,6 @@
 
 namespace Ice\Core;
 
-use Ice\App;
 use Ice\Core;
 use Ice\Helper\Json;
 use Ice\Helper\Model as Helper_Model;
@@ -842,7 +841,7 @@ abstract class Model
 
         $tableData = Table::create($url, $action, $block, $event);
 
-        $tableData->addValue('modelClassName', $modelClass);
+        $tableData->bind(['modelClassName' => $modelClass]);
 
         foreach ($modelClass::getPlugin(Widget_Data::getClass()) as $fieldName => $columnType) {
             $tableData->$columnType($fieldName, $modelClass::getFieldTitle($fieldName));
@@ -1544,5 +1543,9 @@ abstract class Model
         );
 
         return null;
+    }
+
+    public static function getResource() {
+        return Resource::create(self::getClass());
     }
 }

@@ -4,6 +4,7 @@ namespace Ice\Security;
 
 use Application\Sonata\UserBundle\Entity\User;
 use Doctrine\ORM\EntityManager;
+use Ice\Core\Debuger;
 use Ice\Core\Model;
 use Ice\Core\Security_Account;
 use Ice\Data\Provider\Security as Data_Provider_Security;
@@ -32,21 +33,19 @@ class Symfony extends Ice
      */
     public function check(array $roles)
     {
-        $denied = false;
+        if (!$roles) {
+            return true;
+        }
 
-        if (isset($roles)) {
-            $denied = true;
+        $securityAuthorizationChecker = $this->getKernel()->getContainer()->get('security.authorization_checker');
 
-            $securityAuthorizationChecker = $this->getKernel()->getContainer()->get('security.authorization_checker');
-
-            foreach ((array)$roles as $role) {
-                if (true === $securityAuthorizationChecker->isGranted($role)) {
-                    $denied = false;
-                }
+        foreach ($roles as $role) {
+            if (true === $securityAuthorizationChecker->isGranted($role)) {
+                return true;
             }
         }
 
-        return !$denied || parent::check($roles);
+        return parent::check($roles);
     }
 
     /**
