@@ -461,20 +461,20 @@ abstract class Widget_Data extends Widget
     {
         $this->bottomRow = $bottomRow;
     }
-
-    /**
-     * Build link part
-     *
-     * @param  $columnName
-     * @param  $columnTitle
-     * @param  array $options
-     * @param  string $template
-     * @return Widget_Data
-     */
-    public function a($columnName, $columnTitle, array $options = [], $template = 'Ice\Core\Widget_Data_A')
-    {
-        return $this->addColumn($columnName, $columnTitle, $options, $template, 'Cell_A');
-    }
+//
+//    /**
+//     * Build link part
+//     *
+//     * @param  $columnName
+//     * @param  $columnTitle
+//     * @param  array $options
+//     * @param  string $template
+//     * @return Widget_Data
+//     */
+//    public function a($columnName, $columnTitle, array $options = [], $template = 'Ice\Core\Widget_Data_A')
+//    {
+//        return $this->addColumn($columnName, $columnTitle, $options, $template, 'Cell_A');
+//    }
 
     /**
      * Build column part
@@ -489,18 +489,18 @@ abstract class Widget_Data extends Widget
     {
         return $this->addColumn($columnName, $columnTitle, $options, $template, 'Cell_Text');
     }
-
-    /**
-     * Build button part
-     *
-     * @param  $columnName
-     * @param  $columnTitle
-     * @param  array $options
-     * @param  string $template
-     * @return Widget_Data
-     */
-    public function button($columnName, $columnTitle, array $options = [], $template = 'Ice\Core\Widget_Data_Button')
-    {
-        return $this->addColumn($columnName, $columnTitle, $options, $template, 'Cell_Button');
-    }
+//
+//    /**
+//     * Build button part
+//     *
+//     * @param  $columnName
+//     * @param  $columnTitle
+//     * @param  array $options
+//     * @param  string $template
+//     * @return Widget_Data
+//     */
+//    public function button($columnName, $columnTitle, array $options = [], $template = 'Ice\Core\Widget_Data_Button')
+//    {
+//        return $this->addColumn($columnName, $columnTitle, $options, $template, 'Cell_Button');
+//    }
 }

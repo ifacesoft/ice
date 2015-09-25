@@ -337,9 +337,9 @@ abstract class Widget_Form extends Widget
             : array_intersect_key($this->validateScheme, array_flip($filterParts));
     }
 
-    public static function create($url, $action, $block = null, array $data = [])
+    public static function create()
     {
-        $form = parent::create($url, $action, $block, $data);
+        $form = parent::create();
 
         /** @var Widget_Form $formClass */
         $formClass = get_class($form);
