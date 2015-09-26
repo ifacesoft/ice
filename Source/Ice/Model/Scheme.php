@@ -1,27 +1,27 @@
-<?php namespace Ice\Model;
+<?php namespace Ebs\Model;
 
 use Ice\Core\Model;
 
 /**
- * Class Scheme
+ * Class Ice_Scheme
  *
- * @property mixed scheme_pk
+ * @property mixed table_name
+ * @property mixed revision
  * @property mixed table__json
  * @property mixed columns__json
  * @property mixed references__json
  * @property mixed indexes__json
- * @property mixed revision
  *
  * @see Ice\Core\Model
  *
- * @package Ice\Model
+ * @package Ebs\Model
  */
-class Scheme extends Model
+class Ice_Scheme extends Model
 {
     protected static function config()
     {
         return [
-		    'dataSourceKey' => 'Ice\Data\Source\Mysqli/default.binardi',
+		    'dataSourceKey' => 'Ice\Data\Source\Mysqli/default.test',
 		    'scheme' => [
 		        'tableName' => 'ice_scheme',
 		        'engine' => 'InnoDB',
@@ -151,7 +151,7 @@ class Scheme extends Model
 		        'manyToOne' => [],
 		        'manyToMany' => [],
 		    ],
-		    'revision' => '08191514_0sw',
+		    'revision' => '09251203_yhu',
 		];
     }
 }

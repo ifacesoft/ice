@@ -322,6 +322,51 @@ class Form extends Widget
     }
 
     /**
+     * Add choseh type field
+     *
+     * Required "harvesthq/chosen" package
+     *
+     * Check composer.json:
+     * ```json
+     *  "repositories": [
+     *      {
+     *          "type": "package",
+     *          "package": {
+     *              "name": "harvesthq/chosen",
+     *              "version": "1.4.2",
+     *              "source": {
+     *                  "type": "git",
+     *                  "url": "https://github.com/harvesthq/chosen.git",
+     *                  "reference": "1.4.2"
+     *              }
+     *          }
+     *      }
+     *  ],
+     *  "require": {
+     *      "harvesthq/chosen": "1.4.2"
+     *  },
+     * ```
+     *
+     * @param  $fieldName
+     * @param  array $options
+     * @param  string $template
+     * @return Form
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 2.0
+     * @since   2.0
+     */
+    public function chosen($fieldName, array $options = [], $template = 'Ice\Widget\Form\Chosen')
+    {
+        if ($this->horizontal) {
+            $options['horizontal'] = $this->horizontal;
+        }
+
+        return $this->addPart($fieldName, $options, $template, __FUNCTION__);
+    }
+
+    /**
      * Add map type field
      *
      * @param  $fieldName

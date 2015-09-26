@@ -11,10 +11,7 @@ namespace Ice\Core;
 
 use Ice\Core;
 use Ice\Helper\Directory;
-use Ice\Helper\Emmet;
-use Ice\Helper\Json;
-use Ice\View\Render\Php;
-use Ice\Widget\Form\Model as Widget_Form_Model;
+use Ice\Widget\Form_Model as Widget_Form_Model;
 
 /**
  * class Widget_Form
@@ -101,30 +98,6 @@ abstract class Widget_Form extends Widget
     public function hidden($fieldName, $fieldTitle = 'hidden', array $options = [], $template = 'Ice\Core\Widget_Form_Hidden')
     {
         return $this->addPart($fieldName, $fieldTitle, $options, $template, Widget_Form::FIELD_HIDDEN);
-    }
-
-    /**
-     * Add field as form part
-     *
-     * @param $partName
-     * @param $partTitle
-     * @param  array $options
-     * @param $template
-     * @param $element
-     * @return Widget_Form
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.6
-     * @since   0.0
-     */
-    protected function addPart($partName, $partTitle, array $options, $template, $element)
-    {
-        if (!empty($options['validators'])) {
-            $this->validateScheme[$partName] = $options['validators'];
-            unset($options['validators']);
-        }
-
-        return parent::addPart($partName, $partTitle, $options, $template, $element);
     }
 
     /**

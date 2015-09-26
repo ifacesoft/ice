@@ -123,13 +123,19 @@ class Form_Model extends Form
      *
      * @version 0.0
      * @since   0.0
+     * @param $token
+     * @return array|void
      */
-    public function submit()
+    public function action($token)
     {
+        $result = $this->action($token);
+
         /**
          * @var Core_Model $modelClass
          */
         $modelClass = $this->getValues();
         $modelClass::create($this->validate())->save(true);
+
+        return $result;
     }
 }

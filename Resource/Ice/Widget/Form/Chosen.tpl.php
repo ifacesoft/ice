@@ -12,6 +12,7 @@
                 data-for="Widget_<?= $widgetClassName ?>_<?= $widgetName ?>"
                 data-name="<?= $name ?>"
                 data-params='<?= $dataParams ?>'
+            <?php if (isset($options['placeholder'])) : ?> data-placeholder="<?= $options['placeholder'] ?>"<?php endif; ?>
                 <?php if (isset($options['multiple'])) : ?>multiple<?php endif; ?>
                 <?php if (isset($options['size'])) : ?>size="<?= $options['size'] ?>"<?php endif; ?>
                 <?php if (isset($options['onchange'])) : ?>onchange="<?= $options['onchange'] ?> return false;"<?php endif; ?>
@@ -23,4 +24,9 @@
             <?php endforeach; ?>
         </select>
         <?php if (isset($options['horizontal'])) : ?></div><?php endif; ?>
+    <script>
+        $(function () {
+            $("#<?= $widgetClassName . '_' . $widgetName . '_' . $name ?>").chosen({dateFormat: 'yy-mm-dd'});
+        });
+    </script>
 </div>
