@@ -11,15 +11,15 @@ class Form_Security_LoginPassword_Register extends Widget_Form_Security_Register
     protected static function config()
     {
         return [
-            'render' => ['template' => true, 'class' => 'Ice:Php', 'layout' => null],
+            'render' => ['template' => Form::getClass(), 'class' => 'Ice:Php', 'layout' => null],
             'input' => [],
             'access' => ['roles' => [], 'request' => null, 'env' => null]
         ];
     }
 
-    public function init(array $input)
+    protected function build(array $input)
     {
-        parent::init($input);
+        parent::build($input);
 
         $this->text(
             'login',

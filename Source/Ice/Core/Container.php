@@ -11,7 +11,6 @@ namespace Ice\Core;
 
 use Ice\Core;
 use Ice\Exception\FileNotFound;
-use Ice\Helper\Json;
 use Ice\Helper\Object;
 
 /**
@@ -26,65 +25,26 @@ use Ice\Helper\Object;
  */
 abstract class Container
 {
-    /**
-     * Return dat provider for self class
-     *
-     * @param  null $postfix
-     * @return Data_Provider
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.1
-     * @since   0.1
-     */
-    public static function getDataProvider($postfix = null)
-    {
-        if (empty($postfix)) {
-            $postfix = strtolower(Object::getClassName(self::getClass()));
-        }
-
-        return Environment::getInstance()->getProvider(self::getBaseClass(), $postfix);
-    }
-
-    public static function getClass($className = null)
-    {
-        return empty($className)
-            ? get_called_class()
-            : Object::getClass(get_called_class(), $className);
-    }
-
-    /**
-     * Return base class for self class (class extends Container)
-     *
-     * @return Core
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.1
-     * @since   0.1
-     */
-    public static function getBaseClass()
-    {
-        return Object::getBaseClass(self::getClass());
-    }
+    private $instanceKey = null;
 
     /**
      * Get instance from container
      *
      * @param  string $key
      * @param  null $ttl
+     * @param array $params
+     * @return null|object|string
      * @throws Exception
-     * @return object|string|null
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 1.1
+     * @version 2.0
      * @since   0.0
      */
-    public static function getInstance($key = null, $ttl = null)
+    public static function getInstance($key, $ttl = null, array $params = [])
     {
         /** @var Container|Core $class */
-        $class = self::getClass();
+        $class = get_called_class();
 
         /** @var Container|Core $baseClass */
         $baseClass = $class::getBaseClass();
@@ -95,7 +55,7 @@ abstract class Container
 
         if ($class == $baseClass) {
             if (!$key) {
-                return $baseClass::getInstance($class::getDefaultClassKey(), $ttl);
+                return $baseClass::getInstance($class::getDefaultClassKey(), $ttl, $params);
             } elseif (is_string($key)) {
                 $parts = explode('/', $key);
 
@@ -109,29 +69,27 @@ abstract class Container
 
                 $class = Object::getClass($baseClass, $class);
 
-                return $class::getInstance($key, $ttl);
+                return $class::getInstance($key, $ttl, $params);
             }
         }
 
-        if ($key == 'default'/*is_string($key) && String::startsWith($key, 'default')*/) {
+        if (!$key || $key == 'default') {
             $key = $class::getDefaultKey();
         }
 
-        $data = $key;
-
-        $key = is_string($key)
-            ? $class . '/' . $key
-            : $class . '/' . md5(Json::encode($key));
+        $logger = Logger::getInstance(__CLASS__);
 
         $object = null;
         try {
-            $dataProvider = $baseClass::getDataProvider('instance');
+            $dataProvider = $class::getDataProvider('instance');
 
             if ($ttl != -1 && $object = $dataProvider->get($key)) {
                 return $object;
             }
 
-            $object = $class::create($data);
+            $params['instanceKey'] = $key;
+
+            $object = $class::create($params);
 
             if ($object) {
                 $dataProvider->set($key, $object, $ttl);
@@ -139,25 +97,19 @@ abstract class Container
 
         } catch (FileNotFound $e) {
             if ($baseClass == Code_Generator::getClass()) {
-                Container::getLogger()->exception(['Code generator for {$0} not found', $key], __FILE__, __LINE__, $e);
+                $logger->exception(['Code generator for {$0} not found', $key], __FILE__, __LINE__, $e);
             }
 
             if (Environment::getInstance()->isDevelopment()) {
-                Code_Generator::getLogger()->warning(
-                    ['File {$0} not found. Trying generate {$1}...', [$key, $baseClass]],
-                    __FILE__,
-                    __LINE__,
-                    $e
-                );
                 $baseClass::getCodeGenerator()->generate($key);
                 $object = $class::create($key);
             } else {
-                Container::getLogger()->error(['File {$0} not found', $key], __FILE__, __LINE__, $e);
+                $logger->error(['File {$0} not found', $key], __FILE__, __LINE__, $e);
             }
         }
 
         if (!$object) {
-            self::getLogger()->exception('Could not create object', __FILE__, __LINE__);
+            $class::getLogger()->exception('Could not create object', __FILE__, __LINE__);
         }
 
         return $object;
@@ -176,7 +128,7 @@ abstract class Container
     protected static function getDefaultClassKey()
     {
         Resource::getLogger()->exception(
-            ['Implementation {$0} is required for {$1}', [__FUNCTION__, self::getClass()]],
+            ['Implementation {$0} is required for {$1}', [__FUNCTION__, get_called_class()]],
             __FILE__,
             __LINE__
         );
@@ -197,7 +149,7 @@ abstract class Container
     protected static function getDefaultKey()
     {
         Resource::getLogger()->exception(
-            ['Implementation {$0} is required for {$1}', [__FUNCTION__, self::getClass()]],
+            ['Implementation {$0} is required for {$1}', [__FUNCTION__, get_called_class()]],
             __FILE__,
             __LINE__
         );
@@ -208,37 +160,45 @@ abstract class Container
     /**
      * Create instance
      *
-     * @param  $key
-     * @return mixed
+     * @param  $params
+     * @return Container
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.4
+     * @version 2.0
      * @since   0.4
      */
-    protected static function create($key)
+    final private static function create($params)
     {
-        return Resource::getLogger()->exception(
-            ['Implementation {$0} is required for {$1}', [__FUNCTION__, self::getClass()]],
-            __FILE__,
-            __LINE__,
-            null,
-            $key
-        );
+        $class = get_called_class();
+
+        /** @var Container $object */
+        $object = new $class();
+
+        $object->instanceKey = $params['instanceKey'];
+
+        $object->init($params);
+
+        return $object;
     }
 
     /**
-     * Return logger for self class
+     * @return string
+     */
+    public function getInstanceKey()
+    {
+        return $this->instanceKey;
+    }
+
+    /**
+     * Init object
      *
-     * @return Logger
+     * @param array $params
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.2
-     * @since   0.2
+     * @version 2.0
+     * @since   2.0
      */
-    public static function getLogger()
-    {
-        return Logger::getInstance(self::getClass());
-    }
+    protected abstract function init(array $params);
 }

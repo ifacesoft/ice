@@ -27,21 +27,14 @@ class Bootstrap extends Container
 
     private $moduleConfigPath = null;
 
-    /**
-     * Bootstrap constructor.
-     * @param $moduleConfigPath
-     */
-    private function __construct($moduleConfigPath)
-    {
-        $this->moduleConfigPath = $moduleConfigPath;
-    }
-
-    protected static function create($key)
-    {
-        $class = self::getClass();
-
-        return new $class($key);
-    }
+//    /**
+//     * Bootstrap constructor.
+//     * @param $moduleConfigPath
+//     */
+//    private function __construct($moduleConfigPath)
+//    {
+//        $this->moduleConfigPath = $moduleConfigPath;
+//    }
 
     /**
      * Initialization requered parameters, constants and includes core files
@@ -50,18 +43,16 @@ class Bootstrap extends Container
      *
      * @version 0.2
      * @since   0.0
-     * @param   ClassLoader $loader
-     * @param   bool $force
+     * @param array $params
      */
-    public function init(ClassLoader $loader, $force = false)
+    protected function init(array $params)
     {
-
         setlocale(LC_ALL, 'en_US.UTF-8');
         setlocale(LC_NUMERIC, 'C');
 
         date_default_timezone_set('UTC');
 
-        Loader::init($loader, $force);
+        Loader::init($params['loader'], !empty($params['force']));
         Logger::init();
         Request::init();
 
@@ -72,6 +63,16 @@ class Bootstrap extends Container
         if (!Request::isCli()) {
             Session::init();
         }
+
+        $module = Module::getInstance();
+
+        /** @var Security $securityClass */
+        $securityClass = $module->get('securityClass');
+        $securityClass::getInstance('default');
+
+        /** @var Router $routerClass */
+        $routerClass = $module->get('routerClass');
+        $routerClass::getInstance('default');
     }
 
     /**

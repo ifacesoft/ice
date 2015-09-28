@@ -10,6 +10,7 @@
 namespace Ice\Render;
 
 use Ice\Core\Action;
+use Ice\Core\Config;
 use Ice\Core\Debuger;
 use Ice\Core\Environment;
 use Ice\Core\Loader;
@@ -44,17 +45,10 @@ class Smarty extends Render
      */
     private $_smarty = null;
 
-    /**
-     * Constructor of php view render
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since   0.0
-     */
-    protected function __construct()
+
+    protected function init(array $params)
     {
-        $config = Smarty::getConfig();
+        $config = Config::getInstance(__CLASS__);
 
 //        include_once VENDOR_DIR . $config->get('vendor') . '/libs/Smarty.class.php';
 
@@ -79,11 +73,17 @@ class Smarty extends Render
     /**
      * @param null $key
      * @param null $ttl
+     * @param array $params
      * @return Smarty
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 2.0
+     * @since   0.0
      */
-    public static function getInstance($key = null, $ttl = null)
+    public static function getInstance($key = null, $ttl = null, array $params = [])
     {
-        return parent::getInstance($key, $ttl);
+        return parent::getInstance($key, $ttl, $params);
     }
 
     /**

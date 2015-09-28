@@ -26,15 +26,6 @@ class Nav extends Widget
     }
 
     /**
-     * Init widget parts and other
-     * @param array $input
-     * @return array|void
-     */
-    public function init(array $input)
-    {
-    }
-
-    /**
      * @param $name
      * @param array $options
      * @param string $template
@@ -70,5 +61,9 @@ class Nav extends Widget
         return $template
             ? $this->widget($name, $options, $template)
             : $this->widget($name, $options);
+    }
+
+    protected function build(array $input)
+    {
     }
 }

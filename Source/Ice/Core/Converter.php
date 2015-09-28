@@ -25,16 +25,20 @@ abstract class Converter extends Container
 {
     use Stored;
 
-    public static function getInstance($key = null, $ttl = null)
+    /**
+     * @param null $key
+     * @param null $ttl
+     * @param array $params
+     * @return Converter
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 2.0
+     * @since   1.0
+     */
+    public static function getInstance($key = null, $ttl = null, array $params = [])
     {
-        return parent::getInstance($key, $ttl);
-    }
-
-    protected static function create($key)
-    {
-        $converterClass = self::getClass();
-
-        return new $converterClass();
+        return parent::getInstance($key, $ttl, $params);
     }
 
     protected static function getDefaultKey()

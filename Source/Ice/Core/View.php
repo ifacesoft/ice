@@ -52,8 +52,6 @@ abstract class View extends Container
      */
     private $result = null;
 
-    private $name = null;
-
     /**
      * @var Widget[]
      */
@@ -67,20 +65,22 @@ abstract class View extends Container
     /**
      * @param null $key
      * @param null $ttl
+     * @param array $params
      * @return View
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 2.0
+     * @since   2.0
      */
-    public static function getInstance($key = null, $ttl = null)
+    public static function getInstance($key = null, $ttl = null, array $params = [])
     {
-        return parent::getInstance($key, $ttl);
+        return parent::getInstance($key, $ttl, $params);
     }
 
-    public function getName()
+    protected static function getDefaultKey()
     {
-        if ($this->name !== null) {
-            return $this->name;
-        }
-
-        return $this->name = crc32(String::getRandomString());
+        return 'default';
     }
 
     /**
@@ -92,27 +92,6 @@ abstract class View extends Container
         $this->observers[$view->getForViewId()] = $viewClass;
 
         return $this;
-    }
-
-    /**
-     * @param string $name
-     */
-    public function setName($name)
-    {
-        if ($this->name === null) {
-            $this->name = $name;
-            return;
-        }
-
-        Logger::getInstance(__CLASS__)
-            ->warning(
-                [
-                    'Name for view already defined as {$0}. Name {$1} not define',
-                    [$this->name, $name]
-                ],
-                __FILE__,
-                __LINE__
-            );
     }
 
     /**
@@ -175,15 +154,13 @@ abstract class View extends Container
         return $this->dataUrl = Request::uri(true);
     }
 
-    protected static function create($key)
-    {
-        $class = self::getClass();
+    protected function init(array $params) {
+        $this->dataParams = Input::get(self::getClass());
 
-        $view = new $class();
-        $view->dataParams = Input::get($class);
-
-        return $view;
+        $this->build($this->dataParams);
     }
+
+    protected abstract function build($input);
 
     public function __toString()
     {
@@ -203,7 +180,7 @@ abstract class View extends Container
 
         $this->result = '';
 
-        $output = (array) $this->init($this->dataParams);
+        $output = (array) $this->build($this->dataParams);
 
         $dataParams = $this->dataParams;
 
@@ -226,7 +203,7 @@ abstract class View extends Container
 
             foreach ($this->widgets as $widget) {
                 $widget->setDataParams($dataParams);
-                $data[$widget->getName()] = $widget->render();
+                $data[$widget->getInstanceKey()] = $widget->render();
             }
 
             $this->result = $viewClass::getRender($this->renderClass)
@@ -264,50 +241,19 @@ abstract class View extends Container
     }
 
     /**
-     * Widget config
-     *
-     * @return array
-     *
-     *  protected static function config()
-     *  {
-     *      return [
-     *          'render' => ['template' => null, 'class' => 'Ice:Php', 'layout' => true],
-     *          'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'View: Access denied!'],
-     *          'cache' => ['ttl' => -1, 'count' => 1000],
-     *          'input' => [],
-     *          'output' => []
-     *      ];
-     *  }
-     *
-     * /**
-     * init widgets in view
-     *
-     * @param array $input
-     * @return array
-     */
-    public abstract function init(array $input);
-
-    /**
      * @param $widgetClass
      * @param $name
+     * @param array $params
      * @return Widget
      */
-    protected function initWidget($widgetClass, $name)
+    protected function getWidget($widgetClass, $name, array $params = [])
     {
+        $params = array_merge(['forViewId' => $this->getForViewId(), 'resource' => get_class($this)], $params);
+
         /** @var Widget $widgetClass */
         $widgetClass = Widget::getClass($widgetClass);
 
-        $widget = $widgetClass::create();
-
-        $widget
-            ->setName($name)
-            ->setForViewId($this->getForViewId())
-            ->setResource(get_class($this))
-            ->setUrl(Request::uri(true))
-            ->setViewClass(get_class($this))
-            ->setActionClass('Ice:View_Render');
-
-        $widget->init($widget->getValues());
+        $widget = $widgetClass::getInstance($name, null,  $params);
 
         $this->widgets[$name] = $widget;
 
@@ -315,7 +261,7 @@ abstract class View extends Container
     }
 
     private function getForViewId() {
-        return 'View_' . Object::getClassName(get_class($this)) . '_' . $this->getName();
+        return 'View_' . Object::getClassName(get_class($this)) . '_' . $this->getInstanceKey();
     }
 
     protected function getWidgetClass($widgetClass)

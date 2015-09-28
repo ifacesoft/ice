@@ -11,7 +11,7 @@ use Ice\Helper\String;
 use Ice\Render\Php;
 use Ice\Render\Replace;
 
-abstract class Widget
+abstract class Widget extends Container
 {
     use Stored;
     use Rendered;
@@ -52,7 +52,6 @@ abstract class Widget
     private $result = null;
     private $compiledResult = null;
 
-    private $name = null;
     private $forViewId = null;
 
     /**
@@ -94,10 +93,6 @@ abstract class Widget
         'input' => []
     ];
 
-    private function __construct()
-    {
-    }
-
     /**
      * Widget config
      *
@@ -120,55 +115,17 @@ abstract class Widget
         ];
     }
 
-    /**
-     * Create new instance of ui component
-     *
-     * @return $this
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 2.0
-     * @since   0.1
-     */
-    public static function create()
-    {
-        $class = self::getClass();
-
-        /** @var Widget $widget */
-        $widget = new $class();
-
-        if ($input = Input::get($class)) {
-            $widget->rows = [$input];
+    protected function init(array $params) {
+        if ($input = Input::get(self::getClass())) {
+            $this->rows = [$input];
         }
 
-        $widget->token = crc32(String::getRandomString());
+        $this->token = crc32(String::getRandomString());
 
-        return $widget;
+        $this->build($input);
     }
 
-    /**
-     * Widget config
-     *
-     * @return array
-     *
-     *  protected static function config()
-     *  {
-     *      return [
-     *          'render' => ['template' => null, 'class' => 'Ice:Php', 'layout' => ''],
-     *          'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'Widget: Access denied!'],
-     *          'cache' => ['ttl' => -1, 'count' => 1000],
-     *          'actions' => [],
-     *          'input' => [],
-     *          'output' => []
-     *      ];
-     *  }
-     *
-     * /**
-     * Init widget parts and other
-     *
-     * @param array $input
-     */
-    public abstract function init(array $input);
+    protected abstract function build(array $input);
 
     /**
      * @return null
@@ -185,39 +142,6 @@ abstract class Widget
     public function setForViewId($forViewId)
     {
         $this->forViewId = $forViewId;
-        return $this;
-    }
-
-    public function getName()
-    {
-        if ($this->name !== null) {
-            return $this->name;
-        }
-
-        return $this->name = $this->getToken();
-    }
-
-    /**
-     * @param string $name
-     * @return $this
-     */
-    public function setName($name)
-    {
-        if ($this->name === null) {
-            $this->name = $name;
-            return $this;
-        }
-
-        Logger::getInstance(__CLASS__)
-            ->warning(
-                [
-                    'Name for view already defined as {$0}. Name {$1} not define',
-                    [$this->name, $name]
-                ],
-                __FILE__,
-                __LINE__
-            );
-
         return $this;
     }
 
@@ -447,7 +371,7 @@ abstract class Widget
         /** @var Widget $widgetClass */
         $widgetClass = get_class($this);
         $widgetClassName = $widgetClass::getClassName();
-        $widgetName = $this->getName();
+        $widgetName = $this->getInstanceKey();
 
         $rows = $this->rows ? $this->rows : [[]];
 
@@ -618,7 +542,7 @@ abstract class Widget
 
         return $this->compiledResult = [
             'result' => $this->getResult(),
-            'widgetName' => $this->getName(),
+            'widgetName' => $this->getInstanceKey(),
             'widgetData' => $this->getData(),
             'widgetClassName' => $widgetClassName,
             'widgetResource' => $this->getResource(),
@@ -1009,19 +933,12 @@ abstract class Widget
         return $this->addPart($name, $options, $template, __FUNCTION__);
     }
 
-    /**
-     * @param $widgetClass
-     * @return $this
-     */
-    protected function createWidget($widgetClass)
-    {
+    protected function getWidget($widgetClass, $widgetName, array $params = []) {
+        $params['forViewId'] = $this->getForViewId();
+
         /** @var Widget $widgetClass */
         $widgetClass = Widget::getClass($widgetClass);
 
-        return $widgetClass::create()
-            ->setResource($this->getResource())
-            ->setUrl($this->getUrl())
-            ->setViewClass($this->getViewClass())
-            ->setActionClass($this->getActionClass());
+        return $widgetClass::getInstance($widgetName, null, $params);
     }
 }

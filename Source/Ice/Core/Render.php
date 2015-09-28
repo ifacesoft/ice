@@ -43,11 +43,17 @@ abstract class Render extends Container
     /**
      * @param null $key
      * @param null $ttl
+     * @param array $params
      * @return Render
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 2.0
+     * @since   0.0
      */
-    public static function getInstance($key = null, $ttl = null)
+    public static function getInstance($key = null, $ttl = null, array $params = [])
     {
-        return parent::getInstance($key, $ttl);
+        return parent::getInstance($key, $ttl, $params);
     }
 
     /**
@@ -67,23 +73,6 @@ abstract class Render extends Container
         }
 
         return reset(Render::$templates);
-    }
-
-    /**
-     * Create new instance of view render
-     *
-     * @param  $key
-     * @return Render
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since   0.0
-     */
-    protected static function create($key)
-    {
-        $renderClass = self::getClass();
-
-        return new $renderClass();
     }
 
     /**

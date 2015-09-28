@@ -100,6 +100,7 @@ abstract class Validator extends Container
      *
      * @param  null $key
      * @param  null $ttl
+     * @param array $params
      * @return Validator
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -107,9 +108,9 @@ abstract class Validator extends Container
      * @version 0.1
      * @since   0.1
      */
-    public static function getInstance($key = null, $ttl = null)
+    public static function getInstance($key = null, $ttl = null, array $params = [])
     {
-        return parent::getInstance($key, $ttl);
+        return parent::getInstance($key, $ttl, $params);
     }
 
     public static function schemeColumnPlugin($columnName, $table)
@@ -131,24 +132,6 @@ abstract class Validator extends Container
         }
 
         return $validators;
-    }
-
-    /**
-     * Create new instance of validator
-     *
-     * @param  $key
-     * @return Validator
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since   0.0
-     */
-    protected static function create($key)
-    {
-        $class = self::getClass();
-
-        return new $class();
     }
 
     /**

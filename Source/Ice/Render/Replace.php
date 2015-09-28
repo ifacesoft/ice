@@ -10,6 +10,7 @@
 namespace Ice\Render;
 
 use Ice\Core\Action;
+use Ice\Core\Debuger;
 use Ice\Core\Loader;
 use Ice\Core\Module;
 use Ice\Core\Render;
@@ -25,31 +26,17 @@ use Ice\Core\Render;
  *
  * @package    Ice
  * @subpackage View_Render
- *
- * @version 0.0
- * @since   0.0
  */
 class Replace extends Render
 {
     const TEMPLATE_EXTENTION = '.tpl.txt';
 
     /**
-     * Constructor of replace view render
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since   0.0
-     */
-    protected function __construct()
-    {
-    }
-
-    /**
      * Return instanc of view render Replace
      *
      * @param  null $key
      * @param  null $ttl
+     * @param array $params
      * @return Replace
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -57,9 +44,9 @@ class Replace extends Render
      * @version 0.1
      * @since   0.1
      */
-    public static function getInstance($key = null, $ttl = null)
+    public static function getInstance($key = null, $ttl = null, array $params = [])
     {
-        return parent::getInstance($key, $ttl);
+        return parent::getInstance($key, $ttl, $params);
     }
 
     /**
@@ -77,10 +64,9 @@ class Replace extends Render
      */
     public function fetch($template, array $data = [], $templateType = Render::TEMPLATE_TYPE_FILE)
     {
-        //        $template = Action::getClass($template);
-
         if ($templateType == Render::TEMPLATE_TYPE_FILE) {
             $template = str_replace(['_', '\\'], '/', $template);
+
             $template = file_get_contents(
                 Loader::getFilePath($template, self::TEMPLATE_EXTENTION, Module::RESOURCE_DIR)
             );
@@ -100,5 +86,19 @@ class Replace extends Render
             array_values($data),
             $template
         );
+    }
+
+    /**
+     * Init object
+     *
+     * @param array $params
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 2.0
+     * @since   2.0
+     */
+    protected function init(array $params)
+    {
     }
 }

@@ -12,37 +12,33 @@ class PHPMailer extends Message_Transport
     /** @var \PHPMailer */
     private $phpMailer = null;
 
-    protected static function create($key)
-    {
+    protected function init(array $params) {
+        $key = $params['instanceKey'];
+
         $config = Config::getInstance(__CLASS__);
 
-        /** @var PHPMailer $messageTransport */
-        $messageTransport = parent::create($key);
+        $this->phpMailer = new \PHPMailer();
 
-        $messageTransport->phpMailer = new \PHPMailer();
+        $this->phpMailer->CharSet = 'UTF-8';
 
-        $messageTransport->phpMailer->CharSet = 'UTF-8';
+        $this->phpMailer->isSMTP();
 
-        $messageTransport->phpMailer->isSMTP();
+        $this->phpMailer->SMTPSecure = 'tls';
+        $this->phpMailer->SMTPAuth = true;
 
-        $messageTransport->phpMailer->SMTPSecure = 'tls';
-        $messageTransport->phpMailer->SMTPAuth = true;
+        $this->phpMailer->SMTPDebug = $config->get($key . '/debug');
+        $this->phpMailer->Debugoutput = 'html';
 
-        $messageTransport->phpMailer->SMTPDebug = $config->get($key . '/debug');
-        $messageTransport->phpMailer->Debugoutput = 'html';
+        $this->phpMailer->Host = $config->get($key . '/smtpHost');
+        $this->phpMailer->Port = $config->get($key . '/smtpPort');
 
-        $messageTransport->phpMailer->Host = $config->get($key . '/smtpHost');
-        $messageTransport->phpMailer->Port = $config->get($key . '/smtpPort');
+        $this->phpMailer->Username = $config->get($key . '/smtpUser');
+        $this->phpMailer->Password = $config->get($key . '/smtpPass');
 
-        $messageTransport->phpMailer->Username = $config->get($key . '/smtpUser');
-        $messageTransport->phpMailer->Password = $config->get($key . '/smtpPass');
+        $this->phpMailer->setFrom($this->getFromAddress(), $this->getFromName());
+        $this->phpMailer->addReplyTo($this->getReplyToAddress(), $this->getReplyToName());
 
-        $messageTransport->phpMailer->setFrom($messageTransport->getFromAddress(), $messageTransport->getFromName());
-        $messageTransport->phpMailer->addReplyTo($messageTransport->getReplyToAddress(), $messageTransport->getReplyToName());
-
-        $messageTransport->phpMailer->isHTML(true);
-
-        return $messageTransport;
+        $this->phpMailer->isHTML(true);
     }
 
     /**

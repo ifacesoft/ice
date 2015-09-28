@@ -14,7 +14,7 @@ class Form_Security_LoginPassword_Login extends Widget_Form_Security_Login
     protected static function config()
     {
         return [
-            'render' => ['template' => true, 'class' => 'Ice:Php', 'layout' => null],
+            'render' => ['template' => Form::getClass(), 'class' => 'Ice:Php', 'layout' => null],
             'input' => [
                 'login' => ['providers' => 'request'],
                 'password' => ['providers' => 'request']
@@ -23,10 +23,10 @@ class Form_Security_LoginPassword_Login extends Widget_Form_Security_Login
         ];
     }
 
-    public static function create()
+    protected function build(array $input)
     {
-        return parent::create()
-            ->setTemplate(Form::getClass())
+        parent::build($input);
+        $this
             ->text(
                 'login',
                 [

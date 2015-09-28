@@ -150,7 +150,7 @@ class Session
      */
     public static function read($session_id)
     {
-        return Session::getDataProvider()->get($session_id);
+        return Session::getDataProvider('session')->get($session_id);
     }
 
     /**
@@ -178,7 +178,7 @@ class Session
      */
     public static function write($session_id, $session_data)
     {
-        Session::getDataProvider()->set($session_id, $session_data);
+        Session::getDataProvider('session')->set($session_id, $session_data);
     }
 
     public static function id() {

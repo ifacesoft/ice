@@ -9,6 +9,7 @@
 
 namespace Ice\Helper;
 
+use Ice\Core\Debuger;
 use Ice\Core\Exception;
 use Ice\Core\Logger as Core_Logger;
 use Ice\Core\Module;

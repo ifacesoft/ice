@@ -30,8 +30,6 @@ trait Rendered
             return null;
         }
 
-        Debuger::dump($layout);
-
         if ($layout[0] == '_') {
             return 'div.' . Object::getClassName($class) . $layout . $attributes;
         }

@@ -53,11 +53,11 @@ try {
     require_once ICE_DIR . 'Source/Ice/Core/Render.php';
     require_once ICE_DIR . 'Source/Ice/Helper/Api/Client/Yandex/Translate.php';
 
-    \Ice\Core\Bootstrap::getInstance($config['module']['bootstrapClass'])->init($loader);
+    \Ice\Core\Bootstrap::getInstance($config['module']['bootstrapClass'], null, ['loader' => $loader]);
 } catch (Exception $e) {
     echo '<span style="font-weight: bold;">Bootstrapping failed: ' .
         str_replace(MODULE_DIR, '', $e->getMessage()) .
         '</span><br>';
-    echo nl2br(str_replace(MODULE_DIR, '', $e->getTraceAsString()));
+    echo nl2br(str_replace(MODULE_DIR, '', $e->getTraceAsString()) . "\n");
     die('Terminated. Bye-bye...' . "\n");
 }

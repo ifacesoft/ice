@@ -109,14 +109,6 @@ class Form extends Widget
     }
 
     /**
-     * @return Form
-     */
-    public static function create()
-    {
-        return parent::create();
-    }
-
-    /**
      * Init widget parts and other
      * @param array $input
      * @return array|void
@@ -324,7 +316,7 @@ class Form extends Widget
     /**
      * Add choseh type field
      *
-     * Required "harvesthq/chosen" package
+     * Required "harvesthq/bower-chosen" package
      *
      * Check composer.json:
      * ```json
@@ -332,18 +324,18 @@ class Form extends Widget
      *      {
      *          "type": "package",
      *          "package": {
-     *              "name": "harvesthq/chosen",
+     *              "name": "harvesthq/bower-chosen",
      *              "version": "1.4.2",
      *              "source": {
      *                  "type": "git",
-     *                  "url": "https://github.com/harvesthq/chosen.git",
+     *                  "url": "https://github.com/harvesthq/bower-chosen.git",
      *                  "reference": "1.4.2"
      *              }
      *          }
      *      }
      *  ],
      *  "require": {
-     *      "harvesthq/chosen": "1.4.2"
+     *      "harvesthq/bower-chosen": "1.4.2"
      *  },
      * ```
      *
@@ -523,5 +515,9 @@ class Form extends Widget
     private function checkToken($token)
     {
 //        throw new Error('token expired');
+    }
+
+    protected function build(array $input)
+    {
     }
 }

@@ -30,18 +30,6 @@ use Ice\Helper\Json as Helper_Json;
 class Json extends Render
 {
     /**
-     * Constructor of json view render
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since   0.0
-     */
-    protected function __construct()
-    {
-    }
-
-    /**
      * Render view via current view render
      *
      * @param  $template
@@ -57,5 +45,9 @@ class Json extends Render
     public function fetch($template, array $data = [], $templateType = Render::TEMPLATE_TYPE_FILE)
     {
         return Helper_Json::encode($data);
+    }
+
+    protected function init(array $params)
+    {
     }
 }

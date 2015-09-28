@@ -54,7 +54,7 @@ class Config
      * @version 0.5
      * @since   0.0
      */
-    protected function __construct()
+    private function __construct()
     {
     }
 

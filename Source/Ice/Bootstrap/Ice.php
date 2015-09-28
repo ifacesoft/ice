@@ -15,19 +15,11 @@ class Ice extends Bootstrap
         return MODULE_CONFIG_PATH;
     }
 
-    public function init(ClassLoader $loader, $force = false)
+    protected function init(array $params)
     {
-        parent::init($loader, $force);
+        parent::init($params);
 
         set_error_handler('Ice\Core\Logger::errorHandler');
         register_shutdown_function('Ice\Core\Logger::shutdownHandler');
-
-        $module = Module::getInstance();
-        
-        $securityClass = $module->get('securityClass');
-        $securityClass::getInstance()->init();
-
-        $routerClass = $module->get('routerClass');
-        $routerClass::getInstance()->init();
     }
 }

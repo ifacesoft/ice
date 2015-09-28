@@ -2,10 +2,14 @@
 
 namespace Ice\Core;
 
+use Ice\Core;
 use Ice\Exception\Access_Denied_Security;
+use Ice\Exception\Error;
 
 abstract class Security extends Container
 {
+    use Core;
+
     private static $defaultClassKey = null;
 
     public static function checkAccess($roles, $message)
@@ -49,21 +53,20 @@ abstract class Security extends Container
     /**
      * @param null $key
      * @param null $ttl
+     * @param array $params
      * @return Security
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 2.0
+     * @since   2.0
      */
-    public static function getInstance($key = null, $ttl = null)
+    public static function getInstance($key = null, $ttl = null, array $params = [])
     {
-        return parent::getInstance($key, $ttl);
+        return parent::getInstance($key, $ttl, $params);
     }
 
-    protected static function create($key)
-    {
-        $class = self::getClass();
-
-        return new $class($key);
-    }
-
-    public function init()
+    protected function init(array $params)
     {
         if (Security::$defaultClassKey === null) {
             Security::$defaultClassKey = get_class($this);
@@ -72,7 +75,7 @@ abstract class Security extends Container
             return;
         }
 
-        Security::getLogger()->warning('Security already initialized', __FILE__, __LINE__);
+        throw new Error('Security already initialized');
     }
 
     protected static function getDefaultClassKey()

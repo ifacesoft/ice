@@ -40,17 +40,9 @@ class Twig extends Render
 
     protected $templateDirs = [];
 
-    /**
-     * Constructor of php view render
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since   0.0
-     */
-    protected function __construct()
+    protected function init(array $params)
     {
-//        $twigPath = VENDOR_DIR . $config->get('vendor') . '/lib/';
+        //        $twigPath = VENDOR_DIR . $config->get('vendor') . '/lib/';
 //
 //        include_once $twigPath . 'Twig/Environment.php';
 //        include_once $twigPath . 'Twig/Autoloader.php';
@@ -65,11 +57,17 @@ class Twig extends Render
     /**
      * @param null $key
      * @param null $ttl
+     * @param array $params
      * @return Twig
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 2.0
+     * @since   0.0
      */
-    public static function getInstance($key = null, $ttl = null)
+    public static function getInstance($key = null, $ttl = null, array $params = [])
     {
-        return parent::getInstance($key, $ttl);
+        return parent::getInstance($key, $ttl, $params);
     }
 
     /**

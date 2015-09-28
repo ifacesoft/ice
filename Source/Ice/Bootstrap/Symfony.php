@@ -4,7 +4,10 @@ namespace Ice\Bootstrap;
 
 use Composer\Autoload\ClassLoader;
 use Ice\Core\Bootstrap;
+use Ice\Core\Debuger;
 use Ice\Core\Module;
+use Ice\Core\Router;
+use Ice\Core\Security;
 use Ice\Security\Symfony as Security_Symfony;
 use Ice\Router\Symfony as Router_Symfony;
 
@@ -15,19 +18,13 @@ class Symfony extends Bootstrap
         return MODULE_CONFIG_PATH;
     }
 
-    public function init(ClassLoader $loader, $force = true)
+    public function init(array $params)
     {
-        parent::init($loader, $force);
+        $params['force'] = true;
+
+        parent::init($params);
 
 //        set_error_handler('Ice\Core\Logger::errorHandler');
 //        register_shutdown_function('Ice\Core\Logger::shutdownHandler');
-
-        $module = Module::getInstance();
-
-        $securityClass = $module->get('securityClass');
-        $securityClass::getInstance()->init();
-
-        $routerClass = $module->get('routerClass');
-        $routerClass::getInstance()->init();
     }
 }

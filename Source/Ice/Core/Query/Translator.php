@@ -28,17 +28,11 @@ abstract class Query_Translator extends Container
     use Stored;
 
     /**
-     * Private constructor for query translator
-     */
-    private function __construct()
-    {
-    }
-
-    /**
      * Return instance of query translator
      *
      * @param  null $key
      * @param  null $ttl
+     * @param array $params
      * @return Query_Translator
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -46,27 +40,23 @@ abstract class Query_Translator extends Container
      * @version 0.4
      * @since   0.4
      */
-    public static function getInstance($key = null, $ttl = null)
+    public static function getInstance($key = null, $ttl = null, array $params = [])
     {
-        return parent::getInstance($key, $ttl);
+        return parent::getInstance($key, $ttl, $params);
     }
 
     /**
-     * Create new instance of query translator
+     * Init object
      *
-     * @param  $key
-     * @return Query_Translator
+     * @param array $params
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.4
-     * @since   0.0
+     * @version 2.0
+     * @since   2.0
      */
-    protected static function create($key)
+    protected function init(array $params)
     {
-        $queryTranslatorClass = self::getClass();
-
-        return new $queryTranslatorClass();
     }
 
     /**

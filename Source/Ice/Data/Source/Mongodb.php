@@ -24,6 +24,7 @@ class Mongodb extends Data_Source
      *
      * @param  null $key
      * @param  null $ttl
+     * @param array $params
      * @return Mongodb
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -31,9 +32,9 @@ class Mongodb extends Data_Source
      * @version 0.4
      * @since   0.4
      */
-    public static function getInstance($key = null, $ttl = null)
+    public static function getInstance($key = null, $ttl = null, array $params = [])
     {
-        return parent::getInstance($key, $ttl);
+        return parent::getInstance($key, $ttl, $params);
     }
 
     /**

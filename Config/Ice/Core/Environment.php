@@ -33,303 +33,303 @@ return [
         ],
         'dataProviderKeys' => [
             'Ice\Core\Bootstrap' => [
-                'instance' => 'Ice:Registry/bootstrap',
+                'instance' => 'Ice:Registry',
             ],
             'Ice\Core\Security' => [
-                'instance' => 'Ice:Registry/security',
+                'instance' => 'Ice:Registry',
             ],
             'Ice\Core\Message_Transport' => [
-                'instance' => 'Ice:Registry/message_transport',
+                'instance' => 'Ice:Registry',
             ],
             'Ice\Core\Loader' => [
-                'loader' => 'Ice:Registry/loader',
+                'loader' => 'Ice:Registry',
             ],
             'Ice\Core\Action' => [
-                'instance' => 'Ice:Repository/action',
-                'cache' => 'Ice:Repository/action'
+                'instance' => 'Ice:Repository',
+                'cache' => 'Ice:Repository'
             ],
             'Ice\Core\Router' => [
-                'instance' => 'Ice:Registry/router',
+                'instance' => 'Ice:Registry',
             ],
             'Ice\Core\Route' => [
-                'instance' => 'Ice:Repository/route',
-                'route' => 'Ice:Repository/route',
-                'routes' => 'Ice:Repository/route',
+                'instance' => 'Ice:Repository',
+                'route' => 'Ice:Repository',
+                'routes' => 'Ice:Repository',
             ],
             'Ice\Core\Config' => [
-                'instance' => 'Ice:Repository/config',
-                'config' => 'Ice:Repository/config',
-                'route' => 'Ice:Repository/config',
-                'routes' => 'Ice:Repository/config',
-                'model_scheme' => 'Ice:Repository/config',
+                'instance' => 'Ice:Repository',
+                'config' => 'Ice:Repository',
+                'route' => 'Ice:Repository',
+                'routes' => 'Ice:Repository',
+                'model_scheme' => 'Ice:Repository',
             ],
             'Ice\Core\Converter' => [
-                'instance' => 'Ice:Repository/converter',
+                'instance' => 'Ice:Repository',
             ],
             'Ice\Core\Widget' => [
-                'instance' => 'Ice:Repository/widget',
+                'instance' => 'Ice:Repository',
             ],
             'Ice\Core\Widget_Scope' => [
-                'instance' => 'Ice:Repository/widget_scope',
+                'instance' => 'Ice:Repository',
             ],
             'Ice\Core\Widget_Form' => [
-                'instance' => 'Ice:Repository/widget_form',
+                'instance' => 'Ice:Repository',
             ],
             'Ice\Core\Widget_Menu' => [
-                'instance' => 'Ice:Repository/widget_menu',
+                'instance' => 'Ice:Repository',
             ],
             'Ice\Core\Widget_Data' => [
-                'instance' => 'Ice:Repository/widget_data',
+                'instance' => 'Ice:Repository',
             ],
             'Ice\Core\Container' => [
-                'instance' => 'Ice:Repository/container',
+                'instance' => 'Ice:Repository',
             ],
             'Ice\Core\Render' => [
-                'instance' => 'Ice:Registry/render',
+                'instance' => 'Ice:Registry',
             ],
             'Ice\Core\Query_Translator' => [
-                'instance' => 'Ice:Repository/query_translator',
+                'instance' => 'Ice:Repository',
             ],
             'Ice\Core\Query_Scope' => [
-                'instance' => 'Ice:Repository/query_scope',
+                'instance' => 'Ice:Repository',
             ],
             'Ice\Core\Query' => [
-                'instance' => 'Ice:Repository/query',
-                'sql' => 'Ice:Repository/query',
-                'query' => 'Ice:Repository/query',
+                'instance' => 'Ice:Repository',
+                'sql' => 'Ice:Repository',
+                'query' => 'Ice:Repository',
             ],
             'Ice\Core\Code_Generator' => [
-                'instance' => 'Ice:Repository/code_generator',
+                'instance' => 'Ice:Repository',
             ],
             'Ice\Core\Data_Source' => [
-                'instance' => 'Ice:Repository/data_source',
-                'cache' => 'Ice:File/data_source'
+                'instance' => 'Ice:Repository',
+                'cache' => 'Ice:File'
             ],
             'Ice\Core\Data_Scheme' => [
-                'data_scheme' => 'Ice:Repository/data_scheme',
+                'data_scheme' => 'Ice:Repository',
             ],
             'Ice\Core\Model_Scheme' => [
-                'model_scheme' => 'Ice:Repository/model_scheme',
+                'model_scheme' => 'Ice:Repository',
             ],
             'Ice\Core\Validator' => [
-                'instance' => 'Ice:Repository/validator',
+                'instance' => 'Ice:Repository',
             ],
             'Ice\Core\Cache' => [
-                'tags' => 'Ice:Repository/cache',
+                'tags' => 'Ice:Repository',
             ],
             'Ice\Core\ViiewOld' => [
-                'instance' => 'Ice:Repository/view_old',
-                'view' => 'Ice:Repository/view_old',
+                'instance' => 'Ice:Repository',
+                'view' => 'Ice:Repository',
             ],
             'Ice\Core\View' => [
-                'instance' => 'Ice:Repository/view',
+                'instance' => 'Ice:Repository',
             ],
             'Ice\Core\Resource' => [
-                'instance' => 'Ice:Repository/resource'
+                'instance' => 'Ice:Repository'
             ],
             'Ice\Core\Module' => [
-                'instance' => 'Ice:Repository/module'
+                'instance' => 'Ice:Repository'
             ],
             'Ice\Core\Session' => [
-                'session' => 'Ice:Repository/session'
+                'session' => 'Ice:Repository'
             ]
         ],
     ],
     'test' => [
         'dataProviderKeys' => [
             'Ice\Core\Bootstrap' => [
-                'instance' => 'Ice:Registry/bootstrap',
+                'instance' => 'Ice:Registry',
             ],
             'Ice\Core\Message_Transport' => [
-                'instance' => 'Ice:Registry/message_transport',
+                'instance' => 'Ice:Registry',
             ],
             'Ice\Core\Loader' => [
-                'loader' => 'Ice:Registry/loader',
+                'loader' => 'Ice:Registry',
             ],
             'Ice\Core\Action' => [
-                'instance' => 'Ice:File/action',
-                'cache' => 'Ice:File/action'
+                'instance' => 'Ice:File',
+                'cache' => 'Ice:File'
             ],
             'Ice\Core\Route' => [
-                'instance' => 'Ice:File/route',
-                'route' => 'Ice:File/route',
-                'routes' => 'Ice:File/route',
+                'instance' => 'Ice:File',
+                'route' => 'Ice:File',
+                'routes' => 'Ice:File',
             ],
             'Ice\Core\Config' => [
-                'instance' => 'Ice:File/config',
-                'config' => 'Ice:File/config',
-                'route' => 'Ice:File/config',
-                'routes' => 'Ice:File/config',
-                'model_scheme' => 'Ice:File/config',
+                'instance' => 'Ice:File',
+                'config' => 'Ice:File',
+                'route' => 'Ice:File',
+                'routes' => 'Ice:File',
+                'model_scheme' => 'Ice:File',
             ],
             'Ice\Core\Converter' => [
-                'instance' => 'Ice:File/converter',
+                'instance' => 'Ice:File',
             ],
             'Ice\Core\Widget' => [
-                'instance' => 'Ice:File/widget',
+                'instance' => 'Ice:File',
             ],
             'Ice\Core\Widget_Scope' => [
-                'instance' => 'Ice:File/widget_scope',
+                'instance' => 'Ice:File',
             ],
             'Ice\Core\Widget_Form' => [
-                'instance' => 'Ice:File/widget_form',
+                'instance' => 'Ice:File',
             ],
             'Ice\Core\Widget_Menu' => [
-                'instance' => 'Ice:File/widget_menu',
+                'instance' => 'Ice:File',
             ],
             'Ice\Core\Widget_Data' => [
-                'instance' => 'Ice:File/widget_data',
+                'instance' => 'Ice:File',
             ],
             'Ice\Core\Container' => [
-                'instance' => 'Ice:File/container',
+                'instance' => 'Ice:File',
             ],
             'Ice\Core\Render' => [
-                'instance' => 'Ice:Registry/render',
+                'instance' => 'Ice:Registry',
             ],
             'Ice\Core\Query_Translator' => [
-                'instance' => 'Ice:File/query_translator',
+                'instance' => 'Ice:File',
             ],
             'Ice\Core\Query_Scope' => [
-                'instance' => 'Ice:File/query_scope',
+                'instance' => 'Ice:File',
             ],
             'Ice\Core\Query' => [
-                'instance' => 'Ice:File/query',
-                'sql' => 'Ice:File/query',
-                'query' => 'Ice:File/query',
+                'instance' => 'Ice:File',
+                'sql' => 'Ice:File',
+                'query' => 'Ice:File',
             ],
             'Ice\Core\Code_Generator' => [
-                'instance' => 'Ice:File/code_generator',
+                'instance' => 'Ice:File',
             ],
             'Ice\Core\Data_Source' => [
-                'instance' => 'Ice:File/data_source',
-                'cache' => 'Ice:File/data_source'
+                'instance' => 'Ice:File',
+                'cache' => 'Ice:File'
             ],
             'Ice\Core\Data_Scheme' => [
-                'data_scheme' => 'Ice:File/data_scheme',
+                'data_scheme' => 'Ice:File',
             ],
             'Ice\Core\Model_Scheme' => [
-                'model_scheme' => 'Ice:File/model_scheme',
+                'model_scheme' => 'Ice:File',
             ],
             'Ice\Core\Validator' => [
-                'instance' => 'Ice:File/validator',
+                'instance' => 'Ice:File',
             ],
             'Ice\Core\Cache' => [
-                'tags' => 'Ice:File/cache',
+                'tags' => 'Ice:File',
             ],
             'Ice\Core\ViiewOld' => [
-                'instance' => 'Ice:File/view_old',
-                'view' => 'Ice:File/view_old',
+                'instance' => 'Ice:File',
+                'view' => 'Ice:File',
             ],
             'Ice\Core\View' => [
-                'instance' => 'Ice:File/view',
+                'instance' => 'Ice:File',
             ],
             'Ice\Core\Resource' => [
-                'instance' => 'Ice:File/resource'
+                'instance' => 'Ice:File'
             ],
             'Ice\Core\Module' => [
-                'instance' => 'Ice:File/module'
+                'instance' => 'Ice:File'
             ],
             'Ice\Core\Session' => [
-                'session' => 'Ice:File/session'
+                'session' => 'Ice:File'
             ]
         ]
     ],
     'development' => [
         'dataProviderKeys' => [
             'Ice\Core\Bootstrap' => [
-                'instance' => 'Ice:Registry/bootstrap',
+                'instance' => 'Ice:Registry',
             ],
             'Ice\Core\Message_Transport' => [
-                'instance' => 'Ice:Registry/message_transport',
+                'instance' => 'Ice:Registry',
             ],
             'Ice\Core\Loader' => [
-                'loader' => 'Ice:Registry/loader',
+                'loader' => 'Ice:Registry',
             ],
             'Ice\Core\Action' => [
-                'instance' => 'Ice:Registry/action',
-                'output' => 'Ice:Registry/action'
+                'instance' => 'Ice:Registry',
+                'output' => 'Ice:Registry'
             ],
             'Ice\Core\Route' => [
-                'instance' => 'Ice:Registry/route',
-                'route' => 'Ice:Registry/route',
-                'routes' => 'Ice:Registry/route',
+                'instance' => 'Ice:Registry',
+                'route' => 'Ice:Registry',
+                'routes' => 'Ice:Registry',
             ],
             'Ice\Core\Config' => [
-                'instance' => 'Ice:Registry/config',
-                'config' => 'Ice:Registry/config',
-                'route' => 'Ice:Registry/config',
-                'routes' => 'Ice:Registry/config',
-                'model_scheme' => 'Ice:Registry/config',
+                'instance' => 'Ice:Registry',
+                'config' => 'Ice:Registry',
+                'route' => 'Ice:Registry',
+                'routes' => 'Ice:Registry',
+                'model_scheme' => 'Ice:Registry',
             ],
             'Ice\Core\Converter' => [
-                'instance' => 'Ice:Registry/converter',
+                'instance' => 'Ice:Registry',
             ],
             'Ice\Core\Widget' => [
-                'instance' => 'Ice:Registry/widget',
+                'instance' => 'Ice:Registry',
             ],
             'Ice\Core\Widget_Scope' => [
-                'instance' => 'Ice:Registry/widget_scope',
+                'instance' => 'Ice:Registry',
             ],
             'Ice\Core\Widget_Form' => [
-                'instance' => 'Ice:Registry/widget_form',
+                'instance' => 'Ice:Registry',
             ],
             'Ice\Core\Widget_Menu' => [
-                'instance' => 'Ice:Registry/widget_menu',
+                'instance' => 'Ice:Registry',
             ],
             'Ice\Core\Widget_Data' => [
-                'instance' => 'Ice:Registry/widget_data',
+                'instance' => 'Ice:Registry',
             ],
             'Ice\Core\Container' => [
-                'instance' => 'Ice:Registry/container',
+                'instance' => 'Ice:Registry',
             ],
             'Ice\Core\Render' => [
-                'instance' => 'Ice:Registry/render'
+                'instance' => 'Ice:Registry'
             ],
             'Ice\Core\Query_Translator' => [
-                'instance' => 'Ice:Registry/query_translator',
+                'instance' => 'Ice:Registry',
             ],
             'Ice\Core\Query_Scope' => [
-                'instance' => 'Ice:Registry/query_scope',
+                'instance' => 'Ice:Registry',
             ],
             'Ice\Core\Query' => [
-                'instance' => 'Ice:Registry/query',
-                'sql' => 'Ice:Registry/query',
-                'query' => 'Ice:Registry/query',
+                'instance' => 'Ice:Registry',
+                'sql' => 'Ice:Registry',
+                'query' => 'Ice:Registry',
             ],
             'Ice\Core\Code_Generator' => [
-                'instance' => 'Ice:Registry/code_generator',
+                'instance' => 'Ice:Registry',
             ],
             'Ice\Core\Data_Source' => [
-                'instance' => 'Ice:Registry/data_source',
-                'cache' => 'Ice:Registry/cache'
+                'instance' => 'Ice:Registry',
+                'cache' => 'Ice:Registry'
             ],
             'Ice\Core\Data_Scheme' => [
-                'data_scheme' => 'Ice:Registry/data_scheme',
+                'data_scheme' => 'Ice:Registry',
             ],
             'Ice\Core\Model_Scheme' => [
-                'model_scheme' => 'Ice:Registry/model_scheme',
+                'model_scheme' => 'Ice:Registry',
             ],
             'Ice\Core\Validator' => [
-                'instance' => 'Ice:Registry/validator',
+                'instance' => 'Ice:Registry',
             ],
             'Ice\Core\Cache' => [
-                'tags' => 'Ice:File/cache',
+                'tags' => 'Ice:File',
             ],
             'Ice\Core\ViiewOld' => [
-                'instance' => 'Ice:Registry/view_old',
-                'view' => 'Ice:Registry/view_old',
+                'instance' => 'Ice:Registry',
+                'view' => 'Ice:Registry',
             ],
             'Ice\Core\View' => [
-                'instance' => 'Ice:Registry/view',
+                'instance' => 'Ice:Registry',
             ],
             'Ice\Core\Resource' => [
-                'instance' => 'Ice:Registry/resource',
+                'instance' => 'Ice:Registry',
             ],
             'Ice\Core\Module' => [
-                'instance' => 'Ice:Registry/module'
+                'instance' => 'Ice:Registry'
             ],
             'Ice\Core\Session' => [
-                'session' => 'Ice:File/session'
+                'session' => 'Ice:File'
             ]
         ],
     ]

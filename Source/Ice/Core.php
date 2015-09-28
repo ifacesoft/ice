@@ -68,7 +68,7 @@ trait Core
     /**
      * Return dat provider for self class
      *
-     * @param  string|null $postfix
+     * @param  string|null $index
      * @return Data_Provider
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -76,13 +76,9 @@ trait Core
      * @version 0.0
      * @since   0.0
      */
-    public static function getDataProvider($postfix = null)
+    public static function getDataProvider($index)
     {
-        if (empty($postfix)) {
-            $postfix = strtolower(self::getClassName());
-        }
-
-        return Environment::getInstance()->getProvider(self::getBaseClass(), $postfix);
+        return Environment::getInstance()->getProvider(self::getClass(), $index);
     }
 
     /**

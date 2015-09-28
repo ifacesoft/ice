@@ -235,7 +235,7 @@ class Route extends Config
     //     * @version 0.4
     //     * @since 0.4
     //     */
-    //    public static function getInstance($key = null, $ttl = null)
+    //    public static function getInstance($key = null, $ttl = null, array $params = [])
     //    {
     //        if (!$key) {
     //            $key = Route::getDefaultKey();

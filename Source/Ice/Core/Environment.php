@@ -163,7 +163,7 @@ class Environment extends Config
      */
     public function getDataProviderKey($class, $index)
     {
-        $key = 'dataProviderKeys/' . $class . '/' . $index;
+        $key = 'dataProviderKeys/' . $class::getBaseClass() . '/' . $index;
 
         $dataProviderKey = $this->get($key);
 
@@ -175,8 +175,10 @@ class Environment extends Config
             );
         }
 
-        return is_array($dataProviderKey)
+        $dataProviderClass = is_array($dataProviderKey)
             ? reset($dataProviderKey)
             : $dataProviderKey;
+
+        return $dataProviderClass . '/' . $class;
     }
 }

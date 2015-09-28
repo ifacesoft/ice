@@ -26,14 +26,6 @@ class Breadcrumbs_Route extends Breadcrumbs
     }
 
     /**
-     * @return Breadcrumbs_Route
-     */
-    public static function create()
-    {
-        return parent::create();
-    }
-
-    /**
      * Init widget parts and other
      * @param array $input
      * @return array|void

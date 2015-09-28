@@ -17,29 +17,30 @@ abstract class Message_Transport extends Container
     /**
      * @param string $key
      * @param int $ttl
+     * @param array $params
      * @return Message_Transport
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 2.0
+     * @since   1.0
      */
-    public static function getInstance($key = null, $ttl = null)
+    public static function getInstance($key = null, $ttl = null, array $params = [])
     {
-        return parent::getInstance($key, $ttl);
+        return parent::getInstance($key, $ttl, $params);
     }
 
-    protected static function create($key)
+    protected function init(array $params)
     {
-        $class = self::getClass();
+        $config = Config::getInstance(self::getClass());
 
-        /** @var Message_Transport $messageTransport */
-        $messageTransport = new $class();
+        $key = $params['instanceKey'];
 
-        $config = Config::getInstance($class);
+        $this->fromAddress = $config->get($key . '/fromAddress');
+        $this->fromName = $config->get($key . '/fromName', false);
 
-        $messageTransport->fromAddress = $config->get($key . '/fromAddress');
-        $messageTransport->fromName = $config->get($key . '/fromName', false);
-
-        $messageTransport->replyToAddress = $config->get($key . '/replyToAddress');
-        $messageTransport->replyToName = $config->get($key . '/replyToName', false);
-
-        return $messageTransport;
+        $this->replyToAddress = $config->get($key . '/replyToAddress');
+        $this->replyToName = $config->get($key . '/replyToName', false);
     }
 
     protected static function getDefaultClassKey()

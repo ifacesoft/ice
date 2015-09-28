@@ -37,22 +37,11 @@ class Php extends Render
     const TEMPLATE_EXTENTION = '.tpl.php';
 
     /**
-     * Constructor of php view render
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since   0.0
-     */
-    protected function __construct()
-    {
-    }
-
-    /**
      * Return php view render
      *
      * @param  mixed $key
      * @param  int $ttl
+     * @param array $params
      * @return Php
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -60,9 +49,9 @@ class Php extends Render
      * @version 0.4
      * @since   0.4
      */
-    public static function getInstance($key = null, $ttl = null)
+    public static function getInstance($key = null, $ttl = null, array $params = [])
     {
-        return parent::getInstance($key, $ttl);
+        return parent::getInstance($key, $ttl, $params);
     }
 
     /**
@@ -110,5 +99,20 @@ class Php extends Render
 
         include $templateFilePath;
         return ob_get_clean();
+    }
+
+
+    /**
+     * Init object
+     *
+     * @param array $params
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 2.0
+     * @since   2.0
+     */
+    protected function init(array $params)
+    {
     }
 }

@@ -15,7 +15,7 @@ class Form_Security_LoginEmailPassword_Login extends Widget_Form_Security_Login
     protected static function config()
     {
         return [
-            'render' => ['template' => true, 'class' => 'Ice:Php', 'layout' => null],
+            'render' => ['template' => Form::getClass(), 'class' => 'Ice:Php', 'layout' => null],
             'input' => [
                 'username' => ['providers' => 'request'],
                 'password' => ['providers' => 'request']
@@ -24,17 +24,9 @@ class Form_Security_LoginEmailPassword_Login extends Widget_Form_Security_Login
         ];
     }
 
-    /**
-     * @return Form_Security_LoginEmailPassword_Login
-     */
-    public static function create()
+    protected function build(array $input)
     {
-        return parent::create();
-    }
-
-    public function init(array $input)
-    {
-        parent::init($input);
+        parent::build($input);
 
         $this
             ->text(
@@ -65,12 +57,12 @@ class Form_Security_LoginEmailPassword_Login extends Widget_Form_Security_Login
     public function action($token)
     {
         try {
-            return $this->createWidget(Form_Security_LoginPassword_Login::getClass())
+            return $this->getWidget(Form_Security_LoginPassword_Login::getClass(), $this->getInstanceKey())
                 ->setAccountModelClass($this->accountLoginPasswordModelClass)
                 ->bind(['login' => $this->getValue('username')])
                 ->action($token);
         } catch (\Exception $e) {
-            return $this->createWidget(Form_Security_EmailPassword_Login::getClass())
+            return $this->getWidget(Form_Security_EmailPassword_Login::getClass(), $this->getInstanceKey())
                 ->setAccountModelClass($this->accountEmailPasswordModelClass)
                 ->bind(['email' => $this->getValue('username')])
                 ->action($token);

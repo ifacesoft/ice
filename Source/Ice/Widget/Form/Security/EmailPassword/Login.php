@@ -14,7 +14,7 @@ class Form_Security_EmailPassword_Login extends Widget_Form_Security_Login
     protected static function config()
     {
         return [
-            'render' => ['template' => true, 'class' => 'Ice:Php', 'layout' => null],
+            'render' => ['template' => Form::getClass(), 'class' => 'Ice:Php', 'layout' => null],
             'input' => [
                 'email' => ['providers' => 'request'],
                 'password' => ['providers' => 'request']
@@ -23,30 +23,30 @@ class Form_Security_EmailPassword_Login extends Widget_Form_Security_Login
         ];
     }
 
-    public static function create()
+    protected function build(array $input)
     {
-        return parent::create()
-            ->setResource(__CLASS__)
-            ->setTemplate(Form::getClass())
-            ->text(
-                'email',
-                [
-                    'label' => 'Email',
-                    'required' => true,
-                    'placeholder' => 'email_placeholder',
-                    'validators' => 'Ice:Email'
-                ]
-            )
-            ->password(
-                'password',
-                [
-                    'label' => 'Password',
-                    'required' => true,
-                    'placeholder' => 'password_placeholder',
-                    'validators' => ['Ice:Length_Min' => 5]
-                ]
-            )
-            ->button('submit', ['label' => 'Sign in', 'onclick' => 'POST']);
+        parent::build($input);
+
+        $this
+        ->text(
+            'email',
+            [
+                'label' => 'Email',
+                'required' => true,
+                'placeholder' => 'email_placeholder',
+                'validators' => 'Ice:Email'
+            ]
+        )
+        ->password(
+            'password',
+            [
+                'label' => 'Password',
+                'required' => true,
+                'placeholder' => 'password_placeholder',
+                'validators' => ['Ice:Length_Min' => 5]
+            ]
+        )
+        ->button('submit', ['label' => 'Sign in', 'onclick' => 'POST']);
     }
 
     /**

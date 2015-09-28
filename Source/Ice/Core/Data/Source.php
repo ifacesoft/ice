@@ -42,18 +42,6 @@ abstract class Data_Source extends Container
     private $key = null;
 
     /**
-     * Private constructor for dat source
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.6
-     * @since   0.0
-     */
-    private function __construct()
-    {
-    }
-
-    /**
      * Return source data provider
      *
      * @return Data_Provider
@@ -96,6 +84,7 @@ abstract class Data_Source extends Container
      *
      * @param  Data_Source|string|null $key
      * @param  null $ttl
+     * @param array $params
      * @return Data_Source
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -103,9 +92,9 @@ abstract class Data_Source extends Container
      * @version 0.2
      * @since   0.2
      */
-    public static function getInstance($key = null, $ttl = null)
+    public static function getInstance($key = null, $ttl = null, array $params = [])
     {
-        return parent::getInstance($key, $ttl);
+        return parent::getInstance($key, $ttl, $params);
     }
 
     /**
@@ -156,35 +145,12 @@ abstract class Data_Source extends Container
         return $repository->set($key, reset($defaultDataSourceKeys), 0);
     }
 
-    /**
-     * Create new instance of data source
-     *
-     * @param  $key
-     * @return Data_Source
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since   0.0
-     */
-    protected static function create($key)
-    {
-        if (!strpos($key, '.')) {
-            Data_Source::getLogger()->exception(['Data source name not valid {$0}', $key], __FILE__, __LINE__);
-        }
+    protected function init(array $params) {
+        list($key, $scheme) = explode('.', $params['instanceKey']);
 
-        list($key, $scheme) = explode('.', $key);
-
-        $dataSourceClass = self::getClass();
-
-        /** @var Data_Source $dataSource */
-        $dataSource = new $dataSourceClass();
-
-        $dataSource->key = $key;
-        $dataSource->scheme = $scheme;
-        $dataSource->getSourceDataProvider()->setScheme($scheme);
-
-        return $dataSource;
+        $this->key = $key;
+        $this->scheme = $scheme;
+        $this->getSourceDataProvider()->setScheme($scheme);
     }
 
     /**
