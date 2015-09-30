@@ -46,5 +46,9 @@ abstract class Router extends Container
         return 'default';
     }
 
-    public abstract function getUrl($routeName, array $params = []);
+    public abstract function getUrl($routeName = null, array $params = []);
+
+    public abstract function getName($url = null, $method = null);
+
+    public abstract function getParams();
 }

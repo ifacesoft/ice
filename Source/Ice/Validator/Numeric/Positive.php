@@ -20,9 +20,6 @@ namespace Ice\Validator;
  *
  * @package    Ice
  * @subpackage Validator
- *
- * @version 0.0
- * @since   0.0
  */
 class Numeric_Positive extends Numeric
 {

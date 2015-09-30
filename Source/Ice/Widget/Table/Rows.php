@@ -6,7 +6,7 @@ use Ice\Core\Query_Builder;
 use Ice\Core\Query_Result;
 use Ice\Core\Widget;
 
-class Table_Rows extends Widget
+abstract class Table_Rows extends Widget
 {
     private $isShowCount = true;
     private $columnCount = 0;
@@ -19,22 +19,13 @@ class Table_Rows extends Widget
     protected static function config()
     {
         return [
-            'render' => ['template' => true, 'class' => 'Ice:Php', 'layout' => null],
+            'render' => ['template' => true, 'class' => 'Ice:Php', 'layout' => null, 'resource' => null],
             'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'Widget: Access denied!'],
             'cache' => ['ttl' => -1, 'count' => 1000],
             'actions' => [],
             'input' => [],
             'output' => []
         ];
-    }
-
-    /**
-     * Init widget parts and other
-     * @param array $input
-     * @return array|void
-     */
-    public function init(array $input)
-    {
     }
 
     /**
@@ -82,14 +73,6 @@ class Table_Rows extends Widget
     {
         $this->columnCount = $columnCount;
         return $this;
-    }
-
-    /**
-     * @return Table_Rows
-     */
-    public static function create()
-    {
-        return parent::create();
     }
 
     public function setQueryResult(Query_Result $queryResult)

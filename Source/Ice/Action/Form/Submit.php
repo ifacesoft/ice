@@ -10,9 +10,7 @@
 namespace Ice\Action;
 
 use Ice\Core\Action;
-use Ice\Core\Debuger;
 use Ice\Core\Logger;
-use Ice\Core\View;
 use Ice\Core\Widget;
 use Ice\Widget\Form;
 
@@ -44,20 +42,13 @@ class Form_Submit extends Action
     protected static function config()
     {
         return [
-            'view' => ['template' => ''],
+            'view' => ['template' => null, 'viewRenderClass' => 'Ice:Php', 'layout' => null],
             'input' => [
-                'widgetClass' => [
+                'widget' => [
                     'providers' => 'request',
                     'validators' => 'Ice:Not_Empty'
                 ],
-                'viewClass' => [
-                    'providers' => 'request',
-                    'default' => null
-                ],
-                'token' => [
-                    'providers' => 'request',
-                    'validators' => 'Ice:Not_Empty'
-                ],
+                'resourceClass' => null
             ],
             'cache' => ['ttl' => -1, 'count' => 1000],
         ];
@@ -77,29 +68,25 @@ class Form_Submit extends Action
     public function run(array $input)
     {
         /** @var Form $formClass */
-        $formClass = Widget::getClass($input['widgetClass']);
+        $formClass = Widget::getClass($input['widget']['class']);
 
-        $form = $formClass::create()
-            ->setViewClass(Widget::getClass($input['viewClass']));
+        $form = $formClass::getInstance($input['widget']['name']);
 
-        /** @var View $viewClass */
-        $viewClass = $form->getViewClass();
+        $logger = $input['resourceClass']
+            ? Logger::getInstance($input['resourceClass'])
+            : $form::getLogger();
 
         try {
-            $form->init($form->getValues());
-
             return array_merge(
-                ['success' => $viewClass::getLogger()->info('Submitted successfully', Logger::SUCCESS)],
-                (array)$form->action($input['token'])
+                ['success' => $logger->info('Submitted successfully', Logger::SUCCESS)],
+                $form->submit($input['widget']['token'])
             );
         } catch (\Exception $e) {
             $message = ['Submit failed: {$0}', $e->getMessage()];
 
-            $viewClass::getLogger()->error($message, __FILE__, __LINE__, $e);
+            $logger->error($message, __FILE__, __LINE__, $e);
 
-            return [
-                'error' => $viewClass::getLogger()->info($message, Logger::DANGER)
-            ];
+            return ['error' => $logger->info($message, Logger::DANGER)];
         }
     }
 }

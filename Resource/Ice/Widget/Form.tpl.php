@@ -7,10 +7,9 @@
 <form id="Widget_<?= $widgetClassName ?>_<?= $widgetName ?>"
       class="Widget_<?= $widgetClassName ?> form<?php if (!empty($classes)) : ?> <?= $classes ?><?php endif; ?>"
       data-url='<?= $dataUrl ?>'
-      data-action='<?= $dataAction ?>'
-      data-view='<?= $dataView ?>'
+      data-action="<?= $dataAction ?>"
       data-widget='<?= $dataWidget ?>'
-      data-token="<?= $dataToken ?>"
+      data-params='<?= $dataParams ?>'
       data-for="<?= $dataFor ?>"
       action="<?= $url ?>"
       method="<?= $method ?>"

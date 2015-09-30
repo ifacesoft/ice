@@ -19,7 +19,7 @@ class Pagination extends Widget
     protected static function config()
     {
         return [
-            'render' => ['template' => true, 'class' => 'Ice:Php', 'layout' => null],
+            'render' => ['template' => true, 'class' => 'Ice:Php', 'layout' => null, 'resource' => null],
             'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'Widget: Access denied!'],
             'cache' => ['ttl' => -1, 'count' => 1000],
             'actions' => [],
@@ -29,15 +29,6 @@ class Pagination extends Widget
             ],
             'output' => []
         ];
-    }
-
-    /**
-     * Init widget parts and other
-     * @param array $input
-     * @return array|void
-     */
-    public function init(array $input)
-    {
     }
 
     /**
@@ -345,5 +336,15 @@ class Pagination extends Widget
         parent::queryBuilderPart($queryBuilder);
 
         $queryBuilder->setPagination($this->getValue('page'), $this->getValue('limit'));
+    }
+
+    /** Build widget
+     *
+     * @param array $input
+     * @return array
+     */
+    protected function build(array $input)
+    {
+        return [];
     }
 }

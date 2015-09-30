@@ -30,7 +30,7 @@ class Form_Model extends Form
     protected static function config()
     {
         return [
-            'render' => ['template' => true, 'class' => 'Ice:Php', 'layout' => null],
+            'render' => ['template' => true, 'class' => 'Ice:Php', 'layout' => null, 'resource' => null],
             'input' => [],
             'access' => ['roles' => [], 'request' => null, 'env' => null]
         ];
@@ -53,7 +53,6 @@ class Form_Model extends Form
         'double' => Widget_Form::FIELD_TEXT,
         'longtext' => Widget_Form::FIELD_TEXT
     ];
-
 
 
     /**
@@ -121,23 +120,13 @@ class Form_Model extends Form
     /**
      * Submit form
      *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since   0.0
      * @param $token
      * @return array|void
      */
-    public function action($token)
+    protected function action($token)
     {
-        $result = $this->action($token);
-
-        /**
-         * @var Core_Model $modelClass
-         */
+        /** @var Core_Model $modelClass */
         $modelClass = $this->getValues();
         $modelClass::create($this->validate())->save(true);
-
-        return $result;
     }
 }

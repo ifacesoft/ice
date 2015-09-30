@@ -3,6 +3,7 @@
 namespace Ice\Widget;
 
 use Ice\Core\Route;
+use Ice\Core\Router;
 
 class Breadcrumbs_Route extends Breadcrumbs
 {
@@ -14,31 +15,40 @@ class Breadcrumbs_Route extends Breadcrumbs
     protected static function config()
     {
         return [
-            'render' => ['template' => Breadcrumbs::getClass(), 'class' => 'Ice:Php', 'layout' => null],
+            'render' => ['template' => Breadcrumbs::getClass(), 'class' => 'Ice:Php', 'layout' => null, 'resource' => null],
             'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'Widget: Access denied!'],
             'cache' => ['ttl' => -1, 'count' => 1000],
-            'actions' => [],
-            'input' => [
-                'routeName' => ['providers' => 'router']
-            ],
+            'input' => ['routeName' => ['providers' => 'router'], 'routeParams' => ['providers' => 'router']],
             'output' => []
         ];
     }
 
     /**
-     * Init widget parts and other
-     * @param array $input
-     * @return array|void
+     * @param string $key
+     * @param null $ttl
+     * @param array $params
+     * @return Breadcrumbs_Route
      */
-    public function init(array $input)
+    public static function getInstance($key, $ttl = null, array $params = [])
     {
-        $this->setItem(Route::getInstance($input['routeName'])->getParentRoute());
+        return parent::getInstance($key, $ttl, $params);
     }
 
-    private function setItem($route)
+    protected function build(array $input)
+    {
+        $result = parent::build($input);
+
+        $this->setItems(Route::getInstance($input['routeName'])->getParentRoute());
+        $this->li($input['routeName'], ['route' => true, 'params' => $input['routeParams']]);
+
+
+        return $result;
+    }
+
+    private function setItems($route)
     {
         if ($route) {
-            $this->setItem($route->getParentRoute());
+            $this->setItems($route->getParentRoute());
             $this->item($route->getName(), ['route' => true]);
         }
     }

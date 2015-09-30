@@ -6,7 +6,7 @@ use Ice\Core\Query_Builder;
 use Ice\Core\Query_Result;
 use Ice\Core\Widget;
 
-class Navbar extends Widget
+abstract class Navbar extends Widget
 {
     /**
      * Widget config
@@ -16,22 +16,13 @@ class Navbar extends Widget
     protected static function config()
     {
         return [
-            'render' => ['template' => true, 'class' => 'Ice:Php', 'layout' => null],
+            'render' => ['template' => true, 'class' => 'Ice:Php', 'layout' => null, 'resource' => null],
             'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'Widget: Access denied!'],
             'cache' => ['ttl' => -1, 'count' => 1000],
             'actions' => [],
             'input' => [],
             'output' => []
         ];
-    }
-
-    /**
-     * Init widget parts and other
-     * @param array $input
-     * @return array|void
-     */
-    public function init(array $input)
-    {
     }
 
     /**
@@ -53,8 +44,7 @@ class Navbar extends Widget
      */
     public function nav($name, array $options = [], $template = null)
     {
-        $classes = $options['widget']->getClasses();
-        $options['widget']->setClasses($classes . ' navbar-nav');
+        $options['widget']->setClasses($options['widget']->getClasses() . ' navbar-nav');
 
         return $template
             ? $this->widget($name, $options, $template)
@@ -69,8 +59,7 @@ class Navbar extends Widget
      */
     public function form($name, array $options = [], $template = null)
     {
-        $classes = $options['widget']->getClasses();
-        $options['widget']->setClasses($classes . ' navbar-form');
+        $options['widget']->setClasses($options['widget']->getClasses() . ' navbar-form');
 
         return $template
             ? $this->widget($name, $options, $template)

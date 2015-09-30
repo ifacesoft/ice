@@ -11,7 +11,7 @@ class Form_Security_LoginPassword_Register extends Widget_Form_Security_Register
     protected static function config()
     {
         return [
-            'render' => ['template' => Form::getClass(), 'class' => 'Ice:Php', 'layout' => null],
+            'render' => ['template' => Form::getClass(), 'class' => 'Ice:Php', 'layout' => null, 'resource' => null],
             'input' => [],
             'access' => ['roles' => [], 'request' => null, 'env' => null]
         ];
@@ -19,7 +19,7 @@ class Form_Security_LoginPassword_Register extends Widget_Form_Security_Register
 
     protected function build(array $input)
     {
-        parent::build($input);
+        $output = parent::build($input);
 
         $this->text(
             'login',
@@ -37,6 +37,8 @@ class Form_Security_LoginPassword_Register extends Widget_Form_Security_Register
             'password1',
             ['placeholder' => 'password1_placeholder']
         );
+
+        return $output;
     }
 
     /**

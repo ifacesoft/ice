@@ -7,9 +7,7 @@
            data-url='<?= $dataUrl ?>'
            data-params='<?= $dataParams ?>'
            data-action='<?= $dataAction ?>'
-           data-view='<?= $dataView ?>'
            data-widget='<?= $dataWidget ?>'
-           data-token="<?= $dataToken ?>"
            data-for="<?= $dataFor ?>"
     >
         <?php if ($options['disabled']) : ?> disabled="disabled"<?php endif; ?>

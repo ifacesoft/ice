@@ -2,9 +2,7 @@
     class="Widget_<?= $widgetClassName ?> pagination <?php if (!empty($classes)) { ?><?= $classes ?><?php } ?>"
     data-url='<?= $dataUrl ?>'
     data-action='<?= $dataAction ?>'
-    data-view='<?= $dataView ?>'
     data-widget='<?= $dataWidget ?>'
-    data-token="<?= $dataToken ?>"
     data-for="<?= $dataFor ?>"
 >
     <?php $parts = reset($result) ?>

@@ -6,6 +6,7 @@ namespace Ice\Action;
 use Ice\Core\Action;
 use Ice\Core\Debuger;
 use Ice\Core\View;
+use Ice\Core\Widget;
 
 class View_Render extends Action
 {
@@ -21,7 +22,7 @@ class View_Render extends Action
             'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'Action: Access denied!'],
             'cache' => ['ttl' => -1, 'count' => 1000],
             'actions' => [],
-            'input' => ['viewClass' => ['validators' => 'Ice:Not_Empty']],
+            'input' => ['widgetClass' => ['validators' => 'Ice:Not_Empty']],
             'output' => []
         ];
     }
@@ -33,9 +34,9 @@ class View_Render extends Action
      */
     public function run(array $input)
     {
-        /** @var View $viewClass */
-        $viewClass = View::getClass($input['viewClass']);
+        /** @var Widget $widgetClass */
+        $widgetClass = Widget::getClass($input['widgetClass']);
 
-        return ['content' => $viewClass::getInstance()->render()];
+        return ['content' => $widgetClass::getInstance(null)->render()];
     }
 }

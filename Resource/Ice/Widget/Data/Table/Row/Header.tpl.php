@@ -23,9 +23,7 @@
             <a href="<?= $column['href'] ?>" onclick='<?= $column['onclick'] ?>'
                data-url='<?= $column['dataUrl'] ?>'
                data-action='<?= $column['dataAction'] ?>'
-               data-view='<?= $column['dataView'] ?>'
                data-widget='<?= $dataWidget ?>'
-               data-token="<?= $dataToken ?>"
                data-for="<?= $dataFor ?>"
                data-name='<?= $column['name'] ?>'
                data-params='<?= $column['dataParams'] ?>'

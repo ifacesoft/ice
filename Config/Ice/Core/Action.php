@@ -72,15 +72,6 @@ return [
             ]
         ]
     ],
-    'Ice\Action\Admin_Sidebar' => [
-        'input' => [
-            'routeNames' => [
-                'default' => [
-                    'ice_admin_database' => ['ice_admin_database_dashboard']
-                ]
-            ]
-        ]
-    ],
     'Ice\Action\Cache_Hit' => [
         'input' => [
             'routeNames' => [

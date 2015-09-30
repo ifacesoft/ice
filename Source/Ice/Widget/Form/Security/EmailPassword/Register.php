@@ -14,7 +14,7 @@ class Form_Security_EmailPassword_Register extends Widget_Form_Security_Register
     protected static function config()
     {
         return [
-            'render' => ['template' => Form::getClass(), 'class' => 'Ice:Php', 'layout' => null],
+            'render' => ['template' => Form::getClass(), 'class' => 'Ice:Php', 'layout' => null, 'resource' => null],
             'input' => [
                 'email' => ['providers' => 'request'],
                 'password' => ['providers' => 'request'],
@@ -26,7 +26,7 @@ class Form_Security_EmailPassword_Register extends Widget_Form_Security_Register
 
     protected function build(array $input)
     {
-        parent::build($input);
+        $output = parent::build($input);
 
         $this
             ->text(
@@ -52,6 +52,8 @@ class Form_Security_EmailPassword_Register extends Widget_Form_Security_Register
                 ['label' => 'Password1', 'placeholder' => 'password1_placeholder']
             )
             ->button('register', ['label' => 'Sign up', 'onclick' => 'POST']);
+
+        return $output;
     }
 
     /**

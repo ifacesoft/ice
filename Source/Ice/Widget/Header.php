@@ -6,7 +6,7 @@ use Ice\Core\Query_Builder;
 use Ice\Core\Query_Result;
 use Ice\Core\Widget;
 
-class Header extends Widget
+abstract class Header extends Widget
 {
     /**
      * Widget config
@@ -16,30 +16,13 @@ class Header extends Widget
     protected static function config()
     {
         return [
-            'render' => ['template' => true, 'class' => 'Ice:Php', 'layout' => null],
+            'render' => ['template' => true, 'class' => 'Ice:Php', 'layout' => null, 'resource' => null],
             'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'Widget: Access denied!'],
             'cache' => ['ttl' => -1, 'count' => 1000],
             'actions' => [],
             'input' => [],
             'output' => []
         ];
-    }
-
-    /**
-     * @return Header
-     */
-    public static function create()
-    {
-        return parent::create();
-    }
-
-    /**
-     * Init widget parts and other
-     * @param array $input
-     * @return array|void
-     */
-    public function init(array $input)
-    {
     }
 
     /**

@@ -22,9 +22,6 @@ use Ice\Core\Validator;
  *
  * @package    Ice
  * @subpackage Validator
- *
- * @version 0.0
- * @since   0.0
  */
 class Url extends Validator
 {
@@ -52,5 +49,20 @@ class Url extends Validator
     public function validate($data, $scheme = null)
     {
         return (bool)filter_var($data, FILTER_VALIDATE_URL);
+    }
+
+    /**
+     * Init object
+     *
+     * @param array $params
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 2.0
+     * @since   2.0
+     */
+    protected function init(array $params)
+    {
+        // TODO: Implement init() method.
     }
 }

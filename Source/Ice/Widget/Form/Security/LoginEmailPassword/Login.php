@@ -1,11 +1,9 @@
 <?php
 namespace Ice\Widget;
 
-use Ice\Core\Debuger;
 use Ice\Core\Model;
 use Ice\Core\Security_Account;
 use Ice\Core\Widget_Form_Security_Login;
-use Ice\Widget\Form_Security_LoginPassword_Login;
 
 class Form_Security_LoginEmailPassword_Login extends Widget_Form_Security_Login
 {
@@ -15,7 +13,7 @@ class Form_Security_LoginEmailPassword_Login extends Widget_Form_Security_Login
     protected static function config()
     {
         return [
-            'render' => ['template' => Form::getClass(), 'class' => 'Ice:Php', 'layout' => null],
+            'render' => ['template' => Form::getClass(), 'class' => 'Ice:Php', 'layout' => null, 'resource' => null],
             'input' => [
                 'username' => ['providers' => 'request'],
                 'password' => ['providers' => 'request']
@@ -26,7 +24,7 @@ class Form_Security_LoginEmailPassword_Login extends Widget_Form_Security_Login
 
     protected function build(array $input)
     {
-        parent::build($input);
+        $output = parent::build($input);
 
         $this
             ->text(
@@ -51,21 +49,23 @@ class Form_Security_LoginEmailPassword_Login extends Widget_Form_Security_Login
                     'resetFormClass' => true
                 ]
             )
-            ->submit('signin', ['label' => 'Sign in']);
+            ->button('signin', ['label' => 'Sign in', 'submit' => true]);
+
+        return $output;
     }
 
-    public function action($token)
+    protected function action($token)
     {
         try {
-            return $this->getWidget(Form_Security_LoginPassword_Login::getClass(), $this->getInstanceKey())
+            return Form_Security_LoginPassword_Login::getInstance($this->getInstanceKey())
                 ->setAccountModelClass($this->accountLoginPasswordModelClass)
                 ->bind(['login' => $this->getValue('username')])
-                ->action($token);
+                ->submit($token);
         } catch (\Exception $e) {
-            return $this->getWidget(Form_Security_EmailPassword_Login::getClass(), $this->getInstanceKey())
+            return Form_Security_EmailPassword_Login::getInstance($this->getInstanceKey())
                 ->setAccountModelClass($this->accountEmailPasswordModelClass)
                 ->bind(['email' => $this->getValue('username')])
-                ->action($token);
+                ->submit($token);
         }
     }
 

@@ -3,12 +3,13 @@
 namespace Ice\Widget;
 
 use Ice\Action\Form_Submit;
+use Ice\Core\Debuger;
 use Ice\Core\Module;
 use Ice\Core\Validator;
 use Ice\Core\Widget;
 use Ice\Helper\Directory;
 
-class Form extends Widget
+abstract class Form extends Widget
 {
     const FIELD_HIDDEN = 'Field_Hidden';
     const FIELD_TEXT = 'Field_Text';
@@ -99,7 +100,7 @@ class Form extends Widget
     protected static function config()
     {
         return [
-            'render' => ['template' => true, 'class' => 'Ice:Php', 'layout' => null],
+            'render' => ['template' => true, 'class' => 'Ice:Php', 'layout' => null, 'resource' => null],
             'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'Widget: Access denied!'],
             'cache' => ['ttl' => -1, 'count' => 1000],
             'actions' => [],
@@ -115,12 +116,14 @@ class Form extends Widget
      */
     public function init(array $input)
     {
+        parent::init($input);
+
         /** @var Form $formClass */
         $formClass = get_class($this);
 
         $uploadTempDir = Module::getInstance()->get(Module::UPLOAD_TEMP_DIR) . '/' . $formClass::getClassName();
 
-        foreach (array_keys($this->getParts()) as $key) {
+        foreach (array_keys($this->getParts($this->getFilterParts())) as $key) {
             if (isset($params[$key])) {
                 continue;
             }
@@ -423,16 +426,27 @@ class Form extends Widget
      * @version 2.0
      * @since   1.0
      */
-    public function submit($fieldName, array $options = [], $template = 'Ice\Widget\Form\Submit')
+    public function button($fieldName, array $options = [], $template = 'Ice\Widget\Form\Button')
     {
         if ($this->horizontal) {
             $options['horizontal'] = $this->horizontal;
         }
 
-        return $this
-            ->setOnsubmit(isset($options['onsubmit']) ? $options['onsubmit'] : 'POST')
-            ->setActionClass(Form_Submit::getClass())
-            ->addPart($fieldName, $options, $template, __FUNCTION__);
+        $resourceClass = $template;
+
+        if ($resource = $this->getResource()) {
+            $resourceClass = $resource->getResourceClass();
+        }
+
+        $this->bind(['resourceClass' => $resourceClass]);
+
+        if (!empty($options['submit'])) {
+            $this
+                ->setOnsubmit(isset($options['onsubmit']) ? $options['onsubmit'] : 'POST')
+                ->setActionClass(Form_Submit::getClass());
+        }
+
+        return $this->addPart($fieldName, $options, $template, __FUNCTION__);
     }
 
     /**
@@ -497,14 +511,18 @@ class Form extends Widget
      * @param $token
      * @return array
      */
-    public function action($token)
+    public function submit($token)
     {
         $this->checkToken($token);
 
-        return [
-            'viewClass' => $this->getViewClass()
-        ];
+        return $this->action($token);
     }
+
+    /**
+     * @param $token
+     * @return array
+     */
+    protected abstract function action($token);
 
     /**
      * @param $token
@@ -515,9 +533,5 @@ class Form extends Widget
     private function checkToken($token)
     {
 //        throw new Error('token expired');
-    }
-
-    protected function build(array $input)
-    {
     }
 }

@@ -2,9 +2,7 @@
        class="Widget_<?= $widgetClassName ?>"
        data-url='<?= $dataUrl ?>'
        data-action='<?= $dataAction ?>'
-       data-view='<?= $dataView ?>'
        data-widget='<?= $dataWidget ?>'
-       data-token="<?= $dataToken ?>"
        data-for="<?= $dataFor ?>"
 >
 <?php foreach ($result as $offset => $parts) : ?>

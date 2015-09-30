@@ -14,9 +14,7 @@ if (isset($parts['pagination'])) {
        class="Widget_<?= $widgetClassName ?> table<?php if (!empty($classes)) : ?> <?= $classes ?><?php endif; ?>"
        data-url='<?= $dataUrl ?>'
        data-action='<?= $dataAction ?>'
-       data-view='<?= $dataView ?>'
        data-widget='<?= $dataWidget ?>'
-       data-token="<?= $dataToken ?>"
        data-for="<?= $dataFor ?>"
 >
     <?php foreach ($parts as $part) : ?>

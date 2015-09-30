@@ -1,12 +1,14 @@
 <?php
 namespace Ice\Core;
 
+use Doctrine\Common\Util\Debug;
 use Ice\Exception\Access_Denied;
 use Ice\Helper\Access;
 use Ice\Helper\Arrays;
 use Ice\Helper\Emmet;
 use Ice\Helper\Input;
 use Ice\Helper\Json;
+use Ice\Helper\Object;
 use Ice\Helper\String;
 use Ice\Render\Php;
 use Ice\Render\Replace;
@@ -34,26 +36,22 @@ abstract class Widget extends Container
     protected $parts = [];
     private $classes = '';
 
-    private $template = null;
-    private $renderClass = null;
-    private $layout = null;
-
     private $dataParams = null;
+    private $output = null;
 
     private $url = null;
+
     private $actionClass = null;
-    private $viewClass = null;
+    private $widgetClass = null;
 
     private $token = null;
     private $data = [];
-    private $resource = null;
     private $event = 'Ice_Core_Widget.click($(this), null, \'GET\');';
 
     private $result = null;
     private $compiledResult = null;
 
-    private $forViewId = null;
-
+    private $parentWidgetId = null;
     /**
      * Redirect url
      *
@@ -69,7 +67,6 @@ abstract class Widget extends Container
      * @var int
      */
     private $timeout = 0;
-
 
     /**
      * Not ignored parts
@@ -97,52 +94,65 @@ abstract class Widget extends Container
      * Widget config
      *
      * @return array
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 2.0
-     * @since   1.1
      */
     protected static function config()
     {
         return [
-            'render' => ['template' => null, 'class' => 'Ice:Php', 'layout' => ''],
+            'render' => ['template' => null, 'class' => 'Ice:Php', 'layout' => null, 'resource' => null],
             'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'Widget: Access denied!'],
             'cache' => ['ttl' => -1, 'count' => 1000],
-            'actions' => [],
             'input' => [],
             'output' => []
         ];
     }
 
-    protected function init(array $params) {
+    protected function init(array $params)
+    {
         if ($input = Input::get(self::getClass())) {
             $this->rows = [$input];
         }
 
         $this->token = crc32(String::getRandomString());
 
-        $this->build($input);
+        if (isset($params['resource'])) {
+            $this->setResource($params['resource']);
+        }
+
+        $this->output = (array)$this->build($input);
     }
 
+    /**
+     * Widget config
+     *
+     * @return array
+     *
+     *  protected static function config()
+     *  {
+     *      return [
+     *          'render' => ['template' => null, 'class' => 'Ice:Php', 'layout' => null, 'resource' => null],
+     *          'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'Widget: Access denied!'],
+     *          'cache' => ['ttl' => -1, 'count' => 1000],
+     *          'input' => [],
+     *          'output' => []
+     *      ];
+     *  }
+     *
+     * /** Build widget
+     *
+     * @param array $input
+     * @return array
+     */
     protected abstract function build(array $input);
 
     /**
-     * @return null
-     */
-    public function getForViewId()
-    {
-        return $this->forViewId;
-    }
-
-    /**
-     * @param null $forViewId
+     * @param string $key
+     * @param null $ttl
+     * @param array $params
      * @return $this
      */
-    public function setForViewId($forViewId)
+    public static function getInstance($key, $ttl = null, array $params = [])
     {
-        $this->forViewId = $forViewId;
-        return $this;
+        return parent::getInstance($key, $ttl, $params);
     }
 
     /**
@@ -199,66 +209,32 @@ abstract class Widget extends Container
     }
 
     /**
-     * @param string $template
-     * @return $this
-     */
-    public function setTemplate($template)
-    {
-        $this->template = $template;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getUrl()
-    {
-        return $this->url;
-    }
-
-    /**
      * @param string $url
      * @return $this
      */
-    public function setUrl($url)
+    protected function setUrl($url)
     {
         $this->url = $url;
         return $this;
     }
 
     /**
-     * @return string
-     */
-    public function getActionClass()
-    {
-        return $this->actionClass;
-    }
-
-    /**
      * @param string $actionClass
      * @return $this
      */
-    public function setActionClass($actionClass)
+    protected function setActionClass($actionClass)
     {
         $this->actionClass = Action::getClass($actionClass);
         return $this;
     }
 
     /**
-     * @return string
-     */
-    public function getViewClass()
-    {
-        return $this->viewClass;
-    }
-
-    /**
-     * @param string $viewClass
+     * @param string $widgetClass
      * @return $this
      */
-    public function setViewClass($viewClass)
+    protected function setWidgetClass($widgetClass)
     {
-        $this->viewClass = View::getClass($viewClass);
+        $this->widgetClass = Action::getClass($widgetClass);
         return $this;
     }
 
@@ -312,54 +288,6 @@ abstract class Widget extends Container
         return $url . ($queryString ? '?' . $queryString : '');
     }
 
-    /**
-     * ```php
-     * ->setResource(true)
-     *
-     * ->setResource(Resource::create(My\Class))
-     *
-     * ->setResource(My\Class)
-     * ```
-     *
-     * @param Resource|string|boolean $resource
-     * @return $this
-     */
-    public function setResource($resource)
-    {
-        if ($resource instanceof Resource) {
-            $this->resource = $resource;
-        } else {
-            if ($resource === true) {
-                $resource = $this->getTemplate($this->template);
-            }
-
-            $this->resource = Resource::create($resource);
-        }
-
-        return $this;
-    }
-
-    public function getResource($resource = null)
-    {
-        if ($resource instanceof Resource) {
-            return $resource;
-        }
-
-        if ($resource === true || (is_array($resource) && !isset($resource['class']))) {
-            $resource = ['class' => $this->getTemplate($this->template)];
-        }
-
-        if (is_string($resource)) {
-            $resource = ['class' => $resource];
-        }
-
-        if (isset($resource['class'])) {
-            return Resource::create($resource['class']);
-        }
-
-        return $this->resource;
-    }
-
     public function getResult()
     {
         if ($this->result !== null) {
@@ -380,15 +308,7 @@ abstract class Widget extends Container
         foreach ($rows as $values) {
             $row = [];
 
-            foreach ($this->getParts() as $partName => $part) {
-                try {
-                    if (isset($part['options']['access'])) {
-                        Access::check($part['options']['access']);
-                    }
-                } catch (Access_Denied $e) {
-                    continue;
-                }
-
+            foreach ($this->getParts($this->getFilterParts()) as $partName => $part) {
                 $part['widgetClassName'] = $widgetClassName;
                 $part['widgetName'] = $widgetName;
 
@@ -530,6 +450,16 @@ abstract class Widget extends Container
         return $this;
     }
 
+    /**
+     * @todo: все перевести на роуты, а не на урлы.. выпилить и посмотреть где сейчас это используется
+     *
+     * @return string
+     */
+    public function getUrl()
+    {
+        return $this->url == null ? Request::uri(true) : $this->url;
+    }
+
     protected function getCompiledResult()
     {
         if ($this->compiledResult !== null) {
@@ -540,20 +470,31 @@ abstract class Widget extends Container
         $widgetClass = get_class($this);
         $widgetClassName = $widgetClass::getClassName();
 
-        return $this->compiledResult = [
-            'result' => $this->getResult(),
-            'widgetName' => $this->getInstanceKey(),
-            'widgetData' => $this->getData(),
-            'widgetClassName' => $widgetClassName,
-            'widgetResource' => $this->getResource(),
-            'classes' => $this->getClasses(),
-            'url' => $this->getUrl(),
-            'dataToken' => $this->getToken(),
-            'dataAction' => $this->getActionClass(),
-            'dataView' => $this->getViewClass(),
-            'dataWidget' => $widgetClass,
-            'dataUrl' => $this->getFullUrl($this->getUrl()),
-            'dataFor' => $this->getForViewId()
+        return $this->compiledResult = array_merge(
+            [
+                'result' => $this->getResult(),
+                'widgetName' => $this->getInstanceKey(),
+                'widgetData' => $this->getData(),
+                'widgetClassName' => $widgetClassName,
+                'widgetResource' => $this->getResource(),
+                'classes' => $this->getClasses(),
+                'url' => $this->url,
+                'dataParams' => Json::encode($this->getDataParams()),
+                'dataWidget' => Json::encode($this->getDataWidget()),
+                'dataUrl' => $this->getFullUrl($this->url),
+                'dataFor' => $this->getParentWidgetId(),
+                'dataAction' => $this->actionClass,
+            ],
+            (array)$this->output
+        );
+    }
+
+    private function getDataWidget()
+    {
+        return [
+            'class' => get_class($this),
+            'name' => $this->getInstanceKey(),
+            'token' => $this->getToken()
         ];
     }
 
@@ -562,12 +503,12 @@ abstract class Widget extends Container
         /** @var Widget $widgetClass */
         $widgetClass = get_class($this);
 
-        $template = $widgetClass::getTemplate($this->template);
+        $template = $widgetClass::getTemplate();
 
-        $widgetContent = $widgetClass::getRender($this->renderClass)
+        $widgetContent = $widgetClass::getRender()
             ->fetch($template, $this->getCompiledResult());
 
-        $layout = $widgetClass::getLayout($this->layout);
+        $layout = $widgetClass::getLayout();
 
         return $layout
             ? Emmet::translate($layout . '{{$widgetContent}}', ['widgetContent' => $widgetContent])
@@ -637,17 +578,31 @@ abstract class Widget extends Container
      */
     protected function addPart($partName, array $options, $template, $element)
     {
+        try {
+            if (isset($part['options']['access'])) {
+                Access::check($part['options']['access']);
+            }
+        } catch (Access_Denied $e) {
+            return $this;
+        }
+
         if (!empty($options['rewrite']) && isset($this->parts[$partName])) {
             unset($this->parts[$partName]);
         }
 
         $widgetClass = get_class($this);
 
-        $this->parts[$partName] = [
+        $part = [
             'options' => Arrays::defaults($this->defaultOptions, $options),
             'template' => $template,
             'element' => $widgetClass::getClassName() . '_' . $element
         ];
+
+        if (!empty($options['unshift'])) {
+            $this->parts = [$partName => $part] + $this->parts;
+        } else {
+            $this->parts[$partName] = $part;
+        }
 
         if (isset($this->parts[$partName]['options']['default']) && $this->getValue($partName) === null) {
             $this->bind([$partName => $this->parts[$partName]['options']['default']]);
@@ -659,24 +614,23 @@ abstract class Widget extends Container
     /**
      * Compiled widget parts
      *
+     * @param null $filterParts
      * @return array
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
+     * @todo: Зачечем весь этот код?
      * @version 1.0
      * @since   1.0
      */
-    public function getParts()
+    public function getParts($filterParts = null)
     {
         $ascPattern = '/(?:[^\/]+\/)?' . Query_Builder::SQL_ORDERING_ASC . '$/';
         $descPattern = '/(?:[^\/]+\/)?' . Query_Builder::SQL_ORDERING_DESC . '$/';
 
         $parts = [];
 
-        $filterParts = $this->getFilterParts();
-
         foreach ($this->parts as $partName => $part) {
-            if (!empty($filterParts) && !isset($filterParts[$partName])) {
+            if (!empty($filterParts) && !in_array($partName, $filterParts)) {
                 continue;
             }
 
@@ -837,7 +791,6 @@ abstract class Widget extends Container
         return $this->addPart($columnName, $options, $template, __FUNCTION__);
     }
 
-
     /**
      * @param $fieldName
      * @param array $options
@@ -910,35 +863,89 @@ abstract class Widget extends Container
     }
 
     /**
-     * @param $name
+     * @return null
+     */
+    public function getParentWidgetId()
+    {
+        return $this->parentWidgetId;
+    }
+
+    /**
+     * @param null $parentWidgetId
+     */
+    public function setParentWidgetId($parentWidgetId)
+    {
+        $this->parentWidgetId = $parentWidgetId;
+    }
+
+    /**
+     * @param string $name
      * @param array $options
      * @param string $template
      * @return $this
      */
-    public function widget($name, array $options = [], $template = 'Ice\Widget\Widget')
+    protected function widget($name, array $options = [], $template = 'Ice\Widget\Widget')
     {
-        if ($options['widget']->getResource()) {
+        $options['widget'] = $this->getWidget($options['widget']);
+        $options['widget']->setParentWidgetId($this->getId());
+
+        if (!$options['widget']->getResource()) {
             $options['widget']->setResource($this->getResource());
         }
-
-        if ($options['widget']->getUrl()) {
-            $options['widget']->setUrl($this->getUrl());
-        }
-
-        $options['widget']->setActionClass($this->getActionClass());
-        $options['widget']->setViewClass($this->getViewClass());
-
-        $options['widget']->init($options['widget']->getValues());
 
         return $this->addPart($name, $options, $template, __FUNCTION__);
     }
 
-    protected function getWidget($widgetClass, $widgetName, array $params = []) {
-        $params['forViewId'] = $this->getForViewId();
+    /**
+     * @param $widgetClass
+     * @return Widget
+     */
+    protected function getWidgetClass($widgetClass)
+    {
+        return $widgetClass[0] == '_'
+            ? get_class($this) . $widgetClass
+            : Widget::getClass($widgetClass);
+    }
 
-        /** @var Widget $widgetClass */
-        $widgetClass = Widget::getClass($widgetClass);
 
-        return $widgetClass::getInstance($widgetName, null, $params);
+    public function getId()
+    {
+        return 'Widget_' . Object::getClassName(get_class($this)) . '_' . $this->getInstanceKey();
+    }
+
+    protected static function getDefaultKey()
+    {
+        return strtolower(self::getClassName()) . '_' . Router::getInstance()->getName();
+    }
+
+    /**
+     * @param string $widgetClass
+     * @return Widget
+     */
+    protected function getWidget($widgetClass)
+    {
+        if (is_object($widgetClass)) {
+            return $widgetClass;
+        }
+
+        $widgetClass = $this->getWidgetClass($widgetClass);
+
+        return $widgetClass::getInstance(strtolower(get_class($this)));
+    }
+
+    /**
+     * @param array|null $filterParts
+     * @return Widget[]
+     */
+    protected function getWidgets($filterParts = null) {
+        $widgets = [];
+
+        foreach ($this->getParts($filterParts) as $partName => $part) {
+            if (isset($part['options']['widget'])) {
+                $widgets[$partName] = $part['options']['widget'];
+            }
+        }
+
+        return $widgets;
     }
 }

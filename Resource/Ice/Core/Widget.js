@@ -15,15 +15,11 @@ var Ice_Core_Widget = {
             $form = $widget;
         }
 
-        var data = Ice.jsonToObject($widget.closest('#' + $widget.attr('data-for')).attr('data-params'));
+        var data = Ice.jsonToObject($widget.attr('data-params'));
 
-        if ($element.attr('data-params')) {
-            data = Ice.objectMerge(data, Ice.jsonToObject($element.attr('data-params')));
-        }
-
-        if ($form) {
-            data = Ice.objectMerge(data, Ice.querystringToObject($form.serialize()));
-        }
+        data = $form
+            ? Ice.objectMerge(data, Ice.querystringToObject($form.serialize()))
+            : Ice.objectMerge(data, Ice.jsonToObject($element.attr('data-params')));
 
         var url = $element.attr('href');
 
@@ -41,27 +37,7 @@ var Ice_Core_Widget = {
             }
         }
 
-        data.widgetClass = $widget.attr('data-widget');
-        data.token = $widget.attr('data-token');
-
-        data.viewClass = $element.attr('data-view');
-        if (!data.viewClass) {
-            data.viewClass = $widget.attr('data-view');
-        }
-
-        var action = $element.attr('data-action');
-        if (!action) {
-            action = $widget.attr('data-action');
-        }
-
-        var block = data.viewClass.split('\\').pop();
-
-        if (!block) {
-            alert('viewClass not found!');
-            return;
-        }
-
-        var $view = $('#' + $widget.attr('data-for'));
+        data.widget = Ice.jsonToObject($widget.attr('data-widget'));
 
         var widgetCallback = function (result) {
             if (callback) {
@@ -79,17 +55,70 @@ var Ice_Core_Widget = {
                 //};
             }
 
-            var observers = Ice.jsonToObject($view.attr('data-observers'));
-            var $observer;
+            //var observers = Ice.jsonToObject($view.attr('data-observers'));
+            //var $observer;
 
-            for (var forId in observers) {
-                $observer = $('#' + forId);
-
-                Ice.reRender($observer, 'Ice:View_Render', {viewClass: observers[forId]}, null, url);
-            }
+            //for (var forId in observers) {
+            //    $observer = $('#' + forId);
+            //
+            //    Ice.reRender($observer, 'Ice:View_Render', {viewClass: observers[forId]}, null, url);
+            //}
         };
 
-        Ice.reRender($view, action, data, widgetCallback, url);
+        Ice_Core_Widget.reRender($widget, Ice_Core_Widget.getAttr('data-action', $element), data, widgetCallback, url);
+    },
+
+    reRender: function ($widget, actionClass, actionParams, callback, url, method) {
+        Ice.call(
+            actionClass,
+            actionParams,
+            function (result) {
+                if (result.data.error) {
+                    $widget.find('.ice-message').html(result.data.error)
+                } else {
+                    if (result.data.success) {
+                        $widget.find('.ice-message').html(result.data.success)
+                    }
+
+                    setTimeout(
+                        function () {
+                            if (result.data.redirect) {
+                                location.href = result.data.redirect;
+                            } else {
+                                if (result.data.content) {
+                                    $widget.replaceWith(result.data.content);
+                                }
+
+                                if (result.data.widgets) {
+                                    for (widgetId in result.data.widgets) {
+                                        $('#' + widgetId).replaceWith(result.data.widgets[widgetId]);
+                                    }
+                                }
+
+                                if (callback) {
+                                    callback(result);
+                                }
+                            }
+                        },
+                        result.data.timeout ? result.data.timeout : 0
+                    );
+                }
+            },
+            url,
+            method
+        );
+    },
+
+    getAttr: function (name, $element) {
+        var param = $element.attr(name);
+
+        if (param) {
+            return param;
+        }
+
+        $element = $('#' + $element.attr('data-for'));
+
+        return $element ? Ice_Core_Widget.getAttr(name, $element) : param
     }
 };
 

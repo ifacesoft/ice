@@ -241,4 +241,12 @@ class Resource implements Cacheable
     {
         // TODO: Implement invalidate() method.
     }
+
+    /**
+     * @return string
+     */
+    public function getResourceClass()
+    {
+        return $this->class;
+    }
 }

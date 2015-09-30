@@ -15,8 +15,8 @@ abstract class Widget_Form_Security_Login extends Widget_Form_Security
 
     protected function build(array $input)
     {
-        parent::build($input);
-
         $this->setUrl(Router::getInstance()->getUrl('ice_security_login'));
+
+        return [];
     }
 }

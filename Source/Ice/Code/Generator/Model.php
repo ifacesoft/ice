@@ -44,9 +44,6 @@ class Model extends Code_Generator
      * @return mixed
      *
      * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since   0.0
      */
     public function generate($class, array $data = [], $force = false)
     {
@@ -96,5 +93,20 @@ class Model extends Code_Generator
         }
 
         Loader::load($class);
+    }
+
+    /**
+     * Init object
+     *
+     * @param array $params
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 2.0
+     * @since   2.0
+     */
+    protected function init(array $params)
+    {
+        // TODO: Implement init() method.
     }
 }

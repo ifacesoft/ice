@@ -1,4 +1,8 @@
 <?php $parts = reset($result) ?>
+<?php if (isset($parts['breadcrumbs'])) : ?>
+    <?= $parts['breadcrumbs']['content'] ?>
+    <?php unset($parts['breadcrumbs']); ?>
+<?php endif; ?>
 <?php if (isset($parts['header'])) : ?>
     <?= $parts['header']['content'] ?>
     <?php unset($parts['header']); ?>
@@ -7,9 +11,7 @@
     class="Widget_<?= $widgetClassName ?><?php if (!empty($classes)) { ?> <?= $classes ?><?php } ?>"
     data-url='<?= $dataUrl ?>'
     data-action='<?= $dataAction ?>'
-    data-view='<?= $dataView ?>'
     data-widget='<?= $dataWidget ?>'
-    data-token="<?= $dataToken ?>"
     data-for="<?= $dataFor ?>"
 >
     <?php foreach ($parts as $part) : ?>

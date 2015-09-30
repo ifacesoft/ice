@@ -395,7 +395,6 @@ abstract class Widget_Data extends Widget
             $column['dataUrl'] = $this->getUrl();
             $column['dataParams'] = Json::encode($this->getDataParams());
             $column['dataAction'] = $this->getActionClass();
-            $column['dataView'] = $this->getViewClass();
             $column['dataValue'] = $this->getValue($columnName);
 
             if ($this->getValue($columnName) == '') {

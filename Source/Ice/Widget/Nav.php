@@ -6,7 +6,7 @@ use Ice\Core\Query_Builder;
 use Ice\Core\Query_Result;
 use Ice\Core\Widget;
 
-class Nav extends Widget
+abstract class Nav extends Widget
 {
     /**
      * Widget config
@@ -16,7 +16,7 @@ class Nav extends Widget
     protected static function config()
     {
         return [
-            'render' => ['template' => true, 'class' => 'Ice:Php', 'layout' => null],
+            'render' => ['template' => true, 'class' => 'Ice:Php', 'layout' => null, 'resource' => null],
             'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'Widget: Access denied!'],
             'cache' => ['ttl' => -1, 'count' => 1000],
             'actions' => [],
@@ -48,22 +48,15 @@ class Nav extends Widget
     }
 
     /**
-     * @param string $name
+     * @param Nav $widget
      * @param array $options
      * @param string $template
      * @return Navbar
      */
-    public function nav($name, array $options = [], $template = 'Ice\Widget\Nav\Nav')
+    public function nav(Nav $widget, array $options = [], $template = 'Ice\Widget\Nav\Nav')
     {
-        $classes = $options['widget']->getClasses();
-        $options['widget']->setClasses($classes . ' nav-nav');
+        $widget->setClasses($widget->getClasses() . ' nav-nav');
 
-        return $template
-            ? $this->widget($name, $options, $template)
-            : $this->widget($name, $options);
-    }
-
-    protected function build(array $input)
-    {
+        return $this->widget($widget, $options, $template);
     }
 }

@@ -4,6 +4,7 @@ namespace Ice\Helper;
 
 use Ice\Core\Action;
 use Ice\Core\Data_Provider;
+use Ice\Core\Resource;
 use Ice\Data\Provider\Request as Data_Provider_Request;
 use Ice\Data\Provider\Router as Data_Provider_Router;
 use Ice\Data\Provider\Session as Data_Provider_Session;
@@ -30,7 +31,7 @@ class Input
                 $param = [];
             }
 
-            if (is_string($param)) {
+            if (!is_array($param)) {
                 $input[$name] = $param;
                 continue;
             }

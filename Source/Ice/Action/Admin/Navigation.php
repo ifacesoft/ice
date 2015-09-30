@@ -8,6 +8,8 @@ use Ice\Core\Request;
 use Ice\Core\Route;
 use Ice\Helper\String;
 use Ice\Core\Resource as Core_Resource;
+use Ice\Widget\Admin_Nav;
+use Ice\Widget\Admin_Navbar;
 use Ice\Widget\Form;
 use Ice\Widget\Nav;
 use Ice\Widget\Navbar;
@@ -51,22 +53,21 @@ class Admin_Navigation extends Action
      */
     public function run(array $input)
     {
-        $mainNav = Nav::create()
+        $mainNav = Admin_Nav::getInstance('admin_main_nav')
             ->li('ice_admin_dashboard', ['route' => true]);
 
         foreach ($input['routeNames'] as $route) {
             $mainNav->li($route, ['route' => true]);
         }
 
-        $profileNav = Nav::create()
+        $profileNav = Admin_Nav::getInstance('admin_profile_nav')
             ->setClasses('navbar-right')
             ->li('ice_private', ['route' => true])
             ->li('ice_private_profile', ['route' => true]);
 
-        $navbar = Navbar::create()
-            ->brand('project_name', ['label' => Module::getInstance()->getName(), 'href' => '/'])
-            ->nav('main', ['widget' => $mainNav])
-            ->nav('profile', ['widget' => $profileNav])
+        $navbar = Admin_Navbar::getInstance('admin_navbar')
+            ->nav('mainNav', ['widget' => $mainNav])
+            ->nav('profileNav', ['widget' => $profileNav])
             ->setClasses('navbar-inverse navbar-fixed-top');
 
         return [

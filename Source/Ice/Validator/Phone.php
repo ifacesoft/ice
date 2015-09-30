@@ -23,9 +23,6 @@ use Ice\Helper\Phone as Helper_Phone;
  *
  * @package    Ice
  * @subpackage Validator
- *
- * @version 0.0
- * @since   0.0
  */
 class Phone extends Validator
 {
@@ -53,5 +50,20 @@ class Phone extends Validator
     public function validate($data, $scheme = null)
     {
         return strlen(Helper_Phone::parse($data, true)) == 11;
+    }
+
+    /**
+     * Init object
+     *
+     * @param array $params
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 2.0
+     * @since   2.0
+     */
+    protected function init(array $params)
+    {
+        // TODO: Implement init() method.
     }
 }

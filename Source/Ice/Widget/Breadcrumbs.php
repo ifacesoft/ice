@@ -15,22 +15,13 @@ class Breadcrumbs extends Widget
     protected static function config()
     {
         return [
-            'render' => ['template' => true, 'class' => 'Ice:Php', 'layout' => null],
+            'render' => ['template' => true, 'class' => 'Ice:Php', 'layout' => null, 'resource' => null],
             'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'Widget: Access denied!'],
             'cache' => ['ttl' => -1, 'count' => 1000],
             'actions' => [],
             'input' => [],
             'output' => []
         ];
-    }
-
-    /**
-     * Init widget parts and other
-     * @param array $input
-     * @return array|void
-     */
-    public function init(array $input)
-    {
     }
 
     /**
@@ -49,5 +40,14 @@ class Breadcrumbs extends Widget
     public function li($columnName, array $options = [], $template = 'Ice\Widget\Breadcrumbs\Li')
     {
         return $this->addPart($columnName, $options, $template, __FUNCTION__);
+    }
+
+    /**
+     * @param array $input
+     * @return array
+     */
+    protected function build(array $input)
+    {
+        return [];
     }
 }

@@ -319,7 +319,7 @@ abstract class Widget_Form extends Widget
 
         $uploadTempDir = Module::getInstance()->get(Module::UPLOAD_TEMP_DIR) . '/' . $formClass::getClassName();
 
-        foreach (array_keys($form->getParts()) as $key) {
+        foreach (array_keys($form->getParts($form->getFilterParts())) as $key) {
             if (isset($params[$key])) {
                 continue;
             }

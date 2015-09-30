@@ -25,7 +25,7 @@ class Ice extends Security
      */
     public function check(array $roles)
     {
-        return array_intersect($roles, $this->getRoles());
+        return array_intersect($roles, $this->getRoles()) || in_array('ROLE_ICE_SUPER_ADMIN', $this->getRoles());
     }
 
     /**
@@ -99,6 +99,6 @@ class Ice extends Security
      */
     public function getRoles()
     {
-        return [];
+        return $this->isAuth() ? ['ROLE_ICE_USER'] : [];
     }
 }

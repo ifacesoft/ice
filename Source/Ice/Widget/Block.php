@@ -4,7 +4,7 @@ namespace Ice\Widget;
 
 use Ice\Core\Widget;
 
-class Block extends Widget
+abstract class Block extends Widget
 {
     /**
      * Widget config
@@ -14,21 +14,12 @@ class Block extends Widget
     protected static function config()
     {
         return [
-            'render' => ['template' => true, 'class' => 'Ice:Php', 'layout' => null],
+            'render' => ['template' => true, 'class' => 'Ice:Php', 'layout' => null, 'resource' => null],
             'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'Widget: Access denied!'],
             'cache' => ['ttl' => -1, 'count' => 1000],
             'actions' => [],
             'input' => [],
             'output' => []
         ];
-    }
-
-    /**
-     * Init widget parts and other
-     *
-     * @param array $input
-     */
-    public function init(array $input)
-    {
     }
 }

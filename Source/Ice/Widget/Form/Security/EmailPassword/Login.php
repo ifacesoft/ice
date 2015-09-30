@@ -14,7 +14,7 @@ class Form_Security_EmailPassword_Login extends Widget_Form_Security_Login
     protected static function config()
     {
         return [
-            'render' => ['template' => Form::getClass(), 'class' => 'Ice:Php', 'layout' => null],
+            'render' => ['template' => Form::getClass(), 'class' => 'Ice:Php', 'layout' => null, 'resource' => null],
             'input' => [
                 'email' => ['providers' => 'request'],
                 'password' => ['providers' => 'request']
@@ -25,7 +25,7 @@ class Form_Security_EmailPassword_Login extends Widget_Form_Security_Login
 
     protected function build(array $input)
     {
-        parent::build($input);
+        $output = parent::build($input);
 
         $this
         ->text(
@@ -47,6 +47,8 @@ class Form_Security_EmailPassword_Login extends Widget_Form_Security_Login
             ]
         )
         ->button('submit', ['label' => 'Sign in', 'onclick' => 'POST']);
+
+        return $output;
     }
 
     /**
@@ -60,10 +62,8 @@ class Form_Security_EmailPassword_Login extends Widget_Form_Security_Login
      * @return array|null|string
      * @throws \Ice\Core\Exception
      */
-    public function action($token)
+    protected function action($token)
     {
-        $result = parent::action($token);
-
         /** @var Model $accountModelClass */
         $accountModelClass = $this->getAccountModelClass();
 

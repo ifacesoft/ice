@@ -3,10 +3,7 @@
 namespace Ice\Action;
 
 use Ice\Core\Action;
-use Ice\Core\Debuger;
-use Ice\Core\Route;
-use Ice\Widget\Header;
-use Ice\Widget\Nav;
+use Ice\Widget\Admin_Sidebar as Widget_Admin_Sidebar;
 
 class Admin_Sidebar extends Action
 {
@@ -37,46 +34,6 @@ class Admin_Sidebar extends Action
      */
     public function run(array $input)
     {
-        $routeName = $this->getRouteName($input['routeNames'], $input['routeName']);
-
-        if (!$routeName) {
-            $routeName = $this->getRouteName($input['routeNames'], substr($input['routeName'], 0, strrpos($input['routeName'], '_')));
-        }
-
-        return ['nav' => $this->getNav($input['routeNames'][$routeName])];
-    }
-
-    private function getRouteName(array $routeNames, $currentRouteName)
-    {
-        foreach ($routeNames as $key => $routeName) {
-            if ($routeName == $currentRouteName) {
-                return $key;
-            }
-
-            if (is_array($routeName) && $this->getRouteName($routeName, $currentRouteName) !== null) {
-                return $key;
-            }
-        }
-
-        return null;
-    }
-
-    private function getNav(array $routeNames, $routeName = null)
-    {
-        $nav = Nav::create();
-
-        if ($routeName) {
-            $nav->widget($routeName, ['widget' => Header::create()->h4($routeName, ['route' => true])]);
-        }
-
-        foreach ($routeNames as $key => $routeName) {
-            if (is_array($routeName)) {
-                $nav->widget($key, ['widget' => $this->getNav($routeName, $key)]);
-            } else {
-                $nav->li($routeName, ['route' => true]);
-            }
-        }
-
-        return $nav;
+        return ['nav' => Widget_Admin_Sidebar::getInstance(null)];
     }
 }

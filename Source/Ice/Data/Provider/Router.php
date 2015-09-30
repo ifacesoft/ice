@@ -246,12 +246,12 @@ class Router extends Data_Provider
             $baseMatches[0][] = '';
         }
 
-        $route = array_merge($route, array_combine(array_keys($route['params']), array_slice($baseMatches[0], 1)));
+        $route['routeParams'] = array_combine(array_keys($route['params']), array_slice($baseMatches[0], 1));
 
         return (bool)$connection = $dataProvider->set($key, $route);
     }
 
-    private function getRoute($url, $method)
+    public function getRoute($url, $method)
     {
         list($matchedRoutes, $foundRoutes) = $this->getRoutes($url, $method);
 
