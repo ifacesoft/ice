@@ -27,7 +27,7 @@ use Ice\Core\Render;
  * @author dp <denis.a.shestakov@gmail.com>
  *
  * @package    Ice
- * @subpackage View_Render
+ * @subpackage Render
  *
  * @version 0.0
  * @since   0.0

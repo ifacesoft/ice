@@ -13,7 +13,7 @@
                value="<?= $params[$name] ?>"
                data-for="Widget_<?= $widgetClassName ?>_<?= $widgetName ?>"
                <?php if (isset($options['placeholder'])) : ?>placeholder="<?= $options['placeholder'] ?>"<?php endif; ?>
-               <?php if (isset($options['onchange'])) : ?>onchange="<?= $options['onchange'] ?> return false;"<?php endif; ?>
+               <?php if (isset($options['onchange'])) : ?>onchange="<?= $options['onchange'] ?>"<?php endif; ?>
             <?php if ($options['disabled']) : ?> disabled="disabled"<?php endif; ?>
             <?php if ($options['readonly']) : ?> readonly="readonly" <?php endif; ?>
             <?php if ($options['required']) : ?> required="required" <?php endif; ?>

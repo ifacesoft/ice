@@ -20,7 +20,16 @@ class Admin_Sidebar extends Nav
                 'routeNames' => ['default' => []],
                 'routeName' => ['providers' => 'router']
             ],
-            'output' => []
+            'output' => [],
+            'action' => [
+                //  'class' => 'Ice:Render',
+                //  'params' => [
+                //      'widgets' => [
+                ////        'Widget_id' => Widget::class
+                //      ]
+                //  ],
+                //  'method' => 'POST'
+            ]
         ];
     }
 

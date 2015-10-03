@@ -17,7 +17,16 @@ class Admin_Nav extends Nav
             'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'Widget: Access denied!'],
             'cache' => ['ttl' => -1, 'count' => 1000],
             'input' => [],
-            'output' => []
+            'output' => [],
+            'action' => [
+                //  'class' => 'Ice:Render',
+                //  'params' => [
+                //      'widgets' => [
+                ////        'Widget_id' => Widget::class
+                //      ]
+                //  ],
+                //  'method' => 'POST'
+            ]
         ];
     }
 

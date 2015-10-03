@@ -6,14 +6,13 @@
 
 <form id="Widget_<?= $widgetClassName ?>_<?= $widgetName ?>"
       class="Widget_<?= $widgetClassName ?> form<?php if (!empty($classes)) : ?> <?= $classes ?><?php endif; ?>"
-      data-url='<?= $dataUrl ?>'
-      data-action="<?= $dataAction ?>"
+      data-action='<?= $dataAction ?>'
       data-widget='<?= $dataWidget ?>'
       data-params='<?= $dataParams ?>'
       data-for="<?= $dataFor ?>"
-      action="<?= $url ?>"
+      action="<?= $action ?>"
       method="<?= $method ?>"
-      <?php if ($onsubmit) : ?>onsubmit="<?= $onsubmit ?> return false;"<?php endif; ?>
+      <?php if ($onSubmit) : ?>onsubmit="<?= $onSubmit ?>"<?php endif; ?>
 >
     <?php foreach ($parts as $part) : ?>
         <?= $part['content'] ?>

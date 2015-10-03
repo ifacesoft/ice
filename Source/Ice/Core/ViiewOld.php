@@ -213,7 +213,7 @@ class ViiewOld implements Cacheable
 //                );
 //
 //
-//                array_shift(View_Render::$templates);
+//                array_shift(Render::$templates);
 //                return;
 //            }
 

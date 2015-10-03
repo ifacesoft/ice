@@ -2,12 +2,11 @@
 
 namespace Ice\Widget;
 
+use Ice\Action\Form_Submit;
 use Ice\Core\Model;
 use Ice\Core\Security_Account;
 use Ice\Core\Widget_Form_Security;
 use Ice\Core\Widget_Form_Security_Login;
-use Ice\Widget\Form;
-use Ice\Widget\Form\Simple;
 
 class Form_Security_EmailPassword_Login extends Widget_Form_Security_Login
 {
@@ -19,36 +18,41 @@ class Form_Security_EmailPassword_Login extends Widget_Form_Security_Login
                 'email' => ['providers' => 'request'],
                 'password' => ['providers' => 'request']
             ],
-            'access' => ['roles' => [], 'request' => null, 'env' => null]
+            'access' => ['roles' => [], 'request' => null, 'env' => null],
+            'action' => [
+                'class' => Form_Submit::getClass(),
+                'params' => [],
+                'url' => 'ice_security_login',
+                'method' => 'POST',
+                'callback' => null
+            ]
         ];
     }
 
     protected function build(array $input)
     {
-        $output = parent::build($input);
-
         $this
-        ->text(
-            'email',
-            [
-                'label' => 'Email',
-                'required' => true,
-                'placeholder' => 'email_placeholder',
-                'validators' => 'Ice:Email'
-            ]
-        )
-        ->password(
-            'password',
-            [
-                'label' => 'Password',
-                'required' => true,
-                'placeholder' => 'password_placeholder',
-                'validators' => ['Ice:Length_Min' => 5]
-            ]
-        )
-        ->button('submit', ['label' => 'Sign in', 'onclick' => 'POST']);
+            ->text(
+                'email',
+                [
+                    'label' => 'Email',
+                    'required' => true,
+                    'placeholder' => 'email_placeholder',
+                    'validators' => 'Ice:Email'
+                ]
+            )
+            ->password(
+                'password',
+                [
+                    'label' => 'Password',
+                    'required' => true,
+                    'placeholder' => 'password_placeholder',
+                    'validators' => ['Ice:Length_Min' => 5]
+                ]
+            )
+            ->button('signin', ['label' => 'Sign in', 'submit' => true]);
 
-        return $output;
+        return [];
     }
 
     /**

@@ -18,7 +18,7 @@ use Ice\Render\Php;
 use Ice\Render\Twig;
 
 /**
- * Class View_Render_Twig
+ * Class Render_Twig
  *
  * View code generator for twig templates
  *

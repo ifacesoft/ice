@@ -1,6 +1,7 @@
 <?php
 namespace Ice\Widget;
 
+use Ice\Action\Form_Submit;
 use Ice\Core\Model;
 use Ice\Core\Security_Account;
 use Ice\Core\Widget_Form_Security_Login;
@@ -18,14 +19,19 @@ class Form_Security_LoginEmailPassword_Login extends Widget_Form_Security_Login
                 'username' => ['providers' => 'request'],
                 'password' => ['providers' => 'request']
             ],
-            'access' => ['roles' => [], 'request' => null, 'env' => null]
+            'access' => ['roles' => [], 'request' => null, 'env' => null],
+            'action' => [
+                'class' => Form_Submit::getClass(),
+                'params' => [],
+                'url' => 'ice_security_login',
+                'method' => 'POST',
+                'callback' => null
+            ]
         ];
     }
 
     protected function build(array $input)
     {
-        $output = parent::build($input);
-
         $this
             ->text(
                 'username',
@@ -51,7 +57,7 @@ class Form_Security_LoginEmailPassword_Login extends Widget_Form_Security_Login
             )
             ->button('signin', ['label' => 'Sign in', 'submit' => true]);
 
-        return $output;
+        return [];
     }
 
     protected function action($token)

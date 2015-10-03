@@ -2,7 +2,7 @@
  * Created by dp on 28.05.15.
  */
 var Ice_Core_Widget = {
-    click: function ($element, callback, method) {
+    click: function ($element, callback) {
         var $form = $element.prop('tagName') == 'FORM'
             ? $element
             : null;
@@ -21,23 +21,28 @@ var Ice_Core_Widget = {
             ? Ice.objectMerge(data, Ice.querystringToObject($form.serialize()))
             : Ice.objectMerge(data, Ice.jsonToObject($element.attr('data-params')));
 
-        var url = $element.attr('href');
+        var url = $form
+            ? $form.attr('action')
+            : $element.attr('href');
 
-        if (typeof url == 'undefined' && $form) {
-            url = $form.attr('action');
+        var action = Ice.jsonToObject(Ice_Core_Widget.getAttr('data-action', $element));
+
+        if (!url) {
+            url = action.url;
         }
 
-        if (typeof url == 'undefined') {
-            url = $widget.attr('data-url');
-        } else {
-            if (method == 'GET') {
-                var a = document.createElement('a');
-                a.href = url;
-                url = a.pathname + '?' + $.param(data) + a.hash;
-            }
+        var method = action.method;
+
+        if (method == 'GET') {
+            var a = document.createElement('a');
+            a.href = url;
+            url = a.pathname + '?' + $.param(data) + a.hash;
+            data = {};
         }
 
         data.widget = Ice.jsonToObject($widget.attr('data-widget'));
+
+        data = Ice.objectMerge(data, action.params);
 
         var widgetCallback = function (result) {
             if (callback) {
@@ -61,11 +66,11 @@ var Ice_Core_Widget = {
             //for (var forId in observers) {
             //    $observer = $('#' + forId);
             //
-            //    Ice.reRender($observer, 'Ice:View_Render', {viewClass: observers[forId]}, null, url);
+            //    Ice.reRender($observer, 'Ice:Render', {viewClass: observers[forId]}, null, url);
             //}
         };
 
-        Ice_Core_Widget.reRender($widget, Ice_Core_Widget.getAttr('data-action', $element), data, widgetCallback, url);
+        Ice_Core_Widget.reRender($widget, action.class, data, widgetCallback, url, 'POST');
     },
 
     reRender: function ($widget, actionClass, actionParams, callback, url, method) {

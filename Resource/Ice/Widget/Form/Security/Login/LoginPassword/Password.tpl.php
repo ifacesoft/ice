@@ -4,9 +4,8 @@
            placeholder="<?= $options['placeholder'] ?>"
            name="<?= $fieldName ?>" value="<?= $value ?>"
            <?php if (isset($onchange)) : ?>onchange='<?= $onchange ?>'<?php endif; ?>
-           data-url='<?= $dataUrl ?>'
            data-params='<?= $dataParams ?>'
-           data-action='<?= $dataAction ?>'
+           <?php if (!empty($dataAction)) : ?>data-action='<?= $dataAction ?>'<?php endif; ?>
            data-widget='<?= $dataWidget ?>'
            data-for="<?= $dataFor ?>"
     >

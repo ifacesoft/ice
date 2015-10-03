@@ -6,7 +6,7 @@ use Ice\Core\Query_Builder;
 use Ice\Core\Query_Result;
 use Ice\Core\Widget;
 
-abstract class Header extends Widget
+class Header extends Widget
 {
     /**
      * Widget config
@@ -21,7 +21,16 @@ abstract class Header extends Widget
             'cache' => ['ttl' => -1, 'count' => 1000],
             'actions' => [],
             'input' => [],
-            'output' => []
+            'output' => [],
+            'action' => [
+                //  'class' => 'Ice:Render',
+                //  'params' => [
+                //      'widgets' => [
+                ////        'Widget_id' => Widget::class
+                //      ]
+                //  ],
+                //  'method' => 'POST'
+            ]
         ];
     }
 
@@ -89,5 +98,15 @@ abstract class Header extends Widget
     public function h6($name, array $options = [], $template = 'Ice\Widget\Header\H6')
     {
         return $this->addPart($name, $options, $template, __FUNCTION__);
+    }
+
+    /** Build widget
+     *
+     * @param array $input
+     * @return array
+     */
+    protected function build(array $input)
+    {
+        return [];
     }
 }

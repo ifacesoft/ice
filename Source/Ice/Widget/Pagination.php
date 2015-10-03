@@ -4,6 +4,7 @@ namespace Ice\Widget;
 
 use Ice\Core\Query_Builder;
 use Ice\Core\Query_Result;
+use Ice\Core\Request;
 use Ice\Core\Widget;
 
 class Pagination extends Widget
@@ -27,7 +28,16 @@ class Pagination extends Widget
                 'page' => ['providers' => 'request', 'default' => 1],
                 'limit' => ['providers' => 'request', 'default' => 15]
             ],
-            'output' => []
+            'output' => [],
+            'action' => [
+                //  'class' => 'Ice:Render',
+                //  'params' => [
+                //      'widgets' => [
+                ////        'Widget_id' => Widget::class
+                //      ]
+                //  ],
+                //  'method' => 'POST'
+            ]
         ];
     }
 
@@ -88,7 +98,7 @@ class Pagination extends Widget
     {
         return $this->addPart(
             $name,
-            array_merge($options, ['onclick' => true, 'href' => $this->getUrl()]),
+            array_merge($options, ['onclick' => true, 'href' => $this->getFullUrl(Request::uri(true))]),
             $template,
             __FUNCTION__
         );

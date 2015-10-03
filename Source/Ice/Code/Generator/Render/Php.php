@@ -17,7 +17,7 @@ use Ice\Helper\File;
 use Ice\Render\Php;
 
 /**
- * Class View_Render_Php
+ * Class Render_Php
  *
  * View code generator for php templates
  *

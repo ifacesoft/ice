@@ -97,16 +97,32 @@ trait Rendered
         return $renderClass::getInstance();
     }
 
-    public function setResource($resource) {
+    public function setResource($resource, $force = false)
+    {
         if ($resource instanceof Resource) {
             return $this->resource = $resource;
         }
 
-        $class = $resource === true || (is_array($resource) && !isset($resource['class']))
-            ? $this->getTemplate()
-            : $resource;
+        /** @var Configured $class */
+        $class = get_called_class();
 
-        return $this->resource = Resource::create($class);
+        if (!$resource && !$force) {
+            $resource = $class::getConfig()->get('render/resource');
+        }
+
+        if (!$resource) {
+            return null;
+        }
+
+        if ($resource === true || (is_array($resource) && !isset($resource['class']))) {
+            $resource = $class;
+        }
+
+        if (is_array($resource)) {
+            $resource = $resource['class'];
+        }
+
+        return $this->resource = Resource::create($resource);
     }
 
     /**
@@ -116,19 +132,8 @@ trait Rendered
      */
     protected function getResource($resource = null, $force = false)
     {
-        /** @var Configured $class */
-        $class = get_called_class();
-
-        if (!$resource && !$force) {
-            if ($this->resource !== null) {
-                return $this->resource;
-            }
-
-            $resource = $class::getConfig()->get('render/resource');
-        }
-
-        if (!$resource) {
-            return null;
+        if (!$force && $this->resource !== null) {
+            return $this->resource;
         }
 
         return $this->setResource($resource);

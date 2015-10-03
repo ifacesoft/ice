@@ -18,7 +18,7 @@ use Ice\Render\Php;
 use Ice\Render\Smarty_Markdown;
 
 /**
- * Class View_Render_Smarty
+ * Class Render_Smarty
  *
  * View code generator for smarty templates
  *

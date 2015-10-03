@@ -12,14 +12,15 @@
                 data-for="Widget_<?= $widgetClassName ?>_<?= $widgetName ?>"
                 data-name="<?= $name ?>"
                 data-params='<?= $dataParams ?>'
+                <?php if (!empty($dataAction)) : ?>data-action='<?= $dataAction ?>'<?php endif; ?>
                 <?php if (isset($options['multiple'])) : ?>multiple<?php endif; ?>
                 <?php if (isset($options['size'])) : ?>size="<?= $options['size'] ?>"<?php endif; ?>
-                <?php if (isset($options['onchange'])) : ?>onchange="<?= $options['onchange'] ?> return false;"<?php endif; ?>
+                <?php if (isset($options['onchange'])) : ?>onchange="<?= $options['onchange'] ?>"<?php endif; ?>
             <?php if ($options['disabled']) : ?> disabled="disabled"<?php endif; ?>>
-            <?php foreach ($options['rows'] as $option) : ?>
-                <option value="<?= $option[$value] ?>"
-                    <?php if ($params[$name] == $option[$value]) : ?> selected="selected"<?php endif; ?>
-                ><?= $option[$label] ?></option>
+            <?php foreach ($options['rows'] as $row) : ?>
+                <option value="<?= $row[$value] ?>"
+                    <?php if ($params[$name] == $row[$value]) : ?> selected="selected"<?php endif; ?>
+                ><?= $row[$label] ?></option>
             <?php endforeach; ?>
         </select>
         <?php if (isset($options['horizontal'])) : ?></div><?php endif; ?>

@@ -118,9 +118,9 @@ class Resource implements Cacheable
      */
     public static function create($class)
     {
-        $repository = Resource::getRepository();
+        $repository = Resource::getRepository($class);
 
-        if ($resource = $repository->get($class)) {
+        if ($resource = $repository->get('resource')) {
             return $resource;
         }
 
@@ -129,7 +129,7 @@ class Resource implements Cacheable
         $resource->resource = Resource::getResources($class);
         $resource->class = $class;
 
-        return $repository->set($class, $resource);
+        return $repository->set('resource', $resource);
     }
 
     private static function getResources($class)

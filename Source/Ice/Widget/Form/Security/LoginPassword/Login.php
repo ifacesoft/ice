@@ -2,12 +2,11 @@
 
 namespace Ice\Widget;
 
+use Ice\Action\Form_Submit;
 use Ice\Core\Model;
 use Ice\Core\Security_Account;
 use Ice\Core\Widget_Form_Security;
 use Ice\Core\Widget_Form_Security_Login;
-use Ice\Widget\Form;
-use Ice\Widget\Form\Simple;
 
 class Form_Security_LoginPassword_Login extends Widget_Form_Security_Login
 {
@@ -19,14 +18,19 @@ class Form_Security_LoginPassword_Login extends Widget_Form_Security_Login
                 'login' => ['providers' => 'request'],
                 'password' => ['providers' => 'request']
             ],
-            'access' => ['roles' => [], 'request' => null, 'env' => null]
+            'access' => ['roles' => [], 'request' => null, 'env' => null],
+            'action' => [
+                'class' => Form_Submit::getClass(),
+                'params' => [],
+                'url' => 'ice_security_login',
+                'method' => 'POST',
+                'callback' => null
+            ]
         ];
     }
 
     protected function build(array $input)
     {
-        $output = parent::build($input);
-
         $this
             ->text(
                 'login',
@@ -46,9 +50,9 @@ class Form_Security_LoginPassword_Login extends Widget_Form_Security_Login
                     'validators' => ['Ice:Length_Min' => 5]
                 ]
             )
-            ->button('submit', ['label' => 'Sign in', 'onclick' => 'POST']);
+            ->button('signin', ['label' => 'Sign in', 'submit' => true]);
 
-        return $output;
+        return [];
     }
 
     /**

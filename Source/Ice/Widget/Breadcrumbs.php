@@ -20,7 +20,16 @@ class Breadcrumbs extends Widget
             'cache' => ['ttl' => -1, 'count' => 1000],
             'actions' => [],
             'input' => [],
-            'output' => []
+            'output' => [],
+            'action' => [
+                //  'class' => 'Ice:Render',
+                //  'params' => [
+                //      'widgets' => [
+                ////        'Widget_id' => Widget::class
+                //      ]
+                //  ],
+                //  'method' => 'POST'
+            ]
         ];
     }
 

@@ -12,7 +12,7 @@ namespace Ice\Core;
 use Ice\Core;
 
 /**
- * Class View_Render
+ * Class Render
  *
  * Core view render abstract class
  *

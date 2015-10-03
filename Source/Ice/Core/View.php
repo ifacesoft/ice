@@ -1,14 +1,9 @@
 <?php
 namespace Ice\Core;
 
-use Ice\Action\View_Render;
-use Ice\Exception\Error;
-use Ice\Helper\Emmet;
 use Ice\Helper\Input;
 use Ice\Helper\Json;
 use Ice\Helper\Object;
-use Ice\Helper\String;
-use Zend\Code\Generator\DocBlock\Tag\ReturnTag;
 
 abstract class View extends Container
 {
@@ -139,7 +134,7 @@ abstract class View extends Container
             return $this->actionClass;
         }
 
-        return $this->viewClass = View_Render::getClass();
+        return $this->viewClass = Render::getClass();
     }
 
     /**
@@ -215,7 +210,7 @@ abstract class View extends Container
             '[data-action="' . $this->getActionClass() .
             '" data-view="' . $this->getViewClass() .
             '" data-params="' . Json::encode($dataParams) .
-            '" data-url="' . $this->getDataUrl() . '"]'
+            '"]'
         );
 //
 //        require_once VENDOR_DIR . 'ifacesoft/ice/Source/artem_c/emmet/Emmet.php';
@@ -231,7 +226,6 @@ abstract class View extends Container
 
         return $layout
             ? '<div id="' . $this->getForViewId() . '" class="View"' .
-//            ' data-url="' . $this->getDataUrl() . '"' .
 //            ' data-action="' . $this->getActionClass() . '"' .
 //            ' data-view="' . $this->getViewClass() . '"' .
             ' data-params=\'' . Json::encode($dataParams) . '\'' .

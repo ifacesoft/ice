@@ -25,7 +25,6 @@
         <?= isset($resource) && $resource instanceof Ice\Core\Resource ? $resource->get($label) : $label ?>
         <?php if (isset($column['options']['sortable']) && $column['options']['sortable'] === true) : ?>
             <a href="<?= $column['href'] ?>" onclick='<?= $column['onclick'] ?>'
-               data-url='<?= $column['dataUrl'] ?>'
                data-action='<?= $column['dataAction'] ?>'
                data-widget='<?= $dataWidget ?>'
                data-for="<?= $dataFor ?>"

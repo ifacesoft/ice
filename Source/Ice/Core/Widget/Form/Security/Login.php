@@ -12,11 +12,4 @@ abstract class Widget_Form_Security_Login extends Widget_Form_Security
      * @return boolean
      */
     protected abstract function verify(Security_Account $account, $values);
-
-    protected function build(array $input)
-    {
-        $this->setUrl(Router::getInstance()->getUrl('ice_security_login'));
-
-        return [];
-    }
 }

@@ -12,10 +12,11 @@
                 data-for="Widget_<?= $widgetClassName ?>_<?= $widgetName ?>"
                 data-name="<?= $name ?>"
                 data-params='<?= $dataParams ?>'
+                <?php if (!empty($dataAction)) : ?>data-action='<?= $dataAction ?>'<?php endif; ?>
             <?php if (isset($options['placeholder'])) : ?> data-placeholder="<?= $options['placeholder'] ?>"<?php endif; ?>
                 <?php if (isset($options['multiple'])) : ?>multiple<?php endif; ?>
                 <?php if (isset($options['size'])) : ?>size="<?= $options['size'] ?>"<?php endif; ?>
-                <?php if (isset($options['onchange'])) : ?>onchange="<?= $options['onchange'] ?> return false;"<?php endif; ?>
+                <?php if (isset($options['onchange'])) : ?>onchange="<?= $options['onchange'] ?>"<?php endif; ?>
             <?php if ($options['disabled']) : ?> disabled="disabled"<?php endif; ?>>
             <?php foreach ($options['rows'] as $option) : ?>
                 <option value="<?= $option[$value] ?>"

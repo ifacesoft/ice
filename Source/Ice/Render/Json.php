@@ -22,7 +22,7 @@ use Ice\Helper\Json as Helper_Json;
  * @author dp <denis.a.shestakov@gmail.com>
  *
  * @package    Ice
- * @subpackage View_Render
+ * @subpackage Render
  *
  * @version 0.0
  * @since   0.0

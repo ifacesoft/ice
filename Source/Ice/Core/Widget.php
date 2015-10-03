@@ -1,7 +1,6 @@
 <?php
 namespace Ice\Core;
 
-use Doctrine\Common\Util\Debug;
 use Ice\Exception\Access_Denied;
 use Ice\Helper\Access;
 use Ice\Helper\Arrays;
@@ -37,16 +36,12 @@ abstract class Widget extends Container
     private $classes = '';
 
     private $dataParams = null;
+    private $dataAction = null;
+
     private $output = null;
-
-    private $url = null;
-
-    private $actionClass = null;
-    private $widgetClass = null;
 
     private $token = null;
     private $data = [];
-    private $event = 'Ice_Core_Widget.click($(this), null, \'GET\');';
 
     private $result = null;
     private $compiledResult = null;
@@ -90,22 +85,6 @@ abstract class Widget extends Container
         'input' => []
     ];
 
-    /**
-     * Widget config
-     *
-     * @return array
-     */
-    protected static function config()
-    {
-        return [
-            'render' => ['template' => null, 'class' => 'Ice:Php', 'layout' => null, 'resource' => null],
-            'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'Widget: Access denied!'],
-            'cache' => ['ttl' => -1, 'count' => 1000],
-            'input' => [],
-            'output' => []
-        ];
-    }
-
     protected function init(array $params)
     {
         if ($input = Input::get(self::getClass())) {
@@ -133,7 +112,18 @@ abstract class Widget extends Container
      *          'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'Widget: Access denied!'],
      *          'cache' => ['ttl' => -1, 'count' => 1000],
      *          'input' => [],
-     *          'output' => []
+     *          'output' => [],
+     *          'action' => [
+     *          //  'class' => 'Ice:Render',
+     *          //  'params' => [
+     *          //      'widgets' => [
+     *          ////        'Widget_id' => Widget::class
+     *          //      ]
+     *          //  ],
+     *          //  'url' => true,
+     *          //  'method' => 'POST',
+     *          //  'callback' => null
+     *          ]
      *      ];
      *  }
      *
@@ -205,36 +195,6 @@ abstract class Widget extends Container
     public function setRows(array $rows)
     {
         $this->rows = $rows;
-        return $this;
-    }
-
-    /**
-     * @param string $url
-     * @return $this
-     */
-    protected function setUrl($url)
-    {
-        $this->url = $url;
-        return $this;
-    }
-
-    /**
-     * @param string $actionClass
-     * @return $this
-     */
-    protected function setActionClass($actionClass)
-    {
-        $this->actionClass = Action::getClass($actionClass);
-        return $this;
-    }
-
-    /**
-     * @param string $widgetClass
-     * @return $this
-     */
-    protected function setWidgetClass($widgetClass)
-    {
-        $this->widgetClass = Action::getClass($widgetClass);
         return $this;
     }
 
@@ -415,18 +375,6 @@ abstract class Widget extends Container
                         $part['options']['placeholder'] = $part['resource']->get($part['options']['placeholder']);
                     }
                 }
-                foreach (['onclick', 'onchange'] as $event) {
-                    if (array_key_exists($event, $part['options'])) {
-                        if ($part['options'][$event] === true) {
-                            $part['options'][$event] = $this->getEvent();
-                            continue;
-                        }
-
-                        if (in_array($part['options'][$event], ['GET', 'POST'])) {
-                            $part['options'][$event] = 'Ice_Core_Widget.click($(this), null, \'' . $part['options'][$event] . '\');';
-                        }
-                    }
-                }
 
                 $template = $part['template'][0] == '_'
                     ? $widgetClass . $part['template']
@@ -450,16 +398,6 @@ abstract class Widget extends Container
         return $this;
     }
 
-    /**
-     * @todo: все перевести на роуты, а не на урлы.. выпилить и посмотреть где сейчас это используется
-     *
-     * @return string
-     */
-    public function getUrl()
-    {
-        return $this->url == null ? Request::uri(true) : $this->url;
-    }
-
     protected function getCompiledResult()
     {
         if ($this->compiledResult !== null) {
@@ -478,12 +416,10 @@ abstract class Widget extends Container
                 'widgetClassName' => $widgetClassName,
                 'widgetResource' => $this->getResource(),
                 'classes' => $this->getClasses(),
-                'url' => $this->url,
+                'dataAction' => Json::encode(array_intersect_key($this->getDataAction(), array_flip(['class', 'params', 'url', 'method']))),
                 'dataParams' => Json::encode($this->getDataParams()),
                 'dataWidget' => Json::encode($this->getDataWidget()),
-                'dataUrl' => $this->getFullUrl($this->url),
                 'dataFor' => $this->getParentWidgetId(),
-                'dataAction' => $this->actionClass,
             ],
             (array)$this->output
         );
@@ -592,20 +528,55 @@ abstract class Widget extends Container
 
         $widgetClass = get_class($this);
 
+        $options = Arrays::defaults($this->defaultOptions, $options);
+
+        if (isset($options['default']) && $this->getValue($partName) === null) {
+            $this->bind([$partName => $options['default']]);
+        }
+
+        $dataActionArr = null;
+
+        foreach (['onclick', 'onchange'] as $event) {
+            if (array_key_exists($event, $options)) {
+                $dataAction = $options[$event];
+
+                if ($dataAction == true) {
+                    if (empty($this->getDataAction())) {
+                        $dataAction = [
+                            'class' => Render::class,
+                            'params' => ['widgets' => [$this->getInstanceKey() => get_class($this)]],
+                            'url' => Request::uri(true),
+                            'method' => 'GET',
+                            'callback' => null
+                        ];
+
+                        $dataActionArr = $dataAction;
+                    } else {
+                        $dataAction = $this->dataAction;
+                    }
+                } else {
+                    $dataActionArr = $dataAction;
+                }
+
+                $options[$event] = $this->getEvent($dataAction);
+
+                continue;
+            }
+        }
+
         $part = [
-            'options' => Arrays::defaults($this->defaultOptions, $options),
+            'options' => $options,
             'template' => $template,
-            'element' => $widgetClass::getClassName() . '_' . $element
+            'element' => $widgetClass::getClassName() . '_' . $element,
+            'dataAction' => $dataActionArr
+                ? Json::encode(array_intersect_key($dataActionArr, array_flip(['class', 'params'])))
+                : null
         ];
 
         if (!empty($options['unshift'])) {
             $this->parts = [$partName => $part] + $this->parts;
         } else {
             $this->parts[$partName] = $part;
-        }
-
-        if (isset($this->parts[$partName]['options']['default']) && $this->getValue($partName) === null) {
-            $this->bind([$partName => $this->parts[$partName]['options']['default']]);
         }
 
         return $this;
@@ -722,21 +693,16 @@ abstract class Widget extends Container
     }
 
     /**
+     * @param array $dataAction
      * @return string
      */
-    public function getEvent()
+    protected function getEvent(array $dataAction)
     {
-        return $this->event;
-    }
-
-    /**
-     * @param string $event
-     * @return $this
-     */
-    public function setEvent($event)
-    {
-        $this->event = $event;
-        return $this;
+        return $dataAction
+            ? 'Ice_Core_Widget.click($(this)' .
+            ($dataAction['callback'] ? ', \'' . $dataAction['callback'] . '\'' : '') .
+            '); return false;'
+            : '';
     }
 
     /**
@@ -915,14 +881,14 @@ abstract class Widget extends Container
 
     protected static function getDefaultKey()
     {
-        return strtolower(self::getClassName()) . '_' . Router::getInstance()->getName();
+        return Router::getInstance()->getName();
     }
 
     /**
      * @param string $widgetClass
      * @return Widget
      */
-    protected function getWidget($widgetClass)
+    protected function getWidget($widgetClass, $postfixKey = null)
     {
         if (is_object($widgetClass)) {
             return $widgetClass;
@@ -930,14 +896,17 @@ abstract class Widget extends Container
 
         $widgetClass = $this->getWidgetClass($widgetClass);
 
-        return $widgetClass::getInstance(strtolower(get_class($this)));
+        $key = strtolower(Object::getClassName(get_class($this))) . (empty($postfixKey) ? '' : '_' . $postfixKey);
+
+        return $widgetClass::getInstance($key);
     }
 
     /**
      * @param array|null $filterParts
      * @return Widget[]
      */
-    protected function getWidgets($filterParts = null) {
+    protected function getWidgets($filterParts = null)
+    {
         $widgets = [];
 
         foreach ($this->getParts($filterParts) as $partName => $part) {
@@ -947,5 +916,38 @@ abstract class Widget extends Container
         }
 
         return $widgets;
+    }
+
+    protected function getDataAction()
+    {
+        if ($this->dataAction !== null) {
+            return $this->dataAction;
+        }
+
+        /** @var Widget $widgetClass */
+        $widgetClass = get_class($this);
+
+        return $this->setDataAction($widgetClass::getConfig()->gets('action'));
+    }
+
+    /**
+     * @param array $dataAction
+     * @return array
+     */
+    public function setDataAction(array $dataAction)
+    {
+        if ($this->dataAction !== null) {
+            return $this->dataAction;
+        }
+
+        if (isset($dataAction['url'])) {
+            $dataAction['url'] = $dataAction['url'] === true
+                ? Router::getInstance()->getUrl()
+                : Router::getInstance()->getUrl($dataAction['url']);
+        }
+
+        $this->dataAction = $dataAction;
+
+        return $this->dataAction;
     }
 }

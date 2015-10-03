@@ -9,23 +9,6 @@ use Ice\Core\Widget;
 abstract class Nav extends Widget
 {
     /**
-     * Widget config
-     *
-     * @return array
-     */
-    protected static function config()
-    {
-        return [
-            'render' => ['template' => true, 'class' => 'Ice:Php', 'layout' => null, 'resource' => null],
-            'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'Widget: Access denied!'],
-            'cache' => ['ttl' => -1, 'count' => 1000],
-            'actions' => [],
-            'input' => [],
-            'output' => []
-        ];
-    }
-
-    /**
      * @param $name
      * @param array $options
      * @param string $template
@@ -48,15 +31,15 @@ abstract class Nav extends Widget
     }
 
     /**
-     * @param Nav $widget
+     * @param string $name
      * @param array $options
      * @param string $template
-     * @return Navbar
+     * @return Nav
      */
-    public function nav(Nav $widget, array $options = [], $template = 'Ice\Widget\Nav\Nav')
+    public function nav($name, array $options = [], $template = 'Ice\Widget\Nav\Nav')
     {
-        $widget->setClasses($widget->getClasses() . ' nav-nav');
+        $options['widget']->setClasses($options['widget']->getClasses() . ' nav-nav');
 
-        return $this->widget($widget, $options, $template);
+        return $this->widget($name, $options, $template);
     }
 }

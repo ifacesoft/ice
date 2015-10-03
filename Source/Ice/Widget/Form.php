@@ -5,9 +5,11 @@ namespace Ice\Widget;
 use Ice\Action\Form_Submit;
 use Ice\Core\Debuger;
 use Ice\Core\Module;
+use Ice\Core\Request;
 use Ice\Core\Validator;
 use Ice\Core\Widget;
 use Ice\Helper\Directory;
+use Ice\Render\Php;
 
 abstract class Form extends Widget
 {
@@ -33,80 +35,16 @@ abstract class Form extends Widget
 
     private $horizontal = null;
 
-    private $onsubmit = null;
-    private $method = 'POST';
-
-    /**
-     * @return null
-     */
-    public function getOnsubmit()
-    {
-        return $this->onsubmit;
-    }
-
-    /**
-     * @param string|null $onsubmit
-     * @param null $callback
-     * @return $this
-     */
-    public function setOnsubmit($onsubmit, $callback = null)
-    {
-        if ($onsubmit === true) {
-            $this->onsubmit = $this->getEvent();
-            return $this;
-        }
-
-        if (in_array($onsubmit, ['GET', 'POST'])) {
-            $this->onsubmit = 'Ice_Core_Widget.click($(this), ' . ($callback ? '\'' . $callback . '\'' : 'null' . ', \'') . $onsubmit . '\');';
-            return $this;
-        }
-
-        $this->onsubmit = $onsubmit;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getMethod()
-    {
-        return $this->method;
-    }
-
-    /**
-     * @param string $method
-     */
-    public function setMethod($method)
-    {
-        $this->method = $method;
-    }
-
     protected function getCompiledResult()
     {
         return array_merge(
             parent::getCompiledResult(),
             [
-                'method' => $this->getMethod(),
-                'onsubmit' => $this->getOnsubmit()
+                'method' => $this->getDataAction()['method'],
+                'action' => $this->getDataAction()['url'],
+                'onSubmit' => $this->getEvent($this->getDataAction())
             ]
         );
-    }
-
-    /**
-     * Widget config
-     *
-     * @return array
-     */
-    protected static function config()
-    {
-        return [
-            'render' => ['template' => true, 'class' => 'Ice:Php', 'layout' => null, 'resource' => null],
-            'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'Widget: Access denied!'],
-            'cache' => ['ttl' => -1, 'count' => 1000],
-            'actions' => [],
-            'input' => [],
-            'output' => []
-        ];
     }
 
     /**
@@ -441,9 +379,19 @@ abstract class Form extends Widget
         $this->bind(['resourceClass' => $resourceClass]);
 
         if (!empty($options['submit'])) {
-            $this
-                ->setOnsubmit(isset($options['onsubmit']) ? $options['onsubmit'] : 'POST')
-                ->setActionClass(Form_Submit::getClass());
+            if (empty($this->getDataAction())) {
+                $dataAction = $options['submit'] === true
+                    ? [
+                        'class' => Form_Submit::class,
+                        'params' => [],
+                        'url' => true,
+                        'method' => 'POST',
+                        'callback' => null
+                    ]
+                    : $options['submit'];
+
+                $this->setDataAction($dataAction);
+            }
         }
 
         return $this->addPart($fieldName, $options, $template, __FUNCTION__);
@@ -533,5 +481,14 @@ abstract class Form extends Widget
     private function checkToken($token)
     {
 //        throw new Error('token expired');
+    }
+
+    protected function getDefaultDataAction()
+    {
+        return [
+            'class' => Form_Submit::class,
+            'params' => ['resourceClass' => get_class($this->getResource())],
+            'method' => 'POST'
+        ];
     }
 }

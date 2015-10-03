@@ -9,8 +9,7 @@
 <?php endif; ?>
 <div id="Widget_<?= $widgetClassName ?>_<?= $widgetName ?>"
     class="Widget_<?= $widgetClassName ?><?php if (!empty($classes)) { ?> <?= $classes ?><?php } ?>"
-    data-url='<?= $dataUrl ?>'
-    data-action='<?= $dataAction ?>'
+    <?php if (!empty($dataAction)) : ?>data-action='<?= $dataAction ?>'<?php endif; ?>
     data-widget='<?= $dataWidget ?>'
     data-for="<?= $dataFor ?>"
 >

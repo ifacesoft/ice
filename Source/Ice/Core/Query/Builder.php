@@ -1746,10 +1746,8 @@ class Query_Builder
      */
     public function attachWidgets($widgets)
     {
-        if (!is_array($widgets)) {
-            $widgets->queryBuilderPart($this);
-            $this->widgets[] = $widgets;
-            return $this;
+        if (is_object($widgets)) {
+            $widgets = [$widgets];
         }
 
         foreach ($widgets as $widget) {

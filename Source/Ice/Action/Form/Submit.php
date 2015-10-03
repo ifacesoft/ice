@@ -10,6 +10,7 @@
 namespace Ice\Action;
 
 use Ice\Core\Action;
+use Ice\Core\Debuger;
 use Ice\Core\Logger;
 use Ice\Core\Widget;
 use Ice\Widget\Form;
@@ -42,7 +43,7 @@ class Form_Submit extends Action
     protected static function config()
     {
         return [
-            'view' => ['template' => null, 'viewRenderClass' => 'Ice:Php', 'layout' => null],
+            'view' => ['template' => '', 'viewRenderClass' => 'Ice:Php', 'layout' => null],
             'input' => [
                 'widget' => [
                     'providers' => 'request',

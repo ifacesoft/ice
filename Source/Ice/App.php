@@ -107,6 +107,8 @@ class App
 
                 return [Action::getClass($actionClass), $input];
             }
+
+            throw new \Exception('Undefined action for ajax request');
         }
 
         $router = Router::getInstance();

@@ -9,14 +9,13 @@
 
 namespace Ice\Helper;
 
-use Ice\Core\Debuger;
 use Ice\Core\Exception;
 use Ice\Core\Logger as Core_Logger;
 use Ice\Core\Module;
 use Ice\Core\Request as Core_Request;
 use Ice\Core\Request;
 use Ice\Core\Render;
-use Ice\Render\Php as View_Render_Php;
+use Ice\Render\Php as Render_Php;
 
 /**
  * Class Logger
@@ -108,8 +107,8 @@ class Logger
         ];
 
         $message = Core_Request::isCli()
-            ? View_Render_Php::getInstance()->fetch(Core_Logger::getClass() . '/Cli', $output)
-            : View_Render_Php::getInstance()->fetch(Core_Logger::getClass() . '/Http', $output);
+            ? Render_Php::getInstance()->fetch(Core_Logger::getClass() . '/Cli', $output)
+            : Render_Php::getInstance()->fetch(Core_Logger::getClass() . '/Http', $output);
 
         if ($e = $exception->getPrevious()) {
             return self::getMessage($e, $message, $level++);
@@ -157,7 +156,7 @@ class Logger
 
         File::createData(
             $logFile,
-            View_Render_Php::getInstance()->fetch(Core_Logger::getClass() . '/File', $output),
+            Render_Php::getInstance()->fetch(Core_Logger::getClass() . '/File', $output),
             false,
             FILE_APPEND
         );
