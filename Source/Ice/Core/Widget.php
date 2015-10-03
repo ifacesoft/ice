@@ -21,6 +21,7 @@ abstract class Widget extends Container
      * @var array rows of values
      */
     private $rows = [];
+    private $values = [];
 
     /**
      * @var int
@@ -408,6 +409,10 @@ abstract class Widget extends Container
         $widgetClass = get_class($this);
         $widgetClassName = $widgetClass::getClassName();
 
+        $dataAction = empty($this->getDataAction())
+            ? []
+            :array_intersect_key($this->getDataAction(), array_flip(['class', 'params', 'url', 'method']));
+
         return $this->compiledResult = array_merge(
             [
                 'result' => $this->getResult(),
@@ -416,7 +421,7 @@ abstract class Widget extends Container
                 'widgetClassName' => $widgetClassName,
                 'widgetResource' => $this->getResource(),
                 'classes' => $this->getClasses(),
-                'dataAction' => Json::encode(array_intersect_key($this->getDataAction(), array_flip(['class', 'params', 'url', 'method']))),
+                'dataAction' => Json::encode($dataAction),
                 'dataParams' => Json::encode($this->getDataParams()),
                 'dataWidget' => Json::encode($this->getDataWidget()),
                 'dataFor' => $this->getParentWidgetId(),
@@ -430,7 +435,8 @@ abstract class Widget extends Container
         return [
             'class' => get_class($this),
             'name' => $this->getInstanceKey(),
-            'token' => $this->getToken()
+            'token' => $this->getToken(),
+            'resourceClass' => $this->getResource() ? $this->getResource()->getResourceClass() : null
         ];
     }
 
@@ -936,13 +942,13 @@ abstract class Widget extends Container
      */
     public function setDataAction(array $dataAction)
     {
-        if ($this->dataAction !== null) {
+        if ($this->dataAction !== null || empty($dataAction)) {
             return $this->dataAction;
         }
 
         if (isset($dataAction['url'])) {
             $dataAction['url'] = $dataAction['url'] === true
-                ? Router::getInstance()->getUrl()
+                ? Request::uri(true)
                 : Router::getInstance()->getUrl($dataAction['url']);
         }
 

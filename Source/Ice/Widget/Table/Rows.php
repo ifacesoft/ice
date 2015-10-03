@@ -6,35 +6,10 @@ use Ice\Core\Query_Builder;
 use Ice\Core\Query_Result;
 use Ice\Core\Widget;
 
-abstract class Table_Rows extends Widget
+class Table_Rows extends Widget
 {
     private $isShowCount = true;
     private $columnCount = 0;
-
-    /**
-     * Widget config
-     *
-     * @return array
-     */
-    protected static function config()
-    {
-        return [
-            'render' => ['template' => true, 'class' => 'Ice:Php', 'layout' => null, 'resource' => null],
-            'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'Widget: Access denied!'],
-            'cache' => ['ttl' => -1, 'count' => 1000],
-            'input' => [],
-            'output' => [],
-            'action' => [
-                //  'class' => 'Ice:Render',
-                //  'params' => [
-                //      'widgets' => [
-                ////        'Widget_id' => Widget::class
-                //      ]
-                //  ],
-                //  'method' => 'POST'
-            ]
-        ];
-    }
 
     /**
      * @return boolean
@@ -104,5 +79,42 @@ abstract class Table_Rows extends Widget
         }
 
         $this->setOffset($offset);
+    }
+
+    /**
+     * Widget config
+     *
+     * @return array
+     */
+    protected static function config()
+    {
+        return [
+            'render' => ['template' => true, 'class' => 'Ice:Php', 'layout' => null, 'resource' => null],
+            'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'Widget: Access denied!'],
+            'cache' => ['ttl' => -1, 'count' => 1000],
+            'input' => [],
+            'output' => [],
+            'action' => [
+                //  'class' => 'Ice:Render',
+                //  'params' => [
+                //      'widgets' => [
+                ////        'Widget_id' => Widget::class
+                //      ]
+                //  ],
+                //  'url' => true,
+                //  'method' => 'POST',
+                //  'callback' => null
+            ]
+        ];
+    }
+
+    /** Build widget
+     *
+     * @param array $input
+     * @return array
+     */
+    protected function build(array $input)
+    {
+        return [];
     }
 }

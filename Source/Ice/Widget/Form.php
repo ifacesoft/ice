@@ -456,14 +456,16 @@ abstract class Form extends Widget
     }
 
     /**
-     * @param $token
+     * @param array $widget
      * @return array
      */
-    public function submit($token)
+    public function submit(array $widget)
     {
-        $this->checkToken($token);
+        $this->setResource($widget['resourceClass']);
 
-        return $this->action($token);
+        $this->checkToken($widget['token']);
+
+        return $this->action($widget['token']);
     }
 
     /**

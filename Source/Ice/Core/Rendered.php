@@ -130,7 +130,7 @@ trait Rendered
      * @param bool|false $force
      * @return Resource
      */
-    protected function getResource($resource = null, $force = false)
+    public function getResource($resource = null, $force = false)
     {
         if (!$force && $this->resource !== null) {
             return $this->resource;

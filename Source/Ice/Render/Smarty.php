@@ -89,11 +89,11 @@ class Smarty extends Render
     /**
      * Render view via current view render
      *
-     * @param  $template
+     * @param $template
      * @param  array $data
-     * @param  string $templateType
+     * @param string $templateType
      * @return mixed
-     *
+     * @throws \Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
@@ -101,6 +101,10 @@ class Smarty extends Render
      */
     public function fetch($template, array $data = [], $templateType = Render::TEMPLATE_TYPE_FILE)
     {
+        if (empty($template)) {
+            throw new \Exception('Template is empty');
+        }
+
         /**
          * @var \Smarty_Internal_Template $smartyTemplate
          */

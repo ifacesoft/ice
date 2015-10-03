@@ -85,6 +85,8 @@ var Ice_Core_Widget = {
                         $widget.find('.ice-message').html(result.data.success)
                     }
 
+                    console.log(result);
+
                     setTimeout(
                         function () {
                             if (result.data.redirect) {

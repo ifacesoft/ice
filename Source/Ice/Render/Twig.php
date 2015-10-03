@@ -85,6 +85,10 @@ class Twig extends Render
      */
     public function fetch($template, array $data = [], $templateType = Render::TEMPLATE_TYPE_FILE)
     {
+        if (empty($template)) {
+            throw new \Exception('Template is empty');
+        }
+
         try {
             if ($templateType == Render::TEMPLATE_TYPE_STRING) {
                 $twig = new \Twig_Environment(new \Twig_Loader_String());
