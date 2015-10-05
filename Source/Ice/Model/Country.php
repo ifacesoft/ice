@@ -1,4 +1,4 @@
-<?php namespace Ebs\Model;
+<?php namespace Ice\Model;
 
 use Ice\Core\Model;
 
@@ -12,7 +12,7 @@ use Ice\Core\Model;
  *
  * @package Ebs\Model
  */
-class Ice_Country extends Model
+class Country extends Model
 {
     protected static function config()
     {

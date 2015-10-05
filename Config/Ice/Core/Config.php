@@ -13,9 +13,9 @@
 return [
     'Ice\Core\Model' => [
         'schemeColumnPlugins' => [
-            'Ice\Core\Widget_Form',
+            'Ice\Widget\Form',
             'Ice\Core\Validator',
-            'Ice\Core\Widget_Data',
+            'Ice\Widget\Table',
         ]
     ],
     'Ice\Core\Environment' => [

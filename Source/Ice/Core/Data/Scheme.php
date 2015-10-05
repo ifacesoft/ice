@@ -11,7 +11,6 @@ namespace Ice\Core;
 
 use Ice\Core;
 use Ice\Helper\Directory;
-use Ice\Helper\Json;
 use Ice\Helper\Php;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -103,6 +102,7 @@ class Data_Scheme
                 $classNames = Php::getClassNamesFromFile($modelPath);
                 $modelName = reset($classNames);
 
+                /** @var Model $modelClass */
                 $modelClass = str_replace(
                         '/',
                         '\\',

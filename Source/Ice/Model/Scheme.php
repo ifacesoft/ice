@@ -1,9 +1,9 @@
-<?php namespace Ebs\Model;
+<?php namespace Ice\Model;
 
 use Ice\Core\Model;
 
 /**
- * Class Ice_Scheme
+ * Class Scheme
  *
  * @property mixed table_name
  * @property mixed revision
@@ -16,7 +16,7 @@ use Ice\Core\Model;
  *
  * @package Ebs\Model
  */
-class Ice_Scheme extends Model
+class Scheme extends Model
 {
     protected static function config()
     {
@@ -41,11 +41,11 @@ class Ice_Scheme extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'table_name',
-		            'Ice\Core\Widget_Form' => 'Field_Text',
+		            'Ice\Widget\Form' => 'Field_Text',
 		            'Ice\Core\Validator' => [
 		                0 => 'Ice:Not_Null',
 		            ],
-		            'Ice\Core\Widget_Data' => 'text',
+		            'Ice\Widget\Table' => 'text',
 		        ],
 		        'revision' => [
 		            'scheme' => [
@@ -59,11 +59,11 @@ class Ice_Scheme extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'revision',
-		            'Ice\Core\Widget_Form' => 'Field_Text',
+		            'Ice\Widget\Form' => 'Field_Text',
 		            'Ice\Core\Validator' => [
 		                0 => 'Ice:Not_Null',
 		            ],
-		            'Ice\Core\Widget_Data' => 'text',
+		            'Ice\Widget\Table' => 'text',
 		        ],
 		        'table__json' => [
 		            'scheme' => [
@@ -77,11 +77,11 @@ class Ice_Scheme extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'table__json',
-		            'Ice\Core\Widget_Form' => 'Field_Text',
+		            'Ice\Widget\Form' => 'Field_Text',
 		            'Ice\Core\Validator' => [
 		                0 => 'Ice:Not_Null',
 		            ],
-		            'Ice\Core\Widget_Data' => 'text',
+		            'Ice\Widget\Table' => 'text',
 		        ],
 		        'columns__json' => [
 		            'scheme' => [
@@ -95,11 +95,11 @@ class Ice_Scheme extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'columns__json',
-		            'Ice\Core\Widget_Form' => 'Field_Textarea',
+		            'Ice\Widget\Form' => 'Field_Textarea',
 		            'Ice\Core\Validator' => [
 		                0 => 'Ice:Not_Null',
 		            ],
-		            'Ice\Core\Widget_Data' => 'text',
+		            'Ice\Widget\Table' => 'text',
 		        ],
 		        'references__json' => [
 		            'scheme' => [
@@ -113,11 +113,11 @@ class Ice_Scheme extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'references__json',
-		            'Ice\Core\Widget_Form' => 'Field_Text',
+		            'Ice\Widget\Form' => 'Field_Text',
 		            'Ice\Core\Validator' => [
 		                0 => 'Ice:Not_Null',
 		            ],
-		            'Ice\Core\Widget_Data' => 'text',
+		            'Ice\Widget\Table' => 'text',
 		        ],
 		        'indexes__json' => [
 		            'scheme' => [
@@ -131,11 +131,11 @@ class Ice_Scheme extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'indexes__json',
-		            'Ice\Core\Widget_Form' => 'Field_Text',
+		            'Ice\Widget\Form' => 'Field_Text',
 		            'Ice\Core\Validator' => [
 		                0 => 'Ice:Not_Null',
 		            ],
-		            'Ice\Core\Widget_Data' => 'text',
+		            'Ice\Widget\Table' => 'text',
 		        ],
 		    ],
 		    'indexes' => [

@@ -43,9 +43,9 @@ class User extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'user_pk',
-		            'Ice\Core\Widget_Form' => 'Field_Number',
+		            'Ice\Widget\Form' => 'Field_Number',
 		            'Ice\Core\Validator' => [],
-		            'Ice\Core\Widget_Data' => 'text',
+		            'Ice\Widget\Table' => 'text',
 		        ],
 		        'user_phone' => [
 		            'scheme' => [
@@ -59,11 +59,11 @@ class User extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'user_phone',
-		            'Ice\Core\Widget_Form' => 'Field_Text',
+		            'Ice\Widget\Form' => 'Field_Text',
 		            'Ice\Core\Validator' => [
 		                'Ice:Length_Max' => 11,
 		            ],
-		            'Ice\Core\Widget_Data' => 'text',
+		            'Ice\Widget\Table' => 'text',
 		        ],
 		        'user_email' => [
 		            'scheme' => [
@@ -77,11 +77,11 @@ class User extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'user_email',
-		            'Ice\Core\Widget_Form' => 'Field_Text',
+		            'Ice\Widget\Form' => 'Field_Text',
 		            'Ice\Core\Validator' => [
 		                'Ice:Length_Max' => 255,
 		            ],
-		            'Ice\Core\Widget_Data' => 'text',
+		            'Ice\Widget\Table' => 'text',
 		        ],
 		        'user_name' => [
 		            'scheme' => [
@@ -95,11 +95,11 @@ class User extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'user_name',
-		            'Ice\Core\Widget_Form' => 'Field_Text',
+		            'Ice\Widget\Form' => 'Field_Text',
 		            'Ice\Core\Validator' => [
 		                'Ice:Length_Max' => 255,
 		            ],
-		            'Ice\Core\Widget_Data' => 'text',
+		            'Ice\Widget\Table' => 'text',
 		        ],
 		        'surname' => [
 		            'scheme' => [
@@ -113,11 +113,11 @@ class User extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'surname',
-		            'Ice\Core\Widget_Form' => 'Field_Text',
+		            'Ice\Widget\Form' => 'Field_Text',
 		            'Ice\Core\Validator' => [
 		                'Ice:Length_Max' => 255,
 		            ],
-		            'Ice\Core\Widget_Data' => 'text',
+		            'Ice\Widget\Table' => 'text',
 		        ],
 		        'patronymic' => [
 		            'scheme' => [
@@ -131,11 +131,11 @@ class User extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'patronymic',
-		            'Ice\Core\Widget_Form' => 'Field_Text',
+		            'Ice\Widget\Form' => 'Field_Text',
 		            'Ice\Core\Validator' => [
 		                'Ice:Length_Max' => 255,
 		            ],
-		            'Ice\Core\Widget_Data' => 'text',
+		            'Ice\Widget\Table' => 'text',
 		        ],
 		        'user_active' => [
 		            'scheme' => [
@@ -149,11 +149,11 @@ class User extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'user_active',
-		            'Ice\Core\Widget_Form' => 'Field_Checkbox',
+		            'Ice\Widget\Form' => 'Field_Checkbox',
 		            'Ice\Core\Validator' => [
 		                0 => 'Ice:Not_Null',
 		            ],
-		            'Ice\Core\Widget_Data' => 'text',
+		            'Ice\Widget\Table' => 'text',
 		        ],
 		        'user_created' => [
 		            'scheme' => [
@@ -167,9 +167,9 @@ class User extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'user_created',
-		            'Ice\Core\Widget_Form' => 'Field_Date',
+		            'Ice\Widget\Form' => 'Field_Date',
 		            'Ice\Core\Validator' => [],
-		            'Ice\Core\Widget_Data' => 'text',
+		            'Ice\Widget\Table' => 'text',
 		        ],
 		    ],
 		    'indexes' => [

@@ -43,9 +43,9 @@ class Log_Error extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'log_error_pk',
-		            'Ice\Core\Widget_Form' => 'Field_Number',
+		            'Ice\Widget\Form' => 'Field_Number',
 		            'Ice\Core\Validator' => [],
-		            'Ice\Core\Widget_Data' => 'text',
+		            'Ice\Widget\Table' => 'text',
 		        ],
 		        'ip' => [
 		            'scheme' => [
@@ -59,11 +59,11 @@ class Log_Error extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'ip',
-		            'Ice\Core\Widget_Form' => 'Field_Text',
+		            'Ice\Widget\Form' => 'Field_Text',
 		            'Ice\Core\Validator' => [
 		                'Ice:Length_Max' => 15,
 		            ],
-		            'Ice\Core\Widget_Data' => 'text',
+		            'Ice\Widget\Table' => 'text',
 		        ],
 		        'agent' => [
 		            'scheme' => [
@@ -77,11 +77,11 @@ class Log_Error extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'agent',
-		            'Ice\Core\Widget_Form' => 'Field_Text',
+		            'Ice\Widget\Form' => 'Field_Text',
 		            'Ice\Core\Validator' => [
 		                'Ice:Length_Max' => 255,
 		            ],
-		            'Ice\Core\Widget_Data' => 'text',
+		            'Ice\Widget\Table' => 'text',
 		        ],
 		        'referer' => [
 		            'scheme' => [
@@ -95,11 +95,11 @@ class Log_Error extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'referer',
-		            'Ice\Core\Widget_Form' => 'Field_Text',
+		            'Ice\Widget\Form' => 'Field_Text',
 		            'Ice\Core\Validator' => [
 		                'Ice:Length_Max' => 255,
 		            ],
-		            'Ice\Core\Widget_Data' => 'text',
+		            'Ice\Widget\Table' => 'text',
 		        ],
 		        'host' => [
 		            'scheme' => [
@@ -113,11 +113,11 @@ class Log_Error extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'host',
-		            'Ice\Core\Widget_Form' => 'Field_Text',
+		            'Ice\Widget\Form' => 'Field_Text',
 		            'Ice\Core\Validator' => [
 		                'Ice:Length_Max' => 255,
 		            ],
-		            'Ice\Core\Widget_Data' => 'text',
+		            'Ice\Widget\Table' => 'text',
 		        ],
 		        'uri' => [
 		            'scheme' => [
@@ -131,11 +131,11 @@ class Log_Error extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'uri',
-		            'Ice\Core\Widget_Form' => 'Field_Text',
+		            'Ice\Widget\Form' => 'Field_Text',
 		            'Ice\Core\Validator' => [
 		                'Ice:Length_Max' => 255,
 		            ],
-		            'Ice\Core\Widget_Data' => 'text',
+		            'Ice\Widget\Table' => 'text',
 		        ],
 		        'post__json' => [
 		            'scheme' => [
@@ -149,11 +149,11 @@ class Log_Error extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'post__json',
-		            'Ice\Core\Widget_Form' => 'Field_Textarea',
+		            'Ice\Widget\Form' => 'Field_Textarea',
 		            'Ice\Core\Validator' => [
 		                'Ice:Length_Max' => 65535,
 		            ],
-		            'Ice\Core\Widget_Data' => 'text',
+		            'Ice\Widget\Table' => 'text',
 		        ],
 		        'exception__json' => [
 		            'scheme' => [
@@ -167,11 +167,11 @@ class Log_Error extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'exception__json',
-		            'Ice\Core\Widget_Form' => 'Field_Textarea',
+		            'Ice\Widget\Form' => 'Field_Textarea',
 		            'Ice\Core\Validator' => [
 		                'Ice:Length_Max' => 65535,
 		            ],
-		            'Ice\Core\Widget_Data' => 'text',
+		            'Ice\Widget\Table' => 'text',
 		        ],
 		        'log_error_create_date' => [
 		            'scheme' => [
@@ -185,9 +185,9 @@ class Log_Error extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'log_error_create_date',
-		            'Ice\Core\Widget_Form' => 'Field_Date',
+		            'Ice\Widget\Form' => 'Field_Date',
 		            'Ice\Core\Validator' => [],
-		            'Ice\Core\Widget_Data' => 'text',
+		            'Ice\Widget\Table' => 'text',
 		        ],
 		    ],
 		    'indexes' => [
