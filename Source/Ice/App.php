@@ -4,6 +4,7 @@ namespace Ice;
 
 use Composer\Config;
 use Composer\Script\Event;
+use Ice\Action\Http_Status;
 use Ice\Action\Install;
 use Ice\Action\Layout_Main;
 use Ice\Action\Upgrade;
@@ -62,11 +63,14 @@ class App
         } catch (\Exception $e) {
             if (Request::isCli()) {
                 Logger::getInstance(__CLASS__)->error('Application failure', __FILE__, __LINE__, $e);
+            } elseif (Request::isAjax()) {
+                $view = Http_Status::call(['code' => 500, 'exception' => $e]);
+                $view->setError($e->getMessage());
+                App::getResponse()->setView($view);
             } else {
                 $httpStatusAction = [['Ice:Http_Status' => 'main', ['code' => 500, 'exception' => $e]]];
                 $view = Layout_Main::call(['actions' => $httpStatusAction]);
                 $view->setError($e->getMessage());
-
                 App::getResponse()->setView($view);
             }
         }

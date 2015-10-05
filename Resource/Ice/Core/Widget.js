@@ -15,11 +15,15 @@ var Ice_Core_Widget = {
             $form = $widget;
         }
 
-        var data = Ice.jsonToObject($widget.attr('data-params'));
+        if (!$widget.attr('data-params')) {
+            console.warn('Data params for widget not found');
+            return;
+        }
+        console.log(Ice.querystringToObject($form.serialize()));
 
-        data = $form
-            ? Ice.objectMerge(data, Ice.querystringToObject($form.serialize()))
-            : Ice.objectMerge(data, Ice.jsonToObject($element.attr('data-params')));
+        var data = $form
+            ? Ice.querystringToObject($form.serialize())
+            : Ice.objectMerge(Ice.jsonToObject($widget.attr('data-params')), Ice.jsonToObject($element.attr('data-params')));
 
         var url = $form
             ? $form.attr('action')

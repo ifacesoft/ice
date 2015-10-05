@@ -22,7 +22,13 @@ class Render extends Action
             'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'Action: Access denied!'],
             'cache' => ['ttl' => -1, 'count' => 1000],
             'actions' => [],
-            'input' => ['widgets' => []],
+            'input' => [
+                'widget' => [
+                    'providers' => 'request',
+                    'default' => null
+                ],
+                'widgets' => []
+            ],
             'output' => []
         ];
     }
@@ -44,6 +50,10 @@ class Render extends Action
                 $widgets['content'] = $widgetClass::getInstance(null)->render();
             } else {
                 $widget = $widgetClass::getInstance($key);
+
+                if (isset($input['widget'])) {
+                    $widget->setResource($input['widget']['resourceClass']);
+                }
 
                 $widgets[$widget->getId()] = $widget->render();
             }

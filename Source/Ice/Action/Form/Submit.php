@@ -43,7 +43,7 @@ class Form_Submit extends Action
     protected static function config()
     {
         return [
-            'view' => ['template' => '', 'viewRenderClass' => 'Ice:Php', 'layout' => null],
+            'view' => ['template' => null, 'viewRenderClass' => 'Ice:Php', 'layout' => null],
             'input' => [
                 'widget' => [
                     'providers' => 'request',

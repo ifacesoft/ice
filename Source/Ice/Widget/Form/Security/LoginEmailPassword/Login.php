@@ -60,18 +60,22 @@ class Form_Security_LoginEmailPassword_Login extends Widget_Form_Security_Login
         return [];
     }
 
-    protected function action($token)
+    /**
+     * @param array $widget
+     * @return array
+     */
+    protected function action(array $widget)
     {
         try {
             return Form_Security_LoginPassword_Login::getInstance($this->getInstanceKey())
                 ->setAccountModelClass($this->accountLoginPasswordModelClass)
                 ->bind(['login' => $this->getValue('username')])
-                ->submit($token);
+                ->submit($widget);
         } catch (\Exception $e) {
             return Form_Security_EmailPassword_Login::getInstance($this->getInstanceKey())
                 ->setAccountModelClass($this->accountEmailPasswordModelClass)
                 ->bind(['email' => $this->getValue('username')])
-                ->submit($token);
+                ->submit($widget);
         }
     }
 

@@ -81,7 +81,6 @@ abstract class Form extends Widget
             : 'text';
     }
 
-
     /**
      * Add text type field
      *
@@ -465,14 +464,14 @@ abstract class Form extends Widget
 
         $this->checkToken($widget['token']);
 
-        return $this->action($widget['token']);
+        return $this->action($widget);
     }
 
     /**
-     * @param $token
+     * @param array $widget
      * @return array
      */
-    protected abstract function action($token);
+    protected abstract function action(array $widget);
 
     /**
      * @param $token

@@ -120,10 +120,10 @@ class Form_Model extends Form
     /**
      * Submit form
      *
-     * @param $token
-     * @return array|void
+     * @param array $widget
+     * @return array
      */
-    protected function action($token)
+    protected function action(array $widget)
     {
         /** @var Core_Model $modelClass */
         $modelClass = $this->getValues();

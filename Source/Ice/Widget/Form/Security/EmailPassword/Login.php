@@ -62,11 +62,11 @@ class Form_Security_EmailPassword_Login extends Widget_Form_Security_Login
      *
      * @version 1.1
      * @since   0.1
-     * @param $token
+     * @param array $widget
      * @return array|null|string
      * @throws \Ice\Core\Exception
      */
-    protected function action($token)
+    protected function action(array $widget)
     {
         /** @var Model $accountModelClass */
         $accountModelClass = $this->getAccountModelClass();

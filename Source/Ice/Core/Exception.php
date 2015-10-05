@@ -62,6 +62,12 @@ abstract class Exception extends ErrorException
 
         $isExistsResourceClass = class_exists('Ice\Core\Resource', false);
 
+        /** @var Exception $exceptionClass */
+        $exceptionClass = get_class($this);
+        $exceptionClassName = $exceptionClass::getClassName();
+
+        $logger = Logger::getInstance($exceptionClass);
+
         if ($errno <= 0 && $isExistsResourceClass) {
             $params = null;
             $class = null;
@@ -78,7 +84,7 @@ abstract class Exception extends ErrorException
                 }
             }
 
-            $message = Resource::create(Exception::getClass())->get($message, $params, $class);
+            $message = $logger->info([$exceptionClassName . ' - ' . $message, $params, $class], Logger::DANGER);
         } else {
             if (is_array($message)) {
                 if (!$isExistsResourceClass && !empty($message[1])) {
@@ -96,6 +102,8 @@ abstract class Exception extends ErrorException
 
                 $message = reset($message);
             }
+
+            $message = $logger->info($exceptionClassName . ' - ' . $message, Logger::DANGER);
         }
 
         if (!$errfile) {
@@ -111,19 +119,7 @@ abstract class Exception extends ErrorException
             }
         }
 
-        /**
-         * @var Exception $exceptionClass
-         */
-        $exceptionClass = get_class($this);
-
-        parent::__construct(
-            $exceptionClass::getClassName() . ' - ' . $message,
-            $errno,
-            1,
-            $errfile,
-            $errline,
-            $previous
-        );
+        parent::__construct($message, $errno, 1, $errfile, $errline, $previous);
     }
 
     /**

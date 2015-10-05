@@ -20,7 +20,7 @@ abstract class Widget extends Container
     /**
      * @var array rows of values
      */
-    private $rows = [];
+    private $rows = [[]];
     private $values = [];
 
     /**
@@ -88,17 +88,9 @@ abstract class Widget extends Container
 
     protected function init(array $params)
     {
-        if ($input = Input::get(self::getClass())) {
-            $this->rows = [$input];
-        }
-
+        $this->values = Input::get(self::getClass());
         $this->token = crc32(String::getRandomString());
-
-        if (isset($params['resource'])) {
-            $this->setResource($params['resource']);
-        }
-
-        $this->output = (array)$this->build($input);
+        $this->output = (array)$this->build($this->values);
     }
 
     /**
@@ -182,14 +174,6 @@ abstract class Widget extends Container
     }
 
     /**
-     * @return array
-     */
-    public function getRows()
-    {
-        return $this->rows;
-    }
-
-    /**
      * @param array $rows
      * @return $this
      */
@@ -205,12 +189,7 @@ abstract class Widget extends Container
      */
     public function bind(array $params)
     {
-        if (empty($this->rows)) {
-            $this->rows = [$params];
-        } else {
-            $this->rows[0] = array_merge($this->rows[0], $params);
-        }
-
+        $this->values = array_merge($this->values, $params);
         return $this;
     }
 
@@ -262,11 +241,13 @@ abstract class Widget extends Container
         $widgetClassName = $widgetClass::getClassName();
         $widgetName = $this->getInstanceKey();
 
-        $rows = $this->rows ? $this->rows : [[]];
-
         $offset = $this->getOffset();
 
-        foreach ($rows as $values) {
+        foreach ($this->rows as $values) {
+            if (empty($values)) {
+                $values = $this->values;
+            }
+
             $row = [];
 
             foreach ($this->getParts($this->getFilterParts()) as $partName => $part) {
@@ -411,7 +392,7 @@ abstract class Widget extends Container
 
         $dataAction = empty($this->getDataAction())
             ? []
-            :array_intersect_key($this->getDataAction(), array_flip(['class', 'params', 'url', 'method']));
+            : array_intersect_key($this->getDataAction(), array_flip(['class', 'params', 'url', 'method']));
 
         return $this->compiledResult = array_merge(
             [
@@ -546,7 +527,7 @@ abstract class Widget extends Container
             if (array_key_exists($event, $options)) {
                 $dataAction = $options[$event];
 
-                if ($dataAction == true) {
+                if ($dataAction === true) {
                     if (empty($this->getDataAction())) {
                         $dataAction = [
                             'class' => Render::class,
@@ -645,9 +626,7 @@ abstract class Widget extends Container
 
         $filterParts = $this->getFilterParts();
 
-        $row = empty($this->rows) ? [] : reset($this->rows);
-
-        foreach ($row as $partName => $value) {
+        foreach ($this->values as $partName => $value) {
             if (!empty($filterParts) && !isset($filterParts[$partName])) {
                 continue;
             }

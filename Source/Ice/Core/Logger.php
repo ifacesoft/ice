@@ -511,8 +511,6 @@ class Logger
     )
     {
         throw $this->createException($message, $file, $line, $e, $errcontext, $errno, $exceptionClass);
-
-        return null; // dummy
     }
 
     public static function log($value, $label = null, $type = 'LOG', $options = [])

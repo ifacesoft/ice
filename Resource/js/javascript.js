@@ -47,8 +47,8 @@ var Ice = {
                 if (data.responseJSON) {
                     result = data.responseJSON;
                     if (result.error) {
-                        console.error(result.error)
                         Ice.notify($('#iceMessages'), result.error, 5000);
+                        console.warn(result.error)
                     }
                 }
 
@@ -78,8 +78,24 @@ var Ice = {
 
             urlParams = {};
 
+        var param;
+        var value;
+
         while (match = search.exec(query)) {
-            urlParams[decode(match[1])] = decode(match[2]);
+            param = decode(match[1]);
+            value = decode(match[2]);
+
+            if (param.length > 2 && param.slice(-2) == '[]') {
+                param = param.slice(0, -2);
+
+                if (urlParams[param] == undefined) {
+                    urlParams[param] = [value];
+                } else {
+                    urlParams[param].push(value);
+                }
+            } else {
+                urlParams[param] = value;
+            }
         }
 
         return urlParams;
