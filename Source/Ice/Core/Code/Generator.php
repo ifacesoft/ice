@@ -38,7 +38,6 @@ abstract class Code_Generator extends Container
     /**
      * Generate code and other
      *
-     * @param  $class
      * @param  array $data Sended data requered for generate
      * @param  bool $force Force if already generate
      * @return string
@@ -48,5 +47,5 @@ abstract class Code_Generator extends Container
      * @version 0
      * @since   0
      */
-    abstract public function generate($class, array $data = null, $force = false);
+    abstract public function generate(array $data = [], $force = false);
 }

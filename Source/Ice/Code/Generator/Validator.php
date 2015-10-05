@@ -35,18 +35,19 @@ class Validator extends Code_Generator
     /**
      * Generate code and other
      *
-     * @param  $class
      * @param  array $data Sended data requered for generate
      * @param  bool $force Force if already generate
      * @return mixed
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 2.0
      * @since   0.0
      */
-    public function generate($class, array $data = [], $force = false)
+    public function generate(array $data = [], $force = false)
     {
+        $class = $this->getInstanceKey();
+
         //        $class = Object::getClass(Core_Validator::getClass(), $data);
         $namespace = Object::getNamespace(Core_Validator::getClass(), $class);
 

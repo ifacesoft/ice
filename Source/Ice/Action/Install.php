@@ -476,10 +476,8 @@ class Install extends Action
 
         Module::modulesClear();
 
-        Action::getCodeGenerator()->generate(
-            Action::getClass($input['alias'] . ':Index'),
-            ['defaultViewRenderClass' => 'Ice:' . $input['viewRender']]
-        );
+        Action::getCodeGenerator(Action::getClass($input['alias'] . ':Index'))
+            ->generate(['defaultViewRenderClass' => 'Ice:' . $input['viewRender']]);
 
         Vcs::init($input['vcs'], MODULE_DIR);
 

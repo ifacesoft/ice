@@ -11,6 +11,7 @@ namespace Ice\Code\Generator;
 
 use Ice\Class_Generator;
 use Ice\Core\Code_Generator;
+use Ice\Core\Debuger;
 use Ice\Core\Loader;
 use Ice\Core\Logger;
 use Ice\Core\Model as Core_Model;
@@ -38,15 +39,19 @@ class Model extends Code_Generator
     /**
      * Generate code and other
      *
-     * @param  $class
      * @param  array $data Sended data requered for generate
      * @param  bool $force Force if already generate
      * @return mixed
      *
      * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 2.0
+     * @since   0.0
      */
-    public function generate($class, array $data = [], $force = false)
+    public function generate(array $data = [], $force = false)
     {
+        $class = $this->getInstanceKey();
+
         $namespace = Object::getNamespace(Core_Model::getClass(), $class);
 
         $fieldNames = Arrays::column($data['columns'], 'fieldName');

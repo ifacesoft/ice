@@ -19,7 +19,7 @@ class City extends Model
     protected static function config()
     {
         return [
-		    'dataSourceKey' => 'Ice\\Data\\Source\\Mysqli/default.lan',
+		    'dataSourceKey' => 'Ice\Data\Source\Mysqli/default.lan',
 		    'scheme' => [
 		        'tableName' => 'ice_city',
 		        'engine' => 'InnoDB',
@@ -114,14 +114,16 @@ class City extends Model
 		    ],
 		    'relations' => [
 		        'oneToMany' => [
-		            'Ebs\\Model\\Ice_Country' => 'country__fk',
+		            'Ice\Model\Country' => 'country__fk',
 		        ],
 		        'manyToOne' => [
-		            'Ebs\\Model\\Company' => 'city_id',
+		            'Ebs\Model\Company' => 'city_id',
 		        ],
 		        'manyToMany' => [],
 		    ],
 		    'revision' => '09251203_xw0',
+		    'modelClass' => 'Ice\Model\City',
+		    'modelPath' => 'Ice/Model/City.php',
 		];
     }
 }

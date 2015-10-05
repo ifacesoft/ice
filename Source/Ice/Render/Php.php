@@ -85,7 +85,7 @@ class Php extends Render
                     Logger::WARNING
                 );
 
-                return Php::getCodeGenerator()->generate($template);
+                return Php::getCodeGenerator($template)->generate();
             } else {
                 return ViiewOld::getLogger()->error(
                     ['Render error in template "{$0}" "{$1}"', [$templateFilePath, ob_get_clean()]],

@@ -250,7 +250,7 @@ class Orm_Sync_DataSource extends Action
 //                }
 //
 //                if ($updated) {
-//                    Model::getCodeGenerator()->generate($sourceTables[$tableName]['modelClass'], $table, $input['force']);
+//                    Model::getCodeGenerator($sourceTables[$tableName]['modelClass'])->generate($table, $input['force']);
 //                }
 //
 //                unset($sourceTables[$tableName]);

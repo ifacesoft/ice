@@ -21,7 +21,7 @@ class Scheme extends Model
     protected static function config()
     {
         return [
-		    'dataSourceKey' => 'Ice\Data\Source\Mysqli/default.test',
+		    'dataSourceKey' => 'Ice\Data\Source\Mysqli/default.binardi',
 		    'scheme' => [
 		        'tableName' => 'ice_scheme',
 		        'engine' => 'InnoDB',
@@ -151,7 +151,7 @@ class Scheme extends Model
 		        'manyToOne' => [],
 		        'manyToMany' => [],
 		    ],
-		    'revision' => '09251203_yhu',
+		    'revision' => '10051239_wzz',
 		];
     }
 }

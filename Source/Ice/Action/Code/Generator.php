@@ -49,7 +49,7 @@ class Code_Generator extends Action{
     {
         switch ($input['baseClass']) {
             case 'action':
-                Action::getCodeGenerator()->generate(Action::getClass($input['class']));
+                Action::getCodeGenerator(Action::getClass($input['class']))->generate();
                 break;
             case 'view':
                 break;

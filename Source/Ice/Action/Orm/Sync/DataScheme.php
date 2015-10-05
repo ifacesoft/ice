@@ -215,11 +215,8 @@ class Orm_Sync_DataScheme extends Action
                     $isModelFieldsUpdated;
 
                 if ($isUpdated) {
-                    Model::getCodeGenerator()->generate(
-                        $schemeTables[$tableName]['modelClass'],
-                        $schemeTables[$tableName],
-                        $input['force']
-                    );
+                    Model::getCodeGenerator($schemeTables[$tableName]['modelClass'])
+                        ->generate($schemeTables[$tableName], $input['force']);
                 }
 
                 unset($schemeTables[$tableName]);
@@ -244,7 +241,7 @@ class Orm_Sync_DataScheme extends Action
 
     private function createModel($modelClass, $table, $force, $dataSourceKey)
     {
-        Model::getCodeGenerator()->generate($modelClass, $table, $force);
+        Model::getCodeGenerator($modelClass)->generate($table, $force);
 
         Scheme::createQueryBuilder()->getInsertQuery(
             [

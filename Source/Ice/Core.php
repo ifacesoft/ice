@@ -114,22 +114,23 @@ trait Core
     /**
      * Return code generator for self class type
      *
+     * @param $class
      * @return Code_Generator
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.5
+     * @version 2.0
      * @since   0.0
      */
-    public static function getCodeGenerator()
+    public static function getCodeGenerator($class)
     {
         $baseClass = self::getBaseClass();
 
-        $class = $baseClass == self::getClass()
-            ? self::getModuleAlias() . ':' . self::getClassName()
-            : self::getModuleAlias() . ':' . $baseClass::getClassName() . '_' . self::getClassName();
+        $codeGeneratorClass = $baseClass == self::getClass()
+            ? $baseClass
+            : $baseClass . '_' . self::getClassName();
 
-        return Code_Generator::getInstance($class);
+        return Code_Generator::getInstance($codeGeneratorClass . '/' . Object::getClass($baseClass, $class));
     }
 
     /**
@@ -162,21 +163,6 @@ trait Core
     public static function getNamespace()
     {
         return Object::getNamespace(self::getBaseClass(), self::getClass());
-    }
-
-    /**
-     * Return logger for self class
-     *
-     * @return Logger
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since   0.0
-     */
-    public static function getLogger()
-    {
-        return Logger::getInstance(self::getClass());
     }
 
     /**

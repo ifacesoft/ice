@@ -111,7 +111,7 @@ class Twig extends Render
                     Logger::WARNING
                 );
                 $twig = new \Twig_Environment(new \Twig_Loader_String());
-                return $twig->render(Twig::getCodeGenerator()->generate($template), $data);
+                return $twig->render(Twig::getCodeGenerator($template)->generate(), $data);
             } else {
                 return ViiewOld::getLogger()->error(
                     [Twig::getClassName() . ': View {$0} not found', $template],

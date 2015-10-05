@@ -100,7 +100,7 @@ abstract class Container
             }
 
             if (Environment::getInstance()->isDevelopment()) {
-                $baseClass::getCodeGenerator()->generate($key);
+                $baseClass::getCodeGenerator($key)->generate($params);
                 $object = $class::create($key);
             } else {
                 $logger->error(['File {$0} not found', $key], __FILE__, __LINE__, $e);
@@ -200,4 +200,12 @@ abstract class Container
      * @since   2.0
      */
     protected abstract function init(array $params);
+
+    /**
+     * @return Logger
+     */
+    public function getLogger()
+    {
+        return Logger::getInstance(get_class($this));
+    }
 }

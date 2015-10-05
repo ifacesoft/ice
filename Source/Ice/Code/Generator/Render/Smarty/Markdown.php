@@ -34,17 +34,18 @@ class Render_Smarty_Markdown extends Render_Smarty
     /**
      * Generate code and other
      *
-     * @param  $class
      * @param  array $data Sended data requered for generate
      * @param  bool $force Force if already generate
      * @return mixed
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
-     * @since   0.0
+     * @version 2.0
+     * @since   2.0
      */
-    public function generate($class, array $data = [], $force = false)
+    public function generate(array $data = [], $force = false)
     {
+        $class = $this->getInstanceKey();
+
         $module = Module::getInstance(Object::getModuleAlias($class));
 
         $path = $module->get(Module::RESOURCE_DIR);

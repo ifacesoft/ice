@@ -129,7 +129,7 @@ class Smarty extends Render
                  * @var \Smarty_Internal_Template $smartyTemplate
                  */
                 $smartyTemplate = $this->_smarty->createTemplate(
-                    'string:' . Smarty::getCodeGenerator()->generate($template)
+                    'string:' . Smarty::getCodeGenerator($template)->generate()
                 );
 
                 foreach ($data as $key => $value) {
