@@ -98,7 +98,7 @@ class Symfony extends Ice
             );
 
             if (!$user) {
-                Symfony::getLogger()->exception('Symfony user not found', __FILE__, __LINE__);
+                $this->getLogger()->exception('Symfony user not found', __FILE__, __LINE__);
             }
 
             $firewall = 'main';
@@ -114,7 +114,7 @@ class Symfony extends Ice
             $this->logout();
             $this->autologin();
 
-            return Symfony::getLogger()->exception('Symfony security login failed', __FILE__, __LINE__, $e);
+            return $this->getLogger()->exception('Symfony security login failed', __FILE__, __LINE__, $e);
         }
 
         return $account;

@@ -165,7 +165,7 @@ class Model_Collection implements IteratorAggregate, Countable
 
         if ($data instanceof Model) {
             if (!($data instanceof $modelClass)) {
-                Model_Collection::getLogger()->exception(
+                $this->getLogger()->exception(
                     [
                         'Add model {$0} to collection of model {$1} failure: type mismatch',
                         [get_class($data), $modelClass]
@@ -182,7 +182,7 @@ class Model_Collection implements IteratorAggregate, Countable
             $modelClass2 = $data->getModelClass();
 
             if ($modelClass != $modelClass2) {
-                Model_Collection::getLogger()->exception(
+                $this->getLogger()->exception(
                     [
                         'Add collection of model {$0} to collection of model {$1} failure: type mismatch',
                         [$modelClass2, $modelClass]
@@ -196,7 +196,7 @@ class Model_Collection implements IteratorAggregate, Countable
         }
 
         if (!is_array($data)) {
-            Model_Collection::getLogger()->exception(
+            $this->getLogger()->exception(
                 'Data mast by Model, Model_Collection or array type',
                 __FILE__,
                 __LINE__,
@@ -457,5 +457,9 @@ class Model_Collection implements IteratorAggregate, Countable
         $modelClass = $this->getModelClass();
 
         return Arrays::column($this->getRows(), $modelClass::getScheme()->getPkFieldNames(), '');
+    }
+
+    public function getLogger() {
+        return Logger::getInstance($this->getModelClass());
     }
 }

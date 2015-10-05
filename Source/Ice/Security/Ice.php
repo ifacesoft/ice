@@ -63,7 +63,7 @@ class Ice extends Security
             $this->logout();
             $this->autologin();
 
-            return Ice::getLogger()->exception('Ice security login failed', __FILE__, __LINE__, $e);
+            return $this->getLogger()->exception('Ice security login failed', __FILE__, __LINE__, $e);
         }
 
         return true;

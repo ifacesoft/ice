@@ -252,7 +252,7 @@ class Query
     public function getFullHash()
     {
         if ($this->bindHash === null) {
-            Query::getLogger()->exception('Bind hash is empty', __FILE__, __LINE__, null, $this);
+            $this->getLogger()->exception('Bind hash is empty', __FILE__, __LINE__, null, $this);
         }
 
         return $this->hash . '/' . $this->bindHash;
@@ -508,5 +508,9 @@ class Query
         Debuger::dump($this->getBody(), $this->getBinds());
 
         return $this;
+    }
+
+    public function getLogger() {
+        return Logger::getInstance($this->getModelClass());
     }
 }

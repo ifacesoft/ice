@@ -110,7 +110,7 @@ abstract class Data_Provider
         $class = self::getClass();
 
         if (!$key && $class == __CLASS__) {
-            Data_Provider::getLogger()->exception(
+            Logger::getInstance(__CLASS__)->exception(
                 'Not known how create instance of data provider. Need data provider key.',
                 __FILE__,
                 __LINE__
@@ -156,7 +156,7 @@ abstract class Data_Provider
      */
     protected static function getDefaultDataProviderKey()
     {
-        Data_Provider::getLogger()->exception(
+        Logger::getInstance(__CLASS__)->exception(
             ['Need implements {$0} for {$1}', [__METHOD__, self::getClass()]],
             __FILE__,
             __LINE__
@@ -177,12 +177,11 @@ abstract class Data_Provider
      */
     protected static function getDefaultKey()
     {
-        Data_Provider::getLogger()->exception(
+        return Logger::getInstance(__CLASS__)->exception(
             ['Need implements {$0} for {$1}', [__METHOD__, self::getClass()]],
             __FILE__,
             __LINE__
         );
-        return null;
     }
 
     /**
@@ -233,11 +232,7 @@ abstract class Data_Provider
         }
 
         if (!$this->connect($this->connection)) {
-            /**
-             * @var Data_Provider $class
-             */
-            $class = __CLASS__;
-            $class::getLogger()->exception(
+            Logger::getInstance(__CLASS__)->exception(
                 [
                     'Data provider "{$0}" connection failed',
                     get_class($this) . '/' . $this->getKey() . ' (index: ' . $this->getIndex() . ')'],
@@ -306,11 +301,7 @@ abstract class Data_Provider
     public function closeConnection()
     {
         if (!$this->close($this->connection)) {
-            /**
-             * @var Data_Provider $class
-             */
-            $class = __CLASS__;
-            $class::getLogger()->exception(
+            Logger::getInstance(__CLASS__)->exception(
                 [
                     'Не удалось закрыть соединенеие с дата провайдером {$0}',
                     get_class($this) . '/' . $this->getKey() . ' (index: ' . $this->getIndex() . ')'

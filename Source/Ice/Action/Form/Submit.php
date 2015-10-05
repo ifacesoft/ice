@@ -74,7 +74,7 @@ class Form_Submit extends Action
 
         $resource = $form->getResource();
 
-        $logger = $resource ? Logger::getInstance(get_class($resource)) : $form::getLogger();
+        $logger = $resource ? Logger::getInstance(get_class($resource->getResourceClass())) : $form->getLogger();
 
         try {
             return array_merge(

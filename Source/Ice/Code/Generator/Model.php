@@ -74,7 +74,7 @@ class Model extends Code_Generator
         }
 
         if (!$force && $isFileExists) {
-            Code_Generator::getLogger()->info(['Model {$0} already created', $class]);
+            $this->getLogger()->info(['Model {$0} already created', $class]);
             return;
         }
 
@@ -94,7 +94,7 @@ class Model extends Code_Generator
             : 'Model {$0} created';
 
         if ($isFileExists) {
-            Code_Generator::getLogger()->info([$message, $class], Logger::SUCCESS);
+            $this->getLogger()->info([$message, $class], Logger::SUCCESS);
         }
 
         Loader::load($class);

@@ -14,7 +14,7 @@ class Ice extends Router
             return $url;
         }
 
-        return Router::getLogger()->exception(
+        return $this->getLogger()->exception(
             ['Route {$0} not found', $routeName], __FILE__, __LINE__, null, null, -1, 'Ice:RouteNotFound'
         );
     }

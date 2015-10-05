@@ -65,7 +65,7 @@ class Action extends Code_Generator
         $isFileExists = file_exists($filePath);
 
         if (!$force && $isFileExists) {
-            Code_Generator::getLogger()->info(['Action {$0} already created', $class]);
+            $this->getLogger()->info(['Action {$0} already created', $class]);
             return;
         }
 
@@ -85,7 +85,7 @@ class Action extends Code_Generator
             : 'Action {$0} created';
 
         if ($isFileExists) {
-            Code_Generator::getLogger()->info([$message, $class], Logger::SUCCESS);
+            $this->getLogger()->info([$message, $class], Logger::SUCCESS);
         }
 
         Loader::load($class);

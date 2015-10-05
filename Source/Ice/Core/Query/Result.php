@@ -540,7 +540,7 @@ class Query_Result implements Cacheable
                 Query_Result::FOUND_ROWS . '\' => ' . $this->getFoundRows() . ', \'' .
                 Query_Result::INSERT_ID . '\' => ' . print_r($this->getInsertId(), true);
         } catch (\Exception $e) {
-            Query_Result::getLogger()->error('fail', __FILE__, __LINE__, $e);
+            Logger::getInstance(__CLASS__)->error('fail', __FILE__, __LINE__, $e);
         }
 
         return $string;

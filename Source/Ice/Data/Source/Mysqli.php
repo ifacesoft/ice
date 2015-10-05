@@ -70,12 +70,14 @@ class Mysqli extends Data_Source
 
         $statement = $this->getStatement($query->getBody(), $query->getBinds());
 
+        $logger = Logger::getInstance(__CLASS__);
+
         if ($statement->execute() === false) {
             $errno = $statement->errno;
             $error = $statement->error;
             $statement->close();
 
-            Mysqli::getLogger()->exception(
+            $logger->exception(
                 [
                     '#' . $errno . ': {$0} - {$1} [{$2}]',
                     [$error, print_r($query->getBody(), true), implode(', ', $query->getBinds())]
@@ -95,7 +97,7 @@ class Mysqli extends Data_Source
             $error = $statement->error;
             $statement->close();
 
-            Mysqli::getLogger()->exception(
+            $logger->exception(
                 [
                     '#' . $errno . ': {$0} - {$1} [{$2}]',
                     [$error, print_r($query->getBody(), true), implode(', ', $query->getBinds())]
@@ -126,7 +128,7 @@ class Mysqli extends Data_Source
                 $row = $modelClass::$method($row, $params);
 
                 if (!$row) {
-                    Mysqli::getLogger()->exception(
+                    $logger->exception(
                         ['Trigger(method) {$0} of model {$1} must return row. Fix it.', [$method, $modelClass]],
                         __FILE__,
                         __LINE__
@@ -185,6 +187,8 @@ class Mysqli extends Data_Source
     {
         $statement = $this->getConnection()->prepare($body);
 
+        $logger = Logger::getInstance(__CLASS__);
+
         if (!$statement) {
             switch ($this->getConnection()->errno) {
                 case 1146:
@@ -194,7 +198,7 @@ class Mysqli extends Data_Source
                     $exceptionClass = 'Ice:DataSource_Error';
             }
 
-            Mysqli::getLogger()->exception(
+            $logger->exception(
                 ['#' . $this->getConnection()->errno . ': {$0}', $this->getConnection()->error],
                 __FILE__,
                 __LINE__,
@@ -216,7 +220,7 @@ class Mysqli extends Data_Source
             $values = array_merge($values, $binds);
 
             if (call_user_func_array(array($statement, 'bind_param'), $this->makeValuesReferenced($values)) === false) {
-                Mysqli::getLogger()->exception(
+                $logger->exception(
                     'Bind params failure',
                     __FILE__,
                     __LINE__,
@@ -282,12 +286,14 @@ class Mysqli extends Data_Source
 
         $statement = $this->getStatement($query->getBody(), $query->getBinds());
 
+        $logger = Logger::getInstance(__CLASS__);
+
         if ($statement->execute() === false) {
             $errno = $statement->errno;
             $error = $statement->error;
             $statement->close();
 
-            Mysqli::getLogger()->exception(
+            $logger->exception(
                 [
                     '#' . $errno . ': {$0} - {$1} [{$2}]',
                     [$error, print_r($query->getBody(), true), implode(', ', $query->getBinds())]
@@ -347,12 +353,14 @@ class Mysqli extends Data_Source
 
         $statement = $this->getStatement($query->getBody(), $query->getBinds());
 
+        $logger = Logger::getInstance(__CLASS__);
+
         if ($statement->execute() === false) {
             $errno = $statement->errno;
             $error = $statement->error;
             $statement->close();
 
-            Mysqli::getLogger()->exception(
+            $logger->exception(
                 [
                     '#' . $errno . ': {$0} - {$1} [{$2}]',
                     [$error, print_r($query->getBody(), true), implode(', ', $query->getBinds())]
@@ -397,12 +405,14 @@ class Mysqli extends Data_Source
 
         $statement = $this->getStatement($query->getBody(), $query->getBinds());
 
+        $logger = Logger::getInstance(__CLASS__);
+
         if ($statement->execute() === false) {
             $errno = $statement->errno;
             $error = $statement->error;
             $statement->close();
 
-            Mysqli::getLogger()->exception(
+            $logger->exception(
                 [
                     '#' . $errno . ': {$0} - {$1} [{$2}]',
                     [$error, print_r($query->getBody(), true), implode(', ', $query->getBinds())]
@@ -699,12 +709,14 @@ class Mysqli extends Data_Source
 
         $statement = $this->getStatement($query->getBody(), $query->getBinds());
 
+        $logger = Logger::getInstance(__CLASS__);
+
         if ($statement->execute() === false) {
             $errno = $statement->errno;
             $error = $statement->error;
             $statement->close();
 
-            Mysqli::getLogger()->exception(
+            $logger->exception(
                 [
                     '#' . $errno . ': {$0} - {$1} [{$2}]',
                     [$error, print_r($query->getBody(), true), implode(', ', $query->getBinds())]
@@ -738,12 +750,14 @@ class Mysqli extends Data_Source
 
         $statement = $this->getStatement($query->getBody(), $query->getBinds());
 
+        $logger = Logger::getInstance(__CLASS__);
+
         if ($statement->execute() === false) {
             $errno = $statement->errno;
             $error = $statement->error;
             $statement->close();
 
-            Mysqli::getLogger()->exception(
+            $logger->exception(
                 [
                     '#' . $errno . ': {$0} - {$1} [{$2}]',
                     [$error, print_r($query->getBody(), true), implode(', ', $query->getBinds())]
@@ -932,6 +946,8 @@ class Mysqli extends Data_Source
      */
     public function executeNativeQuery($query)
     {
+        $logger = Logger::getInstance(__CLASS__);
+
         if ($this->getConnection()->query($query) === false) {
             $errno = $this->getConnection()->errno;
             $error = $this->getConnection()->error;
@@ -941,7 +957,7 @@ class Mysqli extends Data_Source
                 'native query (error)',
                 'ERROR'
             );
-            Mysqli::getLogger()->exception(['#' . $errno . ': {$0} - {$1}', [$error, $query]], __FILE__, __LINE__);
+            $logger->exception(['#' . $errno . ': {$0} - {$1}', [$error, $query]], __FILE__, __LINE__);
         } else {
             Logger::log($query, 'native query (new)', 'INFO');
         }

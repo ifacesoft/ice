@@ -11,6 +11,7 @@ namespace Ice\Helper;
 
 use Ice\Core;
 use Ice\Core\Logger as Core_Logger;
+use Ice\Core\Logger;
 use Ice\Core\Request as Core_Request;
 use Ice\Core\Resource as Core_Resource;
 use Ice\Core\Validator as Core_Validator;
@@ -164,7 +165,7 @@ class Console
                         ? $params['message']
                         : 'param {$0} is not valid';
 
-                    Core_Validator::getLogger()->info([$message, $param], Core_Logger::DANGER, true, false);
+                    Logger::getInstance(Core_Validator::getClass())->info([$message, $param], Core_Logger::DANGER, true, false);
                 }
             }
 
@@ -179,7 +180,7 @@ class Console
         fclose($f);
 
         fwrite(STDOUT, Console::C_GREEN_B . $data['default'] . "\n");
-        Core_Resource::getLogger()->info('...value is accepted!' . "\n", Core_Logger::SUCCESS, true, false);
+        Logger::getInstance(Core_Resource::getClass())->info('...value is accepted!' . "\n", Core_Logger::SUCCESS, true, false);
 
         return $data['default'];
     }

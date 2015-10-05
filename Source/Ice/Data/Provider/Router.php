@@ -14,6 +14,7 @@ use Ice\Core\Data_Provider;
 use Ice\Core\Debuger;
 use Ice\Core\Environment;
 use Ice\Core\Exception;
+use Ice\Core\Logger;
 use Ice\Core\Request as Core_Request;
 use Ice\Core\Route;
 use Ice\Exception\Http_Not_Found;
@@ -257,15 +258,16 @@ class Router extends Data_Provider
 
         if (empty($foundRoutes)) {
             if (empty($matchedRoutes)) {
-                Router::getLogger()->exception(
-                    ['Route for url \'{$0}\' not found', $url],
-                    __FILE__,
-                    __LINE__,
-                    null,
-                    null,
-                    -1,
-                    Http_Not_Found::getClass()
-                );
+                Logger::getInstance(__CLASS__)
+                    ->exception(
+                        ['Route for url \'{$0}\' not found', $url],
+                        __FILE__,
+                        __LINE__,
+                        null,
+                        null,
+                        -1,
+                        Http_Not_Found::getClass()
+                    );
             }
 
             krsort($matchedRoutes, SORT_NUMERIC);

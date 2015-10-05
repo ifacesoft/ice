@@ -42,7 +42,7 @@ class Route extends Config
         $routes = self::getRoutes();
 
         if (!isset($routes[$routeName])) {
-            Route::getLogger()->exception(
+            Logger::getInstance(__CLASS__)->exception(
                 ['Route {$0} not found', $routeName],
                 __FILE__,
                 __LINE__,
@@ -113,7 +113,7 @@ class Route extends Config
             $configFromFile = File::loadData($routeFilePath);
 
             if (!is_array($configFromFile)) {
-                self::getLogger()->warning(['Не валидный файл конфиг: {$0}', $routeFilePath], __FILE__, __LINE__);
+                Logger::getInstance(__CLASS__)->warning(['Не валидный файл конфиг: {$0}', $routeFilePath], __FILE__, __LINE__);
                 continue;
             }
 
@@ -132,7 +132,7 @@ class Route extends Config
                 $route['route'] = $context . $route['route'];
 
                 if (substr_count($route['route'], '{$') != count($route['params'])) {
-                    Route::getLogger()->warning(
+                    Logger::getInstance(__CLASS__)->warning(
                         ['Count of params in {$0} not equal with count of defined params', $route['route']],
                         __FILE__,
                         __LINE__,

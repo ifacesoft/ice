@@ -195,7 +195,7 @@ class Module extends Config
         }
 
         if (!isset($modules[$moduleAlias])) {
-            Module::getLogger()->exception(
+            Logger::getInstance(__CLASS__)->exception(
                 ['Module alias {$0} not found in module config files', $moduleAlias],
                 __FILE__,
                 __LINE__

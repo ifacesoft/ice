@@ -120,7 +120,7 @@ class Smarty extends Render
             return $smartyTemplate->fetch();
         } catch (\Exception $e) {
             if (Environment::getInstance()->isDevelopment()) {
-                ViiewOld::getLogger()->info(
+                $this->getLogger()->info(
                     ['View {$0} not found. Trying generate template {$1}...', [$template, Smarty::getClassName()]],
                     Logger::WARNING
                 );
@@ -138,7 +138,7 @@ class Smarty extends Render
 
                 return $smartyTemplate->fetch();
             } else {
-                return ViiewOld::getLogger()->error(
+                return $this->getLogger()->error(
                     [Smarty::getClassName() . ': View {$0} not found', $template],
                     __FILE__,
                     __LINE__,

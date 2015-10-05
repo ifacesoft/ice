@@ -59,7 +59,7 @@ class Render_Smarty_Markdown extends Render_Smarty
         $isFileExists = file_exists($filePath);
 
         if (!$force && $isFileExists) {
-            Code_Generator::getLogger()->info(['Template {$0} {$1} already created', ['Smarty_Markdown', $class]]);
+            $this->getLogger()->info(['Template {$0} {$1} already created', ['Smarty_Markdown', $class]]);
             return file_get_contents($filePath);
         }
 
@@ -72,7 +72,7 @@ class Render_Smarty_Markdown extends Render_Smarty
             : 'Template {$0} {$1}" created';
 
         if ($isFileExists) {
-            Code_Generator::getLogger()->info([$message, ['Smarty_Markdown', $class]], Logger::SUCCESS);
+            $this->getLogger()->info([$message, ['Smarty_Markdown', $class]], Logger::SUCCESS);
         }
 
         return $classString;

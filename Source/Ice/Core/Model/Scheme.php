@@ -93,7 +93,7 @@ class Model_Scheme extends Config
                 continue;
             }
 
-            Model::getLogger()->exception(
+            Logger::getInstance(self::getClass())->exception(
                 ['Поле "{$0}" не найдено в модели "{$1}"', [$fieldName, self::getClass()]],
                 __FILE__,
                 __LINE__

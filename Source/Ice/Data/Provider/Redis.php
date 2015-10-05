@@ -11,6 +11,7 @@ namespace Ice\Data\Provider;
 
 use Ice\Core\Data_Provider;
 use Ice\Core\Exception;
+use Ice\Core\Logger;
 
 /**
  * Class Redis
@@ -253,7 +254,8 @@ class Redis extends Data_Provider
         $isConnected = $connection->connect($options['host'], $options['port']);
 
         if (!$isConnected) {
-            Mysqli::getLogger()->exception('redis - ' . $this->getConnection()->getLastError(), __FILE__, __LINE__);
+            Logger::getInstance(__CLASS__)
+                ->exception('redis - ' . $this->getConnection()->getLastError(), __FILE__, __LINE__);
         }
 
         if (function_exists('igbinary_serialize')) {

@@ -51,7 +51,7 @@ class Render_Twig extends Code_Generator
         $isFileExists = file_exists($filePath);
 
         if (!$force && $isFileExists) {
-            Code_Generator::getLogger()->info(['Template {$0} {$1} already created', ['Twig', $class]]);
+            $this->getLogger()->info(['Template {$0} {$1} already created', ['Twig', $class]]);
             return file_get_contents($filePath);
         }
 
@@ -64,7 +64,7 @@ class Render_Twig extends Code_Generator
             : 'Template {$0} {$1}" created';
 
         if ($isFileExists) {
-            Code_Generator::getLogger()->info([$message, ['Twig', $class]], Logger::SUCCESS);
+            $this->getLogger()->info([$message, ['Twig', $class]], Logger::SUCCESS);
         }
 
         return $classString;

@@ -108,7 +108,7 @@ class Mysqli extends Data_Provider
         $result = $this->getConnection()->query('SELECT * FROM ' . $sql, MYSQLI_USE_RESULT);
 
         if ($this->getConnection()->errno) {
-            Mysqli::getLogger()->error(
+            Logger::getInstance(__CLASS__)->error(
                 ['mysql - #' . $this->getConnection()->errno . ': {$0}', $this->getConnection()->error],
                 __FILE__,
                 __LINE__
@@ -241,7 +241,7 @@ class Mysqli extends Data_Provider
     public function setScheme($scheme)
     {
         if (!$this->getConnection()->select_db($scheme)) {
-            Mysqli::getLogger()->exception(
+            Logger::getInstance(__CLASS__)->exception(
                 ['mysql - #' . $this->getConnection()->errno . ': {$0}', $this->getConnection()->error],
                 __FILE__,
                 __LINE__,
@@ -302,7 +302,7 @@ class Mysqli extends Data_Provider
                 throw new Error('Connect failed');
             }
         } catch (\Exception $e) {
-            Mysqli::getLogger()
+            Logger::getInstance(__CLASS__)
                 ->info(
                     [
                         'mysql - #' . $connection->errno . ': {$0}',

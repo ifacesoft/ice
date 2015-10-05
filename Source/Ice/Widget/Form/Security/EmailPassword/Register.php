@@ -91,7 +91,7 @@ class Form_Security_EmailPassword_Register extends Widget_Form_Security_Register
         $accountModelClass = $this->getAccountModelClass();
 
         if (!$accountModelClass) {
-            return Widget_Form_Security::getLogger()
+            return $this->getLogger()
                 ->exception(
                     ['Unknown accountModelClass', [], $this->getResource()],
                     __FILE__,

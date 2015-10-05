@@ -4,6 +4,7 @@ namespace Ice\Data\Source;
 
 use Ice\Core\Data_Provider;
 use Ice\Core\Data_Source;
+use Ice\Core\Logger;
 use Ice\Core\Model;
 use Ice\Core\Module;
 use Ice\Core\Query;
@@ -94,7 +95,7 @@ class Mongodb extends Data_Source
                 $data[Query_Result::ROWS][$pkFieldValue] = array_merge([$pkFieldName => $pkFieldValue], $row);
             }
         } catch (\MongoException $e) {
-            Mongodb::getLogger()->exception(
+            Logger::getInstance(__CLASS__)->exception(
                 [
                     '#' . $e->getCode() . ': {$0} - {$1} [{$2}]',
                     [$e->getMessage(), print_r($query->getBody(), true), implode(', ', $query->getBinds())]
@@ -160,7 +161,7 @@ class Mongodb extends Data_Source
                                     }
                                 }
                             } catch (\MongoException $e) {
-                                Mongodb::getLogger()->exception('Build statement failed', __FILE__, __LINE__, $e, $id);
+                                Logger::getInstance(__CLASS__)->exception('Build statement failed', __FILE__, __LINE__, $e, $id);
                             }
                         } else {
                             $row[$columnName] = isset($operator)
@@ -182,7 +183,7 @@ class Mongodb extends Data_Source
         }
 
         if (!empty($binds)) {
-            Mongodb::getLogger()->exception(
+            Logger::getInstance(__CLASS__)->exception(
                 'Bind params failure',
                 __FILE__,
                 __LINE__,

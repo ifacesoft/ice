@@ -75,7 +75,7 @@ abstract class Widget_Form_Security extends Form
         try {
             return parent::validate();
         } catch (\Exception $e) {
-            return Widget_Form_Security::getLogger()
+            return $this->getLogger()
                 ->exception(
                     ['Validation failure', [], $this->getResource()],
                     __FILE__,
@@ -98,16 +98,14 @@ abstract class Widget_Form_Security extends Form
             'form_class' => get_class($this)
         ]);
 
-        $logger = Widget_Form_Security::getLogger();
-
         if ($account->isExpired()) {
             $error = 'Account is expired';
 
             $log->set('error', $error);
 
-            $logger->save($log);
+            $this->getLogger()->save($log);
 
-            return $logger->exception([$error, [], $this->getResource()], __FILE__, __LINE__);
+            return $this->getLogger()->exception([$error, [], $this->getResource()], __FILE__, __LINE__);
         }
 
         $userModelClass = Config::getInstance(Security::getClass())->get('userModelClass');
@@ -120,16 +118,16 @@ abstract class Widget_Form_Security extends Form
 
             $log->set('error', $error);
 
-            $logger->save($log);
+            $this->getLogger()->save($log);
 
-            return $logger->exception([$error, [], $this->getResource()], __FILE__, __LINE__);
+            return $this->getLogger()->exception([$error, [], $this->getResource()], __FILE__, __LINE__);
         }
 
-        $logger->save($log);
+        $this->getLogger()->save($log);
 
         Security::getInstance()->login($account);
 
-        $logger->save($log);
+        $this->getLogger()->save($log);
 
         return $account;
     }
@@ -147,8 +145,6 @@ abstract class Widget_Form_Security extends Form
     protected function signUp($accountModelClass, array $accountData, array $userData, $dataSource = null)
     {
         $account = null;
-
-        $logger = Widget_Form_Security::getLogger();
 
         $log = Log_Security::create([
             'account_class' => $accountModelClass,
@@ -185,14 +181,14 @@ abstract class Widget_Form_Security extends Form
             $dataSource->commitTransaction();
 
             $log->set('account_key', $account->getPkValue());
-            $logger->save($log);
+            $this->getLogger()->save($log);
         } catch (\Exception $e) {
             $dataSource->rollbackTransaction();
 
             $log->set('error', Helper_Logger::getMessage($e));
-            $logger->save($log);
+            $this->getLogger()->save($log);
 
-            return $logger->exception(['Sign up failed', [], $this->getResource()], __FILE__, __LINE__, $e);
+            return $this->getLogger()->exception(['Sign up failed', [], $this->getResource()], __FILE__, __LINE__, $e);
         }
 
         return (!$this->confirm || ($this->confirm && !$this->confirmRequired)) && $this->autologin
@@ -210,7 +206,7 @@ abstract class Widget_Form_Security extends Form
      */
     public function sendConfirm(array $accountData)
     {
-        return Logger::getInstance('Ice\App')
+        return Logger::getInstance(__CLASS__)
             ->exception(['Implement {$0} for {$1}', [__FUNCTION__, get_class($this)]], __FILE__, __LINE__);
     }
 

@@ -77,7 +77,7 @@ class Php extends Render
 
         if (!file_exists($templateFilePath)) {
             if (Environment::getInstance()->isDevelopment()) {
-                ViiewOld::getLogger()->info(
+                $this->getLogger()->info(
                     [
                         Php::getClassName() . ': View {$0} not found. Trying generate template {$1}...',
                         [$template, Php::getClassName()]
@@ -87,7 +87,7 @@ class Php extends Render
 
                 return Php::getCodeGenerator($template)->generate();
             } else {
-                return ViiewOld::getLogger()->error(
+                return $this->getLogger()->error(
                     ['Render error in template "{$0}" "{$1}"', [$templateFilePath, ob_get_clean()]],
                     __FILE__,
                     __LINE__

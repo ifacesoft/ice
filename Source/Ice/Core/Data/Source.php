@@ -370,7 +370,7 @@ abstract class Data_Source extends Container
                     return $queryResult;
 
                 default:
-                    Data_Source::getLogger()->exception(
+                    Logger::getInstance(__CLASS__)->exception(
                         ['Unknown data source query statement type {$0}', $queryType],
                         __FILE__,
                         __LINE__,

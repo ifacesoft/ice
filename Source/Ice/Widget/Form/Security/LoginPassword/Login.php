@@ -72,7 +72,7 @@ class Form_Security_LoginPassword_Login extends Widget_Form_Security_Login
         $accountModelClass = $this->getAccountModelClass();
 
         if (!$accountModelClass) {
-            return Widget_Form_Security::getLogger()
+            return $this->getLogger()
                 ->exception(
                     ['Unknown accountModelClass', [], $this->getResource()],
                     __FILE__,
@@ -91,7 +91,7 @@ class Form_Security_LoginPassword_Login extends Widget_Form_Security_Login
 
         $result['account'] = $account && $this->verify($account, $values)
             ? $this->signIn($account)
-            : Widget_Form_Security::getLogger()
+            : $this->getLogger()
                 ->exception(
                     ['Log in failure', [], $this->getResource()],
                     __FILE__,

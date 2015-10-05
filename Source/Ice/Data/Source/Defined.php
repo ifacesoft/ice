@@ -11,6 +11,7 @@ namespace Ice\Data\Source;
 
 use Ice\Core\Data_Provider;
 use Ice\Core\Data_Source;
+use Ice\Core\Logger;
 use Ice\Core\Model;
 use Ice\Core\Module;
 use Ice\Core\Query;
@@ -106,7 +107,7 @@ class Defined extends Data_Source
                             }
                             break;
                         default:
-                            Defined::getLogger()->exception(
+                            Logger::getInstance(__CLASS__)->exception(
                                 ['Unknown comparsion operator {$0}', $part[2]],
                                 __FILE__,
                                 __LINE__

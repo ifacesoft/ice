@@ -90,7 +90,7 @@ class Cache_Clear extends Action
      */
     public function run(array $input)
     {
-        $logger = Cache_Clear::getLogger();
+        $logger = $this->getLogger();
 
         /**
          * @var Container $class

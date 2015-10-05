@@ -64,7 +64,7 @@ class Validator extends Code_Generator
         $isFileExists = file_exists($filePath);
 
         if (!$force && $isFileExists) {
-            Code_Generator::getLogger()->info(['Validator {$0} already created', $class]);
+            $this->getLogger()->info(['Validator {$0} already created', $class]);
             return;
         }
 
@@ -82,7 +82,7 @@ class Validator extends Code_Generator
             : 'Validator {$0} created';
 
         if ($isFileExists) {
-            Code_Generator::getLogger()->info([$message, $class], Logger::SUCCESS);
+            $this->getLogger()->info([$message, $class], Logger::SUCCESS);
         }
 
         Loader::load($class);

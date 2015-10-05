@@ -107,10 +107,6 @@ abstract class Container
             }
         }
 
-        if (!$object) {
-            $class::getLogger()->exception('Could not create object', __FILE__, __LINE__);
-        }
-
         return $object;
     }
 
@@ -126,7 +122,7 @@ abstract class Container
      */
     protected static function getDefaultClassKey()
     {
-        Resource::getLogger()->exception(
+        Logger::getInstance(__CLASS__)->exception(
             ['Implementation {$0} is required for {$1}', [__FUNCTION__, get_called_class()]],
             __FILE__,
             __LINE__
@@ -147,7 +143,7 @@ abstract class Container
      */
     protected static function getDefaultKey()
     {
-        Resource::getLogger()->exception(
+        Logger::getInstance(__CLASS__)->exception(
             ['Implementation {$0} is required for {$1}', [__FUNCTION__, get_called_class()]],
             __FILE__,
             __LINE__

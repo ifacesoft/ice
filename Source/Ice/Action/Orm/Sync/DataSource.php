@@ -292,7 +292,7 @@ class Orm_Sync_DataSource extends Action
             $dataSourceKey
         )->getQueryResult();
 
-        Data_Source::getLogger()->info(
+        $this->getLogger()->info(
             ['{$0}: Table {$1} successfully created', [$dataSourceKey, $table['scheme']['tableName']]]
         );
     }
@@ -306,6 +306,6 @@ class Orm_Sync_DataSource extends Action
 
         Scheme::createQueryBuilder()->deleteQuery($tableName, $dataSourceKey)->getQueryResult();
 
-        Data_Source::getLogger()->info(['Model {$0} deleted', $sourceTables[$tableName]['modelClass']]);
+        $this->getLogger()->info(['Model {$0} deleted', $sourceTables[$tableName]['modelClass']]);
     }
 }

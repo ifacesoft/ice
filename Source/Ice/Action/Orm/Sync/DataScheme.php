@@ -191,7 +191,7 @@ class Orm_Sync_DataScheme extends Action
                 }
 
                 foreach ($dataSchemeColumns as $columnName => $column) {
-                    Data_Scheme::getLogger()->info([
+                    $this->getLogger()->info([
                         'Remove field {$0} for model {$1}',
                         [$column['fieldName'], $schemeTables[$tableName]['modelClass']]
                     ]);
@@ -256,7 +256,7 @@ class Orm_Sync_DataScheme extends Action
             $dataSourceKey
         )->getQueryResult();
 
-        Data_Scheme::getLogger()->info(['{$0}: Model {$1} successfully created', [$dataSourceKey, $modelClass]]);
+        $this->getLogger()->info(['{$0}: Model {$1} successfully created', [$dataSourceKey, $modelClass]]);
     }
 
     private function deleteModel($modelFilePath, $tableName, $schemeTables, $dataSourceKey)
@@ -267,7 +267,7 @@ class Orm_Sync_DataScheme extends Action
 
         Scheme::createQueryBuilder()->deleteQuery($tableName, $dataSourceKey)->getQueryResult();
 
-        Data_Scheme::getLogger()->info(
+        $this->getLogger()->info(
             ['{$0}: Model {$1} successfully deleted', [$dataSourceKey, $schemeTables[$tableName]['modelClass']]]
         );
     }
@@ -289,7 +289,7 @@ class Orm_Sync_DataScheme extends Action
             ->updateQuery(['table__json' => $tableSchemeJson], $dataSourceKey)
             ->getQueryResult();
 
-        Data_Scheme::getLogger()->info([
+        $this->getLogger()->info([
             '{$0}: Scheme of model {$1} successfully updated: {$2}',
             [$dataSourceKey, $modelClass, $diffScheme]
         ]);
@@ -321,7 +321,7 @@ class Orm_Sync_DataScheme extends Action
             ->updateQuery(['indexes__json' => $tableIndexesJson], $dataSourceKey)
             ->getQueryResult();
 
-        Data_Scheme::getLogger()->info([
+        $this->getLogger()->info([
             '{$0}: Indexes of model {$1} successfully updated! [added: {$2}; removed: {$3}]',
             [$dataSourceKey, $modelClass, $addedDiffIndexes, $removedDiffIndexes]
         ]);
@@ -353,7 +353,7 @@ class Orm_Sync_DataScheme extends Action
             ->updateQuery(['references__json' => $tableReferencesJson], $dataSourceKey)
             ->getQueryResult();
 
-        Data_Scheme::getLogger()->info([
+        $this->getLogger()->info([
             '{$0}: References of model {$1} successfully updated! [added: {$2}; removed: {$3}]',
             [$dataSourceKey, $modelClass, $addedDiffReferences, $removedDiffReferences]
         ]);
@@ -379,7 +379,7 @@ class Orm_Sync_DataScheme extends Action
 
         $modelOneToMany = $tableOneToMany;
 
-        Data_Scheme::getLogger()->info([
+        $this->getLogger()->info([
             '{$0}: OneToMany relations of model {$1} successfully updated: {$2}',
             [$dataSourceKey, $modelClass, $diffOneToMany]
         ]);
@@ -405,7 +405,7 @@ class Orm_Sync_DataScheme extends Action
 
         $modelManyToOne = $tableManyToOne;
 
-        Data_Scheme::getLogger()->info([
+        $this->getLogger()->info([
             '{$0}: ManyToOne relations of model {$1} successfully updated: {$2}',
             [$dataSourceKey, $modelClass, $diffManyToOne]
         ]);
@@ -431,7 +431,7 @@ class Orm_Sync_DataScheme extends Action
 
         $modelManyToMany = $tableManyToMany;
 
-        Data_Scheme::getLogger()->info([
+        $this->getLogger()->info([
             '{$0}: ManyToMany relations of model {$1} successfully updated: {$2}',
             [$dataSourceKey, $modelClass, $diffManyToMany]
         ]);
@@ -443,7 +443,7 @@ class Orm_Sync_DataScheme extends Action
     {
         $modelField = $modelFieldScheme;
 
-        Data_Scheme::getLogger()->info([
+        $this->getLogger()->info([
             '{$0}: Field {$1} in model {$2} successfully created',
             [$dataSourceKey, $modelFieldScheme['fieldName'], $modelClass]
         ]);
@@ -461,7 +461,7 @@ class Orm_Sync_DataScheme extends Action
 
         $modelField = $tableField;
 
-        Data_Scheme::getLogger()->info([
+        $this->getLogger()->info([
             '{$0}: Field {$1} in model {$2} successfully updated: {$3}',
             [$dataSourceKey, $fieldName, $modelClass, $diffField]
         ]);

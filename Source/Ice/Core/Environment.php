@@ -168,7 +168,7 @@ class Environment extends Config
         $dataProviderKey = $this->get($key);
 
         if ($dataProviderKey === null) {
-            Environment::getLogger()->exception(
+            Logger::getInstance(__CLASS__)->exception(
                 ['In environment config param {$0} not found', $key],
                 __FILE__,
                 __LINE__

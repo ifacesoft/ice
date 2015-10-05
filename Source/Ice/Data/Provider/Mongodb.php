@@ -196,7 +196,7 @@ class Mongodb extends Data_Provider
         try {
             $connection = new \MongoClient('mongodb://' . $options['host'] . ':' . $options['port']);
         } catch (\Exception $e) {
-            Mongodb::getLogger()
+            Logger::getInstance(__CLASS__)
                 ->info(
                     [
                         'mongodb - #' . $e->getCode() . ': {$0}',

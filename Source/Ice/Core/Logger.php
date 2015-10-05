@@ -191,7 +191,6 @@ class Logger
         if ($errno == E_WARNING && strpos($errstr, 'filemtime():') !== false
             || $errno == E_WARNING && strpos($errstr, 'mysqli::real_connect():') !== false
         ) {
-            Logger::getLogger()->info($errstr, self::WARNING, false);
             return; // подавляем ошибку смарти и ошибку подключения mysql (пароль в открытом виде)
         }
 

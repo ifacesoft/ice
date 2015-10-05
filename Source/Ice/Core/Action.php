@@ -111,8 +111,10 @@ abstract class Action implements Cacheable
          */
         $actionClass = self::getClass();
 
+        $logger = Logger::getInstance($actionClass);
+
         if (Request::isCli()) {
-            Action::getLogger()->info(['{$0}call: {$1}...', [str_repeat("\t", $level), $actionClass]], Logger::MESSAGE);
+            $logger->info(['{$0}call: {$1}...', [str_repeat("\t", $level), $actionClass]], Logger::MESSAGE);
         }
 
         Action::checkResponse($input);
@@ -196,7 +198,7 @@ abstract class Action implements Cacheable
                 } catch (Access_Denied $e) {
                     $subView = ViiewOld::create($actionClass);
                 } catch (\Exception $e) {
-                    $subView = Action::getLogger()->error(
+                    $subView = $logger->error(
                         ['Calling subAction "{$0}" in action "{$1}" failed', [$subActionClass, $actionClass]],
                         __FILE__,
                         __LINE__,
@@ -219,7 +221,7 @@ abstract class Action implements Cacheable
         }
 
         if (Request::isCli()) {
-            Action::getLogger()->info(
+            $logger->info(
                 ['{$0}{$1} complete!', [str_repeat("\t", $level), $actionClass::getClassName()]],
                 Logger::MESSAGE
             );
@@ -566,5 +568,9 @@ abstract class Action implements Cacheable
     public function invalidate()
     {
         return $this;
+    }
+
+    public function getLogger() {
+        return Logger::getInstance(get_class($this));
     }
 }

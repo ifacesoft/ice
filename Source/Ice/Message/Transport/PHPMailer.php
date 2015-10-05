@@ -12,7 +12,8 @@ class PHPMailer extends Message_Transport
     /** @var \PHPMailer */
     private $phpMailer = null;
 
-    protected function init(array $params) {
+    protected function init(array $params)
+    {
         $key = $params['instanceKey'];
 
         $config = Config::getInstance(__CLASS__);
@@ -56,8 +57,8 @@ class PHPMailer extends Message_Transport
         PHPMailer::cc($phpMailer, $message->getCc());
         PHPMailer::bcc($phpMailer, $message->getBcc());
 
-            if (!$phpMailer->send()) {
-            PHPMailer::getLogger()->exception($phpMailer->ErrorInfo, __FILE__, __LINE__);
+        if (!$phpMailer->send()) {
+            $this->getLogger()->exception($phpMailer->ErrorInfo, __FILE__, __LINE__);
         }
     }
 

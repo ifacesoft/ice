@@ -340,7 +340,7 @@ class Sql extends Query_Translator
             case Query_Builder::SQL_COMPARISON_KEYWORD_RLIKE_REVERSE:
                 return '? ' . Query_Builder::SQL_COMPARISON_KEYWORD_RLIKE . ' ' . $fieldName;
             default:
-                Sql::getLogger()->exception(['Unknown comparison operator "{$0}"', $comparisonOperator], __FILE__, __LINE__);
+                $this->getLogger()->exception(['Unknown comparison operator "{$0}"', $comparisonOperator], __FILE__, __LINE__);
         }
 
         return '';

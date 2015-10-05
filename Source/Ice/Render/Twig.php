@@ -103,7 +103,7 @@ class Twig extends Render
             }
         } catch (\Exception $e) {
             if (Environment::getInstance()->isDevelopment()) {
-                ViiewOld::getLogger()->info(
+                $this->getLogger()->info(
                     [
                         Twig::getClassName() . ': View {$0} not found. Trying generate template {$1}...',
                         [$template, Twig::getClassName()]
@@ -113,7 +113,7 @@ class Twig extends Render
                 $twig = new \Twig_Environment(new \Twig_Loader_String());
                 return $twig->render(Twig::getCodeGenerator($template)->generate(), $data);
             } else {
-                return ViiewOld::getLogger()->error(
+                return $this->getLogger()->error(
                     [Twig::getClassName() . ': View {$0} not found', $template],
                     __FILE__,
                     __LINE__,

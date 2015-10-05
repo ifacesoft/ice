@@ -153,7 +153,7 @@ class Resource implements Cacheable
 //            $e = new \Exception();
 //            print_r($e->getTraceAsString());die();
 
-            Resource::getLogger()->warning('Empty resource message', __FILE__, __LINE__);
+            Logger::getInstance(__CLASS__)->warning('Empty resource message', __FILE__, __LINE__);
 
             return $message;
         }
@@ -195,7 +195,7 @@ class Resource implements Cacheable
                 }
             }
         } catch (\Exception $e) {
-            Resource::getLogger()->exception('error', __FILE__, __LINE__, $e);
+            Logger::getInstance(__CLASS__)->exception('error', __FILE__, __LINE__, $e);
             $data[$message][Request::locale()] = $message;
         }
 

@@ -100,7 +100,7 @@ class Model_Delete extends Action
             ->deleteQuery($input['pk'])
             ->getQueryResult()
             ->getAffectedRows()
-            ? ['success' => Model_Delete::getLogger()->info('Delete successfully', Logger::SUCCESS)]
-            : ['error' => Model_Delete::getLogger()->info('Delete failed', Logger::DANGER)];
+            ? ['success' => $this->getLogger()->info('Delete successfully', Logger::SUCCESS)]
+            : ['error' => $this->getLogger()->info('Delete failed', Logger::DANGER)];
     }
 }

@@ -77,6 +77,8 @@ class Loader
 
         $fileName = self::getFilePath($class, '.php', Module::SOURCE_DIR, $isRequired);
 
+        $logger = Logger::getInstance(__CLASS__);
+
         if (file_exists($fileName)) {
             include_once $fileName;
 
@@ -86,7 +88,7 @@ class Loader
             }
 
             if (!self::$forceLoading && $isRequired) {
-                Loader::getLogger()->exception(
+                $logger->exception(
                     ['File {$0} exists, but class {$1} not found', [$fileName, $class]],
                     __FILE__,
                     __LINE__
@@ -95,7 +97,7 @@ class Loader
         }
 
         if (!self::$forceLoading && $isRequired) {
-            Loader::getLogger()->exception(['Class {$0} not found', $class], __FILE__, __LINE__, null);
+            $logger->exception(['Class {$0} not found', $class], __FILE__, __LINE__, null);
         }
 
         return false;
@@ -181,7 +183,7 @@ class Loader
                     if (self::$forceLoading) {
                         return null;
                     } else {
-                        Loader::getLogger()->exception(
+                        Logger::getInstance(__CLASS__)->exception(
                             ['Files for {$0} not found', $class],
                             __FILE__,
                             __LINE__,

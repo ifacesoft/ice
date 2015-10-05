@@ -51,7 +51,7 @@ class Render_Smarty extends Code_Generator
         $isFileExists = file_exists($filePath);
 
         if (!$force && $isFileExists) {
-            Code_Generator::getLogger()->info(['Template {$0} {$1} already created', ['Smarty', $class]]);
+            $this->getLogger()->info(['Template {$0} {$1} already created', ['Smarty', $class]]);
             return file_get_contents($filePath);
         }
 
@@ -64,7 +64,7 @@ class Render_Smarty extends Code_Generator
             : 'Template {$0} {$1}" created';
 
         if ($isFileExists) {
-            Code_Generator::getLogger()->info([$message, ['Smarty', $class]], Logger::SUCCESS);
+            $this->getLogger()->info([$message, ['Smarty', $class]], Logger::SUCCESS);
         }
 
         return $classString;

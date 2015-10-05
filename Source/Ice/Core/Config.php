@@ -95,13 +95,15 @@ class Config
             $config = array_merge_recursive($coreConfig, $config);
         }
 
+        $logger = Logger::getInstance($class);
+
         if ($baseClass != $class) {
             $baseClassPathes = Loader::getFilePath($baseClass, '.php', Module::CONFIG_DIR, false, false, false, true);
             foreach (array_reverse($baseClassPathes) as $configFilePath) {
                 $configFromFile = File::loadData($configFilePath);
 
                 if (!is_array($configFromFile)) {
-                    Config::getLogger()->exception(['Не валидный файл конфиг: {$0}', $configFilePath], __FILE__, __LINE__);
+                    $logger->exception(['Не валидный файл конфиг: {$0}', $configFilePath], __FILE__, __LINE__);
                 }
                 if (isset($configFromFile[$class])) {
                     $config = array_merge_recursive($configFromFile[$class], $config);
@@ -114,12 +116,12 @@ class Config
             foreach (array_reverse($classPathes) as $configFilePath) {
                 $configFromFile = File::loadData($configFilePath);
                 if (!is_array($configFromFile)) {
-                    Config::getLogger()->exception(['Не валидный файл конфиг: {$0}', $configFilePath], __FILE__, __LINE__);
+                    $logger->exception(['Не валидный файл конфиг: {$0}', $configFilePath], __FILE__, __LINE__);
                 }
                 $config = array_merge_recursive($configFromFile, $config);
             }
         } catch (FileNotFound $e) {
-            Config::getLogger()->exception(
+            $logger->exception(
                 ['Config for {$0} not found', $class],
                 __FILE__,
                 __LINE__,

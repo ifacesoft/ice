@@ -96,7 +96,7 @@ abstract class Query_Translator extends Container
         }
 
         if (empty($body)) {
-            Query_Translator::getLogger()->exception('Query body is empty', __FILE__, __LINE__, null, $sqlParts);
+            Logger::getInstance(__CLASS__)->exception('Query body is empty', __FILE__, __LINE__, null, $sqlParts);
         }
 
         return $body;
