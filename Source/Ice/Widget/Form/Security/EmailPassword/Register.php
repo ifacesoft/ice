@@ -6,8 +6,6 @@ use Ice\Core\Model;
 use Ice\Core\Security_Account;
 use Ice\Core\Widget_Form_Security;
 use Ice\Core\Widget_Form_Security_Register;
-use Ice\Widget\Form;
-use Ice\Widget\Form\Simple;
 
 class Form_Security_EmailPassword_Register extends Widget_Form_Security_Register
 {

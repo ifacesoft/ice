@@ -41,11 +41,11 @@ class Scheme extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'table_name',
-		            'Ice\Widget\Form' => 'Field_Text',
+		            'Ice\Widget\Form_Model' => 'Field_Text',
 		            'Ice\Core\Validator' => [
 		                0 => 'Ice:Not_Null',
 		            ],
-		            'Ice\Widget\Table' => 'text',
+		            'Ice\Widget\Table_Model' => 'text',
 		        ],
 		        'revision' => [
 		            'scheme' => [
@@ -59,11 +59,11 @@ class Scheme extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'revision',
-		            'Ice\Widget\Form' => 'Field_Text',
+		            'Ice\Widget\Form_Model' => 'Field_Text',
 		            'Ice\Core\Validator' => [
 		                0 => 'Ice:Not_Null',
 		            ],
-		            'Ice\Widget\Table' => 'text',
+		            'Ice\Widget\Table_Model' => 'text',
 		        ],
 		        'table__json' => [
 		            'scheme' => [
@@ -77,11 +77,11 @@ class Scheme extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'table__json',
-		            'Ice\Widget\Form' => 'Field_Text',
+		            'Ice\Widget\Form_Model' => 'Field_Text',
 		            'Ice\Core\Validator' => [
 		                0 => 'Ice:Not_Null',
 		            ],
-		            'Ice\Widget\Table' => 'text',
+		            'Ice\Widget\Table_Model' => 'text',
 		        ],
 		        'columns__json' => [
 		            'scheme' => [
@@ -95,11 +95,11 @@ class Scheme extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'columns__json',
-		            'Ice\Widget\Form' => 'Field_Textarea',
+		            'Ice\Widget\Form_Model' => 'Field_Textarea',
 		            'Ice\Core\Validator' => [
 		                0 => 'Ice:Not_Null',
 		            ],
-		            'Ice\Widget\Table' => 'text',
+		            'Ice\Widget\Table_Model' => 'text',
 		        ],
 		        'references__json' => [
 		            'scheme' => [
@@ -113,11 +113,11 @@ class Scheme extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'references__json',
-		            'Ice\Widget\Form' => 'Field_Text',
+		            'Ice\Widget\Form_Model' => 'Field_Text',
 		            'Ice\Core\Validator' => [
 		                0 => 'Ice:Not_Null',
 		            ],
-		            'Ice\Widget\Table' => 'text',
+		            'Ice\Widget\Table_Model' => 'text',
 		        ],
 		        'indexes__json' => [
 		            'scheme' => [
@@ -131,11 +131,11 @@ class Scheme extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'indexes__json',
-		            'Ice\Widget\Form' => 'Field_Text',
+		            'Ice\Widget\Form_Model' => 'Field_Text',
 		            'Ice\Core\Validator' => [
 		                0 => 'Ice:Not_Null',
 		            ],
-		            'Ice\Widget\Table' => 'text',
+		            'Ice\Widget\Table_Model' => 'text',
 		        ],
 		    ],
 		    'indexes' => [

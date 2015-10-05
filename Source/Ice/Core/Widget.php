@@ -569,6 +569,37 @@ abstract class Widget extends Container
         return $this;
     }
 
+    //    /**
+//     * @param array $params
+//     * @return Widget_Data
+//     */
+//    public function bind(array $params)
+//    {
+//        foreach ($params as $key => $value) {
+//
+//            $ascPattern = '/(?:[^\/]+\/)?' . Query_Builder::SQL_ORDERING_ASC . '$/';
+//            $descPattern = '/(?:[^\/]+\/)?' . Query_Builder::SQL_ORDERING_DESC . '$/';
+//
+//            if (preg_match($ascPattern, $value)) {
+//                $value = Query_Builder::SQL_ORDERING_ASC;
+//            } elseif (preg_match($descPattern, $value)) {
+//                $value = Query_Builder::SQL_ORDERING_DESC;
+//            } else {
+//                $value = '';
+//            }
+//
+//            if (isset($this->columns[$key])) {
+//                if (empty($value) && isset($this->columns[$key]['options']['default'])) {
+//                    $value = $this->columns[$key]['options']['default'];
+//                }
+//
+//                $this->bind([$key => $value]);
+//            }
+//        }
+//
+//        return $this;
+//    }
+
     /**
      * Compiled widget parts
      *

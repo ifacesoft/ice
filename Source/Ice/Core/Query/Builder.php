@@ -12,6 +12,7 @@ namespace Ice\Core;
 use Doctrine\Common\Util\Debug;
 use Ice\Core;
 use Ice\Helper\Object;
+use Ice\Widget\Form;
 
 /**
  * Class Query_Builder
@@ -1846,7 +1847,7 @@ class Query_Builder
         $modelTableData = []
     )
     {
-        /** @var Widget_Form $widget */
+        /** @var Form $widget */
         $widget = $this->widgets[$widgetName]->bind([$key => $value]);
 
         $value = $widget->getValue($key);

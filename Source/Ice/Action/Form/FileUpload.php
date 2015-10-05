@@ -77,7 +77,7 @@ class Form_FileUpload extends Action
     {
         if (isset($files['tmp_name'])) {
             if (!$files['size']) {
-                Widget_Form_File_Upload::getLogger()->error(
+                Form_FileUpload::getLogger()->error(
                     [
                         'File {$0} is empty (size 0). Check php directives post_max_size and upload_max_filesize',
                         basename($files['name'])

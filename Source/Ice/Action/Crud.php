@@ -89,7 +89,7 @@ class Crud extends Action
          */
         $modelClass = Model::getClass($input['modelClassName']);
 
-        $tableData = $modelClass::getTableData(Request::uri(true), __CLASS__);
+        $tableData = $modelClass::getWidgetTable(Request::uri(true), __CLASS__);
         $paginationMenu = Pagination::create(Request::uri(true), __CLASS__);
 
         $modelClass::createQueryBuilder()

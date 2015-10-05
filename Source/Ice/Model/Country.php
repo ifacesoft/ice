@@ -37,9 +37,9 @@ class Country extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'country_pk',
-		            'Ice\\Core\\Widget_Form' => 'Field_Number',
-		            'Ice\\Core\\Validator' => [],
-		            'Ice\\Core\\Widget_Data' => 'text',
+		            'Ice\Widget\Form_Model' => 'Field_Number',
+		            'Ice\Core\Validator' => [],
+		            'Ice\Widget\Table_Model' => 'text',
 		        ],
 		        'country_name' => [
 		            'scheme' => [
@@ -53,9 +53,9 @@ class Country extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'country_name',
-		            'Ice\\Core\\Widget_Form' => 'Field_Text',
-		            'Ice\\Core\\Validator' => [],
-		            'Ice\\Core\\Widget_Data' => 'text',
+		            'Ice\Widget\Form_Model' => 'Field_Text',
+		            'Ice\Core\Validator' => [],
+		            'Ice\Widget\Table_Model' => 'text',
 		        ],
 		    ],
 		    'indexes' => [

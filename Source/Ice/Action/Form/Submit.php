@@ -16,7 +16,7 @@ use Ice\Core\Widget;
 use Ice\Widget\Form;
 
 /**
- * class Widget_Form_Submit
+ * class Form_Submit
  *
  * Action submit model form
  *

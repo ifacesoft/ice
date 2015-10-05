@@ -72,13 +72,13 @@ return [
             'Ice\Core\Widget_Scope' => [
                 'instance' => 'Ice:Repository',
             ],
-            'Ice\Widget\Form' => [
+            'Ice\Widget\Form_Model' => [
                 'instance' => 'Ice:Repository',
             ],
             'Ice\Core\Widget_Menu' => [
                 'instance' => 'Ice:Repository',
             ],
-            'Ice\Widget\Table' => [
+            'Ice\Widget\Table_Model' => [
                 'instance' => 'Ice:Repository',
             ],
             'Ice\Core\Container' => [
@@ -171,13 +171,13 @@ return [
             'Ice\Core\Widget_Scope' => [
                 'instance' => 'Ice:File',
             ],
-            'Ice\Widget\Form' => [
+            'Ice\Widget\Form_Model' => [
                 'instance' => 'Ice:File',
             ],
             'Ice\Core\Widget_Menu' => [
                 'instance' => 'Ice:File',
             ],
-            'Ice\Widget\Table' => [
+            'Ice\Widget\Table_Model' => [
                 'instance' => 'Ice:File',
             ],
             'Ice\Core\Container' => [
@@ -270,13 +270,13 @@ return [
             'Ice\Core\Widget_Scope' => [
                 'instance' => 'Ice:Registry',
             ],
-            'Ice\Widget\Form' => [
+            'Ice\Widget\Form_Model' => [
                 'instance' => 'Ice:Registry',
             ],
             'Ice\Core\Widget_Menu' => [
                 'instance' => 'Ice:Registry',
             ],
-            'Ice\Widget\Table' => [
+            'Ice\Widget\Table_Model' => [
                 'instance' => 'Ice:Registry',
             ],
             'Ice\Core\Container' => [

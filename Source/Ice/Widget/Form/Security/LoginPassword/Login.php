@@ -110,6 +110,6 @@ class Form_Security_LoginPassword_Login extends Widget_Form_Security_Login
      */
     protected function verify(Security_Account $account, $values)
     {
-        return md5($values['password']) == $account->get('password');
+        return md5($values['password']) === $account->get('password');
     }
 }

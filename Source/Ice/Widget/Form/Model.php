@@ -11,49 +11,38 @@ namespace Ice\Widget;
 
 use Ice\Core\Model as Core_Model;
 use Ice\Core\Validator;
-use Ice\Core\Widget_Form;
 
 /**
  * Class Model
  *
  * Binds forms and submit data for model objects
  *
- * @see Ice\Core\Widget_Form
+ * @see Ice\Widget\Form
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
  * @package    Ice
- * @subpackage Widget_Form
+ * @subpackage Widget
  */
 class Form_Model extends Form
 {
-    protected static function config()
-    {
-        return [
-            'render' => ['template' => true, 'class' => 'Ice:Php', 'layout' => null, 'resource' => null],
-            'input' => [],
-            'access' => ['roles' => [], 'request' => null, 'env' => null]
-        ];
-    }
-
     /**
      * Field type map
      *
      * @var array
      */
     public static $typeMap = [
-        'int' => Widget_Form::FIELD_NUMBER,
-        'varchar' => Widget_Form::FIELD_TEXT,
-        'datetime' => Widget_Form::FIELD_DATE,
-        'timestamp' => Widget_Form::FIELD_DATE,
-        'tinyint' => Widget_Form::FIELD_CHECKBOX,
-        'point' => Widget_Form::FIELD_MAP,
-        'bigint' => Widget_Form::FIELD_NUMBER,
-        'text' => Widget_Form::FIELD_TEXTAREA,
-        'double' => Widget_Form::FIELD_TEXT,
-        'longtext' => Widget_Form::FIELD_TEXT
+        'int' => Form::FIELD_NUMBER,
+        'varchar' => Form::FIELD_TEXT,
+        'datetime' => Form::FIELD_DATE,
+        'timestamp' => Form::FIELD_DATE,
+        'tinyint' => Form::FIELD_CHECKBOX,
+        'point' => Form::FIELD_MAP,
+        'bigint' => Form::FIELD_NUMBER,
+        'text' => Form::FIELD_TEXTAREA,
+        'double' => Form::FIELD_TEXT,
+        'longtext' => Form::FIELD_TEXT
     ];
-
 
     /**
      * Constructor for model forms
@@ -74,7 +63,7 @@ class Form_Model extends Form
 
         $pkFieldNames = $modelClass::getScheme()->getPkFieldNames();
 
-        foreach ($modelClass::getPlugin(Widget_Form::getClass()) as $fieldName => $fieldType) {
+        foreach ($modelClass::getPlugin(__CLASS__) as $fieldName => $fieldType) {
             $this->$fieldType(
                 $fieldName,
                 $modelClass::getFieldTitle($fieldName),
@@ -91,7 +80,7 @@ class Form_Model extends Form
     //     * Binds all model field values
     //     *
     //     * @param Core_Model $model
-    //     * @return Widget_Form_Model
+    //     * @return Form_Model
     //     *
     //     * @author dp <denis.a.shestakov@gmail.com>
     //     *
@@ -128,5 +117,49 @@ class Form_Model extends Form
         /** @var Core_Model $modelClass */
         $modelClass = $this->getValues();
         $modelClass::create($this->validate())->save(true);
+    }
+
+    /**
+     * Widget config
+     *
+     * @return array
+     *
+     *  protected static function config()
+     *  {
+     *      return [
+     *          'render' => ['template' => null, 'class' => 'Ice:Php', 'layout' => null, 'resource' => null],
+     *          'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'Widget: Access denied!'],
+     *          'cache' => ['ttl' => -1, 'count' => 1000],
+     *          'input' => [],
+     *          'output' => [],
+     *          'action' => [
+     *          //  'class' => 'Ice:Render',
+     *          //  'params' => [
+     *          //      'widgets' => [
+     *          ////        'Widget_id' => Widget::class
+     *          //      ]
+     *          //  ],
+     *          //  'url' => true,
+     *          //  'method' => 'POST',
+     *          //  'callback' => null
+     *          ]
+     *      ];
+     *  }
+     *
+     * /** Build widget
+     *
+     * @param array $input
+     * @return array
+     */
+    protected function build(array $input)
+    {
+        // TODO: Implement build() method.
+    }
+
+    public static function schemeColumnPlugin($columnName, $table)
+    {
+        return isset(Form_Model::$typeMap[$table['columns'][$columnName]['scheme']['dataType']])
+            ? Form_Model::$typeMap[$table['columns'][$columnName]['scheme']['dataType']]
+            : 'text';
     }
 }

@@ -39,9 +39,9 @@ class City extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'city_pk',
-		            'Ice\\Core\\Widget_Form' => 'Field_Number',
-		            'Ice\\Core\\Validator' => [],
-		            'Ice\\Core\\Widget_Data' => 'text',
+		            'Ice\Widget\Form_Model' => 'Field_Number',
+		            'Ice\Core\Validator' => [],
+		            'Ice\Widget\Table_Model' => 'text',
 		        ],
 		        'city_name' => [
 		            'scheme' => [
@@ -55,9 +55,9 @@ class City extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'city_name',
-		            'Ice\\Core\\Widget_Form' => 'Field_Text',
-		            'Ice\\Core\\Validator' => [],
-		            'Ice\\Core\\Widget_Data' => 'text',
+		            'Ice\Widget\Form_Model' => 'Field_Text',
+		            'Ice\Core\Validator' => [],
+		            'Ice\Widget\Table_Model' => 'text',
 		        ],
 		        'city_short' => [
 		            'scheme' => [
@@ -71,9 +71,9 @@ class City extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'city_short',
-		            'Ice\\Core\\Widget_Form' => 'Field_Text',
-		            'Ice\\Core\\Validator' => [],
-		            'Ice\\Core\\Widget_Data' => 'text',
+		            'Ice\Widget\Form_Model' => 'Field_Text',
+		            'Ice\Core\Validator' => [],
+		            'Ice\Widget\Table_Model' => 'text',
 		        ],
 		        'country__fk' => [
 		            'scheme' => [
@@ -87,9 +87,9 @@ class City extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'country__fk',
-		            'Ice\\Core\\Widget_Form' => 'Field_Number',
-		            'Ice\\Core\\Validator' => [],
-		            'Ice\\Core\\Widget_Data' => 'text',
+		            'Ice\Widget\Form_Model' => 'Field_Number',
+		            'Ice\Core\Validator' => [],
+		            'Ice\Widget\Table_Model' => 'text',
 		        ],
 		    ],
 		    'indexes' => [
