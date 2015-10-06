@@ -146,7 +146,7 @@ abstract class Data_Source extends Container
     }
 
     protected function init(array $params) {
-        list($key, $scheme) = explode('.', $params['instanceKey']);
+        list($key, $scheme) = explode('.', $this->getInstanceKey());
 
         $this->key = $key;
         $this->scheme = $scheme;

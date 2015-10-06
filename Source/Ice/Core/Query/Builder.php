@@ -11,6 +11,7 @@ namespace Ice\Core;
 
 use Doctrine\Common\Util\Debug;
 use Ice\Core;
+use Ice\Exception\Error;
 use Ice\Helper\Object;
 use Ice\Widget\Form;
 
@@ -857,9 +858,11 @@ class Query_Builder
 
         if (!$condition) {
             $joins = array_merge(
-                [$this->getTableAlias() => [
-                    'type' => 'FROM',
-                    'class' => $this->getModelClass()]
+                [
+                    $this->getTableAlias() => [
+                        'type' => 'FROM',
+                        'class' => $this->getModelClass()
+                    ]
                 ],
                 $this->sqlParts[self::PART_JOIN]
             );
@@ -917,6 +920,10 @@ class Query_Builder
         }
 
         foreach ($joins as $joinTableAlias => $join) {
+            if (!isset($join['class'])) {
+                throw new Error('Unknown how join table in query', ['builder' => $this, 'join' => $join]);
+            }
+
             $joinModelScheme = $join['class']::getScheme();
 
             $oneToMany = $joinModelScheme->gets('relations/' . Model_Scheme::ONE_TO_MANY);
@@ -956,17 +963,29 @@ class Query_Builder
             $manyToMany = $joinModelScheme->gets('relations/' . Model_Scheme::MANY_TO_MANY);
 
             if (isset($manyToMany[$modelClass])) {
-                return $this->addJoin(
-                    $joinType,
-                    $manyToMany[$modelClass],
-                    Object::getClassName($manyToMany[$modelClass]),
-                    [$joinTableAlias => $join]
-                ) && $this->addJoin(
-                    Query_Builder::SQL_CLAUSE_INNER_JOIN,
-                    $modelClass,
-                    $tableAlias,
-                    [Object::getClassName($manyToMany[$modelClass]) => $manyToMany[$modelClass]]
-                );
+
+                $joinClass = $manyToMany[$modelClass];
+                $joinAlias = Object::getClassName($manyToMany[$modelClass]);
+
+                $joinColumn = $joinModelScheme->get('relations/' . Model_Scheme::MANY_TO_ONE . '/' . $joinClass);
+
+                $this->sqlParts[self::PART_JOIN][$joinAlias] = [
+                    'type' => $joinType,
+                    'class' => $joinClass,
+                    'on' => $joinAlias . '.' . $joinColumn . ' = ' .
+                        $joinTableAlias . '.' . $join['class']::getPkColumnName()
+                ];
+
+                $joinColumn2 = $modelClass::getScheme()->get('relations/' . Model_Scheme::MANY_TO_ONE . '/' . $joinClass);
+
+                $this->sqlParts[self::PART_JOIN][$tableAlias] = [
+                    'type' => Query_Builder::SQL_CLAUSE_INNER_JOIN,
+                    'class' => $modelClass,
+                    'on' => $tableAlias . '.' . $modelClass::getPkColumnName() . ' = ' .
+                        $joinAlias . '.' . $joinColumn2
+                ];
+
+                return true;
             }
         }
 
@@ -1742,7 +1761,7 @@ class Query_Builder
     }
 
     /**
-     * @param $widgets
+     * @param Widget[] $widgets
      * @return Query_Builder
      */
     public function attachWidgets($widgets)
@@ -1752,7 +1771,7 @@ class Query_Builder
         }
 
         foreach ($widgets as $widget) {
-            $widget->queryBuilderPart($this);
+            $widget->queryBuilderPart($this, $widget->getValues());
             $this->widgets[] = $widget;
         }
 

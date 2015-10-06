@@ -88,9 +88,16 @@ abstract class Widget extends Container
 
     protected function init(array $params)
     {
-        $this->values = Input::get(self::getClass());
         $this->token = crc32(String::getRandomString());
+
+       if (isset($params['parentWidgetId'])) {
+           $this->parentWidgetId = $params['parentWidgetId'];
+           unset($params['parentWidgetId']);
+       }
+
+        $this->bind(array_merge(Input::get(self::getClass()), $params));
         $this->output = (array)$this->build($this->values);
+
     }
 
     /**
@@ -202,11 +209,11 @@ abstract class Widget extends Container
         }
     }
 
-    public function queryBuilderPart(Query_Builder $queryBuilder)
+    public function queryBuilderPart(Query_Builder $queryBuilder, array $input)
     {
         foreach ($this->getParts() as $part) {
             if (isset($part['options']['widget'])) {
-                $part['options']['widget']->queryBuilderPart($queryBuilder);
+                $part['options']['widget']->queryBuilderPart($queryBuilder, $input);
             }
         }
     }
@@ -868,8 +875,17 @@ abstract class Widget extends Container
      */
     protected function widget($name, array $options = [], $template = 'Ice\Widget\Widget')
     {
-        $options['widget'] = $this->getWidget($options['widget']);
-        $options['widget']->setParentWidgetId($this->getId());
+        if (empty($options['postfix'])) {
+            $options['postfix'] = null;
+        }
+
+        if (empty($options['params'])) {
+            $options['params'] = [];
+        }
+
+        $options['params']['parentWidgetId'] = $this->getId();
+
+        $options['widget'] = $this->getWidget($options['widget'], $options['postfix'], $options['params']);
 
         if (!$options['widget']->getResource()) {
             $options['widget']->setResource($this->getResource());
@@ -902,9 +918,11 @@ abstract class Widget extends Container
 
     /**
      * @param string $widgetClass
+     * @param null $postfixKey
+     * @param array $params
      * @return Widget
      */
-    protected function getWidget($widgetClass, $postfixKey = null)
+    protected function getWidget($widgetClass, $postfixKey = null, array $params = [])
     {
         if (is_object($widgetClass)) {
             return $widgetClass;
@@ -914,7 +932,7 @@ abstract class Widget extends Container
 
         $key = strtolower(Object::getClassName(get_class($this))) . (empty($postfixKey) ? '' : '_' . $postfixKey);
 
-        return $widgetClass::getInstance($key);
+        return $widgetClass::getInstance($key, null, $params);
     }
 
     /**

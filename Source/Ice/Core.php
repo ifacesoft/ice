@@ -130,7 +130,7 @@ trait Core
             ? $baseClass
             : $baseClass . '_' . self::getClassName();
 
-        return Code_Generator::getInstance($codeGeneratorClass . '/' . Object::getClass($baseClass, $class));
+        return Code_Generator::getInstance($codeGeneratorClass . '/' . $class);
     }
 
     /**

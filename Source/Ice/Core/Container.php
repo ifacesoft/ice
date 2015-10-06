@@ -171,6 +171,7 @@ abstract class Container
         $object = new $class();
 
         $object->instanceKey = $params['instanceKey'];
+        unset($params['instanceKey']);
 
         $object->init($params);
 
