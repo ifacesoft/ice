@@ -9,6 +9,7 @@
 
 namespace Ice\Data\Provider;
 
+use Ice\Core\Action;
 use Ice\Core\Config;
 use Ice\Core\Data_Provider;
 use Ice\Core\Debuger;
@@ -247,7 +248,7 @@ class Router extends Data_Provider
             $baseMatches[0][] = '';
         }
 
-        $route['routeParams'] = array_combine(array_keys($route['params']), array_slice($baseMatches[0], 1));
+        $route['routeParams'] += array_combine(array_keys($route['params']), array_slice($baseMatches[0], 1));
 
         return (bool)$connection = $dataProvider->set($key, $route);
     }
@@ -319,11 +320,12 @@ class Router extends Data_Provider
                     'params' => $route->gets('params'),
                     'url' => $url,
                     'method' => $method,
-                    'redirect' => $redirect
+                    'redirect' => $redirect,
+                    'routeParams' => (array) $route->gets('request/' . $method, false)
                 ];
             }
 
-            if (!count($route->gets('request/' . $method, false))) {
+            if (empty($matchedRoutes[$weight]['routeParams'])) {
                 continue;
             }
 

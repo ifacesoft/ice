@@ -67,12 +67,8 @@ abstract class Action implements Cacheable
      */
     private $ttl = null;
 
-    /**
-     * Action view
-     *
-     * @var ViiewOld
-     */
-    private $view = null;
+
+    private $result = null;
 
     /**
      * Private constructor of action
@@ -148,18 +144,21 @@ abstract class Action implements Cacheable
         $action = null;
 
         if (isset($actionCacher) && $action = $actionCacher->get($actionHash)) {
-            return $action->getView();
+            return $action->result;
         }
 
         $action = $actionClass::create();
 
         $action->setInput($input);
 
-        $output = (array)$action->run($input);
+        $action->result = (array)$action->run($input);
 
-        Profiler::setPoint($actionClass . ' ' . $hash, $startTime, $startMemory);
-        Logger::fb($input, 'action - ' . $actionClass . ' start', 'INFO');
-        Logger::fb(Profiler::getReport($actionClass . ' ' . $hash), 'action finish', 'INFO');
+        $key = 'run - ' . $actionClass . '/' . $hash;
+
+        Profiler::setPoint($key, $startTime, $startMemory);
+
+        Logger::fb($input, 'action: call ' . $actionClass . '/' . $hash, 'INFO');
+        Logger::fb(Profiler::getReport($key), 'action', 'INFO');
         //            if ($content = $actionContext->getContent()) {
         //                App::getContext()->setContent(null);
         //                return $content;
@@ -185,10 +184,10 @@ abstract class Action implements Cacheable
                  */
                 list($subActionClass, $subActionParams) = each($actionItem);
 
-                $subView = null;
+                $result = [];
 
                 try {
-                    $subView = $subActionClass::call($subActionParams, $newLevel)->getContent();
+                    $result = $subActionClass::call($subActionParams, $newLevel);
                 } catch (Redirect $e) {
                     throw $e;
                 } catch (Http_Bad_Request $e) {
@@ -196,9 +195,9 @@ abstract class Action implements Cacheable
                 } catch (Http_Not_Found $e) {
                     throw $e;
                 } catch (Access_Denied $e) {
-                    $subView = ViiewOld::create($actionClass);
+                    $result = [];
                 } catch (\Exception $e) {
-                    $subView = $logger->error(
+                    $result['error'] = $logger->error(
                         ['Calling subAction "{$0}" in action "{$1}" failed', [$subActionClass, $actionClass]],
                         __FILE__,
                         __LINE__,
@@ -206,15 +205,11 @@ abstract class Action implements Cacheable
                     );
                 }
 
-                $output[$actionKey][] = $subView;
+                $action->result[$actionKey][] = $result;
             }
         }
 
         Profiler::setPoint('Action ' . $actionClass . ' (childs)', $startTimeAfter, $startMemoryAfter);
-
-        $action->setOutput($output);
-
-        $action->getView()->render();
 
         if (isset($actionCacher)) {
             $actionCacher->set($actionHash, $action, $action->getTtl());
@@ -227,7 +222,7 @@ abstract class Action implements Cacheable
             );
         }
 
-        return $action->getView();
+        return $action->result;
     }
 
     private static function checkResponse(&$input)
@@ -337,7 +332,6 @@ abstract class Action implements Cacheable
     public function setInput($input)
     {
         $this->initActions($input);
-        $this->initView($input);
         $this->initTtl($input);
 
         $this->input = $input;
@@ -363,49 +357,6 @@ abstract class Action implements Cacheable
         $this->actions[] = $action;
     }
 
-    private function initView(&$input)
-    {
-        /**
-         * @var Action $actionClass
-         */
-        $actionClass = get_class($this);
-
-        $view = $this->getView();
-
-        if (array_key_exists('template', $input)) {
-            $view->setTemplate($input['template']);
-            unset($input['template']);
-        } else {
-            $view->setTemplate($actionClass::getConfig()->get('view/template', false));
-        }
-
-        if (array_key_exists('viewRenderClass', $input)) {
-            $view->setViewRenderClass($input['viewRenderClass']);
-            unset($input['viewRenderClass']);
-        } else {
-            $view->setViewRenderClass($actionClass::getConfig()->get('view/viewRenderClass', false));
-        }
-
-        if (array_key_exists('layout', $input)) {
-            $view->setLayout($input['layout']);
-            unset($input['layout']);
-        } else {
-            $view->setLayout($actionClass::getConfig()->get('view/layout', false));
-        }
-    }
-
-    /**
-     * @return ViiewOld
-     */
-    public function getView()
-    {
-        if ($this->view) {
-            return $this->view;
-        }
-
-        return $this->view = ViiewOld::create(get_class($this));
-    }
-
     private function initTtl(&$input)
     {
         if (isset($input['ttl'])) {
@@ -424,7 +375,6 @@ abstract class Action implements Cacheable
      *  protected static function config()
      *  {
      *      return [
-     *          'view' => ['template' => null, 'viewRenderClass' => 'Ice:Php', 'layout' => true],
      *          'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'Action: Access denied!'],
      *          'cache' => ['ttl' => -1, 'count' => 1000],
      *          'actions' => [],

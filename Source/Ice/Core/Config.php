@@ -113,6 +113,7 @@ class Config
 
         try {
             $classPathes = Loader::getFilePath($class, '.php', Module::CONFIG_DIR, $isRequired, false, false, true);
+
             foreach (array_reverse($classPathes) as $configFilePath) {
                 $configFromFile = File::loadData($configFilePath);
                 if (!is_array($configFromFile)) {

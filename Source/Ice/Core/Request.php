@@ -266,6 +266,10 @@ class Request
                 'Access-Control-Allow-Headers: ' . implode(', ', $cors[$_SERVER['HTTP_ORIGIN']]['headers'])
             );
         }
+
+        if (Request::isOptions()) {
+            exit;
+        }
     }
 
     public static function isOptions()

@@ -10,8 +10,6 @@ abstract class Security extends Container
 {
     use Core;
 
-    private static $defaultClassKey = null;
-
     public static function checkAccess($roles, $message)
     {
         if (!$roles || Security::getInstance()->check((array)$roles)) {
@@ -68,19 +66,12 @@ abstract class Security extends Container
 
     protected function init(array $params)
     {
-        if (Security::$defaultClassKey === null) {
-            Security::$defaultClassKey = get_class($this);
-
-            $this->autologin();
-            return;
-        }
-
-        throw new Error('Security already initialized');
+        $this->autologin();
     }
 
     protected static function getDefaultClassKey()
     {
-        return Security::$defaultClassKey;
+        return Module::getInstance()->get('securityClass');
     }
 
     protected static function getDefaultKey()

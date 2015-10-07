@@ -4,18 +4,19 @@ namespace Ice\Core;
 use Ice\Exception\Access_Denied;
 use Ice\Helper\Access;
 use Ice\Helper\Arrays;
-use Ice\Helper\Emmet;
 use Ice\Helper\Input;
 use Ice\Helper\Json;
 use Ice\Helper\Object;
 use Ice\Helper\String;
 use Ice\Render\Php;
 use Ice\Render\Replace;
+use Ice\Widget\Resource_Dynamic;
+use Ice\Action\Render as Core_Render;
 
 abstract class Widget extends Container
 {
     use Stored;
-    use Rendered;
+    use Configured;
 
     /**
      * @var array rows of values
@@ -86,18 +87,164 @@ abstract class Widget extends Container
         'input' => []
     ];
 
+    private $resource = null;
+    private $template = null;
+
+    /**
+     * @param string $attributes
+     * @param bool|false $force
+     * @return string|null
+     */
+    public function getLayout($attributes = '', $force = false)
+    {
+        $layout = null;
+
+        /** @var Configured $class */
+        $class = get_called_class();
+
+        if (!$force) {
+            $layout = $class::getConfig()->get('render/layout');
+        }
+
+        if (!$layout) {
+            return null;
+        }
+
+        if ($layout === true) {
+            return 'div.' . Object::getClassName($class) . $attributes;
+        }
+
+        if ($layout[0] == '_') {
+            return 'div.' . Object::getClassName($class) . $layout . $attributes;
+        }
+
+        return $layout;
+    }
+
+    /**
+     * @return string|null
+     */
+    private function getTemplate()
+    {
+        if ($this->template !== null) {
+            return $this->template;
+        }
+
+        /** @var Widget $widgetClass */
+        $widgetClass = get_class($this);
+
+        return $this->setTemplate($widgetClass::getConfig()->get('render/template'));
+    }
+
+    /**
+     * @param string $template
+     * @return null|string
+     */
+    public function setTemplate($template)
+    {
+        if (empty($template)) {
+            return $this->template = $template === '' ? 'Ice\Widget\Blank' : 'Ice\Widget\Default';
+        }
+
+        if ($template === true) {
+            return $this->template = get_class($this);
+        }
+
+        if ($template[0] == '_') {
+            return $this->template = get_class($this) . $template;
+        }
+
+        return $this->template = $template;
+    }
+
+    /**
+     * @param bool|false $force
+     * @return Render
+     */
+    public function getRender($force = false)
+    {
+        $render = null;
+
+        /** @var Configured $class */
+        $class = get_called_class();
+
+        if (!$force) {
+            $render = $class::getConfig()->get('render/class');
+        }
+
+        if (!$render || $render === true) {
+            $render = Config::getInstance(Render::getClass())->get('default');
+        }
+
+        /** @var Render $renderClass */
+        $renderClass = Render::getClass($render);
+
+        return $renderClass::getInstance();
+    }
+
+    public function setResource($resource, $force = false)
+    {
+        if ($resource instanceof Resource) {
+            return $this->resource = $resource;
+        }
+
+        /** @var Configured $class */
+        $class = get_called_class();
+
+        if (!$resource && !$force) {
+            $resource = $class::getConfig()->get('render/resource');
+        }
+
+        if (!$resource) {
+            return null;
+        }
+
+        if ($resource === true || (is_array($resource) && !isset($resource['class']))) {
+            $resource = $class;
+        }
+
+        if (is_array($resource)) {
+            $resource = $resource['class'];
+        }
+
+        return $this->resource = Resource::create($resource);
+    }
+
+    /**
+     * @param null $resource
+     * @param bool|false $force
+     * @return Resource
+     */
+    public function getResource($resource = null, $force = false)
+    {
+        if (!$force && $this->resource !== null) {
+            return $this->resource;
+        }
+
+        return $this->setResource($resource);
+    }
+
     protected function init(array $params)
     {
         $this->token = crc32(String::getRandomString());
 
-       if (isset($params['parentWidgetId'])) {
-           $this->parentWidgetId = $params['parentWidgetId'];
-           unset($params['parentWidgetId']);
-       }
+        if (isset($params['parentWidgetId'])) {
+            $this->parentWidgetId = $params['parentWidgetId'];
+            unset($params['parentWidgetId']);
+        }
 
-        $this->bind(array_merge(Input::get(self::getClass()), $params));
+        $this->bind(Input::get(get_class($this), $params));
+        $this->loadResource();
+        $startTime = Profiler::getMicrotime();
+        $startMemory = Profiler::getMemoryGetUsage();
+
         $this->output = (array)$this->build($this->values);
 
+        $key = 'build - ' . get_class($this) . '/' . $this->getInstanceKey();
+
+        Profiler::setPoint($key, $startTime, $startMemory);
+
+        Logger::fb(Profiler::getReport($key), 'widget', 'INFO');
     }
 
     /**
@@ -110,6 +257,7 @@ abstract class Widget extends Container
      *      return [
      *          'render' => ['template' => null, 'class' => 'Ice:Php', 'layout' => null, 'resource' => null],
      *          'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'Widget: Access denied!'],
+     *          'resource' => ['js' => null, 'css' => null, 'less' => null, 'img' => null],
      *          'cache' => ['ttl' => -1, 'count' => 1000],
      *          'input' => [],
      *          'output' => [],
@@ -296,6 +444,10 @@ abstract class Widget extends Container
 
                 if (isset($part['options']['params'])) {
                     foreach ((array)$part['options']['params'] as $key => $param) {
+                        if (is_array($param)) {
+                            $param = Json::encode($param);
+                        }
+
                         if (is_int($key)) {
                             $params[$param] = $values[$param];
                         } else {
@@ -323,7 +475,7 @@ abstract class Widget extends Container
                     }
 
                     if (!array_key_exists('href', $part['options'])) {
-                        $part['options']['href'] = $this->getFullUrl(Router::getInstance()->getUrl($routeName, $routeParams));
+                        $part['options']['href'] = Router::getInstance()->getUrl($routeName, $routeParams);
                     }
 
                     if (!array_key_exists('active', $part['options'])) {
@@ -344,7 +496,7 @@ abstract class Widget extends Container
                                 : $part['label'];
 
                             $part['options']['label'] =
-                                Replace::getInstance()->fetch($template, $params, Render::TEMPLATE_TYPE_STRING);
+                                Replace::getInstance()->fetch($template, $params, null, Render::TEMPLATE_TYPE_STRING);
                         } else {
                             $part['label'] = $part['name'];
 
@@ -430,19 +582,23 @@ abstract class Widget extends Container
 
     public function render()
     {
-        /** @var Widget $widgetClass */
-        $widgetClass = get_class($this);
+        $startTime = Profiler::getMicrotime();
+        $startMemory = Profiler::getMemoryGetUsage();
 
-        $template = $widgetClass::getTemplate();
+        $result = $this->getRender()
+            ->fetch(
+                $this->getTemplate(),
+                $this->getCompiledResult(),
+                $this->getLayout()
+            );
 
-        $widgetContent = $widgetClass::getRender()
-            ->fetch($template, $this->getCompiledResult());
+        $key = 'render - ' . get_class($this) . '/' . $this->getInstanceKey();
 
-        $layout = $widgetClass::getLayout();
+        Profiler::setPoint($key, $startTime, $startMemory);
 
-        return $layout
-            ? Emmet::translate($layout . '{{$widgetContent}}', ['widgetContent' => $widgetContent])
-            : $widgetContent;
+        Logger::fb(Profiler::getReport($key), 'widget', 'INFO');
+
+        return $result;
     }
 
     public function getDataParams()
@@ -537,7 +693,7 @@ abstract class Widget extends Container
                 if ($dataAction === true) {
                     if (empty($this->getDataAction())) {
                         $dataAction = [
-                            'class' => Render::class,
+                            'class' => Core_Render::class,
                             'params' => ['widgets' => [$this->getInstanceKey() => get_class($this)]],
                             'url' => Request::uri(true),
                             'method' => 'GET',
@@ -768,6 +924,32 @@ abstract class Widget extends Container
     }
 
     /**
+     * Build p part
+     *
+     * @param  $columnName
+     * @param  array $options
+     * @param  string $template
+     * @return $this
+     */
+    public function p($columnName, array $options = [], $template = 'Ice\Widget\P')
+    {
+        return $this->addPart($columnName, $options, $template, __FUNCTION__);
+    }
+
+    /**
+     * Build p part
+     *
+     * @param  $columnName
+     * @param  array $options
+     * @param  string $template
+     * @return $this
+     */
+    public function text($columnName, array $options = [], $template = 'Ice\Widget\Text')
+    {
+        return $this->addPart($columnName, $options, $template, __FUNCTION__);
+    }
+
+    /**
      * Build img part
      *
      * @param  $columnName
@@ -810,7 +992,6 @@ abstract class Widget extends Container
 
         return Widget_Scope::getInstance($widgetClass)->$scope($this, $data);
     }
-
 
     /**
      * @param string $redirect
@@ -983,5 +1164,34 @@ abstract class Widget extends Container
         $this->dataAction = $dataAction;
 
         return $this->dataAction;
+    }
+
+    private function loadResource()
+    {
+        /** @var Widget $widgetClass */
+        $widgetClass = get_class($this);
+
+        if ($widgetClass == Resource_Dynamic::getClass()) {
+            return;
+        }
+
+        if ($widgetClass::getConfig()->get('resource/js') === true) {
+            $this->getResourceDynamic()->addResource($widgetClass, 'js');
+        }
+
+        if ($widgetClass::getConfig()->get('resource/css') === true) {
+            $this->getResourceDynamic()->addResource($widgetClass, 'css');
+        }
+
+        if ($widgetClass::getConfig()->get('resource/less') === true) {
+            $this->getResourceDynamic()->addResource($widgetClass, 'less');
+        }
+    }
+
+    /**
+     * @return Resource_Dynamic
+     */
+    private function getResourceDynamic() {
+        return Resource_Dynamic::getInstance(null);
     }
 }

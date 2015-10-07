@@ -16,6 +16,7 @@ use Ice\Core\Logger;
 use Ice\Core\Module;
 use Ice\Core\ViiewOld;
 use Ice\Core\Render;
+use Ice\Helper\Emmet;
 
 /**
  * Class Php
@@ -57,17 +58,18 @@ class Php extends Render
     /**
      * Render view via current view render
      *
-     * @param $template
+     * @param string $template
      * @param  array $data
+     * @param null $layout
      * @param string $templateType
      * @return mixed
      * @throws \Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 2.0
      * @since   0.0
      */
-    public function fetch($template, array $data = [], $templateType = Render::TEMPLATE_TYPE_FILE)
+    public function fetch($template, array $data = [], $layout = null, $templateType = Render::TEMPLATE_TYPE_FILE)
     {
         if (empty($template)) {
             throw new \Exception('Template is empty');
@@ -102,7 +104,10 @@ class Php extends Render
         unset($data);
 
         include $templateFilePath;
-        return ob_get_clean();
+
+        return $layout
+            ? Emmet::translate($layout . '{{$content}}', ['content' => ob_get_clean()])
+            : ob_get_clean();
     }
 
 

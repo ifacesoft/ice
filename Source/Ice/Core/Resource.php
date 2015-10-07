@@ -99,6 +99,7 @@ class Resource implements Cacheable
             Replace::getInstance()->fetch(
                 $this->resource[$message][$locale],
                 (array)$params,
+                null,
                 Render::TEMPLATE_TYPE_STRING
             )
         );

@@ -11,9 +11,11 @@ namespace Ice\Action;
 
 use CSSmin;
 use Ice\Core\Action;
+use Ice\Core\Debuger;
 use Ice\Core\Module;
 use Ice\Helper\Arrays;
 use Ice\Helper\Directory;
+use Ice\Helper\File;
 
 /**
  * Class Title
@@ -56,7 +58,7 @@ class Resource_Css extends Action
     public function run(array $input)
     {
         $resources = [];
-
+        $cache = [];
         $compiledResourceDir = Module::getInstance()->get('compiledResourceDir');
 
         foreach (array_keys(Module::getAll()) as $name) {
@@ -105,9 +107,7 @@ class Resource_Css extends Action
             }
         }
 
-        $this->pack($resources);
-
-        return ['css' => array_unique(Arrays::column($resources, 'url'))];
+        return $this->pack($resources);
     }
 
     /**
@@ -129,6 +129,8 @@ class Resource_Css extends Action
 
         $CSSmin = new CSSMin();
 
+        $cache = [];
+
         foreach ($resources as $resource) {
             if (!isset($handlers[$resource['resource']])) {
                 Directory::get(dirname($resource['resource']));
@@ -147,6 +149,12 @@ class Resource_Css extends Action
                 $handlers[$resource['resource']],
                 '/* ' . str_replace(dirname(MODULE_DIR), '', $resource['source']) . " */\n" . $pack . "\n\n\n"
             );
+
+            if (!isset($cache[$resource['url']])) {
+                $cache[$resource['url']] = [];
+            }
+
+            $cache[$resource['url']][] = $resource['source'];
         }
 
         foreach ($handlers as $filePath => $handler) {
@@ -157,5 +165,10 @@ class Resource_Css extends Action
                 chgrp($filePath, filegroup(dirname($filePath)));
             }
         }
+
+        return [
+            'styles' =>
+                File::createData(Module::getInstance()->get(Module::COMPILED_RESOURCE_DIR) . 'style.cache.php', $cache)
+        ];
     }
 }

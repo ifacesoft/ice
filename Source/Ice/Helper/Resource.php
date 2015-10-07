@@ -18,7 +18,7 @@ class Resource
         return str_replace(
             ["\t", "\n"],
             ' ',
-            Replace::getInstance()->fetch($message, (array)$params, Render::TEMPLATE_TYPE_STRING)
+            Replace::getInstance()->fetch($message, (array)$params, null, Render::TEMPLATE_TYPE_STRING)
         );
     }
 }

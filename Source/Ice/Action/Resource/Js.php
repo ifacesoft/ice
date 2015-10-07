@@ -13,6 +13,7 @@ use Ice\Core\Action;
 use Ice\Core\Module;
 use Ice\Helper\Arrays;
 use Ice\Helper\Directory;
+use Ice\Helper\File;
 use JSMin;
 
 /**
@@ -108,9 +109,7 @@ class Resource_Js extends Action
             }
         }
 
-        $this->pack($resources);
-
-        return ['js' => array_unique(Arrays::column($resources, 'url'))];
+        return $this->pack($resources);
     }
 
     /**
@@ -140,6 +139,8 @@ class Resource_Js extends Action
             }
         }
 
+        $cache = [];
+
         foreach ($resources as $resource) {
             if (!isset($handlers[$resource['resource']])) {
                 Directory::get(dirname($resource['resource']));
@@ -154,6 +155,12 @@ class Resource_Js extends Action
                 $handlers[$resource['resource']],
                 '/* ' . str_replace(dirname(MODULE_DIR), '', $resource['source']) . " */\n" . $pack . "\n\n\n"
             );
+
+            if (!isset($cache[$resource['url']])) {
+                $cache[$resource['url']] = [];
+            }
+
+            $cache[$resource['url']][] = $resource['source'];
         }
 
         foreach ($handlers as $filePath => $handler) {
@@ -164,5 +171,10 @@ class Resource_Js extends Action
                 chgrp($filePath, filegroup(dirname($filePath)));
             }
         }
+
+        return [
+            'javascripts' =>
+                File::createData(Module::getInstance()->get(Module::COMPILED_RESOURCE_DIR) . 'javascript.cache.php', $cache)
+        ];
     }
 }

@@ -32,17 +32,17 @@ class Json extends Render
     /**
      * Render view via current view render
      *
-     * @param  $template
+     * @param string $template
      * @param  array $data
-     * @param  string $templateType
+     * @param null $layout
+     * @param string $templateType
      * @return mixed
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 2.0
      * @since   0.0
      */
-    public function fetch($template, array $data = [], $templateType = Render::TEMPLATE_TYPE_FILE)
+    public function fetch($template, array $data = [], $layout = null, $templateType = Render::TEMPLATE_TYPE_FILE)
     {
         return Helper_Json::encode($data);
     }

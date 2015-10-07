@@ -24,11 +24,6 @@ use Ice\Helper\Json;
 class Response
 {
     /**
-     * @var ViiewOld
-     */
-    private $view = null;
-
-    /**
      * Content type
      *
      * @var string
@@ -49,6 +44,11 @@ class Response
      */
     private $redirectUrl = null;
 
+    private $content = null;
+
+    private $error = null;
+
+    private $success = null;
     /**
      * Private constructor of Request object
      *
@@ -59,6 +59,30 @@ class Response
      */
     private function __construct()
     {
+    }
+
+    /**
+     * @param null $content
+     */
+    public function setContent($content)
+    {
+        $this->content = $content;
+    }
+
+    /**
+     * @param null $error
+     */
+    public function setError($error)
+    {
+        $this->error = $error;
+    }
+
+    /**
+     * @param null $success
+     */
+    public function setSuccess($success)
+    {
+        $this->success = $success;
     }
 
     /**
@@ -84,24 +108,17 @@ class Response
      * @version 0.4
      * @since   0.0
      */
-    public function send()
+    public function send($result)
     {
-        if ($this->redirectUrl) {
+        $redirectUrl = null;
+
+        if ($redirectUrl = $this->redirectUrl || $redirectUrl = (isset($result['redirectUrl']) ? $result['redirectUrl'] : null)) {
             if (headers_sent()) {
-                echo '<script type="text/javascript">location.href="' . $this->redirectUrl . '"</script>';
+                echo '<script type="text/javascript">location.href="' . $redirectUrl . '"</script>';
                 return;
             }
 
-            Http::setHeader('Location: ' . $this->redirectUrl, false, $this->statusCode);
-            return;
-        }
-
-        if (!$this->view || !($this->view instanceof ViiewOld)) {
-            Logger::getInstance(__CLASS__)->exception(['Response broken. View not found {$0}', $this->view], __FILE__, __LINE__);
-        }
-
-        if (Request::isCli()) {
-            fwrite(empty($this->view->getErrors()) ? STDOUT : STDERR, $this->view->getContent());
+            Http::setHeader('Location: ' . $redirectUrl, false, $this->statusCode);
             return;
         }
 
@@ -114,10 +131,8 @@ class Response
         }
 
         echo Request::isAjax()
-            ? str_replace(dirname(MODULE_DIR), '', Json::encode($this->view->getResult()))
-            : str_replace(dirname(MODULE_DIR), '', $this->view->getContent());
-
-//        echo str_replace(dirname(MODULE_DIR), '', $this->view->getContent());
+            ? str_replace(dirname(MODULE_DIR), '', Json::encode($result))
+            : str_replace(dirname(MODULE_DIR), '', $result['content']);
     }
 
     /**
@@ -165,13 +180,5 @@ class Response
     public function setStatusCode($statusCode)
     {
         $this->statusCode = $statusCode;
-    }
-
-    /**
-     * @param ViiewOld $view
-     */
-    public function setView($view)
-    {
-        $this->view = $view;
     }
 }

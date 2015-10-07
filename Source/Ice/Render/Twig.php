@@ -73,8 +73,9 @@ class Twig extends Render
     /**
      * Render view via current view render
      *
-     * @param $template
+     * @param string $template
      * @param  array $data
+     * @param null $layout
      * @param string $templateType
      * @return mixed
      * @throws \Exception
@@ -83,7 +84,7 @@ class Twig extends Render
      * @version 0.0
      * @since   0.0
      */
-    public function fetch($template, array $data = [], $templateType = Render::TEMPLATE_TYPE_FILE)
+    public function fetch($template, array $data = [], $layout = null, $templateType = Render::TEMPLATE_TYPE_FILE)
     {
         if (empty($template)) {
             throw new \Exception('Template is empty');

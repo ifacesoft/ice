@@ -65,17 +65,10 @@ return [
             ],
         ],
     ],
-    'Ice\Action\Admin_Navigation' => [
-        'input' => [
-            'routeNames' => [
-                'default' => ['ice_admin_database']
-            ]
-        ]
-    ],
     'Ice\Action\Cache_Hit' => [
         'input' => [
             'routeNames' => [
-                'default' =>['ice_test']
+                'default' => ['ice_test']
             ]
         ]
     ],

@@ -2,10 +2,10 @@
 
 namespace Ice\Widget;
 
+use Ice\Core\Route;
+use Ice\Core\Widget;
 
-use Ice\Core\Module;
-
-class Admin_Navbar extends Navbar
+class Title_Route extends Widget
 {
     /**
      * Widget config
@@ -15,10 +15,11 @@ class Admin_Navbar extends Navbar
     protected static function config()
     {
         return [
-            'render' => ['template' => Navbar::getClass(), 'class' => 'Ice:Php', 'layout' => null, 'resource' => null],
+            'render' => ['template' => '', 'class' => 'Ice:Php', 'layout' => null, 'resource' => null],
             'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'Widget: Access denied!'],
+            'resource' => ['js' => null, 'css' => null, 'less' => null, 'img' => null],
             'cache' => ['ttl' => -1, 'count' => 1000],
-            'input' => [],
+            'input' => ['routeName' => ['providers' => 'router']],
             'output' => [],
             'action' => [
                 //  'class' => 'Ice:Render',
@@ -27,7 +28,9 @@ class Admin_Navbar extends Navbar
                 ////        'Widget_id' => Widget::class
                 //      ]
                 //  ],
-                //  'method' => 'POST'
+                //  'url' => true,
+                //  'method' => 'POST',
+                //  'callback' => null
             ]
         ];
     }
@@ -39,6 +42,6 @@ class Admin_Navbar extends Navbar
      */
     protected function build(array $input)
     {
-        $this->brand('project_name', ['label' => Module::getInstance()->getName(), 'route' => 'ice_main']);
+        $this->text($input['routeName'], ['resource' => Route::getClass()]);
     }
 }

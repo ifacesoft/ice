@@ -44,7 +44,9 @@ class Session
             'Ice\Core\Session::gc'
         );
 
-        session_start();
+        if (session_status() == PHP_SESSION_NONE) {
+            session_start();
+        }
     }
 
     /**

@@ -54,25 +54,6 @@ class Bootstrap extends Container
 
         Loader::init($params['loader'], !empty($params['force']));
         Logger::init();
-        Request::init();
-
-        if (Request::isOptions()) {
-            exit;
-        }
-
-        if (!Request::isCli()) {
-            Session::init();
-        }
-
-        $module = Module::getInstance();
-
-        /** @var Security $securityClass */
-        $securityClass = $module->get('securityClass');
-        $securityClass::getInstance('default');
-
-        /** @var Router $routerClass */
-        $routerClass = $module->get('routerClass');
-        $routerClass::getInstance('default');
     }
 
     /**

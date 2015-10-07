@@ -14,6 +14,7 @@ use Ice\Core\Debuger;
 use Ice\Core\Loader;
 use Ice\Core\Module;
 use Ice\Core\Render;
+use Ice\Helper\Emmet;
 
 /**
  * Class Replace
@@ -52,17 +53,18 @@ class Replace extends Render
     /**
      * Render view via current view render
      *
-     * @param $template
+     * @param string $template
      * @param  array $data
+     * @param null $layout
      * @param string $templateType
      * @return mixed
      * @throws \Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 2.0
      * @since   0.0
      */
-    public function fetch($template, array $data = [], $templateType = Render::TEMPLATE_TYPE_FILE)
+    public function fetch($template, array $data = [], $layout = null, $templateType = Render::TEMPLATE_TYPE_FILE)
     {
         if (empty($template)) {
             throw new \Exception('Template is empty');
@@ -80,7 +82,7 @@ class Replace extends Render
             return $template;
         }
 
-        return str_replace(
+        $content = str_replace(
             array_map(
                 function ($var) {
                     return '{$' . $var . '}';
@@ -90,6 +92,10 @@ class Replace extends Render
             array_values($data),
             $template
         );
+
+        return $layout
+            ? Emmet::translate($layout . '{{$content}}', ['content' => $content])
+            : $content;
     }
 
     /**

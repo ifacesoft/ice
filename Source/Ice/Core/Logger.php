@@ -12,6 +12,7 @@ namespace Ice\Core;
 use Ebs\Model\Log_User_Session;
 use FirePHP;
 use Ice\Core;
+use Ice\Exception\Error;
 use Ice\Helper\Console;
 use Ice\Helper\Directory;
 use Ice\Helper\File;
@@ -117,6 +118,7 @@ class Logger
      *
      * @param string $class Class (Logger for this class)
      *
+     * @throws Error
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
@@ -124,6 +126,10 @@ class Logger
      */
     private function __construct($class)
     {
+        if (!$class) {
+            throw new Error('Class for logger not defined');
+        }
+
         $this->class = $class;
     }
 
@@ -343,6 +349,7 @@ class Logger
         ]);
 
         $this->save($logError);
+
 
         if (Request::isCli()) {
             fwrite(STDOUT, $message . "\n");

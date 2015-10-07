@@ -12,6 +12,7 @@ class Form_Security_LoginPassword_Register extends Widget_Form_Security_Register
     {
         return [
             'render' => ['template' => Form::getClass(), 'class' => 'Ice:Php', 'layout' => null, 'resource' => null],
+            'resource' => ['js' => null, 'css' => null, 'less' => null, 'img' => null],
             'input' => [],
             'access' => ['roles' => [], 'request' => null, 'env' => null]
         ];

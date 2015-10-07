@@ -14,6 +14,7 @@ class Form_Security_LoginPassword_Login extends Widget_Form_Security_Login
     {
         return [
             'render' => ['template' => Form::getClass(), 'class' => 'Ice:Php', 'layout' => null, 'resource' => null],
+            'resource' => ['js' => null, 'css' => null, 'less' => null, 'img' => null],
             'input' => [
                 'login' => ['providers' => 'request'],
                 'password' => ['providers' => 'request']

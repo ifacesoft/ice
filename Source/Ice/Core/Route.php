@@ -158,29 +158,14 @@ class Route extends Config
                 $route['pattern'] = Replace::getInstance()->fetch(
                     '#^' . $route['route'] . '$#',
                     $patterns,
+                    null,
                     Render::TEMPLATE_TYPE_STRING
                 );
 
                 if (isset($route['alias'])) {
-                    foreach ($route['alias'] as $method => $alias)
-                    $route['request'][$method] = $routes[$route['alias'][$method]]->gets('request/' . $method, false);
-                }
-
-                foreach ($route['request'] as &$request) {
-                    if (is_string($request)) {
-                        $actionClass = $request;
-                        $actionParams = [];
-                    } else {
-                        list($actionClass, $actionParams) = each($request);
+                    foreach ($route['alias'] as $method => $alias) {
+                        $route['request'][$method] = $routes[$route['alias'][$method]]->gets('request/' . $method, false);
                     }
-
-
-                    if (is_int($actionClass)) {
-                        $actionClass = $actionParams;
-                        $actionParams = [];
-                    }
-
-                    $request = [Action::getClass($actionClass) => $actionParams];
                 }
 
                 $route = Route::create($routeName, $route);
@@ -220,7 +205,7 @@ class Route extends Config
      */
     public function getUrl(array $params = [])
     {
-        return Replace::getInstance()->fetch($this->getRoute(), $params, Render::TEMPLATE_TYPE_STRING);
+        return Replace::getInstance()->fetch($this->getRoute(), $params, null, Render::TEMPLATE_TYPE_STRING);
     }
     //
     //    /**
@@ -262,7 +247,8 @@ class Route extends Config
     /**
      * @return Route|null
      */
-    public function getParentRoute() {
+    public function getParentRoute()
+    {
         if ($parentRouteName = $this->get('parent', false)) {
             return Route::getInstance($parentRouteName);
         }

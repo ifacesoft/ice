@@ -16,6 +16,7 @@ class Header_Route extends Header
     {
         return [
             'render' => ['template' => Header::class, 'class' => 'Ice:Php', 'layout' => null, 'resource' => null],
+            'resource' => ['js' => null, 'css' => null, 'less' => null, 'img' => null],
             'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'Widget: Access denied!'],
             'cache' => ['ttl' => -1, 'count' => 1000],
             'input' => ['routeName' => ['providers' => 'router'], 'routeParams' => ['providers' => 'router']],

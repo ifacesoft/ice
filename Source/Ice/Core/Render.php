@@ -108,15 +108,15 @@ abstract class Render extends Container
     /**
      * Render view via current view render
      *
-     * @param  $template
-     * @param  array $data
+     * @param string $template
+     * @param array $data
+     * @param string|null $layout Emmet style layout
      * @param  string $templateType
-     * @return mixed
-     *
+     * @return string
      * @author anonymous <email>
      *
      * @version 0
      * @since   0
      */
-    abstract public function fetch($template, array $data = [], $templateType = Render::TEMPLATE_TYPE_FILE);
+    abstract public function fetch($template, array $data = [], $layout = null, $templateType = Render::TEMPLATE_TYPE_FILE);
 }

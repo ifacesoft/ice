@@ -19,7 +19,7 @@ var Ice_Core_Widget = {
             console.warn('Data params for widget not found');
             return;
         }
-        console.log(Ice.querystringToObject($form.serialize()));
+
 
         var data = $form
             ? Ice.querystringToObject($form.serialize())

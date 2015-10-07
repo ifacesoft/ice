@@ -27,7 +27,7 @@ class Render extends Action
                     'providers' => 'request',
                     'default' => null
                 ],
-                'widgets' => []
+                'widgets' => ['default' => []]
             ],
             'output' => []
         ];
@@ -41,6 +41,8 @@ class Render extends Action
     public function run(array $input)
     {
         $widgets = [];
+
+        Debuger::dump($input);
 
         foreach ($input['widgets'] as $key => $widgetClass) {
             /** @var Widget $widgetClass */

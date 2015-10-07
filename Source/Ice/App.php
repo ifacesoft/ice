@@ -4,29 +4,27 @@ namespace Ice;
 
 use Composer\Config;
 use Composer\Script\Event;
-use Ice\Action\Http_Status;
 use Ice\Action\Install;
-use Ice\Action\Layout_Main;
+use Ice\Action\Layout;
 use Ice\Action\Upgrade;
 use Ice\Core\Action;
 use Ice\Core\Action_Context;
 use Ice\Core\Debuger;
-use Ice\Core\Environment;
 use Ice\Core\Logger;
 use Ice\Core\Module;
 use Ice\Core\Profiler;
 use Ice\Core\Request;
 use Ice\Core\Response;
-use Ice\Core\Route;
-use Ice\Data\Provider\Cli;
+use Ice\Core\Session;
+use Ice\Data\Provider\Cli as Data_Provider_Cli;
 use Ice\Data\Provider\Request as Data_Provider_Request;
-use Ice\Data\Provider\Router;
 use Ice\Exception\Access_Denied;
 use Ice\Exception\Error;
 use Ice\Exception\Http_Bad_Request;
 use Ice\Exception\Http_Not_Found;
 use Ice\Exception\Redirect;
 use Ice\Helper\File;
+use Ice\Widget\Http_Status;
 
 class App
 {
@@ -39,94 +37,73 @@ class App
         $startTime = Profiler::getMicrotime();
         $startMemory = Profiler::getMemoryGetUsage();
 
-        $actionClass = 'unknown';
+        if (Request::isCli()) {
+            $actionClass = Data_Provider_Cli::getInstance()->get('actionClass');
+        } else {
+            Request::init();
+            Session::init();
 
-        try {
-            /**
-             * @var Action $actionClass
-             * @var array $input
-             */
-            list($actionClass, $input) = App::getAction();
-
-            App::getResponse()->setView($actionClass::call($input));
-        } catch (Redirect $e) {
-            App::getResponse()->setRedirectUrl($e->getRedirectUrl());
-        } catch (Http_Bad_Request $e) {
-            $httpStatusAction = [['Ice:Http_Status' => 'main', ['code' => 400, 'exception' => $e]]];
-            App::getResponse()->setView(Layout_Main::call(['actions' => $httpStatusAction]));
-        } catch (Access_Denied $e) {
-            $httpStatusAction = [['Ice:Http_Status' => 'main', ['code' => 403, 'exception' => $e]]];
-            App::getResponse()->setView(Layout_Main::call(['actions' => $httpStatusAction]));
-        } catch (Http_Not_Found $e) {
-            $httpStatusAction = [['Ice:Http_Status' => 'main', ['code' => 404, 'exception' => $e]]];
-            App::getResponse()->setView(Layout_Main::call(['actions' => $httpStatusAction]));
-        } catch (\Exception $e) {
-            if (Request::isCli()) {
-                Logger::getInstance(__CLASS__)->error('Application failure', __FILE__, __LINE__, $e);
-            } elseif (Request::isAjax()) {
-                $view = Http_Status::call(['code' => 500, 'exception' => $e]);
-                $view->setError($e->getMessage());
-                App::getResponse()->setView($view);
+            if (Request::isAjax()) {
+                $actionClass = Data_Provider_Request::getInstance()->get('actionClass');
             } else {
-                $httpStatusAction = [['Ice:Http_Status' => 'main', ['code' => 500, 'exception' => $e]]];
-                $view = Layout_Main::call(['actions' => $httpStatusAction]);
-                $view->setError($e->getMessage());
-                App::getResponse()->setView($view);
+                $actionClass = Layout::getClass();
             }
         }
 
-        App::getResponse()->send();
+        try {
+            if (!$actionClass) {
+                throw new Error('action class not found');
+            }
+
+            $result = $actionClass::call();
+        } catch (\Exception $e) {
+            if (Request::isCli()) {
+                $result = ['error' => Logger::getInstance(__CLASS__)->error('Application: run action failure', __FILE__, __LINE__, $e)];
+            } else {
+                try {
+                    throw $e;
+                } catch (Redirect $e) {
+                    $result['redirectUrl'] = $e->getRedirectUrl();
+                } catch (Http_Bad_Request $e) {
+                    $result = ['content' => Http_Status::getInstance('app', null, ['code' => 400, 'message' => $e->getMessage()])];
+                } catch (Access_Denied $e) {
+                    $result = ['content' => Http_Status::getInstance('app', null, ['code' => 403, 'message' => $e->getMessage()])];
+                } catch (Http_Not_Found $e) {
+                    $result = ['content' => Http_Status::getInstance('app', null, ['code' => 404, 'message' => $e->getMessage()])];
+                } catch (\Exception $e) {
+                    $result = [
+                        'content' => Http_Status::getInstance('app', null, ['message' => $e->getMessage()]),
+                        'error' => Logger::getInstance(__CLASS__)->error('Application: run action failure', __FILE__, __LINE__, $e)
+                    ];
+                }
+            }
+        }
+
+        if (Request::isCli()) {
+            if (isset($result['error'])) {
+                fwrite(STDERR, $result['error'] . "\n");
+            } else {
+                try {
+                    fwrite(STDOUT, $result['content'] . "\n");
+                } catch (\Exception $e) {
+                    fwrite(STDERR, Logger::getInstance(__CLASS__)->error('Application (Cli): render content failure', __FILE__, __LINE__, $e) . "\n");
+                }
+            }
+        } else {
+            try {
+                App::getResponse()->send($result);
+            } catch (\Exception $e) {
+                echo Logger::getInstance(__CLASS__)->error('Application (Http): render content failure', __FILE__, __LINE__, $e);
+            }
+        }
 
         Profiler::setPoint($actionClass, $startTime, $startMemory);
 
-        Logger::fb(Profiler::getReport($actionClass), __CLASS__, 'LOG');
-
-        Logger::renderLog();
+        Logger::fb(Profiler::getReport(__CLASS__), __CLASS__, 'LOG');
 
         if (!Request::isCli() && function_exists('fastcgi_finish_request')) {
             fastcgi_finish_request();
         }
-    }
-
-    private static function getAction()
-    {
-        if (Request::isCli()) {
-            ini_set('memory_limit', '1024M');
-
-            $_SERVER['REQUEST_URI'] = implode(' ', $_SERVER['argv']);
-
-            $input = Cli::getInstance()->get();
-            $actionClass = $input['actionClass'];
-            unset($input['actionClass']);
-
-            return [Action::getClass($actionClass), $input];
-        }
-
-        if (Request::isAjax()) {
-            $input = Data_Provider_Request::getInstance()->get();
-
-            if (!empty($input['actionClass'])) {
-                $actionClass = $input['actionClass'];
-                unset($input['actionClass']);
-
-                return [Action::getClass($actionClass), $input];
-            }
-
-            throw new \Exception('Undefined action for ajax request');
-        }
-
-        $router = Router::getInstance();
-        $route = Route::getInstance($router->get('routeName'));
-        if ($route && $routeRequest = $route->gets('request/' . $router->get('method'), false)) {
-            list($actionClass, $input) = each($routeRequest);
-
-            return [Action::getClass($actionClass), $input];
-        }
-
-        throw new Http_Not_Found([
-            'Route not found for {$0} request of {$1}, but matched for other method',
-            [$router->get('method'), $router->get('url')]
-        ]);
     }
 
     /**
