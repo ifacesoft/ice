@@ -379,15 +379,26 @@ abstract class Form extends Widget
 
         if (!empty($options['submit'])) {
             if (empty($this->getDataAction())) {
-                $dataAction = $options['submit'] === true
-                    ? [
+                if ($options['submit'] === true) {
+                    $dataAction = [
                         'class' => Form_Submit::class,
                         'params' => [],
                         'url' => true,
                         'method' => 'POST',
                         'callback' => null
-                    ]
-                    : $options['submit'];
+                    ];
+                } else {
+                    $dataAction = $options['submit'];
+
+                    $dataAction['params'] = [
+                        'action' => [
+                            'class' => $dataAction['class'],
+                            'params' => $dataAction['params']
+                        ]
+                    ];
+
+                    $dataAction['class'] = Form_Submit::class;
+                }
 
                 $this->setDataAction($dataAction);
             }
@@ -463,15 +474,7 @@ abstract class Form extends Widget
         $this->setResource($widget['resourceClass']);
 
         $this->checkToken($widget['token']);
-
-        return $this->action($widget);
     }
-
-    /**
-     * @param array $widget
-     * @return array
-     */
-    protected abstract function action(array $widget);
 
     /**
      * @param $token

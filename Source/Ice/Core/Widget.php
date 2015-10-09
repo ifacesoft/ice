@@ -444,14 +444,10 @@ abstract class Widget extends Container
 
                 if (isset($part['options']['params'])) {
                     foreach ((array)$part['options']['params'] as $key => $param) {
-                        if (is_array($param)) {
-                            $param = Json::encode($param);
-                        }
-
                         if (is_int($key)) {
                             $params[$param] = $values[$param];
                         } else {
-                            $params[$key] = array_key_exists($param, $values) ? $values[$param] : $param;
+                            $params[$key] = !is_array($param) && array_key_exists($param, $values) ? $values[$param] : $param;
                         }
                     }
                 } else {

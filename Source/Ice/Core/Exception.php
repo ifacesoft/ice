@@ -60,51 +60,29 @@ abstract class Exception extends ErrorException
     {
         $this->errcontext = $errcontext;
 
-        $isExistsResourceClass = class_exists('Ice\Core\Resource', false);
-
         /** @var Exception $exceptionClass */
         $exceptionClass = get_class($this);
         $exceptionClassName = $exceptionClass::getClassName();
 
-        $logger = Logger::getInstance($exceptionClass);
+        $logger = Logger::getInstance(__CLASS__);
 
-        if ($errno <= 0 && $isExistsResourceClass) {
-            $params = null;
-            $class = null;
-            if (is_array($message)) {
-                switch (count($message)) {
-                    case 2:
-                        list($message, $params) = $message;
-                        break;
-                    case 3:
-                        list($message, $params, $class) = $message;
-                        break;
-                    default:
-                        break;
-                }
-            }
+        $message = (array)$message;
 
-            $message = $logger->info([$exceptionClassName . ' - ' . $message, $params, $class], Logger::DANGER);
-        } else {
-            if (is_array($message)) {
-                if (!$isExistsResourceClass && !empty($message[1])) {
-                    $message[0] = str_replace(
-                        array_map(
-                            function ($var) {
-                                return '{$' . $var . '}';
-                            },
-                            array_keys((array)$message[1])
-                        ),
-                        array_values((array)$message[1]),
-                        $message[0]
-                    );
-                }
-
+        $params = null;
+        $class = null;
+        switch (count($message)) {
+            case 2:
+                list($message, $params) = $message;
+                break;
+            case 3:
+                list($message, $params, $class) = $message;
+                break;
+            default:
                 $message = reset($message);
-            }
-
-            $message = $logger->info($exceptionClassName . ' - ' . $message, Logger::DANGER);
+                break;
         }
+
+        $message = $logger->info([$exceptionClassName . ' - ' . $message, $params, $class], Logger::DANGER, $errno <= 0);
 
         if (!$errfile) {
             $debug = debug_backtrace();

@@ -107,19 +107,6 @@ class Form_Model extends Form
     }
 
     /**
-     * Submit form
-     *
-     * @param array $widget
-     * @return array
-     */
-    protected function action(array $widget)
-    {
-        /** @var Core_Model $modelClass */
-        $modelClass = $this->getValues();
-        $modelClass::create($this->validate())->save(true);
-    }
-
-    /**
      * Widget config
      *
      * @return array

@@ -48,6 +48,10 @@ class Form_Submit extends Action
                 'widget' => [
                     'providers' => 'request',
                     'validators' => 'Ice:Not_Empty'
+                ],
+                'action' => [
+                    'providers' => 'request',
+                    'validators' => 'Ice:Not_Empty'
                 ]
             ],
             'cache' => ['ttl' => -1, 'count' => 1000],
@@ -77,13 +81,20 @@ class Form_Submit extends Action
         $logger = $resource ? Logger::getInstance(get_class($resource->getResourceClass())) : $form->getLogger();
 
         try {
+            $form->submit($input['widget']);
+
+            $input['action']['params']['form'] = $form;
+
+            /** @var Action $actionClass */
+            $actionClass = Action::getClass($input['action']['class']);
+
             return array_merge(
                 [
                     'success' => $logger->info('Submitted successfully', Logger::SUCCESS),
                     'redirect' => $form->getRedirect(),
                     'timeout' => $form->getTimeout()
                 ],
-                $form->submit($input['widget'])
+                $actionClass::call($input['action']['params'])
             );
         } catch (\Exception $e) {
             $message = ['Submit failed: {$0}', $e->getMessage()];

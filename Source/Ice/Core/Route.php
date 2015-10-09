@@ -205,6 +205,10 @@ class Route extends Config
      */
     public function getUrl(array $params = [])
     {
+        $params = array_filter($params, function ($param) {
+            return !is_array($param);
+        });
+
         return Replace::getInstance()->fetch($this->getRoute(), $params, null, Render::TEMPLATE_TYPE_STRING);
     }
     //

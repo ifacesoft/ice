@@ -5,11 +5,28 @@ use Ice\Action\Form_Submit;
 use Ice\Core\Model;
 use Ice\Core\Security_Account;
 use Ice\Core\Widget_Form_Security_Login;
+use Ice\Action\Form_Security_LoginEmailPassword_Login as Action_Form_Security_LoginEmailPassword_Login;
 
 class Form_Security_LoginEmailPassword_Login extends Widget_Form_Security_Login
 {
     private $accountLoginPasswordModelClass = null;
     private $accountEmailPasswordModelClass = null;
+
+    /**
+     * @return null
+     */
+    public function getAccountLoginPasswordModelClass()
+    {
+        return $this->accountLoginPasswordModelClass;
+    }
+
+    /**
+     * @return null
+     */
+    public function getAccountEmailPasswordModelClass()
+    {
+        return $this->accountEmailPasswordModelClass;
+    }
 
     protected static function config()
     {
@@ -23,7 +40,12 @@ class Form_Security_LoginEmailPassword_Login extends Widget_Form_Security_Login
             'access' => ['roles' => [], 'request' => null, 'env' => null],
             'action' => [
                 'class' => Form_Submit::getClass(),
-                'params' => [],
+                'params' => [
+                    'action' => [
+                        'class' => Action_Form_Security_LoginEmailPassword_Login::class,
+                        'params' => []
+                    ]
+                ],
                 'url' => 'ice_security_login',
                 'method' => 'POST',
                 'callback' => null
@@ -62,25 +84,6 @@ class Form_Security_LoginEmailPassword_Login extends Widget_Form_Security_Login
     }
 
     /**
-     * @param array $widget
-     * @return array
-     */
-    protected function action(array $widget)
-    {
-        try {
-            return Form_Security_LoginPassword_Login::getInstance($this->getInstanceKey())
-                ->setAccountModelClass($this->accountLoginPasswordModelClass)
-                ->bind(['login' => $this->getValue('username')])
-                ->submit($widget);
-        } catch (\Exception $e) {
-            return Form_Security_EmailPassword_Login::getInstance($this->getInstanceKey())
-                ->setAccountModelClass($this->accountEmailPasswordModelClass)
-                ->bind(['email' => $this->getValue('username')])
-                ->submit($widget);
-        }
-    }
-
-    /**
      * @param Security_Account $accountLoginPasswordModelClass
      * @return $this
      */
@@ -107,7 +110,7 @@ class Form_Security_LoginEmailPassword_Login extends Widget_Form_Security_Login
      * @param array $values
      * @return boolean
      */
-    protected function verify(Security_Account $account, $values)
+    public function verify(Security_Account $account, $values)
     {
         return false;
     }

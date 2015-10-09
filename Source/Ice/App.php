@@ -58,7 +58,9 @@ class App
             $result = $actionClass::call();
         } catch (\Exception $e) {
             if (Request::isCli()) {
-                $result = ['error' => Logger::getInstance(__CLASS__)->error('Application: run action failure', __FILE__, __LINE__, $e)];
+                Logger::getInstance(__CLASS__)->error('Application (Cli): run action failure', __FILE__, __LINE__, $e);
+
+                $result = ['error' => Logger::getInstance(__CLASS__)->info($e->getMessage(),Logger::DANGER)];
             } else {
                 try {
                     throw $e;
@@ -71,9 +73,11 @@ class App
                 } catch (Http_Not_Found $e) {
                     $result = ['content' => Http_Status::getInstance('app', null, ['code' => 404, 'message' => $e->getMessage()])];
                 } catch (\Exception $e) {
+                    Logger::getInstance(__CLASS__)->error('Application (Http): run action failure', __FILE__, __LINE__, $e);
+
                     $result = [
                         'content' => Http_Status::getInstance('app', null, ['message' => $e->getMessage()]),
-                        'error' => Logger::getInstance(__CLASS__)->error('Application: run action failure', __FILE__, __LINE__, $e)
+                        'error' => Logger::getInstance(__CLASS__)->info($e->getMessage(), Logger::DANGER)
                     ];
                 }
             }

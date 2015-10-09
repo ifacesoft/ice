@@ -28,13 +28,6 @@ var Ice = {
                 jqXHR.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
             },
             success: function (result) {
-                if (result.error) {
-                    Ice.notify($('#iceMessages'), result.error, 5000);
-                }
-                if (result.success) {
-                    Ice.notify($('#iceMessages'), result.success, 5000);
-                }
-
                 if (result.back) {
                     back = result.back;
                 }

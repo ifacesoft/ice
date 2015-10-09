@@ -20,7 +20,6 @@ var Ice_Core_Widget = {
             return;
         }
 
-
         var data = $form
             ? Ice.querystringToObject($form.serialize())
             : Ice.objectMerge(Ice.jsonToObject($widget.attr('data-params')), Ice.jsonToObject($element.attr('data-params')));
@@ -82,27 +81,27 @@ var Ice_Core_Widget = {
             actionClass,
             actionParams,
             function (result) {
-                if (result.data.error) {
-                    $widget.find('.ice-message').html(result.data.error)
-                } else {
-                    if (result.data.success) {
-                        $widget.find('.ice-message').html(result.data.success)
+                var $iceMessage = $widget.find('.ice-message');
+
+                if (result.error) {
+                    if ($iceMessage) {
+                        $iceMessage.html(result.error);
+                    } else {
+                        Ice.notify($('#iceMessages'), result.error, 5000);
                     }
-
-                    console.log(result);
-
+                } else {
                     setTimeout(
                         function () {
-                            if (result.data.redirect) {
-                                location.href = result.data.redirect;
+                            if (result.redirect) {
+                                location.href = result.redirect;
                             } else {
-                                if (result.data.content) {
-                                    $widget.replaceWith(result.data.content);
+                                if (result.content) {
+                                    $widget.replaceWith(result.content);
                                 }
 
-                                if (result.data.widgets) {
-                                    for (widgetId in result.data.widgets) {
-                                        $('#' + widgetId).replaceWith(result.data.widgets[widgetId]);
+                                if (result.widgets) {
+                                    for (widgetId in result.widgets) {
+                                        $('#' + widgetId).replaceWith(result.widgets[widgetId]);
                                     }
                                 }
 
@@ -111,8 +110,16 @@ var Ice_Core_Widget = {
                                 }
                             }
                         },
-                        result.data.timeout ? result.data.timeout : 0
+                        result.timeout ? result.timeout : 0
                     );
+
+                    if (result.success) {
+                        if ($iceMessage) {
+                            $iceMessage.html(result.success);
+                        } else {
+                            Ice.notify($('#iceMessages'), result.success, 5000);
+                        }
+                    }
                 }
             },
             url,

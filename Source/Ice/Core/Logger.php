@@ -203,6 +203,17 @@ class Logger
         self::getInstance()->error($errstr, $errfile, $errline, null, $errcontext, $errno);
     }
 
+    private function getFbType($type) {
+        switch ($type) {
+            case Logger::DANGER:
+                return 'ERROR';
+            case Logger::WARNING:
+                return 'WARN';
+            default:
+                return 'INFO';
+        }
+    }
+
     /**
      * Info message
      *
@@ -245,7 +256,7 @@ class Logger
 
         File::createData($logFile, $message . "\n", false, FILE_APPEND);
 
-        Logger::fb($message, 'info', 'INFO');
+        Logger::fb($message, 'info', $this->getFbType($type));
 
         if (Request::isCli()) {
             $message = Console::getText(' ' . $message . ' ', Console::C_BLACK, self::$consoleColors[$type]) . "\n";
@@ -349,7 +360,6 @@ class Logger
         ]);
 
         $this->save($logError);
-
 
         if (Request::isCli()) {
             fwrite(STDOUT, $message . "\n");

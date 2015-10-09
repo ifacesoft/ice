@@ -57,59 +57,13 @@ class Form_Security_EmailPassword_Login extends Widget_Form_Security_Login
     }
 
     /**
-     * Login
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 1.1
-     * @since   0.1
-     * @param array $widget
-     * @return array|null|string
-     * @throws \Ice\Core\Exception
-     */
-    protected function action(array $widget)
-    {
-        /** @var Model $accountModelClass */
-        $accountModelClass = $this->getAccountModelClass();
-
-        if (!$accountModelClass) {
-            return $this->getLogger()
-                ->exception(
-                    ['Unknown accountModelClass', [], $this->getResource()],
-                    __FILE__,
-                    __LINE__
-                );
-        }
-
-        $values = $this->validate();
-
-        /** @var Security_Account|Model $account */
-        $account = $accountModelClass::createQueryBuilder()
-            ->eq(['email' => $values['email']])
-            ->limit(1)
-            ->getSelectQuery(['password', '/expired', 'user__fk'])
-            ->getModel();
-
-        $result['account'] = $account && $this->verify($account, $values)
-            ? $this->signIn($account)
-            : $this->getLogger()
-                ->exception(
-                    ['Log in failure', [], $this->getResource()],
-                    __FILE__,
-                    __LINE__
-                );
-
-        return $result;
-    }
-
-    /**
      * Verify account
      *
      * @param Security_Account|Model $account
      * @param array $values
      * @return boolean
      */
-    protected function verify(Security_Account $account, $values)
+    public function verify(Security_Account $account, $values)
     {
         return password_verify($values['password'], $account->get('password'));
     }

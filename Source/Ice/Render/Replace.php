@@ -78,6 +78,10 @@ class Replace extends Render
             );
         }
 
+        $data = array_filter($data, function ($param) {
+            return !is_array($param);
+        });
+
         if (empty($data)) {
             return $template;
         }

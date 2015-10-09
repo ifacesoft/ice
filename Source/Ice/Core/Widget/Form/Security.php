@@ -90,7 +90,7 @@ abstract class Widget_Form_Security extends Form
      * @return null|string
      * @throws Exception
      */
-    protected function signIn(Security_Account $account)
+    final public function signIn(Security_Account $account)
     {
         $log = Log_Security::create([
             'account_class' => get_class($account),
@@ -142,7 +142,7 @@ abstract class Widget_Form_Security extends Form
      *
      * @return Model|Security_Account
      */
-    protected function signUp($accountModelClass, array $accountData, array $userData, $dataSource = null)
+    final public function signUp($accountModelClass, array $accountData, array $userData, $dataSource = null)
     {
         $account = null;
 

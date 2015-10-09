@@ -11,5 +11,5 @@ abstract class Widget_Form_Security_Login extends Widget_Form_Security
      * @param array $values
      * @return boolean
      */
-    protected abstract function verify(Security_Account $account, $values);
+    public abstract function verify(Security_Account $account, $values);
 }

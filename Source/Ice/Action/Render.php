@@ -23,11 +23,8 @@ class Render extends Action
             'cache' => ['ttl' => -1, 'count' => 1000],
             'actions' => [],
             'input' => [
-                'widget' => [
-                    'providers' => 'request',
-                    'default' => null
-                ],
-                'widgets' => ['default' => []]
+                'widget' => ['default' => null, 'providers' => 'request'],
+                'widgets' => ['default' => [], 'providers' => ['default', 'request']]
             ],
             'output' => []
         ];
@@ -41,8 +38,6 @@ class Render extends Action
     public function run(array $input)
     {
         $widgets = [];
-
-        Debuger::dump($input);
 
         foreach ($input['widgets'] as $key => $widgetClass) {
             /** @var Widget $widgetClass */
