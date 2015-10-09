@@ -1,3 +1,4 @@
+<?php extract(reset($result)); ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,10 +10,10 @@
     <meta name="author" content="">
     <link rel="icon" href="favicon.ico">
 
-    <title><?= $title ?></title>
+    <title><?= $title['content'] ?></title>
 
-    <?= $staticResources ?>
-    <?= $dynamicResources ?>
+    <?= $staticResources['content'] ?>
+    <?= $dynamicResources['content'] ?>
 
     <?php /*
     <!--[if lt IE 7]>
@@ -43,19 +44,19 @@
     </div>
 </div>
 <div class="Layout_Admin">
-    <?= $navigation ?>
+    <?= $navigation['content'] ?>
 
     <div class="container-fluid">
         <div class="row">
             <div class="col-sm-3 col-md-2 sidebar">
-                <?= $sidebar ?>
+                <?= $sidebar['content'] ?>
             </div>
             <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-                <?= is_array($main) ? $main[0] : $main ?>
+                <?= $main['content']?>
             </div>
         </div>
     </div>
 </div>
-<?= $footerJs ?>
+<?= $footerJs['content'] ?>
 </body>
 </html>

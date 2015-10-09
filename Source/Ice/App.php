@@ -5,7 +5,7 @@ namespace Ice;
 use Composer\Config;
 use Composer\Script\Event;
 use Ice\Action\Install;
-use Ice\Action\Layout;
+use Ice\Action\Front;
 use Ice\Action\Upgrade;
 use Ice\Core\Action;
 use Ice\Core\Action_Context;
@@ -46,7 +46,7 @@ class App
             if (Request::isAjax()) {
                 $actionClass = Data_Provider_Request::getInstance()->get('actionClass');
             } else {
-                $actionClass = Layout::getClass();
+                $actionClass = Front::getClass();
             }
         }
 

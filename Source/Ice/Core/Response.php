@@ -37,13 +37,6 @@ class Response
      */
     private $statusCode = null;
 
-    /**
-     * Redirect url
-     *
-     * @var string|null
-     */
-    private $redirectUrl = null;
-
     private $content = null;
 
     private $error = null;
@@ -103,16 +96,18 @@ class Response
     /**
      * Send data to standard output stream
      *
+     * @param array $result
+     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
      * @since   0.0
      */
-    public function send($result)
+    public function send(array $result)
     {
-        $redirectUrl = null;
+        $redirectUrl = isset($result['redirectUrl']) ? $result['redirectUrl'] : null;
 
-        if ($redirectUrl = $this->redirectUrl || $redirectUrl = (isset($result['redirectUrl']) ? $result['redirectUrl'] : null)) {
+        if ($redirectUrl) {
             if (headers_sent()) {
                 echo '<script type="text/javascript">location.href="' . $redirectUrl . '"</script>';
                 return;
