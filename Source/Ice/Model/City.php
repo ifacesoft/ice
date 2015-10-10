@@ -117,7 +117,7 @@ class City extends Model
 		            'Ice\Model\Country' => 'country__fk',
 		        ],
 		        'manyToOne' => [
-		            'Ebs\Model\Company' => 'city_id',
+		            'Ebs\Model\Publisher' => 'city_id',
 		        ],
 		        'manyToMany' => [],
 		    ],
