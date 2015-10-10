@@ -4,9 +4,9 @@ namespace Ice\Action;
 
 use Ice\Core\Model;
 use Ice\Core\Widget;
-use Ice\Widget\Form_Model;
+use Ice\Widget\Model_Form;
 
-class Form_Model_Save extends Widget
+class Model_Form_Save extends Widget
 {
     /**
      * Widget config
@@ -43,7 +43,7 @@ class Form_Model_Save extends Widget
      */
     protected function build(array $input)
     {
-        /** @var Form_Model $form */
+        /** @var Model_Form $form */
         $form = $input['form'];
 
         /** @var Model $modelClass */

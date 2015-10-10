@@ -15,8 +15,8 @@ use Ice\Helper\Model as Helper_Model;
 use Ice\Helper\Object;
 use Ice\Helper\Spatial;
 use Ice\Widget\Data\Table;
-use Ice\Widget\Form_Model;
-use Ice\Widget\Table_Model;
+use Ice\Widget\Model_Form;
+use Ice\Widget\Model_Table;
 
 /**
  * Class Model
@@ -811,7 +811,7 @@ abstract class Model
      * Return form of self model class
      *
      * @param  array $filterFields
-     * @return Form_Model
+     * @return Model_Form
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
@@ -820,13 +820,13 @@ abstract class Model
      */
     public static function getWidgetForm(array $filterFields = [])
     {
-        return Form_Model::getInstance(strtolower(self::getClassName()))->addFilterFields($filterFields);
+        return Model_Form::getInstance(strtolower(self::getClassName()))->addFilterFields($filterFields);
     }
 
     /**
      * Return data of self model class
      *
-     * @return Table_Model
+     * @return Model_Table
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
@@ -837,11 +837,11 @@ abstract class Model
     {
         $modelClass = self::getClass();
 
-        $tableData = Table_Model::getInstance(strtolower(self::getClassName()));
+        $tableData = Model_Table::getInstance(strtolower(self::getClassName()));
 
         $tableData->bind(['modelClassName' => $modelClass]);
 
-        foreach ($modelClass::getPlugin(Table_Model::getClass()) as $fieldName => $columnType) {
+        foreach ($modelClass::getPlugin(Model_Table::getClass()) as $fieldName => $columnType) {
             $tableData->$columnType($fieldName, $modelClass::getFieldTitle($fieldName));
         }
 

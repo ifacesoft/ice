@@ -76,8 +76,8 @@ abstract class Form extends Widget
 
     public static function schemeColumnPlugin($columnName, $table)
     {
-        return isset(Form_Model::$typeMap[$table['columns'][$columnName]['scheme']['dataType']])
-            ? Form_Model::$typeMap[$table['columns'][$columnName]['scheme']['dataType']]
+        return isset(Model_Form::$typeMap[$table['columns'][$columnName]['scheme']['dataType']])
+            ? Model_Form::$typeMap[$table['columns'][$columnName]['scheme']['dataType']]
             : 'text';
     }
 

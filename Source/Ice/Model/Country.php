@@ -37,9 +37,9 @@ class Country extends Model
 		                'comment' => 'ID Страны',
 		            ],
 		            'fieldName' => 'country_pk',
-		            'Ice\Widget\Form_Model' => 'Field_Number',
+		            'Ice\Widget\Model_Form' => 'Field_Number',
 		            'Ice\Core\Validator' => [],
-		            'Ice\Widget\Table_Model' => 'text',
+		            'Ice\Widget\Model_Table' => 'text',
 		        ],
 		        'country_name' => [
 		            'scheme' => [
@@ -53,9 +53,9 @@ class Country extends Model
 		                'comment' => 'Название страны',
 		            ],
 		            'fieldName' => 'country_name',
-		            'Ice\Widget\Form_Model' => 'Field_Text',
+		            'Ice\Widget\Model_Form' => 'Field_Text',
 		            'Ice\Core\Validator' => [],
-		            'Ice\Widget\Table_Model' => 'text',
+		            'Ice\Widget\Model_Table' => 'text',
 		        ],
 		    ],
 		    'indexes' => [

@@ -39,9 +39,9 @@ class City extends Model
 		                'comment' => 'ID Города',
 		            ],
 		            'fieldName' => 'city_pk',
-		            'Ice\Widget\Form_Model' => 'Field_Number',
+		            'Ice\Widget\Model_Form' => 'Field_Number',
 		            'Ice\Core\Validator' => [],
-		            'Ice\Widget\Table_Model' => 'text',
+		            'Ice\Widget\Model_Table' => 'text',
 		        ],
 		        'city_name' => [
 		            'scheme' => [
@@ -55,9 +55,9 @@ class City extends Model
 		                'comment' => 'Название города',
 		            ],
 		            'fieldName' => 'city_name',
-		            'Ice\Widget\Form_Model' => 'Field_Text',
+		            'Ice\Widget\Model_Form' => 'Field_Text',
 		            'Ice\Core\Validator' => [],
-		            'Ice\Widget\Table_Model' => 'text',
+		            'Ice\Widget\Model_Table' => 'text',
 		        ],
 		        'city_short' => [
 		            'scheme' => [
@@ -71,9 +71,9 @@ class City extends Model
 		                'comment' => 'Краткое наименование',
 		            ],
 		            'fieldName' => 'city_short',
-		            'Ice\Widget\Form_Model' => 'Field_Text',
+		            'Ice\Widget\Model_Form' => 'Field_Text',
 		            'Ice\Core\Validator' => [],
-		            'Ice\Widget\Table_Model' => 'text',
+		            'Ice\Widget\Model_Table' => 'text',
 		        ],
 		        'country__fk' => [
 		            'scheme' => [
@@ -87,9 +87,9 @@ class City extends Model
 		                'comment' => 'Страна',
 		            ],
 		            'fieldName' => 'country__fk',
-		            'Ice\Widget\Form_Model' => 'Field_Number',
+		            'Ice\Widget\Model_Form' => 'Field_Number',
 		            'Ice\Core\Validator' => [],
-		            'Ice\Widget\Table_Model' => 'text',
+		            'Ice\Widget\Model_Table' => 'text',
 		        ],
 		    ],
 		    'indexes' => [

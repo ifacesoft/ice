@@ -80,7 +80,7 @@ class Model_Form extends Form
     //     * Binds all model field values
     //     *
     //     * @param Core_Model $model
-    //     * @return Form_Model
+    //     * @return Model_Form
     //     *
     //     * @author dp <denis.a.shestakov@gmail.com>
     //     *
@@ -146,8 +146,8 @@ class Model_Form extends Form
 
     public static function schemeColumnPlugin($columnName, $table)
     {
-        return isset(Form_Model::$typeMap[$table['columns'][$columnName]['scheme']['dataType']])
-            ? Form_Model::$typeMap[$table['columns'][$columnName]['scheme']['dataType']]
+        return isset(Model_Form::$typeMap[$table['columns'][$columnName]['scheme']['dataType']])
+            ? Model_Form::$typeMap[$table['columns'][$columnName]['scheme']['dataType']]
             : 'text';
     }
 }
