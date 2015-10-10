@@ -45,27 +45,28 @@ class Admin_Database_Sidebar extends Nav
 
         $scheme = [];
 
-        if (isset($input['routeParams']['dataSourceKeyCrc32'])) {
+        if (isset($input['routeParams']['dataSourceKey'])) {
+            $currentDataSourceKey = $module->getDataSourceKeys()[$input['routeParams']['dataSourceKey']];
+
             foreach (Data_Scheme::getTables($module) as $dataSourceKey => $tables) {
-                if (crc32($dataSourceKey) == $input['routeParams']['dataSourceKeyCrc32']) {
+                if ($dataSourceKey == $currentDataSourceKey) {
                     $scheme = $tables;
                     break;
                 }
             }
-        }
-
-        foreach ($scheme as $tableName => $table) {
-            $this->li(
-                $tableName,
-                [
-                    'route' => 'ice_admin_database_table',
-                    'label' => $tableName,
-                    'params' => [
-                        'dataSourceKeyCrc32' => $input['routeParams']['dataSourceKeyCrc32'],
-                        'tableName' => $tableName
+            foreach ($scheme as $tableName => $table) {
+                $this->li(
+                    $tableName,
+                    [
+                        'route' => 'ice_admin_database_table',
+                        'label' => $table['scheme']['comment'] . ' (' . $tableName . ')',
+                        'params' => [
+                            'dataSourceKey' => $input['routeParams']['dataSourceKey'],
+                            'tableName' => $tableName
+                        ]
                     ]
-                ]
-            );
+                );
+            }
         }
     }
 }

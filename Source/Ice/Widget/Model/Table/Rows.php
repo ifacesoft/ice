@@ -1,10 +1,17 @@
 <?php
+/**
+ * Created by PhpStorm.
+ * User: dp
+ * Date: 09.10.15
+ * Time: 18:25
+ */
 
 namespace Ice\Widget;
 
-use Ice\Core\Module;
 
-class Admin_Database_Dashboard extends Nav
+use Ice\Core\Model;
+
+class Model_Table_Rows extends Table_Rows
 {
     /**
      * Widget config
@@ -14,7 +21,7 @@ class Admin_Database_Dashboard extends Nav
     protected static function config()
     {
         return [
-            'render' => ['template' => Nav::getClass(), 'class' => 'Ice:Php', 'layout' => null, 'resource' => null],
+            'render' => ['template' => Table_Rows::getClass(), 'class' => 'Ice:Php', 'layout' => null, 'resource' => null],
             'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'Widget: Access denied!'],
             'resource' => ['js' => null, 'css' => null, 'less' => null, 'img' => null],
             'cache' => ['ttl' => -1, 'count' => 1000],
@@ -41,19 +48,11 @@ class Admin_Database_Dashboard extends Nav
      */
     protected function build(array $input)
     {
-        $module = Module::getInstance();
+        /** @var Model $modelClass */
+        $modelClass = $this->getInstanceKey();
 
-        $this->setClasses('nav-pills');
-
-        foreach ($module->getDataSourceKeys() as $key => $dataSourceKey) {
-            $this->li(
-                'scheme_' . $key,
-                [
-                    'label' => 'scheme_' . $key,
-                    'route' => 'ice_admin_database_database',
-                    'params' => ['dataSourceKey' => $key]
-                ]
-            );
+        foreach ($modelClass::getScheme()->getColumnFieldMap() as $fieldName) {
+            $this->span($fieldName);
         }
     }
 }

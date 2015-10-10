@@ -66,7 +66,7 @@ class Resource_Static extends Resource
         }
 
         foreach ($styles as $css => $sources) {
-            $this->link($css);
+            $this->link($css, ['resource' => null]);
         }
 
         $javascriptCacheFile = Module::getInstance()->get(Module::COMPILED_RESOURCE_DIR) . 'javascript.cache.php';
@@ -91,7 +91,7 @@ class Resource_Static extends Resource
         }
 
         foreach ($javascripts as $js => $sources) {
-            $this->script($js);
+            $this->script($js, ['resource' => null]);
         }
     }
 }

@@ -1761,7 +1761,7 @@ class Query_Builder
     }
 
     /**
-     * @param Widget[] $widgets
+     * @param Widget[]|mixed $widgets
      * @return Query_Builder
      */
     public function attachWidgets($widgets)

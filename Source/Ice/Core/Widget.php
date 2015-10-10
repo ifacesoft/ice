@@ -409,32 +409,38 @@ abstract class Widget extends Container
                 $part['widgetClassName'] = $widgetClassName;
                 $part['widgetName'] = $widgetName;
 
-                $part['resource'] = $this->getResource();
-
                 $resourceParams = [];
 
-                if (isset($part['options']['resource'])) {
-                    $part['resource'] = $this->getResource($part['options']['resource']);
+                $part['resource'] = $this->getResource();
 
-                    if (is_array($part['options']['resource'])) {
-                        if (isset($part['options']['resource'][0])) {
-                            $part['resource'] = Resource::create($part['options']['resource'][0]);
-                            if (array_key_exists(1, $part['options']['resource'])) {
-                                $resourceParams = $part['options']['resource'][1];
+                if (array_key_exists('resource', $part['options'])) {
+                    if (empty($part['options']['resource'])) {
+                        $part['resource'] = null;
+                    } else {
+                        if (isset($part['options']['resource'])) {
+                            $part['resource'] = $this->getResource($part['options']['resource']);
+
+                            if (is_array($part['options']['resource'])) {
+                                if (isset($part['options']['resource'][0])) {
+                                    $part['resource'] = Resource::create($part['options']['resource'][0]);
+                                    if (array_key_exists(1, $part['options']['resource'])) {
+                                        $resourceParams = $part['options']['resource'][1];
+                                    }
+                                } else if (isset($part['options']['resource']['class'])) {
+                                    $part['resource'] = Resource::create($part['options']['resource']['class']);
+                                    $resourceParams = isset($part['options']['resource']['params'])
+                                        ? (array)$part['options']['resource']['params']
+                                        : [];
+                                } else {
+                                    $resourceParams = isset($part['options']['resource']['params'])
+                                        ? (array)$part['options']['resource']['params']
+                                        : (array)$part['options']['resource'];
+                                }
                             }
-                        } else if (isset($part['options']['resource']['class'])) {
-                            $part['resource'] = Resource::create($part['options']['resource']['class']);
-                            $resourceParams = isset($part['options']['resource']['params'])
-                                ? (array)$part['options']['resource']['params']
-                                : [];
-                        } else {
-                            $resourceParams = isset($part['options']['resource']['params'])
-                                ? (array)$part['options']['resource']['params']
-                                : (array)$part['options']['resource'];
+
+                            unset($part['options']['resource']);
                         }
                     }
-
-                    unset($part['options']['resource']);
                 }
 
                 $part['name'] = isset($part['options']['name']) ? $part['options']['name'] : $partName;
@@ -1187,7 +1193,8 @@ abstract class Widget extends Container
     /**
      * @return Resource_Dynamic
      */
-    private function getResourceDynamic() {
+    private function getResourceDynamic()
+    {
         return Resource_Dynamic::getInstance(null);
     }
 }

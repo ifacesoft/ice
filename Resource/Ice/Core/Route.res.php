@@ -33,7 +33,7 @@ return [
     ],
     'ice_admin_database' => [
         'en' => 'Databases',
-        'ru' => 'Базы данных',
+        'ru' => 'Справочники',
     ],
     'Route {$0} not found' => [
         'en' => 'Route {$0} not found',
@@ -61,7 +61,7 @@ return [
     ],
     'ice_admin_database_dashboard' => [
         'en' => 'ice_admin_database_dashboard',
-        'ru' => 'Административная панель',
+        'ru' => 'Панель управления справочниками',
     ],
     'ice_admin' => [
         'en' => 'ice_admin',

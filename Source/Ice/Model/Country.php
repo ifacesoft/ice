@@ -17,12 +17,12 @@ class Country extends Model
     protected static function config()
     {
         return [
-		    'dataSourceKey' => 'Ice\\Data\\Source\\Mysqli/default.test',
+		    'dataSourceKey' => 'Ice\Data\Source\Mysqli/default.test',
 		    'scheme' => [
 		        'tableName' => 'ice_country',
 		        'engine' => 'InnoDB',
 		        'charset' => 'utf8_general_ci',
-		        'comment' => '',
+		        'comment' => 'Страны',
 		    ],
 		    'columns' => [
 		        'country_pk' => [
@@ -34,7 +34,7 @@ class Country extends Model
 		                'characterSet' => null,
 		                'nullable' => false,
 		                'default' => null,
-		                'comment' => '',
+		                'comment' => 'ID Страны',
 		            ],
 		            'fieldName' => 'country_pk',
 		            'Ice\Widget\Form_Model' => 'Field_Number',
@@ -50,7 +50,7 @@ class Country extends Model
 		                'characterSet' => 'utf8',
 		                'nullable' => true,
 		                'default' => null,
-		                'comment' => '',
+		                'comment' => 'Название страны',
 		            ],
 		            'fieldName' => 'country_name',
 		            'Ice\Widget\Form_Model' => 'Field_Text',
@@ -71,11 +71,13 @@ class Country extends Model
 		    'relations' => [
 		        'oneToMany' => [],
 		        'manyToOne' => [
-		            'Ebs\\Model\\Ice_City' => 'country__fk',
+		            'Ebs\Model\Ice_City' => 'country__fk',
 		        ],
 		        'manyToMany' => [],
 		    ],
 		    'revision' => '09251203_tlf',
+		    'modelClass' => 'Ice\Model\Country',
+		    'modelPath' => 'Ice/Model/Country.php',
 		];
     }
 }

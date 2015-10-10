@@ -20,7 +20,7 @@ class Input
      */
     public static function get($class, array $data = [], array $params = [])
     {
-        $params = array_merge($class::getConfig()->gets('input', false), $params);
+        $params = array_merge(array_keys($data), $class::getConfig()->gets('input', false), $params);
 
         $dataProviderKeyMap = [
             'request' => Data_Provider_Request::DEFAULT_DATA_PROVIDER_KEY,

@@ -12,16 +12,16 @@ return [
             'GET' => [
                 'widgetClass' => 'Ice:Admin_Layout',
                 'widgetParams' => [
-                    'main' => 'Ice:Admin_Database_Dashboard',
-                    'sidebar' => 'Ice:Admin_Database_Sidebar'
+                    'sidebar' => 'Ice:Admin_Database_Sidebar',
+                    'main' => ['Ice:Admin_Block', ['dashboard' => 'Ice:Admin_Database_Dashboard']]
                 ]
             ]
         ],
         'parent' => 'ice_admin_database'
     ],
     'ice_admin_database_database' => [
-        'route' => '/{$dataSourceKeyCrc32}',
-        'params' => ['dataSourceKeyCrc32' => '(\d+)'],
+        'route' => '/{$dataSourceKey}',
+        'params' => ['dataSourceKey' => '(\d+)'],
         'request' => [
             'GET' => [
                 'widgetClass' => 'Ice:Admin_Layout',
@@ -34,17 +34,17 @@ return [
         'parent' => 'ice_admin_database_dashboard'
     ],
     'ice_admin_database_table' => [
-        'route' => '/{$dataSourceKeyCrc32}/{$tableName}',
+        'route' => '/{$dataSourceKey}/{$tableName}',
         'params' => [
-            'dataSourceKeyCrc32' => '(\d+)',
-            'tableName' => '(\d+)'
+            'dataSourceKey' => '(\d+)',
+            'tableName' => '(.*)'
         ],
         'request' => [
             'GET' => [
                 'widgetClass' => 'Ice:Admin_Layout',
                 'widgetParams' => [
-                    'main' => 'Ice:Admin_Database_Table',
-                    'sidebar' => 'Ice:Admin_Database_Sidebar'
+                    'sidebar' => 'Ice:Admin_Database_Sidebar',
+                    'main' => ['Ice:Admin_Block', ['dashboard' => 'Ice:Admin_Database_Table']]
                 ]
             ]
         ],

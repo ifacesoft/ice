@@ -24,7 +24,7 @@ use Ice\Core\Validator;
  * @package    Ice
  * @subpackage Widget
  */
-class Form_Model extends Form
+class Model_Form extends Form
 {
     /**
      * Field type map
