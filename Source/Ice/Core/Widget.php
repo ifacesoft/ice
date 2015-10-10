@@ -444,37 +444,39 @@ abstract class Widget extends Container
                 }
 
                 $part['name'] = isset($part['options']['name']) ? $part['options']['name'] : $partName;
-                $part['value'] = isset($part['options']['value']) ? $part['options']['value'] : $part['name'];
+                $part['value'] = isset($part['options']['value']) ? $part['options']['value'] : null;
 
-                $params = [];
+                $part['params'] = isset($values[$part['name']])
+                    ? [$partName => $values[$part['name']]]
+                    : [];
 
                 if (isset($part['options']['params'])) {
                     foreach ((array)$part['options']['params'] as $key => $param) {
                         if (is_int($key)) {
-                            $params[$param] = $values[$param];
+                            $part['params'][$param] = $values[$param];
                         } else {
-                            $params[$key] = !is_array($param) && array_key_exists($param, $values) ? $values[$param] : $param;
+                            $part['params'][$key] = !is_array($param) && array_key_exists($param, $values) ? $values[$param] : $param;
                         }
                     }
-                } else {
-                    $params = [$part['name'] => isset($values[$part['name']]) ? $values[$part['name']] : null];
                 }
 
-                $part['params'] = $params;
-                $part['dataParams'] = Json::encode($params);
+                $part['dataParams'] = Json::encode($part['params']);
 
                 if (!empty($part['options']['route'])) {
-                    if (is_array($part['options']['route'])) {
-                        list($routeName, $routeParams) = each($part['options']['route']);
-
-                        $routeParams = array_merge($part['params'], (array)$routeParams);
-                    } else {
-                        $routeParams = $part['params'];
-
-                        $routeName = $part['options']['route'] === true
-                            ? $partName
-                            : $part['options']['route'];
+                    if ($part['options']['route'] === true) {
+                        $part['options']['route'] = $partName;
                     }
+
+                    $part['options']['route'] = (array) $part['options']['route'];
+
+                    if (count($part['options']['route']) == 2) {
+                        list($routeName, $routeParams) = $part['options']['route'];
+                    } else {
+                        $routeName = reset($part['options']['route']);
+                        $routeParams = [];
+                    }
+
+                    $routeParams = array_merge($part['params'], (array)$routeParams);
 
                     if (!array_key_exists('href', $part['options'])) {
                         $part['options']['href'] = Router::getInstance()->getUrl($routeName, $routeParams);
@@ -1196,5 +1198,9 @@ abstract class Widget extends Container
     private function getResourceDynamic()
     {
         return Resource_Dynamic::getInstance(null);
+    }
+
+    public function removePart($name) {
+        unset($this->parts[$name]);
     }
 }

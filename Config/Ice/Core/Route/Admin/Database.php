@@ -50,4 +50,22 @@ return [
         ],
         'parent' => 'ice_admin_database_database'
     ],
+    'ice_admin_database_row' => [
+        'route' => '/{$dataSourceKey}/{$tableName}/{$pk}',
+        'params' => [
+            'dataSourceKey' => '(\d+)',
+            'tableName' => '(.*)',
+            'pk' => '(\d+)',
+        ],
+        'request' => [
+            'GET' => [
+                'widgetClass' => 'Ice:Admin_Layout',
+                'widgetParams' => [
+                    'sidebar' => 'Ice:Admin_Database_Sidebar',
+                    'main' => ['Ice:Admin_Block', ['dashboard' => 'Ice:Admin_Database_Row']]
+                ]
+            ]
+        ],
+        'parent' => 'ice_admin_database_table'
+    ],
 ];
