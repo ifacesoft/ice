@@ -75,6 +75,15 @@ class Http_Status extends Block
 
         $this->setTemplate('_' . $input['code']);
 
-        return ['message' => strip_tags($input['message'])];
+        $stackTrace = Environment::getInstance()->isProduction()
+            ? '' :
+            str_replace(': ', ': ' . "\n\t" . '<span style="color:gray;">', $input['stackTrace']);
+
+        $stackTrace = str_replace("\n" . '#', '</span>' . "\n" . '#', $stackTrace);
+
+        return [
+            'message' => strip_tags($input['message']),
+            'stackTrace' => $stackTrace
+        ];
     }
 }

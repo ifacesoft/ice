@@ -2,8 +2,8 @@
 
 namespace Ice\Widget;
 
+use Ice\Core\Debuger;
 use Ice\Core\Model;
-use Ice\Core\Module;
 
 class Model_Table extends Table
 {
@@ -24,7 +24,7 @@ class Model_Table extends Table
             'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'Widget: Access denied!'],
             'resource' => ['js' => null, 'css' => null, 'less' => null, 'img' => null],
             'cache' => ['ttl' => -1, 'count' => 1000],
-            'input' => ['routeParams' => ['providers' => 'router']],
+            'input' => ['config' => ['validators' => 'Ice:Not_Empty']],
             'output' => [],
             'action' => [
                 //  'class' => 'Ice:Render',
@@ -47,13 +47,12 @@ class Model_Table extends Table
      */
     protected function build(array $input)
     {
-        $module = Module::getInstance();
-        $currentDataSourceKey = $module->getDataSourceKeys()[$input['routeParams']['dataSourceKey']];
-
         /** @var Model $modelClass */
-        $modelClass = Module::getInstance()->getModelClass($input['routeParams']['tableName'], $currentDataSourceKey);
+        $modelClass = $this->getInstanceKey();
 
-        $tableRows = Model_Table_Rows::getInstance($modelClass);
+        $this->setResource($modelClass);
+
+        $tableRows = Model_Table_Rows::getInstance($modelClass, null, ['config' => $input['config']]);
 
         $this
             ->widget('trth', ['widget' => $tableRows], 'Ice\Widget\Table\Trth')

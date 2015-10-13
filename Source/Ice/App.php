@@ -67,16 +67,16 @@ class App
                 } catch (Redirect $e) {
                     $result['redirectUrl'] = $e->getRedirectUrl();
                 } catch (Http_Bad_Request $e) {
-                    $result = ['content' => Http_Status::getInstance('app', null, ['code' => 400, 'message' => $e->getMessage()])];
+                    $result = ['content' => Http_Status::getInstance('app', null, ['code' => 400, 'message' => $e->getMessage(), 'stackTrace' => $e->getTraceAsString()])];
                 } catch (Access_Denied $e) {
-                    $result = ['content' => Http_Status::getInstance('app', null, ['code' => 403, 'message' => $e->getMessage()])];
+                    $result = ['content' => Http_Status::getInstance('app', null, ['code' => 403, 'message' => $e->getMessage(), 'stackTrace' => $e->getTraceAsString()])];
                 } catch (Http_Not_Found $e) {
-                    $result = ['content' => Http_Status::getInstance('app', null, ['code' => 404, 'message' => $e->getMessage()])];
+                    $result = ['content' => Http_Status::getInstance('app', null, ['code' => 404, 'message' => $e->getMessage(), 'stackTrace' => $e->getTraceAsString()])];
                 } catch (\Exception $e) {
                     Logger::getInstance(__CLASS__)->error('Application (Http): run action failure', __FILE__, __LINE__, $e);
 
                     $result = [
-                        'content' => Http_Status::getInstance('app', null, ['message' => $e->getMessage()]),
+                        'content' => Http_Status::getInstance('app', null, ['message' => $e->getMessage(), 'stackTrace' => $e->getTraceAsString()]),
                         'error' => Logger::getInstance(__CLASS__)->info($e->getMessage(), Logger::DANGER)
                     ];
                 }

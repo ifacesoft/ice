@@ -51,7 +51,7 @@ class Admin_Database_Dashboard extends Nav
                 [
                     'label' => 'scheme_' . $key,
                     'route' => 'ice_admin_database_database',
-                    'params' => ['dataSourceKey' => $key]
+                    'params' => ['schemeName' => $key]
                 ]
             );
         }

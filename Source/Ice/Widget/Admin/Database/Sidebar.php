@@ -4,6 +4,7 @@ namespace Ice\Widget;
 
 use Ice\Core\Data_Scheme;
 use Ice\Core\Debuger;
+use Ice\Core\Model;
 use Ice\Core\Module;
 
 class Admin_Database_Sidebar extends Nav
@@ -20,7 +21,7 @@ class Admin_Database_Sidebar extends Nav
             'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'Widget: Access denied!'],
             'resource' => ['js' => null, 'css' => null, 'less' => null, 'img' => null],
             'cache' => ['ttl' => -1, 'count' => 1000],
-            'input' => ['routeParams' => ['providers' => 'router']],
+            'input' => ['schemeName' => ['providers' => 'router']],
             'output' => [],
             'action' => [
                 //  'class' => 'Ice:Render',
@@ -45,27 +46,26 @@ class Admin_Database_Sidebar extends Nav
 
         $scheme = [];
 
-        if (isset($input['routeParams']['dataSourceKey'])) {
-            $currentDataSourceKey = $module->getDataSourceKeys()[$input['routeParams']['dataSourceKey']];
+        if ($input['schemeName'] !== null) {
+            $currentDataSourceKey = $module->getDataSourceKeys()[$input['schemeName']];
 
-            foreach (Data_Scheme::getTables($module) as $dataSourceKey => $tables) {
+            foreach (Data_Scheme::getTables($module) as $dataSourceKey => $scheme) {
                 if ($dataSourceKey == $currentDataSourceKey) {
-                    $scheme = $tables;
+                    foreach ($scheme as $tableName => $table) {
+                        $this->li(
+                            $tableName,
+                            [
+                                'route' => 'ice_admin_database_table',
+                                'label' => $table['scheme']['comment'] . ' (' . $tableName . ')',
+                                'params' => [
+                                    'schemeName' => $input['schemeName'],
+                                    'tableName' => $tableName
+                                ]
+                            ]
+                        );
+                    }
                     break;
                 }
-            }
-            foreach ($scheme as $tableName => $table) {
-                $this->li(
-                    $tableName,
-                    [
-                        'route' => 'ice_admin_database_table',
-                        'label' => $table['scheme']['comment'] . ' (' . $tableName . ')',
-                        'params' => [
-                            'dataSourceKey' => $input['routeParams']['dataSourceKey'],
-                            'tableName' => $tableName
-                        ]
-                    ]
-                );
             }
         }
     }

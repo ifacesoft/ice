@@ -2,6 +2,7 @@
 namespace Ice\Core;
 
 use Ice\Exception\Access_Denied;
+use Ice\Exception\Error;
 use Ice\Helper\Access;
 use Ice\Helper\Arrays;
 use Ice\Helper\Input;
@@ -226,25 +227,32 @@ abstract class Widget extends Container
 
     protected function init(array $params)
     {
-        $this->token = crc32(String::getRandomString());
-
-        if (isset($params['parentWidgetId'])) {
-            $this->parentWidgetId = $params['parentWidgetId'];
-            unset($params['parentWidgetId']);
-        }
-
-        $this->bind(Input::get(get_class($this), $params));
-        $this->loadResource();
         $startTime = Profiler::getMicrotime();
         $startMemory = Profiler::getMemoryGetUsage();
 
-        $this->output = (array)$this->build($this->values);
-
         $key = 'build - ' . get_class($this) . '/' . $this->getInstanceKey();
 
-        Profiler::setPoint($key, $startTime, $startMemory);
+        $widgetClass = get_class($this);
 
-        Logger::fb(Profiler::getReport($key), 'widget', 'INFO');
+        try {
+            $this->token = crc32(String::getRandomString());
+
+            if (isset($params['parentWidgetId'])) {
+                $this->parentWidgetId = $params['parentWidgetId'];
+                unset($params['parentWidgetId']);
+            }
+
+            $this->bind(Input::get($widgetClass, $params));
+            $this->loadResource();
+
+            $this->output = (array)$this->build($this->values);
+        } catch (\Exception $e) {
+            Logger::getInstance($widgetClass)->error(['Widget {$0} init failed', $widgetClass], __FILE__, __LINE__, $e);
+        } finally {
+            Profiler::setPoint($key, $startTime, $startMemory);
+
+            Logger::fb(Profiler::getReport($key), 'widget', 'INFO');
+        }
     }
 
     /**
@@ -444,11 +452,15 @@ abstract class Widget extends Container
                 }
 
                 $part['name'] = isset($part['options']['name']) ? $part['options']['name'] : $partName;
-                $part['value'] = isset($part['options']['value']) ? $part['options']['value'] : null;
+                $part['value'] = isset($part['options']['value']) ? $part['options']['value'] : $partName;
 
-                $part['params'] = isset($values[$part['name']])
-                    ? [$partName => $values[$part['name']]]
-                    : [];
+                $part['params'] = [];
+
+                if ($part['value'] == $partName) {
+                    [$part['name'] => isset($values[$part['value']]) ? $values[$part['value']] : null];
+                } else {
+                    [$part['name'] => isset($values[$part['value']]) ? $values[$part['value']] : $part['value']];
+                }
 
                 if (isset($part['options']['params'])) {
                     foreach ((array)$part['options']['params'] as $key => $param) {
@@ -467,7 +479,7 @@ abstract class Widget extends Container
                         $part['options']['route'] = $partName;
                     }
 
-                    $part['options']['route'] = (array) $part['options']['route'];
+                    $part['options']['route'] = (array)$part['options']['route'];
 
                     if (count($part['options']['route']) == 2) {
                         list($routeName, $routeParams) = $part['options']['route'];
@@ -1060,17 +1072,9 @@ abstract class Widget extends Container
      */
     protected function widget($name, array $options = [], $template = 'Ice\Widget\Widget')
     {
-        if (empty($options['postfix'])) {
-            $options['postfix'] = null;
-        }
-
-        if (empty($options['params'])) {
-            $options['params'] = [];
-        }
-
         $options['params']['parentWidgetId'] = $this->getId();
 
-        $options['widget'] = $this->getWidget($options['widget'], $options['postfix'], $options['params']);
+        $options['widget'] = $this->getWidget($options['widget']);
 
         if (!$options['widget']->getResource()) {
             $options['widget']->setResource($this->getResource());
@@ -1103,21 +1107,42 @@ abstract class Widget extends Container
 
     /**
      * @param string $widgetClass
-     * @param null $postfixKey
-     * @param array $params
      * @return Widget
      */
-    protected function getWidget($widgetClass, $postfixKey = null, array $params = [])
+    protected function getWidget($widgetClass)
     {
         if (is_object($widgetClass)) {
             return $widgetClass;
         }
 
+        $widgetClass = (array) $widgetClass;
+
+        if (count($widgetClass) == 3) {
+            list($widgetClass, $widgetParams, $instanceKey) = $widgetClass;
+        } else if (count($widgetClass) == 2) {
+            list($widgetClass, $widgetParams) = $widgetClass;
+            $instanceKey = null;
+        } else {
+            $widgetClass = reset($widgetClass);
+            $widgetParams = [];
+            $instanceKey = null;
+        }
+
+        $key = null;
+
+        if (!$instanceKey || $instanceKey[0] == '_') {
+            $key = strtolower(Object::getClassName(get_class($this)));
+
+            if ($instanceKey[0] == '_') {
+                $key .= $instanceKey;
+            }
+        } else {
+            $key = $instanceKey;
+        }
+
         $widgetClass = $this->getWidgetClass($widgetClass);
 
-        $key = strtolower(Object::getClassName(get_class($this))) . (empty($postfixKey) ? '' : '_' . $postfixKey);
-
-        return $widgetClass::getInstance($key, null, $params);
+        return $widgetClass::getInstance($key, null, $widgetParams);
     }
 
     /**
@@ -1200,7 +1225,8 @@ abstract class Widget extends Container
         return Resource_Dynamic::getInstance(null);
     }
 
-    public function removePart($name) {
+    public function removePart($name)
+    {
         unset($this->parts[$name]);
     }
 }

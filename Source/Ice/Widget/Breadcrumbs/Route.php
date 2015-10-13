@@ -20,7 +20,10 @@ class Breadcrumbs_Route extends Breadcrumbs
             'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'Widget: Access denied!'],
             'resource' => ['js' => null, 'css' => null, 'less' => null, 'img' => null],
             'cache' => ['ttl' => -1, 'count' => 1000],
-            'input' => ['routeName' => ['providers' => 'router'], 'routeParams' => ['providers' => 'router']],
+            'input' => [
+                'routeName' => ['providers' => 'router'],
+                'routeParams' => ['providers' => 'router']
+            ],
             'output' => [],
             'action' => [
                 //  'class' => 'Ice:Render',

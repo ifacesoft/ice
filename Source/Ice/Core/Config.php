@@ -323,4 +323,12 @@ class Config
 
         return $this;
     }
+
+    /**
+     * @param $key
+     * @return Config
+     */
+    public function getConfig($key) {
+        return Config::create($this->getName() . '/' . $key, $this->gets($key));
+    }
 }

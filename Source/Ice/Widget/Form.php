@@ -13,19 +13,6 @@ use Ice\Render\Php;
 
 abstract class Form extends Widget
 {
-    const FIELD_HIDDEN = 'Field_Hidden';
-    const FIELD_TEXT = 'Field_Text';
-    const FIELD_DATE = 'Field_Date';
-    const FIELD_CHECKBOX = 'Field_Checkbox';
-    const FIELD_RADIOBUTTON = 'Field_Radiobutton';
-    const FIELD_NUMBER = 'Field_Number';
-    const FIELD_PASSWORD = 'Field_Password';
-    const FIELD_TEXTAREA = 'Field_Textarea';
-    const FIELD_MAP = 'Field_Map';
-    const FIELD_COMBOBOX = 'Field_Combobox';
-    const FIELD_FILE = 'Field_File';
-    const ELEMENT_BUTTON = 'Element_Button';
-
     /**
      * Validate scheme for validate fields
      *

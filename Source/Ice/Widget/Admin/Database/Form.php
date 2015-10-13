@@ -5,7 +5,7 @@ namespace Ice\Widget;
 use Ice\Core\Model;
 use Ice\Core\Module;
 
-class Admin_Database_Table extends Block
+class Admin_Database_Form extends Block
 {
     /**
      * Widget config
@@ -46,7 +46,7 @@ class Admin_Database_Table extends Block
         /** @var Model $modelClass */
         $modelClass = Module::getInstance()->getModelClass($input['tableName'], $currentDataSourceKey);
 
-        $this->widget('table', ['widget' => [Model_Table::class, ['config' => __CLASS__], $modelClass]]);
+        $this->widget('form', ['widget' => [Model_Form::class, ['config' => __CLASS__], $modelClass]]);
 
 //        $tableRows = Model_Table_Rows::getInstance($modelClass);
 //        $tableRows->removePart($modelClass::getPkFieldName());

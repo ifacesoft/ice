@@ -25,7 +25,8 @@ class Front extends Action
             'cache' => ['ttl' => -1, 'count' => 1000],
             'actions' => [],
             'input' => [
-                'routeParams' => ['providers' => 'router'],
+                'widgetClass' => ['providers' => 'router'],
+                'widgetParams' => ['providers' => 'router'],
             ],
             'output' => []
         ];
@@ -39,13 +40,11 @@ class Front extends Action
     public function run(array $input)
     {
         /** @var Widget $widgetClass */
-        $widgetClass = empty($input['routeParams']['widgetClass'])
+        $widgetClass = empty($input['widgetClass'])
             ? Layout::getClass()
-            : Widget::getClass($input['routeParams']['widgetClass']);
+            : Widget::getClass($input['widgetClass']);
 
-        $widgetParams = empty($input['routeParams']['widgetParams'])
-            ? []
-            : $input['routeParams']['widgetParams'];
+        $widgetParams = (array) $input['widgetParams'];
 
         return ['content' => $widgetClass::getInstance(null, null, $widgetParams)];
     }

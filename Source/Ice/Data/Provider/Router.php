@@ -90,7 +90,11 @@ class Router extends Data_Provider
      */
     public function get($key = null)
     {
-        return $key ? $this->getConnection()[$key] : $this->getConnection();
+        if (!$key) {
+            return $this->getConnection();
+        }
+
+        return isset($this->getConnection()[$key]) ? $this->getConnection()[$key] : null;
     }
 
     /**
@@ -249,6 +253,8 @@ class Router extends Data_Provider
         }
 
         $route['routeParams'] += array_combine(array_keys($route['params']), array_slice($baseMatches[0], 1));
+
+        $route += $route['routeParams'];
 
         return (bool)$connection = $dataProvider->set($key, $route);
     }
