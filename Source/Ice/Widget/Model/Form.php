@@ -158,8 +158,7 @@ class Model_Form extends Form
 //        return $this->bind(array_merge($model->get(), $model->getPk()));
 //    }
 
-    public
-    function addFilterFields(array $filterFields)
+    public function addFilterFields(array $filterFields)
     {
         /**
          * @var Core_Model $modelClass
@@ -173,11 +172,12 @@ class Model_Form extends Form
         return parent::addFilterFields($filterFields);
     }
 
-    public
-    static function schemeColumnPlugin($columnName, $table)
+    public static function schemeColumnPlugin($columnName, $table)
     {
-        return isset(Model_Form::$typeMap[$table['columns'][$columnName]['scheme']['dataType']])
+        $type =  isset(Model_Form::$typeMap[$table['columns'][$columnName]['scheme']['dataType']])
             ? Model_Form::$typeMap[$table['columns'][$columnName]['scheme']['dataType']]
             : 'text';
+
+        return ['type' => $type, 'roles' => ['ROLE_ICE_GUEST']];
     }
 }

@@ -41,7 +41,7 @@ class Scheme extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'table_name',
-		            'Ice\Widget\Model_Form' => 'Field_Text',
+		            'Ice\Widget\Model_Form' => 'text',
 		            'Ice\Core\Validator' => [
 		                0 => 'Ice:Not_Null',
 		            ],
@@ -59,7 +59,7 @@ class Scheme extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'revision',
-		            'Ice\Widget\Model_Form' => 'Field_Text',
+		            'Ice\Widget\Model_Form' => 'text',
 		            'Ice\Core\Validator' => [
 		                0 => 'Ice:Not_Null',
 		            ],
@@ -77,7 +77,7 @@ class Scheme extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'table__json',
-		            'Ice\Widget\Model_Form' => 'Field_Text',
+		            'Ice\Widget\Model_Form' => 'text',
 		            'Ice\Core\Validator' => [
 		                0 => 'Ice:Not_Null',
 		            ],
@@ -95,7 +95,7 @@ class Scheme extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'columns__json',
-		            'Ice\Widget\Model_Form' => 'Field_Textarea',
+		            'Ice\Widget\Model_Form' => 'textarea',
 		            'Ice\Core\Validator' => [
 		                0 => 'Ice:Not_Null',
 		            ],
@@ -113,7 +113,7 @@ class Scheme extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'references__json',
-		            'Ice\Widget\Model_Form' => 'Field_Text',
+		            'Ice\Widget\Model_Form' => 'text',
 		            'Ice\Core\Validator' => [
 		                0 => 'Ice:Not_Null',
 		            ],
@@ -131,7 +131,7 @@ class Scheme extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'indexes__json',
-		            'Ice\Widget\Model_Form' => 'Field_Text',
+		            'Ice\Widget\Model_Form' => 'text',
 		            'Ice\Core\Validator' => [
 		                0 => 'Ice:Not_Null',
 		            ],
@@ -151,7 +151,7 @@ class Scheme extends Model
 		        'manyToOne' => [],
 		        'manyToMany' => [],
 		    ],
-		    'revision' => '10101542_p6y',
+		    'revision' => '10130929_5rf',
 		];
     }
 }

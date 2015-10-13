@@ -30,7 +30,7 @@ class Orm_Sync_DataScheme extends Action
         return [
             'view' => ['template' => '', 'viewRenderClass' => null],
             'actions' => [],
-            'input' => ['force' => ['default' => 0]],
+            'input' => ['force' => ['default' => 0], 'updatePlugins' => ['default' => 0]],
             'output' => [],
             'cache' => ['ttl' => -1, 'count' => 1000],
             'roles' => []
@@ -182,6 +182,14 @@ class Orm_Sync_DataScheme extends Action
                         $schemeTables[$tableName]['modelClass'],
                         $dataSourceKey
                     );
+
+                    if ($input['updatePlugins']) {
+                        $isModelFieldUpdated = true;
+
+                        foreach (Model::getConfig()->gets('schemeColumnPlugins') as $columnPluginClass) {
+                            $schemeTables[$tableName]['columns'][$columnName][$columnPluginClass] = $column[$columnPluginClass];
+                        }
+                    }
 
                     if (!$isModelFieldsUpdated) {
                         $isModelFieldsUpdated = $isModelFieldUpdated;

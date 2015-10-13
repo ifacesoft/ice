@@ -2,14 +2,13 @@
 
 namespace Ice\Widget;
 
-use Ice\Core\Debuger;
 use Ice\Core\Model;
 
 class Model_Table extends Table
 {
     public static function schemeColumnPlugin($columnName, $table)
     {
-        return 'text';
+        return ['type' => 'span', 'roles' => ['ROLE_ICE_GUEST']];
     }
 
     /**
