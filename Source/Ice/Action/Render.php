@@ -52,7 +52,7 @@ class Render extends Action
                     $widget->setResource($input['widget']['resourceClass']);
                 }
 
-                $widgets[$widget->getId()] = $widget->render();
+                $widgets[$widget->getWidgetId()] = $widget->render();
             }
         }
 

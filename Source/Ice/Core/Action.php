@@ -126,8 +126,8 @@ abstract class Action implements Cacheable
 
         App::getContext()->initAction($actionClass, $hash);
 
-        if (isset($actionCacher) && $action = $actionCacher->get($actionHash)) {
-            return $action->result;
+        if (isset($actionCacher) && $act = $actionCacher->get($actionHash)) {
+            return $act->result;
         }
 
         $action->result = (array)$action->run($action->getInput());

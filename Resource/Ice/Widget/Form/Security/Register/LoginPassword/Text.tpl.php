@@ -7,7 +7,7 @@
            data-params='<?= $dataParams ?>'
            <?php if (!empty($dataAction)) : ?>data-action='<?= $dataAction ?>'<?php endif; ?>
            data-widget='<?= $dataWidget ?>'
-           data-for="<?= $dataFor ?>"
+           data-for="<?= $parentWidgetId ?>"
     >
         <?php if ($options['disabled']) : ?> disabled="disabled"<?php endif; ?>
         <?php if ($options['readonly']) : ?> readonly="readonly" <?php endif; ?>

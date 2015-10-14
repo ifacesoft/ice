@@ -10,6 +10,7 @@
 namespace Ice\Widget;
 
 use Ice\Core\Data_Scheme;
+use Ice\Core\Debuger;
 use Ice\Core\Model as Core_Model;
 use Ice\Core\Model;
 use Ice\Core\Module;
@@ -127,7 +128,8 @@ abstract class Model_Form extends Form
         }
 
         $this
-            ->bind(array_merge($modelClass::getModel($input['pk'], '*')->get(), $fieldNames))
+            ->bind($modelClass::getModel($input['pk'], $fieldNames)->get())
+            ->div('ice-message', ['label' => '&nbsp;'])
             ->button(
                 'submit',
                 [
@@ -148,7 +150,7 @@ abstract class Model_Form extends Form
                 [
                     'onclick' => [
                         'class' => 'Ice:Model_Form_Delete',
-                        'params' => [],
+                        'params' => ['redirect' => 'ice_admin_database_table'],
                         'url' => true,
                         'method' => 'POST',
                         'callback' => null

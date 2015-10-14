@@ -84,7 +84,7 @@ var Ice_Core_Widget = {
                 var $iceMessage = $widget.find('.ice-message');
 
                 if (result.error) {
-                    if ($iceMessage) {
+                    if ($iceMessage.length) {
                         $iceMessage.html(result.error);
                     } else {
                         Ice.notify($('#iceMessages'), result.error, 5000);
@@ -114,7 +114,7 @@ var Ice_Core_Widget = {
                     );
 
                     if (result.success) {
-                        if ($iceMessage) {
+                        if ($iceMessage.length) {
                             $iceMessage.html(result.success);
                         } else {
                             Ice.notify($('#iceMessages'), result.success, 5000);

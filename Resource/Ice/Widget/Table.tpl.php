@@ -1,7 +1,7 @@
-<div id="Widget_<?= $widgetClassName ?>_<?= $widgetName ?>"
+<div id="<?= $widgetId ?>"
      <?php if (!empty($dataAction)) : ?>data-action='<?= $dataAction ?>'<?php endif; ?>
      data-widget='<?= $dataWidget ?>'
-     data-for="<?= $dataFor ?>">
+     data-for="<?= $parentWidgetId ?>">
     <?php $parts = reset($result) ?>
     <?php if (isset($parts['header'])) : ?>
         <?= $parts['header']['content'] ?>
@@ -14,7 +14,7 @@
     }
     ?>
     <?= $pagination ?>
-    <table class="Widget_<?= $widgetClassName ?> table<?php if (!empty($classes)) : ?> <?= $classes ?><?php endif; ?>">
+    <table class="<?= $widgetClass ?> table<?php if (!empty($classes)) : ?> <?= $classes ?><?php endif; ?>">
         <?php foreach ($parts as $part) : ?>
             <?= $part['content'] ?>
         <?php endforeach; ?>

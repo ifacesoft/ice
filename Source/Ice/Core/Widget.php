@@ -249,7 +249,7 @@ abstract class Widget extends Container
 
             $this->loadResource();
 
-            $this->output = (array)$this->build($this->values);
+            $this->output = (array)$this->build($this->getValues());
         } catch (\Exception $e) {
             Logger::getInstance($widgetClass)->error(['Widget {$0} init failed', $widgetClass], __FILE__, __LINE__, $e);
         } finally {
@@ -405,8 +405,6 @@ abstract class Widget extends Container
 
         /** @var Widget $widgetClass */
         $widgetClass = get_class($this);
-        $widgetClassName = $widgetClass::getClassName();
-        $widgetName = $this->getInstanceKey();
 
         $offset = $this->getOffset();
 
@@ -418,8 +416,11 @@ abstract class Widget extends Container
             $row = [];
 
             foreach ($this->getParts($this->getFilterParts()) as $partName => $part) {
-                $part['widgetClassName'] = $widgetClassName;
-                $part['widgetName'] = $widgetName;
+                $part['widgetId'] = $this->getWidgetId();
+                $part['partId'] = $part['widgetId'] . '_' . $partName;
+
+//                $part['widgetClassName'] = $widgetClassName;
+//                $part['widgetName'] = $widgetName;
 
                 $resourceParams = [];
 
@@ -516,7 +517,7 @@ abstract class Widget extends Container
                                 : $part['label'];
 
                             $part['options']['label'] =
-                                Replace::getInstance()->fetch($template, $params, null, Render::TEMPLATE_TYPE_STRING);
+                                Replace::getInstance()->fetch($template, $part['params'], null, Render::TEMPLATE_TYPE_STRING);
                         } else {
                             $part['label'] = $part['name'];
 
@@ -565,9 +566,7 @@ abstract class Widget extends Container
             return $this->compiledResult;
         }
 
-        /** @var Widget $widgetClass */
-        $widgetClass = get_class($this);
-        $widgetClassName = $widgetClass::getClassName();
+
 
         $dataAction = empty($this->getDataAction())
             ? []
@@ -576,18 +575,25 @@ abstract class Widget extends Container
         return $this->compiledResult = array_merge(
             [
                 'result' => $this->getResult(),
-                'widgetName' => $this->getInstanceKey(),
+                'widgetId' => $this->getWidgetId(),
+                'widgetClass' => $this->getWidgetClass(),
+                'parentWidgetId' => $this->getParentWidgetId(),
                 'widgetData' => $this->getData(),
-                'widgetClassName' => $widgetClassName,
                 'widgetResource' => $this->getResource(),
                 'classes' => $this->getClasses(),
                 'dataAction' => Json::encode($dataAction),
                 'dataParams' => Json::encode($this->getDataParams()),
-                'dataWidget' => Json::encode($this->getDataWidget()),
-                'dataFor' => $this->getParentWidgetId(),
+                'dataWidget' => Json::encode($this->getDataWidget())
             ],
             (array)$this->output
         );
+    }
+
+    private function getWidgetClass() {
+        /** @var Widget $widgetClass */
+        $widgetClass = get_class($this);
+
+        return 'Widget_' .  $widgetClass::getClassName();
     }
 
     private function getDataWidget()
@@ -1076,7 +1082,7 @@ abstract class Widget extends Container
      */
     protected function widget($name, array $options = [], $template = 'Ice\Widget\Widget')
     {
-        $options['params']['parentWidgetId'] = $this->getId();
+        $options['params']['parentWidgetId'] = $this->getWidgetId();
 
         $options['widget'] = $this->getWidget($options['widget']);
 
@@ -1087,21 +1093,9 @@ abstract class Widget extends Container
         return $this->addPart($name, $options, $template, __FUNCTION__);
     }
 
-    /**
-     * @param $widgetClass
-     * @return Widget
-     */
-    protected function getWidgetClass($widgetClass)
+    public function getWidgetId()
     {
-        return $widgetClass[0] == '_'
-            ? get_class($this) . $widgetClass
-            : Widget::getClass($widgetClass);
-    }
-
-
-    public function getId()
-    {
-        return 'Widget_' . Object::getClassName(get_class($this)) . '_' . $this->getInstanceKey();
+        return 'Widget_' . Object::getClassName(get_class($this)) . '_' . strtolower(str_replace('\\', '_', $this->getInstanceKey()));
     }
 
     protected static function getDefaultKey()
@@ -1144,7 +1138,9 @@ abstract class Widget extends Container
             $key = $instanceKey;
         }
 
-        $widgetClass = $this->getWidgetClass($widgetClass);
+        $widgetClass = $widgetClass[0] == '_'
+            ? get_class($this) . $widgetClass
+            : Widget::getClass($widgetClass);
 
         return $widgetClass::getInstance($key, null, $widgetParams);
     }
@@ -1247,5 +1243,10 @@ abstract class Widget extends Container
     public function checkToken($token)
     {
 //        throw new Error('token expired');
+    }
+
+    public function checkAction($class)
+    {
+
     }
 }

@@ -1,8 +1,8 @@
-<div id="Widget_<?= $widgetClassName ?>_<?= $widgetName ?>"
-    class="Widget_<?= $widgetClassName ?><?php if (!empty($classes)) { ?> <?= $classes ?><?php } ?>"
+<div id="<?= $widgetId ?>"
+    class="<?= $widgetClass ?><?php if (!empty($classes)) { ?> <?= $classes ?><?php } ?>"
     <?php if (!empty($dataAction)) : ?>data-action='<?= $dataAction ?>'<?php endif; ?>
     data-widget='<?= $dataWidget ?>'
-    data-for="<?= $dataFor ?>"
+    data-for="<?= $parentWidgetId ?>"
 >
     <?php $parts = reset($result) ?>
     <?php if (isset($parts['breadcrumbs'])) : ?>

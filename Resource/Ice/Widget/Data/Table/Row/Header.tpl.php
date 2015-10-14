@@ -23,7 +23,7 @@
             <a href="<?= $column['href'] ?>" onclick='<?= $column['onclick'] ?>'
                data-action='<?= $column['dataAction'] ?>'
                data-widget='<?= $dataWidget ?>'
-               data-for="<?= $dataFor ?>"
+               data-for="<?= $parentWidgetId ?>"
                data-name='<?= $column['name'] ?>'
                data-params='<?= $column['dataParams'] ?>'
                class="btn btn-default btn-sm<?php if ($column['dataValue']) : ?> active<?php endif; ?>">

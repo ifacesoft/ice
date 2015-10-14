@@ -1,9 +1,9 @@
-<form id="Widget_<?= $widgetClassName ?>_<?= $widgetName ?>"
-      class="Widget_<?= $widgetClassName ?> form<?php if (!empty($classes)) : ?> <?= $classes ?><?php endif; ?>"
+<form id="<?= $widgetId ?>"
+      class="<?= $widgetClass ?> form<?php if (!empty($classes)) : ?> <?= $classes ?><?php endif; ?>"
       data-action='<?= $dataAction ?>'
       data-widget='<?= $dataWidget ?>'
       data-params='<?= $dataParams ?>'
-      data-for="<?= $dataFor ?>"
+      data-for="<?= $parentWidgetId ?>"
       action="<?= $action ?>"
       method="<?= $method ?>"
       <?php if ($onSubmit) : ?>onsubmit="<?= $onSubmit ?>"<?php endif; ?>

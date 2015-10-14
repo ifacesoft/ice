@@ -74,7 +74,9 @@ class City extends Model
 		                    1 => 'ROLE_ICE_USER',
 		                ],
 		            ],
-		            'Ice\Core\Validator' => [],
+		            'Ice\Core\Validator' => [
+		                'Ice:Length_Max' => 255,
+		            ],
 		            'Ice\Widget\Model_Table' => [
 		                'type' => 'span',
 		                'roles' => [
@@ -102,7 +104,9 @@ class City extends Model
 		                    1 => 'ROLE_ICE_USER',
 		                ],
 		            ],
-		            'Ice\Core\Validator' => [],
+		            'Ice\Core\Validator' => [
+		                'Ice:Length_Max' => 32,
+		            ],
 		            'Ice\Widget\Model_Table' => [
 		                'type' => 'span',
 		                'roles' => [

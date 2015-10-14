@@ -1,10 +1,10 @@
 <div
-    id="<?= $widgetClassName ?>_<?= $widgetName ?>_<?= $name ?><?php if (isset($offset)) : ?>_<?= $offset ?><?php endif; ?>"
+    id="<?= $partId ?><?php if (isset($offset)) : ?>_<?= $offset ?><?php endif; ?>"
     class="navbar-header <?= $name ?><?php if (isset($options['classes'])) : ?> <?= $options['classes'] ?><?php endif; ?>"
     data-name="<?= $name ?>"
     data-params='<?= $dataParams ?>'
     <?php if (!empty($dataAction)) : ?>data-action='<?= $dataAction ?>'<?php endif; ?>
-    data-for="Widget_<?= $widgetClassName ?>_<?= $widgetName ?>">
+    data-for="<?= $widgetId ?>">
     <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
             aria-expanded="false" aria-controls="navbar">
         <span class="sr-only">Toggle navigation</span>

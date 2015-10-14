@@ -4,9 +4,9 @@ namespace Ice\Action;
 
 use Ice\Core\Action;
 use Ice\Core\Debuger;
+use Ice\Core\Logger;
 use Ice\Core\Model;
 use Ice\Core\Request;
-use Ice\Core\Widget;
 use Ice\Widget\Form;
 
 class Model_Form_Submit extends Widget_Event
@@ -23,31 +23,30 @@ class Model_Form_Submit extends Widget_Event
             'cache' => ['ttl' => -1, 'count' => 1000],
             'actions' => [],
             'input' => [
-                'widget' => [
-                    'providers' => 'request',
-                    'validators' => 'Ice:Not_Empty'
-                ],
+                'widget' => ['providers' => 'request', 'validators' => 'Ice:Not_Empty'],
+                'widgets' => ['default' => [], 'providers' => ['default', 'request']]
             ],
             'output' => []
         ];
     }
 
-    protected function init(array $data = [])
+    protected function initInput(array $configInput, array $data = [])
     {
-        parent::init($data);
+        parent::initInput($configInput, $data);
 
         $input = $this->getInput();
 
         /** @var Form $modelFormWidget */
         $modelFormWidget = $input['widget'];
-        unset($input['widget']);
 
         /** @var Model $modelClass */
         $modelClass = $modelFormWidget->getInstanceKey();
 
-        $modelFormWidget->bind(Request::getParams($modelClass::getScheme()->getColumnFieldMap()));
+        $modelFormWidget->bind(array_intersect_key(Request::getParams(), $modelClass::getScheme()->getFieldColumnMap()));
 
-        $this->setInput(array_merge($input, $modelFormWidget->validate()));
+        $input['model'] = $modelClass::create($modelFormWidget->validate());
+
+        $this->setInput($input);
     }
 
 
@@ -58,6 +57,30 @@ class Model_Form_Submit extends Widget_Event
      */
     public function run(array $input)
     {
-        Debuger::dump($input);die();
+        $logger = Logger::getInstance(__CLASS__);
+
+        try {
+
+            Debuger::dump($input['model']);
+
+            $input['model']->save();
+
+
+
+            return array_merge(
+                [
+                    'success' => $logger->info(['Model {$0} successfully saved', get_class($input['model'])], Logger::SUCCESS),
+                    'redirect' => $input['widget']->getRedirect(),
+                    'timeout' => $input['widget']->getTimeout()
+                ],
+                parent::run(['widgets' => $input['widgets']])
+            );
+        } catch (\Exception $e) {
+            $message = ['Save modl: {$0}', $e->getMessage()];
+
+            $logger->error($message, __FILE__, __LINE__, $e);
+
+            return ['error' => $logger->info($message, Logger::DANGER)];
+        }
     }
 }

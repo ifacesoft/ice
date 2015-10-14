@@ -118,9 +118,9 @@ abstract class Validator extends Container
     {
         $validators = [];
 
-        switch ($table['columns'][$columnName][Model_Form::getClass()]) {
-            case 'Text':
-            case 'Textarea':
+        switch ($table['columns'][$columnName][Model_Form::getClass()]['type']) {
+            case 'text':
+            case 'textarea':
                 $validators['Ice:Length_Max'] = (int)$table['columns'][$columnName]['scheme']['length'];
                 break;
             default:

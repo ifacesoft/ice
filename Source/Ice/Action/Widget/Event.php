@@ -17,35 +17,6 @@ use Ice\Widget\Form;
 
 abstract class Widget_Event extends Render
 {
-    /**
-     * Action config
-     *
-     * @return array
-     *
-     * @author anonymous <email>
-     *
-     * @version 0
-     * @since   0
-     */
-    protected static function config()
-    {
-        return [
-            'view' => ['template' => null, 'viewRenderClass' => 'Ice:Php', 'layout' => null],
-            'input' => [
-                'widget' => [
-                    'providers' => 'request',
-                    'validators' => 'Ice:Not_Empty'
-                ],
-                'action' => [
-                    'providers' => 'request',
-                    'validators' => 'Ice:Not_Empty'
-                ]
-            ],
-            'cache' => ['ttl' => -1, 'count' => 1000],
-        ];
-    }
-
-
     protected function initInput(array $configInput, array $data = [])
     {
         parent::initInput($configInput, $data);
@@ -60,46 +31,10 @@ abstract class Widget_Event extends Render
         $widget->setResource($input['widget']['resourceClass']);
 
         $widget->checkToken($input['widget']['token']);
+        $widget->checkAction(get_class($this));
 
         $input['widget'] = $widget;
 
         $this->setInput($input);
-    }
-
-    /**
-     * Run action
-     *
-     * @param  array $input
-     * @return array
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 1.0
-     * @since   0.0
-     */
-    public function run(array $input)
-    {
-        $resource = $input['widget']->getResource();
-
-        $logger = $resource ? Logger::getInstance(get_class($resource->getResourceClass())) : $input['widget']->getLogger();
-
-        try {
-            /** @var Action $actionClass */
-            $actionClass = Action::getClass($input['action']['class']);
-
-            return array_merge(
-                [
-                    'redirect' => $input['widget']->getRedirect(),
-                    'timeout' => $input['widget']->getTimeout()
-                ],
-                $actionClass::call($input['action']['params'])
-            );
-        } catch (\Exception $e) {
-            $message = ['Event failed: {$0}', $e->getMessage()];
-
-            $logger->error($message, __FILE__, __LINE__, $e);
-
-            return ['error' => $logger->info($message, Logger::DANGER)];
-        }
     }
 }

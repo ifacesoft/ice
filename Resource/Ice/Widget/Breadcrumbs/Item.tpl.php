@@ -6,5 +6,5 @@
        data-name="<?= $name ?>"
        data-params='<?= $dataParams ?>'
        <?php if (!empty($dataAction)) : ?>data-action='<?= $dataAction ?>'<?php endif; ?>
-       data-for="Widget_<?= $widgetClassName ?>_<?= $widgetName ?>"><?= $options['label'] ?></a>
+       data-for="<?= $widgetId ?>"><?= $options['label'] ?></a>
 </li>

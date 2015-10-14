@@ -1,8 +1,8 @@
-<div id="Widget_<?= $widgetClassName ?>_<?= $widgetName ?>"
-     class="Widget_<?= $widgetClassName ?>"
+<div id="<?= $widgetId ?>"
+     class="<?= $widgetClass ?>"
      <?php if (!empty($dataAction)) : ?>data-action='<?= $dataAction ?>'<?php endif; ?>
      data-widget='<?= $dataWidget ?>'
-     data-for="<?= $dataFor ?>"
+     data-for="<?= $parentWidgetId ?>"
 >
     <?php $parts = reset($result) ?>
     <?php foreach ($parts as $part) : ?>

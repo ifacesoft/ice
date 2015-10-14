@@ -1,6 +1,6 @@
 <div<?php if (!isset($options['resetFormClass'])) : ?> class="form-group"<?php endif; ?>>
     <label
-        for="<?= $widgetClassName ?>_<?= $widgetName ?>_<?= $name ?>"
+        for="<?= $partId ?>"
         class="control-label<?php if (isset($options['srOnly'])) : ?> sr-only<?php endif; ?><?php if (isset($options['horizontal'])) : ?> col-md-<?= $options['horizontal'] ?><?php endif; ?>"
     ><?= $options['label'] ?></label>
 
@@ -11,7 +11,7 @@
                id="<?= $widgetClassName . '_' . $widgetName . '_' . $name ?>"
                name="<?= $name ?>"
                value="<?= isset($params[$name]) ? $params[$name] : '' ?>"
-               data-for="Widget_<?= $widgetClassName ?>_<?= $widgetName ?>"
+               data-for="<?= $widgetId ?>"
                <?php if (isset($options['placeholder'])) : ?>placeholder="<?= $options['placeholder'] ?>"<?php endif; ?>
                <?php if (isset($options['onchange'])) : ?>onchange="<?= $options['onchange'] ?>"<?php endif; ?>
             <?php if ($options['disabled']) : ?> disabled="disabled"<?php endif; ?>

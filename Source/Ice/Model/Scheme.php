@@ -49,6 +49,7 @@ class Scheme extends Model
 		                ],
 		            ],
 		            'Ice\Core\Validator' => [
+		                'Ice:Length_Max' => 255,
 		                0 => 'Ice:Not_Null',
 		            ],
 		            'Ice\Widget\Model_Table' => [
@@ -79,6 +80,7 @@ class Scheme extends Model
 		                ],
 		            ],
 		            'Ice\Core\Validator' => [
+		                'Ice:Length_Max' => 12,
 		                0 => 'Ice:Not_Null',
 		            ],
 		            'Ice\Widget\Model_Table' => [
@@ -109,6 +111,7 @@ class Scheme extends Model
 		                ],
 		            ],
 		            'Ice\Core\Validator' => [
+		                'Ice:Length_Max' => 1023,
 		                0 => 'Ice:Not_Null',
 		            ],
 		            'Ice\Widget\Model_Table' => [
@@ -139,6 +142,7 @@ class Scheme extends Model
 		                ],
 		            ],
 		            'Ice\Core\Validator' => [
+		                'Ice:Length_Max' => 65535,
 		                0 => 'Ice:Not_Null',
 		            ],
 		            'Ice\Widget\Model_Table' => [
@@ -169,6 +173,7 @@ class Scheme extends Model
 		                ],
 		            ],
 		            'Ice\Core\Validator' => [
+		                'Ice:Length_Max' => 1023,
 		                0 => 'Ice:Not_Null',
 		            ],
 		            'Ice\Widget\Model_Table' => [
@@ -199,6 +204,7 @@ class Scheme extends Model
 		                ],
 		            ],
 		            'Ice\Core\Validator' => [
+		                'Ice:Length_Max' => 1023,
 		                0 => 'Ice:Not_Null',
 		            ],
 		            'Ice\Widget\Model_Table' => [
@@ -223,7 +229,7 @@ class Scheme extends Model
 		        'manyToOne' => [],
 		        'manyToMany' => [],
 		    ],
-		    'revision' => '10130956_jqo',
+		    'revision' => '10141332_i1x',
 		];
     }
 }

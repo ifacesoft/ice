@@ -1,6 +1,6 @@
 <div<?php if (!isset($options['resetFormClass'])) : ?> class="form-group"<?php endif; ?>>
     <label
-        for="<?= $widgetClassName ?>_<?= $widgetName ?>_<?= $name ?>"
+        for="<?= $partId ?>"
         class="control-label<?php if (isset($options['srOnly'])) : ?> sr-only<?php endif; ?><?php if (isset($options['horizontal'])) : ?> col-md-<?= $options['horizontal'] ?><?php endif; ?>"
     ><?= $options['label'] ?></label>
 
@@ -9,7 +9,7 @@
         <select id="<?= $widgetClassName . '_' . $widgetName . '_' . $name ?>"
                 class="<?= $element ?> <?= $name ?><?php if (!isset($options['resetFormClass'])) : ?> form-control<?php endif; ?><?php if (isset($options['classes'])) : ?> <?= $options['classes'] ?><?php endif; ?>"
                 name="<?= $name ?>"
-                data-for="Widget_<?= $widgetClassName ?>_<?= $widgetName ?>"
+                data-for="<?= $widgetId ?>"
                 data-name="<?= $name ?>"
                 data-params='<?= $dataParams ?>'
                 <?php if (!empty($dataAction)) : ?>data-action='<?= $dataAction ?>'<?php endif; ?>

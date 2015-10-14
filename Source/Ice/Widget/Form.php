@@ -407,8 +407,6 @@ abstract class Form extends Widget
      */
     public function validate()
     {
-        Debuger::dump($this->getValues(), $this->getValidateScheme());
-
         return Validator::validateByScheme($this->getValues(), $this->getValidateScheme());
     }
 
@@ -435,7 +433,7 @@ abstract class Form extends Widget
     {
         parent::addPart($partName, $options, $template, $element);
 
-        if (is_string($partName) && isset($this->parts[$partName]['options']['validators'])) {
+        if (!empty($this->parts[$partName]['options']['validators'])) {
             $this->validateScheme[$partName] = $this->parts[$partName]['options']['validators'];
             unset($this->parts[$partName]['options']['validators']);
         }
