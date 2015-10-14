@@ -41,8 +41,11 @@ var Ice = {
                     result = data.responseJSON;
                     if (result.error) {
                         Ice.notify($('#iceMessages'), result.error, 5000);
-                        console.warn(result.error)
+                        console.warn(result.error);
                     }
+                } else {
+                    Ice.notify($('#iceMessages'), '<div class="alert alert-danger">' + data.statusText + '</div>', 5000);
+                    console.warn(data.statusText);
                 }
 
                 $('#icePreloader').hide();

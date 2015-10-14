@@ -41,11 +41,23 @@ class Scheme extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'table_name',
-		            'Ice\Widget\Model_Form' => 'text',
+		            'Ice\Widget\Model_Form' => [
+		                'type' => 'text',
+		                'roles' => [
+		                    0 => 'ROLE_ICE_GUEST',
+		                    1 => 'ROLE_ICE_USER',
+		                ],
+		            ],
 		            'Ice\Core\Validator' => [
 		                0 => 'Ice:Not_Null',
 		            ],
-		            'Ice\Widget\Model_Table' => 'text',
+		            'Ice\Widget\Model_Table' => [
+		                'type' => 'span',
+		                'roles' => [
+		                    0 => 'ROLE_ICE_GUEST',
+		                    1 => 'ROLE_ICE_USER',
+		                ],
+		            ],
 		        ],
 		        'revision' => [
 		            'scheme' => [
@@ -59,11 +71,23 @@ class Scheme extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'revision',
-		            'Ice\Widget\Model_Form' => 'text',
+		            'Ice\Widget\Model_Form' => [
+		                'type' => 'text',
+		                'roles' => [
+		                    0 => 'ROLE_ICE_GUEST',
+		                    1 => 'ROLE_ICE_USER',
+		                ],
+		            ],
 		            'Ice\Core\Validator' => [
 		                0 => 'Ice:Not_Null',
 		            ],
-		            'Ice\Widget\Model_Table' => 'text',
+		            'Ice\Widget\Model_Table' => [
+		                'type' => 'span',
+		                'roles' => [
+		                    0 => 'ROLE_ICE_GUEST',
+		                    1 => 'ROLE_ICE_USER',
+		                ],
+		            ],
 		        ],
 		        'table__json' => [
 		            'scheme' => [
@@ -77,11 +101,23 @@ class Scheme extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'table__json',
-		            'Ice\Widget\Model_Form' => 'text',
+		            'Ice\Widget\Model_Form' => [
+		                'type' => 'text',
+		                'roles' => [
+		                    0 => 'ROLE_ICE_GUEST',
+		                    1 => 'ROLE_ICE_USER',
+		                ],
+		            ],
 		            'Ice\Core\Validator' => [
 		                0 => 'Ice:Not_Null',
 		            ],
-		            'Ice\Widget\Model_Table' => 'text',
+		            'Ice\Widget\Model_Table' => [
+		                'type' => 'span',
+		                'roles' => [
+		                    0 => 'ROLE_ICE_GUEST',
+		                    1 => 'ROLE_ICE_USER',
+		                ],
+		            ],
 		        ],
 		        'columns__json' => [
 		            'scheme' => [
@@ -95,11 +131,23 @@ class Scheme extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'columns__json',
-		            'Ice\Widget\Model_Form' => 'textarea',
+		            'Ice\Widget\Model_Form' => [
+		                'type' => 'textarea',
+		                'roles' => [
+		                    0 => 'ROLE_ICE_GUEST',
+		                    1 => 'ROLE_ICE_USER',
+		                ],
+		            ],
 		            'Ice\Core\Validator' => [
 		                0 => 'Ice:Not_Null',
 		            ],
-		            'Ice\Widget\Model_Table' => 'text',
+		            'Ice\Widget\Model_Table' => [
+		                'type' => 'span',
+		                'roles' => [
+		                    0 => 'ROLE_ICE_GUEST',
+		                    1 => 'ROLE_ICE_USER',
+		                ],
+		            ],
 		        ],
 		        'references__json' => [
 		            'scheme' => [
@@ -113,11 +161,23 @@ class Scheme extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'references__json',
-		            'Ice\Widget\Model_Form' => 'text',
+		            'Ice\Widget\Model_Form' => [
+		                'type' => 'text',
+		                'roles' => [
+		                    0 => 'ROLE_ICE_GUEST',
+		                    1 => 'ROLE_ICE_USER',
+		                ],
+		            ],
 		            'Ice\Core\Validator' => [
 		                0 => 'Ice:Not_Null',
 		            ],
-		            'Ice\Widget\Model_Table' => 'text',
+		            'Ice\Widget\Model_Table' => [
+		                'type' => 'span',
+		                'roles' => [
+		                    0 => 'ROLE_ICE_GUEST',
+		                    1 => 'ROLE_ICE_USER',
+		                ],
+		            ],
 		        ],
 		        'indexes__json' => [
 		            'scheme' => [
@@ -131,11 +191,23 @@ class Scheme extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'indexes__json',
-		            'Ice\Widget\Model_Form' => 'text',
+		            'Ice\Widget\Model_Form' => [
+		                'type' => 'text',
+		                'roles' => [
+		                    0 => 'ROLE_ICE_GUEST',
+		                    1 => 'ROLE_ICE_USER',
+		                ],
+		            ],
 		            'Ice\Core\Validator' => [
 		                0 => 'Ice:Not_Null',
 		            ],
-		            'Ice\Widget\Model_Table' => 'text',
+		            'Ice\Widget\Model_Table' => [
+		                'type' => 'span',
+		                'roles' => [
+		                    0 => 'ROLE_ICE_GUEST',
+		                    1 => 'ROLE_ICE_USER',
+		                ],
+		            ],
 		        ],
 		    ],
 		    'indexes' => [
@@ -151,7 +223,7 @@ class Scheme extends Model
 		        'manyToOne' => [],
 		        'manyToMany' => [],
 		    ],
-		    'revision' => '10130929_5rf',
+		    'revision' => '10130956_jqo',
 		];
     }
 }

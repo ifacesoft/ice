@@ -4,11 +4,11 @@ namespace Ice\Widget;
 
 use Ice\Core\Model;
 
-class Model_Table extends Table
+abstract class Model_Table extends Table
 {
     public static function schemeColumnPlugin($columnName, $table)
     {
-        return ['type' => 'span', 'roles' => ['ROLE_ICE_GUEST']];
+        return ['type' => 'span', 'roles' => ['ROLE_ICE_GUEST', 'ROLE_ICE_USER']];
     }
 
     /**
@@ -23,7 +23,7 @@ class Model_Table extends Table
             'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'Widget: Access denied!'],
             'resource' => ['js' => null, 'css' => null, 'less' => null, 'img' => null],
             'cache' => ['ttl' => -1, 'count' => 1000],
-            'input' => ['config' => ['validators' => 'Ice:Not_Empty']],
+            'input' => [],
             'output' => [],
             'action' => [
                 //  'class' => 'Ice:Render',
@@ -51,7 +51,7 @@ class Model_Table extends Table
 
         $this->setResource($modelClass);
 
-        $tableRows = Model_Table_Rows::getInstance($modelClass, null, ['config' => $input['config']]);
+        $tableRows = $this->getWidget(['_Rows', [], $modelClass]);
 
         $this
             ->widget('trth', ['widget' => $tableRows], 'Ice\Widget\Table\Trth')

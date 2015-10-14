@@ -38,6 +38,5 @@ class Admin_Nav extends Nav
      */
     protected function build(array $input)
     {
-        // TODO: Implement build() method.
     }
 }

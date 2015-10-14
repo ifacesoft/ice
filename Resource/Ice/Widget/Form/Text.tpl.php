@@ -10,7 +10,7 @@
                type="text"
                class="<?= $element ?> <?= $name ?><?php if (!isset($options['resetFormClass'])) : ?> form-control<?php endif; ?><?php if (isset($options['classes'])) : ?> <?= $options['classes'] ?><?php endif; ?>"
                name="<?= $name ?>"
-               value="<?= $params[$name] ?>"
+               value="<?= isset($params[$name]) ? $params[$name] : '' ?>"
                data-for="Widget_<?= $widgetClassName ?>_<?= $widgetName ?>"
                <?php if (isset($onchange)) : ?>onchange="<?= $onchange ?> return false"<?php endif; ?>
             <?php if (isset($options['placeholder'])) : ?> placeholder="<?= $options['placeholder'] ?>"<?php endif; ?>

@@ -37,9 +37,21 @@ class Country extends Model
 		                'comment' => 'ID Страны',
 		            ],
 		            'fieldName' => 'country_pk',
-		            'Ice\Widget\Model_Form' => 'Field_Number',
+		            'Ice\Widget\Model_Form' => [
+		                'type' => 'number',
+		                'roles' => [
+		                    0 => 'ROLE_ICE_GUEST',
+		                    1 => 'ROLE_ICE_USER',
+		                ],
+		            ],
 		            'Ice\Core\Validator' => [],
-		            'Ice\Widget\Model_Table' => 'text',
+		            'Ice\Widget\Model_Table' => [
+		                'type' => 'span',
+		                'roles' => [
+		                    0 => 'ROLE_ICE_GUEST',
+		                    1 => 'ROLE_ICE_USER',
+		                ],
+		            ],
 		        ],
 		        'country_name' => [
 		            'scheme' => [
@@ -53,9 +65,21 @@ class Country extends Model
 		                'comment' => 'Название страны',
 		            ],
 		            'fieldName' => 'country_name',
-		            'Ice\Widget\Model_Form' => 'Field_Text',
+		            'Ice\Widget\Model_Form' => [
+		                'type' => 'text',
+		                'roles' => [
+		                    0 => 'ROLE_ICE_GUEST',
+		                    1 => 'ROLE_ICE_USER',
+		                ],
+		            ],
 		            'Ice\Core\Validator' => [],
-		            'Ice\Widget\Model_Table' => 'text',
+		            'Ice\Widget\Model_Table' => [
+		                'type' => 'span',
+		                'roles' => [
+		                    0 => 'ROLE_ICE_GUEST',
+		                    1 => 'ROLE_ICE_USER',
+		                ],
+		            ],
 		        ],
 		    ],
 		    'indexes' => [

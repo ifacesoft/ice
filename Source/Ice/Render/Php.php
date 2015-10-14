@@ -114,14 +114,14 @@ class Php extends Render
     /**
      * Init object
      *
-     * @param array $params
+     * @param array $data
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 2.0
      * @since   2.0
      */
-    protected function init(array $params)
+    protected function init(array $data)
     {
     }
 }

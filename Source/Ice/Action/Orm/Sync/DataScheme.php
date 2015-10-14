@@ -30,7 +30,10 @@ class Orm_Sync_DataScheme extends Action
         return [
             'view' => ['template' => '', 'viewRenderClass' => null],
             'actions' => [],
-            'input' => ['force' => ['default' => 0], 'updatePlugins' => ['default' => 0]],
+            'input' => [
+                'force' => ['providers' => 'cli', 'default' => 0],
+                'updatePlugins' => ['providers' => 'cli', 'default' => 0]
+            ],
             'output' => [],
             'cache' => ['ttl' => -1, 'count' => 1000],
             'roles' => []

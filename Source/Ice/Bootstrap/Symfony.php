@@ -18,11 +18,11 @@ class Symfony extends Bootstrap
         return MODULE_CONFIG_PATH;
     }
 
-    public function init(array $params)
+    public function init(array $data)
     {
-        $params['force'] = true;
+        $data['force'] = true;
 
-        parent::init($params);
+        parent::init($data);
 
 //        set_error_handler('Ice\Core\Logger::errorHandler');
 //        register_shutdown_function('Ice\Core\Logger::shutdownHandler');

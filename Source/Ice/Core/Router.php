@@ -25,7 +25,7 @@ abstract class Router extends Container
         return parent::getInstance($key, $ttl, $params);
     }
 
-    protected function init(array $params) {
+    protected function init(array $data) {
     }
 
     protected static function getDefaultClassKey()

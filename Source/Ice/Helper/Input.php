@@ -3,7 +3,6 @@
 namespace Ice\Helper;
 
 use Ice\Core\Action;
-use Ice\Core\Configured;
 use Ice\Core\Data_Provider;
 use Ice\Data\Provider\Request as Data_Provider_Request;
 use Ice\Data\Provider\Router as Data_Provider_Router;
@@ -13,14 +12,15 @@ use Ice\Data\Provider\Cli as Data_Provider_Cli;
 class Input
 {
     /**
-     * @param Configured $class
-     * @param array $data
-     * @param array $params
+     * Gets all declared input data
+     *
+     * @param array $data Addition input data
+     * @param array $configInput Declared input params
      * @return array
      */
-    public static function get($class, array $data = [], array $params = [])
+    public static function get(array $configInput, array $data = [])
     {
-        $params = array_merge(array_keys($data), $class::getConfig()->gets('input', false), $params);
+        $configInput = array_merge($configInput, array_keys($data));
 
         $dataProviderKeyMap = [
             'request' => Data_Provider_Request::DEFAULT_DATA_PROVIDER_KEY,
@@ -31,7 +31,7 @@ class Input
 
         $input = [];
 
-        foreach ($params as $name => $param) {
+        foreach ($configInput as $name => $param) {
             if (is_int($name)) {
                 $name = $param;
                 $param = [];
@@ -43,7 +43,7 @@ class Input
             }
 
             $dataProviderKeys = isset($param['providers'])
-                ? (array)$param['providers']
+                ? ($param['providers'] == 'any' ? ['request', 'router', 'cli', 'session']: (array)$param['providers'])
                 : ['default'];
 
             foreach ($dataProviderKeys as $dataProviderKey) {

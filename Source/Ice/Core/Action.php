@@ -58,7 +58,7 @@ abstract class Action implements Cacheable
      *
      * @var array
      */
-    private $input = [];
+    private $input = null;
 
     /**
      * Cache ttl
@@ -97,67 +97,46 @@ abstract class Action implements Cacheable
         return Registry::getInstance(__CLASS__, self::getClass());
     }
 
-    public static function call(array $input = [], $level = 0)
+    public static function call(array $params = [], $level = 0)
     {
         $startTime = Profiler::getMicrotime();
         $startMemory = Profiler::getMemoryGetUsage();
+
+        $logger = Logger::getInstance(__CLASS__);
 
         /**
          * @var Action $actionClass
          */
         $actionClass = self::getClass();
 
-        $logger = Logger::getInstance($actionClass);
-
         if (Request::isCli()) {
             $logger->info(['{$0}call: {$1}...', [str_repeat("\t", $level), $actionClass]], Logger::MESSAGE);
         }
-
-        Action::checkResponse($input);
-
-        $input = $actionClass::getInput($input);
-
-        $env = isset($input['env'])
-            ? $input['env']
-            : $actionClass::getConfig()->get('access/env', false);
-
-        $request = isset($input['request'])
-            ? $input['request']
-            : $actionClass::getConfig()->get('access/request', false);
-
-        $roles = isset($input['roles'])
-            ? $input['roles']
-            : $actionClass::getConfig()->get('access/roles', false);
-
-
-        Access::check(['env' => $env, 'roles' => $roles, 'request' => $request]);
 
         if ($actionClass::getConfig()->get('cache/ttl') != -1) {
             $actionCacher = Action::getCacher($actionClass);
         }
 
-        $inputString = Json::encode($input);
+        $action = $actionClass::create($params);
+
+        $inputString = Json::encode($action->getInput());
+
         $hash = crc32($inputString);
         $actionHash = $actionClass . '/' . $hash;
 
         App::getContext()->initAction($actionClass, $hash);
-        $action = null;
 
         if (isset($actionCacher) && $action = $actionCacher->get($actionHash)) {
             return $action->result;
         }
 
-        $action = $actionClass::create();
-
-        $action->setInput($input);
-
-        $action->result = (array)$action->run($input);
+        $action->result = (array)$action->run($action->getInput());
 
         $key = 'run - ' . $actionClass . '/' . $hash;
 
         Profiler::setPoint($key, $startTime, $startMemory);
 
-        Logger::fb($input, 'action: call ' . $actionClass . '/' . $hash, 'INFO');
+        Logger::fb($params, 'action: call ' . $actionClass . '/' . $hash, 'INFO');
         Logger::fb(Profiler::getReport($key), 'action', 'INFO');
         //            if ($content = $actionContext->getContent()) {
         //                App::getContext()->setContent(null);
@@ -241,27 +220,19 @@ abstract class Action implements Cacheable
     }
 
     /**
-     * @param array $data
      * @return array
-     * @throws Redirect
      */
-    public static function getInput(array $data = [])
+    public function getInput()
     {
-        $extendFields = ['actions', 'template', 'layout', 'viewRenderClass', 'env'];
+        return $this->input;
+    }
 
-        $input = Input::get(self::getClass(), $data, ['actions', 'template', 'layout', 'viewRenderClass', 'env']);
-
-        foreach ($extendFields as $extendField) {
-            if ($input[$extendField] === null) {
-                unset($input[$extendField]);
-            }
-        }
-
-        if (isset($input['redirectUrl'])) {
-            throw new Redirect($input['redirectUrl']);
-        }
-
-        return $input;
+    /**
+     * @param array $input
+     */
+    public function setInput($input)
+    {
+        $this->input = $input;
     }
 
     /**
@@ -281,7 +252,6 @@ abstract class Action implements Cacheable
 
     /**
      * Action config
-
      * @return array
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -303,42 +273,29 @@ abstract class Action implements Cacheable
 
     /**
      * Get action object by name
-     *
+     * @param array $params
      * @return Action
-     * @throws Redirect
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.5
+     * @version 2.0
      * @since   0.0
      */
-    public static function create()
+    public static function create(array $params = [])
     {
         $actionClass = self::getClass();
 
-        return new $actionClass();
+        /** @var Action $action */
+        $action = new $actionClass();
+
+        $action->init($params);
+
+        return $action;
     }
 
-    /**
-     * Init input params
-     *
-     * @param array $input
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since   0.5
-     */
-    public function setInput($input)
+    private function initActions()
     {
-        $this->initActions($input);
-        $this->initTtl($input);
+        $input = $this->getInput();
 
-        $this->input = $input;
-    }
-
-    private function initActions(&$input)
-    {
         if (isset($input['actions'])) {
             foreach ((array)$input['actions'] as $key => $action) {
                 if (is_string($action)) {
@@ -349,6 +306,8 @@ abstract class Action implements Cacheable
             }
 
             unset($input['actions']);
+
+            $this->setInput($input);
         }
     }
 
@@ -357,11 +316,16 @@ abstract class Action implements Cacheable
         $this->actions[] = $action;
     }
 
-    private function initTtl(&$input)
+    private function initTtl()
     {
+        $input = $this->getInput();
+
         if (isset($input['ttl'])) {
             $this->setTtl($input['ttl']);
+
             unset($input['ttl']);
+
+            $this->setInput($input);
         } else {
             $this->setTtl(null);
         }
@@ -520,7 +484,58 @@ abstract class Action implements Cacheable
         return $this;
     }
 
-    public function getLogger() {
+    public function getLogger()
+    {
         return Logger::getInstance(get_class($this));
+    }
+
+    protected function init(array $data = [])
+    {
+        /** @var Action|Configured $actionClass */
+        $actionClass = get_class($this);
+
+        Action::checkResponse($data);
+
+        $this->initInput($actionClass::getConfig()->gets('input'), $data);
+
+        $env = isset($this->input['env'])
+            ? $this->input['env']
+            : $actionClass::getConfig()->get('access/env', false);
+
+        $request = isset($this->input['request'])
+            ? $this->input['request']
+            : $actionClass::getConfig()->get('access/request', false);
+
+        $roles = isset($this->input['roles'])
+            ? $this->input['roles']
+            : $actionClass::getConfig()->get('access/roles', false);
+
+        Access::check(['env' => $env, 'roles' => $roles, 'request' => $request]);
+
+        $this->initActions();
+        $this->initTtl();
+    }
+
+    protected function initInput(array $configInput, array $data = [])
+    {
+        /** @var Action|Configured $actionClass */
+        $actionClass = get_class($this);
+
+        $extendFields = ['actions', 'template', 'layout', 'viewRenderClass', 'env'];
+
+        $configInput = array_merge(
+            $actionClass::getConfig()->gets('input', false),
+            $configInput, ['actions', 'template', 'layout', 'viewRenderClass', 'env']
+        );
+
+        $input = Input::get($configInput, $data);
+
+        foreach ($extendFields as $extendField) {
+            if ($input[$extendField] === null) {
+                unset($input[$extendField]);
+            }
+        }
+
+        $this->setInput($input);
     }
 }

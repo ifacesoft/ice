@@ -39,9 +39,21 @@ class City extends Model
 		                'comment' => 'ID Города',
 		            ],
 		            'fieldName' => 'city_pk',
-		            'Ice\Widget\Model_Form' => 'Field_Number',
+		            'Ice\Widget\Model_Form' => [
+		                'type' => 'number',
+		                'roles' => [
+		                    0 => 'ROLE_ICE_GUEST',
+		                    1 => 'ROLE_ICE_USER',
+		                ],
+		            ],
 		            'Ice\Core\Validator' => [],
-		            'Ice\Widget\Model_Table' => 'text',
+		            'Ice\Widget\Model_Table' => [
+		                'type' => 'span',
+		                'roles' => [
+		                    0 => 'ROLE_ICE_GUEST',
+		                    1 => 'ROLE_ICE_USER',
+		                ],
+		            ],
 		        ],
 		        'city_name' => [
 		            'scheme' => [
@@ -55,9 +67,21 @@ class City extends Model
 		                'comment' => 'Название города',
 		            ],
 		            'fieldName' => 'city_name',
-		            'Ice\Widget\Model_Form' => 'Field_Text',
+		            'Ice\Widget\Model_Form' => [
+		                'type' => 'text',
+		                'roles' => [
+		                    0 => 'ROLE_ICE_GUEST',
+		                    1 => 'ROLE_ICE_USER',
+		                ],
+		            ],
 		            'Ice\Core\Validator' => [],
-		            'Ice\Widget\Model_Table' => 'text',
+		            'Ice\Widget\Model_Table' => [
+		                'type' => 'span',
+		                'roles' => [
+		                    0 => 'ROLE_ICE_GUEST',
+		                    1 => 'ROLE_ICE_USER',
+		                ],
+		            ],
 		        ],
 		        'city_short' => [
 		            'scheme' => [
@@ -71,9 +95,21 @@ class City extends Model
 		                'comment' => 'Краткое наименование',
 		            ],
 		            'fieldName' => 'city_short',
-		            'Ice\Widget\Model_Form' => 'Field_Text',
+		            'Ice\Widget\Model_Form' => [
+		                'type' => 'text',
+		                'roles' => [
+		                    0 => 'ROLE_ICE_GUEST',
+		                    1 => 'ROLE_ICE_USER',
+		                ],
+		            ],
 		            'Ice\Core\Validator' => [],
-		            'Ice\Widget\Model_Table' => 'text',
+		            'Ice\Widget\Model_Table' => [
+		                'type' => 'span',
+		                'roles' => [
+		                    0 => 'ROLE_ICE_GUEST',
+		                    1 => 'ROLE_ICE_USER',
+		                ],
+		            ],
 		        ],
 		        'country__fk' => [
 		            'scheme' => [
@@ -87,9 +123,21 @@ class City extends Model
 		                'comment' => 'Страна',
 		            ],
 		            'fieldName' => 'country__fk',
-		            'Ice\Widget\Model_Form' => 'Field_Number',
+		            'Ice\Widget\Model_Form' => [
+		                'type' => 'number',
+		                'roles' => [
+		                    0 => 'ROLE_ICE_GUEST',
+		                    1 => 'ROLE_ICE_USER',
+		                ],
+		            ],
 		            'Ice\Core\Validator' => [],
-		            'Ice\Widget\Model_Table' => 'text',
+		            'Ice\Widget\Model_Table' => [
+		                'type' => 'span',
+		                'roles' => [
+		                    0 => 'ROLE_ICE_GUEST',
+		                    1 => 'ROLE_ICE_USER',
+		                ],
+		            ],
 		        ],
 		    ],
 		    'indexes' => [

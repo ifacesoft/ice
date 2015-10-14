@@ -47,7 +47,7 @@ class Smarty extends Render
     private $_smarty = null;
 
 
-    protected function init(array $params)
+    protected function init(array $data)
     {
         $config = Config::getInstance(__CLASS__);
 

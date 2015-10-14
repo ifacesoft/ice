@@ -225,24 +225,28 @@ abstract class Widget extends Container
         return $this->setResource($resource);
     }
 
-    protected function init(array $params)
+    protected function init(array $data)
     {
         $startTime = Profiler::getMicrotime();
         $startMemory = Profiler::getMemoryGetUsage();
 
         $key = 'build - ' . get_class($this) . '/' . $this->getInstanceKey();
 
+        /** @var Widget $widgetClass */
         $widgetClass = get_class($this);
 
         try {
             $this->token = crc32(String::getRandomString());
 
-            if (isset($params['parentWidgetId'])) {
-                $this->parentWidgetId = $params['parentWidgetId'];
-                unset($params['parentWidgetId']);
+            if (isset($data['parentWidgetId'])) {
+                $this->parentWidgetId = $data['parentWidgetId'];
+                unset($data['parentWidgetId']);
             }
 
-            $this->bind(Input::get($widgetClass, $params));
+            $configInput = $widgetClass::getConfig()->gets('input', false);
+
+            $this->bind(Input::get($configInput, $data));
+
             $this->loadResource();
 
             $this->output = (array)$this->build($this->values);
@@ -454,12 +458,12 @@ abstract class Widget extends Container
                 $part['name'] = isset($part['options']['name']) ? $part['options']['name'] : $partName;
                 $part['value'] = isset($part['options']['value']) ? $part['options']['value'] : $partName;
 
-                $part['params'] = [];
+                $part['params'] = $part['value'] == $partName
+                    ? [$part['name'] => isset($values[$part['value']]) ? $values[$part['value']] : null]
+                    : [$part['name'] => isset($values[$part['value']]) ? $values[$part['value']] : $part['value']];
 
-                if ($part['value'] == $partName) {
-                    [$part['name'] => isset($values[$part['value']]) ? $values[$part['value']] : null];
-                } else {
-                    [$part['name'] => isset($values[$part['value']]) ? $values[$part['value']] : $part['value']];
+                if (is_string($part['params'][$part['name']])) {
+                    $part['params'][$part['name']] = htmlentities($part['params'][$part['name']]);
                 }
 
                 if (isset($part['options']['params'])) {
@@ -1115,7 +1119,7 @@ abstract class Widget extends Container
             return $widgetClass;
         }
 
-        $widgetClass = (array) $widgetClass;
+        $widgetClass = (array)$widgetClass;
 
         if (count($widgetClass) == 3) {
             list($widgetClass, $widgetParams, $instanceKey) = $widgetClass;
@@ -1190,6 +1194,10 @@ abstract class Widget extends Container
                 : Router::getInstance()->getUrl($dataAction['url']);
         }
 
+        if (isset($dataAction['class'])) {
+            $dataAction['class'] = Action::getClass($dataAction['class']);
+        }
+
         $this->dataAction = $dataAction;
 
         return $this->dataAction;
@@ -1228,5 +1236,16 @@ abstract class Widget extends Container
     public function removePart($name)
     {
         unset($this->parts[$name]);
+    }
+
+    /**
+     * @param $token
+     * @return bool
+     *
+     * @todo: need implement
+     */
+    public function checkToken($token)
+    {
+//        throw new Error('token expired');
     }
 }

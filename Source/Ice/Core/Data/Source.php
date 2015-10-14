@@ -145,7 +145,7 @@ abstract class Data_Source extends Container
         return $repository->set($key, reset($defaultDataSourceKeys), 0);
     }
 
-    protected function init(array $params) {
+    protected function init(array $data) {
         list($key, $scheme) = explode('.', $this->getInstanceKey());
 
         $this->key = $key;

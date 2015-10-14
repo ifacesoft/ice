@@ -9,12 +9,12 @@
 
 namespace Ice\Widget;
 
-use Ice\Core\Config;
 use Ice\Core\Data_Scheme;
-use Ice\Core\Debuger;
 use Ice\Core\Model as Core_Model;
 use Ice\Core\Model;
 use Ice\Core\Module;
+use Ice\Core\Validator;
+use Ice\Exception\Not_Configured;
 
 /**
  * Class Model
@@ -28,7 +28,7 @@ use Ice\Core\Module;
  * @package    Ice
  * @subpackage Widget
  */
-class Model_Form extends Form
+abstract class Model_Form extends Form
 {
     /**
      * Field type map
@@ -60,7 +60,7 @@ class Model_Form extends Form
             'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'Widget: Access denied!'],
             'resource' => ['js' => null, 'css' => null, 'less' => null, 'img' => null],
             'cache' => ['ttl' => -1, 'count' => 1000],
-            'input' => ['config' => ['validators' => 'Ice:Not_Empty']],
+            'input' => ['pk' => ['validators' => 'Ice:Not_Null', 'providers' => 'any']],
             'output' => [],
             'action' => [
                 'class' => 'Ice:Model_Form_Submit',
@@ -80,11 +80,18 @@ class Model_Form extends Form
      *
      * @param array $input
      * @return array
+     * @throws Not_Configured
      */
     protected function build(array $input)
     {
         /** @var Model $modelClass */
         $modelClass = $this->getInstanceKey();
+
+        if (!isset($input[$modelClass])) {
+            throw new Not_Configured(['Check config of widget {$0} for {$1}', [get_class($this), $modelClass]]);
+        }
+
+        $this->setResource($modelClass);
 
         $pkFieldName = $modelClass::getPkFieldName();
 
@@ -92,22 +99,64 @@ class Model_Form extends Form
 
         $currentDataSourceKey = $modelClass::getDataSourceKey();
 
-        $config = Config::getInstance($input['config'])->getConfig($modelClass);
-
         $scheme = Data_Scheme::getTables(Module::getInstance())[$currentDataSourceKey][$currentTableName];
 
+        $fieldNames = [];
+
         foreach ($scheme['columns'] as $column) {
-            $fieldType = $column[__CLASS__];
+            if (!isset($input[$modelClass][$column['fieldName']])) {
+                continue;
+            }
 
-            Debuger::dump($column, $fieldType);
-
-            $params = $config->gets($column['fieldName'], false);
-
-            $this->$fieldType(
-                $column['fieldName'],
-                array_merge(['readonly' => $column['fieldName'] == $pkFieldName], $params)
+            $options = array_merge(
+                [
+                    'label' => $column['scheme']['comment'] . ' (' . $column['fieldName'] . ')',
+                    'validators' => $column[Validator::getClass()],
+                    'readonly' => $column['fieldName'] == $pkFieldName, // 'readonly' => in_array($fieldName, $pkFieldNames)
+                ],
+                $input[$modelClass][$column['fieldName']]
             );
+
+            $fieldType = isset($input[$modelClass][$column['fieldName']]['type'])
+                ? $input[$modelClass][$column['fieldName']]['type']
+                : $column[Model_Form::getClass()]['type'];
+
+            $this->$fieldType($column['fieldName'], $options);
+
+            $fieldNames[] = $column['fieldName'];
         }
+
+        $this
+            ->bind(array_merge($modelClass::getModel($input['pk'], '*')->get(), $fieldNames))
+            ->button(
+                'submit',
+                [
+                    'value' => $pkFieldName,
+                    'submit' => [
+                        'class' => 'Ice:Model_Form_Submit',
+                        'params' => [],
+                        'url' => true,
+                        'method' => 'POST',
+                        'callback' => null
+                    ],
+                    'classes' => 'btn-primary',
+                    'resource' => __CLASS__
+                ]
+            )
+            ->button(
+                'delete',
+                [
+                    'onclick' => [
+                        'class' => 'Ice:Model_Form_Delete',
+                        'params' => [],
+                        'url' => true,
+                        'method' => 'POST',
+                        'callback' => null
+                    ],
+                    'classes' => 'btn-danger',
+                    'resource' => __CLASS__
+                ]
+            );
     }
 
 //    /**
@@ -174,10 +223,10 @@ class Model_Form extends Form
 
     public static function schemeColumnPlugin($columnName, $table)
     {
-        $type =  isset(Model_Form::$typeMap[$table['columns'][$columnName]['scheme']['dataType']])
+        $type = isset(Model_Form::$typeMap[$table['columns'][$columnName]['scheme']['dataType']])
             ? Model_Form::$typeMap[$table['columns'][$columnName]['scheme']['dataType']]
             : 'text';
 
-        return ['type' => $type, 'roles' => ['ROLE_ICE_GUEST']];
+        return ['type' => $type, 'roles' => ['ROLE_ICE_GUEST', 'ROLE_ICE_USER']];
     }
 }

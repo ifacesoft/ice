@@ -46,7 +46,7 @@ class Admin_Database_Table extends Block
         /** @var Model $modelClass */
         $modelClass = Module::getInstance()->getModelClass($input['tableName'], $currentDataSourceKey);
 
-        $this->widget('table', ['widget' => [Model_Table::class, ['config' => __CLASS__], $modelClass]]);
+        $this->widget('table', ['widget' => [Admin_Database_Model_Table::getClass(), [], $modelClass]]);
 
 //        $tableRows = Model_Table_Rows::getInstance($modelClass);
 //        $tableRows->removePart($modelClass::getPkFieldName());

@@ -40,7 +40,7 @@ class Twig extends Render
 
     protected $templateDirs = [];
 
-    protected function init(array $params)
+    protected function init(array $data)
     {
         //        $twigPath = VENDOR_DIR . $config->get('vendor') . '/lib/';
 //

@@ -2,6 +2,7 @@
 
 namespace Ice\Widget;
 
+use Ice\Action\Admin_Database;
 use Ice\Core\Model;
 use Ice\Core\Module;
 
@@ -21,7 +22,8 @@ class Admin_Database_Form extends Block
             'cache' => ['ttl' => -1, 'count' => 1000],
             'input' => [
                 'schemeName' => ['providers' => 'router', 'validators' => 'Ice:Not_Null'],
-                'tableName' => ['providers' => 'router', 'validators' => 'Ice:Not_Empty']
+                'tableName' => ['providers' => 'router', 'validators' => 'Ice:Not_Empty'],
+                'pk' => ['providers' => 'router', 'validators' => 'Ice:Not_Null'],
             ],
             'output' => [],
             'action' => [
@@ -46,7 +48,7 @@ class Admin_Database_Form extends Block
         /** @var Model $modelClass */
         $modelClass = Module::getInstance()->getModelClass($input['tableName'], $currentDataSourceKey);
 
-        $this->widget('form', ['widget' => [Model_Form::class, ['config' => __CLASS__], $modelClass]]);
+        $this->widget('form', ['widget' => [Admin_Database_Model_Form::class, ['pk' => $input['pk']], $modelClass]]);
 
 //        $tableRows = Model_Table_Rows::getInstance($modelClass);
 //        $tableRows->removePart($modelClass::getPkFieldName());

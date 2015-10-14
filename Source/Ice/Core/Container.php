@@ -189,14 +189,14 @@ abstract class Container
     /**
      * Init object
      *
-     * @param array $params
+     * @param array $data
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 2.0
      * @since   2.0
      */
-    protected abstract function init(array $params);
+    protected abstract function init(array $data);
 
     /**
      * @return Logger

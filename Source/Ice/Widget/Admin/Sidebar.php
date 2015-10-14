@@ -2,6 +2,8 @@
 
 namespace Ice\Widget;
 
+use Ice\Core\Debuger;
+
 class Admin_Sidebar extends Nav
 {
 
@@ -41,6 +43,8 @@ class Admin_Sidebar extends Nav
      */
     protected function build(array $input)
     {
+        $this->setClasses('nav-sidebar');
+
         $routeName = $this->getRouteName($input['routeNames'], $input['routeName']);
 
         if (!$routeName) {
@@ -69,6 +73,8 @@ class Admin_Sidebar extends Nav
     {
         /** @var NAv $nav */
         $nav = Admin_Nav::getInstance('sidebar_' . $routeName);
+
+        $nav->setClasses('nav-sidebar');
 
         if ($routeName) {
             $nav->widget(

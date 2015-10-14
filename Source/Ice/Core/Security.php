@@ -64,7 +64,7 @@ abstract class Security extends Container
         return parent::getInstance($key, $ttl, $params);
     }
 
-    protected function init(array $params)
+    protected function init(array $data)
     {
         $this->autologin();
     }

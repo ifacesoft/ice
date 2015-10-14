@@ -15,20 +15,7 @@ use Ice\Core\Logger;
 use Ice\Core\Widget;
 use Ice\Widget\Form;
 
-/**
- * class Form_Submit
- *
- * Action submit model form
- *
- * @see Ice\Core\Action
- * @see Ice\Core\Action_Context
- *
- * @author dp <denis.a.shestakov@gmail.com>
- *
- * @package    Ice
- * @subpackage Action
- */
-class Form_Submit extends Action
+abstract class Widget_Event extends Render
 {
     /**
      * Action config
@@ -58,6 +45,27 @@ class Form_Submit extends Action
         ];
     }
 
+
+    protected function initInput(array $configInput, array $data = [])
+    {
+        parent::initInput($configInput, $data);
+
+        $input = $this->getInput();
+
+        /** @var Widget $widgetClass */
+        $widgetClass = Widget::getClass($input['widget']['class']);
+
+        $widget = $widgetClass::getInstance($input['widget']['name']);
+
+        $widget->setResource($input['widget']['resourceClass']);
+
+        $widget->checkToken($input['widget']['token']);
+
+        $input['widget'] = $widget;
+
+        $this->setInput($input);
+    }
+
     /**
      * Run action
      *
@@ -71,33 +79,23 @@ class Form_Submit extends Action
      */
     public function run(array $input)
     {
-        /** @var Form $formClass */
-        $formClass = Widget::getClass($input['widget']['class']);
+        $resource = $input['widget']->getResource();
 
-        $form = $formClass::getInstance($input['widget']['name']);
-
-        $resource = $form->getResource();
-
-        $logger = $resource ? Logger::getInstance(get_class($resource->getResourceClass())) : $form->getLogger();
+        $logger = $resource ? Logger::getInstance(get_class($resource->getResourceClass())) : $input['widget']->getLogger();
 
         try {
-            $form->submit($input['widget']);
-
-            $input['action']['params']['form'] = $form;
-
             /** @var Action $actionClass */
             $actionClass = Action::getClass($input['action']['class']);
 
             return array_merge(
                 [
-                    'success' => $logger->info('Submitted successfully', Logger::SUCCESS),
-                    'redirect' => $form->getRedirect(),
-                    'timeout' => $form->getTimeout()
+                    'redirect' => $input['widget']->getRedirect(),
+                    'timeout' => $input['widget']->getTimeout()
                 ],
                 $actionClass::call($input['action']['params'])
             );
         } catch (\Exception $e) {
-            $message = ['Submit failed: {$0}', $e->getMessage()];
+            $message = ['Event failed: {$0}', $e->getMessage()];
 
             $logger->error($message, __FILE__, __LINE__, $e);
 

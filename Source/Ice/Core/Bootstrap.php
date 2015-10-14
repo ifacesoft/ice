@@ -43,16 +43,16 @@ class Bootstrap extends Container
      *
      * @version 0.2
      * @since   0.0
-     * @param array $params
+     * @param array $data
      */
-    protected function init(array $params)
+    protected function init(array $data)
     {
         setlocale(LC_ALL, 'en_US.UTF-8');
         setlocale(LC_NUMERIC, 'C');
 
         date_default_timezone_set('UTC');
 
-        Loader::init($params['loader'], !empty($params['force']));
+        Loader::init($data['loader'], !empty($data['force']));
         Logger::init();
     }
 

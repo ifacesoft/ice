@@ -3,6 +3,7 @@
 namespace Ice\Widget;
 
 use Ice\Action\Form_Submit;
+use Ice\Core\Action;
 use Ice\Core\Debuger;
 use Ice\Core\Module;
 use Ice\Core\Request;
@@ -406,6 +407,8 @@ abstract class Form extends Widget
      */
     public function validate()
     {
+        Debuger::dump($this->getValues(), $this->getValidateScheme());
+
         return Validator::validateByScheme($this->getValues(), $this->getValidateScheme());
     }
 
@@ -450,28 +453,6 @@ abstract class Form extends Widget
         $this->horizontal = $offset;
 
         return $this;
-    }
-
-    /**
-     * @param array $widget
-     * @return array
-     */
-    public function submit(array $widget)
-    {
-        $this->setResource($widget['resourceClass']);
-
-        $this->checkToken($widget['token']);
-    }
-
-    /**
-     * @param $token
-     * @return bool
-     *
-     * @todo: need implement
-     */
-    private function checkToken($token)
-    {
-//        throw new Error('token expired');
     }
 
     protected function getDefaultDataAction()

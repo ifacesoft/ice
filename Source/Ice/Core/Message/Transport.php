@@ -30,11 +30,11 @@ abstract class Message_Transport extends Container
         return parent::getInstance($key, $ttl, $params);
     }
 
-    protected function init(array $params)
+    protected function init(array $data)
     {
         $config = Config::getInstance(self::getClass());
 
-        $key = $params['instanceKey'];
+        $key = $data['instanceKey'];
 
         $this->fromAddress = $config->get($key . '/fromAddress');
         $this->fromName = $config->get($key . '/fromName', false);

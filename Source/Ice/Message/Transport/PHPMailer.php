@@ -12,9 +12,9 @@ class PHPMailer extends Message_Transport
     /** @var \PHPMailer */
     private $phpMailer = null;
 
-    protected function init(array $params)
+    protected function init(array $data)
     {
-        $key = $params['instanceKey'];
+        $key = $data['instanceKey'];
 
         $config = Config::getInstance(__CLASS__);
 
