@@ -366,7 +366,11 @@ abstract class Model
     private function setPkValue($fieldName, $fieldValue, $isAffected)
     {
         if (!$this->isPkName($fieldName)) {
-            return null;
+            return false;
+        }
+
+        if (!$fieldValue) {
+            return true;
         }
 
         if ($isAffected) {
@@ -379,7 +383,7 @@ abstract class Model
             unset($this->row[$fieldName]);
         }
 
-        return [$fieldName => $fieldValue];
+        return true;
     }
 
     /**

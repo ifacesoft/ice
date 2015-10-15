@@ -9,12 +9,15 @@
 
 namespace Ice\Widget;
 
+use Ice\Core\Config;
 use Ice\Core\Data_Scheme;
 use Ice\Core\Debuger;
 use Ice\Core\Model as Core_Model;
 use Ice\Core\Model;
 use Ice\Core\Module;
+use Ice\Core\Security;
 use Ice\Core\Validator;
+use Ice\Exception\Http_Forbidden;
 use Ice\Exception\Not_Configured;
 
 /**
@@ -63,17 +66,6 @@ abstract class Model_Form extends Form
             'cache' => ['ttl' => -1, 'count' => 1000],
             'input' => ['pk' => ['validators' => 'Ice:Not_Null', 'providers' => 'any']],
             'output' => [],
-            'action' => [
-                'class' => 'Ice:Model_Form_Submit',
-                'params' => [
-                    'widgets' => [
-                        //        'Widget_id' => Widget::class
-                    ]
-                ],
-                'url' => true,
-                'method' => 'POST',
-                'callback' => null
-            ]
         ];
     }
 
@@ -81,6 +73,7 @@ abstract class Model_Form extends Form
      *
      * @param array $input
      * @return array
+     * @throws Http_Forbidden
      * @throws Not_Configured
      */
     protected function build(array $input)
@@ -88,8 +81,10 @@ abstract class Model_Form extends Form
         /** @var Model $modelClass */
         $modelClass = $this->getInstanceKey();
 
-        if (!isset($input[$modelClass])) {
-            throw new Not_Configured(['Check config of widget {$0} for {$1}', [get_class($this), $modelClass]]);
+        try {
+            $models = Config::getInstance(get_class($this))->gets('models');
+        } catch (\Exception $e) {
+            throw new Not_Configured(['Check config of widget {$0} for {$1}', [get_class($this), $modelClass]], [], $e);
         }
 
         $this->setResource($modelClass);
@@ -105,9 +100,11 @@ abstract class Model_Form extends Form
         $fieldNames = [];
 
         foreach ($scheme['columns'] as $column) {
-            if (!isset($input[$modelClass][$column['fieldName']])) {
+            if (!array_key_exists($column['fieldName'], $models[$modelClass]['fields'])) {
                 continue;
             }
+
+            $field = $models[$modelClass]['fields'][$column['fieldName']];
 
             $options = array_merge(
                 [
@@ -115,50 +112,29 @@ abstract class Model_Form extends Form
                     'validators' => $column[Validator::getClass()],
                     'readonly' => $column['fieldName'] == $pkFieldName, // 'readonly' => in_array($fieldName, $pkFieldNames)
                 ],
-                $input[$modelClass][$column['fieldName']]
+                $field
             );
 
-            $fieldType = isset($input[$modelClass][$column['fieldName']]['type'])
-                ? $input[$modelClass][$column['fieldName']]['type']
-                : $column[Model_Form::getClass()]['type'];
+            $fieldType = isset($field['type']) ? $field['type'] : $column[Model_Form::getClass()]['type'];
 
             $this->$fieldType($column['fieldName'], $options);
 
             $fieldNames[] = $column['fieldName'];
         }
 
-        $this
-            ->bind($modelClass::getModel($input['pk'], $fieldNames)->get())
-            ->div('ice-message', ['label' => '&nbsp;'])
-            ->button(
-                'submit',
-                [
-                    'value' => $pkFieldName,
-                    'submit' => [
-                        'class' => 'Ice:Model_Form_Submit',
-                        'params' => [],
-                        'url' => true,
-                        'method' => 'POST',
-                        'callback' => null
-                    ],
-                    'classes' => 'btn-primary',
-                    'resource' => __CLASS__
-                ]
-            )
-            ->button(
-                'delete',
-                [
-                    'onclick' => [
-                        'class' => 'Ice:Model_Form_Delete',
-                        'params' => ['redirect' => 'ice_admin_database_table'],
-                        'url' => true,
-                        'method' => 'POST',
-                        'callback' => null
-                    ],
-                    'classes' => 'btn-danger',
-                    'resource' => __CLASS__
-                ]
-            );
+        if (empty($fieldNames)) {
+            throw new Http_Forbidden(['Access forbidden or all fields of model {$0} on {$1}', [$modelClass, get_class($this)]]);
+        }
+
+        $this->div('ice-message', ['label' => '&nbsp;']);
+
+        foreach ($models[$modelClass]['actions'] as $name => $options) {
+            $this->button($name, $options);
+        }
+
+        if ($input['pk']) {
+            $this->bind($modelClass::getModel($input['pk'], $fieldNames)->get());
+        }
     }
 
 //    /**

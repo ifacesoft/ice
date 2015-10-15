@@ -1,6 +1,5 @@
 <form id="<?= $widgetId ?>"
       class="<?= $widgetClass ?> form<?php if (!empty($classes)) : ?> <?= $classes ?><?php endif; ?>"
-      data-action='<?= $dataAction ?>'
       data-widget='<?= $dataWidget ?>'
       data-params='<?= $dataParams ?>'
       data-for="<?= $parentWidgetId ?>"

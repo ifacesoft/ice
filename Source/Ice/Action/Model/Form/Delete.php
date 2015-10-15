@@ -3,6 +3,10 @@
 namespace Ice\Action;
 
 use Ice\Core\Action;
+use Ice\Core\Logger;
+use Ice\Core\Model;
+use Ice\Core\Request;
+use Ice\Widget\Form;
 
 /**
  * Class Model_Delete
@@ -70,11 +74,28 @@ class Model_Form_Delete extends Widget_Event
      */
     public function run(array $input)
     {
-//        return Query::getBuilder(Model::getClass($input['modelClassName']))
-//            ->deleteQuery($input['pk'])
-//            ->getQueryResult()
-//            ->getAffectedRows()
-//            ? ['success' => $this->getLogger()->info('Delete successfully', Logger::SUCCESS)]
-//            : ['error' => $this->getLogger()->info('Delete failed', Logger::DANGER)];
+        $logger = Logger::getInstance(__CLASS__);
+
+        try {
+            /** @var Model $model */
+            $model = $input['model'];
+
+            $model->remove();
+
+            return array_merge(
+                [
+                    'success' => $logger->info(['Model {$0} successfully removed', get_class($input['model'])], Logger::SUCCESS),
+                    'redirect' => $input['widget']->getRedirect(),
+                    'timeout' => $input['widget']->getTimeout()
+                ],
+                parent::run(['widgets' => $input['widgets']])
+            );
+        } catch (\Exception $e) {
+            $message = ['Remove model: {$0}', $e->getMessage()];
+
+            $logger->error($message, __FILE__, __LINE__, $e);
+
+            return ['error' => $logger->info($message, Logger::DANGER)];
+        }
     }
 }

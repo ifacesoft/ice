@@ -11,21 +11,13 @@ namespace Ice\Core;
 
 use Ice\App;
 use Ice\Core;
-use Ice\Data\Provider\File;
 use Ice\Data\Provider\Registry;
 use Ice\Data\Provider\Repository;
-
-use Ice\Exception\Access_Denied;
-use Ice\Exception\Http_Bad_Request;
-use Ice\Exception\Http_Not_Found;
+use Ice\Exception\Http;
 use Ice\Exception\Redirect;
-use Ice\Exception\Security_AccessDenied;
 use Ice\Helper\Access;
-use Ice\Helper\Hash;
 use Ice\Helper\Input;
 use Ice\Helper\Json;
-use Ice\Helper\Php;
-use Ice\Helper\Validator as Helper_Validator;
 
 /**
  * Class Action
@@ -169,12 +161,8 @@ abstract class Action implements Cacheable
                     $result = $subActionClass::call($subActionParams, $newLevel);
                 } catch (Redirect $e) {
                     throw $e;
-                } catch (Http_Bad_Request $e) {
+                } catch (Http $e) {
                     throw $e;
-                } catch (Http_Not_Found $e) {
-                    throw $e;
-                } catch (Access_Denied $e) {
-                    $result = [];
                 } catch (\Exception $e) {
                     $result['error'] = $logger->error(
                         ['Calling subAction "{$0}" in action "{$1}" failed', [$subActionClass, $actionClass]],

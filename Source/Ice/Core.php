@@ -224,9 +224,4 @@ trait Core
         Debuger::dump($this);
         return $this;
     }
-
-    public function __toString()
-    {
-        return (string)get_class($this);
-    }
 }

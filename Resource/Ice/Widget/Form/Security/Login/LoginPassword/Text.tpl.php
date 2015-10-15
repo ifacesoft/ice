@@ -5,11 +5,11 @@
            name="<?= $fieldName ?>" value="<?= $value ?>"
            <?php if (isset($onchange)) : ?>onchange='<?= $onchange ?>'<?php endif; ?>
            data-params='<?= $dataParams ?>'
-           <?php if (!empty($dataAction)) : ?>data-action='<?= $dataAction ?>'<?php endif; ?>
            data-widget='<?= $dataWidget ?>'
            data-for="<?= $parentWidgetId ?>"
+           <?php if (!empty($options['disabled'])) : ?>disabled="disabled"<?php endif; ?>
+           <?php if (!empty($options['readonly'])) : ?>readonly="readonly" <?php endif; ?>
+           <?php if (!empty($options['required'])) : ?>required="required" <?php endif; ?>
+           autofocus
     >
-        <?php if ($options['disabled']) : ?> disabled="disabled"<?php endif; ?>
-        <?php if ($options['readonly']) : ?> readonly="readonly" <?php endif; ?>
-           required autofocus>
 </div>

@@ -4,7 +4,6 @@ namespace Ice\Core;
 
 use Ice\Core;
 use Ice\Exception\Access_Denied_Security;
-use Ice\Exception\Error;
 
 abstract class Security extends Container
 {

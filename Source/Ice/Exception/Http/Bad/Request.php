@@ -9,8 +9,6 @@
 
 namespace Ice\Exception;
 
-use Ice\Core\Exception;
-
 /**
  * Class Http_Bad_Request
  *
@@ -23,6 +21,6 @@ use Ice\Core\Exception;
  * @package    Ice
  * @subpackage Exception
  */
-class Http_Bad_Request extends Exception
+class Http_Bad_Request extends Http
 {
 }

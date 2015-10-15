@@ -9,7 +9,6 @@ use Ice\Action\Front;
 use Ice\Action\Upgrade;
 use Ice\Core\Action;
 use Ice\Core\Action_Context;
-use Ice\Core\Debuger;
 use Ice\Core\Logger;
 use Ice\Core\Module;
 use Ice\Core\Profiler;
@@ -18,9 +17,9 @@ use Ice\Core\Response;
 use Ice\Core\Session;
 use Ice\Data\Provider\Cli as Data_Provider_Cli;
 use Ice\Data\Provider\Request as Data_Provider_Request;
-use Ice\Exception\Access_Denied;
 use Ice\Exception\Error;
 use Ice\Exception\Http_Bad_Request;
+use Ice\Exception\Http_Forbidden;
 use Ice\Exception\Http_Not_Found;
 use Ice\Exception\Redirect;
 use Ice\Helper\File;
@@ -36,6 +35,8 @@ class App
     {
         $startTime = Profiler::getMicrotime();
         $startMemory = Profiler::getMemoryGetUsage();
+
+        /** @var Action $actionClass */
 
         if (Request::isCli()) {
             $actionClass = Data_Provider_Cli::getInstance()->get('actionClass');
@@ -68,7 +69,7 @@ class App
                     $result['redirectUrl'] = $e->getRedirectUrl();
                 } catch (Http_Bad_Request $e) {
                     $result = ['content' => Http_Status::getInstance('app', null, ['code' => 400, 'message' => $e->getMessage(), 'stackTrace' => $e->getTraceAsString()])];
-                } catch (Access_Denied $e) {
+                } catch (Http_Forbidden $e) {
                     $result = ['content' => Http_Status::getInstance('app', null, ['code' => 403, 'message' => $e->getMessage(), 'stackTrace' => $e->getTraceAsString()])];
                 } catch (Http_Not_Found $e) {
                     $result = ['content' => Http_Status::getInstance('app', null, ['code' => 404, 'message' => $e->getMessage(), 'stackTrace' => $e->getTraceAsString()])];

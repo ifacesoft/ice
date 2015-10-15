@@ -1,6 +1,5 @@
 <ul id="<?= $widgetId ?>"
     class="<?= $widgetClass ?> pagination <?php if (!empty($classes)) { ?><?= $classes ?><?php } ?>"
-    <?php if (!empty($dataAction)) : ?>data-action='<?= $dataAction ?>'<?php endif; ?>
     data-widget='<?= $dataWidget ?>'
     data-for="<?= $parentWidgetId ?>"
 >

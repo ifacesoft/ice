@@ -30,15 +30,6 @@ class Pagination extends Widget
                 'limit' => ['providers' => 'request', 'default' => 15]
             ],
             'output' => [],
-            'action' => [
-                //  'class' => 'Ice:Render',
-                //  'params' => [
-                //      'widgets' => [
-                ////        'Widget_id' => Widget::class
-                //      ]
-                //  ],
-                //  'method' => 'POST'
-            ]
         ];
     }
 
@@ -99,7 +90,7 @@ class Pagination extends Widget
     {
         return $this->addPart(
             $name,
-            array_merge($options, ['onclick' => true, 'href' => $this->getFullUrl(Request::uri(true))]),
+            array_merge($options, ['onclick' => ['action' => 'fixit'], 'href' => $this->getFullUrl(Request::uri(true))]),
             $template,
             __FUNCTION__
         );

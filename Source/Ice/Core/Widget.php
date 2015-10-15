@@ -2,9 +2,9 @@
 namespace Ice\Core;
 
 use Ice\Exception\Access_Denied;
-use Ice\Exception\Error;
+use Ice\Exception\Http;
+use Ice\Exception\RouteNotFound;
 use Ice\Helper\Access;
-use Ice\Helper\Arrays;
 use Ice\Helper\Input;
 use Ice\Helper\Json;
 use Ice\Helper\Object;
@@ -12,7 +12,6 @@ use Ice\Helper\String;
 use Ice\Render\Php;
 use Ice\Render\Replace;
 use Ice\Widget\Resource_Dynamic;
-use Ice\Action\Render as Core_Render;
 
 abstract class Widget extends Container
 {
@@ -39,7 +38,6 @@ abstract class Widget extends Container
     private $classes = '';
 
     private $dataParams = null;
-    private $dataAction = null;
 
     private $output = null;
 
@@ -72,21 +70,6 @@ abstract class Widget extends Container
      * @var array
      */
     private $filterParts = [];
-
-    /**
-     * Default options
-     *
-     * @todo replace to method config
-     *
-     * @var array
-     */
-    protected $defaultOptions = [
-        'disabled' => false,
-        'readonly' => false,
-        'required' => false,
-        'autofocus' => false,
-        'input' => []
-    ];
 
     private $resource = null;
     private $template = null;
@@ -250,6 +233,10 @@ abstract class Widget extends Container
             $this->loadResource();
 
             $this->output = (array)$this->build($this->getValues());
+        } catch (Http $e) {
+            throw $e;
+//        } catch (Access_Denied $e) {
+//            throw $e;
         } catch (\Exception $e) {
             Logger::getInstance($widgetClass)->error(['Widget {$0} init failed', $widgetClass], __FILE__, __LINE__, $e);
         } finally {
@@ -383,7 +370,8 @@ abstract class Widget extends Container
         try {
             return $this->render();
         } catch (\Exception $e) {
-            return $e->getMessage() . ' - ' . $this->getClass() . ' (' . $e->getFile() . ':' . $e->getLine() . ')<br>' .
+            return '<strong>' . get_class($this) . '</strong> (' . $e->getFile() . ':' . $e->getLine() . ')<br>' .
+            '<strong style="color: red;">' . $e->getMessage() . '</strong><br>' .
             nl2br($e->getTraceAsString());
         }
     }
@@ -410,7 +398,7 @@ abstract class Widget extends Container
 
         foreach ($this->rows as $values) {
             if (empty($values)) {
-                $values = $this->values;
+                $values = $this->getValues();
             }
 
             $row = [];
@@ -419,8 +407,7 @@ abstract class Widget extends Container
                 $part['widgetId'] = $this->getWidgetId();
                 $part['partId'] = $part['widgetId'] . '_' . $partName;
 
-//                $part['widgetClassName'] = $widgetClassName;
-//                $part['widgetName'] = $widgetName;
+                $this->partParams($partName, $part, $values);
 
                 $resourceParams = [];
 
@@ -455,29 +442,6 @@ abstract class Widget extends Container
                         }
                     }
                 }
-
-                $part['name'] = isset($part['options']['name']) ? $part['options']['name'] : $partName;
-                $part['value'] = isset($part['options']['value']) ? $part['options']['value'] : $partName;
-
-                $part['params'] = $part['value'] == $partName
-                    ? [$part['name'] => isset($values[$part['value']]) ? $values[$part['value']] : null]
-                    : [$part['name'] => isset($values[$part['value']]) ? $values[$part['value']] : $part['value']];
-
-                if (is_string($part['params'][$part['name']])) {
-                    $part['params'][$part['name']] = htmlentities($part['params'][$part['name']]);
-                }
-
-                if (isset($part['options']['params'])) {
-                    foreach ((array)$part['options']['params'] as $key => $param) {
-                        if (is_int($key)) {
-                            $part['params'][$param] = $values[$param];
-                        } else {
-                            $part['params'][$key] = !is_array($param) && array_key_exists($param, $values) ? $values[$param] : $param;
-                        }
-                    }
-                }
-
-                $part['dataParams'] = Json::encode($part['params']);
 
                 if (!empty($part['options']['route'])) {
                     if ($part['options']['route'] === true) {
@@ -566,12 +530,6 @@ abstract class Widget extends Container
             return $this->compiledResult;
         }
 
-
-
-        $dataAction = empty($this->getDataAction())
-            ? []
-            : array_intersect_key($this->getDataAction(), array_flip(['class', 'params', 'url', 'method']));
-
         return $this->compiledResult = array_merge(
             [
                 'result' => $this->getResult(),
@@ -581,7 +539,6 @@ abstract class Widget extends Container
                 'widgetData' => $this->getData(),
                 'widgetResource' => $this->getResource(),
                 'classes' => $this->getClasses(),
-                'dataAction' => Json::encode($dataAction),
                 'dataParams' => Json::encode($this->getDataParams()),
                 'dataWidget' => Json::encode($this->getDataWidget())
             ],
@@ -589,11 +546,12 @@ abstract class Widget extends Container
         );
     }
 
-    private function getWidgetClass() {
+    private function getWidgetClass()
+    {
         /** @var Widget $widgetClass */
         $widgetClass = get_class($this);
 
-        return 'Widget_' .  $widgetClass::getClassName();
+        return 'Widget_' . $widgetClass::getClassName();
     }
 
     private function getDataWidget()
@@ -691,8 +649,17 @@ abstract class Widget extends Container
     protected function addPart($partName, array $options, $template, $element)
     {
         try {
-            if (isset($part['options']['access'])) {
-                Access::check($part['options']['access']);
+            if (isset($options['roles'])) {
+                if (!isset($options['access'])) {
+                    $options['access'] = [];
+                }
+
+                $options['access']['roles'] = $options['roles'];
+                unset($options['roles']);
+            }
+
+            if (isset($options['access'])) {
+                Access::check($options['access']);
             }
         } catch (Access_Denied $e) {
             return $this;
@@ -704,49 +671,16 @@ abstract class Widget extends Container
 
         $widgetClass = get_class($this);
 
-        $options = Arrays::defaults($this->defaultOptions, $options);
-
         if (isset($options['default']) && $this->getValue($partName) === null) {
             $this->bind([$partName => $options['default']]);
         }
 
-        $dataActionArr = null;
-
-        foreach (['onclick', 'onchange'] as $event) {
-            if (array_key_exists($event, $options)) {
-                $dataAction = $options[$event];
-
-                if ($dataAction === true) {
-                    if (empty($this->getDataAction())) {
-                        $dataAction = [
-                            'class' => Core_Render::class,
-                            'params' => ['widgets' => [$this->getInstanceKey() => get_class($this)]],
-                            'url' => Request::uri(true),
-                            'method' => 'GET',
-                            'callback' => null
-                        ];
-
-                        $dataActionArr = $dataAction;
-                    } else {
-                        $dataAction = $this->dataAction;
-                    }
-                } else {
-                    $dataActionArr = $dataAction;
-                }
-
-                $options[$event] = $this->getEvent($dataAction);
-
-                continue;
-            }
-        }
+        $this->partEvents($partName, $options);
 
         $part = [
             'options' => $options,
             'template' => $template,
             'element' => $widgetClass::getClassName() . '_' . $element,
-            'dataAction' => $dataActionArr
-                ? Json::encode(array_intersect_key($dataActionArr, array_flip(['class', 'params'])))
-                : null
         ];
 
         if (!empty($options['unshift'])) {
@@ -857,6 +791,8 @@ abstract class Widget extends Container
                 } elseif ($param = strstr($value, '/' . Query_Builder::SQL_ORDERING_DESC, false) !== false) {
                     $value = $param;
                 }
+
+                $value = htmlentities($value, ENT_QUOTES);
             }
 
             $values[$partName] = $value;
@@ -898,16 +834,28 @@ abstract class Widget extends Container
     }
 
     /**
-     * @param array $dataAction
+     * @param array $event
      * @return string
      */
-    protected function getEvent(array $dataAction)
+    protected function getEvent(array $event)
     {
-        return $dataAction
-            ? 'Ice_Core_Widget.click($(this)' .
-            ($dataAction['callback'] ? ', \'' . $dataAction['callback'] . '\'' : '') .
-            '); return false;'
-            : '';
+        $code = 'Ice_Core_Widget.click($(this), \'' . addslashes($event['action']) . '\'';
+
+        if (isset($event['url']) || isset($event['method']) || isset($event['callback'])) {
+            $code .= (isset($event['url']) ? ', \'' . $event['url'] . '\'' : ', \'\'');
+
+            if (isset($event['method']) || isset($event['callback'])) {
+                $code .= (isset($event['method']) ? ', \'' . $event['method'] . '\'' : ', \'POST\'');
+
+                if (isset($event['callback'])) {
+                    $code .= ', \'' . $event['callback'] . '\'';
+                }
+            }
+        }
+
+        return $code . '); return false;';
+
+
     }
 
     /**
@@ -1162,43 +1110,6 @@ abstract class Widget extends Container
         return $widgets;
     }
 
-    protected function getDataAction()
-    {
-        if ($this->dataAction !== null) {
-            return $this->dataAction;
-        }
-
-        /** @var Widget $widgetClass */
-        $widgetClass = get_class($this);
-
-        return $this->setDataAction($widgetClass::getConfig()->gets('action'));
-    }
-
-    /**
-     * @param array $dataAction
-     * @return array
-     */
-    public function setDataAction(array $dataAction)
-    {
-        if ($this->dataAction !== null || empty($dataAction)) {
-            return $this->dataAction;
-        }
-
-        if (isset($dataAction['url'])) {
-            $dataAction['url'] = $dataAction['url'] === true
-                ? Request::uri(true)
-                : Router::getInstance()->getUrl($dataAction['url']);
-        }
-
-        if (isset($dataAction['class'])) {
-            $dataAction['class'] = Action::getClass($dataAction['class']);
-        }
-
-        $this->dataAction = $dataAction;
-
-        return $this->dataAction;
-    }
-
     private function loadResource()
     {
         /** @var Widget $widgetClass */
@@ -1245,8 +1156,71 @@ abstract class Widget extends Container
 //        throw new Error('token expired');
     }
 
-    public function checkAction($class)
+    public function getActionAccess($class)
     {
+        $access = [];
 
+        foreach ($this->getParts() as $part) {
+            if (isset($part['options']['action']) && $part['options']['action'] == $class && isset($part['options']['access'])) {
+                $access = array_merge_recursive($access, $part['options']['access']);
+            }
+        }
+
+        if (!isset($access['roles'])) {
+            $access['roles'] = 'ROLE_ICE_SUPER_ADMIN';
+        }
+
+        return $access;
+    }
+
+    private function partEvents($partName, array &$options)
+    {
+        foreach (['onclick', 'onchange', 'submit'] as $event) {
+            if (array_key_exists($event, $options)) {
+                $options[$event]['action'] = Action::getClass($options[$event]['action']);
+
+                if (isset($options[$event]['url'])) {
+                    try {
+                        $options[$event]['url'] === true
+                            ? Router::getInstance()->getUrl($partName)
+                            : Router::getInstance()->getUrl($options[$event]['url']);
+                    } catch (RouteNotFound $e) {
+                    }
+                }
+
+                $options['action'] = $options[$event]['action'];
+                $options[$event] = $this->getEvent($options[$event]);
+            }
+        }
+    }
+
+    private function partParams($partName, array &$part, array $values)
+    {
+        $part['name'] = isset($part['options']['name']) ? $part['options']['name'] : $partName;
+        unset($part['options']['name']);
+
+        $part['value'] = isset($part['options']['value']) ? $part['options']['value'] : $partName;
+        unset($part['options']['value']);
+
+        $part['params'] = $part['value'] == $partName
+            ? [$part['name'] => isset($values[$part['value']]) ? $values[$part['value']] : null]
+            : [$part['name'] => isset($values[$part['value']]) ? $values[$part['value']] : $part['value']];
+
+        if (isset($part['options']['params'])) {
+            foreach ((array)$part['options']['params'] as $key => $param) {
+                if (is_int($key)) {
+                    $key = $param;
+                    $param = null;
+                }
+
+                if (is_string($param)) {
+                    $part['params'][$key] = array_key_exists($param, $values) ? $values[$param] : $param;
+                } else {
+                    $part['params'][$key] = $param;
+                }
+            }
+        }
+
+        $part['dataParams'] = Json::encode($part['params']);
     }
 }

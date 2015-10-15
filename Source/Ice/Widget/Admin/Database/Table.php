@@ -46,7 +46,21 @@ class Admin_Database_Table extends Block
         /** @var Model $modelClass */
         $modelClass = Module::getInstance()->getModelClass($input['tableName'], $currentDataSourceKey);
 
-        $this->widget('table', ['widget' => [Admin_Database_Model_Table::getClass(), [], $modelClass]]);
+        $this
+            ->a(
+                'add',
+                [
+                    'label' => 'Добавить новую запись',
+                    'route' => 'ice_admin_database_row',
+                    'params' => [
+                        'schemeName' => $input['schemeName'],
+                        'tableName' => $input['tableName'],
+                        'pk' => 0
+                    ],
+                    'classes' => 'btn btn-success'
+                ]
+            )
+            ->widget('table', ['widget' => [Admin_Database_Model_Table::getClass(), [], $modelClass]]);
 
 //        $tableRows = Model_Table_Rows::getInstance($modelClass);
 //        $tableRows->removePart($modelClass::getPkFieldName());

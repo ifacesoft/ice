@@ -10,6 +10,7 @@ use Ice\Core\Request;
 use Ice\Core\Validator;
 use Ice\Core\Widget;
 use Ice\Helper\Directory;
+use Ice\Helper\Json;
 use Ice\Render\Php;
 
 abstract class Form extends Widget
@@ -23,14 +24,26 @@ abstract class Form extends Widget
 
     private $horizontal = null;
 
+    private $submit = null;
+
+    private $action = '';
+
+    private $method = 'POST';
+
     protected function getCompiledResult()
     {
+        $submitOptions =  $this->submit ? $this->getPart($this->submit)['options'] : null;
+
+        if ($submitOptions && !empty($submitOptions['params'])) {
+            $this->setDataParams(array_merge($this->getDataParams(), $submitOptions['params']));
+        }
+
         return array_merge(
             parent::getCompiledResult(),
             [
-                'method' => $this->getDataAction()['method'],
-                'action' => $this->getDataAction()['url'],
-                'onSubmit' => $this->getEvent($this->getDataAction())
+                'action' => $this->action,
+                'method' => $this->method,
+                'onSubmit' => $submitOptions ? $submitOptions['submit'] : null
             ]
         );
     }
@@ -342,6 +355,14 @@ abstract class Form extends Widget
     }
 
     /**
+     * @param null $submit
+     */
+    public function setSubmit($submit)
+    {
+        $this->submit = $submit;
+    }
+
+    /**
      * @param $fieldName
      * @param array $options
      * @param string $template
@@ -357,39 +378,12 @@ abstract class Form extends Widget
             $options['horizontal'] = $this->horizontal;
         }
 
-        $resourceClass = $template;
-
-        if ($resource = $this->getResource()) {
-            $resourceClass = $resource->getResourceClass();
+        if (!isset($options['resource'])) {
+            $options['resource'] = get_class($this);
         }
 
-        $this->bind(['resourceClass' => $resourceClass]);
-
-        if (!empty($options['submit'])) {
-            if (empty($this->getDataAction())) {
-                if ($options['submit'] === true) {
-                    $dataAction = [
-                        'class' => Form_Submit::class,
-                        'params' => [],
-                        'url' => true,
-                        'method' => 'POST',
-                        'callback' => null
-                    ];
-                } else {
-                    $dataAction = $options['submit'];
-
-                    $dataAction['params'] = [
-                        'action' => [
-                            'class' => $dataAction['class'],
-                            'params' => $dataAction['params']
-                        ]
-                    ];
-
-                    $dataAction['class'] = Form_Submit::class;
-                }
-
-                $this->setDataAction($dataAction);
-            }
+        if (isset($options['submit'])) {
+            $this->submit = $fieldName;
         }
 
         return $this->addPart($fieldName, $options, $template, __FUNCTION__);
@@ -451,14 +445,5 @@ abstract class Form extends Widget
         $this->horizontal = $offset;
 
         return $this;
-    }
-
-    protected function getDefaultDataAction()
-    {
-        return [
-            'class' => Form_Submit::class,
-            'params' => ['resourceClass' => get_class($this->getResource())],
-            'method' => 'POST'
-        ];
     }
 }

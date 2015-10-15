@@ -1,6 +1,5 @@
 <tbody id="<?= $widgetId ?>"
        class="<?= $widgetClass ?>"
-       <?php if (!empty($dataAction)) : ?>data-action='<?= $dataAction ?>'<?php endif; ?>
        data-widget='<?= $dataWidget ?>'
        data-for="<?= $parentWidgetId ?>"
 >

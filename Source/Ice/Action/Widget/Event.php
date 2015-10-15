@@ -13,6 +13,7 @@ use Ice\Core\Action;
 use Ice\Core\Debuger;
 use Ice\Core\Logger;
 use Ice\Core\Widget;
+use Ice\Helper\Access;
 use Ice\Widget\Form;
 
 abstract class Widget_Event extends Render
@@ -31,7 +32,8 @@ abstract class Widget_Event extends Render
         $widget->setResource($input['widget']['resourceClass']);
 
         $widget->checkToken($input['widget']['token']);
-        $widget->checkAction(get_class($this));
+
+        Access::check($widget->getActionAccess(get_class($this)));
 
         $input['widget'] = $widget;
 

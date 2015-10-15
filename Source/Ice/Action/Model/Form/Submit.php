@@ -60,12 +60,10 @@ class Model_Form_Submit extends Widget_Event
         $logger = Logger::getInstance(__CLASS__);
 
         try {
+            /** @var Model $model */
+            $model = $input['model'];
 
-            Debuger::dump($input['model']);
-
-            $input['model']->save();
-
-
+            $model->save();
 
             return array_merge(
                 [
@@ -76,7 +74,7 @@ class Model_Form_Submit extends Widget_Event
                 parent::run(['widgets' => $input['widgets']])
             );
         } catch (\Exception $e) {
-            $message = ['Save modl: {$0}', $e->getMessage()];
+            $message = ['Save model: {$0}', $e->getMessage()];
 
             $logger->error($message, __FILE__, __LINE__, $e);
 

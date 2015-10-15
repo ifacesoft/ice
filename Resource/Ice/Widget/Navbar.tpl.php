@@ -1,6 +1,5 @@
 <nav id="<?= $widgetId ?>"
      class="<?= $widgetClass ?> navbar <?php if (!empty($classes)) { ?><?= $classes ?><?php } ?>"
-     <?php if (!empty($dataAction)) : ?>data-action='<?= $dataAction ?>'<?php endif; ?>
      data-widget='<?= $dataWidget ?>'
      data-for="<?= $parentWidgetId ?>"
 >

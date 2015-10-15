@@ -30,7 +30,7 @@
                     formName: '<?= $widgetClassName ?>',
                     fieldName: '<?= $name ?>'
                 },
-                autoUpload: <?php if (isset($options['autoUpload']) && $options['autoUpload'] == false) : ?>false<?php else : ?>true<?php endif; ?>,
+                autoUpload: <?php if (!empty($options['autoUpload']) && $options['autoUpload'] == false) : ?>false<?php else : ?>true<?php endif; ?>,
                 elements: {
                     list: '.js-files',
                     file: {

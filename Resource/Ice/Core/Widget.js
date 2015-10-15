@@ -2,7 +2,7 @@
  * Created by dp on 28.05.15.
  */
 var Ice_Core_Widget = {
-    click: function ($element, callback) {
+    click: function ($element, actionClass, url, method, callback) {
         var $form = $element.prop('tagName') == 'FORM'
             ? $element
             : null;
@@ -20,21 +20,15 @@ var Ice_Core_Widget = {
             return;
         }
 
-        var data = $form
-            ? Ice.querystringToObject($form.serialize())
-            : Ice.objectMerge(Ice.jsonToObject($widget.attr('data-params')), Ice.jsonToObject($element.attr('data-params')));
+        var data = Ice.objectMerge(Ice.jsonToObject($widget.attr('data-params')));
 
-        var url = $form
-            ? $form.attr('action')
-            : $element.attr('href');
+        data = $form
+            ? Ice.objectMerge(data, Ice.querystringToObject($form.serialize()))
+            : Ice.objectMerge(data, Ice.jsonToObject($element.attr('data-params')));
 
-        var action = Ice.jsonToObject(Ice_Core_Widget.getAttr('data-action', $element));
-
-        if (!url) {
-            url = action.url;
+        if (url == '') {
+            url = location.href;
         }
-
-        var method = action.method;
 
         if (method == 'GET') {
             var a = document.createElement('a');
@@ -44,8 +38,6 @@ var Ice_Core_Widget = {
         }
 
         data.widget = Ice.jsonToObject($widget.attr('data-widget'));
-
-        data = Ice.objectMerge(data, action.params);
 
         var widgetCallback = function (result) {
             if (callback) {
@@ -73,7 +65,7 @@ var Ice_Core_Widget = {
             //}
         };
 
-        Ice_Core_Widget.reRender($widget, action.class, data, widgetCallback, url, 'POST');
+        Ice_Core_Widget.reRender($widget, actionClass, data, widgetCallback, url, 'POST');
     },
 
     reRender: function ($widget, actionClass, actionParams, callback, url, method) {
