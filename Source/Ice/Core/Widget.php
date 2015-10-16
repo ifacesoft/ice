@@ -2,6 +2,7 @@
 namespace Ice\Core;
 
 use Ice\Exception\Access_Denied;
+use Ice\Exception\Error;
 use Ice\Exception\Http;
 use Ice\Exception\RouteNotFound;
 use Ice\Helper\Access;
@@ -370,9 +371,8 @@ abstract class Widget extends Container
         try {
             return $this->render();
         } catch (\Exception $e) {
-            return '<strong>' . get_class($this) . '</strong> (' . $e->getFile() . ':' . $e->getLine() . ')<br>' .
-            '<strong style="color: red;">' . $e->getMessage() . '</strong><br>' .
-            nl2br($e->getTraceAsString());
+            return Logger::getInstance(__CLASS__)
+                ->error(['Render widget {$0} was failed', [get_class($this)]], __FILE__, __LINE__, $e);
         }
     }
 
@@ -669,6 +669,7 @@ abstract class Widget extends Container
             unset($this->parts[$partName]);
         }
 
+        /** @var Widget $widgetClass */
         $widgetClass = get_class($this);
 
         if (isset($options['default']) && $this->getValue($partName) === null) {
@@ -1053,9 +1054,10 @@ abstract class Widget extends Container
 
     /**
      * @param string $widgetClass
+     * @param string $postfixKey
      * @return Widget
      */
-    protected function getWidget($widgetClass)
+    protected function getWidget($widgetClass, $postfixKey = '')
     {
         if (is_object($widgetClass)) {
             return $widgetClass;
@@ -1090,7 +1092,7 @@ abstract class Widget extends Container
             ? get_class($this) . $widgetClass
             : Widget::getClass($widgetClass);
 
-        return $widgetClass::getInstance($key, null, $widgetParams);
+        return $widgetClass::getInstance($key . $postfixKey, null, $widgetParams);
     }
 
     /**
@@ -1167,7 +1169,7 @@ abstract class Widget extends Container
         }
 
         if (!isset($access['roles'])) {
-            $access['roles'] = 'ROLE_ICE_SUPER_ADMIN';
+            $access['roles'] = ['ROLE_ICE_GUEST', 'ROLE_ICE_USER'];
         }
 
         return $access;
@@ -1177,18 +1179,30 @@ abstract class Widget extends Container
     {
         foreach (['onclick', 'onchange', 'submit'] as $event) {
             if (array_key_exists($event, $options)) {
+                if (!isset($options[$event]['action'])) {
+                    throw new Error(
+                        ['For part {$0} with event {$1} of widget {$2} must be defined action param',
+                            [$partName, $event, get_class($this)]
+                        ]
+                    );
+                }
+
                 $options[$event]['action'] = Action::getClass($options[$event]['action']);
 
                 if (isset($options[$event]['url'])) {
                     try {
-                        $options[$event]['url'] === true
+                        $options[$event]['url'] = $options[$event]['url'] === true
                             ? Router::getInstance()->getUrl($partName)
                             : Router::getInstance()->getUrl($options[$event]['url']);
                     } catch (RouteNotFound $e) {
                     }
                 }
 
-                $options['action'] = $options[$event]['action'];
+                $options['dataAction'] = Json::encode([
+                    'class' => $options[$event]['action'],
+                    'data' => isset($options[$event]['data']) ? $options[$event]['data'] : []
+                ]);
+
                 $options[$event] = $this->getEvent($options[$event]);
             }
         }

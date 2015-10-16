@@ -2,10 +2,8 @@
 
 namespace Ice\Widget;
 
-use Ice\Action\Form_Submit;
 use Ice\Core\Model;
 use Ice\Core\Security_Account;
-use Ice\Core\Widget_Form_Security;
 use Ice\Core\Widget_Form_Security_Login;
 
 class Form_Security_EmailPassword_Login extends Widget_Form_Security_Login
@@ -20,13 +18,6 @@ class Form_Security_EmailPassword_Login extends Widget_Form_Security_Login
                 'password' => ['providers' => 'request']
             ],
             'access' => ['roles' => [], 'request' => null, 'env' => null],
-            'action' => [
-                'class' => Form_Submit::getClass(),
-                'params' => [],
-                'url' => 'ice_security_login',
-                'method' => 'POST',
-                'callback' => null
-            ]
         ];
     }
 
@@ -51,7 +42,16 @@ class Form_Security_EmailPassword_Login extends Widget_Form_Security_Login
                     'validators' => ['Ice:Length_Min' => 5]
                 ]
             )
-            ->button('signin', ['label' => 'Sign in', 'submit' => true]);
+            ->button(
+                'signin',
+                [
+                    'label' => 'Sign in',
+                    'submit' => [
+                        'action' => Security_EmailPassword_Login::class,
+                        'url' => 'ice_security_login',
+                    ]
+                ]
+            );
 
         return [];
     }

@@ -6,7 +6,7 @@
 
     <?php if (!empty($options['horizontal'])) : ?>
     <div class="col-md-<?= 12 - $options['horizontal'] ?>"><?php endif; ?>
-        <select id="<?= $widgetClassName . '_' . $widgetName . '_' . $name ?>"
+        <select id="<?= $partId ?>"
                 class="<?= $element ?> <?= $name ?><?php if (!isset($options['resetFormClass'])) : ?> form-control<?php endif; ?><?php if (!empty($options['classes'])) : ?> <?= $options['classes'] ?><?php endif; ?>"
                 name="<?= $name ?><?php if (!empty($options['multiple'])) : ?>[]<?php endif; ?>"
                 data-for="<?= $widgetId ?>"
@@ -14,7 +14,7 @@
                 data-params='<?= $dataParams ?>'
                 <?php if (!empty($options['multiple'])) : ?>multiple="multiple"<?php endif; ?>
                 <?php if (!empty($options['size'])) : ?>size="<?= $options['size'] ?>"<?php endif; ?>
-                <?php if (!empty($options['onchange'])) : ?>onchange="<?= $options['onchange'] ?>"<?php endif; ?>
+                <?php if (isset($options['onchange'])) : ?>onchange="<?= $options['onchange'] ?>" data-action='<?= $options['dataAction'] ?>'<?php endif; ?>
                 <?php if (!empty($options['disabled'])) : ?>disabled="disabled"<?php endif; ?>
                 <?php if (!empty($options['readonly'])) : ?>readonly="readonly" <?php endif; ?>
                 <?php if (!empty($options['required'])) : ?>required="required" <?php endif; ?>

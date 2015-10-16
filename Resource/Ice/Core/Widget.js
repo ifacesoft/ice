@@ -20,11 +20,14 @@ var Ice_Core_Widget = {
             return;
         }
 
-        var data = Ice.objectMerge(Ice.jsonToObject($widget.attr('data-params')));
+        var data = Ice.objectMerge(
+            Ice.jsonToObject($widget.attr('data-params')),
+            Ice.jsonToObject($element.attr('data-params'))
+        );
 
-        data = $form
-            ? Ice.objectMerge(data, Ice.querystringToObject($form.serialize()))
-            : Ice.objectMerge(data, Ice.jsonToObject($element.attr('data-params')));
+        if ($form) {
+            data = Ice.objectMerge(data, Ice.querystringToObject($form.serialize()))
+        }
 
         if (url == '') {
             url = location.href;
@@ -87,13 +90,14 @@ var Ice_Core_Widget = {
                             if (result.redirect) {
                                 location.href = result.redirect;
                             } else {
-                                if (result.content) {
-                                    $widget.replaceWith(result.content);
-                                }
-
                                 if (result.widgets) {
                                     for (widgetId in result.widgets) {
-                                        $('#' + widgetId).replaceWith(result.widgets[widgetId]);
+                                        $widget = $('#' + widgetId);
+                                        if ($widget.length) {
+                                            $widget.replaceWith(result.widgets[widgetId]);
+                                        } else {
+                                            Ice.notify($('#iceMessages'), '<div class="alert alert-danger">#' + widgetId + ' not found</div>', 5000);
+                                        }
                                     }
                                 }
 

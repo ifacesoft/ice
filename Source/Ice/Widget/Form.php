@@ -2,16 +2,11 @@
 
 namespace Ice\Widget;
 
-use Ice\Action\Form_Submit;
 use Ice\Core\Action;
-use Ice\Core\Debuger;
 use Ice\Core\Module;
-use Ice\Core\Request;
 use Ice\Core\Validator;
 use Ice\Core\Widget;
 use Ice\Helper\Directory;
-use Ice\Helper\Json;
-use Ice\Render\Php;
 
 abstract class Form extends Widget
 {
@@ -43,6 +38,7 @@ abstract class Form extends Widget
             [
                 'action' => $this->action,
                 'method' => $this->method,
+                'dataAction' => $submitOptions ? $submitOptions['dataAction'] : null,
                 'onSubmit' => $submitOptions ? $submitOptions['submit'] : null
             ]
         );

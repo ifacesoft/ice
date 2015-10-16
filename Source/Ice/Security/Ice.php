@@ -99,6 +99,6 @@ class Ice extends Security
      */
     public function getRoles()
     {
-        return $this->isAuth() ? ['ROLE_ICE_USER'] : [];
+        return $this->isAuth() ? ['ROLE_ICE_USER'] : ['ROLE_ICE_GUEST'];
     }
 }

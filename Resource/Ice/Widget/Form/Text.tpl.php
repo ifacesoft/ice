@@ -12,7 +12,7 @@
                name="<?= $name ?>"
                value="<?= isset($params[$name]) ? $params[$name] : '' ?>"
                data-for="<?= $widgetId ?>"
-               <?php if (isset($onchange)) : ?>onchange="<?= $onchange ?> return false"<?php endif; ?>
+               <?php if (isset($options['onchange'])) : ?>onchange="<?= $options['onchange'] ?>" data-action='<?= $options['dataAction'] ?>'<?php endif; ?>
                <?php if (!empty($options['placeholder'])) : ?>placeholder="<?= $options['placeholder'] ?>"<?php endif; ?>
                <?php if (!empty($options['disabled'])) : ?>disabled="disabled"<?php endif; ?>
                <?php if (!empty($options['readonly'])) : ?>readonly="readonly"<?php endif; ?>

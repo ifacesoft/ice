@@ -5,7 +5,7 @@ use Ebs\Widget\Security_Login_LoginEmailPassword_Login;
 use Ice\Widget\Form_Security_LoginPassword_Login as Widget_Form_Security_LoginPassword_Login;
 use Ice\Widget\Form_Security_EmailPassword_Login as Widget_Form_Security_EmailPassword_Login;
 
-class Form_Security_LoginEmailPassword_Login extends Render
+class Form_Security_LoginEmailPassword_Login extends Widget_Event
 {
     /**
      * Action config
@@ -22,7 +22,6 @@ class Form_Security_LoginEmailPassword_Login extends Render
             'input' => [
                 'widget' => ['default' => null, 'providers' => 'request'],
                 'widgets' => ['default' => [], 'providers' => ['default', 'request']],
-                'form' => ['validators' => 'Ice:Not_Empty']
             ],
             'output' => []
         ];
@@ -36,7 +35,7 @@ class Form_Security_LoginEmailPassword_Login extends Render
     public function run(array $input)
     {
         /** @var Security_Login_LoginEmailPassword_Login $form */
-        $form = $input['form'];
+        $form = $input['widget'];
 
         try {
             return Form_Security_LoginPassword_Login::call([

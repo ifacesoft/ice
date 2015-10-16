@@ -8,12 +8,12 @@
     <div class="col-md-<?= 12 - $options['horizontal'] ?>"><?php endif; ?>
         <input type="text"
                class="<?= $element ?> <?= $name ?><?php if (!isset($options['resetFormClass'])) : ?> form-control<?php endif; ?><?php if (!empty($options['classes'])) : ?> <?= $options['classes'] ?><?php endif; ?>"
-               id="<?= $widgetClassName . '_' . $widgetName . '_' . $name ?>"
+               id="<?= $partId ?>"
                name="<?= $name ?>"
                value="<?= isset($params[$name]) ? $params[$name] : '' ?>"
                data-for="<?= $widgetId ?>"
                <?php if (!empty($options['placeholder'])) : ?>placeholder="<?= $options['placeholder'] ?>"<?php endif; ?>
-               <?php if (!empty($options['onchange'])) : ?>onchange="<?= $options['onchange'] ?>"<?php endif; ?>
+               <?php if (isset($options['onchange'])) : ?>onchange="<?= $options['onchange'] ?>" data-action='<?= $options['dataAction'] ?>'<?php endif; ?>
                <?php if (!empty($options['disabled'])) : ?>disabled="disabled"<?php endif; ?>
                <?php if (!empty($options['readonly'])) : ?>readonly="readonly" <?php endif; ?>
                <?php if (!empty($options['required'])) : ?>required="required" <?php endif; ?>
@@ -22,7 +22,7 @@
         <?php if (!empty($options['horizontal'])) : ?></div><?php endif; ?>
     <script>
         $(function () {
-            $("#<?= $widgetClassName . '_' . $widgetName . '_' . $name ?>").datepicker({dateFormat: 'yy-mm-dd'});
+            $("#<?= $partId ?>").datepicker({dateFormat: 'yy-mm-dd'});
         });
     </script>
 </div>

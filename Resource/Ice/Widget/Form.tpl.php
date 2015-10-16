@@ -5,7 +5,7 @@
       data-for="<?= $parentWidgetId ?>"
       action="<?= $action ?>"
       method="<?= $method ?>"
-      <?php if ($onSubmit) : ?>onsubmit="<?= $onSubmit ?>"<?php endif; ?>
+      <?php if ($onSubmit) : ?>onsubmit="<?= $onSubmit ?>" data-action='<?= $dataAction ?>'<?php endif; ?>
 >
     <?php $parts = reset($result) ?>
 
