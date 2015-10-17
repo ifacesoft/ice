@@ -840,7 +840,7 @@ abstract class Widget extends Container
      */
     protected function getEvent(array $event)
     {
-        $code = 'Ice_Core_Widget.click($(this), \'' . addslashes($event['action']) . '\'';
+        $code = 'Ice_Core_Widget.click($(this)';
 
         if (isset($event['url']) || isset($event['method']) || isset($event['callback'])) {
             $code .= (isset($event['url']) ? ', \'' . $event['url'] . '\'' : ', \'\'');

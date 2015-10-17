@@ -2,7 +2,7 @@
  * Created by dp on 28.05.15.
  */
 var Ice_Core_Widget = {
-    click: function ($element, actionClass, url, method, callback) {
+    click: function ($element, url, method, callback) {
         var $form = $element.prop('tagName') == 'FORM'
             ? $element
             : null;
@@ -42,6 +42,10 @@ var Ice_Core_Widget = {
 
         data.widget = Ice.jsonToObject($widget.attr('data-widget'));
 
+        var dataAction = Ice.jsonToObject($element.attr('data-action'));
+
+        data = Ice.objectMerge(data, dataAction.data);
+
         var widgetCallback = function (result) {
             if (callback) {
                 callback(result);
@@ -68,7 +72,7 @@ var Ice_Core_Widget = {
             //}
         };
 
-        Ice_Core_Widget.reRender($widget, actionClass, data, widgetCallback, url, 'POST');
+        Ice_Core_Widget.reRender($widget, dataAction.class, data, widgetCallback, url, 'POST');
     },
 
     reRender: function ($widget, actionClass, actionParams, callback, url, method) {

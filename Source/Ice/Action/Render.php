@@ -49,7 +49,7 @@ class Render extends Action
                 $widget = $widgetClass::getInstance($key);
 
                 if (isset($input['widget'])) {
-                    $widget->setResource($input['widget']['resourceClass']);
+                    $widget->setResource(is_object($input['widget']) ? $input['widget']->getResource() : $input['widget']['resourceClass']);
                 }
 
                 $widgets[$widget->getWidgetId()] = $widget->render();
