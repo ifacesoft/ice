@@ -1,11 +1,11 @@
 <?php
 namespace Ice\Action;
 
-use Ebs\Widget\Security_Login_LoginEmailPassword_Login;
-use Ice\Widget\Form_Security_LoginPassword_Login as Widget_Form_Security_LoginPassword_Login;
-use Ice\Widget\Form_Security_EmailPassword_Login as Widget_Form_Security_EmailPassword_Login;
+use Ebs\Widget\Security_LoginEmailPassword_Login;
+use Ice\Widget\Security_LoginPassword_Login as Widget_Form_Security_LoginPassword_Login;
+use Ice\Widget\Security_EmailPassword_Login as Widget_Form_Security_EmailPassword_Login;
 
-class Form_Security_LoginEmailPassword_Login extends Widget_Event
+class Security_LoginEmailPassword_Login extends Widget_Event
 {
     /**
      * Action config
@@ -34,11 +34,11 @@ class Form_Security_LoginEmailPassword_Login extends Widget_Event
      */
     public function run(array $input)
     {
-        /** @var Security_Login_LoginEmailPassword_Login $form */
+        /** @var Security_LoginEmailPassword_Login $form */
         $form = $input['widget'];
 
         try {
-            return Form_Security_LoginPassword_Login::call([
+            return Security_LoginPassword_Login::call([
                 'widgets' => $input['widgets'],
                 'form' => Widget_Form_Security_LoginPassword_Login::getInstance($form->getInstanceKey())
                     ->setAccountModelClass($form->getAccountLoginPasswordModelClass())
@@ -46,7 +46,7 @@ class Form_Security_LoginEmailPassword_Login extends Widget_Event
             ]);
 
         } catch (\Exception $e) {
-            return Form_Security_EmailPassword_Login::call([
+            return Security_EmailPassword_Login::call([
                 'widgets' => $input['widgets'],
                 'form' => Widget_Form_Security_EmailPassword_Login::getInstance($form->getInstanceKey())
                     ->setAccountModelClass($form->getAccountEmailPasswordModelClass())

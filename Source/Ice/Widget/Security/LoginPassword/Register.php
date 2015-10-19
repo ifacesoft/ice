@@ -6,7 +6,7 @@ use Ice\Core\Model;
 use Ice\Core\Security_Account;
 use Ice\Core\Widget_Form_Security_Register;
 
-class Form_Security_LoginPassword_Register extends Widget_Form_Security_Register
+class Security_LoginPassword_Register extends Widget_Form_Security_Register
 {
     protected static function config()
     {

@@ -10,6 +10,7 @@
 namespace Ice\Action;
 
 use Ice\Core\Action;
+use Ice\Core\Debuger;
 use Ice\Core\Widget;
 use Ice\Helper\Access;
 
@@ -35,5 +36,16 @@ abstract class Widget_Event extends Render
         $input['widget'] = $widget;
 
         $this->setInput($input);
+    }
+
+    public function run(array $input)
+    {
+        return array_merge(
+            parent::run($input),
+            [
+                'redirect' => $input['widget']->getRedirect(),
+                'timeout' => $input['widget']->getTimeout()
+            ]
+        );
     }
 }

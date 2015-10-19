@@ -956,6 +956,13 @@ abstract class Widget extends Container
      */
     public function setRedirect($redirect, $timeout = 0)
     {
+        try {
+            $redirect = $redirect === true
+                ? Router::getInstance()->getUrl()
+                : Router::getInstance()->getUrl($redirect);
+        } catch (RouteNotFound $e) {
+        }
+
         $this->redirect = $redirect;
         $this->setTimeout($timeout);
 

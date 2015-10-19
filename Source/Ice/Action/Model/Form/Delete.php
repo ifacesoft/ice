@@ -83,12 +83,8 @@ class Model_Form_Delete extends Widget_Event
             $model->remove();
 
             return array_merge(
-                [
-                    'success' => $logger->info(['Model {$0} successfully removed', get_class($input['model'])], Logger::SUCCESS),
-                    'redirect' => $input['widget']->getRedirect(),
-                    'timeout' => $input['widget']->getTimeout()
-                ],
-                parent::run(['widgets' => $input['widgets']])
+                parent::run($input),
+                ['success' => $logger->info(['Model {$0} successfully removed', get_class($input['model'])], Logger::SUCCESS)]
             );
         } catch (\Exception $e) {
             $message = ['Remove model: {$0}', $e->getMessage()];

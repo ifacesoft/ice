@@ -37,7 +37,8 @@
     "michelf/php-markdown": "1.5.*",
     "mrclay/minify": "2.2.*",
     "oyejorge/less.php": "1.7.*",
-    "phpmailer/phpmailer": "5.2.*"
+    "phpmailer/phpmailer": "5.2.*",
+    "gregwar/captcha": "1.1.*"
   },
   "require-dev": {
     "sami/sami": "3.0.*@dev",

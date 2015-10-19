@@ -6,7 +6,7 @@ use Ice\Core\Model;
 use Ice\Core\Security_Account;
 use Ice\Core\Widget_Form_Security_Login;
 
-class Form_Security_EmailPassword_Login extends Widget_Form_Security_Login
+class Security_EmailPassword_Login extends Widget_Form_Security_Login
 {
     protected static function config()
     {

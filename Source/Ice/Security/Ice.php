@@ -86,6 +86,7 @@ class Ice extends Security
             $userKey = 1;
         }
 
+        /** @var Model $userModelClass */
         $userModelClass = Config::getInstance(Security::getClass())->get('userModelClass');
 
         Data_Provider_Security::getInstance()->set(Ice::SECURITY_USER, $userModelClass::getModel($userKey, '*'));

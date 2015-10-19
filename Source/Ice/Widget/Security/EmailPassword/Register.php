@@ -2,12 +2,10 @@
 
 namespace Ice\Widget;
 
-use Ice\Core\Model;
-use Ice\Core\Security_Account;
-use Ice\Core\Widget_Form_Security;
+use Ice\Action\Security_EmailPassword_Register_Submit;
 use Ice\Core\Widget_Form_Security_Register;
 
-class Form_Security_EmailPassword_Register extends Widget_Form_Security_Register
+class Security_EmailPassword_Register extends Widget_Form_Security_Register
 {
     protected static function config()
     {
@@ -48,7 +46,7 @@ class Form_Security_EmailPassword_Register extends Widget_Form_Security_Register
                 'password1',
                 ['label' => 'Password1', 'placeholder' => 'password1_placeholder']
             )
-            ->button('register', ['label' => 'Sign up', 'onclick' => 'POST']);
+            ->button('register', ['submit' => ['action' => Security_EmailPassword_Register_Submit::class]]);
 
         return [];
     }
@@ -70,38 +68,5 @@ class Form_Security_EmailPassword_Register extends Widget_Form_Security_Register
         }
 
         return $this;
-    }
-
-    /**
-     * Register
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @param array $userData
-     * @param null $dataSource
-     * @return Security_Account
-     * @throws \Ice\Core\Exception
-     * @version 1.1
-     * @since   0.1
-     */
-    public function register(array $userData = [], $dataSource = null)
-    {
-        /** @var Model $accountModelClass */
-        $accountModelClass = $this->getAccountModelClass();
-
-        if (!$accountModelClass) {
-            return $this->getLogger()
-                ->exception(
-                    ['Unknown accountModelClass', [], $this->getResource()],
-                    __FILE__,
-                    __LINE__
-                );
-        }
-
-        $accountData = $this->validate();
-
-        $accountData['password'] = password_hash($accountData['password'], PASSWORD_DEFAULT);
-
-        return $this->signUp($accountModelClass, $accountData, $userData, $dataSource);
     }
 }

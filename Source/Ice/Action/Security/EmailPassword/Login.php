@@ -5,9 +5,9 @@ namespace Ice\Action;
 use Ice\Core\Logger;
 use Ice\Core\Model;
 use Ice\Core\Security_Account;
-use Ice\Widget\Form_Security_EmailPassword_Login as Widget_Form_Security_EmailPassword_Login;
+use Ice\Widget\Security_EmailPassword_Login as Widget_Form_Security_EmailPassword_Login;
 
-class Form_Security_EmailPassword_Login extends Render
+class Security_EmailPassword_Login extends Render
 {
     /**
      * Action config
