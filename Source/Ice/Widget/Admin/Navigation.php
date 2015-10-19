@@ -48,7 +48,7 @@ class Admin_Navigation extends Navbar
         }
 
         $profileNav = Admin_Nav::getInstance('admin_profile_nav')
-            ->setClasses('navbar-right')
+            ->addClasses('navbar-right')
             ->li('ice_private', ['route' => true])
             ->li('ice_private_profile', ['route' => true]);
 
@@ -56,6 +56,6 @@ class Admin_Navigation extends Navbar
             ->brand('project_name', ['label' => Module::getInstance()->getName(), 'route' => 'ice_main'])
             ->nav('mainNav', ['widget' => $mainNav])
             ->nav('profileNav', ['widget' => $profileNav])
-            ->setClasses('navbar-inverse navbar-fixed-top');
+            ->addClasses('navbar-inverse navbar-fixed-top');
     }
 }

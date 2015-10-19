@@ -437,7 +437,7 @@ abstract class Form extends Widget
      */
     public function setHorizontal($offset = 2)
     {
-        $this->setClasses('form-horizontal');
+        $this->addClasses('form-horizontal');
         $this->horizontal = $offset;
 
         return $this;

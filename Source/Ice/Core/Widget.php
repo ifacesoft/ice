@@ -261,17 +261,6 @@ abstract class Widget extends Container
      *          'cache' => ['ttl' => -1, 'count' => 1000],
      *          'input' => [],
      *          'output' => [],
-     *          'action' => [
-     *          //  'class' => 'Ice:Render',
-     *          //  'params' => [
-     *          //      'widgets' => [
-     *          ////        'Widget_id' => Widget::class
-     *          //      ]
-     *          //  ],
-     *          //  'url' => true,
-     *          //  'method' => 'POST',
-     *          //  'callback' => null
-     *          ]
      *      ];
      *  }
      *
@@ -310,21 +299,13 @@ abstract class Widget extends Container
     }
 
     /**
-     * @return string
-     */
-    public function getClasses()
-    {
-        return $this->classes;
-    }
-
-    /**
      * @param string $classes
      *
      * @return $this
      */
-    public function setClasses($classes)
+    public function addClasses($classes)
     {
-        $this->classes = $classes;
+        $this->classes .= ' ' . $classes;
         return $this;
     }
 
@@ -538,7 +519,7 @@ abstract class Widget extends Container
                 'parentWidgetId' => $this->getParentWidgetId(),
                 'widgetData' => $this->getData(),
                 'widgetResource' => $this->getResource(),
-                'classes' => $this->getClasses(),
+                'classes' => trim($this->classes),
                 'dataParams' => Json::encode($this->getDataParams()),
                 'dataWidget' => Json::encode($this->getDataWidget())
             ],

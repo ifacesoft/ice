@@ -27,7 +27,7 @@ abstract class Navbar extends Widget
      */
     public function nav($name, array $options = [], $template = null)
     {
-        $options['widget']->setClasses($options['widget']->getClasses() . ' navbar-nav');
+        $options['widget']->addClasses('navbar-nav');
 
         return $template
             ? $this->widget($name, $options, $template)
@@ -42,7 +42,7 @@ abstract class Navbar extends Widget
      */
     public function form($name, array $options = [], $template = null)
     {
-        $options['widget']->setClasses($options['widget']->getClasses() . ' navbar-form');
+        $options['widget']->addClasses('navbar-form');
 
         return $template
             ? $this->widget($name, $options, $template)

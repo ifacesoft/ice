@@ -9,7 +9,7 @@ class WidgetTest extends PHPUnit_Framework_TestCase
     public function testMenuNavCrud()
     {
         $navMenu = Nav::create('/', __CLASS__)
-            ->setClasses('nav-pills nav-stacked')
+            ->addClasses('nav-pills nav-stacked')
             ->link('/test', 'test item')
             ->link('/test2', 'test item2', ['active' => true]);
 
@@ -30,7 +30,7 @@ class WidgetTest extends PHPUnit_Framework_TestCase
     public function testMenuNavbarCrud()
     {
         $navbarMenu = Navbar::create('/', __CLASS__)
-            ->setClasses('navbar-default navbar-fixed-top')
+            ->addClasses('navbar-default navbar-fixed-top')
             ->link('/test', 'test item')
             ->link('/test2', 'test item2', ['active' => true])
             ->link('/test3', 'test item3', ['position' => 'left'])
@@ -66,7 +66,7 @@ class WidgetTest extends PHPUnit_Framework_TestCase
     {
         /** @var Pagination $paginationMenu */
         $paginationMenu = Pagination::create('/', __CLASS__)
-            ->setClasses('pagination-sm');
+            ->addClasses('pagination-sm');
 
         $paginationMenu->bind([
             'page' => 5,

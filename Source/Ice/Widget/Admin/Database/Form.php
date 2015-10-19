@@ -77,6 +77,6 @@ class Admin_Database_Form extends Block
 //
 //        $tableRows->render();
 //
-//        $this->setClasses('table-striped table-bordered table-hover table-condensed');
+//        $this->addClasses('table-striped table-bordered table-hover table-condensed');
     }
 }

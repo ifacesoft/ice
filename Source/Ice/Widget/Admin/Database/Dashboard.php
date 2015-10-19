@@ -43,7 +43,7 @@ class Admin_Database_Dashboard extends Nav
     {
         $module = Module::getInstance();
 
-        $this->setClasses('nav-pills');
+        $this->addClasses('nav-pills');
 
         foreach ($module->getDataSourceKeys() as $key => $dataSourceKey) {
             $this->li(

@@ -38,7 +38,7 @@ class Nav extends Widget
      */
     public function nav($name, array $options = [], $template = 'Ice\Widget\Nav\Nav')
     {
-        $options['widget']->setClasses($options['widget']->getClasses() . ' nav-nav');
+        $options['widget']->addClasses('nav-nav');
 
         return $this->widget($name, $options, $template);
     }

@@ -43,7 +43,7 @@ class Admin_Sidebar extends Nav
      */
     protected function build(array $input)
     {
-        $this->setClasses('nav-sidebar');
+        $this->addClasses('nav-sidebar');
 
         $routeName = $this->getRouteName($input['routeNames'], $input['routeName']);
 
@@ -74,7 +74,7 @@ class Admin_Sidebar extends Nav
         /** @var NAv $nav */
         $nav = Admin_Nav::getInstance('sidebar_' . $routeName);
 
-        $nav->setClasses('nav-sidebar');
+        $nav->addClasses('nav-sidebar');
 
         if ($routeName) {
             $nav->widget(

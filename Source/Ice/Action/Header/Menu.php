@@ -46,7 +46,7 @@ class Header_Menu extends Action
         }
 
         $navMenu = Nav::create(Request::uri(), __CLASS__)
-            ->setClasses('nav-pills')
+            ->addClasses('nav-pills')
             ->link('guide', 'Руководство', ['href' => $hrefPrefix . '/guide', 'target' => $target])
 //            ->link('cookbook', 'Полезные статьи', ['href' => $hrefPrefix . '/cookbook', 'target' => $target])
 //            ->link('blog', 'Блог', ['href' => $hrefPrefix . '/blog', 'target' => $target])

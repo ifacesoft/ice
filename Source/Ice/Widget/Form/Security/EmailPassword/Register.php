@@ -25,8 +25,6 @@ class Form_Security_EmailPassword_Register extends Widget_Form_Security_Register
 
     protected function build(array $input)
     {
-        $output = parent::build($input);
-
         $this
             ->text(
                 'email',
@@ -52,7 +50,7 @@ class Form_Security_EmailPassword_Register extends Widget_Form_Security_Register
             )
             ->button('register', ['label' => 'Sign up', 'onclick' => 'POST']);
 
-        return $output;
+        return [];
     }
 
     /**
