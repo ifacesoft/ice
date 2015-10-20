@@ -2,11 +2,9 @@
 
 namespace Ice\Widget;
 
-use Ice\Core\Model;
-use Ice\Core\Security_Account;
-use Ice\Core\Widget_Form_Security_Register;
+use Ice\Core\Widget_Security;
 
-class Security_LoginPassword_Register extends Widget_Form_Security_Register
+class Security_LoginPassword_Register extends Widget_Security
 {
     protected static function config()
     {
@@ -59,17 +57,5 @@ class Security_LoginPassword_Register extends Widget_Form_Security_Register
         }
 
         return $this;
-    }
-
-
-    /**
-     * Register by input form data
-     *
-     * @param array $userData User defaults
-     * @return Model|Security_Account
-     */
-    public function register(array $userData = [])
-    {
-        // TODO: Implement register() method.
     }
 }

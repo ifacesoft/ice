@@ -22,18 +22,20 @@ abstract class Widget_Event extends Render
 
         $input = $this->getInput();
 
-        /** @var Widget $widgetClass */
-        $widgetClass = Widget::getClass($input['widget']['class']);
+        if (is_array($input['widget'])) {
+            /** @var Widget $widgetClass */
+            $widgetClass = Widget::getClass($input['widget']['class']);
 
-        $widget = $widgetClass::getInstance($input['widget']['name']);
+            $widget = $widgetClass::getInstance($input['widget']['name']);
 
-        $widget->setResource($input['widget']['resourceClass']);
+            $widget->setResource($input['widget']['resourceClass']);
 
-        $widget->checkToken($input['widget']['token']);
+            $widget->checkToken($input['widget']['token']);
 
-        Access::check($widget->getActionAccess(get_class($this)));
+            Access::check($widget->getActionAccess(get_class($this)));
 
-        $input['widget'] = $widget;
+            $input['widget'] = $widget;
+        }
 
         $this->setInput($input);
     }

@@ -12,16 +12,17 @@ namespace Ice\Data\Source;
 use Ice\Core\Converter;
 use Ice\Core\Data_Provider;
 use Ice\Core\Data_Source;
-use Ice\Core\Debuger;
 use Ice\Core\Exception;
 use Ice\Core\Logger;
 use Ice\Core\Model;
 use Ice\Core\Module;
-use Ice\Core\Profiler;
 use Ice\Core\Query;
 use Ice\Core\Query_Builder;
 use Ice\Core\Query_Result;
 use Ice\Core\Query_Translator;
+use Ice\Exception\DataSource;
+use Ice\Exception\DataSource_Insert;
+use Ice\Exception\DataSource_Insert_DuplicateEntry;
 use Ice\Helper\Arrays;
 use Ice\Helper\Model as Helper_Model;
 use Ice\Helper\String;
@@ -192,10 +193,10 @@ class Mysqli extends Data_Source
         if (!$statement) {
             switch ($this->getConnection()->errno) {
                 case 1146:
-                    $exceptionClass = 'Ice:DataSource_TableNotFound';
+                    $exceptionClass = DataSource_TableNotFound::getClass();
                     break;
                 default:
-                    $exceptionClass = 'Ice:DataSource_Error';
+                    $exceptionClass = DataSource::getClass();
             }
 
             $logger->exception(
@@ -293,13 +294,25 @@ class Mysqli extends Data_Source
             $error = $statement->error;
             $statement->close();
 
+            switch ($errno) {
+                case 1062:
+                    $exceptionClass = DataSource_Insert_DuplicateEntry::getClass();
+                    break;
+                default:
+                    $exceptionClass = DataSource_Insert::getClass();
+            }
+
             $logger->exception(
                 [
                     '#' . $errno . ': {$0} - {$1} [{$2}]',
                     [$error, print_r($query->getBody(), true), implode(', ', $query->getBinds())]
                 ],
                 __FILE__,
-                __LINE__
+                __LINE__,
+                null,
+                [$query->getBody(), $query->getBinds()],
+                -1,
+                $exceptionClass
             );
         }
 

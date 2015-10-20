@@ -952,7 +952,7 @@ abstract class Widget extends Container
     /**
      * @param string $redirect
      * @param int $timeout
-     * @return $this Widget_Form_Security
+     * @return $this
      */
     public function setRedirect($redirect, $timeout = 0)
     {
@@ -1025,6 +1025,12 @@ abstract class Widget extends Container
 
         if (!$options['widget']->getResource()) {
             $options['widget']->setResource($this->getResource());
+        }
+
+        try {
+            Access::check($options['widget']::getConfig()->gets('access'));
+        } catch (Access_Denied $e) {
+            return $this;
         }
 
         return $this->addPart($name, $options, $template, __FUNCTION__);
@@ -1130,9 +1136,14 @@ abstract class Widget extends Container
         return Resource_Dynamic::getInstance(null);
     }
 
+    /**
+     * @param $name
+     * @return $this
+     */
     public function removePart($name)
     {
         unset($this->parts[$name]);
+        return $this;
     }
 
     /**

@@ -1,10 +1,10 @@
 <?php
 namespace Ice\Widget;
 
+use Ice\Action\Security_LoginEmailPassword_Login_Submit;
 use Ice\Core\Model;
 use Ice\Core\Security_Account;
 use Ice\Core\Widget_Form_Security_Login;
-use Ice\Action\Security_LoginEmailPassword_Login as Action_Form_Security_LoginEmailPassword_Login;
 
 class Security_LoginEmailPassword_Login extends Widget_Form_Security_Login
 {
@@ -70,7 +70,7 @@ class Security_LoginEmailPassword_Login extends Widget_Form_Security_Login
                 [
                     'label' => 'Sign in',
                     'submit' => [
-                        'action' => Action_Form_Security_LoginEmailPassword_Login::class,
+                        'action' => Security_LoginEmailPassword_Login_Submit::class,
                         'url' => 'ice_security_login',
                     ]
                 ]

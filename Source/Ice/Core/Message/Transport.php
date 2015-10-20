@@ -34,7 +34,7 @@ abstract class Message_Transport extends Container
     {
         $config = Config::getInstance(self::getClass());
 
-        $key = $data['instanceKey'];
+        $key = $this->getInstanceKey();
 
         $this->fromAddress = $config->get($key . '/fromAddress');
         $this->fromName = $config->get($key . '/fromName', false);

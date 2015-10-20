@@ -2,7 +2,7 @@
 
 namespace Ice\Core;
 
-abstract class Widget_Form_Security_Login extends Widget_Form_Security
+abstract class Widget_Form_Security_Login extends Widget_Security
 {
     /**
      * Verify account by form values

@@ -3,66 +3,62 @@
 namespace Ice\Action;
 
 use Ice\Core\Action;
+use Ice\Core\Debuger;
+use Ice\Core\Logger;
+use Ice\Core\Model;
+use Ice\Core\Widget_Security;
+use Ice\Exception\DataSource_Insert_DuplicateEntry;
+use Ice\Exception\Not_Valid;
 
-class Security_EmailPassword_Register_Submit extends Security_Register
+class Security_EmailPassword_Register_Submit extends Security
 {
-
-    /**
-     * Action config
-     *
-     * @return array
-     */
-       protected static function config()
-       {
-           return [
-               'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'Action: Access denied!'],
-               'cache' => ['ttl' => -1, 'count' => 1000],
-               'actions' => [],
-               'input' => [],
-               'output' => []
-           ];
-       }
-
-      /** Run action
+    /** Run action
      *
      * @param  array $input
      * @return array
      */
     public function run(array $input)
     {
-        // TODO: Implement run() method.
-    }
+        /** @var Widget_Security $securityForm */
+        $securityForm = $input['widget'];
 
-    /**
-     * Register
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @param array $userData
-     * @param null $dataSource
-     * @return Security_Account
-     * @throws \Ice\Core\Exception
-     * @version 1.1
-     * @since   0.1
-     */
-    public function register(array $userData = [], $dataSource = null)
-    {
-        /** @var Model $accountModelClass */
-        $accountModelClass = $this->getAccountModelClass();
+        $logger = $securityForm->getLogger();
 
-        if (!$accountModelClass) {
-            return $this->getLogger()
-                ->exception(
-                    ['Unknown accountModelClass', [], $this->getResource()],
-                    __FILE__,
-                    __LINE__
-                );
+        try {
+            /** @var Model $accountModelClass */
+            $accountModelClass = $securityForm->getAccountModelClass();
+
+            if (!$accountModelClass) {
+                return $logger
+                    ->exception(
+                        ['Unknown accountModelClass', [], $securityForm->getResource()],
+                        __FILE__,
+                        __LINE__
+                    );
+            }
+
+            $accountData = $securityForm->validate();
+
+            $accountData['password'] = password_hash($accountData['password'], PASSWORD_DEFAULT);
+
+            $this->signUp($accountModelClass, $accountData, $input);
+
+            return array_merge(
+                ['success' => $logger->info('Регистрация прошла успешно', Logger::SUCCESS)],
+                parent::run($input)
+            );
+        } catch (Not_Valid $e) {
+            return [
+                'error' => $logger->info('Введены не валидные данные. Провверте ввод.', Logger::DANGER)
+            ];
+        } catch (DataSource_Insert_DuplicateEntry $e) {
+            return [
+                'error' => $logger->info('Пользователь уже существует', Logger::DANGER)
+            ];
+        } catch (\Exception $e) {
+            return [
+                'error' => $logger->info('Регистрация не удалась', Logger::DANGER)
+            ];
         }
-
-        $accountData = $this->validate();
-
-        $accountData['password'] = password_hash($accountData['password'], PASSWORD_DEFAULT);
-
-        return $this->signUp($accountModelClass, $accountData, $userData, $dataSource);
     }
 }

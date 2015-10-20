@@ -3,9 +3,9 @@
 namespace Ice\Widget;
 
 use Ice\Action\Security_EmailPassword_Register_Submit;
-use Ice\Core\Widget_Form_Security_Register;
+use Ice\Core\Widget_Security;
 
-class Security_EmailPassword_Register extends Widget_Form_Security_Register
+class Security_EmailPassword_Register extends Widget_Security
 {
     protected static function config()
     {
@@ -46,7 +46,15 @@ class Security_EmailPassword_Register extends Widget_Form_Security_Register
                 'password1',
                 ['label' => 'Password1', 'placeholder' => 'password1_placeholder']
             )
-            ->button('register', ['submit' => ['action' => Security_EmailPassword_Register_Submit::class]]);
+            ->button(
+                'register',
+                [
+                    'submit' => [
+                        'action' => Security_EmailPassword_Register_Submit::class,
+                        'url' => 'ice_security_register'
+                    ]
+                ]
+            );
 
         return [];
     }

@@ -14,7 +14,9 @@ class PHPMailer extends Message_Transport
 
     protected function init(array $data)
     {
-        $key = $data['instanceKey'];
+        parent::init($data);
+
+        $key = $this->getInstanceKey();
 
         $config = Config::getInstance(__CLASS__);
 

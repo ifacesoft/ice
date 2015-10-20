@@ -2,6 +2,7 @@
 
 namespace Ice\Widget;
 
+use Ice\Action\Security_LoginPassword_Login_Submit;
 use Ice\Core\Model;
 use Ice\Core\Security_Account;
 use Ice\Core\Widget_Form_Security_Login;
@@ -47,7 +48,7 @@ class Security_LoginPassword_Login extends Widget_Form_Security_Login
                 [
                     'label' => 'Sign in',
                     'submit' => [
-                        'action' => Security_LoginPassword_Login::class,
+                        'action' => Security_LoginPassword_Login_Submit::class,
                         'url' => 'ice_security_login',
                     ]
                 ]

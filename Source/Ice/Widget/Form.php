@@ -433,7 +433,7 @@ abstract class Form extends Widget
 
     /**
      * @param int $offset input offset
-     * @return Form
+     * @return $this
      */
     public function setHorizontal($offset = 2)
     {
