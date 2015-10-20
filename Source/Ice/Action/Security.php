@@ -19,7 +19,7 @@ abstract class Security extends Widget_Event
     /**
      * @param Security_Account|Model $account
      * @param array $input
-     * @return null|string
+     * @return Security_Account|Model
      * @throws Exception
      */
     final public function signIn(Security_Account $account, array $input)
@@ -145,5 +145,51 @@ abstract class Security extends Widget_Event
     {
         return Logger::getInstance(__CLASS__)
             ->exception(['Implement {$0} for {$1}', [__FUNCTION__, get_class($this)]], __FILE__, __LINE__);
+    }
+
+    /**
+     * @param array $tokenData
+     * @param array $input
+     * @return Security_Account|Model
+     */
+    final public function confirm(array $tokenData, array $input) {
+        /** @var Widget_Security $securityForm */
+        $securityForm = $input['widget'];
+
+        $log = Log_Security::create([
+            'account_class' => $tokenData['accountClass'],
+            'account_key' => $tokenData['accountKey'],
+            'form_class' => get_class($this)
+        ]);
+
+        /** @var Security_Account|Model $accountClass */
+        $accountClass = $tokenData['accountClass'];
+
+        $account = $accountClass::getModel($tokenData['accountKey'], 'user__fk');
+
+        if (!$account) {
+            $error = 'Account not found';
+
+            $log->set('error', $error);
+
+            $securityForm->getLogger()->save($log);
+
+            return $securityForm->getLogger()->exception([$error, [], $securityForm->getResource()], __FILE__, __LINE__);
+        }
+
+        $securityForm->getLogger()->save($log);
+
+        $account->set(['/expired' => $tokenData['expired']])->save();
+
+        $userModelClass = Config::getInstance(Core_Security::getClass())->get('userModelClass');
+
+        /** @var Security_User|Model $user */
+        $user = $account->fetchOne($userModelClass, '/pk', true);
+
+        $user->set(['/active' => 1])->save();
+
+        $this->getLogger()->save($log);
+
+        return $account;
     }
 }

@@ -40,14 +40,14 @@ return [
             ]
         ]
     ],
-    'ice_security_register_confirm' => [
-        'route' => '/register/confirm',
+    'ice_security_confirm' => [
+        'route' => '/confirm',
         'request' => [
             'GET' => [
                 'Ice:Layout_Main' => [
                     'actions' => [
-                        ['Ice:Title' => 'title', ['title' => 'Register']],
-                        'Ice:Security_Register' => 'main'
+                        ['Ice:Title' => 'title', ['title' => 'Confirm']],
+                        'Ice:Security_Confirm' => 'main'
                     ]
                 ]
             ]
