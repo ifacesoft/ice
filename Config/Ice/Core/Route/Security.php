@@ -39,5 +39,18 @@ return [
                 ]
             ]
         ]
+    ],
+    'ice_security_register_confirm' => [
+        'route' => '/register/confirm',
+        'request' => [
+            'GET' => [
+                'Ice:Layout_Main' => [
+                    'actions' => [
+                        ['Ice:Title' => 'title', ['title' => 'Register']],
+                        'Ice:Security_Register' => 'main'
+                    ]
+                ]
+            ]
+        ]
     ]
 ];

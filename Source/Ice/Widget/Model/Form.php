@@ -17,6 +17,7 @@ use Ice\Core\Model;
 use Ice\Core\Module;
 use Ice\Core\Security;
 use Ice\Core\Validator;
+use Ice\Core\Widget;
 use Ice\Exception\Http_Forbidden;
 use Ice\Exception\Not_Configured;
 
@@ -81,8 +82,11 @@ abstract class Model_Form extends Form
         /** @var Model $modelClass */
         $modelClass = $this->getInstanceKey();
 
+        /** @var Widget $widgetClass */
+        $widgetClass = get_class($this);
+
         try {
-            $models = Config::getInstance(get_class($this))->gets('models');
+            $models = $widgetClass::getConfig()->gets('models');
         } catch (\Exception $e) {
             throw new Not_Configured(['Check config of widget {$0} for {$1}', [get_class($this), $modelClass]], [], $e);
         }

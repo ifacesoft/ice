@@ -43,7 +43,7 @@ class Input
             }
 
             $dataProviderKeys = isset($param['providers'])
-                ? ($param['providers'] == 'any' ? ['request', 'router', 'cli', 'session']: (array)$param['providers'])
+                ? ($param['providers'] == 'any' ? ['default', 'request', 'router', 'cli', 'session']: (array)$param['providers'])
                 : ['default'];
 
             foreach ($dataProviderKeys as $dataProviderKey) {
