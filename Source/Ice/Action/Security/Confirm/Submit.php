@@ -17,10 +17,11 @@ class Security_Confirm_Submit extends Security
         $logger = $securityForm->getLogger();
 
         try {
+            /** @var Token $token */
             $token = Token::createQueryBuilder()
-                ->eq(['token' => $securityForm->getValue('token')])
+                ->eq(['/' => $securityForm->getValue('token')])
                 ->lt('/expired', Date::get())
-                ->getSelectQuery('/data__json')
+                ->getSelectQuery('*')
                 ->getModel();
 
             if (!$token) {
@@ -29,7 +30,7 @@ class Security_Confirm_Submit extends Security
                 ];
             }
 
-            $this->confirm($token->get('/data'), $input);
+            $this->confirm($token, $input);
 
             return array_merge(
                 ['success' => $logger->info('Регистрация прошла успешно', Logger::SUCCESS)],

@@ -3,6 +3,7 @@
 namespace Ice\Action;
 
 use Ebs\Model\Log_Security;
+use Ebs\Model\Token;
 use Ice\Core;
 use Ice\Core\Config;
 use Ice\Core\Data_Source;
@@ -70,19 +71,19 @@ abstract class Security extends Widget_Event
     /**
      * Sing up by account
      *
-     * @param Security_Account|Model $accountModelClass
      * @param array $accountData
      * @param array $input user defaults
      * @param Data_Source|string|null $dataSource
      * @return Model|Security_Account
      * @throws \Exception
      */
-    final public function signUp($accountModelClass, array $accountData, array $input, $dataSource = null)
+    final public function signUp(array $accountData, array $input, $dataSource = null)
     {
         /** @var Widget_Security $securityForm */
         $securityForm = $input['widget'];
 
-        $account = null;
+        /** @var Security_Account|Model $account */
+        $accountModelClass = $accountData['modelClass'];
 
         $log = Log_Security::create([
             'account_class' => $accountModelClass,
@@ -114,6 +115,8 @@ abstract class Security extends Widget_Event
             $userModelClass = Config::getInstance(Core_Security::getClass())->get('userModelClass');
 
             $accountData['user'] = $userModelClass::create($input)->save();
+
+            /** @var Security_Account|Model $account */
             $account = $accountModelClass::create($accountData)->save();
 
             $dataSource->commitTransaction();
@@ -148,24 +151,23 @@ abstract class Security extends Widget_Event
     }
 
     /**
-     * @param array $tokenData
+     * @param Token $token
      * @param array $input
      * @return Security_Account|Model
      */
-    final public function confirm(array $tokenData, array $input) {
+    final public function confirm(Token $token, array $input) {
         /** @var Widget_Security $securityForm */
         $securityForm = $input['widget'];
 
+        /** @var Security_Account|Model $accountClass */
+        $accountClass = $token->get('class');
+
         $log = Log_Security::create([
-            'account_class' => $tokenData['accountClass'],
-            'account_key' => $tokenData['accountKey'],
+            'account_class' => $accountClass,
             'form_class' => get_class($this)
         ]);
 
-        /** @var Security_Account|Model $accountClass */
-        $accountClass = $tokenData['accountClass'];
-
-        $account = $accountClass::getModel($tokenData['accountKey'], 'user__fk');
+        $account = $accountClass->getSelectQuery('user__fk', ['token' => $token])->getModel();
 
         if (!$account) {
             $error = 'Account not found';
@@ -177,7 +179,11 @@ abstract class Security extends Widget_Event
             return $securityForm->getLogger()->exception([$error, [], $securityForm->getResource()], __FILE__, __LINE__);
         }
 
+        $log->set('account_key', $account->getPkValue());
+
         $securityForm->getLogger()->save($log);
+
+        $tokenData = $token->get('data');
 
         $account->set(['/expired' => $tokenData['expired']])->save();
 

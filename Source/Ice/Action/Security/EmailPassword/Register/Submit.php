@@ -41,7 +41,9 @@ class Security_EmailPassword_Register_Submit extends Security
 
             $accountData['password'] = password_hash($accountData['password'], PASSWORD_DEFAULT);
 
-            $this->signUp($accountModelClass, $accountData, $input);
+            $accountData['modelClass'] = $accountModelClass;
+
+            $this->signUp($accountData, $input);
 
             return array_merge(
                 ['success' => $logger->info('Регистрация прошла успешно', Logger::SUCCESS)],
