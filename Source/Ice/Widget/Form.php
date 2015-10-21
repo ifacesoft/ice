@@ -93,10 +93,6 @@ abstract class Form extends Widget
      */
     public function text($fieldName, array $options = [], $template = 'Ice\Widget\Form\Text')
     {
-        if ($this->horizontal) {
-            $options['horizontal'] = $this->horizontal;
-        }
-
         return $this->addPart($fieldName, $options, $template, __FUNCTION__);
     }
 
@@ -133,10 +129,6 @@ abstract class Form extends Widget
      */
     public function password($fieldName, array $options = [], $template = 'Ice\Widget\Form\Password')
     {
-        if ($this->horizontal) {
-            $options['horizontal'] = $this->horizontal;
-        }
-
         return $this->addPart($fieldName, $options, $template, __FUNCTION__);
     }
 
@@ -155,10 +147,6 @@ abstract class Form extends Widget
      */
     public function number($fieldName, array $options = [], $template = 'Ice\Widget\Form\Number')
     {
-        if ($this->horizontal) {
-            $options['horizontal'] = $this->horizontal;
-        }
-
         return $this->addPart($fieldName, $options, $template, __FUNCTION__);
     }
 
@@ -177,10 +165,6 @@ abstract class Form extends Widget
      */
     public function date($fieldName, array $options = [], $template = 'Ice\Widget\Form\Date')
     {
-        if ($this->horizontal) {
-            $options['horizontal'] = $this->horizontal;
-        }
-
         return $this->addPart($fieldName, $options, $template, __FUNCTION__);
     }
 
@@ -199,10 +183,6 @@ abstract class Form extends Widget
      */
     public function checkbox($fieldName, array $options = [], $template = 'Ice\Widget\Form\Checkbox')
     {
-        if ($this->horizontal) {
-            $options['horizontal'] = $this->horizontal;
-        }
-
         return $this->addPart($fieldName, $options, $template, __FUNCTION__);
     }
 
@@ -221,10 +201,6 @@ abstract class Form extends Widget
      */
     public function radio($fieldName, array $options = [], $template = 'Ice\Widget\Form\Radiobutton')
     {
-        if ($this->horizontal) {
-            $options['horizontal'] = $this->horizontal;
-        }
-
         return $this->addPart($fieldName, $options, $template, __FUNCTION__);
     }
 
@@ -243,10 +219,6 @@ abstract class Form extends Widget
      */
     public function combobox($fieldName, array $options = [], $template = 'Ice\Widget\Form\Combobox')
     {
-        if ($this->horizontal) {
-            $options['horizontal'] = $this->horizontal;
-        }
-
         return $this->addPart($fieldName, $options, $template, __FUNCTION__);
     }
 
@@ -288,10 +260,6 @@ abstract class Form extends Widget
      */
     public function chosen($fieldName, array $options = [], $template = 'Ice\Widget\Form\Chosen')
     {
-        if ($this->horizontal) {
-            $options['horizontal'] = $this->horizontal;
-        }
-
         return $this->addPart($fieldName, $options, $template, __FUNCTION__);
     }
 
@@ -328,10 +296,6 @@ abstract class Form extends Widget
      */
     public function textarea($fieldName, array $options = [], $template = 'Ice\Widget\Form\Textarea')
     {
-        if ($this->horizontal) {
-            $options['horizontal'] = $this->horizontal;
-        }
-
         return $this->addPart($fieldName, $options, $template, __FUNCTION__);
     }
 
@@ -370,10 +334,6 @@ abstract class Form extends Widget
      */
     public function button($fieldName, array $options = [], $template = 'Ice\Widget\Form\Button')
     {
-        if ($this->horizontal) {
-            $options['horizontal'] = $this->horizontal;
-        }
-
         if (!isset($options['resource'])) {
             $options['resource'] = get_class($this);
         }
@@ -438,7 +398,7 @@ abstract class Form extends Widget
     public function setHorizontal($offset = 2)
     {
         $this->addClasses('form-horizontal');
-        $this->horizontal = $offset;
+        $this->setOption('horizontal', $offset);
 
         return $this;
     }

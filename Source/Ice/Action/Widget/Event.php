@@ -35,6 +35,8 @@ abstract class Widget_Event extends Render
             Access::check($widget->getActionAccess(get_class($this)));
 
             $input['widget'] = $widget;
+
+
         }
 
         $this->setInput($input);

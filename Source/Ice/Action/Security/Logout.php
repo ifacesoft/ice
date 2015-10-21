@@ -2,6 +2,7 @@
 namespace Ice\Action;
 
 use Ice\Core\Action;
+use Ice\Core\Debuger;
 use Ice\Core\Request;
 use Ice\Core\View;
 use Ice\Exception\Redirect;
@@ -28,6 +29,6 @@ class Security_Logout extends Security
     {
         session_destroy();
 
-        return ['redirect' => $input['redirect'] === true ? Request::referer() : $input['redirect']];
+        return parent::run($input);
     }
 }

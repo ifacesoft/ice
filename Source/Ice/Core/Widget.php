@@ -48,6 +48,8 @@ abstract class Widget extends Container
     private $result = null;
     private $compiledResult = null;
 
+    private $options = [];
+
     private $parentWidgetId = null;
     /**
      * Redirect url
@@ -74,6 +76,23 @@ abstract class Widget extends Container
 
     private $resource = null;
     private $template = null;
+
+    /**
+     * @return array
+     */
+    public function getOption($name)
+    {
+        return $this->options[$name];
+    }
+
+    /**
+     * @param $name
+     * @param $value
+     */
+    public function setOption($name, $value)
+    {
+        $this->options[$name] = $value;
+    }
 
     /**
      * @param string $attributes
@@ -488,6 +507,9 @@ abstract class Widget extends Container
                     : $part['template'];
 
                 $part['offset'] = $offset + 1;
+
+                $part['widgetOptions'] = $this->options;
+
                 $part['content'] = Php::getInstance()->fetch($template, $part);
 
                 $row[$partName] = $part;

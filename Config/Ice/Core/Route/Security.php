@@ -52,5 +52,31 @@ return [
                 ]
             ]
         ]
+    ],
+    'ice_security_restore_request' => [
+        'route' => '/restore/request',
+        'request' => [
+            'GET' => [
+                'Ice:Layout_Main' => [
+                    'actions' => [
+                        ['Ice:Title' => 'title', ['title' => 'Restore request']],
+                        'Ice:Security_RestoreRequest' => 'main'
+                    ]
+                ]
+            ]
+        ]
+    ],
+    'ice_security_restore_confirm' => [
+        'route' => '/restore/confirm',
+        'request' => [
+            'GET' => [
+                'Ice:Layout_Main' => [
+                    'actions' => [
+                        ['Ice:Title' => 'title', ['title' => 'Restore confirm']],
+                        'Ice:Security_RestoreConfirm' => 'main'
+                    ]
+                ]
+            ]
+        ]
     ]
 ];

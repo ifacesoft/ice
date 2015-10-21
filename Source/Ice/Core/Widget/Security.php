@@ -102,7 +102,7 @@ abstract class Widget_Security extends Form
      * @param bool $confirmRequired
      * @return $this
      */
-    public function setConfirm($confirm, $confirmExpired = '+3 hours', $confirmRequired = true)
+    public function setConfirm($confirm, $confirmExpired = '+1 hours', $confirmRequired = true)
     {
         $this->confirm = $confirm;
 

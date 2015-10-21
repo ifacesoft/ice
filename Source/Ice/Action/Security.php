@@ -24,7 +24,7 @@ abstract class Security extends Widget_Event
      * @return Security_Account|Model
      * @throws Exception
      */
-    final public function signIn(Security_Account $account, array $input)
+    final protected function signIn(Security_Account $account, array $input)
     {
         /** @var Widget_Security $securityForm */
         $securityForm = $input['widget'];
@@ -78,7 +78,7 @@ abstract class Security extends Widget_Event
      * @return Model|Security_Account
      * @throws \Exception
      */
-    final public function signUp(array $accountData, array $input, $dataSource = null)
+    final protected function signUp(array $accountData, array $input, $dataSource = null)
     {
         /** @var Widget_Security $securityForm */
         $securityForm = $input['widget'];
@@ -158,11 +158,23 @@ abstract class Security extends Widget_Event
     }
 
     /**
+     * Return confirm token and confirm token expired
+     *
+     * @param Token $token
+     * @throws Exception
+     */
+    public function sendRestoreConfirm(Token $token, array $input)
+    {
+        Logger::getInstance(__CLASS__)
+            ->exception(['Implement {$0} for {$1}', [__FUNCTION__, get_class($this)]], __FILE__, __LINE__);
+    }
+
+    /**
      * @param Token $token
      * @param array $input
      * @return Security_Account|Model
      */
-    final public function confirm(Token $token, array $input)
+    final protected function confirm(Token $token, array $input)
     {
         /** @var Widget_Security $securityForm */
         $securityForm = $input['widget'];
@@ -202,6 +214,51 @@ abstract class Security extends Widget_Event
         $user = $account->fetchOne($userModelClass, '/pk', true);
 
         $user->set(['/active' => 1])->save();
+
+        $this->getLogger()->save($log);
+
+        return $account;
+    }
+
+    /**
+     * @param Security_Account|Model $account
+     * @param $input
+     * @return null
+     * @throws Exception
+     */
+    final protected function restoreRequest($account, $input) {
+        /** @var Widget_Security $securityForm */
+        $securityForm = $input['widget'];
+
+        $accountModelClass = get_class($account);
+
+        $log = Log_Security::create([
+            'account_class' => $accountModelClass,
+            'account_key' => $account->getPkValue(),
+            'form_class' => get_class($this)
+        ]);
+
+        if ($account->isExpired()) {
+            $error = 'Account is expired';
+
+            $log->set('error', $error);
+
+            $securityForm->getLogger()->save($log);
+
+            return $securityForm->getLogger()->exception([$error, [], $securityForm->getResource()], __FILE__, __LINE__);
+        }
+
+        $token = Token::create([
+            '/' => md5(String::getRandomString()),
+            '/expired' => $securityForm->getConfirmationExpired(),
+            'modelClass' => $accountModelClass,
+        ])->save();
+
+        $account->set(['token' => $token])->save();
+
+        $this->sendRestoreConfirm($token, $input);
+
+        $securityForm->getLogger()->save($log);
 
         $this->getLogger()->save($log);
 
