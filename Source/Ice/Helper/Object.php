@@ -61,7 +61,7 @@ class Object
     {
         if ($baseClass == $class) {
 //            return $class;
-            Core_Logger::getInstance()->exception(['Base class and class {$0} are equal', $class], __FILE__, __LINE__);
+            Core_Logger::getInstance(__CLASS__)->exception(['Base class and class {$0} are equal', $class], __FILE__, __LINE__);
         }
 
         if (self::isShortName($class)) {

@@ -45,7 +45,7 @@ class File
     public static function createData($path, $data, $phpData = true, $file_put_contents_flag = 0, $isPretty = true)
     {
         if (!$path) {
-            Core_Logger::getInstance()->error('File path is empty', __FILE__, __LINE__);
+            Core_Logger::getInstance(__CLASS__)->error('File path is empty', __FILE__, __LINE__);
             return $data;
         }
 
@@ -77,7 +77,7 @@ class File
     public static function loadData($path, $isRequire = true)
     {
         if (empty($path)) {
-            Core_Logger::getInstance()->error('File path is empty', __FILE__, __LINE__);
+            Core_Logger::getInstance(__CLASS__)->error('File path is empty', __FILE__, __LINE__);
         }
 
         if (file_exists($path)) {
@@ -85,7 +85,7 @@ class File
         }
 
         if ($isRequire) {
-            Core_Logger::getInstance()->exception(['File {$0} with data not found', $path], __FILE__, __LINE__);
+            Core_Logger::getInstance(__CLASS__)->exception(['File {$0} with data not found', $path], __FILE__, __LINE__);
         }
 
         return null;
@@ -146,7 +146,7 @@ class File
     public static function loadCsvData($path, $delimiter = ',', $enclosure = '"', $escape = '\\', $isRequire = true)
     {
         if (empty($path)) {
-            Core_Logger::getInstance()->error('File path is empty', __FILE__, __LINE__);
+            Core_Logger::getInstance(__CLASS__)->error('File path is empty', __FILE__, __LINE__);
         }
 
         //        if (file_exists($path)) {
@@ -171,7 +171,7 @@ class File
         }
 
         if ($isRequire) {
-            Core_Logger::getInstance()->exception(['File {$0} with data not found', $path], __FILE__, __LINE__);
+            Core_Logger::getInstance(__CLASS__)->exception(['File {$0} with data not found', $path], __FILE__, __LINE__);
         }
 
         return null;

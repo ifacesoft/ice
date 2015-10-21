@@ -2,7 +2,7 @@
 
 namespace Ice\Action;
 
-use Ebs\Model\Token;
+use Ice\Model\Token;
 use Ice\Core\Logger;
 use Ice\Core\Widget_Security;
 use Ice\Helper\Date;
@@ -20,23 +20,25 @@ class Security_Confirm_Submit extends Security
             /** @var Token $token */
             $token = Token::createQueryBuilder()
                 ->eq(['/' => $securityForm->getValue('token')])
-                ->lt('/expired', Date::get())
+                ->gt('/expired', Date::get())
                 ->getSelectQuery('*')
                 ->getModel();
 
             if (!$token) {
                 return [
-                    'error' => $logger->info('Токен не наден или истек срок его действия', Logger::DANGER)
+                    'error' => $logger->info('Ключ подтверждения не найден или истек срок его действия', Logger::DANGER)
                 ];
             }
 
             $this->confirm($token, $input);
 
             return array_merge(
-                ['success' => $logger->info('Регистрация прошла успешно', Logger::SUCCESS)],
+                ['success' => $logger->info('Регистрация успешно подтверждена', Logger::SUCCESS)],
                 parent::run($input)
             );
         } catch (\Exception $e) {
+            $logger->error('Подтверждение не удалось', __FILE__, __LINE__, $e);
+
             return [
                 'error' => $logger->info('Подтверждение не удалось', Logger::DANGER)
             ];

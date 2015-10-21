@@ -21,18 +21,8 @@ return [
     'Implement flushAll() method.' => [
         'ru' => 'Implement flushAll() method.',
     ],
-    'Could not set value:
-. Field "" not found in Model "Upload_Task"' => [
-        'ru' => 'Could not set value:
-. Field "" not found in Model "Upload_Task"',
-    ],
     'Implement set() method.' => [
         'en' => 'Implement set() method.',
-    ],
-    'Could not set value:
-. Field "" not found in Model "Test"' => [
-        'en' => 'Could not set value:
-. Field "" not found in Model "Test"',
     ],
     'Query is empty' => [
         'en' => 'Query is empty',
@@ -170,5 +160,8 @@ return [
     'Forbidden' => [
         'en' => 'Forbidden',
         'ru' => 'Запрещено',
+    ],
+    'Access_Denied_Security - Widget: Access denied!' => [
+        'ru' => 'Access_Denied_Security - Widget: Access denied!',
     ],
 ];

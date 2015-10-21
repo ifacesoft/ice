@@ -162,19 +162,20 @@ abstract class Security extends Widget_Event
      * @param array $input
      * @return Security_Account|Model
      */
-    final public function confirm(Token $token, array $input) {
+    final public function confirm(Token $token, array $input)
+    {
         /** @var Widget_Security $securityForm */
         $securityForm = $input['widget'];
 
         /** @var Security_Account|Model $accountClass */
-        $accountClass = $token->get('class');
+        $accountClass = $token->get('modelClass');
 
         $log = Log_Security::create([
             'account_class' => $accountClass,
             'form_class' => get_class($this)
         ]);
 
-        $account = $accountClass->getSelectQuery('user__fk', ['token' => $token])->getModel();
+        $account = $accountClass::getSelectQuery('user__fk', ['token' => $token])->getModel();
 
         if (!$account) {
             $error = 'Account not found';
@@ -190,9 +191,10 @@ abstract class Security extends Widget_Event
 
         $securityForm->getLogger()->save($log);
 
-        $tokenData = $token->get('data');
+        $tokenData = $token->get('/data');
 
-        $account->set(['/expired' => $tokenData['expired']])->save();
+        $account->set(['/expired' => $tokenData['account_expired'], 'token__fk' => null])->save();
+        $token->remove();
 
         $userModelClass = Config::getInstance(Core_Security::getClass())->get('userModelClass');
 
