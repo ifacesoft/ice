@@ -1,11 +1,11 @@
-<?php namespace Ebs\Model;
+<?php namespace Ice\Model;
 
 use Ice\Core\Model;
 
 /**
- * Class Ice_Token
+ * Class Token
  *
- * @property mixed ice_token_pk
+ * @property mixed token_pk
  * @property mixed token
  * @property mixed token_expired
  *
@@ -18,7 +18,7 @@ class Token extends Model
     protected static function config()
     {
         return [
-		    'dataSourceKey' => 'Ice\\Data\\Source\\Mysqli/default.ebs',
+		    'dataSourceKey' => 'Ice\Data\Source\Mysqli/default.ebs',
 		    'scheme' => [
 		        'tableName' => 'ice_token',
 		        'engine' => 'InnoDB',
@@ -37,16 +37,16 @@ class Token extends Model
 		                'default' => null,
 		                'comment' => '',
 		            ],
-		            'fieldName' => 'ice_token_pk',
-		            'Ice\\Widget\\Model_Form' => [
+		            'fieldName' => 'token_pk',
+		            'Ice\Widget\Model_Form' => [
 		                'type' => 'number',
 		                'roles' => [
 		                    0 => 'ROLE_ICE_GUEST',
 		                    1 => 'ROLE_ICE_USER',
 		                ],
 		            ],
-		            'Ice\\Core\\Validator' => [],
-		            'Ice\\Widget\\Model_Table' => [
+		            'Ice\Core\Validator' => [],
+		            'Ice\Widget\Model_Table' => [
 		                'type' => 'span',
 		                'roles' => [
 		                    0 => 'ROLE_ICE_GUEST',
@@ -66,17 +66,17 @@ class Token extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'token',
-		            'Ice\\Widget\\Model_Form' => [
+		            'Ice\Widget\Model_Form' => [
 		                'type' => 'text',
 		                'roles' => [
 		                    0 => 'ROLE_ICE_GUEST',
 		                    1 => 'ROLE_ICE_USER',
 		                ],
 		            ],
-		            'Ice\\Core\\Validator' => [
+		            'Ice\Core\Validator' => [
 		                'Ice:Length_Max' => 64,
 		            ],
-		            'Ice\\Widget\\Model_Table' => [
+		            'Ice\Widget\Model_Table' => [
 		                'type' => 'span',
 		                'roles' => [
 		                    0 => 'ROLE_ICE_GUEST',
@@ -96,15 +96,75 @@ class Token extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'token_expired',
-		            'Ice\\Widget\\Model_Form' => [
+		            'Ice\Widget\Model_Form' => [
 		                'type' => 'date',
 		                'roles' => [
 		                    0 => 'ROLE_ICE_GUEST',
 		                    1 => 'ROLE_ICE_USER',
 		                ],
 		            ],
-		            'Ice\\Core\\Validator' => [],
-		            'Ice\\Widget\\Model_Table' => [
+		            'Ice\Core\Validator' => [],
+		            'Ice\Widget\Model_Table' => [
+		                'type' => 'span',
+		                'roles' => [
+		                    0 => 'ROLE_ICE_GUEST',
+		                    1 => 'ROLE_ICE_USER',
+		                ],
+		            ],
+		        ],
+		        'token_data__json' => [
+		            'scheme' => [
+		                'extra' => '',
+		                'type' => 'text',
+		                'dataType' => 'text',
+		                'length' => '65535',
+		                'characterSet' => 'utf8',
+		                'nullable' => true,
+		                'default' => '[]',
+		                'comment' => '',
+		            ],
+		            'fieldName' => 'token_data__json',
+		            'Ice\Widget\Model_Form' => [
+		                'type' => 'textarea',
+		                'roles' => [
+		                    0 => 'ROLE_ICE_GUEST',
+		                    1 => 'ROLE_ICE_USER',
+		                ],
+		            ],
+		            'Ice\Core\Validator' => [
+		                'Ice:Length_Max' => 65535,
+		            ],
+		            'Ice\Widget\Model_Table' => [
+		                'type' => 'span',
+		                'roles' => [
+		                    0 => 'ROLE_ICE_GUEST',
+		                    1 => 'ROLE_ICE_USER',
+		                ],
+		            ],
+		        ],
+		        'modelClass' => [
+		            'scheme' => [
+		                'extra' => '',
+		                'type' => 'varchar(255)',
+		                'dataType' => 'varchar',
+		                'length' => '255',
+		                'characterSet' => 'utf8',
+		                'nullable' => true,
+		                'default' => null,
+		                'comment' => '',
+		            ],
+		            'fieldName' => 'modelclass',
+		            'Ice\Widget\Model_Form' => [
+		                'type' => 'text',
+		                'roles' => [
+		                    0 => 'ROLE_ICE_GUEST',
+		                    1 => 'ROLE_ICE_USER',
+		                ],
+		            ],
+		            'Ice\Core\Validator' => [
+		                'Ice:Length_Max' => 255,
+		            ],
+		            'Ice\Widget\Model_Table' => [
 		                'type' => 'span',
 		                'roles' => [
 		                    0 => 'ROLE_ICE_GUEST',
@@ -120,20 +180,26 @@ class Token extends Model
 		            ],
 		        ],
 		        'FOREIGN KEY' => [],
-		        'UNIQUE' => [],
+		        'UNIQUE' => [
+		            'token' => [
+		                1 => 'token',
+		            ],
+		        ],
 		    ],
 		    'references' => [],
 		    'relations' => [
 		        'oneToMany' => [],
 		        'manyToOne' => [
-		            'Ebs\\Model\\Account_Email_Password' => 'token_id',
-		            'Ebs\\Model\\Account_Login_Password' => 'token_id',
+		            'Ebs\Model\Account_Email_Password' => 'token_id',
+		            'Ebs\Model\Account_Login_Password' => 'token_id',
 		        ],
 		        'manyToMany' => [
-		            'Ebs\\Model\\User' => 'Ebs\\Model\\Account_Login_Password',
+		            'Ebs\Model\User' => 'Ebs\Model\Account_Login_Password',
 		        ],
 		    ],
 		    'revision' => '10201240_4ng',
+		    'modelClass' => 'Ice\Model\Token',
+		    'modelPath' => 'Ice/Model/Token.php',
 		];
     }
 }
