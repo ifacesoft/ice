@@ -3,7 +3,6 @@
 namespace Ice\Action;
 
 use Ebs\Model\Log_Security;
-use Ebs\Model\Token;
 use Ice\Core;
 use Ice\Core\Config;
 use Ice\Core\Data_Source;
@@ -14,6 +13,8 @@ use Ice\Core\Security_User;
 use Ice\Core\Widget_Security;
 use Ice\Helper\Logger;
 use Ice\Core\Security as Core_Security;
+use Ice\Helper\String;
+use Ice\Model\Token;
 
 abstract class Security extends Widget_Event
 {
@@ -97,7 +98,14 @@ abstract class Security extends Widget_Event
             $dataSource->beginTransaction();
 
             if ($securityForm->isConfirm()) {
-                $accountData = $this->sendConfirm($accountData, $input);
+                $accountData['token'] = Token::create([
+                    '/' => md5(String::getRandomString()),
+                    '/expired' => $securityForm->getConfirmationExpired(),
+                    'modelClass' => $accountModelClass,
+                    '/data' => ['account_expired' => $securityForm->getExpired()]
+                ])->save();
+
+                $this->sendConfirm($accountData['token'], $input);
 
                 if ($securityForm->isConfirmRequired()) {
                     $accountData['/expired'] = '0000-00-00';
@@ -140,13 +148,12 @@ abstract class Security extends Widget_Event
     /**
      * Return confirm token and confirm token expired
      *
-     * @param array $accountData
-     * @return array
+     * @param Token $token
      * @throws Exception
      */
-    public function sendConfirm(array $accountData, array $input)
+    public function sendConfirm(Token $token, array $input)
     {
-        return Logger::getInstance(__CLASS__)
+        Logger::getInstance(__CLASS__)
             ->exception(['Implement {$0} for {$1}', [__FUNCTION__, get_class($this)]], __FILE__, __LINE__);
     }
 

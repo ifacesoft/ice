@@ -950,20 +950,26 @@ abstract class Widget extends Container
     }
 
     /**
-     * @param string $redirect
+     * @param string $route
      * @param int $timeout
      * @return $this
      */
-    public function setRedirect($redirect, $timeout = 0)
+    public function setRedirect($route, $timeout = 0)
     {
-        try {
-            $redirect = $redirect === true
-                ? Router::getInstance()->getUrl()
-                : Router::getInstance()->getUrl($redirect);
-        } catch (RouteNotFound $e) {
+        if (is_array($route)) {
+            list($route, $params) = $route;
+        } else {
+            $params = [];
         }
 
-        $this->redirect = $redirect;
+        try {
+            $this->redirect = $route === true
+                ? Router::getInstance()->getUrl(null, $params)
+                : Router::getInstance()->getUrl($route, $params);
+        } catch (RouteNotFound $e) {
+            $this->redirect = $route;
+        }
+
         $this->setTimeout($timeout);
 
         return $this;
@@ -971,7 +977,7 @@ abstract class Widget extends Container
 
     /**
      * @param int $timeout
-     * @return Widget_Form_Security
+     * @return $this
      */
     public function setTimeout($timeout)
     {

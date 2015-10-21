@@ -126,19 +126,30 @@ abstract class Model
 
             $length = strlen($lowercaseModelName);
             if (strpos($fieldName, $lowercaseModelName) === 0) {
-                $field = '/' . substr($fieldName, $length + 1);
-                if (array_key_exists($field, $row)) {
-                    $this->set($fieldName, $row[$field]);
-                    unset($row[$field]);
+                $shortFieldName = '/' . substr($fieldName, $length + 1);
+                if (array_key_exists($shortFieldName, $row)) {
+                    $this->set($fieldName, $row[$shortFieldName]);
+                    unset($row[$shortFieldName]);
                     continue;
+                }
+
+                // for '/data' => 'token_data__json'
+                foreach (['__json', '__fk', '_geo'] as $ext) {
+                    $extFieldName = strstr($shortFieldName, $ext, true);
+                    if ($extFieldName !== false && array_key_exists($extFieldName, $row)) {
+                        $this->set($extFieldName, $row[$extFieldName]);
+                        unset($row[$extFieldName]);
+
+                        continue 2;
+                    }
                 }
             }
 
             foreach (['__json', '__fk', '_geo'] as $ext) {
-                $field = strstr($fieldName, $ext, true);
-                if ($field !== false && array_key_exists($field, $row)) {
-                    $this->set($field, $row[$field]);
-                    unset($row[$field]);
+                $extFieldName = strstr($fieldName, $ext, true);
+                if ($extFieldName !== false && array_key_exists($extFieldName, $row)) {
+                    $this->set($extFieldName, $row[$extFieldName]);
+                    unset($row[$extFieldName]);
 
                     continue 2;
                 }
@@ -348,19 +359,15 @@ abstract class Model
     {
         $fieldName = trim($fieldName);
 
-        $isShort = strpos($fieldName, '/');
+        if ($fieldName[0] == '/') {
+            $fieldName[0] = '_';
 
-        if ($isShort === false) {
-            return $fieldName;
+            $modelClass = self::getClass();
+
+            return strtolower($modelClass::getClassName()) . (strlen($fieldName) === 1 ? '' : $fieldName);
         }
 
-        $modelClass = self::getClass();
-
-        $modelSchemeName = $isShort
-            ? substr($fieldName, 0, $isShort)
-            : $modelClass::getClassName();
-
-        return strtolower($modelSchemeName) . '_' . substr($fieldName, $isShort + 1);
+        return $fieldName;
     }
 
     private function setPkValue($fieldName, $fieldValue, $isAffected)

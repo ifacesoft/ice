@@ -153,7 +153,7 @@ class Token extends Model
 		                'default' => null,
 		                'comment' => '',
 		            ],
-		            'fieldName' => 'modelclass',
+		            'fieldName' => 'modelClass',
 		            'Ice\Widget\Model_Form' => [
 		                'type' => 'text',
 		                'roles' => [
