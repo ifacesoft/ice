@@ -17,8 +17,6 @@ abstract class Form extends Widget
      */
     protected $validateScheme = [];
 
-    private $horizontal = null;
-
     private $submit = null;
 
     private $action = '';

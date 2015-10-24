@@ -6,9 +6,9 @@
 
     <?php if (!empty($widgetOptions['horizontal'])) : ?>
     <div class="col-md-<?= 12 - $widgetOptions['horizontal'] ?>"><?php endif; ?>
-        <input type="text"
+        <input id="<?= $partId ?>"
+               type="text"
                class="<?= $element ?> <?= $name ?><?php if (!isset($options['resetFormClass'])) : ?> form-control<?php endif; ?><?php if (!empty($options['classes'])) : ?> <?= $options['classes'] ?><?php endif; ?>"
-               id="<?= $partId ?>"
                name="<?= $name ?>"
                value="<?= isset($params[$name]) ? $params[$name] : '' ?>"
                data-for="<?= $widgetId ?>"
@@ -17,7 +17,7 @@
                <?php if (!empty($options['disabled'])) : ?>disabled="disabled"<?php endif; ?>
                <?php if (!empty($options['readonly'])) : ?>readonly="readonly" <?php endif; ?>
                <?php if (!empty($options['required'])) : ?>required="required" <?php endif; ?>
-            <?php if (!empty($options['autofocus'])) : ?>autofocus="autofocus" <?php endif; ?>
+               <?php if (!empty($options['autofocus'])) : ?>autofocus="autofocus" <?php endif; ?>
         >
         <?php if (!empty($widgetOptions['horizontal'])) : ?></div><?php endif; ?>
     <script>

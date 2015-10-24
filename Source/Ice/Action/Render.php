@@ -53,6 +53,8 @@ class Render extends Action
                 }
 
                 $widgets[$widget->getWidgetId()] = $widget->render();
+
+
             }
         }
 

@@ -74,7 +74,6 @@ abstract class Widget extends Container
      */
     private $filterParts = [];
 
-    private $resource = null;
     private $template = null;
 
     /**
@@ -188,12 +187,14 @@ abstract class Widget extends Container
 
     public function setResource($resource, $force = false)
     {
-        if ($resource instanceof Resource) {
-            return $this->resource = $resource;
-        }
-
-        /** @var Configured $class */
+        /** @var Widget $class */
         $class = get_called_class();
+
+        $repository = $class::getRepository('resource');
+
+        if ($resource instanceof Resource) {
+            return $repository->set($this->getInstanceKey(), $resource);
+        }
 
         if (!$resource && !$force) {
             $resource = $class::getConfig()->get('render/resource');
@@ -211,7 +212,7 @@ abstract class Widget extends Container
             $resource = $resource['class'];
         }
 
-        return $this->resource = Resource::create($resource);
+        return $repository->set($this->getInstanceKey(),  Resource::create($resource));
     }
 
     /**
@@ -221,8 +222,13 @@ abstract class Widget extends Container
      */
     public function getResource($resource = null, $force = false)
     {
-        if (!$force && $this->resource !== null) {
-            return $this->resource;
+        /** @var Widget $class */
+        $class = get_called_class();
+
+        $repository = $class::getRepository('resource');
+
+        if (!$force && $repository->get($this->getInstanceKey()) !== null) {
+            return $repository->get($this->getInstanceKey());
         }
 
         return $this->setResource($resource);
@@ -484,6 +490,10 @@ abstract class Widget extends Container
                                 Replace::getInstance()->fetch($template, $part['params'], null, Render::TEMPLATE_TYPE_STRING);
                         } else {
                             $part['label'] = $part['name'];
+
+//                            if ($partName == 'vuzIpCount') {
+//                                Debuger::dump($part['resource']);die();
+//                            }
 
                             $part['options']['label'] = $part['resource']
                                 ? $part['resource']->get($part['label'], $resourceParams)
@@ -1039,13 +1049,18 @@ abstract class Widget extends Container
         $this->parentWidgetId = $parentWidgetId;
     }
 
+    public function cloneWidget()
+    {
+        return clone $this;
+    }
+
     /**
      * @param string $name
      * @param array $options
      * @param string $template
      * @return $this
      */
-    protected function widget($name, array $options = [], $template = 'Ice\Widget\Widget')
+    public function widget($name, array $options = [], $template = 'Ice\Widget\Widget')
     {
         $options['params']['parentWidgetId'] = $this->getWidgetId();
 
@@ -1079,7 +1094,7 @@ abstract class Widget extends Container
      * @param string $postfixKey
      * @return Widget
      */
-    protected function getWidget($widgetClass, $postfixKey = '')
+    public function getWidget($widgetClass, $postfixKey = '')
     {
         if (is_object($widgetClass)) {
             return $widgetClass;
@@ -1244,20 +1259,21 @@ abstract class Widget extends Container
         unset($part['options']['value']);
 
         $part['params'] = $part['value'] == $partName
-            ? [$part['name'] => isset($values[$part['value']]) ? $values[$part['value']] : null]
-            : [$part['name'] => isset($values[$part['value']]) ? $values[$part['value']] : $part['value']];
+            ? [$part['name'] => array_key_exists($part['value'], $values) ? $values[$part['value']] : null]
+            : [$part['name'] => array_key_exists($part['value'], $values) ? $values[$part['value']] : $part['value']];
 
         if (isset($part['options']['params'])) {
-            foreach ((array)$part['options']['params'] as $key => $param) {
+            foreach ((array)$part['options']['params'] as $key => $value) {
                 if (is_int($key)) {
-                    $key = $param;
-                    $param = null;
+                    $key = $value;
                 }
 
-                if (is_string($param)) {
-                    $part['params'][$key] = array_key_exists($param, $values) ? $values[$param] : $param;
+                if (is_string($value)) {
+                    $part['params'][$key] = $key == $value
+                        ? array_key_exists($value, $values) ? $values[$value] : null
+                        : array_key_exists($value, $values) ? $values[$value] : $value;
                 } else {
-                    $part['params'][$key] = $param;
+                    $part['params'][$key] = $value;
                 }
             }
         }

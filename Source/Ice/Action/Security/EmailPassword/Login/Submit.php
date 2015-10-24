@@ -39,8 +39,16 @@ class Security_EmailPassword_Login_Submit extends Security
             ->getSelectQuery(['password', '/expired', 'user__fk'])
             ->getModel();
 
-        if (!$account && !$form->verify($account, $values)) {
-            $form->getLogger()->exception(['Log in failure', [], $form->getResource()], __FILE__, __LINE__);
+        if (!$account) {
+            $form->getLogger()->error(['Account with email {$0} not found', $values['email']], __FILE__, __LINE__);
+
+            return ['error' => $form->getLogger()->info(['Account with email {$0} not found', $values['email']], Logger::DANGER)];
+        }
+
+        if (!$form->verify($account, $values)) {
+            $form->getLogger()->error('Authentification data is not valid. Please, check input.', __FILE__, __LINE__);
+
+            return ['error' => $form->getLogger()->info('Authentification data is not valid. Please, check input.', Logger::DANGER)];
         }
 
         $this->signIn($account, $input);
