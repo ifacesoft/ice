@@ -2,7 +2,7 @@
     <label
         class="control-label<?php if (!empty($widgetOptions['horizontal'])) : ?> col-md-<?= $widgetOptions['horizontal'] ?><?php endif; ?>"
         for="<?= $partId ?>"
-    ><?= $options['label'] ?></label>
+    ><?= $label ?></label>
 
     <?php if (!empty($widgetOptions['horizontal'])) : ?>
     <div class="col-md-<?= 12 - $widgetOptions['horizontal'] ?>"><?php endif; ?>

@@ -1,1 +1,1 @@
-<script src="<?= $options['label'] ?>"></script>
+<script src="<?= $label ?>"></script>

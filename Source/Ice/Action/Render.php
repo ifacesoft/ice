@@ -2,10 +2,7 @@
 
 namespace Ice\Action;
 
-
 use Ice\Core\Action;
-use Ice\Core\Debuger;
-use Ice\Core\View;
 use Ice\Core\Widget;
 
 class Render extends Action

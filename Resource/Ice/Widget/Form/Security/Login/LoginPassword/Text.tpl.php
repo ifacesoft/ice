@@ -1,5 +1,5 @@
 <div class="form-group">
-    <label for="<?= $formName . '_' . $fieldName ?>" class="sr-only"><?= $options['label'] ?></label>
+    <label for="<?= $formName . '_' . $fieldName ?>" class="sr-only"><?= $label ?></label>
     <input type="text" class="form-control" id="<?= $formName . '_' . $fieldName ?>"
            placeholder="<?= $options['placeholder'] ?>"
            name="<?= $fieldName ?>" value="<?= $value ?>"

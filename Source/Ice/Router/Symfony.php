@@ -14,22 +14,18 @@ class Symfony extends Ice
 
         $url = null;
 
-        global $kernel;
-
-        try {
-            if ($url = $kernel->getContainer()->get('router')->generate($routeName, $params)) {
-                return $url;
-            }
-        } catch (\Exception $e) {
-            //
-        }
-
         try {
             if ($url = parent::getUrl($routeName, $params)) {
                 return $url;
             }
         } catch (RouteNotFound $e) {
             //
+        }
+
+        global $kernel;
+
+        if ($url = $kernel->getContainer()->get('router')->generate($routeName, $params)) {
+            return $url;
         }
 
         return $url;

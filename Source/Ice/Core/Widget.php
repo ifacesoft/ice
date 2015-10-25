@@ -212,7 +212,7 @@ abstract class Widget extends Container
             $resource = $resource['class'];
         }
 
-        return $repository->set($this->getInstanceKey(),  Resource::create($resource));
+        return $repository->set($this->getInstanceKey(), Resource::create($resource));
     }
 
     /**
@@ -474,41 +474,41 @@ abstract class Widget extends Container
                     }
 
                     if (!array_key_exists('label', $part['options'])) {
-                        $part['label'] = $routeName;
-                        $part['options']['label'] = Resource::create(Route::getClass())->get($routeName, $routeParams);
+                        $part['label'] = Resource::create(Route::getClass())->get($routeName, $routeParams);
                     }
                 } else {
-                    if (!array_key_exists('label', $part['options'])) {
-                        if (isset($part['options']['template'])) {
-                            $part['label'] = $part['options']['template'];
-
-                            $template = $part['resource']
-                                ? $part['resource']->get($part['label'], $resourceParams)
-                                : $part['label'];
-
-                            $part['options']['label'] =
-                                Replace::getInstance()->fetch($template, $part['params'], null, Render::TEMPLATE_TYPE_STRING);
-                        } else {
-                            $part['label'] = $part['name'];
-
-//                            if ($partName == 'vuzIpCount') {
-//                                Debuger::dump($part['resource']);die();
-//                            }
-
-                            $part['options']['label'] = $part['resource']
-                                ? $part['resource']->get($part['label'], $resourceParams)
-                                : $part['label'];
-                        }
-                    } else {
-                        $part['label'] = $part['options']['label'];
-
-                        if ($part['resource']) {
-                            $part['options']['label'] = $part['resource']->get($part['label'], $resourceParams);
-                        }
-                    }
-
                     if ($part['resource'] && array_key_exists('placeholder', $part['options'])) {
                         $part['options']['placeholder'] = $part['resource']->get($part['options']['placeholder']);
+                    }
+                }
+
+                if (!isset($part['label'])) {
+                    if (isset($part['options']['label']) && array_key_exists($part['options']['label'], $values)) {
+                        $part['label'] = $values[$part['options']['label']];
+                        unset($part['options']['label']);
+                    } else {
+                        $part['label'] = isset($part['options']['label']) ? $part['options']['label'] : $partName;
+                        unset($part['options']['label']);
+
+                        if ($part['label'] == $partName && isset($part['options']['template'])) {
+
+                            if ($part['resource']) {
+                                $part['options']['template'] = $part['resource']->get($part['options']['template'], $resourceParams);
+                            }
+
+                            $part['label'] =
+                                Replace::getInstance()->fetch(
+                                    $part['options']['template'],
+                                    $part['params'],
+                                    null,
+                                    Render::TEMPLATE_TYPE_STRING
+                                );
+                            unset($part['options']['template']);
+                        } else {
+                            $part['label'] = $part['resource']
+                                ? $part['resource']->get($part['label'], $resourceParams)
+                                : $part['label'];
+                        }
                     }
                 }
 

@@ -1,1 +1,1 @@
-<?= $options['label'] ?>
+<?= $label ?>

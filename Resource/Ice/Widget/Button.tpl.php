@@ -4,4 +4,4 @@
         data-name="<?= $name ?>"
         data-params='<?= $dataParams ?>'
         data-for="<?= $widgetId ?>"
-        type="button"><?= $options['label'] ?></button>
+        type="button"><?= $label ?></button>

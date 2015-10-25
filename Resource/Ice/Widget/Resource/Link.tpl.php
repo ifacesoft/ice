@@ -1,1 +1,1 @@
-<link href="<?= $options['label'] ?>" rel="stylesheet">
+<link href="<?= $label ?>" rel="stylesheet">

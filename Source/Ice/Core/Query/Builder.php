@@ -874,7 +874,7 @@ class Query_Builder
 
         if (!$condition) {
             Logger::getInstance(__CLASS__)->exception(
-                'Could not defined condition for join part of sql query',
+                ['Could not defined condition join part of query for {$0} with {$1}', [$this->getModelClass(), $modelClass]],
                 __FILE__,
                 __LINE__,
                 null,
@@ -912,6 +912,7 @@ class Query_Builder
      * @param $tableAlias
      * @param array $joins
      * @return bool
+     * @throws Error
      */
     private function addJoin($joinType, $modelClass, $tableAlias, array $joins)
     {
@@ -1771,11 +1772,12 @@ class Query_Builder
             $widgets = [$widgets];
         }
 
-        if ($applyWidgetQueryBuilderParts) {
-            foreach ($widgets as $widget) {
+        foreach ($widgets as $widget) {
+            if ($applyWidgetQueryBuilderParts) {
                 $widget->queryBuilderPart($this, $widget->getValues());
-                $this->widgets[] = $widget;
             }
+
+            $this->widgets[] = $widget;
         }
 
         return $this;

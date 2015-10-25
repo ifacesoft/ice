@@ -1,6 +1,6 @@
 <div<?php if (!isset($options['resetFormClass'])) : ?> class="form-group"<?php endif; ?>>
     <div class="b-upload b-upload_dnd">
-        <div class="b-upload__dnd"><?= $options['label'] ?></div>
+        <div class="b-upload__dnd"><?= $label ?></div>
         <div class="b-upload__dnd-not-supported" style="display: none;">
             <div class="btn btn-success js-fileapi-wrapper">
                 <span>Choose files</span>

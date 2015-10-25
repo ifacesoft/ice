@@ -8,6 +8,6 @@
                 data-name="<?= $name ?>"
                 data-params='<?= $dataParams ?>'
                 data-for="<?= $widgetId ?>"
-                type="submit"><?= $options['label'] ?></button>
+                type="submit"><?= $label ?></button>
         <?php if (!empty($widgetOptions['horizontal'])) : ?></div><?php endif; ?>
 </div>

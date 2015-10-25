@@ -5,4 +5,4 @@
     data-name="<?= $name ?>"
     data-params='<?= $dataParams ?>'
     data-for="<?= $widgetId ?>"
-><?= $options['label'] ?></h2>
+><?= $label ?></h2>
