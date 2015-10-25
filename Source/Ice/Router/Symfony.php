@@ -1,7 +1,8 @@
 <?php
 namespace Ice\Router;
 
-use Ice\Core\Router;
+use Ice\Core\Debuger;
+use Ice\Exception\RouteNotFound;
 
 class Symfony extends Ice
 {
@@ -13,17 +14,18 @@ class Symfony extends Ice
 
         $url = null;
 
-        global $kernel;
-
         try {
-            if ($url = $kernel->getContainer()->get('router')->generate($routeName, $params)) {
+            if ($url = parent::getUrl($routeName, $params)) {
                 return $url;
             }
-        } catch (\Exception $e) {
+        } catch (RouteNotFound $e) {
             //
         }
 
-        if ($url = parent::getUrl($routeName, $params)) {
+
+        global $kernel;
+
+        if ($url = $kernel->getContainer()->get('router')->generate($routeName, $params)) {
             return $url;
         }
 

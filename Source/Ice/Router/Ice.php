@@ -5,6 +5,7 @@ namespace Ice\Router;
 use Ice\Core\Route;
 use Ice\Core\Router;
 use Ice\Data\Provider\Router as Data_Provider_Router;
+use Ice\Exception\RouteNotFound;
 
 class Ice extends Router
 {
@@ -14,9 +15,7 @@ class Ice extends Router
             return $url;
         }
 
-        return $this->getLogger()->exception(
-            ['Route {$0} not found', $routeName], __FILE__, __LINE__, null, null, -1, 'Ice:RouteNotFound'
-        );
+        return null;
     }
 
     public function getName($url = null, $method = null)

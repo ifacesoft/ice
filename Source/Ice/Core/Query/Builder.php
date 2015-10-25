@@ -1762,17 +1762,20 @@ class Query_Builder
 
     /**
      * @param Widget[]|mixed $widgets
+     * @param bool $applyWidgetQueryBuilderParts
      * @return Query_Builder
      */
-    public function attachWidgets($widgets)
+    public function attachWidgets($widgets, $applyWidgetQueryBuilderParts = true)
     {
         if (is_object($widgets)) {
             $widgets = [$widgets];
         }
 
-        foreach ($widgets as $widget) {
-            $widget->queryBuilderPart($this, $widget->getValues());
-            $this->widgets[] = $widget;
+        if ($applyWidgetQueryBuilderParts) {
+            foreach ($widgets as $widget) {
+                $widget->queryBuilderPart($this, $widget->getValues());
+                $this->widgets[] = $widget;
+            }
         }
 
         return $this;

@@ -11,6 +11,7 @@ namespace Ice\Core;
 
 use Ice\Core;
 use Ice\Exception\Http_Not_Found;
+use Ice\Exception\RouteNotFound;
 use Ice\Helper\File;
 use Ice\Render\Replace;
 use Ice\Data\Provider\Router as Data_Provider_Router;
@@ -42,15 +43,7 @@ class Route extends Config
         $routes = self::getRoutes();
 
         if (!isset($routes[$routeName])) {
-            Logger::getInstance(__CLASS__)->exception(
-                ['Route {$0} not found', $routeName],
-                __FILE__,
-                __LINE__,
-                null,
-                null,
-                -1,
-                Http_Not_Found::getClass()
-            );
+            throw new RouteNotFound(['Route {$0} not found', $routeName]);
         }
 
         return $routes[$routeName];

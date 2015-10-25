@@ -264,7 +264,7 @@ abstract class Widget extends Container
 //        } catch (Access_Denied $e) {
 //            throw $e;
         } catch (\Exception $e) {
-            Logger::getInstance($widgetClass)->error(['Widget {$0} init failed', $widgetClass], __FILE__, __LINE__, $e);
+            Logger::getInstance(__CLASS__)->error(['Widget {$0} init failed', $widgetClass], __FILE__, __LINE__, $e);
         } finally {
             Profiler::setPoint($key, $startTime, $startMemory);
 
