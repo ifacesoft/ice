@@ -491,19 +491,23 @@ abstract class Widget extends Container
                         unset($part['options']['label']);
 
                         if ($part['label'] == $partName && isset($part['options']['template'])) {
+                            if ($part['options']['template'] !== true) {
+                                $part['label'] = $part['options']['template'];
+                            }
+                            unset($part['options']['template']);
 
                             if ($part['resource']) {
-                                $part['options']['template'] = $part['resource']->get($part['options']['template'], $resourceParams);
+                                $part['label'] = $part['resource']->get($part['label'], $resourceParams);
                             }
 
                             $part['label'] =
                                 Replace::getInstance()->fetch(
-                                    $part['options']['template'],
+                                    $part['label'],
                                     $part['params'],
                                     null,
                                     Render::TEMPLATE_TYPE_STRING
                                 );
-                            unset($part['options']['template']);
+
                         } else {
                             $part['label'] = $part['resource']
                                 ? $part['resource']->get($part['label'], $resourceParams)
@@ -1276,6 +1280,7 @@ abstract class Widget extends Container
                     $part['params'][$key] = $value;
                 }
             }
+            unset($part['options']['params']);
         }
 
         $part['dataParams'] = Json::encode($part['params']);
