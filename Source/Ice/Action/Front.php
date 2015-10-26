@@ -3,13 +3,8 @@
 namespace Ice\Action;
 
 use Ice\Core\Action;
-use Ice\Core\Debuger;
 use Ice\Core\Widget;
-use Ice\Core\Render as Core_Render;
 use Ice\Widget\Layout;
-use Ice\Widget\Resource_FooterJs;
-use Ice\Widget\Resource_Static;
-use Ice\Widget\Resource_Dynamic as Widget_Resource_Dynamic;
 
 class Front extends Action
 {
@@ -44,7 +39,7 @@ class Front extends Action
             ? Layout::getClass()
             : Widget::getClass($input['widgetClass']);
 
-        $widgetParams = (array) $input['widgetParams'];
+        $widgetParams = (array)$input['widgetParams'];
 
         return ['content' => $widgetClass::getInstance(null, null, $widgetParams)];
     }

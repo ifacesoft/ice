@@ -10,9 +10,9 @@
 namespace Ice\Helper;
 
 use FilesystemIterator;
+use Ice\Core\Logger as Core_Logger;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
-use Ice\Core\Logger as Core_Logger;
 
 /**
  * Class Directory

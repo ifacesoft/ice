@@ -3,7 +3,6 @@
 namespace Ice\Action;
 
 use Ice\Core\Action;
-use Ice\Helper\File;
 
 class Upgrade extends Action
 {

@@ -2,7 +2,6 @@
 
 namespace Ice\Widget;
 
-use Ice\Core\Route;
 use Ice\Core\Widget;
 
 class Title_Route extends Widget

@@ -2,8 +2,6 @@
 
 namespace Ice\Widget;
 
-use Ice\Core\Debuger;
-
 class Admin_Sidebar extends Nav
 {
 

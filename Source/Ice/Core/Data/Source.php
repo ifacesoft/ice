@@ -10,7 +10,6 @@
 namespace Ice\Core;
 
 use Ice\Core;
-use Ice\Data\Source\Mysqli;
 
 /**
  * Class Data_Source
@@ -40,44 +39,6 @@ abstract class Data_Source extends Container
      * @var string
      */
     private $key = null;
-
-    /**
-     * Return source data provider
-     *
-     * @return Data_Provider
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since   0.0
-     */
-    public function getSourceDataProvider()
-    {
-        $sourceDataProviderClass = $this->getDataProviderClass();
-
-        /**
-         * @var Data_Provider $sourceDataProvider
-         */
-        $sourceDataProvider = $sourceDataProviderClass::getInstance($this->key);
-
-        if ($sourceDataProvider->getScheme() != $this->scheme) {
-            $sourceDataProvider->setScheme($this->scheme);
-        }
-
-        return $sourceDataProvider;
-    }
-
-    /**
-     * Return data provider class
-     *
-     * @return Data_Provider
-     *
-     * @author anonymous <email>
-     *
-     * @version 0
-     * @since   0
-     */
-    abstract public function getDataProviderClass();
 
     /**
      * Return instance of data source
@@ -143,14 +104,6 @@ abstract class Data_Source extends Container
         $defaultDataSourceKeys = Module::getInstance()->getDefaultDataSourceKeys();
 
         return $repository->set($key, reset($defaultDataSourceKeys), 0);
-    }
-
-    protected function init(array $data) {
-        list($key, $scheme) = explode('.', $this->getInstanceKey());
-
-        $this->key = $key;
-        $this->scheme = $scheme;
-        $this->getSourceDataProvider()->setScheme($scheme);
     }
 
     /**
@@ -393,6 +346,51 @@ abstract class Data_Source extends Container
     }
 
     /**
+     * Return data source key
+     *
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since   0.5
+     */
+    public function getDataSourceKey()
+    {
+        return get_class($this) . '/' . $this->getKey() . '.' . $this->getScheme();
+    }
+
+    /**
+     * Return current key
+     *
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since   0.5
+     */
+    public function getKey()
+    {
+        return $this->key;
+    }
+
+    /**
+     * Return current scheme
+     *
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since   0.5
+     */
+    public function getScheme()
+    {
+        return $this->scheme;
+    }
+
+    /**
      * Prepare query statement for query
      *
      * @param  $body
@@ -485,48 +483,50 @@ abstract class Data_Source extends Container
      */
     abstract public function releaseSavePoint($savePoint);
 
-    /**
-     * Return data source key
-     *
-     * @return string
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since   0.5
-     */
-    public function getDataSourceKey()
+    protected function init(array $data)
     {
-        return get_class($this) . '/' . $this->getKey() . '.' . $this->getScheme();
+        list($key, $scheme) = explode('.', $this->getInstanceKey());
+
+        $this->key = $key;
+        $this->scheme = $scheme;
+        $this->getSourceDataProvider()->setScheme($scheme);
     }
 
     /**
-     * Return current key
+     * Return source data provider
      *
-     * @return string
+     * @return Data_Provider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.5
-     * @since   0.5
+     * @version 0.0
+     * @since   0.0
      */
-    public function getKey()
+    public function getSourceDataProvider()
     {
-        return $this->key;
+        $sourceDataProviderClass = $this->getDataProviderClass();
+
+        /**
+         * @var Data_Provider $sourceDataProvider
+         */
+        $sourceDataProvider = $sourceDataProviderClass::getInstance($this->key);
+
+        if ($sourceDataProvider->getScheme() != $this->scheme) {
+            $sourceDataProvider->setScheme($this->scheme);
+        }
+
+        return $sourceDataProvider;
     }
 
     /**
-     * Return current scheme
+     * Return data provider class
      *
-     * @return string
+     * @return Data_Provider
      *
-     * @author dp <denis.a.shestakov@gmail.com>
+     * @author anonymous <email>
      *
-     * @version 0.5
-     * @since   0.5
+     * @version 0
+     * @since   0
      */
-    public function getScheme()
-    {
-        return $this->scheme;
-    }
+    abstract public function getDataProviderClass();
 }

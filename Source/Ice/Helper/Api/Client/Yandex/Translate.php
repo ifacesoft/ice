@@ -2,8 +2,8 @@
 
 namespace Ice\Helper;
 
-use Ice\Core\Config as Core_Config;
 use Ice\Core\Config;
+use Ice\Core\Config as Core_Config;
 use Ice\Core\Request as Core_Request;
 use Ice\Data\Provider\Repository;
 

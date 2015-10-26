@@ -4,7 +4,8 @@ namespace Ice\Action;
 
 use Ice\Core\Action;
 
-class Code_Generator extends Action{
+class Code_Generator extends Action
+{
 
     /**
      * Action config
@@ -16,26 +17,26 @@ class Code_Generator extends Action{
      * @version 0
      * @since   0
      */
-       protected static function config()
-       {
-           return [
-               'view' => ['template' => ''],
-               'actions' => [],
-               'input' => [
-                   'baseClass',
-                   'class',
-               ],
-               'output' => [],
-               'cache' => ['ttl' => -1, 'count' => 1000],
-               'access' => [
-                   'roles' => [],
-                   'request' => 'cli',
-                   'env' => null
-              ]
-           ];
-       }
+    protected static function config()
+    {
+        return [
+            'view' => ['template' => ''],
+            'actions' => [],
+            'input' => [
+                'baseClass',
+                'class',
+            ],
+            'output' => [],
+            'cache' => ['ttl' => -1, 'count' => 1000],
+            'access' => [
+                'roles' => [],
+                'request' => 'cli',
+                'env' => null
+            ]
+        ];
+    }
 
-      /** Run action
+    /** Run action
      *
      * @param  array $input
      * @return array

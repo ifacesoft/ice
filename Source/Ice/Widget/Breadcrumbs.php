@@ -1,8 +1,6 @@
 <?php
 namespace Ice\Widget;
 
-use Ice\Core\Query_Builder;
-use Ice\Core\Query_Result;
 use Ice\Core\Widget;
 
 class Breadcrumbs extends Widget

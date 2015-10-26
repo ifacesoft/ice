@@ -4,12 +4,6 @@ namespace Ice\Bootstrap;
 
 use Composer\Autoload\ClassLoader;
 use Ice\Core\Bootstrap;
-use Ice\Core\Debuger;
-use Ice\Core\Module;
-use Ice\Core\Router;
-use Ice\Core\Security;
-use Ice\Security\Symfony as Security_Symfony;
-use Ice\Router\Symfony as Router_Symfony;
 
 class Symfony extends Bootstrap
 {

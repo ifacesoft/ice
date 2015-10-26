@@ -21,6 +21,25 @@ class Security_EmailPassword_Register extends Widget_Security
         ];
     }
 
+    /**
+     * @param array $params
+     * @return $this
+     */
+    public function bind(array $params)
+    {
+        foreach ($params as $key => $value) {
+            if ($key == 'password1') {
+                [
+                    $this->validateScheme['password1']['Ice:Equal'] = $this->getValue('password')
+                ];
+            }
+
+            parent::bind([$key => $value]);
+        }
+
+        return $this;
+    }
+
     protected function build(array $input)
     {
         $this
@@ -57,24 +76,5 @@ class Security_EmailPassword_Register extends Widget_Security
             );
 
         return [];
-    }
-
-    /**
-     * @param array $params
-     * @return $this
-     */
-    public function bind(array $params)
-    {
-        foreach ($params as $key => $value) {
-            if ($key == 'password1') {
-                [
-                    $this->validateScheme['password1']['Ice:Equal'] = $this->getValue('password')
-                ];
-            }
-
-            parent::bind([$key => $value]);
-        }
-
-        return $this;
     }
 }

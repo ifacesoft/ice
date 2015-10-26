@@ -11,7 +11,6 @@ namespace Ice\Core;
 
 use Ice\Core;
 use Ice\Exception\ModuleNotFound;
-use Ice\Helper\Console;
 use Ice\Helper\Directory;
 use Ice\Helper\File;
 use Ice\Helper\String;

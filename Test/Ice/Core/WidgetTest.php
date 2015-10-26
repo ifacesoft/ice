@@ -71,7 +71,7 @@ class WidgetTest extends PHPUnit_Framework_TestCase
         $paginationMenu->bind([
             'page' => 5,
             'limit' => 10
-            ])->setFoundRows(100);
+        ])->setFoundRows(100);
 
         $this->assertEquals(
             $paginationMenu->render(),

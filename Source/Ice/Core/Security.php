@@ -18,7 +18,39 @@ abstract class Security extends Container
         throw new Access_Denied_Security($message);
     }
 
-    abstract protected function autologin();
+    /**
+     * Check access by roles
+     *
+     * @param array $roles
+     * @return bool
+     */
+    abstract public function check(array $roles);
+
+    /**
+     * @param null $key
+     * @param null $ttl
+     * @param array $params
+     * @return Security
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 2.0
+     * @since   2.0
+     */
+    public static function getInstance($key = null, $ttl = null, array $params = [])
+    {
+        return parent::getInstance($key, $ttl, $params);
+    }
+
+    protected static function getDefaultClassKey()
+    {
+        return Module::getInstance()->get('securityClass');
+    }
+
+    protected static function getDefaultKey()
+    {
+        return 'default';
+    }
 
     /**
      * All user roles
@@ -47,44 +79,12 @@ abstract class Security extends Container
      */
     abstract public function isAuth();
 
-    /**
-     * @param null $key
-     * @param null $ttl
-     * @param array $params
-     * @return Security
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 2.0
-     * @since   2.0
-     */
-    public static function getInstance($key = null, $ttl = null, array $params = [])
-    {
-        return parent::getInstance($key, $ttl, $params);
-    }
-
     protected function init(array $data)
     {
         $this->autologin();
     }
 
-    protected static function getDefaultClassKey()
-    {
-        return Module::getInstance()->get('securityClass');
-    }
-
-    protected static function getDefaultKey()
-    {
-        return 'default';
-    }
-
-    /**
-     * Check access by roles
-     *
-     * @param array $roles
-     * @return bool
-     */
-    abstract public function check(array $roles);
+    abstract protected function autologin();
 
 //    public static function checkAccess($roles, $permission)
 //    {

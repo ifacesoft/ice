@@ -9,13 +9,10 @@
 
 namespace Ice\Widget;
 
-use Ice\Core\Config;
 use Ice\Core\Data_Scheme;
-use Ice\Core\Debuger;
 use Ice\Core\Model as Core_Model;
 use Ice\Core\Model;
 use Ice\Core\Module;
-use Ice\Core\Security;
 use Ice\Core\Validator;
 use Ice\Core\Widget;
 use Ice\Exception\Http_Forbidden;

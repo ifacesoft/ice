@@ -10,7 +10,6 @@
 namespace Ice\Action;
 
 use Ice\Core\Action;
-use Ice\Core\Debuger;
 use Ice\Core\Widget;
 use Ice\Helper\Access;
 

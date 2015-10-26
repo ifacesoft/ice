@@ -3,7 +3,6 @@
 namespace Ice\Core;
 
 use Ice\Core;
-use Ice\Exception\Error;
 
 abstract class Router extends Container
 {
@@ -25,9 +24,6 @@ abstract class Router extends Container
         return parent::getInstance($key, $ttl, $params);
     }
 
-    protected function init(array $data) {
-    }
-
     protected static function getDefaultClassKey()
     {
         return Module::getInstance()->get('routerClass');
@@ -43,4 +39,8 @@ abstract class Router extends Container
     public abstract function getName($url = null, $method = null);
 
     public abstract function getParams();
+
+    protected function init(array $data)
+    {
+    }
 }

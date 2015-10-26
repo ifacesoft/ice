@@ -13,7 +13,6 @@ use Ice\Core;
 use Ice\Core\Loader;
 use Ice\Core\Logger as Core_Logger;
 use Ice\Core\Module;
-use ReflectionClass;
 
 /**
  * Class object

@@ -459,7 +459,8 @@ class Model_Collection implements IteratorAggregate, Countable
         return Arrays::column($this->getRows(), $modelClass::getScheme()->getPkFieldNames(), '');
     }
 
-    public function getLogger() {
+    public function getLogger()
+    {
         return Logger::getInstance($this->getModelClass());
     }
 }

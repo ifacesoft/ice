@@ -1564,7 +1564,8 @@ abstract class Model
         return null;
     }
 
-    public static function getResource() {
+    public static function getResource()
+    {
         return Resource::create(self::getClass());
     }
 }

@@ -8,11 +8,11 @@ use Ice\Core\Config;
 use Ice\Core\Data_Source;
 use Ice\Core\Exception;
 use Ice\Core\Model;
+use Ice\Core\Security as Core_Security;
 use Ice\Core\Security_Account;
 use Ice\Core\Security_User;
 use Ice\Core\Widget_Security;
 use Ice\Helper\Logger;
-use Ice\Core\Security as Core_Security;
 use Ice\Helper\String;
 use Ice\Model\Token;
 
@@ -226,7 +226,8 @@ abstract class Security extends Widget_Event
      * @return null
      * @throws Exception
      */
-    final protected function restoreRequest($account, $input) {
+    final protected function restoreRequest($account, $input)
+    {
         /** @var Widget_Security $securityForm */
         $securityForm = $input['widget'];
 

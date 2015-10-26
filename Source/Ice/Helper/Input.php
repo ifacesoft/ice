@@ -4,10 +4,10 @@ namespace Ice\Helper;
 
 use Ice\Core\Action;
 use Ice\Core\Data_Provider;
+use Ice\Data\Provider\Cli as Data_Provider_Cli;
 use Ice\Data\Provider\Request as Data_Provider_Request;
 use Ice\Data\Provider\Router as Data_Provider_Router;
 use Ice\Data\Provider\Session as Data_Provider_Session;
-use Ice\Data\Provider\Cli as Data_Provider_Cli;
 
 class Input
 {
@@ -43,7 +43,7 @@ class Input
             }
 
             $dataProviderKeys = isset($param['providers'])
-                ? ($param['providers'] == 'any' ? ['default', 'request', 'router', 'cli', 'session']: (array)$param['providers'])
+                ? ($param['providers'] == 'any' ? ['default', 'request', 'router', 'cli', 'session'] : (array)$param['providers'])
                 : ['default'];
 
             foreach ($dataProviderKeys as $dataProviderKey) {

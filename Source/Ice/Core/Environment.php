@@ -32,6 +32,20 @@ class Environment extends Config
 
     private static $instance = null;
 
+    public static function isLoaded()
+    {
+        return Environment::$instance;
+    }
+
+    public static function checkAccess($environments, $message)
+    {
+        if (!$environments || in_array(Environment::getInstance()->getName(), (array)$environments)) {
+            return;
+        }
+
+        throw new Access_Denied_Environment($message);
+    }
+
     /**
      * Return application environment
      *
@@ -85,20 +99,6 @@ class Environment extends Config
         }
 
         return Environment::$instance = Environment::create($environmentName, $environment);
-    }
-
-    public static function isLoaded()
-    {
-        return Environment::$instance;
-    }
-
-    public static function checkAccess($environments, $message)
-    {
-        if (!$environments || in_array(Environment::getInstance()->getName(), (array) $environments)) {
-            return;
-        }
-
-        throw new Access_Denied_Environment($message);
     }
 
     /**

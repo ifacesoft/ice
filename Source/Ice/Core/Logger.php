@@ -9,6 +9,7 @@
 
 namespace Ice\Core;
 
+use Ebs\Model\Log_Error;
 use Ebs\Model\Log_User_Session;
 use FirePHP;
 use Ice\Core;
@@ -20,7 +21,6 @@ use Ice\Helper\Http;
 use Ice\Helper\Logger as Helper_Logger;
 use Ice\Helper\Object;
 use Ice\Helper\Profiler as Helper_Profiler;
-use Ebs\Model\Log_Error;
 
 /**
  * Class Logger
@@ -203,7 +203,8 @@ class Logger
         self::getInstance()->error($errstr, $errfile, $errline, null, $errcontext, $errno);
     }
 
-    private function getFbType($type) {
+    private function getFbType($type)
+    {
         switch ($type) {
             case Logger::DANGER:
                 return 'ERROR';

@@ -13,7 +13,6 @@ use Composer\Autoload\ClassLoader;
 use Ice\Core;
 use Ice\Data\Provider\Repository;
 use Ice\Exception\FileNotFound;
-use Ice\Helper\Hash;
 use Ice\Helper\Object;
 
 /**

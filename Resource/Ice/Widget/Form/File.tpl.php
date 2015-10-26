@@ -5,7 +5,7 @@
             <div class="btn btn-success js-fileapi-wrapper">
                 <span>Choose files</span>
                 <input id="<?= $partId ?>"
-                    name="filedata" multiple="" type="file">
+                       name="filedata" multiple="" type="file">
             </div>
         </div>
         <div class="js-files b-upload__files">

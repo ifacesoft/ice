@@ -2,12 +2,38 @@
 
 namespace Ice\Widget;
 
-use Ice\Core\Query_Builder;
-use Ice\Core\Query_Result;
 use Ice\Core\Widget;
 
 class Nav extends Widget
 {
+    /**
+     * Widget config
+     *
+     * @return array
+     */
+    protected static function config()
+    {
+        return [
+            'render' => ['template' => true, 'class' => 'Ice:Php', 'layout' => null, 'resource' => null],
+            'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'Widget: Access denied!'],
+            'resource' => ['js' => null, 'css' => null, 'less' => null, 'img' => null],
+            'cache' => ['ttl' => -1, 'count' => 1000],
+            'input' => [],
+            'output' => [],
+            'action' => [
+                //  'class' => 'Ice:Render',
+                //  'params' => [
+                //      'widgets' => [
+                ////        'Widget_id' => Widget::class
+                //      ]
+                //  ],
+                //  'url' => true,
+                //  'method' => 'POST',
+                //  'callback' => null
+            ]
+        ];
+    }
+
     /**
      * @param $name
      * @param array $options
@@ -41,34 +67,6 @@ class Nav extends Widget
         $options['widget']->addClasses('nav-nav');
 
         return $this->widget($name, $options, $template);
-    }
-
-    /**
-     * Widget config
-     *
-     * @return array
-     */
-    protected static function config()
-    {
-        return [
-            'render' => ['template' => true, 'class' => 'Ice:Php', 'layout' => null, 'resource' => null],
-            'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'Widget: Access denied!'],
-            'resource' => ['js' => null, 'css' => null, 'less' => null, 'img' => null],
-            'cache' => ['ttl' => -1, 'count' => 1000],
-            'input' => [],
-            'output' => [],
-            'action' => [
-                //  'class' => 'Ice:Render',
-                //  'params' => [
-                //      'widgets' => [
-                ////        'Widget_id' => Widget::class
-                //      ]
-                //  ],
-                //  'url' => true,
-                //  'method' => 'POST',
-                //  'callback' => null
-            ]
-        ];
     }
 
     /** Build widget

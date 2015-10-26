@@ -53,8 +53,7 @@ class Header_Menu extends Action
 //            ->link('forum', 'Форум', ['href' => $hrefPrefix . '/forum', 'target' => $target])
             ->link('github', 'GitHub', ['href' => 'https://github.com/ifacesoft/Ice/tree/master', 'target' => $target])
             ->link('bitbucket', 'Bitbucket', ['href' => 'https://bitbucket.org/dp_ifacesoft/ice', 'target' => $target])
-            ->link('api', 'Api', ['href' => $hrefPrefix . '/resource/api/Ice/1.0', 'target' => $target])
-//            ->link('roadmap', 'План разработки', ['href' => $hrefPrefix . '/roadMap', 'target' => $target])
+            ->link('api', 'Api', ['href' => $hrefPrefix . '/resource/api/Ice/1.0', 'target' => $target])//            ->link('roadmap', 'План разработки', ['href' => $hrefPrefix . '/roadMap', 'target' => $target])
         ;
 
         return ['menu' => $navMenu];

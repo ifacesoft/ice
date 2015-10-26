@@ -9,7 +9,6 @@
 
 namespace Ice\Query\Translator;
 
-use Ice\Core\Debuger;
 use Ice\Core\Exception;
 use Ice\Core\Model;
 use Ice\Core\Query;
@@ -273,7 +272,8 @@ class Sql extends Query_Translator
         return empty($delete) ? $sql : $delete . $sql;
     }
 
-    protected function translateHaving(array $part) {
+    protected function translateHaving(array $part)
+    {
         $sql = '';
 
         /**
@@ -331,9 +331,9 @@ class Sql extends Query_Translator
             case Query_Builder::SQL_COMPARISON_KEYWORD_RLIKE:
                 return $comparisonOperator . ' ?';
             case Query_Builder::SQL_COMPARISON_KEYWORD_BETWEEN:
-                return $comparisonOperator .' ? AND ?';
+                return $comparisonOperator . ' ? AND ?';
             case Query_Builder::SQL_COMPARISON_KEYWORD_IN:
-                return $comparisonOperator .' (?' . ($count > 1 ? str_repeat(',?', $count - 1) : '') . ')';
+                return $comparisonOperator . ' (?' . ($count > 1 ? str_repeat(',?', $count - 1) : '') . ')';
             case Query_Builder::SQL_COMPARISON_KEYWORD_IS_NULL:
             case Query_Builder::SQL_COMPARISON_KEYWORD_IS_NOT_NULL:
                 return $comparisonOperator;

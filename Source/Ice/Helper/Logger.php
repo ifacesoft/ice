@@ -12,9 +12,9 @@ namespace Ice\Helper;
 use Ice\Core\Exception;
 use Ice\Core\Logger as Core_Logger;
 use Ice\Core\Module;
+use Ice\Core\Render;
 use Ice\Core\Request as Core_Request;
 use Ice\Core\Request;
-use Ice\Core\Render;
 use Ice\Render\Php as Render_Php;
 
 /**
@@ -147,7 +147,7 @@ class Logger
 
         $logFile = Directory::get(
                 Module::getInstance()->get(Module::LOG_DIR) . date('Y-m-d')
-            ) . Core_Logger::$errorCodes[$exception->getCode()] . '/' . Object::getClassName($class) . '/' . urlencode(Request::uri()) .'.log';
+            ) . Core_Logger::$errorCodes[$exception->getCode()] . '/' . Object::getClassName($class) . '/' . urlencode(Request::uri()) . '.log';
 
         if (strlen($logFile) > 255) {
             $logFilename = substr($logFile, 0, 255 - 11);

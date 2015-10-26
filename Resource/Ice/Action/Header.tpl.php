@@ -14,19 +14,19 @@
             <?= $Header_Menu[0] ?>
         </div>
         <div class="col-md-2">
-<!--            --><?php //if (isset($user) && $user) : ?>
-<!--                <br>-->
-<!--                <button onclick="location.href='/ice/security/logout'" class="btn btn-default">-->
-<!--                    <span class="glyphicon glyphicon-log-out"></span>-->
-<!--                    Выйти-->
-<!--                </button>-->
-<!--            --><?php //else : ?>
-<!--                <br>-->
-<!--                <button onclick="location.href='/ice/security/login';" class="btn btn-default">-->
-<!--                    <span class="glyphicon glyphicon-log-in"></span>-->
-<!--                    Войти-->
-<!--                </button>-->
-<!--            --><?php //endif; ?>
+            <!--            --><?php //if (isset($user) && $user) : ?>
+            <!--                <br>-->
+            <!--                <button onclick="location.href='/ice/security/logout'" class="btn btn-default">-->
+            <!--                    <span class="glyphicon glyphicon-log-out"></span>-->
+            <!--                    Выйти-->
+            <!--                </button>-->
+            <!--            --><?php //else : ?>
+            <!--                <br>-->
+            <!--                <button onclick="location.href='/ice/security/login';" class="btn btn-default">-->
+            <!--                    <span class="glyphicon glyphicon-log-in"></span>-->
+            <!--                    Войти-->
+            <!--                </button>-->
+            <!--            --><?php //endif; ?>
         </div>
     </div>
 </div>
@@ -36,7 +36,7 @@
         <?php foreach ($flags as $flag) : ?>
             <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
                  class="flag flag-<?= $flag['country'] ?>" style="cursor: pointer;"
-                 alt="<?= $flag['lang'] ?>" onclick="location.href='/ice/locale/<?= $flag['locale']?>';"
+                 alt="<?= $flag['lang'] ?>" onclick="location.href='/ice/locale/<?= $flag['locale'] ?>';"
                  data-toggle="tooltip" data-placement="top" title="<?= $flag['lang'] ?>"/>
         <?php endforeach; ?>
     </div>

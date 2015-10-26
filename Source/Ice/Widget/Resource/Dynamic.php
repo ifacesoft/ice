@@ -2,11 +2,10 @@
 
 namespace Ice\Widget;
 
-use Ice\Core\Debuger;
+use Ice\Action\Resource_Dynamic as Action_Resource_Dynamic;
 use Ice\Core\Environment;
 use Ice\Core\Module;
 use Ice\Helper\File;
-use Ice\Action\Resource_Dynamic as Action_Resource_Dynamic;
 
 class Resource_Dynamic extends Resource
 {

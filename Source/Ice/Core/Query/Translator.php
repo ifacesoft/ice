@@ -46,20 +46,6 @@ abstract class Query_Translator extends Container
     }
 
     /**
-     * Init object
-     *
-     * @param array $data
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 2.0
-     * @since   2.0
-     */
-    protected function init(array $data)
-    {
-    }
-
-    /**
      * Translate query body
      *
      * @param  array $sqlParts
@@ -100,5 +86,19 @@ abstract class Query_Translator extends Container
         }
 
         return $body;
+    }
+
+    /**
+     * Init object
+     *
+     * @param array $data
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 2.0
+     * @since   2.0
+     */
+    protected function init(array $data)
+    {
     }
 }

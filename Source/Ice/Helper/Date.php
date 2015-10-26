@@ -9,9 +9,7 @@
 
 namespace Ice\Helper;
 
-use Ice\Core\Debuger;
 use Locale;
-use Ice\Core\Request as Core_Request;
 
 /**
  * Class Date
@@ -69,6 +67,15 @@ class Date
         return Date::strftime('%B', $time, 'ru_RU.UTF-8');
     }
 
+    private static function strftime($format, $time, $locale)
+    {
+        $defaultLocale = setlocale(LC_TIME, 0);
+        setlocale(LC_TIME, $locale);
+        $time = strftime($format, $time);
+        setlocale(LC_TIME, $defaultLocale);
+        return $time;
+    }
+
     public static function getMonthShort($time)
     {
         return Date::strftime('%b', $time, 'ru_RU.UTF-8');
@@ -82,15 +89,6 @@ class Date
     public static function getDay($time)
     {
         return Date::strftime('%A', $time, 'ru_RU.UTF-8');
-    }
-
-    private static function strftime($format, $time, $locale)
-    {
-        $defaultLocale = setlocale(LC_TIME, 0);
-        setlocale(LC_TIME, $locale);
-        $time = strftime($format, $time);
-        setlocale(LC_TIME, $defaultLocale);
-        return $time;
     }
 
     public static function expired($time, $ttl)

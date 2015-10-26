@@ -1,6 +1,7 @@
 <?php
 
 namespace Ice\Action;
+
 use Ice\Core\Action;
 
 /**

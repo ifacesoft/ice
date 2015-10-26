@@ -47,8 +47,8 @@ class Admin_Layout extends Block
      */
     protected function build(array $input)
     {
-       $this->widget('dynamicResources', ['widget' => Resource_Dynamic::getInstance(null)]);
+        $this->widget('dynamicResources', ['widget' => Resource_Dynamic::getInstance(null)]);
 
-       parent::build($input);
+        parent::build($input);
     }
 }

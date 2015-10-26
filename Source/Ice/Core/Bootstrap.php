@@ -37,6 +37,14 @@ class Bootstrap extends Container
 //    }
 
     /**
+     * @return string
+     */
+    public function getModuleConfigPath()
+    {
+        return $this->moduleConfigPath;
+    }
+
+    /**
      * Initialization requered parameters, constants and includes core files
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -54,13 +62,5 @@ class Bootstrap extends Container
 
         Loader::init($data['loader'], !empty($data['force']));
         Logger::init();
-    }
-
-    /**
-     * @return string
-     */
-    public function getModuleConfigPath()
-    {
-        return $this->moduleConfigPath;
     }
 }

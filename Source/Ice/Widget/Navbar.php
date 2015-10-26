@@ -2,8 +2,6 @@
 
 namespace Ice\Widget;
 
-use Ice\Core\Query_Builder;
-use Ice\Core\Query_Result;
 use Ice\Core\Widget;
 
 abstract class Navbar extends Widget

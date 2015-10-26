@@ -1,7 +1,6 @@
 <?php
 namespace Ice\Helper;
 
-use Ice\Core\Query_Builder;
 use Ice\Core\Request as Core_Request;
 
 class Request

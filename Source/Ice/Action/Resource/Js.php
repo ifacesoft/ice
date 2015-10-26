@@ -11,7 +11,6 @@ namespace Ice\Action;
 
 use Ice\Core\Action;
 use Ice\Core\Module;
-use Ice\Helper\Arrays;
 use Ice\Helper\Directory;
 use Ice\Helper\File;
 use JSMin;

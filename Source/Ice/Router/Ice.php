@@ -5,7 +5,6 @@ namespace Ice\Router;
 use Ice\Core\Route;
 use Ice\Core\Router;
 use Ice\Data\Provider\Router as Data_Provider_Router;
-use Ice\Exception\RouteNotFound;
 
 class Ice extends Router
 {
@@ -31,6 +30,6 @@ class Ice extends Router
 
     public function getParams()
     {
-       return Data_Provider_Router::getInstance()->get();
+        return Data_Provider_Router::getInstance()->get();
     }
 }

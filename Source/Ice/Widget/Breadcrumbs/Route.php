@@ -2,12 +2,21 @@
 
 namespace Ice\Widget;
 
-use Ice\Core\Debuger;
 use Ice\Core\Route;
-use Ice\Core\Router;
 
 class Breadcrumbs_Route extends Breadcrumbs
 {
+    /**
+     * @param string $key
+     * @param null $ttl
+     * @param array $params
+     * @return Breadcrumbs_Route
+     */
+    public static function getInstance($key, $ttl = null, array $params = [])
+    {
+        return parent::getInstance($key, $ttl, $params);
+    }
+
     /**
      * Widget config
      *
@@ -35,17 +44,6 @@ class Breadcrumbs_Route extends Breadcrumbs
                 //  'method' => 'POST'
             ]
         ];
-    }
-
-    /**
-     * @param string $key
-     * @param null $ttl
-     * @param array $params
-     * @return Breadcrumbs_Route
-     */
-    public static function getInstance($key, $ttl = null, array $params = [])
-    {
-        return parent::getInstance($key, $ttl, $params);
     }
 
     protected function build(array $input)

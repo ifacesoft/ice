@@ -10,9 +10,7 @@
 namespace Ice\Data\Provider;
 
 use Ice\Core\Data_Provider;
-use Ice\Core\Debuger;
 use Ice\Core\Exception;
-use Ice\Core\Loader;
 use Ice\Core\Module;
 use Ice\Helper\Date;
 use Ice\Helper\Directory;

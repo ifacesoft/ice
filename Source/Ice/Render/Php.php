@@ -10,13 +10,12 @@
 namespace Ice\Render;
 
 use Ice\Core\Action;
-use Ice\Core\Debuger;
 use Ice\Core\Environment;
 use Ice\Core\Loader;
 use Ice\Core\Logger;
 use Ice\Core\Module;
-use Ice\Core\ViiewOld;
 use Ice\Core\Render;
+use Ice\Core\ViiewOld;
 use Ice\Helper\Emmet;
 
 /**

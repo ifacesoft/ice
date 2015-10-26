@@ -4,12 +4,11 @@ namespace Ice;
 
 use Composer\Config;
 use Composer\Script\Event;
-use Ice\Action\Install;
 use Ice\Action\Front;
+use Ice\Action\Install;
 use Ice\Action\Upgrade;
 use Ice\Core\Action;
 use Ice\Core\Action_Context;
-use Ice\Core\Debuger;
 use Ice\Core\Logger;
 use Ice\Core\Module;
 use Ice\Core\Profiler;
@@ -62,7 +61,7 @@ class App
             if (Request::isCli()) {
                 Logger::getInstance(__CLASS__)->error('Application (Cli): run action failure', __FILE__, __LINE__, $e);
 
-                $result = ['error' => Logger::getInstance(__CLASS__)->info($e->getMessage(),Logger::DANGER)];
+                $result = ['error' => Logger::getInstance(__CLASS__)->info($e->getMessage(), Logger::DANGER)];
             } else {
                 try {
                     throw $e;

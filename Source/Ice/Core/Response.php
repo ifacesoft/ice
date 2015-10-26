@@ -42,6 +42,7 @@ class Response
     private $error = null;
 
     private $success = null;
+
     /**
      * Private constructor of Request object
      *
@@ -52,6 +53,21 @@ class Response
      */
     private function __construct()
     {
+    }
+
+    /**
+     * Create instance of Response
+     *
+     * @return Response
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since   0.4
+     */
+    public static function create()
+    {
+        return new Response();
     }
 
     /**
@@ -76,21 +92,6 @@ class Response
     public function setSuccess($success)
     {
         $this->success = $success;
-    }
-
-    /**
-     * Create instance of Response
-     *
-     * @return Response
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since   0.4
-     */
-    public static function create()
-    {
-        return new Response();
     }
 
     /**

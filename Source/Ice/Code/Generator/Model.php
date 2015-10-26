@@ -11,7 +11,6 @@ namespace Ice\Code\Generator;
 
 use Ice\Class_Generator;
 use Ice\Core\Code_Generator;
-use Ice\Core\Debuger;
 use Ice\Core\Loader;
 use Ice\Core\Logger;
 use Ice\Core\Model as Core_Model;

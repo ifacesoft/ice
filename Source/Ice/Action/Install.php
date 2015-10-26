@@ -3,7 +3,6 @@
 namespace Ice\Action;
 
 use Ice\Core\Action;
-use Ice\Core\Code_Generator;
 use Ice\Core\Config;
 use Ice\Core\Environment;
 use Ice\Core\Module;

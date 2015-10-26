@@ -876,7 +876,6 @@ class Mysqli extends Data_Source
 
     /**
      * Rollback transaction
-
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 1.1
@@ -885,8 +884,8 @@ class Mysqli extends Data_Source
     public function rollbackTransaction()
     {
         if ($this->savePointLevel === 0) {
-                $this->getConnection()->rollback();
-                Logger::log('level_' . $this->savePointLevel, 'mysql rollback', 'INFO');
+            $this->getConnection()->rollback();
+            Logger::log('level_' . $this->savePointLevel, 'mysql rollback', 'INFO');
 
             $this->savePointLevel = null;
 

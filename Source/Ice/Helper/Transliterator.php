@@ -8,7 +8,6 @@
  */
 
 namespace Ice\Helper;
-use Ice\Core\Debuger;
 
 /**
  * Class Transliterator

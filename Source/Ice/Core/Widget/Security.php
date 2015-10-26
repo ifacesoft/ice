@@ -2,9 +2,7 @@
 
 namespace Ice\Core;
 
-use Ebs\Model\Log_Security;
 use Ice\Helper\Date;
-use Ice\Helper\Logger as Helper_Logger;
 use Ice\Widget\Form;
 
 abstract class Widget_Security extends Form
@@ -61,11 +59,43 @@ abstract class Widget_Security extends Form
     }
 
     /**
+     * @param boolean $confirm
+     * @param string $confirmExpired
+     * @param bool $confirmRequired
+     * @return $this
+     */
+    public function setConfirm($confirm, $confirmExpired = '+1 hours', $confirmRequired = true)
+    {
+        $this->confirm = $confirm;
+
+        $this->setConfirmExpired($confirmExpired);
+        $this->setConfirmRequired($confirmRequired);
+
+        return $this;
+    }
+
+    /**
+     * @param string $confirmExpired
+     */
+    public function setConfirmExpired($confirmExpired)
+    {
+        $this->confirmExpired = $confirmExpired;
+    }
+
+    /**
      * @return boolean
      */
     public function isConfirmRequired()
     {
         return $this->confirmRequired;
+    }
+
+    /**
+     * @param boolean $confirmRequired
+     */
+    public function setConfirmRequired($confirmRequired)
+    {
+        $this->confirmRequired = $confirmRequired;
     }
 
     /**
@@ -86,30 +116,14 @@ abstract class Widget_Security extends Form
         return $this;
     }
 
-    /**
-     * @param boolean $autologin
-     * @return $this
-     */
-    public function setAutologin($autologin)
+    public function getConfirmationExpired()
     {
-        $this->autologin = $autologin;
-        return $this;
+        return Date::get(strtotime($this->confirmExpired));
     }
 
-    /**
-     * @param boolean $confirm
-     * @param string $confirmExpired
-     * @param bool $confirmRequired
-     * @return $this
-     */
-    public function setConfirm($confirm, $confirmExpired = '+1 hours', $confirmRequired = true)
+    public function getExpired()
     {
-        $this->confirm = $confirm;
-
-        $this->setConfirmExpired($confirmExpired);
-        $this->setConfirmRequired($confirmRequired);
-
-        return $this;
+        return Date::get(strtotime($this->expired));
     }
 
     /**
@@ -123,37 +137,21 @@ abstract class Widget_Security extends Form
     }
 
     /**
-     * @param string $confirmExpired
-     */
-    public function setConfirmExpired($confirmExpired)
-    {
-        $this->confirmExpired = $confirmExpired;
-    }
-
-    /**
-     * @param boolean $confirmRequired
-     */
-    public function setConfirmRequired($confirmRequired)
-    {
-        $this->confirmRequired = $confirmRequired;
-    }
-
-    public function getConfirmationExpired()
-    {
-        return Date::get(strtotime($this->confirmExpired));
-    }
-
-    public function getExpired()
-    {
-        return Date::get(strtotime($this->expired));
-    }
-
-    /**
      * @return boolean
      */
     public function isAutologin()
     {
         return $this->autologin;
+    }
+
+    /**
+     * @param boolean $autologin
+     * @return $this
+     */
+    public function setAutologin($autologin)
+    {
+        $this->autologin = $autologin;
+        return $this;
     }
 
 

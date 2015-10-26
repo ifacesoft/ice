@@ -2,9 +2,7 @@
 
 namespace Ice\Helper;
 
-use Ice\Core\Debuger;
 use Ice\Core\Logger;
-use Symfony\Component\Debug\Debug;
 
 class Config
 {
@@ -37,7 +35,7 @@ class Config
                 $params = $params[$keyPart];
             }
 
-            return (array) $params;
+            return (array)$params;
         } catch (\Exception $e) {
             if ($isRequired) {
                 Logger::getInstance(__CLASS__)->exception(

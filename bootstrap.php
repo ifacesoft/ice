@@ -39,7 +39,7 @@ if (!$loader) {
 try {
     $config = require MODULE_DIR . MODULE_CONFIG_PATH;
 
-    foreach($config['module']['ignorePatterns'] as $ignorePattern) {
+    foreach ($config['module']['ignorePatterns'] as $ignorePattern) {
         if (preg_match($ignorePattern, \Ice\Core\Request::uri(true))) {
             return;
         }

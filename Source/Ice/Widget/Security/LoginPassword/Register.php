@@ -16,6 +16,25 @@ class Security_LoginPassword_Register extends Widget_Security
         ];
     }
 
+    /**
+     * @param array $params
+     * @return $this
+     */
+    public function bind(array $params)
+    {
+        foreach ($params as $key => $value) {
+            if ($key == 'password1') {
+                [
+                    $this->validateScheme['password1']['Ice:Equal'] = $this->getValue('password')
+                ];
+            }
+
+            parent::bind([$key => $value]);
+        }
+
+        return $this;
+    }
+
     protected function build(array $input)
     {
         $output = parent::build($input);
@@ -38,24 +57,5 @@ class Security_LoginPassword_Register extends Widget_Security
         );
 
         return $output;
-    }
-
-    /**
-     * @param array $params
-     * @return $this
-     */
-    public function bind(array $params)
-    {
-        foreach ($params as $key => $value) {
-            if ($key == 'password1') {
-                [
-                    $this->validateScheme['password1']['Ice:Equal'] = $this->getValue('password')
-                ];
-            }
-
-            parent::bind([$key => $value]);
-        }
-
-        return $this;
     }
 }

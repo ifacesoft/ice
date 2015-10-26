@@ -2,9 +2,6 @@
 
 namespace Ice\Widget;
 
-use Ice\Core\Debuger;
-use Ice\Core\Router;
-
 class Header_Route extends Header
 {
     /**

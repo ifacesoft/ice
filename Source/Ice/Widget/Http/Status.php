@@ -10,7 +10,6 @@
 namespace Ice\Widget;
 
 use Ice\Core\Action;
-use Ice\Core\Debuger;
 use Ice\Core\Environment;
 use Ice\Helper\Http;
 

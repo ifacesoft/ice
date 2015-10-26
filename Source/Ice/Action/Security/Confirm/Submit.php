@@ -2,10 +2,10 @@
 
 namespace Ice\Action;
 
-use Ice\Model\Token;
 use Ice\Core\Logger;
 use Ice\Core\Widget_Security;
 use Ice\Helper\Date;
+use Ice\Model\Token;
 
 class Security_Confirm_Submit extends Security
 {

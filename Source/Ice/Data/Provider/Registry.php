@@ -11,7 +11,6 @@ namespace Ice\Data\Provider;
 
 use ArrayObject;
 use Ice\Core\Data_Provider;
-use Ice\Core\Debuger;
 use Ice\Core\Exception;
 
 /**

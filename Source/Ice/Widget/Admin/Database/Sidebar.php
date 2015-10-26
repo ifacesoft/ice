@@ -3,8 +3,6 @@
 namespace Ice\Widget;
 
 use Ice\Core\Data_Scheme;
-use Ice\Core\Debuger;
-use Ice\Core\Model;
 use Ice\Core\Module;
 
 class Admin_Database_Sidebar extends Nav

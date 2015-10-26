@@ -10,11 +10,9 @@
 namespace Ice\Core;
 
 use Ice\Core;
-use Ice\Exception\Http_Not_Found;
 use Ice\Exception\RouteNotFound;
 use Ice\Helper\File;
 use Ice\Render\Replace;
-use Ice\Data\Provider\Router as Data_Provider_Router;
 
 /**
  * Class Route

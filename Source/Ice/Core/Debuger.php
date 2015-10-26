@@ -55,7 +55,7 @@ class Debuger
                     echo '<div class="alert alert-' . Logger::INFO . '">' . str_replace('<span style="color: #0000BB">&lt;?php&nbsp;</span>', '', highlight_string('<?php // Debug value:' . "\n" . $var . "\n", true)) . '</div>';
                 }
 
-                $logFile = Directory::get(Module::getInstance()->get(Module::LOG_DIR)) . date('Y-m-d') . '/DEBUG/' . urlencode(Request::uri()) .'.log';
+                $logFile = Directory::get(Module::getInstance()->get(Module::LOG_DIR)) . date('Y-m-d') . '/DEBUG/' . urlencode(Request::uri()) . '.log';
 
                 if (strlen($logFile) > 255) {
                     $logFilename = substr($logFile, 0, 255 - 11);

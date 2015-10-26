@@ -500,17 +500,20 @@ class Query
         return array_keys($this->getRows($ttl));
     }
 
-    public function getModelClass() {
+    public function getModelClass()
+    {
         return $this->getQueryBuilder()->getModelClass();
     }
 
-    public function dumpQuery() {
+    public function dumpQuery()
+    {
         Debuger::dump($this->getBody(), $this->getBinds());
 
         return $this;
     }
 
-    public function getLogger() {
+    public function getLogger()
+    {
         return Logger::getInstance($this->getModelClass());
     }
 }

@@ -183,7 +183,8 @@ class Session
         Session::getDataProvider('session')->set($session_id, $session_data);
     }
 
-    public static function id() {
+    public static function id()
+    {
         return session_id();
     }
 }

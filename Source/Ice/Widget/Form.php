@@ -25,7 +25,7 @@ abstract class Form extends Widget
 
     protected function getCompiledResult()
     {
-        $submitOptions =  $this->submit ? $this->getPart($this->submit)['options'] : null;
+        $submitOptions = $this->submit ? $this->getPart($this->submit)['options'] : null;
 
         if ($submitOptions && !empty($submitOptions['params'])) {
             $this->setDataParams(array_merge($this->getDataParams(), $submitOptions['params']));

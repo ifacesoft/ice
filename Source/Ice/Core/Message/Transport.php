@@ -30,19 +30,6 @@ abstract class Message_Transport extends Container
         return parent::getInstance($key, $ttl, $params);
     }
 
-    protected function init(array $data)
-    {
-        $config = Config::getInstance(self::getClass());
-
-        $key = $this->getInstanceKey();
-
-        $this->fromAddress = $config->get($key . '/fromAddress');
-        $this->fromName = $config->get($key . '/fromName', false);
-
-        $this->replyToAddress = $config->get($key . '/replyToAddress');
-        $this->replyToName = $config->get($key . '/replyToName', false);
-    }
-
     protected static function getDefaultClassKey()
     {
         return Message_Transport::$defaultClassKey;
@@ -85,5 +72,18 @@ abstract class Message_Transport extends Container
     public function getReplyToName()
     {
         return $this->replyToName;
+    }
+
+    protected function init(array $data)
+    {
+        $config = Config::getInstance(self::getClass());
+
+        $key = $this->getInstanceKey();
+
+        $this->fromAddress = $config->get($key . '/fromAddress');
+        $this->fromName = $config->get($key . '/fromName', false);
+
+        $this->replyToAddress = $config->get($key . '/replyToAddress');
+        $this->replyToName = $config->get($key . '/replyToName', false);
     }
 }
