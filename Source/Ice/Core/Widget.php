@@ -485,10 +485,8 @@ abstract class Widget extends Container
                 if (!isset($part['label'])) {
                     if (isset($part['options']['label']) && array_key_exists($part['options']['label'], $values)) {
                         $part['label'] = $values[$part['options']['label']];
-                        unset($part['options']['label']);
                     } else {
                         $part['label'] = isset($part['options']['label']) ? $part['options']['label'] : $partName;
-                        unset($part['options']['label']);
 
                         if ($part['label'] == $partName && isset($part['options']['template'])) {
                             if ($part['options']['template'] !== true) {

@@ -23,7 +23,7 @@
             <?php foreach ($options['rows'] as $row) : ?>
                 <option value="<?= $row[$value] ?>"
                     <?php if ($params[$name] == $row[$value]) : ?> selected="selected"<?php endif; ?>
-                ><?= $row[$label] ?></option>
+                ><?= $row[$options['label']] ?></option>
             <?php endforeach; ?>
         </select>
         <?php if (!empty($widgetOptions['horizontal'])) : ?></div><?php endif; ?>
