@@ -2,6 +2,7 @@
 
 namespace Ice\Helper;
 
+use Ice\Core\Debuger;
 use Ice\Core\Model as Core_Model;
 
 class Mapping
