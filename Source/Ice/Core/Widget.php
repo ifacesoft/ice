@@ -1264,6 +1264,11 @@ abstract class Widget extends Container
             ? [$part['name'] => array_key_exists($part['value'], $values) ? $values[$part['value']] : null]
             : [$part['name'] => array_key_exists($part['value'], $values) ? $values[$part['value']] : $part['value']];
 
+        if (isset($part['options']['dateFormat'])) {
+            $part['params'][$part['name']] = date($part['options']['dateFormat'], strtotime($part['params'][$part['name']]));
+            unset($part['options']['dateFormat']);
+        }
+
         if (isset($part['options']['params'])) {
             foreach ((array)$part['options']['params'] as $key => $value) {
                 if (is_int($key)) {
