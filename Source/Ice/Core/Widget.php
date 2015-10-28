@@ -13,6 +13,7 @@ use Ice\Helper\String;
 use Ice\Render\Php;
 use Ice\Render\Replace;
 use Ice\Widget\Resource_Dynamic;
+use Symfony\Component\Debug\Debug;
 
 abstract class Widget extends Container
 {
@@ -893,7 +894,7 @@ abstract class Widget extends Container
      * @param  $columnName
      * @param  array $options
      * @param  string $template
-     * @return Widget $this_Data
+     * @return $this $this_Data
      */
     public function span($columnName, $options = [], $template = 'Ice\Widget\Span')
     {
@@ -1223,6 +1224,22 @@ abstract class Widget extends Container
     {
         foreach (['onclick', 'onchange', 'submit'] as $event) {
             if (array_key_exists($event, $options)) {
+                if ($options[$event] === true) {
+                    throw new Error(
+                        ['Temporary For part {$0} with event {$1} of widget {$2} must be defined action param',
+                            [$partName, $event, get_class($this)]
+                        ]
+                    );
+                }
+
+                if (is_string($options[$event])) {
+                    $options['dataAction'] = Json::encode([
+                        'class' => '',
+                        'data' => []
+                    ]);
+                    continue;
+                }
+
                 if (!isset($options[$event]['action'])) {
                     throw new Error(
                         ['For part {$0} with event {$1} of widget {$2} must be defined action param',

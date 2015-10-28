@@ -1,6 +1,7 @@
 <?php
 namespace Ice\Widget;
 
+use Ice\Core\Debuger;
 use Ice\Core\Query_Builder;
 use Ice\Core\Query_Result;
 use Ice\Core\Widget;
@@ -25,6 +26,7 @@ class Table_Rows extends Widget
     public function setShowCount($isShowCount)
     {
         $this->isShowCount = $isShowCount;
+
         return $this;
     }
 

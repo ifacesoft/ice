@@ -4,7 +4,7 @@
        data-for="<?= $parentWidgetId ?>"
 >
 <?php foreach ($result as $offset => $parts) : ?>
-    <tr>
+    <tr class="primary_row">
     <?php if ($isShowCount) : ?>
         <td rowspan="<?= ceil(count($parts) / $columnCount) ?>"><?= $offset ?></td><?php endif; ?>
     <?php
@@ -20,7 +20,7 @@
             $count = 1
             ?>
             </tr>
-            <tr>
+            <tr class="secondary_row">
             <td<?php if (isset($column['options']['rowspan'])) : ?> rowspan="<?= $column['options']['rowspan'] ?>"<?php endif;
             ?><?php if (isset($column['options']['colspan'])) : ?> colspan="<?= $column['options']['colspan'] ?>"<?php endif;
             ?>>
