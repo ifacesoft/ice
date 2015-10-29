@@ -66,4 +66,10 @@ return [
         'en' => 'Model::__get: Foreign key is missing - {$0} in model {$1}',
         'ru' => 'Модель::__получить: внешний ключ отсутствует - {$0} в модели {$1}',
     ],
+    'Error - Field {$0} not found in Model {$1}' => [
+        'ru' => 'Error - Field {$0} not found in Model {$1}',
+    ],
+    'Error - field "{$0}" of model "{$1}" is null' => [
+        'ru' => 'Error - field "{$0}" of model "{$1}" is null',
+    ],
 ];

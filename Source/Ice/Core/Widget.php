@@ -78,6 +78,7 @@ abstract class Widget extends Container
     private $template = null;
 
     /**
+     * @param $name
      * @return array
      */
     public function getOption($name)
@@ -92,6 +93,14 @@ abstract class Widget extends Container
     public function setOption($name, $value)
     {
         $this->options[$name] = $value;
+    }
+
+    /**
+     * @return array
+     */
+    protected function getRows()
+    {
+        return $this->rows;
     }
 
     /**
@@ -255,6 +264,8 @@ abstract class Widget extends Container
 
             $configInput = $widgetClass::getConfig()->gets('input', false);
 
+            $this->setData($data);
+
             $this->bind(Input::get($configInput, $data));
 
             $this->loadResource();
@@ -403,7 +414,7 @@ abstract class Widget extends Container
 
         $offset = $this->getOffset();
 
-        foreach ($this->rows as $values) {
+        foreach ($this->getRows() as $values) {
             if (empty($values)) {
                 $values = $this->getValues();
             }
