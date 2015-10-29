@@ -4,6 +4,7 @@ namespace Ice\Security;
 
 use Application\Sonata\UserBundle\Entity\User;
 use Doctrine\ORM\EntityManager;
+use Ice\Core\Debuger;
 use Ice\Core\Model;
 use Ice\Core\Security_Account;
 use Ice\Data\Provider\Security as Data_Provider_Security;

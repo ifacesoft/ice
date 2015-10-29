@@ -34,7 +34,7 @@ class Ice extends Security
      */
     public function isAuth()
     {
-        return Session::getInstance()->get(Ice::SESSION_ACCOUNT_KEY);
+        return (bool) Session::getInstance()->get(Ice::SESSION_ACCOUNT_KEY);
     }
 
     /**
