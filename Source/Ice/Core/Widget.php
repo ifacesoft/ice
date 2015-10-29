@@ -366,7 +366,7 @@ abstract class Widget extends Container
 
     public function queryBuilderPart(Query_Builder $queryBuilder, array $input)
     {
-        foreach ($this->getParts() as $part) {
+        foreach ($this->getParts() as $partName => $part) {
             if (isset($part['options']['widget'])) {
                 $part['options']['widget']->queryBuilderPart($queryBuilder, $input);
             }

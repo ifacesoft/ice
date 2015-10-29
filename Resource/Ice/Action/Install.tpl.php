@@ -43,6 +43,7 @@ rewrite ^(.*)$ /index.php/$1 last;
 location ~ ^/index\.php(/|$) {
 fastcgi_pass <?= strtolower($moduleName) ?>_phpfcgi;
 fastcgi_split_path_info ^(.+\.php)(/.*)$;
+fastcgi_read_timeout 300;
 
 include fastcgi_params;
 

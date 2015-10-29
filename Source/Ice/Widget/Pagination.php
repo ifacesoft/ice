@@ -2,6 +2,7 @@
 
 namespace Ice\Widget;
 
+use Ice\Core\Debuger;
 use Ice\Core\Query_Builder;
 use Ice\Core\Query_Result;
 use Ice\Core\Request;
