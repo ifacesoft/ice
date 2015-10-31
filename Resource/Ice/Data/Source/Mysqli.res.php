@@ -19,4 +19,16 @@ return [
     '#1146: {$0}' => [
         'ru' => '#1146: {$0}',
     ],
+    'DataSource - #1054: {$0}' => [
+        'ru' => 'DataSource - #1054: {$0}',
+    ],
+    'DataSource - #1066: {$0}' => [
+        'ru' => 'DataSource - #1066: {$0}',
+    ],
+    'DataSource - #1064: {$0}' => [
+        'ru' => 'DataSource - #1064: {$0}',
+    ],
+    'DataSource - #1234: {$0}' => [
+        'ru' => 'DataSource - #1234: {$0}',
+    ],
 ];
