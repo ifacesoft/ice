@@ -98,6 +98,25 @@ class Http
     }
 
     /**
+     * Return content type header by file extension
+     *
+     * @param  $length
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @package    Ice
+     * @subpackage Helper
+     *
+     * @version 2.0
+     * @since   2.0
+     */
+    public static function getContentLength($length)
+    {
+        return 'Content-Length: ' . $length;
+    }
+
+    /**
      * Return status code header by code
      *
      * @param  $code

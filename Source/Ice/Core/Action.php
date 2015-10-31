@@ -192,21 +192,6 @@ abstract class Action implements Cacheable
         return $action->result;
     }
 
-    private static function checkResponse(&$input)
-    {
-        if (isset($input['response'])) {
-            if (isset($input['response']['contentType'])) {
-                App::getResponse()->setContentType($input['response']['contentType']);
-            }
-
-            if (isset($input['response']['statusCode'])) {
-                App::getResponse()->setStatusCode($input['response']['statusCode']);
-            }
-
-            unset($input['response']);
-        }
-    }
-
     /**
      * @return array
      */
@@ -481,8 +466,6 @@ abstract class Action implements Cacheable
     {
         /** @var Action|Configured $actionClass */
         $actionClass = get_class($this);
-
-        Action::checkResponse($data);
 
         $this->initInput($actionClass::getConfig()->gets('input'), $data);
 

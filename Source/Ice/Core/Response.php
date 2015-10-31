@@ -118,17 +118,23 @@ class Response
             return;
         }
 
+        if ($this->content === null) {
+            $this->content = Request::isAjax()
+                ? str_replace(dirname(MODULE_DIR), '', Json::encode($result))
+                : str_replace(dirname(MODULE_DIR), '', $result['content']);
+        }
+
+        Http::setHeader(Http::getContentLength(strlen($this->content)));
+
         if ($this->contentType) {
-            Http::setHeader(Http::getContentTypeHeader($this->contentType), true, $this->statusCode);
+            Http::setHeader(Http::getContentTypeHeader($this->contentType));
         }
 
         if ($this->statusCode) {
             Http::setHeader(Http::getStatusCodeHeader($this->statusCode), true, $this->statusCode);
         }
 
-        echo Request::isAjax()
-            ? str_replace(dirname(MODULE_DIR), '', Json::encode($result))
-            : str_replace(dirname(MODULE_DIR), '', $result['content']);
+        echo $this->content;
     }
 
     /**

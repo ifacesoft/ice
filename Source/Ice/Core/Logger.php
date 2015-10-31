@@ -203,6 +203,16 @@ class Logger
         self::getInstance()->error($errstr, $errfile, $errline, null, $errcontext, $errno);
     }
 
+    public static function getLogUserSession()
+    {
+        return Log_User_Session::create([
+            'ip' => Request::ip(),
+            'agent' => Request::agent(),
+            'session' => Session::id(),
+            'user' => Security::getInstance()->getUser()
+        ])->save(true);
+    }
+
     private function getFbType($type)
     {
         switch ($type) {
@@ -568,12 +578,7 @@ class Logger
      */
     public function save($log)
     {
-        $logUserSession = Log_User_Session::create([
-            'ip' => Request::ip(),
-            'agent' => Request::agent(),
-            'session' => Session::id(),
-            'user' => Security::getInstance()->getUser()
-        ])->save(true);
+        $logUserSession = Logger::getLogUserSession();
 
         $logUserSession__fk = $log->get('log_user_session__fk', false);
 

@@ -72,4 +72,7 @@ return [
     'Error - field "{$0}" of model "{$1}" is null' => [
         'ru' => 'Error - field "{$0}" of model "{$1}" is null',
     ],
+    'Error - Could not set value: Field "{$0}" not found in Model "{$1}"' => [
+        'ru' => 'Error - Could not set value: Field "{$0}" not found in Model "{$1}"',
+    ],
 ];

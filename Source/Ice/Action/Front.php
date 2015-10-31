@@ -2,6 +2,7 @@
 
 namespace Ice\Action;
 
+use Ice\App;
 use Ice\Core\Action;
 use Ice\Core\Widget;
 use Ice\Widget\Layout;
@@ -22,6 +23,7 @@ class Front extends Action
             'input' => [
                 'widgetClass' => ['providers' => 'router'],
                 'widgetParams' => ['providers' => 'router'],
+                'response' => ['providers' => 'router']
             ],
             'output' => []
         ];
@@ -40,6 +42,16 @@ class Front extends Action
             : Widget::getClass($input['widgetClass']);
 
         $widgetParams = (array)$input['widgetParams'];
+
+        if (isset($input['response'])) {
+            if (isset($input['response']['contentType'])) {
+                App::getResponse()->setContentType($input['response']['contentType']);
+            }
+
+            if (isset($input['response']['statusCode'])) {
+                App::getResponse()->setStatusCode($input['response']['statusCode']);
+            }
+        }
 
         return ['content' => $widgetClass::getInstance(null, null, $widgetParams)];
     }
