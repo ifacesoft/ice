@@ -1820,7 +1820,7 @@ class Query_Builder
             $limit = 0;
         }
 
-        return $this->calcFoundRows()->limit($limit, ($page - 1) * $limit);
+        return $this->setCalcFoundRows()->limit($limit, ($page - 1) * $limit);
     }
 
     /**
@@ -1848,16 +1848,16 @@ class Query_Builder
     /**
      * Set flag for total found rows query
      *
+     * @param bool $calcFoundRows
      * @return Query_Builder
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 2.0
      * @since   0.0
      */
-    public function calcFoundRows()
+    public function setCalcFoundRows($calcFoundRows = true)
     {
-        $this->sqlParts[self::PART_SELECT]['_calcFoundRows'] = true;
+        $this->sqlParts[self::PART_SELECT]['_calcFoundRows'] = $calcFoundRows;
         return $this;
     }
 

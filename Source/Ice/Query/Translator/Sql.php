@@ -412,6 +412,7 @@ class Sql extends Query_Translator
         }
 
         if (isset($select['table']) && $select['table'] instanceof Query_Builder) {
+            $select['table']->setCalcFoundRows(false);
             $select['table'] = $select['table']->getSelectQuery('*'); // todo Не доджно быть никаких Query, только Query_Builder
         }
 

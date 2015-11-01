@@ -35,16 +35,16 @@ class Session
      */
     public static function init()
     {
-        session_set_save_handler(
-            'Ice\Core\Session::open',
-            'Ice\Core\Session::close',
-            'Ice\Core\Session::read',
-            'Ice\Core\Session::write',
-            'Ice\Core\Session::destroy',
-            'Ice\Core\Session::gc'
-        );
-
         if (session_status() == PHP_SESSION_NONE) {
+            session_set_save_handler(
+                'Ice\Core\Session::open',
+                'Ice\Core\Session::close',
+                'Ice\Core\Session::read',
+                'Ice\Core\Session::write',
+                'Ice\Core\Session::destroy',
+                'Ice\Core\Session::gc'
+            );
+
             session_start();
         }
     }
