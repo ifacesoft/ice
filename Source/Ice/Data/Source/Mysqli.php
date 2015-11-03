@@ -137,13 +137,15 @@ class Mysqli extends Data_Source
                 }
             }
 
-            $id = implode('_', array_intersect_key($row, array_flip($pkFieldNames)));
+            $data[Query_Result::ROWS][] = $row;
 
-            if ($id) {
-                $data[Query_Result::ROWS][$id] = $row;
-            } else {
-                $data[Query_Result::ROWS][] = $row;
-            }
+//            $id = implode('_', array_intersect_key($row, array_flip($pkFieldNames)));
+//
+//            if ($id) {
+//                $data[Query_Result::ROWS][$id] = $row;
+//            } else {
+//                $data[Query_Result::ROWS][] = $row;
+//            }
         }
 
         $result->free_result();
