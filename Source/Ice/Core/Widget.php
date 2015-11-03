@@ -206,12 +206,16 @@ abstract class Widget extends Container
             return $repository->set($this->getInstanceKey(), $resource);
         }
 
-        if (!$resource && !$force) {
+        if ($resource === null && !$force) {
             $resource = $class::getConfig()->get('render/resource');
         }
 
-        if (!$resource) {
+        if ($resource === null) {
             return null;
+        }
+
+        if ($resource === false) {
+            return $repository->set($this->getInstanceKey(), false);
         }
 
         if ($resource === true || (is_array($resource) && !isset($resource['class']))) {
@@ -1080,7 +1084,7 @@ abstract class Widget extends Container
 
         $options['widget'] = $this->getWidget($options['widget']);
 
-        if (!$options['widget']->getResource()) {
+        if ($options['widget']->getResource() === null) {
             $options['widget']->setResource($this->getResource());
         }
 
