@@ -482,7 +482,7 @@ class Query
 
         return empty($fieldName)
             ? $this->getKeys()
-            : Arrays::column($this->getRows($ttl), $modelClass::getFieldName($fieldName), $indexKey);
+            : Arrays::column($this->getRows($ttl), $modelClass::getFieldName($fieldName), $modelClass::getFieldName($indexKey));
     }
 
     /**
