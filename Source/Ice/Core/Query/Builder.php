@@ -1845,6 +1845,11 @@ class Query_Builder
         return $this;
     }
 
+
+    public function isCalcFoundRows() {
+        return $this->sqlParts[self::PART_SELECT]['_calcFoundRows'];
+    }
+
     /**
      * Set flag for total found rows query
      *

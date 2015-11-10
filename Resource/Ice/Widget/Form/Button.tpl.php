@@ -1,4 +1,3 @@
-<?php //var_dump(get_defined_vars());?>
 <button id="<?= $partId ?>"
         class="btn <?= $element ?> <?= $name ?><?php if (!empty($options['classes'])) : ?> <?= $options['classes'] ?><?php endif; ?>"
         <?php if (isset($options['onclick'])) : ?>onclick="<?= $options['onclick'] ?>"

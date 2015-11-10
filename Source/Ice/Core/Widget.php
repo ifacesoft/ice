@@ -77,6 +77,8 @@ abstract class Widget extends Container
 
     private $template = null;
 
+    private $layout = null;
+
     /**
      * @param $name
      * @return array
@@ -622,15 +624,15 @@ abstract class Widget extends Container
             return $this->dataParams;
         }
 
-        $this->dataParams = $this->getValues();
+        $dataParams = $this->getValues();
 
         foreach ($this->getParts() as $part) {
             if (isset($part['options']['widget'])) {
-                $this->dataParams = array_merge($part['options']['widget']->getDataParams(), $this->dataParams);
+                $dataParams = array_merge($part['options']['widget']->getDataParams(), $dataParams);
             }
         }
 
-        return $this->dataParams;
+        return $dataParams;
     }
 
     /**
@@ -638,13 +640,13 @@ abstract class Widget extends Container
      */
     public function setDataParams(array $dataParams)
     {
+        $this->dataParams = array_merge($this->getDataParams(), $dataParams);
+
         foreach ($this->getParts() as $part) {
             if (isset($part['options']['widget'])) {
-                $part['options']['widget']->setDataParams($dataParams);
+                $part['options']['widget']->setDataParams($this->dataParams);
             }
         }
-
-        $this->dataParams = $dataParams;
     }
 
     /**
@@ -869,7 +871,7 @@ abstract class Widget extends Container
      * @param array $event
      * @return string
      */
-    protected function getEvent(array $event)
+    protected function getOnclick(array $event)
     {
         $code = 'Ice_Core_Widget.click($(this)';
 
@@ -1094,7 +1096,11 @@ abstract class Widget extends Container
             return $this;
         }
 
-        return $this->addPart($name, $options, $template, __FUNCTION__);
+        $this->addPart($name, $options, $template, __FUNCTION__);
+
+        $this->setDataParams($options['widget']->getDataParams());
+
+        return $this;
     }
 
     public function getWidgetId()
@@ -1279,7 +1285,7 @@ abstract class Widget extends Container
                     'data' => isset($options[$event]['data']) ? $options[$event]['data'] : []
                 ]);
 
-                $options[$event] = $this->getEvent($options[$event]);
+                $options[$event] = $this->getOnclick($options[$event]);
             }
         }
     }

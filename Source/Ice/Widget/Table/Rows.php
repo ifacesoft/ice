@@ -1,6 +1,7 @@
 <?php
 namespace Ice\Widget;
 
+use Ice\Action\Render;
 use Ice\Core\Debuger;
 use Ice\Core\Query_Builder;
 use Ice\Core\Query_Result;
@@ -63,7 +64,11 @@ class Table_Rows extends Widget
     {
         parent::setQueryResult($queryResult);
 
-        $limitQueryPart = $queryResult->getQuery()->getQueryBuilder()->getSqlParts()[Query_Builder::PART_LIMIT];
+        $queryBuilder = $queryResult->getQuery()->getQueryBuilder();
+
+        $limitQueryPart = $queryBuilder->getSqlParts()[Query_Builder::PART_LIMIT];
+
+//        Debuger::dump($this->getDataParams());
 
         $limit = isset($this->getDataParams()['limit'])
             ? $this->getDataParams()['limit']

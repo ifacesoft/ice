@@ -2,7 +2,7 @@
 
 namespace Ice\Widget;
 
-use Ice\Core\Debuger;
+use Ice\Action\Render;
 use Ice\Core\Query_Builder;
 use Ice\Core\Query_Result;
 use Ice\Core\Request;
@@ -12,6 +12,8 @@ class Pagination extends Widget
 {
     protected $foundRows = 0;
     protected $isShort = false;
+
+    protected $event = null;
 
     /**
      * Widget config
@@ -32,6 +34,35 @@ class Pagination extends Widget
             ],
             'output' => [],
         ];
+    }
+
+    /**
+     * @return null
+     */
+    public function getEvent()
+    {
+        if ($this->event !== null) {
+            return $this->event;
+        }
+
+        return [
+            'action' => Render::class,
+            'data' => [
+                'widgets' => [
+                    $this->getInstanceKey() => get_class($this)
+                ]
+            ]
+        ];
+    }
+
+    /**
+     * @param array $event
+     * @return $this
+     */
+    public function setEvent($event)
+    {
+        $this->event = $event;
+        return $this;
     }
 
     /**
@@ -91,7 +122,7 @@ class Pagination extends Widget
     {
         return $this->addPart(
             $name,
-            array_merge($options, ['onclick' => ['action' => 'fixit'], 'href' => $this->getFullUrl(Request::uri(true))]),
+            array_merge($options, ['onclick' => $this->getEvent(), 'href' => $this->getFullUrl(Request::uri(true))]),
             $template,
             __FUNCTION__
         );
@@ -356,7 +387,7 @@ class Pagination extends Widget
 
     /**
      * @param boolean $isShort
-     * @return Pagination
+     * @return $this
      */
     public function setIsShort($isShort)
     {

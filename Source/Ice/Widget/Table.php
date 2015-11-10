@@ -2,6 +2,7 @@
 
 namespace Ice\Widget;
 
+use Ice\Action\Render;
 use Ice\Core\Widget;
 
 class Table extends Widget
@@ -30,5 +31,20 @@ class Table extends Widget
      */
     protected function build(array $input)
     {
+        return [];
+    }
+
+    public function getPagination($widgetClass = 'Ice\Widget\Pagination')
+    {
+        return $this->getWidget($widgetClass)
+            ->setEvent([
+                'action' => Render::class,
+                'data' => [
+                    'widgets' => [
+                        $this->getInstanceKey() => get_class($this)
+                    ]
+                ],
+//                'method' => 'GET'
+            ]);
     }
 }
