@@ -407,7 +407,12 @@ abstract class Widget extends Container
         return $url . ($queryString ? '?' . $queryString : '');
     }
 
-    public function getResult()
+    /**
+     * @param Render|string $renderClass
+     * @return array|null
+     * @throws \Exception
+     */
+    public function getResult($renderClass = 'Ice\Render\Php')
     {
         if ($this->result !== null) {
             return $this->result;
@@ -540,7 +545,7 @@ abstract class Widget extends Container
 
                 $part['widgetOptions'] = $this->options;
 
-                $part['content'] = Php::getInstance()->fetch($template, $part);
+                $part['content'] = $renderClass::getInstance()->fetch($template, $part);
 
                 $row[$partName] = $part;
             }
@@ -1325,5 +1330,19 @@ abstract class Widget extends Container
         }
 
         $part['dataParams'] = Json::encode($part['params']);
+    }
+
+    /**
+     * @param Render $renderClass
+     * @param array $data
+     * @param $template
+     * @return string
+     */
+    public function renderExternal($renderClass, array $data, $template) {
+        $start = microtime(true);
+        $data['result'] = $this->getResult($renderClass);
+        $data['time'] = microtime(true) - $start;
+
+        return $renderClass::getInstance()->fetch($template, $data);
     }
 }
