@@ -480,9 +480,17 @@ class Query
     {
         $modelClass = $this->getQueryBuilder()->getModelClass();
 
+        if ($fieldName) {
+            $fieldName = $modelClass::getFieldName($fieldName);
+        }
+
+        if ($indexKey) {
+            $indexKey = $modelClass::getFieldName($indexKey);
+        }
+
         return empty($fieldName)
             ? $this->getKeys()
-            : Arrays::column($this->getRows($ttl), $modelClass::getFieldName($fieldName), $modelClass::getFieldName($indexKey));
+            : Arrays::column($this->getRows($ttl), $fieldName, $indexKey);
     }
 
     /**
