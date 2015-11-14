@@ -1,6 +1,6 @@
 <?php $parts = reset($result) ?>
 <?php if (isset($parts['header'])) : ?>
-    <?= $parts['header']['content'] ?>
+    <?= $widget->renderPart($parts['header']) ?>
     <?php unset($parts['header']); ?>
 <?php endif; ?>
 
@@ -10,6 +10,6 @@
     data-for="<?= $parentWidgetId ?>"
 >
     <?php foreach ($parts as $part) : ?>
-        <?= $part['content'] ?>
+        <?= $widget->renderPart($part) ?>
     <?php endforeach; ?>
 </ul>

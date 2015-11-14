@@ -10,10 +10,10 @@
     <meta name="author" content="">
     <link rel="icon" href="favicon.ico">
 
-    <title><?= $title['content'] ?></title>
+    <title><?= $widget->renderPart($title) ?></title>
 
-    <?= $staticResources['content'] ?>
-    <?= $dynamicResources['content'] ?>
+    <?= $widget->renderPart($staticResources) ?>
+    <?= $widget->renderPart($dynamicResources) ?>
 
     <?php /*
     <!--[if lt IE 7]>
@@ -44,19 +44,19 @@
     </div>
 </div>
 <div class="Layout_Admin">
-    <?= $navigation['content'] ?>
+    <?= $widget->renderPart($navigation) ?>
 
     <div class="container-fluid">
         <div class="row">
             <div class="col-sm-3 col-md-2 sidebar">
-                <?= $sidebar['content'] ?>
+                <?= $widget->renderPart($sidebar) ?>
             </div>
             <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-                <?= $main['content'] ?>
+                <?= $widget->renderPart($main) ?>
             </div>
         </div>
     </div>
 </div>
-<?= $footerJs['content'] ?>
+<?= $widget->renderPart($footerJs) ?>
 </body>
 </html>

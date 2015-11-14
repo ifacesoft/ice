@@ -8,6 +8,7 @@ use Ice\Core\Logger;
 use Ice\Core\Module;
 use Ice\Core\Render;
 use Ice\Core\Widget;
+use PHPExcel_Shared_Font;
 use PHPExcel_Writer_Excel2007;
 
 class External_PHPExcel extends Render
@@ -26,7 +27,7 @@ class External_PHPExcel extends Render
      */
     protected function init(array $data)
     {
-        // TODO: Implement init() method.
+//        PHPExcel_Shared_Font::setAutoSizeMethod(PHPExcel_Shared_Font::AUTOSIZE_METHOD_EXACT);
     }
 
     /**
@@ -78,14 +79,22 @@ class External_PHPExcel extends Render
         return '';
     }
 
-    public function renderWidget(Widget $widget, $template = 'Ice\Render\External') {
+    public function renderWidget(Widget $widget) {
         ob_start();
         ob_implicit_flush(false);
 
         $xls = new \PHPExcel();
         $xls->setActiveSheetIndex(0);
 
-        $widget->renderExternal(__CLASS__, ['sheet' => $xls->getActiveSheet()], $template);
+        $widget->renderExternal(__CLASS__, ['sheet' => $xls->getActiveSheet(), 'column' => 'A', 'index' => 1]);
+
+        foreach(range('A','G') as $columnID) {
+            $xls->getActiveSheet()->getColumnDimension($columnID)->setAutoSize(true);
+        }
+
+//        foreach(range(1, 100) as $rowID) {
+//            $xls->getActiveSheet()->getRowDimension($rowID)->setRowHeight(-1);
+//        }
 
         $objWriter = new PHPExcel_Writer_Excel2007($xls);
 

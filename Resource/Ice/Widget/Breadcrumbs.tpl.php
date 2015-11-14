@@ -3,5 +3,7 @@
     data-widget='<?= $dataWidget ?>'
     data-for="<?= $parentWidgetId ?>"
 >
-    <?= implode('', array_column(reset($result), 'content')) ?>
+    <?php foreach (reset($result) as $part) : ?>
+        <?= $widget->renderPart($part) ?>
+    <?php endforeach; ?>
 </ol>

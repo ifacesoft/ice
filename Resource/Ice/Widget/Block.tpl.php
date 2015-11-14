@@ -6,15 +6,15 @@
 >
     <?php $parts = reset($result) ?>
     <?php if (isset($parts['breadcrumbs'])) : ?>
-        <?= $parts['breadcrumbs']['content'] ?>
+        <?= $widget->renderPart($parts['breadcrumbs']) ?>
         <?php unset($parts['breadcrumbs']); ?>
     <?php endif; ?>
     <?php if (isset($parts['header'])) : ?>
-        <?= $parts['header']['content'] ?>
+        <?= $widget->renderPart($parts['header']) ?>
         <?php unset($parts['header']); ?>
     <?php endif; ?>
 
     <?php foreach ($parts as $part) : ?>
-        <?= $part['content'] ?>
+        <?= $widget->renderPart($part) ?>
     <?php endforeach; ?>
 </div>

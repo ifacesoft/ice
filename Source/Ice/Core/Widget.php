@@ -408,11 +408,11 @@ abstract class Widget extends Container
     }
 
     /**
-     * @param Render|string $renderClass
+     * @param array $data
      * @return array|null
      * @throws \Exception
      */
-    public function getResult($renderClass = 'Ice\Render\Php')
+    public function getResult(array $data = [])
     {
         if ($this->result !== null) {
             return $this->result;
@@ -424,15 +424,24 @@ abstract class Widget extends Container
         $widgetClass = get_class($this);
 
         $offset = $this->getOffset();
+        $index = isset($data['index']) ? $data['index'] : 0;
 
         foreach ($this->getRows() as $values) {
-            if (empty($values)) {
+            $column = isset($data['column']) ? $data['column'] : 'A';
+
+            $isRow = !empty($values);
+
+            if (!$isRow) {
                 $values = $this->getValues();
             }
 
             $row = [];
 
             foreach ($this->getParts($this->getFilterParts()) as $partName => $part) {
+                if (isset($data['sheet'])) {
+                    $part['sheet'] = $data['sheet'];
+                }
+
                 $part['widgetId'] = $this->getWidgetId();
                 $part['partId'] = $part['widgetId'] . '_' . $partName;
 
@@ -537,17 +546,28 @@ abstract class Widget extends Container
                     }
                 }
 
-                $template = $part['template'][0] == '_'
-                    ? $widgetClass . $part['template']
-                    : $part['template'];
+                if ($part['template'][0] == '_') {
+                    $part['template'] = $widgetClass . $part['template'];
+                }
 
                 $part['offset'] = $offset + 1;
 
+                $part['index'] = $index;
+                $part['column'] = $column;
+
                 $part['widgetOptions'] = $this->options;
 
-                $part['content'] = $renderClass::getInstance()->fetch($template, $part);
-
                 $row[$partName] = $part;
+
+                if ($isRow) {
+                    $column++;
+                } else {
+                    $index++;
+                }
+            }
+
+            if ($isRow) {
+                $index++;
             }
 
             $this->result[++$offset] = $row;
@@ -570,6 +590,7 @@ abstract class Widget extends Container
 
         return $this->compiledResult = array_merge(
             [
+                'widget' => $this,
                 'result' => $this->getResult(),
                 'widgetId' => $this->getWidgetId(),
                 'widgetClass' => $this->getWidgetClass(),
@@ -1335,14 +1356,23 @@ abstract class Widget extends Container
     /**
      * @param Render $renderClass
      * @param array $data
-     * @param $template
      * @return string
      */
-    public function renderExternal($renderClass, array $data, $template) {
+    public function renderExternal($renderClass, array $data)
+    {
         $start = microtime(true);
-        $data['result'] = $this->getResult($renderClass);
         $data['time'] = microtime(true) - $start;
+        $data['widget'] = $this;
+        return $renderClass::getInstance()->fetch($this->getTemplate(), $data);
+    }
 
-        return $renderClass::getInstance()->fetch($template, $data);
+    public function renderPart(array $part)
+    {
+        /** @var Render $renderClass */
+        $renderClass = empty($part['renderClass'])
+            ? Php::getClass()
+            : $part['renderClass'];
+
+        return $renderClass::getInstance()->fetch($part['template'], $part);
     }
 }

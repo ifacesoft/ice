@@ -5,6 +5,6 @@
 >
     <?php $parts = reset($result) ?>
     <?php foreach ($parts as $part) : ?>
-        <?= $part['content'] ?>
+        <?= $widget->renderPart($part) ?>
     <?php endforeach; ?>
 </div>

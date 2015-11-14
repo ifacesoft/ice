@@ -9,23 +9,23 @@
         <td rowspan="<?= ceil(count($parts) / $columnCount) ?>"><?= $offset ?></td><?php endif; ?>
     <?php
     $count = 0;
-    foreach ($parts as $columnName => $column) :
-        $colspan = isset($column['options']['colspan']) ? $column['options']['colspan'] : 1;
+    foreach ($parts as $columnName => $part) :
+        $colspan = isset($part['options']['colspan']) ? $part['options']['colspan'] : 1;
         $count += $colspan;
         if ($count <= $columnCount) : ?>
-            <td<?php if (isset($column['options']['rowspan'])) : ?> rowspan="<?= $column['options']['rowspan'] ?>"<?php endif;
-            ?><?php if (isset($column['options']['colspan'])) : ?> colspan="<?= $column['options']['colspan'] ?>"<?php endif;
+            <td<?php if (isset($part['options']['rowspan'])) : ?> rowspan="<?= $part['options']['rowspan'] ?>"<?php endif;
+            ?><?php if (isset($part['options']['colspan'])) : ?> colspan="<?= $part['options']['colspan'] ?>"<?php endif;
             ?>>
         <?php else :
             $count = 1
             ?>
             </tr>
             <tr class="secondary_row">
-            <td<?php if (isset($column['options']['rowspan'])) : ?> rowspan="<?= $column['options']['rowspan'] ?>"<?php endif;
-            ?><?php if (isset($column['options']['colspan'])) : ?> colspan="<?= $column['options']['colspan'] ?>"<?php endif;
+            <td<?php if (isset($part['options']['rowspan'])) : ?> rowspan="<?= $part['options']['rowspan'] ?>"<?php endif;
+            ?><?php if (isset($part['options']['colspan'])) : ?> colspan="<?= $part['options']['colspan'] ?>"<?php endif;
             ?>>
         <?php endif; ?>
-        <?= $column['content']; ?>
+        <?= $widget->renderPart($part) ?>
         </td>
     <?php endforeach; ?>
     </tr>
