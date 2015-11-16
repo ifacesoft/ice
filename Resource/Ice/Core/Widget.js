@@ -27,6 +27,10 @@ var Ice_Core_Widget = {
 
         if ($form) {
             data = Ice.objectMerge(data, Ice.querystringToObject($form.serialize()))
+
+            $form.find("input:checkbox:not(:checked)").each(function() {
+                data[$(this).attr('name')] = null;
+            });
         }
 
         if (url == '') {

@@ -1340,7 +1340,7 @@ abstract class Widget extends Container
                 }
 
                 if (is_string($value)) {
-                    $part['params'][$key] = $key == $value
+                    $part['params'][$key] = $key == $value // TODO: ЭТО работало и, возможно, так должно работать
                         ? array_key_exists($value, $values) ? $values[$value] : null
                         : array_key_exists($value, $values) ? $values[$value] : $value;
                 } else {

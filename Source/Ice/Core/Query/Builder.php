@@ -2043,7 +2043,7 @@ class Query_Builder
 
     public function havingLike($fieldName, $fieldValue, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
     {
-        return $this->having(
+        return $this->havingPart(
             $sqlLogical,
             [$fieldName => $fieldValue],
             Query_Builder::SQL_COMPARISON_KEYWORD_LIKE,
@@ -2051,7 +2051,17 @@ class Query_Builder
         );
     }
 
-    private function having($sqlLogical, array $fieldNameValues, $sqlComparison, $modelTableData = [])
+    public function havingGt($fieldName, $fieldValue, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
+    {
+        return $this->havingPart(
+            $sqlLogical,
+            [$fieldName => $fieldValue],
+            Query_Builder::SQL_COMPARISON_OPERATOR_GREATER,
+            $modelTableData
+        );
+    }
+
+    private function havingPart($sqlLogical, array $fieldNameValues, $sqlComparison, $modelTableData = [])
     {
         /**
          * @var Model $modelClass
