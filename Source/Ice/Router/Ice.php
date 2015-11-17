@@ -10,7 +10,7 @@ class Ice extends Router
 {
     public function getUrl($routeName = null, array $params = [])
     {
-        if ($url = Route::getInstance($routeName)->getUrl($params)) {
+        if ($url = Route::getInstance($routeName)->getUrl(array_merge($this->getParams(), $params))) {
             return $url;
         }
 
@@ -28,6 +28,9 @@ class Ice extends Router
         return $route ? $route['routeName'] : null;
     }
 
+    /**
+     * @return array
+     */
     public function getParams()
     {
         return Data_Provider_Router::getInstance()->get();
