@@ -24,6 +24,7 @@ use Ice\Core\Query_Translator;
 use Ice\Exception\DataSource;
 use Ice\Exception\DataSource_Insert;
 use Ice\Exception\DataSource_Insert_DuplicateEntry;
+use Ice\Exception\DataSource_Statement_TableNotFound;
 use Ice\Helper\Arrays;
 use Ice\Helper\Model as Helper_Model;
 use Ice\Helper\String;
@@ -196,7 +197,7 @@ class Mysqli extends Data_Source
         if (!$statement) {
             switch ($this->getConnection()->errno) {
                 case 1146:
-                    $exceptionClass = DataSource_TableNotFound::getClass();
+                    $exceptionClass = DataSource_Statement_TableNotFound::getClass();
                     break;
                 default:
                     $exceptionClass = DataSource::getClass();

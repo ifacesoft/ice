@@ -89,7 +89,9 @@ class App
                 fwrite(STDERR, $result['error'] . "\n");
             } else {
                 try {
-                    fwrite(STDOUT, $result['content'] . "\n");
+                    if (isset($result['content'])) {
+                        fwrite(STDOUT, $result['content'] . "\n");
+                    }
                 } catch (\Exception $e) {
                     fwrite(STDERR, Logger::getInstance(__CLASS__)->error('Application (Cli): render content failure', __FILE__, __LINE__, $e) . "\n");
                 }

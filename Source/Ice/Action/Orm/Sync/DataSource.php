@@ -6,7 +6,7 @@ use Ice\Core\Action;
 use Ice\Core\Data_Scheme;
 use Ice\Core\Model;
 use Ice\Core\Module;
-use Ice\Exception\DataSource_TableNotFound;
+use Ice\Exception\DataSource_Statement_TableNotFound;
 use Ice\Helper\Json;
 use Ice\Model\Scheme;
 
@@ -54,7 +54,7 @@ class Orm_Sync_DataSource extends Action
         foreach (Data_Scheme::getTables($module) as $dataSourceKey => $tables) {
             try {
                 $schemes = Scheme::createQueryBuilder()->getSelectQuery('*', [], $dataSourceKey)->getRows();
-            } catch (DataSource_TableNotFound $e) {
+            } catch (DataSource_Statement_TableNotFound $e) {
                 Scheme::createTable($dataSourceKey);
                 $schemes = [];
             }
