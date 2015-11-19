@@ -2,13 +2,13 @@
 
 namespace Ice\Render;
 
+use Ice\Core\Debuger;
 use Ice\Core\Environment;
 use Ice\Core\Loader;
 use Ice\Core\Logger;
 use Ice\Core\Module;
 use Ice\Core\Render;
 use Ice\Core\Widget;
-use PHPExcel_Shared_Font;
 use PHPExcel_Writer_Excel2007;
 
 class External_PHPExcel extends Render
@@ -36,12 +36,13 @@ class External_PHPExcel extends Render
      * @param string $template
      * @param array $data
      * @param string|null $layout Emmet style layout
-     * @param  string $templateType
+     * @param string $templateType
      * @return string
+     * @throws \Exception
      * @author anonymous <email>
      *
-     * @version 0
-     * @since   0
+     * @version 2.0
+     * @since   2.0
      */
     public function fetch($template, array $data = [], $layout = null, $templateType = Render::TEMPLATE_TYPE_FILE)
     {
@@ -49,7 +50,7 @@ class External_PHPExcel extends Render
             throw new \Exception('Template is empty');
         }
 
-        $templateFilePath = Loader::getFilePath($template, External_PHPExcel::TEMPLATE_EXTENTION, Module::RESOURCE_DIR, false);
+        $templateFilePath = Loader::getFilePath($template, External_PHPExcel::TEMPLATE_EXTENTION, Module::RESOURCE_DIR, false, true);
 
         if (!file_exists($templateFilePath)) {
             if (Environment::getInstance()->isDevelopment()) {
@@ -88,7 +89,7 @@ class External_PHPExcel extends Render
 
         $widget->renderExternal(__CLASS__, ['sheet' => $xls->getActiveSheet(), 'column' => 'A', 'index' => 1]);
 
-        foreach(range('A','G') as $columnID) {
+        foreach(range('A','I') as $columnID) {
             $xls->getActiveSheet()->getColumnDimension($columnID)->setAutoSize(true);
         }
 

@@ -13,7 +13,6 @@ use Ice\Helper\String;
 use Ice\Render\Php;
 use Ice\Render\Replace;
 use Ice\Widget\Resource_Dynamic;
-use Symfony\Component\Debug\Debug;
 
 abstract class Widget extends Container
 {
@@ -914,8 +913,6 @@ abstract class Widget extends Container
         }
 
         return $code . '); return false;';
-
-
     }
 
     /**
@@ -1287,15 +1284,25 @@ abstract class Widget extends Container
                     continue;
                 }
 
-                if (!isset($options[$event]['action'])) {
-                    throw new Error(
-                        ['For part {$0} with event {$1} of widget {$2} must be defined action param',
-                            [$partName, $event, get_class($this)]
-                        ]
-                    );
+                if (isset($options[$event]['action'])) {
+                    $options[$event]['action'] = Action::getClass($options[$event]['action']);
                 }
 
-                $options[$event]['action'] = Action::getClass($options[$event]['action']);
+                $actionData = [];
+
+                if (isset($options[$event]['action'])) {
+                    $actionData['class'] = Action::getClass($options[$event]['action']);
+                    unset($options[$event]['action']);
+                }
+
+                if (isset($options[$event]['data'])) {
+                    $actionData['data'] = $options[$event]['data'];
+                    unset($options[$event]['data']);
+                }
+
+                $actionData['ajax'] = array_key_exists('ajax', $options[$event]) ? $options[$event]['ajax'] : true;
+
+                $options['dataAction'] = Json::encode($actionData);
 
                 if (isset($options[$event]['url'])) {
                     try {
@@ -1303,15 +1310,11 @@ abstract class Widget extends Container
                             ? Router::getInstance()->getUrl($partName)
                             : Router::getInstance()->getUrl($options[$event]['url']);
                     } catch (RouteNotFound $e) {
+                        $options[$event]['url'] = '/';
                     }
                 }
 
-                $options['dataAction'] = Json::encode([
-                    'class' => $options[$event]['action'],
-                    'data' => isset($options[$event]['data']) ? $options[$event]['data'] : []
-                ]);
-
-                $options[$event] = $this->getOnclick($options[$event]);
+                $options[$event] = $this->getOnclick($options[$event], $actionData['ajax']);
             }
         }
     }

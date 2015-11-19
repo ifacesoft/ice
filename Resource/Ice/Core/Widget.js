@@ -44,9 +44,14 @@ var Ice_Core_Widget = {
             data = {};
         }
 
-        data.widget = Ice.jsonToObject($widget.attr('data-widget'));
-
         var dataAction = Ice.jsonToObject($element.attr('data-action'));
+
+        if (!data.ajax) {
+            location.href = url;
+            return;
+        }
+
+        data.widget = Ice.jsonToObject($widget.attr('data-widget'));
 
         data = Ice.objectMerge(data, dataAction.data);
 
