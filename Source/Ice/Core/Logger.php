@@ -267,13 +267,13 @@ class Logger
 
         File::createData($logFile, $message . "\n", false, FILE_APPEND);
 
-        Logger::fb($message, 'info', $this->getFbType($type));
-
         if (Request::isCli()) {
             $message = Console::getText(' ' . $message . ' ', Console::C_BLACK, self::$consoleColors[$type]) . "\n";
             fwrite(STDOUT, $message);
             return $logging ? $message : '';
         } else {
+            Logger::fb($message, 'info', $this->getFbType($type));
+
             $message = '<div class="alert alert-' . $type . '">' . $message . '</div>';
             return $logging ? self::addLog($message) : $message;
         }

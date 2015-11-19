@@ -10,9 +10,11 @@
 namespace Ice\Helper;
 
 use Ice\Core;
+use Ice\Core\Environment;
 use Ice\Core\Logger as Core_Logger;
 use Ice\Core\Logger;
 use Ice\Core\Request as Core_Request;
+use Ice\Core\Request;
 use Ice\Core\Resource as Core_Resource;
 use Ice\Core\Validator as Core_Validator;
 
@@ -201,11 +203,11 @@ class Console
             $commandString .= ' &';
         }
 
-        if (Core_Request::isCli()) {
-            fwrite(STDOUT, Console::getText($commandString, Console::C_GREEN_B) . "\n");
-        };
-
         ob_start();
+
+        if (!Request::isCli()) {
+            Logger::getInstance(__CLASS__)->info($commandString, Logger::INFO, false);
+        }
         passthru($commandString);
 
         $var = ob_get_contents();
