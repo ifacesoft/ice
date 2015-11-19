@@ -46,7 +46,7 @@ var Ice_Core_Widget = {
 
         var dataAction = Ice.jsonToObject($element.attr('data-action'));
 
-        if (!data.ajax) {
+        if (!dataAction.ajax) {
             location.href = url;
             return;
         }
