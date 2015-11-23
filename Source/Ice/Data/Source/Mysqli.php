@@ -964,7 +964,9 @@ class Mysqli extends Data_Source
     {
         $logger = Logger::getInstance(__CLASS__);
 
-        if ($this->getConnection()->query($query) === false) {
+        $result = $this->getConnection()->query($query);
+
+        if ($result === false) {
             $errno = $this->getConnection()->errno;
             $error = $this->getConnection()->error;
 
@@ -974,8 +976,17 @@ class Mysqli extends Data_Source
                 'ERROR'
             );
             $logger->exception(['#' . $errno . ': {$0} - {$1}', [$error, $query]], __FILE__, __LINE__);
-        } else {
-            Logger::log($query, 'native query (new)', 'INFO');
         }
+
+        $data[Query_Result::ROWS] = $result->fetch_all(MYSQLI_ASSOC);
+
+        $result->free_result();
+
+        $data[Query_Result::NUM_ROWS] = count($data[Query_Result::ROWS]);
+        $data[Query_Result::FOUND_ROWS] = $data[Query_Result::NUM_ROWS];
+
+        Logger::log($query, 'native query (new)', 'INFO');
+
+        return $data;
     }
 }
