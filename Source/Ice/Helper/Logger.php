@@ -16,6 +16,7 @@ use Ice\Core\Render;
 use Ice\Core\Request as Core_Request;
 use Ice\Core\Request;
 use Ice\Render\Php as Render_Php;
+use Ice\Core\Console as Core_Console;
 
 /**
  * Class Logger
@@ -145,9 +146,10 @@ class Logger
         $output['errcontext'] = $errcontext;
         $output['stackTrace'] = $exception->getTraceAsString();
 
+        $name = Request::isCli() ? Core_Console::getCommand(null) : Request::uri();
         $logFile = Directory::get(
                 Module::getInstance()->get(Module::LOG_DIR) . date('Y-m-d')
-            ) . Core_Logger::$errorCodes[$exception->getCode()] . '/' . Object::getClassName($class) . '/' . urlencode(Request::uri()) . '.log';
+            ) . Core_Logger::$errorCodes[$exception->getCode()] . '/' . Object::getClassName($class) . '/' . urlencode($name) . '.log';
 
         if (strlen($logFile) > 255) {
             $logFilename = substr($logFile, 0, 255 - 11);

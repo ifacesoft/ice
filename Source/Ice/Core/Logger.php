@@ -21,6 +21,7 @@ use Ice\Helper\Http;
 use Ice\Helper\Logger as Helper_Logger;
 use Ice\Helper\Object;
 use Ice\Helper\Profiler as Helper_Profiler;
+use Ice\Core\Console as Core_Console;
 
 /**
  * Class Logger
@@ -258,7 +259,8 @@ class Logger
             $message = Resource::create($class)->get($message, $params);
         }
 
-        $logFile = Directory::get(Module::getInstance()->get('logDir')) . date('Y-m-d') . '/INFO/' . urlencode(Request::uri()) . '.log';
+        $name = Request::isCli() ? Core_Console::getCommand(null) : Request::uri();
+        $logFile = Directory::get(Module::getInstance()->get('logDir')) . date('Y-m-d') . '/INFO/' . urlencode($name) . '.log';
 
         if (strlen($logFile) > 255) {
             $logFilename = substr($logFile, 0, 255 - 11);
@@ -544,7 +546,8 @@ class Logger
     {
         $value = str_replace(["\n", "\t"], ' ', $value);
 
-        $logFile = Directory::get(Module::getInstance()->get('logDir')) . date('Y-m-d') . '/LOG/' . urlencode(Request::uri()) . '.log';
+        $name = Request::isCli() ? Core_Console::getCommand(null) : Request::uri();
+        $logFile = Directory::get(Module::getInstance()->get('logDir')) . date('Y-m-d') . '/LOG/' . urlencode($name) . '.log';
 
         if (strlen($logFile) > 255) {
             $logFilename = substr($logFile, 0, 255 - 11);

@@ -2,7 +2,7 @@
 
 namespace Ice\Core;
 
-use Ice\Helper\Console;
+use Ice\Helper\Console as Helper_Console;
 use Ice\Helper\Directory;
 use Ice\Helper\File;
 use Ice\Helper\Php;
@@ -50,20 +50,21 @@ class Debuger
 
             if (!Request::isAjax()) {
                 if (Request::isCli()) {
-                    fwrite(STDOUT, Console::getText($var, Console::C_CYAN) . "\n");
+                    fwrite(STDOUT, Helper_Console::getText($var, Helper_Console::C_CYAN) . "\n");
                 } else {
                     echo '<div class="alert alert-' . Logger::INFO . '">' . str_replace('<span style="color: #0000BB">&lt;?php&nbsp;</span>', '', highlight_string('<?php // Debug value:' . "\n" . $var . "\n", true)) . '</div>';
                 }
-
-                $logFile = Directory::get(Module::getInstance()->get(Module::LOG_DIR)) . date('Y-m-d') . '/DEBUG/' . urlencode(Request::uri()) . '.log';
-
-                if (strlen($logFile) > 255) {
-                    $logFilename = substr($logFile, 0, 255 - 11);
-                    $logFile = $logFilename . '_' . crc32(substr($logFile, 255 - 11));
-                }
-
-                File::createData($logFile, $var, false, FILE_APPEND);
             }
+
+            $name = Request::isCli() ? Console::getCommand(null) : Request::uri();
+            $logFile = Directory::get(Module::getInstance()->get(Module::LOG_DIR)) . date('Y-m-d') . '/DEBUG/' . urlencode($name) . '.log';
+
+            if (strlen($logFile) > 255) {
+                $logFilename = substr($logFile, 0, 255 - 11);
+                $logFile = $logFilename . '_' . crc32(substr($logFile, 255 - 11));
+            }
+
+            File::createData($logFile, $var, false, FILE_APPEND);
 
             Logger::fb($arg, 'debug', 'INFO');
         }
