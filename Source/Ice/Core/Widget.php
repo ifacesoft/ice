@@ -268,6 +268,7 @@ abstract class Widget extends Container
             }
 
             $configInput = $widgetClass::getConfig()->gets('input', false);
+            $configOutput = $widgetClass::getConfig()->gets('output', false);
 
             $this->setData($data);
 
@@ -275,7 +276,7 @@ abstract class Widget extends Container
 
             $this->loadResource();
 
-            $this->output = (array)$this->build($this->getValues());
+            $this->output = array_merge(Input::get($configOutput, $data), (array)$this->build($this->getValues()));
         } catch (Http $e) {
             throw $e;
 //        } catch (Access_Denied $e) {

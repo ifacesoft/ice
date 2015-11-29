@@ -33,7 +33,7 @@ var Ice_Core_Widget = {
             });
         }
 
-        if (url == '') {
+        if (!url) {
             url = location.href;
         }
 

@@ -56,6 +56,8 @@ class App
                 throw new Error('action class not found');
             }
 
+            $actionClass = Action::getClass($actionClass);
+
             $result = $actionClass::call();
         } catch (\Exception $e) {
             if (Request::isCli()) {

@@ -7,7 +7,7 @@ use Ice\Core\Query_Builder;
 use Ice\Core\Query_Result;
 use Ice\Core\Widget;
 
-class Table_Rows extends Widget
+class Roll extends Widget
 {
     private $isShowCount = true;
     private $columnCount = 0;
