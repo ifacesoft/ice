@@ -24,7 +24,6 @@ class Security_LoginEmailPassword_Login_Submit extends Security
                     ->setAccountModelClass($form->getAccountLoginPasswordModelClass())
                     ->bind(['login' => $form->getValue('username')])
             ]);
-
         } catch (\Exception $e) {
             return Security_EmailPassword_Login_Submit::call([
                 'widgets' => $input['widgets'],

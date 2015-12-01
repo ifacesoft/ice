@@ -46,5 +46,7 @@ class Block extends Widget
 
             $this->widget($name, ['widget' => [$widgetClass, $widgetParams, $instanceKey]]);
         }
+
+        return [];
     }
 }

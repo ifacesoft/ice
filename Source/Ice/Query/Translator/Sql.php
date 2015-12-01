@@ -333,6 +333,7 @@ class Sql extends Query_Translator
             case Query_Builder::SQL_COMPARISON_KEYWORD_BETWEEN:
                 return $comparisonOperator . ' ? AND ?';
             case Query_Builder::SQL_COMPARISON_KEYWORD_IN:
+            case Query_Builder::SQL_COMPARISON_KEYWORD_NOT_IN:
                 return $comparisonOperator . ' (?' . ($count > 1 ? str_repeat(',?', $count - 1) : '') . ')';
             case Query_Builder::SQL_COMPARISON_KEYWORD_IS_NULL:
             case Query_Builder::SQL_COMPARISON_KEYWORD_IS_NOT_NULL:
