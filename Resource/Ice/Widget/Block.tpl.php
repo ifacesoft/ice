@@ -1,5 +1,5 @@
 <div id="<?= $widgetId ?>"
-     class="<?= $widgetClass ?> form<?php if (!empty($classes)) : ?> <?= $classes ?><?php endif; ?>"
+     class="<?= $widgetClass ?> <?php if (!empty($classes)) : ?> <?= $classes ?><?php endif; ?>"
      data-widget='<?= $dataWidget ?>'
      data-params='<?= $dataParams ?>'
      data-for="<?= $parentWidgetId ?>"

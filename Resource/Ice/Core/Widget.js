@@ -89,10 +89,12 @@ var Ice_Core_Widget = {
             actionClass,
             actionParams,
             function (result) {
-                var $iceMessage = $widget.find('.ice-message');
+                var $iceMessage = null;
 
                 if (result.error) {
-                    if ($iceMessage.length) {
+                    $iceMessage = $widget.find('.ice-message');
+
+                    if ($widget && $iceMessage.length) {
                         $iceMessage.html(result.error);
                     } else {
                         Ice.notify($('#iceMessages'), result.error, 5000);
@@ -123,7 +125,9 @@ var Ice_Core_Widget = {
                     );
 
                     if (result.success) {
-                        if ($iceMessage.length) {
+                        $iceMessage = $widget.find('.ice-message');
+
+                        if ($widget && $iceMessage.length) {
                             $iceMessage.html(result.success);
                         } else {
                             Ice.notify($('#iceMessages'), result.success, 5000);

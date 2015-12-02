@@ -118,14 +118,14 @@ class Sql extends Query_Translator
         $fieldColumnMap = $modelClass::getScheme()->getFieldColumnMap();
 
         $sql = "\n" . self::SQL_STATEMENT_UPDATE .
-            "\n\t" . $modelClass::getTableName() . ' ' . $tableAlias . '';
+            "\n\t`" . $modelClass::getTableName() . '` `' . $tableAlias . '`';
         $sql .= "\n" . self::SQL_CLAUSE_SET;
         $sql .= implode(
             ',',
             array_map(
                 function ($fieldName) use ($fieldColumnMap, $tableAlias) {
                     $columnName = $fieldColumnMap[$fieldName];
-                    return "\n\t" . $tableAlias . '.`' . $columnName . '` = ?';
+                    return "\n\t`" . $tableAlias . '`.`' . $columnName . '` = ?';
                 },
                 $part['fieldNames']
             )
@@ -264,7 +264,7 @@ class Sql extends Query_Translator
                     ? ' ' . $logicalOperator . "\n\t"
                     : "\n" . self::SQL_CLAUSE_WHERE . "\n\t";
 
-                $sql .= $tableAlias . '.' . '`' . $fieldName . '` ' .
+                $sql .= '`' . $tableAlias . '`.`' . $fieldName . '` ' .
                     $this->buildWhere($comparisonOperator, $fieldName, $count);
             }
         }

@@ -932,8 +932,8 @@ class Query_Builder
                 $this->sqlParts[self::PART_JOIN][$tableAlias] = [
                     'type' => $joinType,
                     'class' => $modelClass,
-                    'on' => $joinTableAlias . '.' . $oneToMany[$modelClass] . ' = ' .
-                        $tableAlias . '.' . $modelClass::getPkColumnName()
+                    'on' => '`' . $joinTableAlias . '`.`' . $oneToMany[$modelClass] . '` = `' .
+                        $tableAlias . '`.`' . $modelClass::getPkColumnName() . '`'
                 ];
 
                 return true;
@@ -949,8 +949,8 @@ class Query_Builder
                 $this->sqlParts[self::PART_JOIN][$tableAlias] = [
                     'type' => $joinType,
                     'class' => $modelClass,
-                    'on' => $tableAlias . '.' . $manyToOne[$modelClass] . ' = ' .
-                        $joinTableAlias . '.' . $join['class']::getPkColumnName()
+                    'on' => '`' . $tableAlias . '`.`' . $manyToOne[$modelClass] . '` = `' .
+                        $joinTableAlias . '`.`' . $join['class']::getPkColumnName() . '`'
                 ];
 
                 return true;
@@ -972,8 +972,8 @@ class Query_Builder
                 $this->sqlParts[self::PART_JOIN][$joinAlias] = [
                     'type' => $joinType,
                     'class' => $joinClass,
-                    'on' => $joinAlias . '.' . $joinColumn . ' = ' .
-                        $joinTableAlias . '.' . $join['class']::getPkColumnName()
+                    'on' => '`' . $joinAlias . '`.`' . $joinColumn . '` = `' .
+                        $joinTableAlias . '`.`' . $join['class']::getPkColumnName() . '`'
                 ];
 
                 $joinColumn2 = $modelClass::getScheme()->get('relations/' . Model_Scheme::MANY_TO_ONE . '/' . $joinClass);
@@ -981,8 +981,8 @@ class Query_Builder
                 $this->sqlParts[self::PART_JOIN][$tableAlias] = [
                     'type' => Query_Builder::SQL_CLAUSE_INNER_JOIN,
                     'class' => $modelClass,
-                    'on' => $tableAlias . '.' . $modelClass::getPkColumnName() . ' = ' .
-                        $joinAlias . '.' . $joinColumn2
+                    'on' => '`' . $tableAlias . '`.`' . $modelClass::getPkColumnName() . '` = `' .
+                        $joinAlias . '`.`' . $joinColumn2 . '`'
                 ];
 
                 return true;

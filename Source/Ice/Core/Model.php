@@ -755,22 +755,22 @@ abstract class Model
     }
 
     /**
-     * @param string $fieldNames
-     * @param array $fields
+     * @param string $selectFields
+     * @param array $filterFields
      * @param array $pagination
      * @param null $dataSourceKey
      * @return Query
      */
-    public static function getSelectQuery($fieldNames, array $fields = [], array $pagination = null, $dataSourceKey = null)
+    public static function getSelectQuery($selectFields, array $filterFields = [], array $pagination = null, $dataSourceKey = null)
     {
         if (!$pagination) {
             $pagination = ['page' => 1, 'limit' => 0];
         }
 
         return Query::getBuilder(self::getClass())
-            ->eq($fields)
+            ->eq($filterFields)
             ->setPagination($pagination['page'], $pagination['limit'])
-            ->getSelectQuery($fieldNames, [], $dataSourceKey);
+            ->getSelectQuery($selectFields, [], $dataSourceKey);
     }
 
     /**
