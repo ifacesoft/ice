@@ -79,6 +79,8 @@ abstract class Widget extends Container
 
     private $layout = null;
 
+    private $indexOffset = 0;
+
     /**
      * @param $name
      * @return array
@@ -553,8 +555,13 @@ abstract class Widget extends Container
 
                 $part['offset'] = $offset + 1;
 
-                $part['index'] = $index;
+                $part['index'] = $index + $this->indexOffset;
                 $part['column'] = $column;
+
+                if (isset($part['options']['indexOffset'])) {
+                    $part['options']['indexOffset'] += $part['index'];
+                    $part['index'] = $part['options']['indexOffset'];
+                }
 
                 $part['widgetOptions'] = $this->options;
 
@@ -1111,14 +1118,19 @@ abstract class Widget extends Container
 
         $options['widget'] = $this->getWidget($options['widget']);
 
-        if ($options['widget']->getResource() === null) {
-            $options['widget']->setResource($this->getResource());
-        }
-
         try {
             Access::check($options['widget']::getConfig()->gets('access'));
         } catch (Access_Denied $e) {
             return $this;
+        }
+
+        if ($options['widget']->getResource() === null) {
+            $options['widget']->setResource($this->getResource());
+        }
+
+        if (isset($options['indexOffset'])) {
+            $options['widget']->indexOffset += $options['indexOffset'];
+            unset($options['indexOffset']);
         }
 
         $this->addPart($name, $options, $template, __FUNCTION__);
@@ -1286,13 +1298,16 @@ abstract class Widget extends Container
                     continue;
                 }
 
-                if (isset($options[$event]['action'])) {
-                    $options[$event]['action'] = Action::getClass($options[$event]['action']);
-                }
-
                 $actionData = [];
 
                 if (isset($options[$event]['action'])) {
+                    if ($options[$event]['action'][0] == '_') {
+                        /** @var Widget $widgetClass */
+                        $widgetClass = get_class($this);
+                        $options[$event]['action'] = $widgetClass::getModuleAlias() . ':' .
+                            $widgetClass::getClassName() . $options[$event]['action'];
+                    }
+
                     $actionData['class'] = Action::getClass($options[$event]['action']);
                     unset($options[$event]['action']);
                 }

@@ -2,6 +2,7 @@
 
 namespace Ice\Action;
 
+use Ice\Core\Debuger;
 use Ice\Core\Logger;
 use Ice\Core\Model;
 use Ice\Core\Security_Account;
