@@ -1,7 +1,6 @@
 <?php
 namespace Ice\Core;
 
-use Ebs\Widget\Order_Basket_Books;
 use Ice\Exception\Access_Denied;
 use Ice\Exception\Error;
 use Ice\Exception\Http;
@@ -533,8 +532,19 @@ abstract class Widget extends Container
                                 $part['label'] = $part['resource']->get($part['label'], $resourceParams);
                             }
 
+                            if ($render = strstr($part['label'], '/', true)) {
+                                $renderClass = Render::getClass($render);
+                                if (Loader::load($renderClass, false)) {
+                                    $part['label'] = substr($part['label'], strlen($render) + 1);
+                                } else {
+                                    $renderClass = Replace::getClass();
+                                }
+                            } else {
+                                $renderClass = Replace::getClass();
+                            }
+
                             $part['label'] =
-                                Replace::getInstance()->fetch(
+                                $renderClass::getInstance()->fetch(
                                     $part['label'],
                                     $part['params'],
                                     null,
@@ -1360,9 +1370,9 @@ abstract class Widget extends Container
                 }
 
                 if (is_string($value)) {
-                    $part['params'][$key] = $key == $value // TODO: ЭТО работало и, возможно, так должно работать
-                        ? array_key_exists($value, $values) ? $values[$value] : null
-                        : array_key_exists($value, $values) ? $values[$value] : $value;
+                    $part['params'][$key] = $key == $value
+                        ? (array_key_exists($value, $values) ? $values[$value] : null)
+                        : (array_key_exists($value, $values) ? $values[$value] : $value);
                 } else {
                     $part['params'][$key] = $value;
                 }
