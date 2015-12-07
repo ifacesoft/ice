@@ -1,5 +1,6 @@
 <div id="<?= $widgetId ?>"
      data-widget='<?= $dataWidget ?>'
+     data-params='<?= $dataParams ?>'
      data-for="<?= $parentWidgetId ?>">
     <?php $parts = reset($result) ?>
     <?php if (isset($parts['header'])) : ?>

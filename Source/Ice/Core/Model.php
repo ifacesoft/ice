@@ -503,6 +503,7 @@ abstract class Model
         if (!$this->isFieldName($jsonFieldName)) {
             return null;
         }
+
         if ($fieldValue === null) {
             $this->json[$fieldName] = [];
 
@@ -518,9 +519,7 @@ abstract class Model
                 ->exception(['Supported only arrays in json field in model {0}', get_class($this)], __FILE__, __LINE__);
         }
 
-        if (empty($this->json[$fieldName])) {
             $this->json[$fieldName] = [];
-        }
 
         foreach ($fieldValue as $key => $value) {
             if ($value instanceof Model) {
@@ -530,8 +529,7 @@ abstract class Model
             }
         }
 
-        $fieldValue = Json::encode($this->get($fieldName));
-//        $fieldValue = Json::encode(array_merge($this->get($fieldName), $this->json[$fieldName]));
+        $fieldValue = Json::encode($this->json[$fieldName]);
 
         $this->set($jsonFieldName, $fieldValue, $isAffected);
 

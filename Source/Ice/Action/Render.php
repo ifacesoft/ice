@@ -37,13 +37,19 @@ class Render extends Action
         $widgets = [];
 
         foreach ($input['widgets'] as $key => $widgetClass) {
+            if (is_array($widgetClass)) {
+                list($widgetClass, $params) = $widgetClass;
+            } else {
+                $params = [];
+            }
+
             /** @var Widget $widgetClass */
             $widgetClass = Widget::getClass($widgetClass);
 
             if ($key == 'content') {
-                $widgets['content'] = $widgetClass::getInstance(null)->render();
+                $widgets['content'] = $widgetClass::getInstance($key, null, $params)->render();
             } else {
-                $widget = $widgetClass::getInstance($key);
+                $widget = $widgetClass::getInstance($key, null, $params);
 
                 if (isset($input['widget'])) {
                     $widget->setResource(is_object($input['widget']) ? $input['widget']->getResource() : $input['widget']['resourceClass']);

@@ -1,6 +1,7 @@
 <tbody id="<?= $widgetId ?>"
        class="<?= $widgetClass ?>"
        data-widget='<?= $dataWidget ?>'
+       data-params='<?= $dataParams ?>'
        data-for="<?= $parentWidgetId ?>"
 >
 <?php foreach ($result as $offset => $parts) : ?>
