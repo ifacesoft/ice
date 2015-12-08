@@ -10,10 +10,13 @@ return [
         'route' => '/dashboard',
         'request' => [
             'GET' => [
-                'Ice:Layout_Admin' => [
-                    'actions' => [
-                        ['Ice:Title' => 'title', ['title' => 'Dashboard']],
-                        'Ice:Admin_Dashboard' => 'main'
+                'widgetClass' => 'Ice:Admin_Layout',
+                'widgetParams' => [
+                    'main' => [
+                        'Ice:Admin_Block',
+                        [
+                            'main' => 'Ice:Admin_Dashboard'
+                        ]
                     ]
                 ]
             ]
