@@ -444,9 +444,6 @@ abstract class Widget extends Container
                     $part['sheet'] = $data['sheet'];
                 }
 
-                $part['widgetId'] = $this->getWidgetId();
-                $part['partId'] = $part['widgetId'] . '_' . $partName;
-
                 $this->partParams($partName, $part, $values);
 
                 $resourceParams = [];
@@ -756,6 +753,7 @@ abstract class Widget extends Container
         $this->partEvents($partName, $options);
 
         $part = [
+            'partName' => $partName,
             'options' => $options,
             'template' => $template,
             'element' => $widgetClass::getClassName() . '_' . $element,
@@ -1402,6 +1400,9 @@ abstract class Widget extends Container
         $renderClass = empty($part['renderClass'])
             ? Php::getClass()
             : $part['renderClass'];
+
+        $part['widgetId'] = $this->getWidgetId();
+        $part['partId'] = $part['widgetId'] . '_' . $part['partName'];
 
         return $renderClass::getInstance()->fetch($part['template'], $part);
     }

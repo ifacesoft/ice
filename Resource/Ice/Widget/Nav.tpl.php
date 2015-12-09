@@ -1,8 +1,10 @@
 <?php $parts = reset($result) ?>
-<?php if (isset($parts['header'])) : ?>
-    <?= $widget->renderPart($parts['header']) ?>
-    <?php unset($parts['header']); ?>
-<?php endif; ?>
+<?php foreach ($parts as $partName => $part) : ?>
+    <?php if (isset($part['options']['widget']) && $part['options']['widget'] instanceof \Ice\Widget\Header) : ?>
+        <?= $widget->renderPart($part) ?>
+        <?php unset($parts[$partName]); ?>
+    <?php endif; ?>
+<?php endforeach; ?>
 
 <ul id="<?= $widgetId ?>"
     class="<?= $widgetClass ?> nav<?php if (!empty($classes)) : ?> <?= $classes ?><?php endif; ?>"

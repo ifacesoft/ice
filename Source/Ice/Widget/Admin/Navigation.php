@@ -40,14 +40,14 @@ class Admin_Navigation extends Navbar
      */
     protected function build(array $input)
     {
-        $mainNav = Admin_Nav::getInstance('admin_main_nav')
+        $mainNav = $this->getWidget(Nav::getClass(), 'admin_main_nav')
             ->li('ice_admin_dashboard', ['route' => true]);
 
         foreach ($input['routeNames'] as $route) {
             $mainNav->li($route, ['route' => true]);
         }
 
-        $profileNav = Admin_Nav::getInstance('admin_profile_nav')
+        $profileNav = $this->getWidget(Nav::getClass(), 'admin_profile_nav')
             ->addClasses('navbar-right')
             ->li('ice_private', ['route' => true])
             ->li('ice_private_profile', ['route' => true]);

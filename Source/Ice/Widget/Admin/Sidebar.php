@@ -2,6 +2,8 @@
 
 namespace Ice\Widget;
 
+use Ice\Core\Debuger;
+
 class Admin_Sidebar extends Nav
 {
 
@@ -49,7 +51,7 @@ class Admin_Sidebar extends Nav
             $routeName = $this->getRouteName($input['routeNames'], substr($input['routeName'], 0, strrpos($input['routeName'], '_')));
         }
 
-        $this->widget('sidebar', ['widget' => $this->getNav($input['routeNames'][$routeName])]);
+        $this->nav('sidebar', ['widget' => $this->getNav($input['routeNames'][$routeName])]);
     }
 
     private function getRouteName(array $routeNames, $currentRouteName)
@@ -69,21 +71,19 @@ class Admin_Sidebar extends Nav
 
     private function getNav(array $routeNames, $routeName = null)
     {
-        /** @var NAv $nav */
-        $nav = Admin_Nav::getInstance('sidebar_' . $routeName);
-
-        $nav->addClasses('nav-sidebar');
+        /** @var Nav $nav */
+        $nav = $this->getWidget(Nav::getClass(), $routeName . '_sidebar')->addClasses('nav-sidebar');
 
         if ($routeName) {
             $nav->widget(
-                $routeName . '_main',
-                ['widget' => Header::getInstance($routeName . '_header')->h4($routeName, ['route' => true])]
+                $routeName . '_header',
+                ['widget' => $nav->getWidget(Header::getClass(), $routeName . '_header')->h4($routeName, ['route' => true])]
             );
         }
 
         foreach ($routeNames as $key => $routeName) {
             if (is_array($routeName)) {
-                $nav->widget($key . '_nav', ['widget' => $this->getNav($routeName, $key)]);
+                $nav->nav($key . '_nav', ['widget' => $this->getNav($routeName, $key)]);
             } else {
                 $nav->li($routeName, ['route' => true]);
             }
