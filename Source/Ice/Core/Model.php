@@ -14,7 +14,6 @@ use Ice\Helper\Json;
 use Ice\Helper\Model as Helper_Model;
 use Ice\Helper\Object;
 use Ice\Helper\Spatial;
-use Ice\Widget\Data\Table;
 use Ice\Widget\Model_Form;
 use Ice\Widget\Model_Table;
 
@@ -1560,6 +1559,10 @@ abstract class Model
         );
 
         return null;
+    }
+
+    public function getModelCollection($fieldNames, $filter) {
+
     }
 
     public static function getResource()

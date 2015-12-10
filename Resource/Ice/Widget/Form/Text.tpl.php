@@ -11,9 +11,12 @@
                class="<?= $element ?> <?= $name ?><?php if (!isset($options['resetFormClass'])) : ?> form-control<?php endif; ?><?php if (!empty($options['classes'])) : ?> <?= $options['classes'] ?><?php endif; ?>"
                name="<?= $name ?>"
                value="<?= isset($params[$name]) ? $params[$name] : '' ?>"
+               data-params='<?= $dataParams ?>'
                data-for="<?= $widgetId ?>"
-               <?php if (isset($options['onchange'])) : ?>onchange="<?= $options['onchange'] ?>"
-               data-action='<?= $options['dataAction'] ?>'<?php endif; ?>
+            <?php if (isset($options['onchange'])) : ?>
+                onchange="<?= $options['onchange'] ?>"
+                data-action='<?= $options['dataAction'] ?>'
+            <?php endif; ?>
                <?php if (!empty($options['placeholder'])) : ?>placeholder="<?= $options['placeholder'] ?>"<?php endif; ?>
                <?php if (!empty($options['disabled'])) : ?>disabled="disabled"<?php endif; ?>
                <?php if (!empty($options['readonly'])) : ?>readonly="readonly"<?php endif; ?>

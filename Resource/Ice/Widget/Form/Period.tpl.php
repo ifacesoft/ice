@@ -10,9 +10,13 @@
                class="<?= $element ?> <?= $name ?>_from<?php if (!isset($options['resetFormClass'])) : ?> form-control<?php endif; ?><?php if (!empty($options['classes'])) : ?> <?= $options['classes'] ?><?php endif; ?>"
                name="<?= $name ?>_from"
                value="<?= isset($params[$name . '_from']) ? $params[$name . '_from'] : '' ?>"
+               data-params='<?= $dataParams ?>'
                data-for="<?= $widgetId ?>"
+            <?php if (isset($options['onchange'])) : ?>
+                onchange="<?= $options['onchange'] ?>"
+                data-action='<?= $options['dataAction'] ?>'
+            <?php endif; ?>
                <?php if (!empty($options['placeholder'])) : ?>placeholder="<?= $options['placeholder'] ?>"<?php endif; ?>
-               <?php if (isset($options['onchange'])) : ?>onchange="<?= $options['onchange'] ?>" data-action='<?= $options['dataAction'] ?>'<?php endif; ?>
                <?php if (!empty($options['disabled'])) : ?>disabled="disabled"<?php endif; ?>
                <?php if (!empty($options['readonly'])) : ?>readonly="readonly" <?php endif; ?>
                <?php if (!empty($options['required'])) : ?>required="required" <?php endif; ?>
@@ -23,9 +27,13 @@
                class="<?= $element ?> <?= $name ?>_to<?php if (!isset($options['resetFormClass'])) : ?> form-control<?php endif; ?><?php if (!empty($options['classes'])) : ?> <?= $options['classes'] ?><?php endif; ?>"
                name="<?= $name ?>_to"
                value="<?= isset($params[$name . '_to']) ? $params[$name . '_to'] : '' ?>"
+               data-params='<?= $dataParams ?>'
                data-for="<?= $widgetId ?>"
+            <?php if (isset($options['onchange'])) : ?>
+                onchange="<?= $options['onchange'] ?>"
+                data-action='<?= $options['dataAction'] ?>'
+            <?php endif; ?>
                <?php if (!empty($options['placeholder'])) : ?>placeholder="<?= $options['placeholder'] ?>"<?php endif; ?>
-               <?php if (isset($options['onchange'])) : ?>onchange="<?= $options['onchange'] ?>" data-action='<?= $options['dataAction'] ?>'<?php endif; ?>
                <?php if (!empty($options['disabled'])) : ?>disabled="disabled"<?php endif; ?>
                <?php if (!empty($options['readonly'])) : ?>readonly="readonly" <?php endif; ?>
                <?php if (!empty($options['required'])) : ?>required="required" <?php endif; ?>

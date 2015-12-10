@@ -10,6 +10,7 @@
             <?php if (!empty($options['placeholder'])) : ?> placeholder="<?= $options['placeholder'] ?>"<?php endif; ?>
             name="<?= $name ?>"
             rows="4"
+            data-params='<?= $dataParams ?>'
             data-for="<?= $widgetId ?>"
             <?php if (isset($onchange)) : ?>onchange='<?= $onchange ?>'<?php endif; ?>
             <?php if (!empty($options['disabled'])) : ?>disabled="disabled"<?php endif; ?>

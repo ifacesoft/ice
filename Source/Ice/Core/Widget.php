@@ -549,7 +549,7 @@ abstract class Widget extends Container
                                 );
 
                         } else {
-                            $part['label'] = $part['resource']
+                            $part['label'] = $part['label'] && $part['resource']
                                 ? $part['resource']->get($part['label'], $resourceParams)
                                 : $part['label'];
                         }
