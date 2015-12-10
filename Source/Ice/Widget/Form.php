@@ -3,6 +3,7 @@
 namespace Ice\Widget;
 
 use Ice\Core\Action;
+use Ice\Core\Debuger;
 use Ice\Core\Module;
 use Ice\Core\Validator;
 use Ice\Core\Widget;
@@ -336,6 +337,37 @@ class Form extends Widget
      */
     public function file($fieldName, array $options = [], $template = 'Ice\Widget\Form\File')
     {
+        return $this->addPart($fieldName, $options, $template, __FUNCTION__);
+    }
+
+    /**
+     * @param $fieldName
+     * @param array $options
+     * @param string $template
+     * @return Form
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 2.0
+     * @since   2.0
+     */
+    public function period($fieldName, array $options = [], $template = 'Ice\Widget\Form\Period')
+    {
+        $fields = [$fieldName . '_from', $fieldName . '_to'];
+
+        if (!empty($options['default'])) {
+            foreach ($fields as $name) {
+                if ($this->getValue($name) === null) {
+                    $this->bind([$name => $options['default'][$name]]);
+                }
+            }
+        }
+
+        if (empty($options['params'])) {
+            $options['params'] = $fields;
+        } else {
+            $options['params'] += $fields;
+        }
+
         return $this->addPart($fieldName, $options, $template, __FUNCTION__);
     }
 

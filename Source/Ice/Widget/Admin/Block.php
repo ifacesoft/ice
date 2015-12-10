@@ -17,7 +17,7 @@ class Admin_Block extends Block
             'resource' => ['js' => null, 'css' => null, 'less' => null, 'img' => null],
             'cache' => ['ttl' => -1, 'count' => 1000],
             'input' => [
-                'title' => ['default' => 'Ice:Title_Route'],
+//                'title' => ['default' => 'Ice:Title_Route'],
                 'breadcrumbs' => 'Ice:Breadcrumbs_Route',
                 'header' => 'Ice:Header_Route'
             ],
