@@ -4,7 +4,6 @@ namespace Ice;
 
 use Composer\Config;
 use Composer\Script\Event;
-use Ice\Action\Front;
 use Ice\Action\Install;
 use Ice\Action\Upgrade;
 use Ice\Core\Action;
@@ -17,6 +16,7 @@ use Ice\Core\Response;
 use Ice\Core\Session;
 use Ice\Data\Provider\Cli as Data_Provider_Cli;
 use Ice\Data\Provider\Request as Data_Provider_Request;
+use Ice\Data\Provider\Router as Data_Provider_Router;
 use Ice\Exception\Error;
 use Ice\Exception\Http_Bad_Request;
 use Ice\Exception\Http_Forbidden;
@@ -44,16 +44,14 @@ class App
             Request::init();
             Session::init();
 
-            if (Request::isAjax()) {
-                $actionClass = Data_Provider_Request::getInstance()->get('actionClass');
-            } else {
-                $actionClass = Front::getClass();
-            }
+            $actionClass = Request::isAjax()
+                ? Data_Provider_Request::getInstance()->get('actionClass')
+                : Data_Provider_Router::getInstance()->get('actionClass');
         }
 
         try {
             if (!$actionClass) {
-                throw new Error('action class not found');
+                throw new Error('Action class not found');
             }
 
             $actionClass = Action::getClass($actionClass);
@@ -99,6 +97,18 @@ class App
                 }
             }
         } else {
+            if (!Request::isAjax()) {
+                if ($response = Data_Provider_Router::getInstance()->get('response')) {
+                    if (isset($response['contentType'])) {
+                        App::getResponse()->setContentType($response['contentType']);
+                    }
+
+                    if (isset($response['statusCode'])) {
+                        App::getResponse()->setStatusCode($response['statusCode']);
+                    }
+                }
+            }
+
             try {
                 App::getResponse()->send($result);
             } catch (\Exception $e) {

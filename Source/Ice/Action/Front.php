@@ -43,15 +43,7 @@ class Front extends Action
 
         $widgetParams = (array)$input['widgetParams'];
 
-        if (isset($input['response'])) {
-            if (isset($input['response']['contentType'])) {
-                App::getResponse()->setContentType($input['response']['contentType']);
-            }
 
-            if (isset($input['response']['statusCode'])) {
-                App::getResponse()->setStatusCode($input['response']['statusCode']);
-            }
-        }
 
         return ['content' => $widgetClass::getInstance(null, null, $widgetParams)];
     }

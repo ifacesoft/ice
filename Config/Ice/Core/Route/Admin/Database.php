@@ -10,6 +10,7 @@ return [
         'route' => '/dashboard',
         'request' => [
             'GET' => [
+                'actionClass' => 'Ice:Render',
                 'widgetClass' => 'Ice:Admin_Layout',
                 'widgetParams' => [
                     'sidebar' => 'Ice:Admin_Database_Sidebar',
@@ -28,6 +29,7 @@ return [
         ],
         'request' => [
             'GET' => [
+                'actionClass' => 'Ice:Render',
                 'widgetClass' => 'Ice:Admin_Layout',
                 'widgetParams' => [
                     'sidebar' => 'Ice:Admin_Database_Sidebar',
@@ -45,6 +47,7 @@ return [
         ],
         'request' => [
             'GET' => [
+                'actionClass' => 'Ice:Render',
                 'widgetClass' => 'Ice:Admin_Layout',
                 'widgetParams' => [
                     'sidebar' => 'Ice:Admin_Database_Sidebar',
@@ -59,6 +62,7 @@ return [
         'params' => ['schemeName' => '(\d+)'],
         'request' => [
             'GET' => [
+                'actionClass' => 'Ice:Render',
                 'widgetClass' => 'Ice:Admin_Layout',
                 'widgetParams' => [
                     'main' => 'Ice:Admin_Database_Database',

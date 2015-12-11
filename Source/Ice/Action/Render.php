@@ -20,6 +20,8 @@ class Render extends Action
             'cache' => ['ttl' => -1, 'count' => 1000],
             'actions' => [],
             'input' => [
+                'widgetClass' => ['providers' => ['default', 'router', 'request']],
+                'widgetParams' => ['providers' => ['default', 'router', 'request'], 'default' => []],
                 'widget' => ['default' => null, 'providers' => ['default', 'request']],
                 'widgets' => ['default' => [], 'providers' => ['default', 'request']]
             ],
@@ -35,6 +37,11 @@ class Render extends Action
     public function run(array $input)
     {
         $widgets = [];
+
+        if ($input['widgetClass']) {
+            $widgetClass = Widget::getClass($input['widgetClass']);
+            return ['content' => $widgetClass::getInstance(null, null, $input['widgetParams'])];
+        }
 
         foreach ($input['widgets'] as $key => $widgetClass) {
             if (is_array($widgetClass)) {

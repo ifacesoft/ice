@@ -54,6 +54,18 @@ return [
             ]
         ]
     ],
+    'ice_render_excel' => [
+        'route' => '/render/excel',
+        'request' => [
+            'GET' => [
+                'Ice:Layout_Blank' => [
+                    'response' => [
+                        'redirect' => 'ice_main'
+                    ]
+                ]
+            ]
+        ]
+    ],
     '_Security' => '/security',
     '_Admin' => '/admin',
     '_Private' => '/private',

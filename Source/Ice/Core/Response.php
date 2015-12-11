@@ -121,7 +121,7 @@ class Response
         if ($this->content === null) {
             $this->content = Request::isAjax()
                 ? str_replace(dirname(MODULE_DIR), '', Json::encode($result))
-                : str_replace(dirname(MODULE_DIR), '', $result['content']);
+                : str_replace(dirname(MODULE_DIR), '', isset($result['content']) ? $result['content'] : '');
         }
 
         Http::setHeader(Http::getContentLength(strlen($this->content)));

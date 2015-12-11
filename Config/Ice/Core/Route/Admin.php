@@ -10,6 +10,7 @@ return [
         'route' => '/dashboard',
         'request' => [
             'GET' => [
+                'actionClass' => 'Ice:Render',
                 'widgetClass' => 'Ice:Admin_Layout',
                 'widgetParams' => [
                     'main' => [
