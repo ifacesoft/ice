@@ -31,22 +31,6 @@ class Block extends Widget
      */
     protected function build(array $input)
     {
-        foreach ($input as $name => $widgetClass) {
-            $widgetClass = (array)$widgetClass;
-
-            if (count($widgetClass) == 3) {
-                list($widgetClass, $widgetParams, $instanceKey) = $widgetClass;
-            } else if (count($widgetClass) == 2) {
-                list($widgetClass, $widgetParams) = $widgetClass;
-                $instanceKey = null;
-            } else {
-                $widgetClass = reset($widgetClass);
-                $widgetParams = [];
-                $instanceKey = null;
-            }
-
-            $this->widget($name, ['widget' => [$widgetClass, $widgetParams, $instanceKey]]);
-        }
 
         return [];
     }

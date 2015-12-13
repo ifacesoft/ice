@@ -36,20 +36,33 @@ class App
         $startTime = Profiler::getMicrotime();
         $startMemory = Profiler::getMemoryGetUsage();
 
+        $actionClass = null;
+
         /** @var Action $actionClass */
-
-        if (Request::isCli()) {
-            $actionClass = Data_Provider_Cli::getInstance()->get('actionClass');
-        } else {
-            Request::init();
-            Session::init();
-
-            $actionClass = Request::isAjax()
-                ? Data_Provider_Request::getInstance()->get('actionClass')
-                : Data_Provider_Router::getInstance()->get('actionClass');
-        }
-
         try {
+            if (Request::isCli()) {
+                $actionClass = Data_Provider_Cli::getInstance()->get('actionClass');
+            } else {
+                Request::init();
+                Session::init();
+
+                $actionClass = Request::isAjax()
+                    ? Data_Provider_Request::getInstance()->get('actionClass')
+                    : Data_Provider_Router::getInstance()->get('actionClass');
+
+                if (!Request::isAjax()) {
+                    if ($response = Data_Provider_Router::getInstance()->get('response')) {
+                        if (isset($response['contentType'])) {
+                            App::getResponse()->setContentType($response['contentType']);
+                        }
+
+                        if (isset($response['statusCode'])) {
+                            App::getResponse()->setStatusCode($response['statusCode']);
+                        }
+                    }
+                }
+            }
+
             if (!$actionClass) {
                 throw new Error('Action class not found');
             }
@@ -97,18 +110,6 @@ class App
                 }
             }
         } else {
-            if (!Request::isAjax()) {
-                if ($response = Data_Provider_Router::getInstance()->get('response')) {
-                    if (isset($response['contentType'])) {
-                        App::getResponse()->setContentType($response['contentType']);
-                    }
-
-                    if (isset($response['statusCode'])) {
-                        App::getResponse()->setStatusCode($response['statusCode']);
-                    }
-                }
-            }
-
             try {
                 App::getResponse()->send($result);
             } catch (\Exception $e) {

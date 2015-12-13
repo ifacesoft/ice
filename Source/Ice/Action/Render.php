@@ -38,7 +38,7 @@ class Render extends Action
     {
         $widgets = [];
 
-        if ($input['widgetClass']) {
+        if (isset($input['widgetClass'])) {
             $widgetClass = Widget::getClass($input['widgetClass']);
             return ['content' => $widgetClass::getInstance(null, null, $input['widgetParams'])];
         }

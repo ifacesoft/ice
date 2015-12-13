@@ -42,8 +42,8 @@
         <?php if (!empty($widgetOptions['horizontal'])) : ?></div><?php endif; ?>
     <script>
         $(function () {
-            $("#<?= $partId ?>_from").datepicker({dateFormat: 'yy-mm-dd'});
-            $("#<?= $partId ?>_to").datepicker({dateFormat: 'yy-mm-dd'});
+            $("#<?= $partId ?>_from").datepicker({dateFormat: '<?= isset($options['dateFormat']) ? $options['dateFormat'] : 'yy-mm-dd' ?>'});
+            $("#<?= $partId ?>_to").datepicker({dateFormat: '<?= isset($options['dateFormat']) ? $options['dateFormat'] : 'yy-mm-dd' ?>'});
         });
     </script>
 </div>

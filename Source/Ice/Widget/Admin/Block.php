@@ -2,7 +2,7 @@
 
 namespace Ice\Widget;
 
-class Admin_Block extends Block
+class Admin_Block extends Block_Render
 {
     /**
      * Widget config
