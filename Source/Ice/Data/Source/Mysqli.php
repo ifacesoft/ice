@@ -12,7 +12,6 @@ namespace Ice\Data\Source;
 use Ice\Core\Converter;
 use Ice\Core\Data_Provider;
 use Ice\Core\Data_Source;
-use Ice\Core\Debuger;
 use Ice\Core\Exception;
 use Ice\Core\Logger;
 use Ice\Core\Model;
@@ -978,9 +977,15 @@ class Mysqli extends Data_Source
             $logger->exception(['#' . $errno . ': {$0} - {$1}', [$error, $query]], __FILE__, __LINE__);
         }
 
-        $data[Query_Result::ROWS] = $result->fetch_all(MYSQLI_ASSOC);
+        $data[Query_Result::ROWS] = [];
 
-        $result->free_result();
+        if (is_object($result)) {
+            if ($result->num_rows) {
+                $result->fetch_all(MYSQLI_ASSOC);
+            }
+
+            $result->free_result();
+        }
 
         $data[Query_Result::NUM_ROWS] = count($data[Query_Result::ROWS]);
         $data[Query_Result::FOUND_ROWS] = $data[Query_Result::NUM_ROWS];
