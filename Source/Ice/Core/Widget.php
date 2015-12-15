@@ -455,7 +455,7 @@ abstract class Widget extends Container
                         $part['resource'] = null;
                     } else {
                         if (isset($part['options']['resource'])) {
-                            $part['resource'] = $this->getResource($part['options']['resource']);
+                            $part['resource'] = $this->getResource($part['options']['resource'], true);
 
                             if (is_array($part['options']['resource'])) {
                                 if (isset($part['options']['resource'][0])) {
@@ -1351,6 +1351,26 @@ abstract class Widget extends Container
 
         $part['value'] = isset($part['options']['value']) ? $part['options']['value'] : $partName;
         unset($part['options']['value']);
+
+        if (isset($part['options']['oneToMany'])) {
+            /** @var Model $modelClass */
+            list($modelClass, $selectFieldName) = $part['options']['oneToMany'];
+
+            $values[$part['value']] = $modelClass::getModel($values[$part['name']], $selectFieldName)->get($part['value']);
+        }
+
+        if (isset($part['options']['manyToMany'])) {
+            /** @var Model $linkModelClass */
+            /** $var Model $modelClass */
+            list($fieldName, $linkModelClass, $linkFieldName, $modelClass, $selectFieldName) = $part['options']['manyToMany'];
+
+            $values[$part['value']] = $linkModelClass::createQueryBuilder()
+                ->inner($modelClass, $selectFieldName, $modelClass::getClassName() . '.' . $modelClass::getPkColumnName() . '=' . $linkModelClass::getClassName() . '.' . $linkFieldName . ' AND ' . $linkModelClass::getClassName() . '.' . $fieldName . '=' . $values[$part['name']])
+                ->group($fieldName, $linkModelClass)
+                ->func(['GROUP_CONCAT' => $part['value']], '"",' . $selectFieldName)
+                ->getSelectQuery('/pk')
+                ->getValue($selectFieldName);
+        }
 
         $part['params'] = $part['value'] == $partName
             ? [$part['name'] => array_key_exists($part['value'], $values) ? $values[$part['value']] : null]

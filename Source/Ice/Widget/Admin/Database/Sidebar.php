@@ -2,8 +2,11 @@
 
 namespace Ice\Widget;
 
-use Ice\Core\Data_Scheme;
+use Ebs\Security\Ebs;
+use Ice\Core\Config;
 use Ice\Core\Module;
+use Ice\Core\Security;
+use Ice\Exception\Http_Forbidden;
 
 class Admin_Database_Sidebar extends Nav
 {
@@ -15,21 +18,12 @@ class Admin_Database_Sidebar extends Nav
     protected static function config()
     {
         return [
-            'render' => ['template' => Nav::getClass(), 'class' => 'Ice:Php', 'layout' => null, 'resource' => null],
+            'render' => ['template' => Nav::getClass(), 'class' => 'Ice:Php', 'layout' => null, 'resource' => Admin_Database_Database::getClass()],
             'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'Widget: Access denied!'],
             'resource' => ['js' => null, 'css' => null, 'less' => null, 'img' => null],
             'cache' => ['ttl' => -1, 'count' => 1000],
             'input' => ['schemeName' => ['providers' => 'router']],
             'output' => [],
-            'action' => [
-                //  'class' => 'Ice:Render',
-                //  'params' => [
-                //      'widgets' => [
-                ////        'Widget_id' => Widget::class
-                //      ]
-                //  ],
-                //  'method' => 'POST'
-            ]
         ];
     }
 
@@ -37,6 +31,7 @@ class Admin_Database_Sidebar extends Nav
      *
      * @param array $input
      * @return array
+     * @throws Http_Forbidden
      */
     protected function build(array $input)
     {
@@ -44,29 +39,37 @@ class Admin_Database_Sidebar extends Nav
 
         $module = Module::getInstance();
 
-        $scheme = [];
+        $currentDataSourceKey = $module->getDataSourceKeys()[$input['schemeName']];
 
-        if ($input['schemeName'] !== null) {
-            $currentDataSourceKey = $module->getDataSourceKeys()[$input['schemeName']];
+        $config = Config::getInstance(Admin_Database_Database::getClass());
 
-            foreach (Data_Scheme::getTables($module) as $dataSourceKey => $scheme) {
-                if ($dataSourceKey == $currentDataSourceKey) {
-                    foreach ($scheme as $tableName => $table) {
-                        $this->li(
-                            $tableName,
-                            [
-                                'route' => 'ice_admin_database_table',
-                                'label' => $table['scheme']['comment'] . ' (' . $tableName . ')',
-                                'params' => [
-                                    'schemeName' => $input['schemeName'],
-                                    'tableName' => $tableName
-                                ]
-                            ]
-                        );
-                    }
-                    break;
-                }
-            }
+        if (!isset($config->gets()[$currentDataSourceKey])) {
+            throw new Http_Forbidden(['Scheme {$0} not found', $currentDataSourceKey]);
+        }
+
+        $scheme = Config::create($currentDataSourceKey, $config->gets()[$currentDataSourceKey]);
+
+        /** @var Ebs $security */
+        $security = Security::getInstance();
+
+        if (!$security->check($scheme->gets('roles'))) {
+            throw new Http_Forbidden('Access denied');
+        }
+
+        foreach ($scheme->gets('tables') as $tableName => $table) {
+            $this->li(
+                $tableName,
+                [
+                    'label' => $tableName,
+                    'resource' => Module::getInstance()->getModelClass($tableName, $currentDataSourceKey),
+                    'route' => 'ice_admin_database_table',
+                    'params' => [
+                        'schemeName' => $input['schemeName'],
+                        'tableName' => $tableName
+                    ],
+                    'access' => ['roles' => $scheme->getConfig('tables/' . $tableName)->gets('roles')]
+                ]
+            );
         }
     }
 }

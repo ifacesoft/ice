@@ -7,7 +7,7 @@
 <?php foreach ($result as $offset => $parts) : ?>
     <tr class="primary_row">
     <?php if ($isShowCount) : ?>
-        <td rowspan="<?= ceil(count($parts) / $columnCount) ?>"><?= $offset ?></td><?php endif; ?>
+        <td rowspan="<?=$columnCount ? ceil(count($parts) / $columnCount) : 1 ?>"><?= $offset ?></td><?php endif; ?>
     <?php
     $count = 0;
     foreach ($parts as $columnName => $part) :

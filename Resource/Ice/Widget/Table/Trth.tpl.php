@@ -1,7 +1,7 @@
 <thead>
 <tr>
     <?php if ($options['widget']->isShowCount()) : ?>
-    <th rowspan="<?= ceil(count($options['widget']->getParts()) / $options['widget']->getColumnCount()) ?>">
+    <th rowspan="<?= $options['widget']->getColumnCount() ? ceil(count($options['widget']->getParts()) / $options['widget']->getColumnCount()) : 1 ?>">
             #</th><?php endif; ?>
     <?php
     $count = 0;
