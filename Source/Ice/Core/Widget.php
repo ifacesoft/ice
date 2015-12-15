@@ -1353,15 +1353,33 @@ abstract class Widget extends Container
         unset($part['options']['value']);
 
         if (isset($part['options']['oneToMany'])) {
-            /** @var Model $modelClass */
-            list($modelClass, $selectFieldName) = $part['options']['oneToMany'];
+            $model = $part['options']['oneToMany']::getModel($values[$part['name']], $part['value']);
+            $values[$part['value']] = $model ? $model->get($part['value'], false) : '&nbsp;';
+        }
 
-            $values[$part['value']] = $modelClass::getModel($values[$part['name']], $selectFieldName)->get($part['value']);
+        if (isset($part['options']['oneToManyToMany'])) {
+            /** @var Model $linkModelClass1 */
+            /** @var Model $linkModelClass2 */
+            list($linkModelClass1, $linkFieldName, $linkModelClass2) = $part['options']['oneToManyToMany'];
+            $model = $linkModelClass1::getModel($values[$part['name']], $linkFieldName);
+            $model = $model ? $model->fetchOne($linkModelClass2, $part['value'], true) : null;
+            $values[$part['value']] = $model ? $model->get($part['value'], false) : '&nbsp;';
+        }
+
+        if (isset($part['options']['manyToOne'])) {
+            /** @var Model $linkModelClass1 */
+            list($linkFieldName, $linkModelClass1) = $part['options']['manyToOne'];
+            $values[$part['value']] = $linkModelClass1::createQueryBuilder()
+                ->eq([$linkFieldName => $values[$part['name']]])
+                ->group($linkFieldName)
+                ->func(['GROUP_CONCAT' => $part['value']], '"",' . $part['value'])
+                ->getSelectQuery('/pk')
+                ->getValue($part['value']);
         }
 
         if (isset($part['options']['manyToMany'])) {
             /** @var Model $linkModelClass */
-            /** $var Model $modelClass */
+            /** @var Model $modelClass */
             list($fieldName, $linkModelClass, $linkFieldName, $modelClass, $selectFieldName) = $part['options']['manyToMany'];
 
             $values[$part['value']] = $linkModelClass::createQueryBuilder()
