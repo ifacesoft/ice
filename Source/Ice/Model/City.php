@@ -3,7 +3,7 @@
 use Ice\Core\Model;
 
 /**
- * Class Ice_City
+ * Class City
  *
  * @property mixed city_pk
  * @property mixed city_name

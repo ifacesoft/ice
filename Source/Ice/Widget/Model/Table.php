@@ -25,17 +25,6 @@ abstract class Model_Table extends Table
             'cache' => ['ttl' => -1, 'count' => 1000],
             'input' => [],
             'output' => [],
-            'action' => [
-                //  'class' => 'Ice:Render',
-                //  'params' => [
-                //      'widgets' => [
-                ////        'Widget_id' => Widget::class
-                //      ]
-                //  ],
-                //  'url' => true,
-                //  'method' => 'POST',
-                //  'callback' => null
-            ]
         ];
     }
 

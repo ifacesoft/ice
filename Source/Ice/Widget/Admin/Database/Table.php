@@ -24,17 +24,6 @@ class Admin_Database_Table extends Block
                 'tableName' => ['providers' => 'router', 'validators' => 'Ice:Not_Empty']
             ],
             'output' => [],
-            'action' => [
-                //  'class' => 'Ice:Render',
-                //  'params' => [
-                //      'widgets' => [
-                ////        'Widget_id' => Widget::class
-                //      ]
-                //  ],
-                //  'url' => true,
-                //  'method' => 'POST',
-                //  'callback' => null
-            ]
         ];
     }
 
