@@ -9,7 +9,9 @@
 
 namespace Ice\Helper;
 
+use Ice\Core\Debuger;
 use Ice\Core\Logger as Core_Logger;
+use Ice\Exception\Error;
 
 /**
  * Class Arrays
@@ -29,6 +31,8 @@ class Arrays
     /**
      * Filter array by filter scheme
      *
+     * Удаляет целую строку
+     *
      *  $filterScheme = [
      *      ['name', 'Petya', '='],
      *      ['age', 18, '>'],
@@ -36,57 +40,65 @@ class Arrays
      *  ];
      *
      * @param  array $rows
-     * @param  $filterScheme
+     * @param array $filterScheme
      * @return array
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 2.0
      * @since   0.0
      */
-    public static function filter(array $rows, $filterScheme)
+    public static function filterRows(array $rows, $filterScheme = [['*', null, '<>']])
     {
         $filterFunction = function ($filterSchemes) {
             return function ($row) use ($filterSchemes) {
+                if (!is_array($row)) {
+                    throw new Error('Filter array must be multidimensional ');
+                }
+
                 foreach ($filterSchemes as $filterScheme) {
                     list($field, $value, $comparison) = $filterScheme;
-                    $field = trim($field);
-                    $value = trim($value);
-                    switch ($comparison) {
-                        case '<=':
-                            if ($row[$field] > $value) {
-                                return false;
-                            }
-                            break;
-                        case '>=':
-                            if ($row[$field] < $value) {
-                                return false;
-                            }
-                            break;
-                        case '<>':
-                            if ($row[$field] == $value) {
-                                return false;
-                            }
-                            break;
-                        case '=':
-                            if ($row[$field] != $value) {
-                                return false;
-                            }
-                            break;
-                        case '<':
-                            if ($row[$field] >= $value) {
-                                return false;
-                            }
-                            break;
-                        case '>':
-                            if ($row[$field] <= $value) {
-                                return false;
-                            }
-                            break;
-                        default:
-                            Core_Logger::getInstance(__CLASS__)->exception(['Unknown comparison operator {$0}', $comparison], __FILE__, __LINE__);
-                    };
+                    $field = $field !== null ? trim($field) : $field;
+                    $value = $value !== null ? trim($value) : $value;
+
+                    foreach ($row as $rowField => $rowValue) {
+                        switch ($comparison) {
+                            case '<=':
+                                if (($rowField == $field || $field == '*') && $rowValue > $value) {
+                                    return false;
+                                }
+                                break;
+                            case '>=':
+                                if (($rowField == $field || $field == '*') && $rowValue < $value) {
+                                    return false;
+                                }
+                                break;
+                            case '<>':
+                            case '!=':
+                                if (($rowField == $field || $field == '*') && $rowValue == $value) {
+                                    return false;
+                                }
+                                break;
+                            case '=':
+                                if (($rowField == $field || $field == '*') && $rowValue != $value) {
+                                    return false;
+                                }
+                                break;
+                            case '<':
+                                if (($rowField == $field || $field == '*') && $rowValue >= $value) {
+                                    return false;
+                                }
+                                break;
+                            case '>':
+                                if (($rowField == $field || $field == '*') && $rowValue <= $value) {
+                                    return false;
+                                }
+                                break;
+                            default:
+                                Core_Logger::getInstance(__CLASS__)->exception(['Unknown comparison operator {$0}', $comparison], __FILE__, __LINE__);
+                        };
+                    }
                 }
+
                 return true;
             };
         };

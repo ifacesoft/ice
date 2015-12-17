@@ -270,7 +270,7 @@ class Query_Result implements Cacheable
     public function filter($filterScheme)
     {
         $data = clone $this;
-        $data->result[Query_Result::ROWS] = Arrays::filter($data->result[Query_Result::ROWS], $filterScheme);
+        $data->result[Query_Result::ROWS] = Arrays::filterRows($data->result[Query_Result::ROWS], $filterScheme);
         return $data;
     }
 

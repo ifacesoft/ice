@@ -8,6 +8,18 @@ class Model_Scheme extends Config
     const MANY_TO_ONE = 'manyToOne';
     const MANY_TO_MANY = 'manyToMany';
 
+    /**
+     * @param mixed $class
+     * @param null $postfix
+     * @param bool $isRequired
+     * @param null $ttl
+     * @return Model_Scheme
+     */
+    public static function getInstance($class, $postfix = null, $isRequired = false, $ttl = null)
+    {
+        return parent::getInstance($class, $postfix, $isRequired, $ttl);
+    }
+
     public function getFieldColumnMap()
     {
         /**

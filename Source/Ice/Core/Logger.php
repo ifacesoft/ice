@@ -554,7 +554,7 @@ class Logger
             $logFile = $logFilename . '_' . crc32(substr($logFile, 255 - 11));
         }
 
-        File::createData($logFile, $label . ': ' . $value . "\n", false, FILE_APPEND);
+        File::createData($logFile, $label . ': ' . $value . "\n\n", false, FILE_APPEND);
 
         if (Environment::getInstance()->isProduction()) {
             return;

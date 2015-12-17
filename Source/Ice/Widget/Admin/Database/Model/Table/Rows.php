@@ -74,10 +74,8 @@ class Admin_Database_Model_Table_Rows extends Table_Rows
             throw new Http_Forbidden('Access denied: table not allowed');
         }
 
-        $pkFieldName = $modelClass::getPkFieldName();
-
         $this->a(
-            $pkFieldName,
+            $modelClass::getPkFieldName(),
             [
                 'route' => 'ice_admin_database_row',
                 'name' => 'pk',

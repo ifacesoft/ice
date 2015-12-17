@@ -10,6 +10,7 @@
 namespace Ice\Core;
 
 use Ice\Core;
+use Ice\Helper\Arrays;
 use Ice\Helper\Json;
 use Ice\Helper\Model as Helper_Model;
 use Ice\Helper\Object;
@@ -551,7 +552,7 @@ abstract class Model
     public function get($fieldName = null, $isNotNull = true)
     {
         if ($fieldName === null) {
-            return array_merge((array)$this->pk, array_filter($this->row));
+            return array_merge((array)$this->pk, array_filter($this->row, function($value) {return $value !== null;}));
         }
 
         if (is_array($fieldName)) {
@@ -1245,7 +1246,7 @@ abstract class Model
             ->getQueryResult()
             ->getInsertId();
 
-        if ($isSmart && $model = $modelClass::create(array_filter($this->row))->find('/pk')) {
+        if ($isSmart && $model = $modelClass::create(array_filter($this->row, function($value) {return $value !== null;}))->find('/pk')) {
             $this->set($model->getPk());
         }
 

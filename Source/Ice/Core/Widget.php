@@ -732,7 +732,7 @@ abstract class Widget extends Container
                 unset($options['roles']);
             }
 
-            if (isset($options['access'])) {
+            if (!empty($options['access'])) {
                 Access::check($options['access']);
             }
         } catch (Access_Denied $e) {
@@ -1352,23 +1352,17 @@ abstract class Widget extends Container
         $part['value'] = isset($part['options']['value']) ? $part['options']['value'] : $partName;
         unset($part['options']['value']);
 
-        if (isset($part['options']['oneToMany'])) {
-            $model = $part['options']['oneToMany']::getModel($values[$part['name']], $part['value']);
-            $values[$part['value']] = $model ? $model->get($part['value'], false) : '&nbsp;';
+        if (isset($part['options']['oneToMany']) && empty($part['options']['rows'])) {
+            $fieldName = $part['options']['oneToMany']::getPkFieldName();
+            $part['options']['rows'] =
+                [0 => [$part['name'] => 0, $part['value'] => '']] +
+                $part['options']['oneToMany']::getSelectQuery([$fieldName => $part['name'], $part['value']])->getRows($part['value']);
         }
 
-        if (isset($part['options']['oneToManyToMany'])) {
-            /** @var Model $linkModelClass1 */
-            /** @var Model $linkModelClass2 */
-            list($linkModelClass1, $linkFieldName, $linkModelClass2) = $part['options']['oneToManyToMany'];
-            $model = $linkModelClass1::getModel($values[$part['name']], $linkFieldName);
-            $model = $model ? $model->fetchOne($linkModelClass2, $part['value'], true) : null;
-            $values[$part['value']] = $model ? $model->get($part['value'], false) : '&nbsp;';
-        }
-
-        if (isset($part['options']['manyToOne'])) {
+        if (isset($part['options']['manyToOne']) && empty($part['options']['rows'])) {
             /** @var Model $linkModelClass1 */
             list($linkFieldName, $linkModelClass1) = $part['options']['manyToOne'];
+
             $values[$part['value']] = $linkModelClass1::createQueryBuilder()
                 ->eq([$linkFieldName => $values[$part['name']]])
                 ->group($linkFieldName)
@@ -1380,19 +1374,41 @@ abstract class Widget extends Container
         if (isset($part['options']['manyToMany'])) {
             /** @var Model $linkModelClass */
             /** @var Model $modelClass */
-            list($fieldName, $linkModelClass, $linkFieldName, $modelClass, $selectFieldName) = $part['options']['manyToMany'];
+            list($modelClass, $linkFieldName, $linkModelClass, $fieldName) = $part['options']['manyToMany'];
 
-            $values[$part['value']] = $linkModelClass::createQueryBuilder()
-                ->inner($modelClass, $selectFieldName, $modelClass::getClassName() . '.' . $modelClass::getPkColumnName() . '=' . $linkModelClass::getClassName() . '.' . $linkFieldName . ' AND ' . $linkModelClass::getClassName() . '.' . $fieldName . '=' . $values[$part['name']])
-                ->group($fieldName, $linkModelClass)
-                ->func(['GROUP_CONCAT' => $part['value']], '"",' . $selectFieldName)
-                ->getSelectQuery('/pk')
-                ->getValue($selectFieldName);
+            $part['options']['rows'] = $modelClass::createQueryBuilder()
+                ->left($linkModelClass, [$fieldName => $part['name']], $linkModelClass::getClassName() . '.' . $linkFieldName . '=' . $modelClass::getClassName() . '.' . $modelClass::getPkColumnName() . ' AND ' . $linkModelClass::getClassName() . '.' . $fieldName . '=' . $values[$part['name']])
+                ->group()
+                ->getSelectQuery($part['value'])
+                ->getRows();
+
+//            $values[$part['value']] = $linkModelClass::createQueryBuilder()
+//                ->inner($modelClass, $selectFieldName, $modelClass::getClassName() . '.' . $modelClass::getPkColumnName() . '=' . $linkModelClass::getClassName() . '.' . $linkFieldName . ' AND ' . $linkModelClass::getClassName() . '.' . $fieldName . '=' . $values[$part['name']])
+//                ->group($fieldName, $linkModelClass)
+//                ->func(['GROUP_CONCAT' => $part['value']], '"",' . $selectFieldName)
+//                ->getSelectQuery('/pk')
+//                ->getValue($selectFieldName);
+        }
+
+        if (isset($part['options']['oneToManyToMany'])) {
+            /** @var Model $linkModelClass1 */
+            /** @var Model $linkModelClass2 */
+            list($linkModelClass1, $linkFieldName, $linkModelClass2) = $part['options']['oneToManyToMany'];
+            $model = $linkModelClass1::getModel($values[$part['name']], $linkFieldName);
+            $model = $model ? $model->fetchOne($linkModelClass2, $part['value'], true) : null;
+            $values[$part['value']] = $model ? $model->get($part['value'], false) : '&nbsp;';
         }
 
         $part['params'] = $part['value'] == $partName
             ? [$part['name'] => array_key_exists($part['value'], $values) ? $values[$part['value']] : null]
-            : [$part['name'] => array_key_exists($part['value'], $values) ? $values[$part['value']] : $part['value']];
+            : [$part['name'] => array_key_exists($part['value'], $values)
+                ? $values[$part['value']]
+                : (
+                array_key_exists($part['name'], $values)
+                    ? $values[$part['name']]
+                    : $part['value']
+                )
+            ];
 
         if (isset($part['options']['dateFormat'])) {
             $part['params'][$part['name']] = date($part['options']['dateFormat'], strtotime($part['params'][$part['name']]));

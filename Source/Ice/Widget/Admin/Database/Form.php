@@ -3,10 +3,17 @@
 namespace Ice\Widget;
 
 use Ice\Action\Admin_Database;
+use Ice\Core\Config;
+use Ice\Core\Data_Scheme;
+use Ice\Core\Debuger;
 use Ice\Core\Model;
 use Ice\Core\Module;
+use Ice\Core\Security;
+use Ice\Core\Validator;
+use Ice\Exception\Http_Forbidden;
+use Ice\Exception\Http_Not_Found;
 
-class Admin_Database_Form extends Block
+class Admin_Database_Form extends Form
 {
     /**
      * Widget config
@@ -16,7 +23,7 @@ class Admin_Database_Form extends Block
     protected static function config()
     {
         return [
-            'render' => ['template' => Block::getClass(), 'class' => 'Ice:Php', 'layout' => null, 'resource' => null],
+            'render' => ['template' => Form::getClass(), 'class' => 'Ice:Php', 'layout' => null, 'resource' => Admin_Database_Database::getClass()],
             'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'Widget: Access denied!'],
             'resource' => ['js' => null, 'css' => null, 'less' => null, 'img' => null],
             'cache' => ['ttl' => -1, 'count' => 1000],
@@ -26,57 +33,90 @@ class Admin_Database_Form extends Block
                 'pk' => ['providers' => 'router', 'validators' => 'Ice:Not_Null'],
             ],
             'output' => [],
-            'action' => [
-                //  'class' => 'Ice:Render',
-                //  'params' => [
-                //      'widgets' => [
-                ////        'Widget_id' => Widget::class
-                //      ]
-                //  ],
-                //  'url' => true,
-                //  'method' => 'POST',
-                //  'callback' => null
-            ]
         ];
     }
 
     protected function build(array $input)
     {
         $module = Module::getInstance();
+
         $currentDataSourceKey = $module->getDataSourceKeys()[$input['schemeName']];
+
+        $config = Config::getInstance(Admin_Database_Database::getClass());
+
+        if (!isset($config->gets()[$currentDataSourceKey])) {
+            throw new Http_Not_Found(['Scheme {$0} not found', $currentDataSourceKey]);
+        }
+
+        $scheme = Config::create($currentDataSourceKey, $config->gets()[$currentDataSourceKey]);
+
+        $security = Security::getInstance();
+
+        if (!$security->check($scheme->gets('roles'))) {
+            throw new Http_Forbidden('Access denied: scheme not allowed');
+        }
 
         /** @var Model $modelClass */
         $modelClass = Module::getInstance()->getModelClass($input['tableName'], $currentDataSourceKey);
 
-        $this->widget('form', ['widget' => [Admin_Database_Model_Form::class, ['pk' => $input['pk']], $modelClass]]);
+        $this->setResource($modelClass);
 
-//        $tableRows = Model_Table_Rows::getInstance($modelClass);
-//        $tableRows->removePart($modelClass::getPkFieldName());
-//        $tableRows->a(
-//            'pk',
-//            [
-//                'route' => 'ice_admin_database_row',
-//                'name' => $modelClass::getPkFieldName(),
-//                'params' => [
-//                    'dataSourceKey' => $input['dataSourceKey'],
-//                    'tableName' => $input['modelClass']
-//                ],
-//                'unshift' => true
-//            ]
-//        );
-//
-//        $this
-//            ->widget('trth', ['widget' => $tableRows], 'Ice\Widget\Table\Trth')
-//            ->widget('rows', ['widget' => $tableRows])
-//            ->widget('pagination', ['widget' => $this->getWidget(Pagination::getClass())]);
-//
-//        $modelClass::createQueryBuilder()
-//            ->attachWidgets($this)
-//            ->getSelectQuery('*')
-//            ->getQueryResult();
-//
-//        $tableRows->render();
-//
-//        $this->addClasses('table-striped table-bordered table-hover table-condensed');
+        $currentTableName = $modelClass::getTableName();
+
+        if (!$scheme->gets('tables/' . $currentTableName)) {
+            throw new Http_Not_Found(['Table {$0} not found', $currentTableName]);
+        }
+
+        $table = Config::create($currentTableName, $scheme->gets('tables/' . $currentTableName));
+
+        if (!$security->check($table->gets('roles'))) {
+            throw new Http_Forbidden('Access denied: table not allowed');
+        }
+
+        $this->setHorizontal();
+
+        $this->text($modelClass::getPkFieldName(), ['readonly' => true]);
+
+        $columns = Data_Scheme::getTables(Module::getInstance())[$currentDataSourceKey][$currentTableName]['columns'];
+
+        foreach ($table->gets('columns') as $columnName => $column) {
+            $column = $table->getConfig('columns/' . $columnName);
+
+            if ($roles = $column->gets('formRoles', false)) {
+                $options = $column->gets('options', false);
+
+                $options['access'] = ['roles' => $roles];
+
+                if (isset($columns[$columnName])) {
+                    $fieldType = $column->get('type', false) ? $column->get('type') : $columns[$columnName][Model_Form::getClass()]['type'];
+
+                    $options['validators'] = $columns[$columnName][Validator::getClass()];
+                    $options['placeholder'] = $columns[$columnName]['fieldName'] . '_placeholder';
+
+                    $this->$fieldType($columns[$columnName]['fieldName'], $options);
+
+                    continue;
+                }
+
+                $options['placeholder'] = $columnName . '_placeholder';
+
+                if ($column->get('options/oneToMany', false)) {
+                    $this->combobox($columnName, $options);
+                } else if ($column->get('options/manyToMany', false)) {
+                    $options['multiple'] = true;
+
+                    $this->combobox($columnName, $options);
+                } else {
+                    $this->text($columnName, $options);
+                }
+            }
+        }
+
+        $this->div('ice-message', ['label' => '&nbsp;']);
+
+        $this->button('submit', ['submit' => ['action' => '_Submit'], 'classes' => 'btn-primary']);
+//        $this->hidden('modelClass', ['params' => ['modelClass' => $modelClass]]);
+
+        $this->bind($modelClass::getModel($input['pk'], '*')->get());
     }
 }
