@@ -20,6 +20,24 @@ return [
         ],
         'parent' => 'ice_admin_database'
     ],
+    'ice_admin_database_row_new' => [
+        'route' => '/{$schemeName}/{$tableName}/new',
+        'params' => [
+            'schemeName' => '(\d+)',
+            'tableName' => '(.*)'
+        ],
+        'request' => [
+            'GET' => [
+                'actionClass' => 'Ice:Render',
+                'widgetClass' => 'Ice:Admin_Layout',
+                'widgetParams' => [
+                    'sidebar' => 'Ice:Admin_Database_Sidebar',
+                    'main' => ['Ice:Admin_Block', ['model' => ['Ice:Admin_Database_Form', ['mode' => 'new']]]]
+                ]
+            ]
+        ],
+        'parent' => 'ice_admin_database_table'
+    ],
     'ice_admin_database_row' => [
         'route' => '/{$schemeName}/{$tableName}/{$pk}',
         'params' => [
@@ -33,7 +51,7 @@ return [
                 'widgetClass' => 'Ice:Admin_Layout',
                 'widgetParams' => [
                     'sidebar' => 'Ice:Admin_Database_Sidebar',
-                    'main' => ['Ice:Admin_Block', ['model' => 'Ice:Admin_Database_Form']]
+                    'main' => ['Ice:Admin_Block', ['model' => ['Ice:Admin_Database_Form', ['mode' => 'edit']]]]
                 ]
             ]
         ],
@@ -51,7 +69,7 @@ return [
                 'widgetClass' => 'Ice:Admin_Layout',
                 'widgetParams' => [
                     'sidebar' => 'Ice:Admin_Database_Sidebar',
-                    'main' => ['Ice:Admin_Block', ['model' => 'Ice:Admin_Database_Table']]
+                    'main' => ['Ice:Admin_Block', ['model' => 'Ice:Admin_Database_Roll']]
                 ]
             ]
         ],

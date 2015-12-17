@@ -52,7 +52,7 @@ class Admin_Database_Sidebar extends Nav
         /** @var Ebs $security */
         $security = Security::getInstance();
 
-        if (!$security->check($scheme->gets('roles'))) {
+        if (!$security->check($scheme->gets('roles', false))) {
             throw new Http_Forbidden('Access denied');
         }
 
@@ -67,7 +67,7 @@ class Admin_Database_Sidebar extends Nav
                         'schemeName' => $input['schemeName'],
                         'tableName' => $tableName
                     ],
-                    'access' => ['roles' => $scheme->getConfig('tables/' . $tableName)->gets('roles')]
+                    'access' => ['roles' => $scheme->getConfig('tables/' . $tableName)->gets('roles', false)]
                 ]
             );
         }

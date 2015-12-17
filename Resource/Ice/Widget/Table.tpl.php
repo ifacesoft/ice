@@ -13,7 +13,6 @@
         unset($parts['pagination']);
     }
     ?>
-    <?= $pagination ?>
     <table class="<?= $widgetClass ?> table<?php if (!empty($classes)) : ?> <?= $classes ?><?php endif; ?>">
         <?php foreach ($parts as $part) : ?>
             <?= $widget->renderPart($part) ?>

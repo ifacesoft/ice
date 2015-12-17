@@ -3,15 +3,16 @@
 namespace Ice\Widget;
 
 use Ice\Core\Config;
+use Ice\Core\Debuger;
 use Ice\Core\Model;
 use Ice\Core\Module;
+use Ice\Core\Query_Builder;
 use Ice\Core\Security;
 use Ice\Exception\Http_Forbidden;
 use Ice\Exception\Http_Not_Found;
 
-class Admin_Database_Model_Table_Rows extends Table_Rows
+class Admin_Database_Table_Rows extends Table_Rows
 {
-
     /**
      * Widget config
      *
@@ -45,6 +46,9 @@ class Admin_Database_Model_Table_Rows extends Table_Rows
 
         $currentDataSourceKey = $module->getDataSourceKeys()[$input['schemeName']];
 
+        /** @var Model $modelClass */
+        $modelClass = Module::getInstance()->getModelClass($input['tableName'], $currentDataSourceKey);
+
         $config = Config::getInstance(Admin_Database_Database::getClass());
 
         if (!isset($config->gets()[$currentDataSourceKey])) {
@@ -55,12 +59,9 @@ class Admin_Database_Model_Table_Rows extends Table_Rows
 
         $security = Security::getInstance();
 
-        if (!$security->check($scheme->gets('roles'))) {
+        if (!$scheme->gets('roles', false) || !$security->check($scheme->gets('roles', false))) {
             throw new Http_Forbidden('Access denied: scheme not allowed');
         }
-
-        /** @var Model $modelClass */
-        $modelClass = $this->getInstanceKey();
 
         $currentTableName = $modelClass::getTableName();
 
@@ -70,7 +71,7 @@ class Admin_Database_Model_Table_Rows extends Table_Rows
 
         $table = Config::create($currentTableName, $scheme->gets('tables/' . $currentTableName));
 
-        if (!$security->check($table->gets('roles'))) {
+        if (!$table->gets('roles', false) || !$security->check($table->gets('roles', false))) {
             throw new Http_Forbidden('Access denied: table not allowed');
         }
 
@@ -86,9 +87,13 @@ class Admin_Database_Model_Table_Rows extends Table_Rows
         foreach ($table->gets('columns') as $columnName => $column) {
             $column = $table->getConfig('columns/' . $columnName);
 
+            if (!$column->gets('roles', false)) {
+                continue;
+            }
+
             $this->span(
                 $columnName,
-                array_merge(['access' => ['roles' => $column->gets('roles')]], $column->gets('options', false))
+                array_merge(['access' => ['roles' => $column->gets('roles', false)]], $column->gets('options', false))
             );
         }
     }

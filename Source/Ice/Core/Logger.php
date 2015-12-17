@@ -306,7 +306,7 @@ class Logger
 
         $varSize = Helper_Profiler::getVarSize($value);
 
-        if ($varSize > pow(2, 17)) {
+        if ($varSize > pow(2, 18)) {
             FirePHP::getInstance(true)->fb('Too big data: ' . $varSize . ' bytes (max: ' . pow(2, 17) . ')', $label, 'WARN', $options);
             return;
         }

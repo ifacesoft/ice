@@ -1352,11 +1352,14 @@ abstract class Widget extends Container
         $part['value'] = isset($part['options']['value']) ? $part['options']['value'] : $partName;
         unset($part['options']['value']);
 
+        $part['title'] = isset($part['options']['title']) ? $part['options']['title'] : $partName;
+        unset($part['options']['title']);
+
         if (isset($part['options']['oneToMany']) && empty($part['options']['rows'])) {
             $fieldName = $part['options']['oneToMany']::getPkFieldName();
             $part['options']['rows'] =
-                [0 => [$part['name'] => 0, $part['value'] => '']] +
-                $part['options']['oneToMany']::getSelectQuery([$fieldName => $part['name'], $part['value']])->getRows($part['value']);
+                [0 => [$part['value'] => 0, $part['title'] => '']] +
+                $part['options']['oneToMany']::getSelectQuery([$fieldName => $part['value'], $part['title']])->getRows($part['title']);
         }
 
         if (isset($part['options']['manyToOne']) && empty($part['options']['rows'])) {
@@ -1374,12 +1377,16 @@ abstract class Widget extends Container
         if (isset($part['options']['manyToMany'])) {
             /** @var Model $linkModelClass */
             /** @var Model $modelClass */
-            list($modelClass, $linkFieldName, $linkModelClass, $fieldName) = $part['options']['manyToMany'];
+            list($modelClass, $linkFieldName, $linkModelClass, $fkFieldName, $linkFkFieldName) = $part['options']['manyToMany'];
+
+            if (empty($values[$part['name']])) {
+                $values[$part['name']] = 0;
+            }
 
             $part['options']['rows'] = $modelClass::createQueryBuilder()
-                ->left($linkModelClass, [$fieldName => $part['name']], $linkModelClass::getClassName() . '.' . $linkFieldName . '=' . $modelClass::getClassName() . '.' . $modelClass::getPkColumnName() . ' AND ' . $linkModelClass::getClassName() . '.' . $fieldName . '=' . $values[$part['name']])
+                ->left($linkModelClass, [$fkFieldName => $part['value']], $linkModelClass::getClassName() . '.' . $linkFieldName . '=' . $modelClass::getClassName() . '.' . $modelClass::getPkColumnName() . ' AND ' . $linkModelClass::getClassName() . '.' . $linkFkFieldName . '=' . (isset($values[$part['value']]) ? $values[$part['value']] : 0))
                 ->group()
-                ->getSelectQuery($part['value'])
+                ->getSelectQuery($part['title'])
                 ->getRows();
 
 //            $values[$part['value']] = $linkModelClass::createQueryBuilder()
@@ -1403,11 +1410,11 @@ abstract class Widget extends Container
             ? [$part['name'] => array_key_exists($part['value'], $values) ? $values[$part['value']] : null]
             : [$part['name'] => array_key_exists($part['value'], $values)
                 ? $values[$part['value']]
-                : (
-                array_key_exists($part['name'], $values)
-                    ? $values[$part['name']]
+//                : (
+//                array_key_exists($part['name'], $values)
+//                    ? $values[$part['name']]
                     : $part['value']
-                )
+//                )
             ];
 
         if (isset($part['options']['dateFormat'])) {

@@ -30,7 +30,8 @@ class Admin_Database_Form extends Form
             'input' => [
                 'schemeName' => ['providers' => 'router', 'validators' => 'Ice:Not_Null'],
                 'tableName' => ['providers' => 'router', 'validators' => 'Ice:Not_Empty'],
-                'pk' => ['providers' => 'router', 'validators' => 'Ice:Not_Null'],
+                'pk' => ['providers' => 'router'],
+                'mode' => ['provider' => 'default']
             ],
             'output' => [],
         ];
@@ -52,7 +53,7 @@ class Admin_Database_Form extends Form
 
         $security = Security::getInstance();
 
-        if (!$security->check($scheme->gets('roles'))) {
+        if (!$scheme->gets('roles', false) || !$security->check($scheme->gets('roles', false))) {
             throw new Http_Forbidden('Access denied: scheme not allowed');
         }
 
@@ -69,20 +70,24 @@ class Admin_Database_Form extends Form
 
         $table = Config::create($currentTableName, $scheme->gets('tables/' . $currentTableName));
 
-        if (!$security->check($table->gets('roles'))) {
+        if (!$table->gets('roles', false) || !$security->check($table->gets('roles', false))) {
             throw new Http_Forbidden('Access denied: table not allowed');
         }
 
-        $this->setHorizontal();
+        if ($input['mode'] != 'filter') {
+            $this->setHorizontal();
+        }
 
-        $this->text($modelClass::getPkFieldName(), ['readonly' => true]);
+        if ($input['mode'] == 'edit') {
+            $this->text($modelClass::getPkFieldName(), ['readonly' => true]);
+        }
 
         $columns = Data_Scheme::getTables(Module::getInstance())[$currentDataSourceKey][$currentTableName]['columns'];
 
         foreach ($table->gets('columns') as $columnName => $column) {
             $column = $table->getConfig('columns/' . $columnName);
 
-            if ($roles = $column->gets('formRoles', false)) {
+            if ($roles = $column->gets($input['mode'] . 'Roles', false)) {
                 $options = $column->gets('options', false);
 
                 $options['access'] = ['roles' => $roles];
@@ -114,9 +119,23 @@ class Admin_Database_Form extends Form
 
         $this->div('ice-message', ['label' => '&nbsp;']);
 
-        $this->button('submit', ['submit' => ['action' => '_Submit'], 'classes' => 'btn-primary']);
-//        $this->hidden('modelClass', ['params' => ['modelClass' => $modelClass]]);
+        switch ($input['mode']) {
+            case 'filter':
+                $this->button('filter', ['onclick' => ['action' => 'Ice:Render', 'method' => 'GET'], 'classes' => 'btn-default', 'params' =>['widgets' => ['admin_database_roll' => 'Ice:Admin_Database_Table']]]);
+                break;
+            case 'edit':
+                $this->button('edit', ['submit' => ['action' => '_Submit'], 'classes' => 'btn-primary']);
+                break;
+            case 'new':
+                $this->button('save', ['submit' => ['action' => '_Submit'], 'classes' => 'btn-success']);
+                break;
+            default:
+                break;
+        }
 
-        $this->bind($modelClass::getModel($input['pk'], '*')->get());
+
+        if ($input['pk']) {
+            $this->bind($modelClass::getModel($input['pk'], '*')->get());
+        }
     }
 }
