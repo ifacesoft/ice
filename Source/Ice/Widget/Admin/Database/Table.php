@@ -50,7 +50,7 @@ class Admin_Database_Table extends Table
                 'add',
                 [
                     'label' => 'Добавить новую запись',
-                    'route' => 'ice_admin_database_row_new',
+                    'route' => 'ice_admin_database_row_create',
                     'params' => [
                         'schemeName' => $input['schemeName'],
                         'tableName' => $input['tableName']

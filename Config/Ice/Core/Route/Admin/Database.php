@@ -20,8 +20,8 @@ return [
         ],
         'parent' => 'ice_admin_database'
     ],
-    'ice_admin_database_row_new' => [
-        'route' => '/{$schemeName}/{$tableName}/new',
+    'ice_admin_database_row_create' => [
+        'route' => '/{$schemeName}/{$tableName}/create',
         'params' => [
             'schemeName' => '(\d+)',
             'tableName' => '(.*)'
@@ -32,7 +32,7 @@ return [
                 'widgetClass' => 'Ice:Admin_Layout',
                 'widgetParams' => [
                     'sidebar' => 'Ice:Admin_Database_Sidebar',
-                    'main' => ['Ice:Admin_Block', ['model' => ['Ice:Admin_Database_Form', ['mode' => 'new']]]]
+                    'main' => ['Ice:Admin_Block', ['model' => ['Ice:Admin_Database_Form', ['mode' => 'create']]]]
                 ]
             ]
         ],

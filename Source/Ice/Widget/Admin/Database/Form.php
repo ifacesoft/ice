@@ -126,7 +126,7 @@ class Admin_Database_Form extends Form
             case 'edit':
                 $this->button('edit', ['submit' => ['action' => '_Submit'], 'classes' => 'btn-primary']);
                 break;
-            case 'new':
+            case 'create':
                 $this->button('save', ['submit' => ['action' => '_Submit'], 'classes' => 'btn-success']);
                 break;
             default:
