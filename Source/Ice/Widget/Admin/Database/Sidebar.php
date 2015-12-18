@@ -35,6 +35,10 @@ class Admin_Database_Sidebar extends Nav
      */
     protected function build(array $input)
     {
+        if (!$input['schemeName']) {
+            return [];
+        }
+
         $this->addClasses('nav-sidebar');
 
         $module = Module::getInstance();
