@@ -1338,7 +1338,7 @@ class Query_Builder
      * @version 0.6
      * @since   0.0
      */
-    public function deleteQuery($pkValues = [], $dataSourceKey = null)
+    public function getDeleteQuery($pkValues = [], $dataSourceKey = null)
     {
         $this->queryType = Query_Builder::TYPE_DELETE;
         $this->sqlParts[Query_Builder::PART_WHERE]['_delete'] = $this->modelClass;

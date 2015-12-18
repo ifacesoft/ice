@@ -303,7 +303,7 @@ class Orm_Sync_DataSource extends Action
             unlink($modelFilePath);
         }
 
-        Scheme::createQueryBuilder()->deleteQuery($tableName, $dataSourceKey)->getQueryResult();
+        Scheme::createQueryBuilder()->getDeleteQuery($tableName, $dataSourceKey)->getQueryResult();
 
         $this->getLogger()->info(['Model {$0} deleted', $sourceTables[$tableName]['modelClass']]);
     }

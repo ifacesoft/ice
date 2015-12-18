@@ -1352,7 +1352,7 @@ abstract class Model
     {
         $this->beforeDelete();
 
-        Query::getBuilder(get_class($this))->deleteQuery($this->getPk(), $dataSourceKey)->getQueryResult();
+        Query::getBuilder(get_class($this))->getDeleteQuery($this->getPk(), $dataSourceKey)->getQueryResult();
 
         $this->afterDelete();
 

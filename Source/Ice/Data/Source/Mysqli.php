@@ -521,7 +521,7 @@ class Mysqli extends Data_Source
                 if (count($data['references'])) {
                     foreach ($data['references'] as $tableName1 => $reference1) {
                         foreach ($data['references'] as $tableName2 => $reference2) {
-                            if ($tableName1 != $tableName2) {
+                            if ($tableName1 != $tableName2 && !strpos($table['TABLE_NAME'], '_log_')) { // dirty hack
                                 $tables[$tableName1]['relations']['manyToMany'][$tableName2] = $table['TABLE_NAME'];
                             }
                         }

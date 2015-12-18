@@ -2,6 +2,7 @@
 
 namespace Ice\Widget;
 
+use Ice\Action\Render;
 use Ice\Core\Config;
 use Ice\Core\Data_Scheme;
 use Ice\Core\Model;
@@ -45,6 +46,12 @@ class Admin_Database_Table extends Table
 
         $tableRows = $this->getWidget(['_Rows', [], $modelClass]);
 
+        $pagination = $this->getWidget(Pagination::getClass())
+            ->setEvent([
+                'action' => Render::class,
+                'data' => ['widgets' => ['admin_database_roll' => __CLASS__]]
+            ]);
+
         $this
             ->a(
                 'add',
@@ -60,7 +67,7 @@ class Admin_Database_Table extends Table
             )
             ->widget('trth', ['widget' => $tableRows], 'Ice\Widget\Table\Trth')
             ->widget('rows', ['widget' => $tableRows])
-            ->widget('pagination', ['widget' => $this->getWidget(Pagination::getClass())]);
+            ->widget('pagination', ['widget' => $pagination]);
 
         $modelClass::createQueryBuilder()
             ->attachWidgets($this)
@@ -105,7 +112,11 @@ class Admin_Database_Table extends Table
                 $fieldName = $columnFieldMap[$columnName];
 
                 if (isset($params[$fieldName]) && $params[$fieldName] !== '') {
-                    $queryBuilder->like($fieldName, '%' . $params[$fieldName] . '%');
+                    if (is_numeric($params[$fieldName])) {
+                        $queryBuilder->eq([$fieldName => $params[$fieldName]]);
+                    } else {
+                        $queryBuilder->like($fieldName, '%' . $params[$fieldName] . '%');
+                    }
                 }
 
                 continue;

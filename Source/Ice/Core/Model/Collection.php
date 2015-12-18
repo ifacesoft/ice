@@ -307,7 +307,7 @@ class Model_Collection implements IteratorAggregate, Countable
         $pkFieldNames = $modelClass::getScheme()->getPkFieldNames();
 
         $this->rows = Query::getBuilder($modelClass)
-            ->deleteQuery(Arrays::column($this->getRows(), reset($pkFieldNames)), $dataSourceKey)
+            ->getDeleteQuery(Arrays::column($this->getRows(), reset($pkFieldNames)), $dataSourceKey)
             ->getRows();
     }
 

@@ -12,6 +12,7 @@ use Ice\Core\Debuger;
 use Ice\Core\Logger;
 use Ice\Core\Model;
 use Ice\Core\Module;
+use Ice\Core\Router;
 use Ice\Exception\Error;
 use Ice\Widget\Admin_Database_Form;
 
@@ -96,21 +97,27 @@ class Admin_Database_Form_Submit extends Widget_Event
 
                         foreach ($keys as $pk) {
                             $data[] = [
-                                  strtolower($modelClass::getClassName()) => $model,
-                                strtolower($manyModelClass::getClassName()) => $manyModelClass::getModel($pk, '/pk')
+                                strtolower($modelClass::getClassName()) . '__fk' => $model->getPkValue(),
+                                strtolower($manyModelClass::getClassName()) . '__fk' => $pk
                             ];
                         }
 
-//                        $linkModelClass::createQueryBuilder()
-//                            ->getInsertQuery($data)
-//                            ->getQueryResult();
+                        $linkModelClass::createQueryBuilder()
+                            ->eq([strtolower($modelClass::getClassName()) . '__fk' => $model->getPkValue()])
+                            ->getDeleteQuery()
+                            ->getQueryResult();
+
+                        $linkModelClass::createQueryBuilder()
+                            ->getInsertQuery($data)
+                            ->getQueryResult();
                     }
                 }
             }
 
             return [
                 'success' => $form->getLogger()->info('Запись сохранена', Logger::SUCCESS),
-//                'redirect' => ['ice_admin_database_table' , ['schemeName' => $form->getValue('schemeName'), 'tableName' => $form->getValue('tableName')]]
+                'redirect' => Router::getInstance()->getUrl('ice_admin_database_table' , ['schemeName' => $form->getValue('schemeName'), 'tableName' => $form->getValue('tableName')]),
+                'timeout' => 2
             ];
         } catch (\Exception $e) {
             return [
