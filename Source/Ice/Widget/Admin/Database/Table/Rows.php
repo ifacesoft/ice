@@ -87,13 +87,13 @@ class Admin_Database_Table_Rows extends Table_Rows
         foreach ($table->gets('columns') as $columnName => $column) {
             $column = $table->getConfig('columns/' . $columnName);
 
-            if (!$column->gets('roles', false)) {
+            if (!$column->gets('showRoles', false)) {
                 continue;
             }
 
             $this->span(
                 $columnName,
-                array_merge(['access' => ['roles' => $column->gets('roles', false)]], $column->gets('options', false))
+                array_merge(['access' => ['roles' => $column->gets('showRoles', false)]], $column->gets('options', false))
             );
         }
     }
