@@ -117,7 +117,7 @@ class Request extends Data_Provider
      * Get data from data provider by key
      *
      * @param  string $key
-     * @return mixed
+     * @return array|mixed|null
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *

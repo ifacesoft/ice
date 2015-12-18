@@ -10,7 +10,9 @@
 namespace Ice\Action;
 
 use Ice\Core\Action;
+use Ice\Core\Debuger;
 use Ice\Core\Widget;
+use Ice\Data\Provider\Request;
 use Ice\Helper\Access;
 
 abstract class Widget_Event extends Render
@@ -33,9 +35,9 @@ abstract class Widget_Event extends Render
 
             Access::check($widget->getActionAccess(get_class($this)));
 
+            $widget->bind(Request::getInstance()->get(array_keys($widget->getParts())));
+
             $input['widget'] = $widget;
-
-
         }
 
         $this->setInput($input);

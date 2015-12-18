@@ -31,7 +31,7 @@ class Admin_Database_Form extends Form
                 'schemeName' => ['providers' => 'router', 'validators' => 'Ice:Not_Null'],
                 'tableName' => ['providers' => 'router', 'validators' => 'Ice:Not_Empty'],
                 'pk' => ['providers' => 'router'],
-                'mode' => ['provider' => 'default']
+                'mode' => ['provider' => 'default', 'default' => 'create']
             ],
             'output' => [],
         ];
@@ -42,6 +42,9 @@ class Admin_Database_Form extends Form
         $module = Module::getInstance();
 
         $currentDataSourceKey = $module->getDataSourceKeys()[$input['schemeName']];
+
+        /** @var Model $modelClass */
+        $modelClass = Module::getInstance()->getModelClass($input['tableName'], $currentDataSourceKey);
 
         $config = Config::getInstance(Admin_Database_Database::getClass());
 
@@ -56,9 +59,6 @@ class Admin_Database_Form extends Form
         if (!$scheme->gets('roles', false) || !$security->check($scheme->gets('roles', false))) {
             throw new Http_Forbidden('Access denied: scheme not allowed');
         }
-
-        /** @var Model $modelClass */
-        $modelClass = Module::getInstance()->getModelClass($input['tableName'], $currentDataSourceKey);
 
         $this->setResource($modelClass);
 

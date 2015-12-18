@@ -10,8 +10,12 @@ namespace Ice\Action;
 
 use Ice\Core\Debuger;
 use Ice\Core\Logger;
+use Ice\Core\Model;
+use Ice\Core\Module;
+use Ice\Exception\Error;
+use Ice\Widget\Admin_Database_Form;
 
-class Admin_Database_Form_Submit  extends Widget_Event
+class Admin_Database_Form_Submit extends Widget_Event
 {
     /**
      * Action config
@@ -28,7 +32,6 @@ class Admin_Database_Form_Submit  extends Widget_Event
             'input' => [
                 'widget' => ['default' => null, 'providers' => 'request'],
                 'widgets' => ['default' => [], 'providers' => ['default', 'request']],
-                'modelCLass' => ['providers' => 'request']
             ],
             'output' => []
         ];
@@ -41,13 +44,51 @@ class Admin_Database_Form_Submit  extends Widget_Event
      */
     public function run(array $input)
     {
-        $values = $input['widget']->getValues();
+        /** @var Admin_Database_Form $form */
+        $form = $input['widget'];
 
-        Debuger::dump($input);
+        try {
+            $form->validate();
 
-        return [
-            'success' => $this->getLogger()->info('Запись сохранена', Logger::SUCCESS),
-            'widgets' => parent::run($input)['widgets']
-        ];
+            $module = Module::getInstance();
+
+            $currentDataSourceKey = $module->getDataSourceKeys()[$form->getValue('schemeName')];
+
+            /** @var Model $modelClass */
+            $modelClass = Module::getInstance()->getModelClass($form->getValue('tableName'), $currentDataSourceKey);
+
+            $pkFieldName = $modelClass::getPkFieldName();
+
+            $model = $modelClass::create();
+
+            $model->set($pkFieldName, $form->getValue($pkFieldName));
+
+            $manyToMany = [];
+
+            foreach ($form->getParts() as $partName => $part) {
+                $value = $form->getValue($partName);
+
+                if ($value === null) {
+                    continue;
+                }
+
+                if (isset($part['options']['manyToMany'])) {
+                    $manyToMany[$partName] = $value;
+                } else {
+                    $model->set($partName, $value);
+                }
+            }
+
+            $model->save();
+
+            return [
+                'success' => $form->getLogger()->info('Запись сохранена', Logger::SUCCESS),
+//                'redirect' => ['ice_admin_database_table' , ['schemeName' => $form->getValue('schemeName'), 'tableName' => $form->getValue('tableName')]]
+            ];
+        } catch (\Exception $e) {
+            return [
+                'error' => $this->getLogger()->info(['Сохранение не удалось: {$0}', $e->getMessage()], Logger::DANGER)
+            ];
+        }
     }
 }

@@ -112,9 +112,7 @@ class Admin_Database_Table extends Table
             }
 
             if ($column->get('options/oneToMany', false)) {
-                $fieldName = $column->get('options/name');
-
-
+                $fieldName = $columnName;
 
                 if (isset($params[$fieldName]) && $params[$fieldName] !== '0') {
                     $queryBuilder->eq([$fieldName => $params[$fieldName]]);
