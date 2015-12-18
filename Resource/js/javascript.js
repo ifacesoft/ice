@@ -111,7 +111,22 @@ var Ice = {
 
     objectMerge: function (obj1, obj2) {
         return $.extend({}, obj1, obj2);
-    }
+    },
+
+    //serialize: function($form) {
+    //    /* Get input values from form */
+    //    var values = $form.serializeArray();
+    //
+    //    /* Because serializeArray() ignores unset checkboxes and radio buttons: */
+    //    values = values.concat(
+    //        jQuery('#' + $form.attr('id') + ' input[type=checkbox]:not(:checked)').map(
+    //            function() {
+    //                return {"name": this.name, "value": this.value}
+    //            }).get()
+    //    );
+    //
+    //    return {"name": this.name, "value": 'off' }
+    //}
 };
 
 Date.prototype.yyyymmdd = function () {

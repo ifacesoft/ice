@@ -81,6 +81,33 @@ class Admin_Database_Form_Submit extends Widget_Event
 
             $model->save();
 
+            $modelScheme = $modelClass::getScheme()->gets('relations/manyToMany');
+
+            Debuger::dump($modelScheme);
+
+            foreach ($manyToMany as $pkFieldName => $keys) {
+                /**
+                 * @var Model $manyModelClass
+                 * @var Model $linkModelClass
+                 */
+                foreach ($modelClass::getScheme()->gets('relations/manyToMany') as $manyModelClass => $linkModelClass) {
+                    if ($manyModelClass::getPkFieldName() == $pkFieldName) {
+                        $data = [];
+
+                        foreach ($keys as $pk) {
+                            $data[] = [
+                                  strtolower($modelClass::getClassName()) => $model,
+                                strtolower($manyModelClass::getClassName()) => $manyModelClass::getModel($pk, '/pk')
+                            ];
+                        }
+
+//                        $linkModelClass::createQueryBuilder()
+//                            ->getInsertQuery($data)
+//                            ->getQueryResult();
+                    }
+                }
+            }
+
             return [
                 'success' => $form->getLogger()->info('Запись сохранена', Logger::SUCCESS),
 //                'redirect' => ['ice_admin_database_table' , ['schemeName' => $form->getValue('schemeName'), 'tableName' => $form->getValue('tableName')]]

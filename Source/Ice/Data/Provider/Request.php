@@ -137,7 +137,7 @@ class Request extends Data_Provider
         $params = [];
 
         foreach ($key as $name) {
-            $params[$name] = empty($_REQUEST[$name]) ? null : $_REQUEST[$name];
+            $params[$name] = isset($_REQUEST[$name]) ? $_REQUEST[$name] : null;
         }
 
         return $params;
