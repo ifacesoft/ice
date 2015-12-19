@@ -97,7 +97,7 @@ class Country extends Model
 		    'relations' => [
 		        'oneToMany' => [],
 		        'manyToOne' => [
-		            'Ice\Model\City' => 'country__fk',
+		            'Ebs\Model\Ice_City' => 'country__fk',
 		        ],
 		        'manyToMany' => [],
 		    ],
