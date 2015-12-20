@@ -1355,11 +1355,19 @@ abstract class Widget extends Container
         $part['title'] = isset($part['options']['title']) ? $part['options']['title'] : $partName;
         unset($part['options']['title']);
 
+        $value = isset($values[$part['value']]) ? $values[$part['value']] : 0;
+        $valueFieldName = $part['value'];
+
         if (isset($part['options']['oneToMany']) && empty($part['options']['rows'])) {
             $fieldName = $part['options']['oneToMany']::getPkFieldName();
             $part['options']['rows'] =
                 [0 => [$part['value'] => 0, $part['title'] => '']] +
                 $part['options']['oneToMany']::getSelectQuery([$fieldName => $part['value'], $part['title']])->getRows($part['title']);
+
+            $oneToMany = array_filter($part['options']['rows'], function($item) use ($value, $valueFieldName) {return $item[$valueFieldName] == $value;});
+            $one = $oneToMany ? reset($oneToMany) : [$part['title'] = '&nbsp;'];
+
+            $part['oneToMany'] = $one[$part['title']];
         }
 
         if (isset($part['options']['manyToOne']) && empty($part['options']['rows'])) {
@@ -1384,17 +1392,14 @@ abstract class Widget extends Container
             }
 
             $part['options']['rows'] = $modelClass::createQueryBuilder()
-                ->left($linkModelClass, [$fkFieldName => $part['value']], $linkModelClass::getClassName() . '.' . $linkFieldName . '=' . $modelClass::getClassName() . '.' . $modelClass::getPkColumnName() . ' AND ' . $linkModelClass::getClassName() . '.' . $linkFkFieldName . '=' . (isset($values[$part['value']]) ? $values[$part['value']] : 0))
+                ->left($linkModelClass, [$fkFieldName => $part['value']], $linkModelClass::getClassName() . '.' . $linkFieldName . '=' . $modelClass::getClassName() . '.' . $modelClass::getPkColumnName() . ' AND ' . $linkModelClass::getClassName() . '.' . $linkFkFieldName . '=' . $value)
                 ->group()
                 ->getSelectQuery($part['title'])
                 ->getRows();
 
-//            $values[$part['value']] = $linkModelClass::createQueryBuilder()
-//                ->inner($modelClass, $selectFieldName, $modelClass::getClassName() . '.' . $modelClass::getPkColumnName() . '=' . $linkModelClass::getClassName() . '.' . $linkFieldName . ' AND ' . $linkModelClass::getClassName() . '.' . $fieldName . '=' . $values[$part['name']])
-//                ->group($fieldName, $linkModelClass)
-//                ->func(['GROUP_CONCAT' => $part['value']], '"",' . $selectFieldName)
-//                ->getSelectQuery('/pk')
-//                ->getValue($selectFieldName);
+            $manyToMany = array_filter($part['options']['rows'], function($item) use ($value, $valueFieldName) {return $item[$valueFieldName] == $value;});
+
+            $part['manyToMany'] = implode(', ', array_column($manyToMany, $part['title']));
         }
 
         if (isset($part['options']['oneToManyToMany'])) {

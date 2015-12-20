@@ -5,4 +5,16 @@
     <?php if (isset($options['onclick'])) : ?>onclick="<?= $options['onclick'] ?>" data-action='<?= $options['dataAction'] ?>'<?php endif; ?>
     data-name="<?= $name ?>"
     data-params='<?= $dataParams ?>'
-    data-for="<?= $widgetId ?>"><?php if (isset($params[$name])) : ?><?= $params[$name] ?><?php else : ?><?= $label ?><?php endif; ?></span>
+    data-for="<?= $widgetId ?>">
+    <?php if (isset($params[$name])) : ?>
+        <?php if (isset($oneToMany)) : ?>
+            <?= $oneToMany ?>
+        <?php elseif (isset($manyToMany)) : ?>
+            <?= $manyToMany ?>
+        <?php else : ?>
+            <?= $params[$name] ?>
+        <?php endif; ?>
+    <?php else : ?>
+        &nbsp;
+    <?php endif; ?>
+</span>
