@@ -31,7 +31,7 @@ return [
         'logDir' => 'Var/log/',
         'cacheDir' => 'Var/cache/',
         'uploadDir' => 'Var/upload/',
-        'uploadTempDir' => 'Var/upload/temp/',
+        'tempDir' => 'Var/temp/',
         'compiledResourceDir' => 'Web/resource/',
         'downloadDir' => 'Web/download/',
         'ignorePatterns' => [],

@@ -82,14 +82,14 @@ class Form extends Widget
         /** @var Form $formClass */
         $formClass = get_class($this);
 
-        $uploadTempDir = Module::getInstance()->get(Module::UPLOAD_TEMP_DIR) . '/' . $formClass::getClassName();
+        $tempDir = Module::getInstance()->get(Module::TEMP_DIR) . '/' . $formClass::getClassName();
 
         foreach (array_keys($this->getParts($this->getFilterParts())) as $key) {
             if (isset($params[$key])) {
                 continue;
             }
 
-            $path = implode('/', [$uploadTempDir, $key, $this->getToken()]);
+            $path = implode('/', [$tempDir, $key, $this->getToken()]);
 
             if (file_exists($path)) {
                 $this->bind([$key => Directory::getFileNames($path)]);
