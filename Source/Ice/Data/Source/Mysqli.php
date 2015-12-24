@@ -966,6 +966,8 @@ class Mysqli extends Data_Source
 
         $result = $this->getConnection()->query($query);
 
+        Debuger::dump($this->getConnection()->error);
+
         if ($result === false) {
             $errno = $this->getConnection()->errno;
             $error = $this->getConnection()->error;
@@ -982,7 +984,7 @@ class Mysqli extends Data_Source
 
         if (is_object($result)) {
             if ($result->num_rows) {
-                $result->fetch_all(MYSQLI_ASSOC);
+                $data[Query_Result::ROWS] = $result->fetch_all(MYSQLI_ASSOC);
             }
 
             $result->free_result();
