@@ -1,4 +1,4 @@
-<?php extract(reset($result)); ?>
+<?php $parts = reset($result); ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,10 +10,10 @@
     <meta name="author" content="">
     <link rel="icon" href="favicon.ico">
 
-    <title><?= $widget->renderPart($title) ?></title>
+    <title><?= $widget->renderPart($parts['title']) ?></title>
 
-    <?= $widget->renderPart($staticResources) ?>
-    <?= $widget->renderPart($dynamicResources) ?>
+    <?= $widget->renderPart($parts['staticResources']) ?>
+    <?= $widget->renderPart($parts['dynamicResources']) ?>
 
     <?php /*
     <!--[if lt IE 7]>
@@ -44,19 +44,19 @@
     </div>
 </div>
 <div class="Layout_Admin">
-    <?= $widget->renderPart($navigation) ?>
+    <?= $widget->renderPart($parts['navigation']) ?>
 
     <div class="container-fluid">
         <div class="row">
             <div class="col-sm-3 col-md-2 sidebar">
-                <?= $widget->renderPart($sidebar) ?>
+                <?= $widget->renderPart($parts['sidebar']) ?>
             </div>
             <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-                <?= $widget->renderPart($main) ?>
+                <?= $widget->renderPart($parts['main']) ?>
             </div>
         </div>
     </div>
 </div>
-<?= $widget->renderPart($footerJs) ?>
+<?= $widget->renderPart($parts['footerJs']) ?>
 </body>
 </html>

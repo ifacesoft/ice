@@ -5,6 +5,7 @@ namespace Ice\Widget;
 use Ice\Action\Render;
 use Ice\Core\Config;
 use Ice\Core\Data_Scheme;
+use Ice\Core\Debuger;
 use Ice\Core\Model;
 use Ice\Core\Module;
 use Ice\Core\Query_Builder;
@@ -46,6 +47,7 @@ class Admin_Database_Table extends Table
 
         $tableRows = $this->getWidget(['_Rows', [], $modelClass]);
 
+        /** @var Pagination $pagination */
         $pagination = $this->getWidget(Pagination::getClass())
             ->setEvent([
                 'action' => Render::class,
@@ -69,10 +71,13 @@ class Admin_Database_Table extends Table
             ->widget('rows', ['widget' => $tableRows])
             ->widget('pagination', ['widget' => $pagination]);
 
+        ini_set('memory_limit', '4G');
+
         $modelClass::createQueryBuilder()
             ->attachWidgets($this)
             ->getSelectQuery('*')
-            ->getQueryResult();
+            ->getQueryResult()
+;
     }
 
     public function queryBuilderPart(Query_Builder $queryBuilder, array $input)

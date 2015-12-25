@@ -15,7 +15,6 @@ use Ice\Core\Loader;
 use Ice\Core\Logger;
 use Ice\Core\Module;
 use Ice\Core\Render;
-use Ice\Core\ViiewOld;
 use Ice\Helper\Emmet;
 
 /**

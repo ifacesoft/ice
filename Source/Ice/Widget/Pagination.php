@@ -411,4 +411,12 @@ class Pagination extends Widget
     {
         return [];
     }
+
+    public function getLimit() {
+        return $this->getValue('limit');
+    }
+
+    public function getPage() {
+        return $this->getValue('page');
+    }
 }

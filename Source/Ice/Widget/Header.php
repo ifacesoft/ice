@@ -21,15 +21,6 @@ class Header extends Widget
             'actions' => [],
             'input' => [],
             'output' => [],
-            'action' => [
-                //  'class' => 'Ice:Render',
-                //  'params' => [
-                //      'widgets' => [
-                ////        'Widget_id' => Widget::class
-                //      ]
-                //  ],
-                //  'method' => 'POST'
-            ]
         ];
     }
 

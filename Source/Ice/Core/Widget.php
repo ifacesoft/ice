@@ -506,6 +506,10 @@ abstract class Widget extends Container
 
                     if (!array_key_exists('label', $part['options'])) {
                         $part['label'] = Resource::create(Route::getClass())->get($routeName, $routeParams);
+
+                        $part['label'] = $part['label'] && $part['resource']
+                            ? $part['resource']->get($part['label'], $resourceParams)
+                            : $part['label'];
                     }
                 } else {
                     if ($part['resource'] && array_key_exists('placeholder', $part['options'])) {
@@ -1365,7 +1369,7 @@ abstract class Widget extends Container
                 $part['options']['oneToMany']::getSelectQuery([$fieldName => $part['value'], $part['title']])->getRows($part['title']);
 
             $oneToMany = array_filter($part['options']['rows'], function($item) use ($value, $valueFieldName) {return $item[$valueFieldName] == $value;});
-            $one = $oneToMany ? reset($oneToMany) : [$part['title'] = '&nbsp;'];
+            $one = $oneToMany ? reset($oneToMany) : [$part['title'] => ''];
 
             $part['oneToMany'] = $one[$part['title']];
         }

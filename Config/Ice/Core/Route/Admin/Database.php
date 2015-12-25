@@ -58,7 +58,7 @@ return [
         'parent' => 'ice_admin_database_table'
     ],
     'ice_admin_database_table' => [
-        'route' => '/{$schemeName}/{$tableName}',
+        'route' => '/{$schemeName}/{$tableName}/',
         'params' => [
             'schemeName' => '(\d+)',
             'tableName' => '(.*)'
