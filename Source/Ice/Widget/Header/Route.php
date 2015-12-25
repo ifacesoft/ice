@@ -12,7 +12,7 @@ class Header_Route extends Header
     protected static function config()
     {
         return [
-            'render' => ['template' => Header::class, 'class' => 'Ice:Php', 'layout' => null, 'resource' => null],
+            'render' => ['template' => Header::class, 'class' => 'Ice:Php', 'layout' => null, 'resource' => Header::class],
             'resource' => ['js' => null, 'css' => null, 'less' => null, 'img' => null],
             'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'Widget: Access denied!'],
             'cache' => ['ttl' => -1, 'count' => 1000],
@@ -21,15 +21,6 @@ class Header_Route extends Header
                 'routeParams' => ['providers' => 'router']
             ],
             'output' => [],
-            'action' => [
-                //  'class' => 'Ice:Render',
-                //  'params' => [
-                //      'widgets' => [
-                ////        'Widget_id' => Widget::class
-                //      ]
-                //  ],
-                //  'method' => 'POST'
-            ]
         ];
     }
 

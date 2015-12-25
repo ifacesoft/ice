@@ -966,8 +966,6 @@ class Mysqli extends Data_Source
 
         $result = $this->getConnection()->query($query);
 
-        Debuger::dump($this->getConnection()->error);
-
         if ($result === false) {
             $errno = $this->getConnection()->errno;
             $error = $this->getConnection()->error;

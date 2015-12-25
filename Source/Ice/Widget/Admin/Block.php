@@ -21,18 +21,6 @@ class Admin_Block extends Block_Render
                 'breadcrumbs' => 'Ice:Breadcrumbs_Route',
                 'header' => 'Ice:Header_Route'
             ],
-            'output' => [],
-            'action' => [
-                //  'class' => 'Ice:Render',
-                //  'params' => [
-                //      'widgets' => [
-                ////        'Widget_id' => Widget::class
-                //      ]
-                //  ],
-                //  'url' => true,
-                //  'method' => 'POST',
-                //  'callback' => null
-            ]
         ];
     }
 }
