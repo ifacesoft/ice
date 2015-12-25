@@ -980,6 +980,13 @@ abstract class Model
         return implode('__', $modelClass::getScheme()->getPkFieldNames());
     }
 
+    public static function getFkFieldName()
+    {
+        $modelClass = self::getClass();
+
+        return strtolower($modelClass::getClassName()) . '__fk';
+    }
+
     /**
      * Return primary key field value
      *

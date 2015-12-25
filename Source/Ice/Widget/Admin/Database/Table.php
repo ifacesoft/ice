@@ -72,6 +72,7 @@ class Admin_Database_Table extends Table
             ->widget('pagination', ['widget' => $pagination]);
 
         ini_set('memory_limit', '4G');
+        ini_set('max_execution_time', 60);
 
         $modelClass::createQueryBuilder()
             ->attachWidgets($this)
@@ -142,9 +143,13 @@ class Admin_Database_Table extends Table
                  */
                 foreach ($modelClass::getScheme()->gets('relations/manyToMany') as $manyModelClass => $linkModelClass) {
                     if ($manyModelClass::getPkFieldName() == $fieldName) {
-                        $queryBuilder
-                            ->inner($manyModelClass, '/pk')
-                            ->in('/pk', $params[$fieldName], $manyModelClass);
+                        $values = empty($params[$fieldName]) ? [] : array_filter($params[$fieldName]);
+
+                        if (!empty($values)) {
+                            $queryBuilder
+                                ->inner($manyModelClass, '/pk')
+                                ->in('/pk', $values, $manyModelClass);
+                        }
 
                         break;
                     }

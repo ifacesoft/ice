@@ -1395,7 +1395,8 @@ abstract class Widget extends Container
                 $values[$part['name']] = 0;
             }
 
-            $part['options']['rows'] = $modelClass::createQueryBuilder()
+            $part['options']['rows'] = [0 => [$part['value'] => null, $modelClass::getFkFieldName() => null, $modelClass::getPkFieldName() => 0, $part['title'] => '']] +
+                $modelClass::createQueryBuilder()
                 ->left($linkModelClass, [$fkFieldName => $part['value']], $linkModelClass::getClassName() . '.' . $linkFieldName . '=' . $modelClass::getClassName() . '.' . $modelClass::getPkColumnName() . ' AND ' . $linkModelClass::getClassName() . '.' . $linkFkFieldName . '=' . $value)
                 ->group()
                 ->getSelectQuery($part['title'])
