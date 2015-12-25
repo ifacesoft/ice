@@ -22,7 +22,7 @@ class Admin_Database_Table extends Table
     protected static function config()
     {
         return [
-            'render' => ['template' => Table::getClass(), 'class' => 'Ice:Php', 'layout' => null, 'resource' => Admin_Database_Database::getClass()],
+            'render' => ['template' => Table::getClass(), 'class' => 'Ice:Php', 'layout' => null, 'resource' => null],
             'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'Widget: Access denied!'],
             'resource' => ['js' => null, 'css' => null, 'less' => null, 'img' => null],
             'cache' => ['ttl' => -1, 'count' => 1000],
@@ -129,16 +129,29 @@ class Admin_Database_Table extends Table
 
             if ($column->get('options/oneToMany', false)) {
                 $fieldName = $columnName;
-
+//
                 if (isset($params[$fieldName]) && $params[$fieldName] !== '0') {
                     $queryBuilder->eq([$fieldName => $params[$fieldName]]);
                 }
-//            } else if ($column->get('options/manyToMany', false)) {
-//                $options['multiple'] = true;
-//
-//                $this->combobox($columnName, $options);
-//            } else {
-//                $this->text($columnName, $options);
+            } else if ($column->get('options/manyToMany', false)) {
+                $fieldName = $columnName;
+
+                /**
+                 * @var Model $manyModelClass
+                 * @var Model $linkModelClass
+                 */
+                foreach ($modelClass::getScheme()->gets('relations/manyToMany') as $manyModelClass => $linkModelClass) {
+                    if ($manyModelClass::getPkFieldName() == $fieldName) {
+                        $queryBuilder
+                            ->inner($manyModelClass, '/pk')
+                            ->in('/pk', $params[$fieldName], $manyModelClass);
+
+                        break;
+                    }
+                }
+
+            } else {
+//                $this->eq([$columnName => $params[$columnName]]);
             }
         }
     }

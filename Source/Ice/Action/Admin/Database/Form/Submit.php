@@ -82,10 +82,6 @@ class Admin_Database_Form_Submit extends Widget_Event
 
             $model->save();
 
-            $modelScheme = $modelClass::getScheme()->gets('relations/manyToMany');
-
-            Debuger::dump($modelScheme);
-
             foreach ($manyToMany as $pkFieldName => $keys) {
                 /**
                  * @var Model $manyModelClass

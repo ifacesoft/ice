@@ -2,8 +2,6 @@
 
 namespace Ice\Widget;
 
-use Ice\Widget\Table;
-
 class Admin_Table extends Table
 {
     protected function build(array $input)
