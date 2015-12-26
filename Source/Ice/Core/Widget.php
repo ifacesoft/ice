@@ -504,7 +504,7 @@ abstract class Widget extends Container
                         $part['options']['active'] = String::startsWith(Request::uri(), $part['options']['href']);
                     }
 
-                    if (!array_key_exists('label', $part['options'])) {
+                    if (!array_key_exists('label', $part['options']) && $routeName == $partName) {
                         $part['label'] = Resource::create(Route::getClass())->get($routeName, $routeParams);
 
                         $part['label'] = $part['label'] && $part['resource']
@@ -518,44 +518,42 @@ abstract class Widget extends Container
                 }
 
                 if (!isset($part['label'])) {
-                    if (isset($part['options']['label']) && array_key_exists($part['options']['label'], $values)) {
-                        $part['label'] = $values[$part['options']['label']];
-                    } else {
-                        $part['label'] = isset($part['options']['label']) ? $part['options']['label'] : $partName;
+                    if (isset($part['options']['template'])) {
+                        if ($part['options']['template'] === true) {
+                            $part['options']['template'] = $partName;
+                        }
 
-                        if ($part['label'] == $partName && isset($part['options']['template'])) {
-                            if ($part['options']['template'] !== true) {
-                                $part['label'] = $part['options']['template'];
-                            }
-                            unset($part['options']['template']);
+                        if ($part['resource']) {
+                            $part['options']['template'] = $part['resource']->get($part['options']['template'], $resourceParams);
+                        }
 
-                            if ($part['resource']) {
-                                $part['label'] = $part['resource']->get($part['label'], $resourceParams);
-                            }
-
-                            if ($render = strstr($part['label'], '/', true)) {
-                                $renderClass = Render::getClass($render);
-                                if (Loader::load($renderClass, false)) {
-                                    $part['label'] = substr($part['label'], strlen($render) + 1);
-                                } else {
-                                    $renderClass = Replace::getClass();
-                                }
+                        if ($render = strstr($part['options']['template'], '/', true)) {
+                            $renderClass = Render::getClass($render);
+                            if (Loader::load($renderClass, false)) {
+                                $part['options']['template'] = substr($part['options']['template'], strlen($render) + 1);
                             } else {
                                 $renderClass = Replace::getClass();
                             }
-
-                            $part['label'] =
-                                $renderClass::getInstance()->fetch(
-                                    $part['label'],
-                                    $part['params'],
-                                    null,
-                                    Render::TEMPLATE_TYPE_STRING
-                                );
-
                         } else {
-                            $part['label'] = $part['label'] && $part['resource']
-                                ? $part['resource']->get($part['label'], $resourceParams)
-                                : $part['label'];
+                            $renderClass = Replace::getClass();
+                        }
+
+                        $part['label'] =
+                            $renderClass::getInstance()->fetch(
+                                $part['options']['template'],
+                                $part['params'],
+                                null,
+                                Render::TEMPLATE_TYPE_STRING
+                            );
+
+                        unset($part['options']['template']);
+                    } else {
+                        $part['label'] = isset($part['options']['label']) ? $part['options']['label'] : $partName;
+
+                        unset($part['options']['label']);
+
+                        if ($part['label'] && $part['resource']) {
+                            $part['label'] = $part['resource']->get($part['label'], $resourceParams);
                         }
                     }
                 }
@@ -1418,13 +1416,9 @@ abstract class Widget extends Container
 
         $part['params'] = $part['value'] == $partName
             ? [$part['name'] => array_key_exists($part['value'], $values) ? $values[$part['value']] : null]
-            : [$part['name'] => array_key_exists($part['value'], $values)
-                ? $values[$part['value']]
-//                : (
-//                array_key_exists($part['name'], $values)
-//                    ? $values[$part['name']]
-                    : $part['value']
-//                )
+            : [
+                $part['name'] => array_key_exists($part['value'], $values) ? $values[$part['value']]: $part['value'],
+                $partName => array_key_exists($partName, $values) ? $values[$partName] : null
             ];
 
         if (isset($part['options']['dateFormat'])) {

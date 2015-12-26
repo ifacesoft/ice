@@ -205,9 +205,8 @@ class Console
 
         ob_start();
 
-        if (!Request::isCli()) {
-            Logger::getInstance(__CLASS__)->info($commandString, Logger::INFO, false);
-        }
+        Logger::getInstance(__CLASS__)->info($commandString, Logger::INFO, false);
+
         passthru($commandString);
 
         $var = ob_get_contents();
