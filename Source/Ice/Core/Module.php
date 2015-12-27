@@ -35,6 +35,7 @@ class Module extends Config
     const LOG_DIR = 'logDir';
     const CACHE_DIR = 'cacheDir';
     const UPLOAD_DIR = 'uploadDir';
+    const DATA_DIR = 'dataDir';
     const TEMP_DIR = 'tempDir';
     const DOWNLOAD_DIR = 'downloadDir';
     const COMPILED_RESOURCE_DIR = 'compiledResourceDir';
@@ -48,6 +49,7 @@ class Module extends Config
             Module::LOG_DIR => 'Var/log/',
             Module::CACHE_DIR => 'Var/cache/',
             Module::UPLOAD_DIR => 'Var/upload/',
+            Module::DATA_DIR => 'Var/temp/',
             Module::TEMP_DIR => 'Var/temp/',
             Module::COMPILED_RESOURCE_DIR => 'Web/resource/',
             Module::DOWNLOAD_DIR => 'Web/download/',
@@ -271,6 +273,7 @@ class Module extends Config
                     MODULE::LOG_DIR,
                     MODULE::CACHE_DIR,
                     MODULE::UPLOAD_DIR,
+                    MODULE::DATA_DIR,
                     MODULE::TEMP_DIR,
                     MODULE::DOWNLOAD_DIR,
                     MODULE::COMPILED_RESOURCE_DIR
