@@ -4,7 +4,6 @@ namespace Ice;
 
 use Composer\Config;
 use Composer\Script\Event;
-use Doctrine\Common\Util\Debug;
 use Ice\Action\Install;
 use Ice\Action\Upgrade;
 use Ice\Core\Action;
