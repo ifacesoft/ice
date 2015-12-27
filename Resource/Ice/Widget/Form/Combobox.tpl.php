@@ -22,7 +22,7 @@
         >
             <?php foreach ($options['rows'] as $option) : ?>
                 <option value="<?= $option[$name] ?>"
-                    <?php if ($params[$name] === $option[$value]) : ?> selected="selected"<?php endif; ?>
+                    <?php if ($params[$name] == $option[$value]) : ?> selected="selected"<?php endif; ?>
                 ><?= \Ice\Helper\String::truncate($option[$title], isset($options['truncate']) ? $options['truncate'] : 100) ?></option>
             <?php endforeach; ?>
         </select>

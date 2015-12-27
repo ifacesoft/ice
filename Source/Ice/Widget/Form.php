@@ -71,6 +71,14 @@ class Form extends Widget
     }
 
     /**
+     * @param string $action
+     */
+    public function setAction($action)
+    {
+        $this->action = $action;
+    }
+
+    /**
      * Init widget parts and other
      * @param array $input
      * @return array|void

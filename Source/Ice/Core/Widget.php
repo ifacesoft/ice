@@ -1163,7 +1163,7 @@ abstract class Widget extends Container
     /**
      * @param string $widgetClass
      * @param string $postfixKey
-     * @return Widget
+     * @return $this
      */
     public function getWidget($widgetClass, $postfixKey = '')
     {
