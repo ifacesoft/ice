@@ -222,6 +222,7 @@ abstract class Widget extends Container
         }
 
         if ($resource === true || (is_array($resource) && !isset($resource['class']))) {
+
             $resource = $class;
         }
 
@@ -239,6 +240,10 @@ abstract class Widget extends Container
      */
     public function getResource($resource = null, $force = false)
     {
+        if ($resource) {
+            return Resource::create($resource);
+        }
+
         /** @var Widget $class */
         $class = get_called_class();
 
@@ -449,13 +454,17 @@ abstract class Widget extends Container
                 $resourceParams = [];
 
                 $part['resource'] = $this->getResource();
+//
+//                if ($partName == 'period') {
+//                    Debuger::dump($part['resource']);die();
+//                }
 
                 if (array_key_exists('resource', $part['options'])) {
                     if (empty($part['options']['resource'])) {
                         $part['resource'] = null;
                     } else {
                         if (isset($part['options']['resource'])) {
-                            $part['resource'] = $this->getResource($part['options']['resource'], true);
+                            $part['resource'] = $this->getResource($part['options']['resource']);
 
                             if (is_array($part['options']['resource'])) {
                                 if (isset($part['options']['resource'][0])) {

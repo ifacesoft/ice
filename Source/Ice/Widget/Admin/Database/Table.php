@@ -49,6 +49,7 @@ class Admin_Database_Table extends Table
 
         /** @var Pagination $pagination */
         $pagination = $this->getWidget(Pagination::getClass())
+            ->bind(['limit' => 10])
             ->setEvent([
                 'action' => Render::class,
                 'data' => ['widgets' => ['admin_database_roll' => __CLASS__]]
@@ -72,7 +73,7 @@ class Admin_Database_Table extends Table
             ->widget('pagination', ['widget' => $pagination]);
 
         ini_set('memory_limit', '4G');
-        ini_set('max_execution_time', 60);
+        ini_set('max_execution_time', 120);
 
         $modelClass::createQueryBuilder()
             ->attachWidgets($this)

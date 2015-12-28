@@ -80,6 +80,7 @@ class Admin_Database_Table_Rows extends Table_Rows
             [
                 'route' => 'ice_admin_database_row',
                 'name' => 'pk',
+                'label' => 'pk',
                 'params' => $input
             ]
         );
