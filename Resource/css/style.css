@@ -32,3 +32,7 @@ hr.hrline {
     border-bottom: 1px dashed;
     cursor: pointer;
 }
+
+.form-horizontal .checkbox .control-label {
+    text-align: left;
+}

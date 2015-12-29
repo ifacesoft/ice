@@ -493,11 +493,9 @@ class Sql extends Query_Translator
             $fieldColumnMap = $modelClass::getScheme()->getFieldColumnMap();
 
             foreach ($fieldNames as $fieldName => $ascending) {
-                if (isset($fieldColumnMap[$fieldName])) {
-                    $fieldName = $fieldColumnMap[$fieldName];
-                }
-
-                $orders[] = '`' . $tableAlias . '`.`' . $fieldName . '` ' . $ascending;
+                $orders[] = isset($fieldColumnMap[$fieldName])
+                    ? '`' . $tableAlias . '`.`' . $fieldColumnMap[$fieldName] . '` ' . $ascending
+                    : '`' . trim($fieldName, '`') . '` ' . $ascending;
             }
         }
 

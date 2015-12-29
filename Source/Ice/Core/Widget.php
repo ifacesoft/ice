@@ -449,7 +449,6 @@ abstract class Widget extends Container
                     $part['sheet'] = $data['sheet'];
                 }
 
-                $this->partParams($partName, $part, $values);
 
                 $resourceParams = [];
 
@@ -488,6 +487,8 @@ abstract class Widget extends Container
                         }
                     }
                 }
+
+                $this->partParams($partName, $part, $values);
 
                 if (!empty($part['options']['route'])) {
                     if ($part['options']['route'] === true) {
@@ -1375,7 +1376,9 @@ abstract class Widget extends Container
                 [0 => [$part['value'] => 0, $part['title'] => '']] +
                 $part['options']['oneToMany']::getSelectQuery([$fieldName => $part['value'], $part['title']])->getRows($part['title']);
 
-            $oneToMany = array_filter($part['options']['rows'], function($item) use ($value, $valueFieldName) {return $item[$valueFieldName] == $value;});
+            $oneToMany = array_filter($part['options']['rows'], function ($item) use ($value, $valueFieldName) {
+                return $item[$valueFieldName] == $value;
+            });
             $one = $oneToMany ? reset($oneToMany) : [$part['title'] => ''];
 
             $part['oneToMany'] = $one[$part['title']];
@@ -1404,12 +1407,14 @@ abstract class Widget extends Container
 
             $part['options']['rows'] = [0 => [$part['value'] => null, $modelClass::getFkFieldName() => null, $modelClass::getPkFieldName() => 0, $part['title'] => '']] +
                 $modelClass::createQueryBuilder()
-                ->left($linkModelClass, [$fkFieldName => $part['value']], $linkModelClass::getClassName() . '.' . $linkFieldName . '=' . $modelClass::getClassName() . '.' . $modelClass::getPkColumnName() . ' AND ' . $linkModelClass::getClassName() . '.' . $linkFkFieldName . '=' . $value)
-                ->group()
-                ->getSelectQuery($part['title'])
-                ->getRows();
+                    ->left($linkModelClass, [$fkFieldName => $part['value']], $linkModelClass::getClassName() . '.' . $linkFieldName . '=' . $modelClass::getClassName() . '.' . $modelClass::getPkColumnName() . ' AND ' . $linkModelClass::getClassName() . '.' . $linkFkFieldName . '=' . $value)
+                    ->group()
+                    ->getSelectQuery($part['title'])
+                    ->getRows();
 
-            $manyToMany = array_filter($part['options']['rows'], function($item) use ($value, $valueFieldName) {return $item[$valueFieldName] == $value;});
+            $manyToMany = array_filter($part['options']['rows'], function ($item) use ($value, $valueFieldName) {
+                return $item[$valueFieldName] == $value;
+            });
 
             $part['manyToMany'] = implode(', ', array_column($manyToMany, $part['title']));
         }
@@ -1426,13 +1431,44 @@ abstract class Widget extends Container
         $part['params'] = $part['value'] == $partName
             ? [$part['name'] => array_key_exists($part['value'], $values) ? $values[$part['value']] : null]
             : [
-                $part['name'] => array_key_exists($part['value'], $values) ? $values[$part['value']]: $part['value'],
+                $part['name'] => array_key_exists($part['value'], $values) ? $values[$part['value']] : $part['value'],
                 $partName => array_key_exists($partName, $values) ? $values[$partName] : null
             ];
 
         if (isset($part['options']['dateFormat'])) {
             $part['params'][$part['name']] = date($part['options']['dateFormat'], strtotime($part['params'][$part['name']]));
             unset($part['options']['dateFormat']);
+        }
+
+        if (isset($part['options']['valueTemplate'])) {
+            if ($part['options']['valueTemplate'] === true) {
+                $part['options']['valueTemplate'] = $partName;
+            }
+
+            if ($part['resource']) {
+                $part['options']['valueTemplate'] = $part['resource']->get($part['options']['valueTemplate'], $part['params']);
+            }
+
+            if ($render = strstr($part['options']['valueTemplate'], '/', true)) {
+                $renderClass = Render::getClass($render);
+                if (Loader::load($renderClass, false)) {
+                    $part['options']['valueTemplate'] = substr($part['options']['valueTemplate'], strlen($render) + 1);
+                } else {
+                    $renderClass = Replace::getClass();
+                }
+            } else {
+                $renderClass = Replace::getClass();
+            }
+
+            $part['params'][$part['name']] =
+                $renderClass::getInstance()->fetch(
+                    $part['options']['valueTemplate'],
+                    $part['params'],
+                    null,
+                    Render::TEMPLATE_TYPE_STRING
+                );
+
+            unset($part['options']['valueTemplate']);
         }
 
         if (isset($part['options']['params'])) {

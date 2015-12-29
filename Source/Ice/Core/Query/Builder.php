@@ -1976,7 +1976,7 @@ class Query_Builder
      * @param $funcName
      * @param argumentString
      * @param array $modelTableData
-     * @return Query_Builder
+     * @return $this
      */
     public function func($funcName, $argumentString, $modelTableData = [])
     {
