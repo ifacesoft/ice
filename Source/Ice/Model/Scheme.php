@@ -21,7 +21,7 @@ class Scheme extends Model
     protected static function config()
     {
         return [
-		    'dataSourceKey' => 'Ice\Data\Source\Mysqli/default.binardi',
+		    'dataSourceKey' => 'Ice\Data\Source\Mysqli/default.ebs_text',
 		    'scheme' => [
 		        'tableName' => 'ice_scheme',
 		        'engine' => 'InnoDB',
@@ -229,7 +229,7 @@ class Scheme extends Model
 		        'manyToOne' => [],
 		        'manyToMany' => [],
 		    ],
-		    'revision' => '12100935_lik',
+		    'revision' => '12290952_bmy',
 		];
     }
 }
