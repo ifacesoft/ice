@@ -6,4 +6,4 @@
    <?php if (!empty($options['target'])) : ?>target="<?= $options['target'] ?>"<?php endif; ?>
    data-name="<?= $name ?>"
    data-params='<?= $dataParams ?>'
-   data-for="<?= $widgetId ?>"><?php if (isset($params[$label])) : ?><?= $params[$label] ?><?php else : ?><?= $label ?><?php endif; ?></a>
+   data-for="<?= $widgetId ?>"><?php if (isset($params[$title])) : ?><?= $params[$title] ?><?php else : ?><?= $title ?><?php endif; ?></a>

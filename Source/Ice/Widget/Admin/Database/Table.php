@@ -78,8 +78,7 @@ class Admin_Database_Table extends Table
         $modelClass::createQueryBuilder()
             ->attachWidgets($this)
             ->getSelectQuery('*')
-            ->getQueryResult()
-;
+            ->getQueryResult();
     }
 
     public function queryBuilderPart(Query_Builder $queryBuilder, array $input)
@@ -130,13 +129,22 @@ class Admin_Database_Table extends Table
             }
 
             if ($column->get('options/oneToMany', false)) {
-                $fieldName = $columnName;
-//
+                $fieldName = $column->get('options/name', false);
+
+                if (!$fieldName) {
+                    $fieldName = $columnName;
+                }
+
                 if (isset($params[$fieldName]) && $params[$fieldName] !== '0') {
                     $queryBuilder->eq([$fieldName => $params[$fieldName]]);
+                    Debuger::dump([$fieldName => $params[$fieldName]]);
                 }
             } else if ($column->get('options/manyToMany', false)) {
-                $fieldName = $columnName;
+                $fieldName = $column->get('options/name', false);
+
+                if (!$fieldName) {
+                    $fieldName = $columnName;
+                }
 
                 /**
                  * @var Model $manyModelClass
