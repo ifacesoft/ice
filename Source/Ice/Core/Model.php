@@ -519,7 +519,7 @@ abstract class Model
                 ->exception(['Supported only arrays in json field in model {0}', get_class($this)], __FILE__, __LINE__);
         }
 
-            $this->json[$fieldName] = [];
+        $this->json[$fieldName] = [];
 
         foreach ($fieldValue as $key => $value) {
             if ($value instanceof Model) {
@@ -552,7 +552,9 @@ abstract class Model
     public function get($fieldName = null, $isNotNull = true)
     {
         if ($fieldName === null) {
-            return array_merge((array)$this->pk, array_filter($this->row, function($value) {return $value !== null;}));
+            return array_merge((array)$this->pk, array_filter($this->row, function ($value) {
+                return $value !== null;
+            }));
         }
 
         if (is_array($fieldName)) {
@@ -803,6 +805,21 @@ abstract class Model
     public static function getTableName()
     {
         return self::getConfig()->get('scheme/tableName');
+    }
+
+    /**
+     * Return scheme name of self model class
+     *
+     * @return string
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 2.0
+     * @since   2.0
+     */
+    public static function getSchemeName()
+    {
+        $dataSourceKey = self::getConfig()->get('dataSourceKey');
+        return substr($dataSourceKey, strpos($dataSourceKey, '.') + 1);
     }
 
     public static function getTablePrefix()
@@ -1253,7 +1270,10 @@ abstract class Model
             ->getQueryResult()
             ->getInsertId();
 
-        if ($isSmart && $model = $modelClass::create(array_filter($this->row, function($value) {return $value !== null;}))->find('/pk')) {
+        if ($isSmart && $model = $modelClass::create(array_filter($this->row, function ($value) {
+                return $value !== null;
+            }))->find('/pk')
+        ) {
             $this->set($model->getPk());
         }
 
@@ -1569,7 +1589,8 @@ abstract class Model
         return null;
     }
 
-    public function getModelCollection($fieldNames, $filter) {
+    public function getModelCollection($fieldNames, $filter)
+    {
 
     }
 

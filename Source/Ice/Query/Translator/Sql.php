@@ -86,7 +86,7 @@ class Sql extends Query_Translator
             return '';
         }
 
-        return "\n" . self::SQL_STATEMENT_DROP . ' `' . $modelClass::getTableName() . '`';
+        return "\n" . self::SQL_STATEMENT_DROP . ' `' . $modelClass::getSchemeName() . '`.`' . $modelClass::getTableName() . '`';
     }
 
     /**
@@ -118,7 +118,7 @@ class Sql extends Query_Translator
         $fieldColumnMap = $modelClass::getScheme()->getFieldColumnMap();
 
         $sql = "\n" . self::SQL_STATEMENT_UPDATE .
-            "\n\t`" . $modelClass::getTableName() . '` `' . $tableAlias . '`';
+            "\n\t`" . $modelClass::getSchemeName() . '`.`' . $modelClass::getTableName() . '` `' . $tableAlias . '`';
         $sql .= "\n" . self::SQL_CLAUSE_SET;
         $sql .= implode(
             ',',
@@ -160,7 +160,7 @@ class Sql extends Query_Translator
         $modelClass = $part['modelClass'];
 
         $sql = "\n" . self::SQL_STATEMENT_INSERT . ' ' . self::SQL_CLAUSE_INTO .
-            "\n\t" . $modelClass::getTableName();
+            "\n\t`" . $modelClass::getSchemeName() . '`.`' . $modelClass::getTableName() . '`';
 
         $fieldNamesCount = count($part['fieldNames']);
 
@@ -234,7 +234,7 @@ class Sql extends Query_Translator
             $tableAlias = each($part)[0];
 
             $delete = "\n" . self::SQL_STATEMENT_DELETE . ' ' . self::SQL_CLAUSE_FROM .
-                "\n\t" . '`' . $tableAlias . '` USING ' . $deleteClass::getTableName() . ' AS `' . $tableAlias . '`';
+                "\n\t" . '`' . $tableAlias . '` USING `' . $deleteClass::getSchemeName() . '`.`' . $deleteClass::getTableName() . '` AS `' . $tableAlias . '`';
             $sql .= $delete;
         }
 
@@ -419,7 +419,7 @@ class Sql extends Query_Translator
 
         $table = isset($select['table']) && $select['table'] instanceof Query
             ? '(' . $select['table']->getBody() . ')'
-            : '`' . $modelClass::getTableName() . '`';
+            : '`' . $modelClass::getSchemeName() . '`.`' . $modelClass::getTableName() . '`';
 
         $sql .= "\n" . self::SQL_STATEMENT_SELECT . ($calcFoundRows ? ' ' . self::SQL_CALC_FOUND_ROWS . ' ' : '') .
             "\n\t" . implode(',' . "\n\t", $fields) .
@@ -455,8 +455,7 @@ class Sql extends Query_Translator
             $joinModelClass = $joinTable['class'];
 
             $sql .= "\n" . $joinTable['type'] . "\n\t`" .
-                $joinModelClass::getTableName() . '` `' . $tableAlias . '` ON (' . $joinTable['on'] . ')';
-
+                $joinModelClass::getSchemeName() . '`.`' . $joinModelClass::getTableName() . '` `' . $tableAlias . '` ON (' . $joinTable['on'] . ')';
         }
 
         return $sql;
@@ -624,7 +623,7 @@ class Sql extends Query_Translator
             }
         );
 
-        $sql .= "\n" . self::SQL_STATEMENT_CREATE . ' `' . $modelClass::getTableName() . '`' .
+        $sql .= "\n" . self::SQL_STATEMENT_CREATE . ' `' . $modelClass::getSchemeName() . '`.`' . $modelClass::getTableName() . '`' .
             "\n" . '(' .
             "\n\t" . implode(',' . "\n\t", $scheme['value']) .
             "\n" . ') ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;';
