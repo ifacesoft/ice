@@ -59,13 +59,13 @@ class Admin_Database_Table extends Table
             ->a(
                 'add',
                 [
-                    'label' => 'Добавить новую запись',
                     'route' => 'ice_admin_database_row_create',
                     'params' => [
                         'schemeName' => $input['schemeName'],
                         'tableName' => $input['tableName']
                     ],
-                    'classes' => 'btn btn-success'
+                    'classes' => 'btn btn-success',
+                    'resource' => '/Ice/Widget/Admin_Database_Database'
                 ]
             )
             ->widget('trth', ['widget' => $tableRows], 'Ice\Widget\Table\Trth')

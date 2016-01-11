@@ -513,6 +513,7 @@ abstract class Widget extends Container
                     if (!array_key_exists('active', $part['options'])) {
                         $part['options']['active'] = String::startsWith(Request::uri(), $part['options']['href']);
                     }
+
                     if (!array_key_exists('label', $part['options']) && $routeName == $partName) {
                         $part['label'] = Resource::create(Route::getClass())->get($routeName, $routeParams);
 

@@ -75,6 +75,8 @@ class Admin_Database_Table_Rows extends Table_Rows
             throw new Http_Forbidden('Access denied: table not allowed');
         }
 
+        $this->setResource($modelClass);
+
         $this->a(
             $modelClass::getPkFieldName(),
             [
