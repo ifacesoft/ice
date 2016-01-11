@@ -137,7 +137,6 @@ class Admin_Database_Table extends Table
 
                 if (isset($params[$fieldName]) && $params[$fieldName] !== '0') {
                     $queryBuilder->eq([$fieldName => $params[$fieldName]]);
-                    Debuger::dump([$fieldName => $params[$fieldName]]);
                 }
             } else if ($column->get('options/manyToMany', false)) {
                 $fieldName = $column->get('options/name', false);
