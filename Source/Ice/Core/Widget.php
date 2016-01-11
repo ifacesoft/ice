@@ -454,8 +454,8 @@ abstract class Widget extends Container
 
                 $part['resource'] = $this->getResource();
 //
-//                if ($partName == 'period') {
-//                    Debuger::dump($part['resource']);die();
+//                if ($partName == 'btnExcel') {
+//                    Debuger::dump([$part['options'], $part['resource']]);die();
 //                }
 
                 if (array_key_exists('resource', $part['options'])) {

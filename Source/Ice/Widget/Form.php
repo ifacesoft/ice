@@ -399,10 +399,6 @@ class Form extends Widget
      */
     public function button($fieldName, array $options = [], $template = 'Ice\Widget\Form\Button')
     {
-        if (!isset($options['resource'])) {
-            $options['resource'] = get_class($this);
-        }
-
         if (isset($options['submit'])) {
             $this->submit = $fieldName;
         }
