@@ -1361,6 +1361,10 @@ abstract class Widget extends Container
         $part['name'] = isset($part['options']['name']) ? $part['options']['name'] : $partName;
         unset($part['options']['name']);
 
+//        if ($partName == 'access_type__fk') {
+//            Debuger::dump($part);
+//        }
+
         $part['value'] = isset($part['options']['value']) ? $part['options']['value'] : $partName;
         unset($part['options']['value']);
 
