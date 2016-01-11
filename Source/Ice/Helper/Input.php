@@ -96,16 +96,16 @@ class Input
             $value = Php::castTo($param['type'], $value);
         }
 
-        if (isset($param['validators'])) {
-            foreach ((array)$param['validators'] as $validatorClass => $validatorParams) {
-                if (is_int($validatorClass)) {
-                    $validatorClass = $validatorParams;
-                    $validatorParams = null;
-                }
-
-                Validator::validate($validatorClass, $validatorParams, $name, $value);
-            }
-        }
+//        if (isset($param['validators'])) {
+//            foreach ((array)$param['validators'] as $validatorClass => $validatorParams) {
+//                if (is_int($validatorClass)) {
+//                    $validatorClass = $validatorParams;
+//                    $validatorParams = null;
+//                }
+//
+//                Validator::validate($validatorClass, $validatorParams, $name, $value);
+//            }
+//        }
 
         //        if (isset($param['converter']) && is_callable($param['converter'])) {
         //            $value = $param['converter']($value);

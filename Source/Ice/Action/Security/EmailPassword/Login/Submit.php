@@ -30,32 +30,32 @@ class Security_EmailPassword_Login_Submit extends Security
                 );
         }
 
-        $values = $form->validate();
+        try {
+            $values = $form->validate();
 
-        /** @var Security_Account|Model $account */
-        $account = $accountModelClass::createQueryBuilder()
-            ->eq(['email' => $values['email']])
-            ->limit(1)
-            ->getSelectQuery(['password', '/expired', 'user__fk'])
-            ->getModel();
+            /** @var Security_Account|Model $account */
+            $account = $accountModelClass::createQueryBuilder()
+                ->eq(['email' => $values['email']])
+                ->limit(1)
+                ->getSelectQuery(['password', '/expired', 'user__fk'])
+                ->getModel();
 
-        if (!$account) {
-            $form->getLogger()->error(['Account with email {$0} not found', $values['email']], __FILE__, __LINE__);
+            if (!$account) {
+                $form->getLogger()->exception(['Account with email {$0} not found', $values['email']], __FILE__, __LINE__);
+            }
 
-            return ['error' => $form->getLogger()->info(['Account with email {$0} not found', $values['email']], Logger::DANGER)];
+            if (!$form->verify($account, $values)) {
+                $form->getLogger()->exception('Authentication data is not valid. Please, check input.', __FILE__, __LINE__);
+            }
+
+            $this->signIn($account, $input);
+
+            return array_merge(
+                ['success' => $form->getLogger()->info('Login successfully', Logger::SUCCESS)],
+                parent::run($input)
+            );
+        } catch (\Exception $e) {
+            return ['error' => $form->getLogger()->info($e->getMessage(), Logger::DANGER)];
         }
-
-        if (!$form->verify($account, $values)) {
-            $form->getLogger()->error('Authentification data is not valid. Please, check input.', __FILE__, __LINE__);
-
-            return ['error' => $form->getLogger()->info('Authentification data is not valid. Please, check input.', Logger::DANGER)];
-        }
-
-        $this->signIn($account, $input);
-
-        return array_merge(
-            ['success' => $form->getLogger()->info('Login successfully', Logger::SUCCESS)],
-            parent::run($input)
-        );
     }
 }

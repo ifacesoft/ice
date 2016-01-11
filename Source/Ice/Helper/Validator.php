@@ -27,6 +27,6 @@ class Validator
             ? Exception::getClass('Ice:Not_Valid')
             : Exception::getClass($validatorParams['exception']);
 
-        throw new $exceptionClass(Core_Logger::getInstance(__CLASS__)->info($message, Core_Logger::DANGER));
+        Core_Logger::getInstance(__CLASS__)->exception($message, __FILE__, __LINE__, null, null, -1, $exceptionClass);
     }
 }

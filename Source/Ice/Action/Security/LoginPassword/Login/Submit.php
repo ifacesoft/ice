@@ -2,7 +2,6 @@
 
 namespace Ice\Action;
 
-use Ice\Core\Debuger;
 use Ice\Core\Logger;
 use Ice\Core\Model;
 use Ice\Core\Security_Account;
@@ -31,24 +30,32 @@ class Security_LoginPassword_Login_Submit extends Security
                 );
         }
 
-        $values = $form->validate();
+        try {
+            $values = $form->validate();
 
-        /** @var Security_Account|Model $account */
-        $account = $accountModelClass::createQueryBuilder()
-            ->eq(['login' => $values['login']])
-            ->limit(1)
-            ->getSelectQuery(['password', '/expired', 'user__fk'])
-            ->getModel();
+            /** @var Security_Account|Model $account */
+            $account = $accountModelClass::createQueryBuilder()
+                ->eq(['login' => $values['login']])
+                ->limit(1)
+                ->getSelectQuery(['password', '/expired', 'user__fk'])
+                ->getModel();
 
-        if (!$account && !$form->verify($account, $values)) {
-            $form->getLogger()->exception(['Log in failure', [], $form->getResource()], __FILE__, __LINE__);
+            if (!$account) {
+                $form->getLogger()->exception(['Account with login {$0} not found', $values['login']], __FILE__, __LINE__);
+            }
+
+            if (!$form->verify($account, $values)) {
+                $form->getLogger()->exception('Authentication data is not valid. Please, check input.', __FILE__, __LINE__);
+            }
+
+            $this->signIn($account, $input);
+
+            return array_merge(
+                ['success' => $form->getLogger()->info('Login successfully', Logger::SUCCESS)],
+                parent::run($input)
+            );
+        } catch (\Exception $e) {
+            return ['error' => $form->getLogger()->info($e->getMessage(), Logger::DANGER)];
         }
-
-        $this->signIn($account, $input);
-
-        return array_merge(
-            ['success' => $form->getLogger()->info('Login successfully', Logger::SUCCESS)],
-            parent::run($input)
-        );
     }
 }
