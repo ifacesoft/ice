@@ -1,0 +1,1 @@
+<?php $sheet->setCellValue($column . $index, isset($params[$title]) ? $params[$title] : $title);

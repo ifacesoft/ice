@@ -113,4 +113,17 @@ class Table_Rows extends Widget
 
         $this->setOffset($offset);
     }
+
+    /**
+     * Build a tag part
+     *
+     * @param  $columnName
+     * @param  array $options
+     * @param  string $template
+     * @return $this
+     */
+    public function a($columnName, array $options = [], $template = 'Ice\Widget\Table\Rows\A')
+    {
+        return $this->addPart($columnName, $options, $template, __FUNCTION__);
+    }
 }
