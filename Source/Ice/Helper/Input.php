@@ -8,6 +8,7 @@ use Ice\Data\Provider\Cli as Data_Provider_Cli;
 use Ice\Data\Provider\Request as Data_Provider_Request;
 use Ice\Data\Provider\Router as Data_Provider_Router;
 use Ice\Data\Provider\Session as Data_Provider_Session;
+use Ice\Exception\Http_Not_Found;
 
 class Input
 {
@@ -60,7 +61,11 @@ class Input
                     continue;
                 }
 
-                $input[$name] = Data_Provider::getInstance($dataProviderKey)->get($name);
+                try {
+                    $input[$name] = Data_Provider::getInstance($dataProviderKey)->get($name);
+                } catch (Http_Not_Found $e) {
+                    //
+                }
             }
 
             $input[$name] = Input::getParam($name, $input[$name], $param);

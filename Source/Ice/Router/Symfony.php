@@ -25,7 +25,7 @@ class Symfony extends Ice
         global $kernel;
 
         if ($url = $kernel->getContainer()->get('router')->generate($routeName, array_merge($this->getParams(), $params))) {
-            return $url;
+            return strtok($url,'?');
         }
 
         return $url;
