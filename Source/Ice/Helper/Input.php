@@ -61,7 +61,7 @@ class Input
                     continue;
                 }
 
-                try {
+                try { // пока провайдер роутер понимает только нативные роуты (не понмает, например, от Symfony)
                     $input[$name] = Data_Provider::getInstance($dataProviderKey)->get($name);
                 } catch (Http_Not_Found $e) {
                     //

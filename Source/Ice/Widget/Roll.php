@@ -113,4 +113,30 @@ class Roll extends Widget
 
         $this->setOffset($offset);
     }
+
+    /**
+     * Build a tag part
+     *
+     * @param  $columnName
+     * @param  array $options
+     * @param  string $template
+     * @return $this
+     */
+    public function a($columnName, array $options = [], $template = 'Ice\Widget\Table\Rows\A')
+    {
+        return $this->addPart($columnName, $options, $template, __FUNCTION__);
+    }
+
+    /**
+     * Build span tag part
+     *
+     * @param  $columnName
+     * @param  array $options
+     * @param  string $template
+     * @return $this
+     */
+    public function span($columnName, array $options = [], $template = 'Ice\Widget\Table\Rows\Span')
+    {
+        return $this->addPart($columnName, $options, $template, __FUNCTION__);
+    }
 }

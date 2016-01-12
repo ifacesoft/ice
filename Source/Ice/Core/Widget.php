@@ -1480,7 +1480,7 @@ abstract class Widget extends Container
                 $renderClass = Replace::getClass();
             }
 
-            $part['params'][$part['name']] =
+            $part['params'][$part['title']] =
                 $renderClass::getInstance()->fetch(
                     $part['options']['valueTemplate'],
                     $part['params'],

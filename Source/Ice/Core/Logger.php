@@ -252,6 +252,7 @@ class Logger
              */
             $class = $this->class;
             $params = null;
+
             if (is_array($message)) {
                 list($message, $params) = $message;
             }

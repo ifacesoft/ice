@@ -203,20 +203,21 @@ class Query_Builder
      * @param  $fieldName
      * @param  array $modelTableData
      * @param  string $sqlLogical
+     * @param bool $isUse
      * @return Query_Builder
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.6
+     * @version 2.0
      * @since   0.0
      */
-    public function notNull($fieldName, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
+    public function notNull($fieldName, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND, $isUse = true)
     {
         return $this->where(
             $sqlLogical,
             [$fieldName => null],
             Query_Builder::SQL_COMPARISON_KEYWORD_IS_NOT_NULL,
-            $modelTableData
+            $modelTableData,
+            $isUse
         );
     }
 
@@ -242,15 +243,19 @@ class Query_Builder
      * @param  array $fieldNameValues
      * @param  $sqlComparison
      * @param  array|string $modelTableData Key -> modelClass, value -> tableAlias
+     * @param $isUse
      * @return Query_Builder
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
      * @since   0.0
      */
-    private function where($sqlLogical, array $fieldNameValues, $sqlComparison, $modelTableData = [])
+    private function where($sqlLogical, array $fieldNameValues, $sqlComparison, $modelTableData, $isUse)
     {
+        if (!$isUse) {
+            return $this;
+        }
+
         /**
          * @var Model $modelClass
          */
@@ -386,20 +391,21 @@ class Query_Builder
      * @param  $fieldName
      * @param  array $modelTableData
      * @param  string $sqlLogical
+     * @param bool $isUse
      * @return Query_Builder
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.6
+     * @version 2.0
      * @since   0.0
      */
-    public function isNull($fieldName, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
+    public function isNull($fieldName, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND, $isUse = true)
     {
         return $this->where(
             $sqlLogical,
             [$fieldName => null],
             Query_Builder::SQL_COMPARISON_KEYWORD_IS_NULL,
-            $modelTableData
+            $modelTableData,
+            $isUse
         );
     }
 
@@ -462,20 +468,21 @@ class Query_Builder
      * @param  array $fieldNameValues
      * @param  array $modelTableData
      * @param  string $sqlLogical
+     * @param bool $isUse
      * @return Query_Builder
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.6
+     * @version 2.0
      * @since   0.0
      */
-    public function eq(array $fieldNameValues, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
+    public function eq(array $fieldNameValues, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND, $isUse = true)
     {
         return $this->where(
             $sqlLogical,
             $fieldNameValues,
             Query_Builder::SQL_COMPARISON_OPERATOR_EQUAL,
-            $modelTableData
+            $modelTableData,
+            $isUse
         );
     }
 
@@ -486,20 +493,21 @@ class Query_Builder
      * @param  $fieldValue
      * @param  array $modelTableData
      * @param  string $sqlLogical
+     * @param bool $isUse
      * @return Query_Builder
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.6
+     * @version 2.0
      * @since   0.0
      */
-    public function ge($fieldName, $fieldValue, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
+    public function ge($fieldName, $fieldValue, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND, $isUse = true)
     {
         return $this->where(
             $sqlLogical,
             [$fieldName => $fieldValue],
             Query_Builder::SQL_COMPARISON_OPERATOR_GREATER_OR_EQUAL,
-            $modelTableData
+            $modelTableData,
+            $isUse
         );
     }
 
@@ -510,20 +518,21 @@ class Query_Builder
      * @param  $fieldValue
      * @param  array $modelTableData
      * @param  string $sqlLogical
+     * @param bool $isUse
      * @return Query_Builder
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.6
+     * @version 2.0
      * @since   0.4
      */
-    public function regex($fieldName, $fieldValue, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
+    public function regex($fieldName, $fieldValue, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND, $isUse = true)
     {
         return $this->where(
             $sqlLogical,
             [$fieldName => $fieldValue],
             Query_Builder::SQL_COMPARISON_KEYWORD_REGEXP,
-            $modelTableData
+            $modelTableData,
+            $isUse
         );
     }
 
@@ -538,16 +547,17 @@ class Query_Builder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 1.1
+     * @version 2.0
      * @since   1.1
      */
-    public function between($fieldName, array $fieldRangeValue, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
+    public function between($fieldName, array $fieldRangeValue, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND, $isUse = true)
     {
         return $this->where(
             $sqlLogical,
             [$fieldName => $fieldRangeValue],
             Query_Builder::SQL_COMPARISON_KEYWORD_BETWEEN,
-            $modelTableData
+            $modelTableData,
+            $isUse
         );
     }
 
@@ -558,20 +568,21 @@ class Query_Builder
      * @param  $fieldValue
      * @param  array $modelTableData
      * @param  string $sqlLogical
+     * @param bool $isUse
      * @return Query_Builder
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.6
+     * @version 2.0
      * @since   0.0
      */
-    public function le($fieldName, $fieldValue, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
+    public function le($fieldName, $fieldValue, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND, $isUse = true)
     {
         return $this->where(
             $sqlLogical,
             [$fieldName => $fieldValue],
             Query_Builder::SQL_COMPARISON_OPERATOR_LESS_OR_EQUAL,
-            $modelTableData
+            $modelTableData,
+            $isUse
         );
     }
 
@@ -582,20 +593,21 @@ class Query_Builder
      * @param  $fieldValue
      * @param  array $modelTableData
      * @param  string $sqlLogical
+     * @param bool $isUse
      * @return Query_Builder
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.6
+     * @version 2.0
      * @since   0.0
      */
-    public function gt($fieldName, $fieldValue, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
+    public function gt($fieldName, $fieldValue, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND, $isUse = true)
     {
         return $this->where(
             $sqlLogical,
             [$fieldName => $fieldValue],
             Query_Builder::SQL_COMPARISON_OPERATOR_GREATER,
-            $modelTableData
+            $modelTableData,
+            $isUse
         );
     }
 
@@ -610,16 +622,17 @@ class Query_Builder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.6
+     * @version 2.0
      * @since   0.0
      */
-    public function lt($fieldName, $fieldValue, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
+    public function lt($fieldName, $fieldValue, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND, $isUse = true)
     {
         return $this->where(
             $sqlLogical,
             [$fieldName => $fieldValue],
             Query_Builder::SQL_COMPARISON_OPERATOR_LESS,
-            $modelTableData
+            $modelTableData,
+            $isUse
         );
     }
 
@@ -666,20 +679,21 @@ class Query_Builder
      * @param  $fieldValue
      * @param  array $modelTableData
      * @param  string $sqlLogical
+     * @param bool $isUse
      * @return Query_Builder
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.6
+     * @version 2.0
      * @since   0.0
      */
-    public function ne($fieldName, $fieldValue, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
+    public function ne($fieldName, $fieldValue, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND, $isUse = true)
     {
         return $this->where(
             $sqlLogical,
             [$fieldName => $fieldValue],
             Query_Builder::SQL_COMPARISON_OPERATOR_NOT_EQUAL,
-            $modelTableData
+            $modelTableData,
+            $isUse
         );
     }
 
@@ -690,26 +704,21 @@ class Query_Builder
      * @param  array $fieldValue
      * @param  array $modelTableData
      * @param  string $sqlLogical
+     * @param bool $isUse
      * @return Query_Builder
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.6
+     * @version 2.0
      * @since   0.0
      */
-    public function notIn(
-        $fieldName,
-        array $fieldValue,
-        $modelTableData = [],
-        $sqlLogical =
-        Query_Builder::SQL_LOGICAL_AND
-    )
+    public function notIn($fieldName, array $fieldValue, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND, $isUse = true)
     {
         return $this->where(
             $sqlLogical,
             [$fieldName => $fieldValue],
             Query_Builder::SQL_COMPARISON_KEYWORD_NOT_IN,
-            $modelTableData
+            $modelTableData,
+            $isUse
         );
     }
 
@@ -756,20 +765,21 @@ class Query_Builder
      * @param  $fieldValue
      * @param  array $modelTableData
      * @param  string $sqlLogical
+     * @param bool $isUse
      * @return Query_Builder
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.6
+     * @version 2.0
      * @since   0.0
      */
-    public function like($fieldName, $fieldValue, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
+    public function like($fieldName, $fieldValue, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND, $isUse = true)
     {
         return $this->where(
             $sqlLogical,
             [$fieldName => $fieldValue],
             Query_Builder::SQL_COMPARISON_KEYWORD_LIKE,
-            $modelTableData
+            $modelTableData,
+            $isUse
         );
     }
 
@@ -780,14 +790,14 @@ class Query_Builder
      * @param  $value
      * @param  array $modelTableData
      * @param  string $sqlLogical
+     * @param bool $isUse
      * @return Query_Builder
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.6
+     * @version 2.0
      * @since   0.0
      */
-    public function rlike($fieldName, $value, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
+    public function rlike($fieldName, $value, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND, $isUse = true)
     {
         /**
          * @var Model $modelClass
@@ -805,13 +815,15 @@ class Query_Builder
                 $sqlLogical,
                 [$fieldValue => $fieldName],
                 Query_Builder::SQL_COMPARISON_KEYWORD_RLIKE_REVERSE,
-                $modelTableData
+                $modelTableData,
+                $isUse
             )
             : $this->where(
                 $sqlLogical,
                 [$fieldName => $value],
                 Query_Builder::SQL_COMPARISON_KEYWORD_RLIKE,
-                $modelTableData
+                $modelTableData,
+                $isUse
             );
     }
 
@@ -1389,20 +1401,21 @@ class Query_Builder
      * @param  array $fieldValue
      * @param  array $modelTableData
      * @param  string $sqlLogical
+     * @param bool $isUse
      * @return Query_Builder
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.6
+     * @version 2.0
      * @since   0.0
      */
-    public function in($fieldName, $fieldValue, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
+    public function in($fieldName, $fieldValue, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND, $isUse = true)
     {
         return $this->where(
             $sqlLogical,
             [$fieldName => $fieldValue],
             Query_Builder::SQL_COMPARISON_KEYWORD_IN,
-            $modelTableData
+            $modelTableData,
+            $isUse
         );
     }
 
@@ -1701,16 +1714,17 @@ class Query_Builder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.6
+     * @version 2.0
      * @since   0.0
      */
-    public function search($fieldName, $fieldValue, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND)
+    public function search($fieldName, $fieldValue, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND, $isUse = true)
     {
         return $this->where(
             $sqlLogical,
             [$fieldName => $fieldValue],
             Query_Builder::SEARCH_KEYWORD,
-            $modelTableData
+            $modelTableData,
+            $isUse
         );
     }
 
@@ -1872,7 +1886,8 @@ class Query_Builder
         $value,
         $fieldName = null,
         $comparison = Query_Builder::SQL_COMPARISON_OPERATOR_EQUAL,
-        $modelTableData = []
+        $modelTableData = [],
+        $isUse = true
     )
     {
         /** @var Form $widget */
@@ -1885,7 +1900,7 @@ class Query_Builder
                 $fieldName = $key;
             }
 
-            $this->where(Query_Builder::SQL_LOGICAL_AND, [$fieldName => $value], $comparison, $modelTableData);
+            $this->where(Query_Builder::SQL_LOGICAL_AND, [$fieldName => $value], $comparison, $modelTableData, $isUse);
         }
 
         return $this;
