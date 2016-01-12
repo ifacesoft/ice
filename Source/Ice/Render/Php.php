@@ -10,6 +10,7 @@
 namespace Ice\Render;
 
 use Ice\Core\Action;
+use Ice\Core\Debuger;
 use Ice\Core\Environment;
 use Ice\Core\Loader;
 use Ice\Core\Logger;
@@ -72,6 +73,20 @@ class Php extends Render
     {
         if (empty($template)) {
             throw new \Exception('Template is empty');
+        }
+
+        if ($templateType == Render::TEMPLATE_TYPE_STRING) {
+            ob_start();
+            ob_implicit_flush(false);
+
+            extract($data);
+            unset($data);
+
+            eval($template . ';');
+
+            return $layout
+                ? Emmet::translate($layout . '{{$content}}', ['content' => ob_get_clean()])
+                : ob_get_clean();
         }
 
         $templateFilePath = Loader::getFilePath($template, Php::TEMPLATE_EXTENTION, Module::RESOURCE_DIR, false);

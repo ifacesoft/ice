@@ -1,1 +1,1 @@
-<?php $sheet->setCellValue($column . $index, html_entity_decode(isset($params[$value]) ? $params[$value] : $label));
+<?php $sheet->setCellValue($column . $index, html_entity_decode(isset($params[$label]) ? $params[$label] : $label));

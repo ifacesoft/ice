@@ -126,4 +126,17 @@ class Table_Rows extends Widget
     {
         return $this->addPart($columnName, $options, $template, __FUNCTION__);
     }
+
+    /**
+     * Build span tag part
+     *
+     * @param  $columnName
+     * @param  array $options
+     * @param  string $template
+     * @return $this
+     */
+    public function span($columnName, array $options = [], $template = 'Ice\Widget\Table\Rows\Span')
+    {
+        return $this->addPart($columnName, $options, $template, __FUNCTION__);
+    }
 }

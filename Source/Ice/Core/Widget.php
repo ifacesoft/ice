@@ -449,7 +449,6 @@ abstract class Widget extends Container
                     $part['sheet'] = $data['sheet'];
                 }
 
-
                 $resourceParams = [];
 
                 $part['resource'] = $this->getResource();
@@ -965,7 +964,7 @@ abstract class Widget extends Container
      * @param  string $template
      * @return $this $this_Data
      */
-    public function span($columnName, $options = [], $template = 'Ice\Widget\Span')
+    public function span($columnName, array $options = [], $template = 'Ice\Widget\Span')
     {
         return $this->addPart($columnName, $options, $template, __FUNCTION__);
     }
@@ -1439,6 +1438,23 @@ abstract class Widget extends Container
                 $partName => array_key_exists($partName, $values) ? $values[$partName] : null
             ];
 
+        if (isset($part['options']['params'])) {
+            foreach ((array)$part['options']['params'] as $key => $value) {
+                if (is_int($key)) {
+                    $key = $value;
+                }
+
+                if (is_string($value)) {
+                    $part['params'][$key] = $key == $value
+                        ? (array_key_exists($value, $values) ? $values[$value] : null)
+                        : (array_key_exists($value, $values) ? $values[$value] : $value);
+                } else {
+                    $part['params'][$key] = $value;
+                }
+            }
+            unset($part['options']['params']);
+        }
+
         if (isset($part['options']['dateFormat'])) {
             $part['params'][$part['name']] = date($part['options']['dateFormat'], strtotime($part['params'][$part['name']]));
             unset($part['options']['dateFormat']);
@@ -1473,23 +1489,6 @@ abstract class Widget extends Container
                 );
 
             unset($part['options']['valueTemplate']);
-        }
-
-        if (isset($part['options']['params'])) {
-            foreach ((array)$part['options']['params'] as $key => $value) {
-                if (is_int($key)) {
-                    $key = $value;
-                }
-
-                if (is_string($value)) {
-                    $part['params'][$key] = $key == $value
-                        ? (array_key_exists($value, $values) ? $values[$value] : null)
-                        : (array_key_exists($value, $values) ? $values[$value] : $value);
-                } else {
-                    $part['params'][$key] = $value;
-                }
-            }
-            unset($part['options']['params']);
         }
 
         $part['dataParams'] = Json::encode($part['params']);
