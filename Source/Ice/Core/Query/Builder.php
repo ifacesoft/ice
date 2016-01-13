@@ -1332,7 +1332,7 @@ class Query_Builder
      * @version 0.6
      * @since   0.0
      */
-    public function updateQuery(array $data, $dataSource = null)
+    public function getUpdateQuery(array $data, $dataSource = null)
     {
         $this->queryType = Query_Builder::TYPE_UPDATE;
         return $this->affect($data, Query_Builder::PART_SET, $dataSource);

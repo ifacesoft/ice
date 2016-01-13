@@ -1225,7 +1225,7 @@ abstract class Model
 
         Query::getBuilder($modelClass)
             ->pk($this->getPk())
-            ->updateQuery($affected, $dataSourceKey)
+            ->getUpdateQuery($affected, $dataSourceKey)
             ->getQueryResult();
 
         $this->afterUpdate();

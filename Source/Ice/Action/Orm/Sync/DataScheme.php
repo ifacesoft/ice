@@ -212,7 +212,7 @@ class Orm_Sync_DataScheme extends Action
                 if ($isModelFieldsUpdated) {
                     Scheme::createQueryBuilder()
                         ->pk($tableName)
-                        ->updateQuery(['columns__json' => Json::encode($table['columns'])], $dataSourceKey)
+                        ->getUpdateQuery(['columns__json' => Json::encode($table['columns'])], $dataSourceKey)
                         ->getQueryResult();
                 }
 
@@ -296,7 +296,7 @@ class Orm_Sync_DataScheme extends Action
 
         Scheme::createQueryBuilder()
             ->pk($tableName)
-            ->updateQuery(['table__json' => $tableSchemeJson], $dataSourceKey)
+            ->getUpdateQuery(['table__json' => $tableSchemeJson], $dataSourceKey)
             ->getQueryResult();
 
         $this->getLogger()->info([
@@ -328,7 +328,7 @@ class Orm_Sync_DataScheme extends Action
 
         Scheme::createQueryBuilder()
             ->pk($tableName)
-            ->updateQuery(['indexes__json' => $tableIndexesJson], $dataSourceKey)
+            ->getUpdateQuery(['indexes__json' => $tableIndexesJson], $dataSourceKey)
             ->getQueryResult();
 
         $this->getLogger()->info([
@@ -360,7 +360,7 @@ class Orm_Sync_DataScheme extends Action
 
         Scheme::createQueryBuilder()
             ->pk($tableName)
-            ->updateQuery(['references__json' => $tableReferencesJson], $dataSourceKey)
+            ->getUpdateQuery(['references__json' => $tableReferencesJson], $dataSourceKey)
             ->getQueryResult();
 
         $this->getLogger()->info([

@@ -268,6 +268,8 @@ class Logger
             $logFile = $logFilename . '_' . crc32(substr($logFile, 255 - 11));
         }
 
+        $message = print_r($message, true);
+
         File::createData($logFile, $message . "\n", false, FILE_APPEND);
 
         if (Request::isCli()) {
