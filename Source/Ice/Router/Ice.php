@@ -8,7 +8,7 @@ use Ice\Data\Provider\Router as Data_Provider_Router;
 
 class Ice extends Router
 {
-    public function getUrl($routeName = null, array $params = [])
+    public function getUrl($routeName = null, array $params = [], $withGet = false)
     {
         if ($url = Route::getInstance($routeName)->getUrl(array_merge($this->getParams(), $params))) {
             return $url;

@@ -6,7 +6,7 @@ use Ice\Exception\RouteNotFound;
 
 class Symfony extends Ice
 {
-    public function getUrl($routeName = null, array $params = [])
+    public function getUrl($routeName = null, array $params = [], $withGet = false)
     {
         if (!$routeName) {
             $routeName = $this->getName();
@@ -15,7 +15,7 @@ class Symfony extends Ice
         $url = null;
 
         try {
-            if ($url = parent::getUrl($routeName, $params)) {
+            if ($url = parent::getUrl($routeName, $params, $withGet)) {
                 return $url;
             }
         } catch (RouteNotFound $e) {
@@ -25,7 +25,7 @@ class Symfony extends Ice
         global $kernel;
 
         if ($url = $kernel->getContainer()->get('router')->generate($routeName, array_merge($this->getParams(), $params))) {
-            return strtok($url,'?');
+            return $withGet ? $url : strtok($url,'?');
         }
 
         return $url;

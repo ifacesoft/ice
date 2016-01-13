@@ -187,14 +187,15 @@ class Route extends Config
      * Generate url by route
      *
      * @param  array $params
+     * @param bool $withGet
      * @return string
-     *
+     * @throws \Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.6
+     * @version 2.0
      * @since   0.0
      */
-    public function getUrl(array $params = [])
+    public function getUrl(array $params = [], $withGet = false)
     {
         $params = array_filter($params, function ($param) {
             return !is_array($param);

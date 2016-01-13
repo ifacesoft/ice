@@ -496,17 +496,21 @@ abstract class Widget extends Container
 
                     $part['options']['route'] = (array)$part['options']['route'];
 
-                    if (count($part['options']['route']) == 2) {
+                    if (count($part['options']['route']) == 3) {
+                        list($routeName, $routeParams, $withGet) = $part['options']['route'];
+                    } elseif (count($part['options']['route']) == 2) {
                         list($routeName, $routeParams) = $part['options']['route'];
+                        $withGet = false;
                     } else {
                         $routeName = reset($part['options']['route']);
                         $routeParams = [];
+                        $withGet = false;
                     }
 
                     $routeParams = array_merge($part['params'], (array)$routeParams);
 
                     if (!array_key_exists('href', $part['options'])) {
-                        $part['options']['href'] = Router::getInstance()->getUrl($routeName, $routeParams);
+                        $part['options']['href'] = Router::getInstance()->getUrl($routeName, $routeParams, $withGet);
                     }
 
                     if (!array_key_exists('active', $part['options'])) {
