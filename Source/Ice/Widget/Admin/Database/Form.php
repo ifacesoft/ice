@@ -121,13 +121,13 @@ class Admin_Database_Form extends Form
 
         switch ($input['mode']) {
             case 'filter':
-                $this->button('filter', ['onclick' => ['action' => 'Ice:Render', 'method' => 'GET'], 'classes' => 'btn-default', 'params' =>['widgets' => ['admin_database_roll' => 'Ice:Admin_Database_Table']]]);
+                $this->button('filter', ['resource' => Admin_Database_Database::class, 'onclick' => ['action' => 'Ice:Render', 'method' => 'GET'], 'classes' => 'btn-default', 'params' =>['widgets' => ['admin_database_roll' => 'Ice:Admin_Database_Table']]]);
                 break;
             case 'edit':
-                $this->button('edit', ['submit' => ['action' => '_Submit'], 'classes' => 'btn-primary']);
+                $this->button('edit', ['resource' => Admin_Database_Database::class, 'submit' => ['action' => '_Submit'], 'classes' => 'btn-primary']);
                 break;
             case 'create':
-                $this->button('save', ['submit' => ['action' => '_Submit'], 'classes' => 'btn-success']);
+                $this->button('save', ['resource' => Admin_Database_Database::class, 'submit' => ['action' => '_Submit'], 'classes' => 'btn-success']);
                 break;
             default:
                 break;

@@ -14,7 +14,7 @@ class Admin_Database_Dashboard extends Nav
     protected static function config()
     {
         return [
-            'render' => ['template' => Nav::getClass(), 'class' => 'Ice:Php', 'layout' => null, 'resource' => null],
+            'render' => ['template' => Nav::getClass(), 'class' => 'Ice:Php', 'layout' => null, 'resource' => __CLASS__],
             'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'Widget: Access denied!'],
             'resource' => ['js' => null, 'css' => null, 'less' => null, 'img' => null],
             'cache' => ['ttl' => -1, 'count' => 1000],
@@ -51,7 +51,7 @@ class Admin_Database_Dashboard extends Nav
                 [
                     'label' => 'scheme_' . $key,
                     'route' => 'ice_admin_database_database',
-                    'params' => ['schemeName' => $key]
+                    'params' => ['schemeName' => $key],
                 ]
             );
         }

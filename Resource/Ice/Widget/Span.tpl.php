@@ -6,14 +6,12 @@
     data-name="<?= $name ?>"
     data-params='<?= $dataParams ?>'
     data-for="<?= $widgetId ?>">
-    <?php if (isset($params[$label])) : ?>
-        <?php if (isset($oneToMany)) : ?>
-            <?= $oneToMany ?>
-        <?php elseif (isset($manyToMany)) : ?>
-            <?= $manyToMany ?>
-        <?php else : ?>
-            <?= $params[$label] ?>
-        <?php endif; ?>
+    <?php if (isset($oneToMany)) : ?>
+        <?= $oneToMany ?>
+    <?php elseif (isset($manyToMany)) : ?>
+        <?= $manyToMany ?>
+    <?php elseif (isset($params[$label])) : ?>
+        <?= $params[$label] ?>
     <?php else : ?>
         &nbsp;
     <?php endif; ?>

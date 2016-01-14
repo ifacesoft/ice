@@ -49,8 +49,9 @@ class Admin_Navigation extends Navbar
 
         $profileNav = $this->getWidget(Nav::getClass(), 'admin_profile_nav')
             ->addClasses('navbar-right')
-            ->li('ice_private', ['route' => true])
-            ->li('ice_private_profile', ['route' => true]);
+//            ->li('ice_private', ['route' => true])
+//            ->li('ice_private_profile', ['route' => true])
+        ;
 
         $this
             ->brand('project_name', ['label' => Module::getInstance()->getName(), 'route' => 'ice_main'])

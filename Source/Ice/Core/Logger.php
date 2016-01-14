@@ -314,7 +314,7 @@ class Logger
             return;
         }
 
-        FirePHP::getInstance(true)->fb($value, $label, $type, $options);
+        FirePHP::getInstance(true)->fb(1, $label, $type, $options);
     }
 
     /**
