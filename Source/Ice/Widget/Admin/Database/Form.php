@@ -12,6 +12,7 @@ use Ice\Core\Security;
 use Ice\Core\Validator;
 use Ice\Exception\Http_Forbidden;
 use Ice\Exception\Http_Not_Found;
+use Ice\Helper\Emmet;
 
 class Admin_Database_Form extends Form
 {
@@ -23,7 +24,7 @@ class Admin_Database_Form extends Form
     protected static function config()
     {
         return [
-            'render' => ['template' => Form::getClass(), 'class' => 'Ice:Php', 'layout' => null, 'resource' => null],
+            'render' => ['template' => Form::getClass(), 'class' => 'Ice:Php', 'layout' => Emmet::PANEL_BODY, 'resource' => null],
             'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'Widget: Access denied!'],
             'resource' => ['js' => null, 'css' => null, 'less' => null, 'img' => null],
             'cache' => ['ttl' => -1, 'count' => 1000],
