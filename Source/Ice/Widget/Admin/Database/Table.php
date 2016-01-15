@@ -77,10 +77,6 @@ class Admin_Database_Table extends Table
 
         $modelClass::createQueryBuilder()
             ->attachWidgets($this)
-            ->getSelectQuery('*')->dump(); die();
-
-        $modelClass::createQueryBuilder()
-            ->attachWidgets($this)
             ->getSelectQuery('*')
             ->getQueryResult();
     }

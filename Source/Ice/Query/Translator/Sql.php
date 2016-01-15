@@ -248,8 +248,9 @@ class Sql extends Query_Translator
          * @var Model $modelClass
          * @var array $where
          */
-        foreach ($part as $tableAlias => $where) {
+        foreach ($part as $where) {
             $modelClass = $where['class'];
+            $tableAlias = $where['alias'];
 
             $fields = $modelClass::getScheme()->getFieldColumnMap();
 

@@ -271,14 +271,15 @@ class Query_Builder
 
             $where = [$sqlLogical, $fieldName, $sqlComparison, $value === null ? 1 : count((array)$value)];
 
-            if (isset($this->sqlParts[Query_Builder::PART_WHERE][$tableAlias])) {
-                $this->sqlParts[Query_Builder::PART_WHERE][$tableAlias]['data'][] = $where;
-            } else {
-                $this->sqlParts[Query_Builder::PART_WHERE][$tableAlias] = [
+//            if (isset($this->sqlParts[Query_Builder::PART_WHERE][$tableAlias])) {
+//                $this->sqlParts[Query_Builder::PART_WHERE][$tableAlias]['data'][] = $where;
+//            } else {
+                $this->sqlParts[Query_Builder::PART_WHERE][] = [
                     'class' => $modelClass,
+                    'alias' => $tableAlias,
                     'data' => [$where]
                 ];
-            }
+//            }
 
             $this->appendCacheTag($modelClass, $fieldName, true, false);
 
