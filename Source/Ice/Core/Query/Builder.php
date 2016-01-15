@@ -114,17 +114,6 @@ class Query_Builder
         self::PART_LIMIT => ['offset' => 0, 'limit' => 0]
     ];
 
-    private $triggers = [
-        'beforeSelect' => [],
-        'afterSelect' => [],
-        'beforeInsert' => [],
-        'afterInsert' => [],
-        'beforeUpdate' => [],
-        'afterUpdate' => [],
-        'beforeDelete' => [],
-        'afterDelete' => [],
-    ];
-
     /**
      * Query binds
      *
@@ -138,6 +127,17 @@ class Query_Builder
         self::PART_WHERE => [],
         self::PART_HAVING => [],
         self::PART_LIMIT => []
+    ];
+
+    private $triggers = [
+        'beforeSelect' => [],
+        'afterSelect' => [],
+        'beforeInsert' => [],
+        'afterInsert' => [],
+        'beforeUpdate' => [],
+        'afterUpdate' => [],
+        'beforeDelete' => [],
+        'afterDelete' => [],
     ];
 
     /**
@@ -1129,7 +1129,6 @@ class Query_Builder
         $this->appendCacheTag($modelClass, $fieldName, true, false);
 
         if ($table instanceof Query_Builder) {
-
             // TODO: This duplicate from Query::getBinds.. fix it
             $binds = [];
 

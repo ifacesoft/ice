@@ -77,6 +77,10 @@ class Admin_Database_Table extends Table
 
         $modelClass::createQueryBuilder()
             ->attachWidgets($this)
+            ->getSelectQuery('*')->dump(); die();
+
+        $modelClass::createQueryBuilder()
+            ->attachWidgets($this)
             ->getSelectQuery('*')
             ->getQueryResult();
     }
@@ -118,11 +122,11 @@ class Admin_Database_Table extends Table
                 $fieldName = $columnFieldMap[$columnName];
 
                 if (isset($params[$fieldName]) && $params[$fieldName] !== '') {
-                    if (is_numeric($params[$fieldName])) {
-                        $queryBuilder->eq([$fieldName => $params[$fieldName]]);
-                    } else {
+//                    if (is_numeric($params[$fieldName])) {
+//                        $queryBuilder->eq([$fieldName => $params[$fieldName]]);
+//                    } else {
                         $queryBuilder->like($fieldName, '%' . $params[$fieldName] . '%');
-                    }
+//                    }
                 }
 
                 continue;
