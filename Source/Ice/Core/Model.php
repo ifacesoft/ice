@@ -247,11 +247,15 @@ abstract class Model
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.4
+     * @version 2.0
      * @since   0.0
      */
     public function set($fieldName, $fieldValue = null, $isAffected = true)
     {
+        if (!$fieldName) {
+            return $this;
+        }
+
         if (is_array($fieldName)) {
             foreach ($fieldName as $key => $value) {
                 $this->set($key, $value, $isAffected);
@@ -1274,6 +1278,7 @@ abstract class Model
                 return $value !== null;
             }))->find('/pk')
         ) {
+
             $this->set($model->getPk());
         }
 
@@ -1372,6 +1377,7 @@ abstract class Model
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
+     * @bug удаление модели с множественным ключем -> пишет delete from 0 where pk in (?,?,?)
      * @version 0.2
      * @since   0.0
      */
