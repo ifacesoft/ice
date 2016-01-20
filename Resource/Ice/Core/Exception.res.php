@@ -164,4 +164,70 @@ return [
     'Access_Denied_Security - Widget: Access denied!' => [
         'ru' => 'Access_Denied_Security - Widget: Access denied!',
     ],
+    'RouteNotFound - Route {$0} not found' => [
+        'ru' => 'RouteNotFound - Route {$0} not found',
+    ],
+    'Error - For part {$0} with event {$1} of widget {$2} must be defined action param' => [
+        'ru' => 'Error - For part {$0} with event {$1} of widget {$2} must be defined action param',
+    ],
+    'Error - action class not found' => [
+        'ru' => 'Error - action class not found',
+    ],
+    'Not_Configured - Check config of widget {$0} for {$1}' => [
+        'ru' => 'Not_Configured - Check config of widget {$0} for {$1}',
+    ],
+    'Access_Denied_Security - Forbidden' => [
+        'ru' => 'Access_Denied_Security - Forbidden',
+    ],
+    'Http_Forbidden - Access denied' => [
+        'ru' => 'Http_Forbidden - Access denied',
+    ],
+    'Http_Forbidden - Table {$0} not found' => [
+        'ru' => 'Http_Forbidden - Table {$0} not found',
+    ],
+    'Http_Not_Found - Table {$0} not found' => [
+        'ru' => 'Http_Not_Found - Table {$0} not found',
+    ],
+    'Http_Forbidden - Access denied: scheme not allowed' => [
+        'ru' => 'Http_Forbidden - Access denied: scheme not allowed',
+    ],
+    'Error - Action class not found' => [
+        'ru' => 'Error - Action class not found',
+    ],
+    'Redirect - /ice/admin/database/dashboard' => [
+        'ru' => 'Redirect - /ice/admin/database/dashboard',
+    ],
+    'Redirect - /ice/admin/access/book/packet' => [
+        'ru' => 'Redirect - /ice/admin/access/book/packet',
+    ],
+    'Redirect - /ice/admin/tool/upload' => [
+        'ru' => 'Redirect - /ice/admin/tool/upload',
+    ],
+    'Redirect - /ice/admin/tool/upload/book' => [
+        'ru' => 'Redirect - /ice/admin/tool/upload/book',
+    ],
+    'Redirect - /ice/admin/report/dashboard' => [
+        'ru' => 'Redirect - /ice/admin/report/dashboard',
+    ],
+    'Http_Forbidden - Scheme {$0} not found' => [
+        'ru' => 'Http_Forbidden - Scheme {$0} not found',
+    ],
+    'Http_Forbidden - Access denied: table not allowed' => [
+        'ru' => 'Http_Forbidden - Access denied: table not allowed',
+    ],
+    'Error - fix' => [
+        'ru' => 'Error - fix',
+    ],
+    'Error - Book not found' => [
+        'ru' => 'Error - Book not found',
+    ],
+    'Redirect - /ice/admin/tool/order/table' => [
+        'ru' => 'Redirect - /ice/admin/tool/order/table',
+    ],
+    'Redirect - /ice/admin/tool/order' => [
+        'ru' => 'Redirect - /ice/admin/tool/order',
+    ],
+    'Redirect - /ice/admin/dashboard' => [
+        'ru' => 'Redirect - /ice/admin/dashboard',
+    ],
 ];

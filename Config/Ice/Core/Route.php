@@ -67,6 +67,5 @@ return [
         ]
     ],
     '_Security' => '/security',
-    '_Admin' => '/admin',
     '_Private' => '/private',
 ];
