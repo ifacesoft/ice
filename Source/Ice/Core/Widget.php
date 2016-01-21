@@ -1381,7 +1381,10 @@ abstract class Widget extends Container
             $fieldName = $part['options']['oneToMany']::getPkFieldName();
             $part['options']['rows'] =
                 [0 => [$part['value'] => 0, $part['title'] => '']] +
-                $part['options']['oneToMany']::createQueryBuilder()->asc($part['title'])->getSelectQuery([$fieldName => $part['value'], $part['title']])->getRows($part['title']);
+                $part['options']['oneToMany']::createQueryBuilder()
+                    ->asc($part['title'])
+                    ->getSelectQuery([$fieldName => $part['value'], $part['title']])
+                    ->getRows($part['title']);
 
             $oneToMany = array_filter($part['options']['rows'], function ($item) use ($value, $valueFieldName) {
                 return $item[$valueFieldName] == $value;
