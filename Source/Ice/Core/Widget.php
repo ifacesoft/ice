@@ -1,6 +1,7 @@
 <?php
 namespace Ice\Core;
 
+use Doctrine\Common\Util\Debug;
 use Ice\Exception\Access_Denied;
 use Ice\Exception\Error;
 use Ice\Exception\Http;
@@ -442,9 +443,13 @@ abstract class Widget extends Container
                 $values = $this->getValues();
             }
 
+            $empty = empty($values);
+
             $row = [];
 
             foreach ($this->getParts($this->getFilterParts()) as $partName => $part) {
+                $part['empty'] = $empty;
+
                 if (isset($data['sheet'])) {
                     $part['sheet'] = $data['sheet'];
                 }
