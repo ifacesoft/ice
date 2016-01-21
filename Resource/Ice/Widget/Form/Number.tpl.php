@@ -6,11 +6,11 @@
 
     <?php if (!empty($widgetOptions['horizontal'])) : ?>
     <div class="col-md-<?= 12 - $widgetOptions['horizontal'] ?>"><?php endif; ?>
-        <input type="text"
+        <input type="number"
                class="<?= $element ?> <?= $name ?><?php if (!isset($options['resetFormClass'])) : ?> form-control<?php endif; ?><?php if (!empty($options['classes'])) : ?> <?= $options['classes'] ?><?php endif; ?>"
                id="<?= $partId ?>"
                name="<?= $name ?>"
-               value="<?= isset($params[$name]) ? $params[$name] : '' ?>"
+               value="<?= isset($params[$v]) ? $params[$name] : '' ?>"
                <?php if (!empty($options['placeholder'])) : ?>placeholder="<?= $options['placeholder'] ?>"<?php endif; ?>
                data-for="<?= $widgetId ?>"
                <?php if (isset($onchange)) : ?>onchange='<?= $onchange ?>'<?php endif; ?>

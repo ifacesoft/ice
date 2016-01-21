@@ -13,6 +13,6 @@
     <?php elseif (isset($params[$title])) : ?>
         <?= $params[$title] ?>
     <?php else : ?>
-        &nbsp;
+        <?= $title ?>
     <?php endif; ?>
 </span>
