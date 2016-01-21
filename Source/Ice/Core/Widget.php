@@ -1416,17 +1416,18 @@ abstract class Widget extends Container
                     $queryBuilder->asc($fieldNames, $fieldModelClass);
                 }
 
-                foreach ((array) $fieldNames as $field) {
+                foreach ((array)$fieldNames as $field) {
                     $firstRow[$field] = '';
                     $fields[] = $field;
                 }
             }
 
-            $part['options']['rows'] =
-                [$firstRow] +
+            $part['options']['rows'] = array_merge(
+                [$firstRow],
                 $queryBuilder
-                    ->getSelectQuery(array_merge([$fieldName => $part['value']], isset($part['title'][$modelClass]) ? (array) $part['title'][$modelClass] : (array)reset($part['title'])))
-                    ->getRows();
+                    ->getSelectQuery(array_merge([$fieldName => $part['value']], isset($part['title'][$modelClass]) ? (array)$part['title'][$modelClass] : (array)reset($part['title'])))
+                    ->getRows()
+            );
 
             $oneToMany = array_filter($part['options']['rows'], function ($item) use ($value, $valueFieldName) {
                 return $item[$valueFieldName] == $value;
