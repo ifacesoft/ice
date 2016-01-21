@@ -16,7 +16,7 @@
             <?php if (!empty($options['disabled'])) : ?>disabled="disabled"<?php endif; ?>
             <?php if (!empty($options['readonly'])) : ?>readonly="readonly"<?php endif; ?>
             <?php if (!empty($options['required'])) : ?>required="required"<?php endif; ?>
-        ><?= $value ?></textarea>
+        ><?= isset($params[$value]) ? $params[$value] : '' ?></textarea>
         <?php if (!empty($widgetOptions['horizontal'])) : ?></div><?php endif; ?>
 </div>
 

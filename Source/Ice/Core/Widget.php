@@ -445,6 +445,10 @@ abstract class Widget extends Container
 
             $empty = empty($values);
 
+            if (empty($values)) {
+                $part['empty'] = true;
+            }
+
             $row = [];
 
             foreach ($this->getParts($this->getFilterParts()) as $partName => $part) {
@@ -1383,20 +1387,56 @@ abstract class Widget extends Container
         $valueFieldName = $part['value'];
 
         if (isset($part['options']['oneToMany']) && empty($part['options']['rows'])) {
-            $fieldName = $part['options']['oneToMany']::getPkFieldName();
+            $part['options']['oneToMany'] = (array)$part['options']['oneToMany'];
+            $modelClass = array_shift($part['options']['oneToMany']);
+            $fieldName = $modelClass::getPkFieldName();
+
+            $firstRow = [$part['value'] => 0];
+
+            $joinModelClasses = [$modelClass];
+
+            /** @var Query_Builder $queryBuilder */
+            $queryBuilder = $modelClass::createQueryBuilder();
+
+            $part['title'] = (array)$part['title'];
+
+            $fields = [];
+
+            foreach ($part['title'] as $fieldModelClass => $fieldNames) {
+                if (is_int($fieldModelClass)) {
+                    $fieldModelClass = $modelClass;
+                }
+
+                if (!in_array($fieldModelClass, $joinModelClasses)) {
+                    $queryBuilder->inner($fieldModelClass, '*');
+                    $joinModelClasses[] = $fieldModelClass;
+                }
+
+                if ($fieldModelClass != $modelClass) {
+                    $queryBuilder->asc($fieldNames, $fieldModelClass);
+                }
+
+                foreach ((array) $fieldNames as $field) {
+                    $firstRow[$field] = '';
+                    $fields[] = $field;
+                }
+            }
+
             $part['options']['rows'] =
-                [0 => [$part['value'] => 0, $part['title'] => '']] +
-                $part['options']['oneToMany']::createQueryBuilder()
-                    ->asc($part['title'])
-                    ->getSelectQuery([$fieldName => $part['value'], $part['title']])
-                    ->getRows($part['title']);
+                [$firstRow] +
+                $queryBuilder
+                    ->getSelectQuery(array_merge([$fieldName => $part['value']], isset($part['title'][$modelClass]) ? (array) $part['title'][$modelClass] : (array)reset($part['title'])))
+                    ->getRows();
 
             $oneToMany = array_filter($part['options']['rows'], function ($item) use ($value, $valueFieldName) {
                 return $item[$valueFieldName] == $value;
             });
-            $one = $oneToMany ? reset($oneToMany) : [$part['title'] => ''];
 
-            $part['oneToMany'] = $one[$part['title']];
+            $part['title'] = $fields;
+
+            $one = $oneToMany ? reset($oneToMany) : array_fill_keys((array)$part['title'], '');
+
+            $part['oneToMany'] = array_intersect_key($one, array_flip($part['title']));
         }
 
         if (isset($part['options']['manyToOne']) && empty($part['options']['rows'])) {

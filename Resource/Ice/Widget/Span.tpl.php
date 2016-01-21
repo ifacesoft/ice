@@ -7,12 +7,12 @@
     data-params='<?= $dataParams ?>'
     data-for="<?= $widgetId ?>">
     <?php if (isset($oneToMany)) : ?>
-        <?= $oneToMany ?>
+        <?= implode(', ', $oneToMany) ?>
     <?php elseif (isset($manyToMany)) : ?>
         <?= $manyToMany ?>
     <?php elseif (isset($params[$label])) : ?>
         <?= $params[$label] ?>
     <?php else : ?>
-        &nbsp;
+        <?= $label ?>
     <?php endif; ?>
 </span>
