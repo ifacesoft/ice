@@ -14,7 +14,7 @@ $options['column'] = isset($options['column']) ? $options['column'] : 'A';
 foreach ($options['widget']->getParts() as $name => $part) {
     $label = isset($part['options']['label']) ? $part['options']['label'] : $name;
 
-    if (isset($resource) && $resource instanceof Ice\Core\Resource) {
+    if ($label && isset($resource) && $resource instanceof Ice\Core\Resource) {
         $label = $resource->get($label);
     }
 

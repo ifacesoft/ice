@@ -3,7 +3,6 @@
 namespace Ice\Widget;
 
 use Ice\Core\Action;
-use Ice\Core\Debuger;
 use Ice\Core\Module;
 use Ice\Core\Validator;
 use Ice\Core\Widget;
@@ -18,11 +17,7 @@ class Form extends Widget
      */
     protected $validateScheme = [];
 
-    private $submit = null;
-
-    private $action = '';
-
-    private $method = 'POST';
+    private $submitPartName = null;
 
     /**
      * Widget config
@@ -53,7 +48,7 @@ class Form extends Widget
 
     protected function getCompiledResult()
     {
-        $submitOptions = $this->submit ? $this->getPart($this->submit)['options'] : null;
+        $submitOptions = $this->submitPartName ? $this->getPart($this->submitPartName)['options'] : null;
 
         if ($submitOptions && !empty($submitOptions['params'])) {
             $this->setDataParams(array_merge($this->getDataParams(), $submitOptions['params']));
@@ -62,20 +57,12 @@ class Form extends Widget
         return array_merge(
             parent::getCompiledResult(),
             [
-                'action' => $this->action,
-                'method' => $this->method,
-                'dataAction' => $submitOptions ? $submitOptions['dataAction'] : null,
-                'onSubmit' => $submitOptions ? $submitOptions['submit'] : null
+                'dataAction' => $submitOptions['dataAction'],
+                'onSubmit' => $submitOptions['submit'],
+                'url' => $submitOptions['url'],
+                'method' => $submitOptions['method']
             ]
         );
-    }
-
-    /**
-     * @param string $action
-     */
-    public function setAction($action)
-    {
-        $this->action = $action;
     }
 
     /**
@@ -380,14 +367,6 @@ class Form extends Widget
     }
 
     /**
-     * @param null $submit
-     */
-    public function setSubmit($submit)
-    {
-        $this->submit = $submit;
-    }
-
-    /**
      * @param $fieldName
      * @param array $options
      * @param string $template
@@ -400,7 +379,7 @@ class Form extends Widget
     public function button($fieldName, array $options = [], $template = 'Ice\Widget\Form\Button')
     {
         if (isset($options['submit'])) {
-            $this->submit = $fieldName;
+            $this->submitPartName = $fieldName;
         }
 
         return $this->addPart($fieldName, $options, $template, __FUNCTION__);

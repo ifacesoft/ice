@@ -168,7 +168,7 @@ class Logger
      */
     public static function shutdownHandler()
     {
-        self::$reserveMemory;
+        self::$reserveMemory = null;
 
         if ($error = error_get_last()) {
             Http::setHeader(Http::getStatusCodeHeader(500), true, 500);
@@ -314,7 +314,7 @@ class Logger
             return;
         }
 
-        FirePHP::getInstance(true)->fb(1, $label, $type, $options);
+        FirePHP::getInstance(true)->fb($value, $label, $type, $options);
     }
 
     /**

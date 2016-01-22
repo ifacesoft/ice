@@ -57,12 +57,8 @@ return [
     'ice_render_excel' => [
         'route' => '/render/excel',
         'request' => [
-            'GET' => [
-                'Ice:Layout_Blank' => [
-                    'response' => [
-                        'redirect' => 'ice_main'
-                    ]
-                ]
+            'POST' => [
+                'actionClass' => 'Ice:Render_Excel',
             ]
         ]
     ],

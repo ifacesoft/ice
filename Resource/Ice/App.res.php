@@ -12,4 +12,7 @@ return [
     'Warning: Invalid argument supplied for foreach()' => [
         'ru' => 'Warning: Invalid argument supplied for foreach()',
     ],
+    'Error - Application (Http): render content failure' => [
+        'ru' => 'Error - Application (Http): render content failure',
+    ],
 ];

@@ -3,7 +3,7 @@
       data-widget='<?= $dataWidget ?>'
       data-params='<?= $dataParams ?>'
       data-for="<?= $parentWidgetId ?>"
-      action="<?= $action ?>"
+      action="<?= $url ?>"
       method="<?= $method ?>"
       <?php if ($onSubmit) : ?>onsubmit="<?= $onSubmit ?>" data-action='<?= $dataAction ?>'<?php endif; ?>
 >

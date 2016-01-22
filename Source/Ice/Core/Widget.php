@@ -1,7 +1,6 @@
 <?php
 namespace Ice\Core;
 
-use Doctrine\Common\Util\Debug;
 use Ice\Exception\Access_Denied;
 use Ice\Exception\Error;
 use Ice\Exception\Http;
@@ -934,23 +933,17 @@ abstract class Widget extends Container
     }
 
     /**
+     * @param $url
+     * @param $method
      * @param array $event
      * @return string
      */
-    protected function getOnclick(array $event)
+    protected function getOnclick($url, $method, array $event)
     {
-        $code = 'Ice_Core_Widget.click($(this)';
+        $code = 'Ice_Core_Widget.click($(this), \'' . $url . '\', \'' . $method . '\'';
 
-        if (isset($event['url']) || isset($event['method']) || isset($event['callback'])) {
-            $code .= (isset($event['url']) ? ', \'' . $event['url'] . '\'' : ', \'\'');
-
-            if (isset($event['method']) || isset($event['callback'])) {
-                $code .= (isset($event['method']) ? ', \'' . $event['method'] . '\'' : ', \'POST\'');
-
-                if (isset($event['callback'])) {
-                    $code .= ', \'' . $event['callback'] . '\'';
-                }
-            }
+        if (isset($event['callback'])) {
+            $code .= ', \'' . $event['callback'] . '\'';
         }
 
         return $code . '); return false;';
@@ -1349,10 +1342,6 @@ abstract class Widget extends Container
                     unset($options[$event]['data']);
                 }
 
-                $actionData['ajax'] = array_key_exists('ajax', $options[$event]) ? $options[$event]['ajax'] : true;
-
-                $options['dataAction'] = Json::encode($actionData);
-
                 if (isset($options[$event]['url'])) {
                     try {
                         $options[$event]['url'] = $options[$event]['url'] === true
@@ -1362,8 +1351,16 @@ abstract class Widget extends Container
                         $options[$event]['url'] = '/';
                     }
                 }
+                $options['url'] = isset($options[$event]['url']) ? $options[$event]['url'] : '';
+                $options['method'] = isset($options[$event]['method']) ? $options[$event]['method'] : 'POST';
 
-                $options[$event] = $this->getOnclick($options[$event], $actionData['ajax']);
+                $actionData['ajax'] = array_key_exists('ajax', $options[$event]) ? $options[$event]['ajax'] : true;
+
+                $options['dataAction'] = Json::encode($actionData);
+
+                $options[$event] = $actionData['ajax']
+                    ? $this->getOnclick($options['url'], $options['method'], $options[$event])
+                    : '';
             }
         }
     }

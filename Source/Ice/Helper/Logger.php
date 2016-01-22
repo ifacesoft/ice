@@ -124,6 +124,8 @@ class Logger
      * @param \Exception $exception
      * @param $output
      *
+     * @param $class
+     * @throws \Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0

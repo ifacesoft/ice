@@ -5,4 +5,4 @@
         data-name="<?= $name ?>"
         data-params='<?= $dataParams ?>'
         data-for="<?= $widgetId ?>"
-        type="<?php if (!empty($options['submit'])) : ?>submit<?php else : ?>button<?php endif; ?>"><?= $label ?></button>
+        type="<?php if (isset($options['submit'])) : ?>submit<?php else : ?>button<?php endif; ?>"><?= $label ?></button>
