@@ -3,6 +3,7 @@
 namespace Ice\Action;
 
 use Ice\Core\Action;
+use Ice\Core\Debuger;
 use Ice\Core\Widget;
 
 class Render extends Action
@@ -65,6 +66,8 @@ class Render extends Action
                 $widgets[$widget->getWidgetId()] = $widget->render();
             }
         }
+
+
 
         return ['widgets' => $widgets];
     }

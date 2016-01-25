@@ -28,8 +28,8 @@ class Render_Excel extends Action
             'cache' => ['ttl' => -1, 'count' => 1000],
             'actions' => [],
             'input' => [
-                'widgetClass' => ['providers' => ['default', 'router', 'request']],
-                'widgetParams' => ['providers' => ['default', 'router', 'request'], 'default' => []],
+                'class' => ['providers' => ['default', 'router', 'request']],
+                'params' => ['providers' => ['default', 'router', 'request'], 'default' => []],
                 'widget' => ['default' => null, 'providers' => ['default', 'request']]
             ],
             'output' => []
@@ -43,7 +43,7 @@ class Render_Excel extends Action
      */
     public function run(array $input)
     {
-        $widgetClass = Widget::getClass($input['widgetClass']);
+        $widgetClass = Widget::getClass($input['class']);
 
         $headers = [
             'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
@@ -57,7 +57,7 @@ class Render_Excel extends Action
 
         return [
             'content' => External_PHPExcel::getInstance()
-                ->renderWidget($widgetClass::getInstance(null, null, $input['widgetParams']))
+                ->renderWidget($widgetClass::getInstance(null, null, $input['params']))
         ];
     }
 }
