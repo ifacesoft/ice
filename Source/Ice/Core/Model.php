@@ -763,6 +763,9 @@ abstract class Model
      * @param array $filterFields
      * @param array $pagination
      * @param null $dataSourceKey
+     *
+     * @todo add order param
+     *
      * @return Query
      */
     public static function getSelectQuery($selectFields, array $filterFields = [], array $pagination = null, $dataSourceKey = null)
