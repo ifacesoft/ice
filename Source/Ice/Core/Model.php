@@ -1173,9 +1173,7 @@ abstract class Model
      */
     public function save($isSmart = false, $dataSourceKey = null)
     {
-        /**
-         * @var Model $modelClass
-         */
+        /**@var Model $modelClass */
         $modelClass = get_class($this);
 
         $pk = $this->getPk();
@@ -1193,15 +1191,24 @@ abstract class Model
 
             return $this->clearAffected();
         }
-//
+
+        /** @var Model_Scheme $modelScheme */
+        $modelScheme = $modelClass::getScheme();
+
         if (!$isSetPk) {
-            $this->find('/pk');
-//                $this->insert($modelClass, $affected, false, $dataSourceKey);
-//
-//                return $this->clearAffected();
+            $this->find(array_merge($modelScheme->getPkFieldNames(), $modelScheme->getUniqueFieldNames()));
         }
 
-        $this->insert($modelClass, $affected, true, $dataSourceKey);
+        $this->insert(
+            $modelClass,
+            array_merge(
+                (array)$this->getPk(),
+                array_intersect_key($this->get(), array_flip($modelScheme->getUniqueFieldNames())),
+                $affected
+            ),
+            true,
+            $dataSourceKey
+        );
 
         return $this->clearAffected();
     }

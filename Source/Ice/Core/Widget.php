@@ -329,6 +329,11 @@ abstract class Widget extends Container
      */
     public static function getInstance($key, $ttl = null, array $params = [])
     {
+        /** @var Widget $widgetClass */
+        $widgetClass = self::getClass();
+
+        Access::check($widgetClass::getConfig()->gets('access'));
+
         return parent::getInstance($key, $ttl, $params);
     }
 

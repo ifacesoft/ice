@@ -118,7 +118,7 @@ class Model_Scheme extends Config
     /**
      * Return all primary key names if them more then one
      *
-     * @return mixed
+     * @return array
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
@@ -127,9 +127,7 @@ class Model_Scheme extends Config
      */
     public function getPkFieldNames()
     {
-        /**
-         * @var Model $modelClass
-         */
+        /**@var Model $modelClass */
         $modelClass = $this->getName();
 
         $repository = $modelClass::getRepository('scheme');
@@ -142,7 +140,7 @@ class Model_Scheme extends Config
         $columnFieldMappings = $this->getColumnFieldMap();
 
         return $repository->set(
-            'pkFieldNames',
+            $key,
             array_map(
                 function ($columnName) use ($columnFieldMappings) {
                     return $columnFieldMappings[$columnName];
@@ -180,5 +178,63 @@ class Model_Scheme extends Config
     public function getIndexes()
     {
         return $this->gets('indexes');
+    }
+
+    /**
+     * Return unique key column names
+     *
+     * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 2.0
+     * @since   2.0
+     */
+    public function getUniqueColumnNames()
+    {
+        $uniqueColumnNames = [];
+
+        foreach ($this->getIndexes()['UNIQUE'] as $SeqInIndex => $columnNames) {
+            foreach ($columnNames as $columnName) {
+                $uniqueColumnNames[] = $columnName;
+            }
+        }
+
+        return $this->getIndexes()['PRIMARY KEY']['PRIMARY'];
+    }
+
+    /**
+     * Return unique field names
+     *
+     * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 2.0
+     * @since   2.0
+     */
+    public function getUniqueFieldNames()
+    {
+        /**@var Model $modelClass */
+        $modelClass = $this->getName();
+
+        $repository = $modelClass::getRepository('scheme');
+        $key = 'uniqueFieldNames';
+
+        if ($uniqueFieldNames = $repository->get($key)) {
+            return $uniqueFieldNames;
+        }
+
+        $columnFieldMappings = $this->getColumnFieldMap();
+
+        return $repository->set(
+            $key,
+            array_map(
+                function ($columnName) use ($columnFieldMappings) {
+                    return $columnFieldMappings[$columnName];
+                },
+                $this->getUniqueColumnNames()
+            )
+        );
     }
 }
