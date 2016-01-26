@@ -329,10 +329,10 @@ abstract class Widget extends Container
      */
     public static function getInstance($key, $ttl = null, array $params = [])
     {
-        /** @var Widget $widgetClass */
-        $widgetClass = self::getClass();
-
-        Access::check($widgetClass::getConfig()->gets('access'));
+//        /** @var Widget $widgetClass */
+//        $widgetClass = self::getClass();
+//
+//        Access::check($widgetClass::getConfig()->gets('access'));
 
         return parent::getInstance($key, $ttl, $params);
     }
@@ -1144,6 +1144,10 @@ abstract class Widget extends Container
      */
     public function widget($name, array $options = [], $template = 'Ice\Widget\Widget')
     {
+        if (!$options['widget']) {
+            return $this;
+        }
+
         $options['params']['parentWidgetId'] = $this->getWidgetId();
 
         $options['widget'] = $this->getWidget($options['widget']);
@@ -1220,7 +1224,15 @@ abstract class Widget extends Container
             ? get_class($this) . $widgetClass
             : Widget::getClass($widgetClass);
 
-        return $widgetClass::getInstance($key . $postfixKey, null, $widgetParams);
+        $widget = null;
+
+//        try {
+            $widget = $widgetClass::getInstance($key . $postfixKey, null, $widgetParams);
+//        } catch (\Exception $e) {
+//            //todo: заменять на виджет сообщения об ошибке
+//        }
+
+        return $widget;
     }
 
     /**
