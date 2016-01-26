@@ -173,9 +173,15 @@ class City extends Model
 		            'Ebs\Model\Subscriber' => 'city_id',
 		        ],
 		        'manyToMany' => [
-		            'Ebs\Model\Access_Type' => 'Ebs\Model\Subscriber',
-		            'Ebs\Model\Subscriber' => 'Ebs\Model\Subscriber',
-		            'Ebs\Model\Subscriber_Type' => 'Ebs\Model\Subscriber',
+		            'Ebs\Model\Access_Type' => [
+		                0 => 'Ebs\Model\Subscriber',
+		            ],
+		            'Ebs\Model\Subscriber' => [
+		                0 => 'Ebs\Model\Subscriber',
+		            ],
+		            'Ebs\Model\Subscriber_Type' => [
+		                0 => 'Ebs\Model\Subscriber',
+		            ],
 		        ],
 		    ],
 		    'revision' => '09251203_xw0',

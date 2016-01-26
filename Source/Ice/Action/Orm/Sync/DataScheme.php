@@ -4,6 +4,7 @@ namespace Ice\Action;
 
 use Ice\Core\Action;
 use Ice\Core\Data_Scheme;
+use Ice\Core\Debuger;
 use Ice\Core\Model;
 use Ice\Core\Module;
 use Ice\Exception\DataSource_Statement_TableNotFound;
@@ -87,16 +88,20 @@ class Orm_Sync_DataScheme extends Action
                 $table['relations']['manyToOne'] = $relations;
 
                 $relations = [];
-                foreach ($table['relations']['manyToMany'] as $referenceTableName => $linkTableName) {
+                foreach ($table['relations']['manyToMany'] as $referenceTableName => $linkTableNames) {
                     $referenceClassName = isset($schemeTables[$referenceTableName])
                         ? $schemeTables[$referenceTableName]['modelClass']
                         : $module->getModelClass($referenceTableName, $dataSourceKey);
 
-                    $linkClassName = isset($schemeTables[$linkTableName])
-                        ? $schemeTables[$linkTableName]['modelClass']
-                        : $module->getModelClass($linkTableName, $dataSourceKey);
+                    $relations[$referenceClassName] = [];
 
-                    $relations[$referenceClassName] = $linkClassName;
+                    foreach ($linkTableNames as $linkTableName) {
+                        $linkClassName = isset($schemeTables[$linkTableName])
+                            ? $schemeTables[$linkTableName]['modelClass']
+                            : $module->getModelClass($linkTableName, $dataSourceKey);
+
+                        $relations[$referenceClassName][] = $linkClassName;
+                    }
                 }
                 $table['relations']['manyToMany'] = $relations;
 
@@ -437,7 +442,7 @@ class Orm_Sync_DataScheme extends Action
             return false;
         }
 
-        $diffManyToMany = Json::encode(array_diff($tableManyToMany, $modelManyToMany));
+        $diffManyToMany = '';//Json::encode(array_diff($tableManyToMany, $modelManyToMany));
 
         $modelManyToMany = $tableManyToMany;
 
