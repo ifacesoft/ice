@@ -11,8 +11,10 @@ namespace Ice\Core;
 
 use Ice\Core;
 use Ice\Exception\Error;
+use Ice\Exception\QueryBuilder_Join;
 use Ice\Helper\Object;
 use Ice\Widget\Form;
+use Symfony\Component\Config\Definition\Exception\Exception;
 
 /**
  * Class Query_Builder
@@ -977,22 +979,29 @@ class Query_Builder
 
             if (isset($manyToMany[$modelClass])) {
 
-                $joinClass = $manyToMany[$modelClass];
+                $linkClasses = $manyToMany[$modelClass];
+
+                if (count($linkClasses) > 1) {
+                    throw new QueryBuilder_Join('linkModelClass is Ambiguous', $linkClasses);
+                }
+
+                $linkClass = reset($linkClasses);
+
                 $joinAlias = Object::getClassName($manyToMany[$modelClass]);
 
-                $joinColumn = $joinModelScheme->get('relations/' . Model_Scheme::MANY_TO_ONE . '/' . $joinClass);
+                $joinColumn = $joinModelScheme->get('relations/' . Model_Scheme::MANY_TO_ONE . '/' . $linkClass);
 
                 $this->sqlParts[self::PART_JOIN][$joinAlias] = [
                     'type' => $joinType,
-                    'class' => $joinClass,
+                    'class' => $linkClass,
                     'on' => '`' . $joinAlias . '`.`' . $joinColumn . '` = `' .
                         $joinTableAlias . '`.`' . $join['class']::getPkColumnName() . '`'
                 ];
 
-                $joinColumn2 = $modelClass::getScheme()->get('relations/' . Model_Scheme::MANY_TO_ONE . '/' . $joinClass);
+                $joinColumn2 = $modelClass::getScheme()->get('relations/' . Model_Scheme::MANY_TO_ONE . '/' . $linkClass);
 
                 $this->sqlParts[self::PART_JOIN][$tableAlias] = [
-                    'type' => Query_Builder::SQL_CLAUSE_INNER_JOIN,
+                    'type' => $joinType,
                     'class' => $modelClass,
                     'on' => '`' . $tableAlias . '`.`' . $modelClass::getPkColumnName() . '` = `' .
                         $joinAlias . '`.`' . $joinColumn2 . '`'
