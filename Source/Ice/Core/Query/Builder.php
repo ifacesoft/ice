@@ -14,7 +14,6 @@ use Ice\Exception\Error;
 use Ice\Exception\QueryBuilder_Join;
 use Ice\Helper\Object;
 use Ice\Widget\Form;
-use Symfony\Component\Config\Definition\Exception\Exception;
 
 /**
  * Class Query_Builder
