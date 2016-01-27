@@ -987,7 +987,7 @@ class Query_Builder
 
                 $linkClass = reset($linkClasses);
 
-                $joinAlias = Object::getClassName($manyToMany[$modelClass]);
+                $joinAlias = Object::getClassName($linkClass);
 
                 $joinColumn = $joinModelScheme->get('relations/' . Model_Scheme::MANY_TO_ONE . '/' . $linkClass);
 
