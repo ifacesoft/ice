@@ -1,6 +1,7 @@
 <?php
 namespace Ice\Core;
 
+use Ebs\Widget\Admin_Database_Form;
 use Ice\Exception\Access_Denied;
 use Ice\Exception\Error;
 use Ice\Exception\Http;
@@ -1227,7 +1228,7 @@ abstract class Widget extends Container
         $widget = null;
 
 //        try {
-            $widget = $widgetClass::getInstance($key . $postfixKey, null, $widgetParams);
+        $widget = $widgetClass::getInstance($key . $postfixKey, null, $widgetParams);
 //        } catch (\Exception $e) {
 //            //todo: заменять на виджет сообщения об ошибке
 //        }
