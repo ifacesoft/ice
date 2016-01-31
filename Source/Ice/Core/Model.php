@@ -556,9 +556,7 @@ abstract class Model
     public function get($fieldName = null, $isNotNull = true)
     {
         if ($fieldName === null) {
-            return array_merge((array)$this->pk, array_filter($this->row, function ($value) {
-                return $value !== null;
-            }));
+            return array_merge((array)$this->pk, array_filter($this->row, function ($value) { return $value !== null; }));
         }
 
         if (is_array($fieldName)) {
@@ -574,7 +572,7 @@ abstract class Model
         $fieldName = $this->getFieldName($fieldName);
 
         if ($this->isPkName($fieldName)) {
-            return $this->getPk();
+            return $this->getPkValue();
         }
 
         /**
@@ -1194,10 +1192,6 @@ abstract class Model
 
         /** @var Model_Scheme $modelScheme */
         $modelScheme = $modelClass::getScheme();
-
-        if (!$isSetPk) {
-            $this->find(array_merge($modelScheme->getPkFieldNames(), $modelScheme->getUniqueFieldNames()));
-        }
 
         $this->insert(
             $modelClass,

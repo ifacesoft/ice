@@ -981,7 +981,7 @@ class Query_Builder
                 $linkClasses = $manyToMany[$modelClass];
 
                 if (count($linkClasses) > 1) {
-                    throw new QueryBuilder_Join('linkModelClass is Ambiguous', $linkClasses);
+                    throw new QueryBuilder_Join('linkModelClass is ambiguous', $linkClasses);
                 }
 
                 $linkClass = reset($linkClasses);
