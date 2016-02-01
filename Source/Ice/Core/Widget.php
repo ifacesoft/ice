@@ -788,6 +788,15 @@ abstract class Widget extends Container
             'element' => $widgetClass::getClassName() . '_' . $element,
         ];
 
+        $part['name'] = isset($part['options']['name']) ? $part['options']['name'] : $partName;
+        unset($part['options']['name']);
+
+        $part['value'] = isset($part['options']['value']) ? $part['options']['value'] : $partName;
+        unset($part['options']['value']);
+
+        $part['title'] = isset($part['options']['title']) ? $part['options']['title'] : $partName;
+        unset($part['options']['title']);
+
         if (!empty($options['unshift'])) {
             $this->parts = [$partName => $part] + $this->parts;
         } else {
@@ -1385,18 +1394,9 @@ abstract class Widget extends Container
 
     private function partParams($partName, array &$part, array $values)
     {
-        $part['name'] = isset($part['options']['name']) ? $part['options']['name'] : $partName;
-        unset($part['options']['name']);
-
 //        if ($partName == 'access_type__fk') {
 //            Debuger::dump($part);
 //        }
-
-        $part['value'] = isset($part['options']['value']) ? $part['options']['value'] : $partName;
-        unset($part['options']['value']);
-
-        $part['title'] = isset($part['options']['title']) ? $part['options']['title'] : $partName;
-        unset($part['options']['title']);
 
         $value = isset($values[$part['value']]) ? $values[$part['value']] : 0;
         $valueFieldName = $part['value'];

@@ -89,7 +89,6 @@ class App
                     $result = ['content' => Http_Status::getInstance('app', null, ['code' => 404, 'message' => $e->getMessage(), 'stackTrace' => $e->getTraceAsString()])];
                 } catch (\Exception $e) {
                     Logger::getInstance(__CLASS__)->error('Application (Http): run action failure', __FILE__, __LINE__, $e);
-
                     $result = [
                         'content' => Http_Status::getInstance('app', null, ['message' => $e->getMessage(), 'stackTrace' => $e->getTraceAsString()]),
                         'error' => Logger::getInstance(__CLASS__)->info($e->getMessage(), Logger::DANGER)

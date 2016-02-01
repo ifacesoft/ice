@@ -240,7 +240,7 @@ class Logger
      * @version 0.0
      * @since   0.0
      */
-    public function info($message, $type = null, $isResource = false, $logging = true)
+    public function info($message, $type = Logger::INFO, $isResource = false, $logging = true)
     {
         if (!$type) {
             $type = self::INFO;
