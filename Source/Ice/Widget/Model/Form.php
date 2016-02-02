@@ -206,6 +206,6 @@ abstract class Model_Form extends Form
             ? Model_Form::$typeMap[$table['columns'][$columnName]['scheme']['dataType']]
             : 'text';
 
-        return ['type' => $type, 'roles' => ['ROLE_ICE_GUEST', 'ROLE_ICE_USER']];
+        return ['type' => $type, /*'roles' => ['ROLE_ICE_GUEST', 'ROLE_ICE_USER']*/];
     }
 }

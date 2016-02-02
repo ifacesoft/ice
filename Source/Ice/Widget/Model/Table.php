@@ -8,7 +8,7 @@ abstract class Model_Table extends Table
 {
     public static function schemeColumnPlugin($columnName, $table)
     {
-        return ['type' => 'span', 'roles' => ['ROLE_ICE_GUEST', 'ROLE_ICE_USER']];
+        return ['type' => 'span', /*'roles' => ['ROLE_ICE_GUEST', 'ROLE_ICE_USER']*/];
     }
 
     /**
