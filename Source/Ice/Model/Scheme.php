@@ -229,7 +229,7 @@ class Scheme extends Model
 		        'manyToOne' => [],
 		        'manyToMany' => [],
 		    ],
-		    'revision' => '01261331_q8x',
+		    'revision' => '02020912_bzo',
 		];
     }
 }
