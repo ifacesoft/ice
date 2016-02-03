@@ -276,8 +276,8 @@ class Form extends Widget
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 2.0
-     * @since   2.0
+     * @version 1.1
+     * @since   1.1
      */
     public function chosen($fieldName, array $options = [], $template = 'Ice\Widget\Form\Chosen')
     {
@@ -342,8 +342,8 @@ class Form extends Widget
      * @return Form
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 2.0
-     * @since   2.0
+     * @version 1.1
+     * @since   1.1
      */
     public function period($fieldName, array $options = [], $template = 'Ice\Widget\Form\Period')
     {
@@ -373,7 +373,7 @@ class Form extends Widget
      * @return Form
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 2.0
+     * @version 1.1
      * @since   1.0
      */
     public function button($fieldName, array $options = [], $template = 'Ice\Widget\Form\Button')

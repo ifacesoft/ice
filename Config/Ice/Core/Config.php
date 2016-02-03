@@ -28,8 +28,22 @@ return [
         'apiHost' => 'http://iceframework.net'
     ],
     'Ice\Core\Security' => [
+        'defaultClassName' => 'Ice\Security\Ice',
         'userModelClass' => 'Ice\Model\User'
     ],
+    'Ice\Core\Router' => [
+        'defaultClassName' => 'Ice\Router\Symfony',
+    ],
+    'Ice\Core\SessionHandler' => [
+        'defaultClassName' => 'Ice\SessionHandler\DataProvider',
+    ],
+    'Ice\Core\Render' => [
+        'defaultClassName' => 'Ice\Render\Php',
+    ],
+    'Ice\MessageTransport' => [
+        'defaultClassName' => 'Ice\MessageTransport\PHPMailer'
+    ],
+
     'Ice\Core\Request' => [
         'multiLocale' => 1,
         'locale' => 'en',
@@ -56,7 +70,7 @@ return [
             'request' => []
         ]
     ],
-    'Ice\Message\Transport\PHPMailer' => [
+    'Ice\MessageTransport\PHPMailer' => [
         'default' => [
             'debug' => '0',
             'smtpHost' => null, // required

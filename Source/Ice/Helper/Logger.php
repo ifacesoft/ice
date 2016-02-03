@@ -100,7 +100,7 @@ class Logger
             'lastTemplate' => Render::getLastTemplate(),
             'message' => Core_Logger::$errorCodes[$exception->getCode()] . ': ' . $exception->getMessage(),
             'errPoint' => $exception->getFile() . ':' . $exception->getLine(),
-            'errcontext' => $errcontext,
+            'errcontext' => empty($errcontext) ? '' : Php::varToPhpString($errcontext),
             'stackTrace' => str_replace('): ', '): ' . "\n" . str_repeat("\t", $level), $exception->getTraceAsString()),
             'type' => $type,
             'previous' => $previousMessage,
@@ -145,7 +145,7 @@ class Logger
 
         $output['message'] = Core_Logger::$errorCodes[$exception->getCode()] . ': ' . $exception->getMessage();
         $output['errPoint'] = '(' . $exception->getFile() . ':' . $exception->getLine() . ')';
-        $output['errcontext'] = $errcontext;
+        $output['errcontext'] = empty($errcontext) ? '' : Php::varToPhpString($errcontext);
         $output['stackTrace'] = $exception->getTraceAsString();
 
         $name = Request::isCli() ? Core_Console::getCommand(null) : Request::uri();

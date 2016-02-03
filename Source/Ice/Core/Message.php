@@ -108,11 +108,11 @@ abstract class Message
     }
 
     /**
-     * @param Message_Transport|string|null $messageTransport
+     * @param MessageTransport|string|null $messageTransport
      */
     public function send($messageTransport = null)
     {
-        $messageTransport = Message_Transport::getInstance($messageTransport);
+        $messageTransport = MessageTransport::getInstance($messageTransport);
 
         $logger = $messageTransport->getLogger();
 

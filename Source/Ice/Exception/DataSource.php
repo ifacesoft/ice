@@ -4,7 +4,7 @@ namespace Ice\Exception;
 
 use Ice\Core\Exception;
 
-class DataSource extends Exception
+abstract class DataSource extends Exception
 {
 
 }

@@ -38,7 +38,7 @@ return [
             'Ice\Core\Security' => [
                 'instance' => 'Ice:Registry',
             ],
-            'Ice\Core\Message_Transport' => [
+            'Ice\Core\MessageTransport' => [
                 'instance' => 'Ice:Registry',
             ],
             'Ice\Core\Loader' => [
@@ -130,8 +130,8 @@ return [
             'Ice\Core\Module' => [
                 'instance' => 'Ice:Repository'
             ],
-            'Ice\Core\Session' => [
-                'session' => 'Ice:Repository'
+            'Ice\Core\SessionHandler' => [
+                'instance' => 'Ice:Repository'
             ]
         ],
     ],
@@ -140,7 +140,7 @@ return [
             'Ice\Core\Bootstrap' => [
                 'instance' => 'Ice:Registry',
             ],
-            'Ice\Core\Message_Transport' => [
+            'Ice\Core\MessageTransport' => [
                 'instance' => 'Ice:Registry',
             ],
             'Ice\Core\Loader' => [
@@ -229,8 +229,8 @@ return [
             'Ice\Core\Module' => [
                 'instance' => 'Ice:File'
             ],
-            'Ice\Core\Session' => [
-                'session' => 'Ice:File'
+            'Ice\Core\SessionHandler' => [
+                'instance' => 'Ice:File'
             ]
         ]
     ],
@@ -239,7 +239,7 @@ return [
             'Ice\Core\Bootstrap' => [
                 'instance' => 'Ice:Registry',
             ],
-            'Ice\Core\Message_Transport' => [
+            'Ice\Core\MessageTransport' => [
                 'instance' => 'Ice:Registry',
             ],
             'Ice\Core\Loader' => [
@@ -328,8 +328,8 @@ return [
             'Ice\Core\Module' => [
                 'instance' => 'Ice:Registry'
             ],
-            'Ice\Core\Session' => [
-                'session' => 'Ice:File'
+            'Ice\Core\SessionHandler' => [
+                'instance' => 'Ice:Registry'
             ]
         ],
     ]

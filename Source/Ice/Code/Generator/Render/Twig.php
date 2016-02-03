@@ -39,7 +39,7 @@ class Render_Twig extends Code_Generator
      * @return mixed
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 2.0
+     * @version 1.1
      * @since   0.0
      */
     public function generate(array $data = [], $force = false)
@@ -77,8 +77,8 @@ class Render_Twig extends Code_Generator
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 2.0
-     * @since   2.0
+     * @version 1.1
+     * @since   1.1
      */
     protected function init(array $data)
     {

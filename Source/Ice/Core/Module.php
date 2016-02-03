@@ -55,8 +55,6 @@ class Module extends Config
             Module::DOWNLOAD_DIR => 'Web/download/',
             'ignorePatterns' => [],
             'bootstrapClass' => 'Ice\Bootstrap\Ice',
-            'securityClass' => 'Ice\Security\Ice',
-            'routerClass' => 'Ice\Router\Ice'
 
         ],
         'modules' => [

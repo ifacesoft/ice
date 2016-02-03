@@ -3,6 +3,6 @@ namespace Ice\Exception;
 
 use Ice\Core\Exception;
 
-class ConfigNotFound extends Exception
+abstract class Config extends Exception
 {
 }

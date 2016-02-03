@@ -108,8 +108,8 @@ class Http
      * @package    Ice
      * @subpackage Helper
      *
-     * @version 2.0
-     * @since   2.0
+     * @version 1.1
+     * @since   1.1
      */
     public static function getContentLength($length)
     {

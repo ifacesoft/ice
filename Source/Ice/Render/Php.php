@@ -66,7 +66,7 @@ class Php extends Render
      * @throws \Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 2.0
+     * @version 1.1
      * @since   0.0
      */
     public function fetch($template, array $data = [], $layout = null, $templateType = Render::TEMPLATE_TYPE_FILE)
@@ -132,8 +132,8 @@ class Php extends Render
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 2.0
-     * @since   2.0
+     * @version 1.1
+     * @since   1.1
      */
     protected function init(array $data)
     {

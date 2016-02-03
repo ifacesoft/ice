@@ -247,7 +247,7 @@ abstract class Model
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 2.0
+     * @version 1.1
      * @since   0.0
      */
     public function set($fieldName, $fieldValue = null, $isAffected = true)
@@ -818,8 +818,8 @@ abstract class Model
      * @return string
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 2.0
-     * @since   2.0
+     * @version 1.1
+     * @since   1.1
      */
     public static function getSchemeName()
     {

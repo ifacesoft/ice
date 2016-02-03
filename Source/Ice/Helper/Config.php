@@ -3,6 +3,7 @@
 namespace Ice\Helper;
 
 use Ice\Core\Logger;
+use Ice\Exception\Config_Param_NotFound;
 
 class Config
 {
@@ -43,7 +44,9 @@ class Config
                     __FILE__,
                     __LINE__,
                     null,
-                    $config
+                    $config,
+                    -1,
+                    Config_Param_NotFound::class
                 );
             }
 

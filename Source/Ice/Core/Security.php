@@ -34,17 +34,12 @@ abstract class Security extends Container
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 2.0
-     * @since   2.0
+     * @version 1.1
+     * @since   1.1
      */
     public static function getInstance($key = null, $ttl = null, array $params = [])
     {
         return parent::getInstance($key, $ttl, $params);
-    }
-
-    protected static function getDefaultClassKey()
-    {
-        return Module::getInstance()->get('securityClass');
     }
 
     protected static function getDefaultKey()

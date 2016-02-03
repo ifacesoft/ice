@@ -208,7 +208,7 @@ class Query_Builder
      * @return Query_Builder
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 2.0
+     * @version 1.1
      * @since   0.0
      */
     public function notNull($fieldName, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND, $isUse = true)
@@ -397,7 +397,7 @@ class Query_Builder
      * @return Query_Builder
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 2.0
+     * @version 1.1
      * @since   0.0
      */
     public function isNull($fieldName, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND, $isUse = true)
@@ -474,7 +474,7 @@ class Query_Builder
      * @return Query_Builder
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 2.0
+     * @version 1.1
      * @since   0.0
      */
     public function eq(array $fieldNameValues, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND, $isUse = true)
@@ -499,7 +499,7 @@ class Query_Builder
      * @return Query_Builder
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 2.0
+     * @version 1.1
      * @since   0.0
      */
     public function ge($fieldName, $fieldValue, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND, $isUse = true)
@@ -524,7 +524,7 @@ class Query_Builder
      * @return Query_Builder
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 2.0
+     * @version 1.1
      * @since   0.4
      */
     public function regex($fieldName, $fieldValue, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND, $isUse = true)
@@ -549,7 +549,7 @@ class Query_Builder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 2.0
+     * @version 1.1
      * @since   1.1
      */
     public function between($fieldName, array $fieldRangeValue, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND, $isUse = true)
@@ -574,7 +574,7 @@ class Query_Builder
      * @return Query_Builder
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 2.0
+     * @version 1.1
      * @since   0.0
      */
     public function le($fieldName, $fieldValue, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND, $isUse = true)
@@ -599,7 +599,7 @@ class Query_Builder
      * @return Query_Builder
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 2.0
+     * @version 1.1
      * @since   0.0
      */
     public function gt($fieldName, $fieldValue, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND, $isUse = true)
@@ -624,7 +624,7 @@ class Query_Builder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 2.0
+     * @version 1.1
      * @since   0.0
      */
     public function lt($fieldName, $fieldValue, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND, $isUse = true)
@@ -685,7 +685,7 @@ class Query_Builder
      * @return Query_Builder
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 2.0
+     * @version 1.1
      * @since   0.0
      */
     public function ne($fieldName, $fieldValue, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND, $isUse = true)
@@ -710,7 +710,7 @@ class Query_Builder
      * @return Query_Builder
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 2.0
+     * @version 1.1
      * @since   0.0
      */
     public function notIn($fieldName, array $fieldValue, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND, $isUse = true)
@@ -771,7 +771,7 @@ class Query_Builder
      * @return Query_Builder
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 2.0
+     * @version 1.1
      * @since   0.0
      */
     public function like($fieldName, $fieldValue, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND, $isUse = true)
@@ -796,7 +796,7 @@ class Query_Builder
      * @return Query_Builder
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 2.0
+     * @version 1.1
      * @since   0.0
      */
     public function rlike($fieldName, $value, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND, $isUse = true)
@@ -1413,7 +1413,7 @@ class Query_Builder
      * @return Query_Builder
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 2.0
+     * @version 1.1
      * @since   0.0
      */
     public function in($fieldName, $fieldValue, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND, $isUse = true)
@@ -1722,7 +1722,7 @@ class Query_Builder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 2.0
+     * @version 1.1
      * @since   0.0
      */
     public function search($fieldName, $fieldValue, $modelTableData = [], $sqlLogical = Query_Builder::SQL_LOGICAL_AND, $isUse = true)
@@ -1879,7 +1879,7 @@ class Query_Builder
      * @return Query_Builder
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 2.0
+     * @version 1.1
      * @since   0.0
      */
     public function setCalcFoundRows($calcFoundRows = true)

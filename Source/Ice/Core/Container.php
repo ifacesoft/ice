@@ -38,7 +38,7 @@ abstract class Container
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 2.0
+     * @version 1.1
      * @since   0.0
      */
     public static function getInstance($key, $ttl = null, array $params = [])
@@ -55,7 +55,7 @@ abstract class Container
 
         if ($class == $baseClass) {
             if (!$key) {
-                return $baseClass::getInstance($class::getDefaultClassKey(), $ttl, $params);
+                return $baseClass::getInstance(Config::getInstance($class)->get('defaultClassName'), $ttl, $params);
             } elseif (is_string($key)) {
                 $parts = explode('/', $key);
 
@@ -111,27 +111,6 @@ abstract class Container
     }
 
     /**
-     * Return default class key
-     *
-     * @return string
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since   0.4
-     */
-    protected static function getDefaultClassKey()
-    {
-        Logger::getInstance(__CLASS__)->exception(
-            ['Implementation {$0} is required for {$1}', [__FUNCTION__, get_called_class()]],
-            __FILE__,
-            __LINE__
-        );
-
-        return null;
-    }
-
-    /**
      * Return default key
      *
      * @return string
@@ -160,7 +139,7 @@ abstract class Container
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 2.0
+     * @version 1.1
      * @since   0.4
      */
     final private static function create($params)
@@ -193,8 +172,8 @@ abstract class Container
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 2.0
-     * @since   2.0
+     * @version 1.1
+     * @since   1.1
      */
     protected abstract function init(array $data);
 

@@ -250,7 +250,7 @@ abstract class Action implements Cacheable
      * @return Action
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 2.0
+     * @version 1.1
      * @since   0.0
      */
     public static function create(array $params = [])

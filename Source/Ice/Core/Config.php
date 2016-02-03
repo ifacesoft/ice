@@ -11,6 +11,9 @@ namespace Ice\Core;
 
 use Ice\Core;
 use Ice\Data\Provider\Repository;
+use Ice\Exception\Config_Error;
+use Ice\Exception\Config_Param;
+use Ice\Exception\Config_Param_NotFound;
 use Ice\Exception\FileNotFound;
 use Ice\Helper\Config as Helper_Config;
 use Ice\Helper\File;
@@ -129,7 +132,7 @@ class Config
                 $e,
                 null,
                 -1,
-                'Ice:ConfigNotFound'
+                'Ice:Config_NotFound'
             );
         }
 
@@ -142,15 +145,19 @@ class Config
      * @param  string|null $key
      * @param  bool $isRequired
      * @return array
-     *
+     * @throws Config_Error
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.4
+     * @version 1.1
      * @since   0.0
      */
     public function gets($key = null, $isRequired = true)
     {
-        return Helper_Config::gets($this->config, $key, $isRequired);
+        try {
+            return Helper_Config::gets($this->config, $key, $isRequired);
+        } catch (Config_Param_NotFound $e) {
+            throw new Config_Error(['Param not found for {$0}', $this->getName()], [], $e);
+        }
     }
 
     /**
@@ -238,7 +245,7 @@ class Config
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 2.0
+     * @version 1.1
      * @since   0.5
      */
     public function set($key, $value = null, $force = false)

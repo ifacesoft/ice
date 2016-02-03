@@ -2,11 +2,10 @@
 
 namespace Ice\Core;
 
-abstract class Message_Transport extends Container
+abstract class MessageTransport extends Container
 {
     use Stored;
 
-    private static $defaultClassKey = 'Ice\Message\Transport\PHPMailer/default';
     private static $defaultKey = 'default';
 
     private $fromAddress = null;
@@ -18,11 +17,11 @@ abstract class Message_Transport extends Container
      * @param string $key
      * @param int $ttl
      * @param array $params
-     * @return Message_Transport
+     * @return MessageTransport
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 2.0
+     * @version 1.1
      * @since   1.0
      */
     public static function getInstance($key = null, $ttl = null, array $params = [])
@@ -30,14 +29,9 @@ abstract class Message_Transport extends Container
         return parent::getInstance($key, $ttl, $params);
     }
 
-    protected static function getDefaultClassKey()
-    {
-        return Message_Transport::$defaultClassKey;
-    }
-
     protected static function getDefaultKey()
     {
-        return Message_Transport::$defaultKey;
+        return MessageTransport::$defaultKey;
     }
 
     abstract public function send(Message $message);

@@ -11,6 +11,7 @@ namespace Ice\Helper;
 
 use FilesystemIterator;
 use Ice\Core\Logger as Core_Logger;
+use Ice\Core\Module;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 
@@ -23,9 +24,6 @@ use RecursiveIteratorIterator;
  *
  * @package    Ice
  * @subpackage Helper
- *
- * @version 0.0
- * @since   0.0
  */
 class Directory
 {
@@ -152,4 +150,9 @@ class Directory
     {
         return array_diff(scandir($path), ['..', '.']);
     }
+}
+
+function logDir()
+{
+    return Module::getInstance()->get(Module::LOG_DIR);
 }

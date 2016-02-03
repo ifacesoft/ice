@@ -10,7 +10,7 @@ use Ice\Helper\Php;
 
 <?= Console::getText($errPoint, Console::C_BLUE) ?>
 
-<?php if (!empty($errcontext)) { ?><?= Console::getText(Php::varToPhpString($errcontext), Console::C_GREEN) ?><?php } ?>
+<?php if ($errcontext) { ?><?= Console::getText($errcontext, Console::C_GREEN) ?><?php } ?>
 
 <?= str_replace("):", '):' . Console::RESET, str_replace("#", Console::C_GRAY_B . "#", str_replace(dirname(MODULE_DIR), '', $stackTrace))) . Console::RESET ?>
 

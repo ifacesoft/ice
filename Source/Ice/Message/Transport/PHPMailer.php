@@ -1,13 +1,13 @@
 <?php
 
-namespace Ice\Message\Transport;
+namespace Ice\MessageTransport;
 
 use Ice\Core\Config;
 use Ice\Core\Message;
-use Ice\Core\Message_Transport;
+use Ice\Core\MessageTransport;
 use Ice\Message\Mail;
 
-class PHPMailer extends Message_Transport
+class PHPMailer extends MessageTransport
 {
     /** @var \PHPMailer */
     private $phpMailer = null;

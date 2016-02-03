@@ -47,22 +47,7 @@ class Sql extends Query_Translator
     const SQL_CLAUSE_ORDER = 'ORDER';
     const SQL_CLAUSE_LIMIT = 'LIMIT';
     const ON_DUPLICATE_KEY_UPDATE = 'ON DUPLICATE KEY UPDATE';
-    const DEFAULT_CLASS_KEY = 'Ice:Sql/default';
     const DEFAULT_KEY = 'instance';
-
-    /**
-     * Return default class key
-     *
-     * @return string
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since   0.4
-     */
-    protected static function getDefaultClassKey()
-    {
-        return Sql::DEFAULT_CLASS_KEY;
-    }
 
     /**
      * Return default key

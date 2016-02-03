@@ -187,8 +187,8 @@ class Model_Scheme extends Config
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 2.0
-     * @since   2.0
+     * @version 1.1
+     * @since   1.1
      */
     public function getUniqueColumnNames()
     {
@@ -210,8 +210,8 @@ class Model_Scheme extends Config
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 2.0
-     * @since   2.0
+     * @version 1.1
+     * @since   1.1
      */
     public function getUniqueFieldNames()
     {

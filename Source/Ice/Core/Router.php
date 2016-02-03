@@ -16,17 +16,12 @@ abstract class Router extends Container
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 2.0
+     * @version 1.1
      * @since   0.0
      */
     public static function getInstance($key = null, $ttl = null, array $params = [])
     {
         return parent::getInstance($key, $ttl, $params);
-    }
-
-    protected static function getDefaultClassKey()
-    {
-        return Module::getInstance()->get('routerClass');
     }
 
     protected static function getDefaultKey()

@@ -33,7 +33,7 @@ abstract class Converter extends Container
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 2.0
+     * @version 1.1
      * @since   1.0
      */
     public static function getInstance($key = null, $ttl = null, array $params = [])

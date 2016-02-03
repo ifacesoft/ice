@@ -30,7 +30,6 @@ use Ice\Helper\Mapping;
  */
 class Mongodb extends Query_Translator
 {
-    const DEFAULT_CLASS_KEY = 'Ice:Mongodb/default';
     const DEFAULT_KEY = 'instance';
 
     private static $operators = [
@@ -53,20 +52,6 @@ class Mongodb extends Query_Translator
         Query_Builder::SQL_ORDERING_ASC => 1,
         Query_Builder::SQL_ORDERING_DESC => -1
     ];
-
-    /**
-     * Return default class key
-     *
-     * @return string
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since   0.4
-     */
-    protected static function getDefaultClassKey()
-    {
-        return Mongodb::DEFAULT_CLASS_KEY;
-    }
 
     /**
      * Return default key

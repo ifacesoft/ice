@@ -36,7 +36,6 @@ return [
         'downloadDir' => 'Web/download/',
         'ignorePatterns' => [],
         'bootstrapClass' => 'Ice\Bootstrap\Ice',
-        'securityClass' => 'Ice\Security\Ice',
         'routerClass' => 'Ice\Router\Ice'
     ],
     'modules' => []

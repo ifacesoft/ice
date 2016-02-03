@@ -38,8 +38,8 @@ class Render_Smarty_Markdown extends Render_Smarty
      * @return mixed
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 2.0
-     * @since   2.0
+     * @version 1.1
+     * @since   1.1
      */
     public function generate(array $data = [], $force = false)
     {
