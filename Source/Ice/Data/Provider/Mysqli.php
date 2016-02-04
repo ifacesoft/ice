@@ -10,6 +10,7 @@
 namespace Ice\Data\Provider;
 
 use Ice\Core\Data_Provider;
+use Ice\Core\Debuger;
 use Ice\Core\Exception;
 use Ice\Core\Logger;
 use Ice\Exception\Error;
@@ -28,7 +29,6 @@ use Ice\Exception\Error;
  */
 class Mysqli extends Data_Provider
 {
-    const DEFAULT_DATA_PROVIDER_KEY = 'Ice:Mysqli/default';
     const DEFAULT_KEY = 'default';
 
     protected $options = [
@@ -36,21 +36,6 @@ class Mysqli extends Data_Provider
         'port' => '3306',
         'charset' => 'utf8'
     ];
-
-    /**
-     * Return default data provider key
-     *
-     * @return string
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since   0.4
-     */
-    protected static function getDefaultDataProviderKey()
-    {
-        return self::DEFAULT_DATA_PROVIDER_KEY;
-    }
 
     /**
      * Return default key

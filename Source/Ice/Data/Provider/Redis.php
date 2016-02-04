@@ -30,28 +30,12 @@ use Ice\Core\Logger;
  */
 class Redis extends Data_Provider
 {
-    const DEFAULT_DATA_PROVIDER_KEY = 'Ice:Redis/default';
-    const DEFAULT_KEY = 'instance';
+    const DEFAULT_KEY = 'default';
 
     protected $options = [
         'host' => 'localhost',
         'port' => 6379
     ];
-
-    /**
-     * Return default data provider key
-     *
-     * @return string
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since   0.4
-     */
-    protected static function getDefaultDataProviderKey()
-    {
-        return self::DEFAULT_DATA_PROVIDER_KEY;
-    }
 
     /**
      * Return default key

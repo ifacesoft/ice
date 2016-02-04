@@ -26,23 +26,7 @@ use Ice\Core\Data_Provider;
  */
 class Cli extends Data_Provider
 {
-    const DEFAULT_DATA_PROVIDER_KEY = 'Ice:Cli/default';
-    const DEFAULT_KEY = 'instance';
-
-    /**
-     * Return default data provider key
-     *
-     * @return string
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since   0.0
-     */
-    protected static function getDefaultDataProviderKey()
-    {
-        return self::DEFAULT_DATA_PROVIDER_KEY;
-    }
+    const DEFAULT_KEY = 'default';
 
     /**
      * Return default key

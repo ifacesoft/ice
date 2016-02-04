@@ -4,9 +4,9 @@ namespace Ice\Action;
 
 use Ice\Core\Action;
 use Ice\Core\Data_Scheme;
-use Ice\Core\Debuger;
 use Ice\Core\Model;
 use Ice\Core\Module;
+use Ice\Data\Provider\Cli;
 use Ice\Exception\DataSource_Statement_TableNotFound;
 use Ice\Helper\Arrays;
 use Ice\Helper\Json;
@@ -31,8 +31,8 @@ class Orm_Sync_DataScheme extends Action
             'view' => ['template' => '', 'viewRenderClass' => null],
             'actions' => [],
             'input' => [
-                'force' => ['providers' => 'cli', 'default' => 0],
-                'updatePlugins' => ['providers' => 'cli', 'default' => 0]
+                'force' => ['providers' => Cli::class, 'default' => 0],
+                'updatePlugins' => ['providers' => Cli::class, 'default' => 0]
             ],
             'output' => [],
             'cache' => ['ttl' => -1, 'count' => 1000],

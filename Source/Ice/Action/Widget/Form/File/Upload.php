@@ -6,6 +6,7 @@ use FileAPI;
 use Ice\Core\Action;
 use Ice\Core\Debuger;
 use Ice\Core\Module;
+use Ice\Data\Provider\Request;
 use Ice\Helper\File;
 
 class Widget_Form_File_Upload extends Action
@@ -22,9 +23,9 @@ class Widget_Form_File_Upload extends Action
             'view' => ['template' => '', 'viewRenderClass' => null],
             'actions' => [],
             'input' => [
-                'token' => ['providers' => 'request'],
-                'formName' => ['providers' => 'request'],
-                'fieldName' => ['providers' => 'request'],
+                'token' => ['providers' => Request::class],
+                'formName' => ['providers' => Request::class],
+                'fieldName' => ['providers' => Request::class],
             ],
             'output' => [],
             'ttl' => -1,

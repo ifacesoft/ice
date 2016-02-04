@@ -7,6 +7,7 @@ use Ice\Core\Query_Builder;
 use Ice\Core\Query_Result;
 use Ice\Core\Request;
 use Ice\Core\Widget;
+use Ice\Data\Provider\Request as Data_Provider_Request;
 
 class Pagination extends Widget
 {
@@ -29,8 +30,8 @@ class Pagination extends Widget
             'cache' => ['ttl' => -1, 'count' => 1000],
             'actions' => [],
             'input' => [
-                'page' => ['providers' => 'request', 'default' => 1],
-                'limit' => ['providers' => 'request', 'default' => 15]
+                'page' => ['providers' => Data_Provider_Request::class, 'default' => 1],
+                'limit' => ['providers' => Data_Provider_Request::class, 'default' => 15]
             ],
             'output' => [],
         ];

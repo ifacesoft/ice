@@ -26,8 +26,7 @@ use Ice\Core\Exception;
  */
 class Request extends Data_Provider
 {
-    const DEFAULT_DATA_PROVIDER_KEY = 'Ice:Request/default';
-    const DEFAULT_KEY = 'instance';
+    const DEFAULT_KEY = 'default';
 
     /**
      * Return default data provider key
@@ -42,21 +41,6 @@ class Request extends Data_Provider
     protected static function getDefaultKey()
     {
         return self::DEFAULT_KEY;
-    }
-
-    /**
-     * Return default data provider key
-     *
-     * @return string
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since   0.4
-     */
-    protected static function getDefaultDataProviderKey()
-    {
-        return self::DEFAULT_DATA_PROVIDER_KEY;
     }
 
     /**

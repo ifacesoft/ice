@@ -62,7 +62,7 @@ abstract class Model_Form extends Form
             'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'Widget: Access denied!'],
             'resource' => ['js' => null, 'css' => null, 'less' => null, 'img' => null],
             'cache' => ['ttl' => -1, 'count' => 1000],
-            'input' => ['pk' => ['validators' => 'Ice:Not_Null', 'providers' => 'any']],
+            'input' => ['pk' => ['validators' => 'Ice:Not_Null', 'providers' => '*']],
             'output' => [],
         ];
     }

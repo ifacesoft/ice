@@ -9,25 +9,7 @@ use Ice\Helper\Object;
 
 class Resource extends Data_Provider
 {
-    const DEFAULT_DATA_PROVIDER_KEY = 'Ice:Resource/default';
     const DEFAULT_KEY = 'Ice\Action\Test';
-
-    private $resourceKey = null;
-
-    /**
-     * Return default data provider key
-     *
-     * @return string
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since   0.5
-     */
-    protected static function getDefaultDataProviderKey()
-    {
-        return self::DEFAULT_DATA_PROVIDER_KEY;
-    }
 
     /**
      * Return default key

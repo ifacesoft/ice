@@ -5,6 +5,7 @@ use Ice\Action\Security_LoginEmailPassword_Login_Submit;
 use Ice\Core\Model;
 use Ice\Core\Security_Account;
 use Ice\Core\Widget_Form_Security_Login;
+use Ice\Data\Provider\Request;
 
 class Security_LoginEmailPassword_Login extends Widget_Form_Security_Login
 {
@@ -33,8 +34,8 @@ class Security_LoginEmailPassword_Login extends Widget_Form_Security_Login
             'render' => ['template' => Form::getClass(), 'class' => 'Ice:Php', 'layout' => null, 'resource' => null],
             'resource' => ['js' => null, 'css' => null, 'less' => null, 'img' => null],
             'input' => [
-                'username' => ['providers' => 'request'],
-                'password' => ['providers' => 'request']
+                'username' => ['providers' => Request::class],
+                'password' => ['providers' => Request::class]
             ],
             'access' => ['roles' => [], 'request' => null, 'env' => null],
         ];

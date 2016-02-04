@@ -1,4 +1,9 @@
 <?php
+use Ice\Core\MessageTransport;
+use Ice\Core\Module;
+use Ice\Core\Router;
+use Ice\Core\Security;
+
 if (defined('ICE_BOOTSTRAP')) {
     return;
 }

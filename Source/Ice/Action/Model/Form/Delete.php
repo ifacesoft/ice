@@ -36,7 +36,7 @@ class Model_Form_Delete extends Widget_Event
             'actions' => [],
             'input' => [
                 'widget' => ['providers' => 'request', 'validators' => 'Ice:Not_Empty'],
-                'widgets' => ['default' => [], 'providers' => ['default', 'request']]
+                'widgets' => ['default' => [], 'providers' => ['default', Request::class]]
             ],
             'output' => []
         ];

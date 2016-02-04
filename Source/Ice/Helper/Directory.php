@@ -151,8 +151,3 @@ class Directory
         return array_diff(scandir($path), ['..', '.']);
     }
 }
-
-function logDir()
-{
-    return Module::getInstance()->get(Module::LOG_DIR);
-}

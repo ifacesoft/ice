@@ -2,6 +2,7 @@
 namespace Ice\Action;
 
 use Ice\Core\Action;
+use Ice\Data\Provider\Request;
 
 class Test extends Action
 {
@@ -48,7 +49,7 @@ class Test extends Action
             'view' => ['viewRenderClass' => 'Ice:Php', 'layout' => ''],
             'input' => [
                 'test' => [
-                    'providers' => 'request',
+                    'providers' => Request::class,
                     'default' => 'test'
                 ]
             ],

@@ -62,8 +62,5 @@ class Bootstrap extends Container
 
         Loader::init($data['loader'], !empty($data['force']));
         Logger::init();
-
-        require_once ICE_DIR . 'Source/Ice/Helper/Core.php';
-        require_once ICE_DIR . 'Source/Ice/Helper/Directory.php';
     }
 }

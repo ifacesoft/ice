@@ -15,6 +15,7 @@ use Ice\Core\Data_Provider;
 use Ice\Core\Loader;
 use Ice\Core\Module;
 use Ice\Core\Route;
+use Ice\Data\Provider\Router;
 use Ice\Helper\Directory;
 use Ice\Helper\File;
 use JSMin;
@@ -105,7 +106,7 @@ class Resource_Dynamic extends Action
             'input' => [
                 'js' => ['default' => []],
                 'css' => ['default' => []],
-                'routeName' => ['providers' => 'router', 'default' => '/'],
+                'routeName' => ['providers' => Router::class, 'default' => '/'],
                 'context' => ['default' => '/resource/'],
                 'widgetClasses' => ['default' => ['js' => [], 'css' => [], 'less' => []]],
             ],

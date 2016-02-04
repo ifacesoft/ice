@@ -4,10 +4,10 @@ namespace Ice\Helper;
 
 use Ice\Core\Action;
 use Ice\Core\Data_Provider;
-use Ice\Data\Provider\Cli as Data_Provider_Cli;
-use Ice\Data\Provider\Request as Data_Provider_Request;
-use Ice\Data\Provider\Router as Data_Provider_Router;
-use Ice\Data\Provider\Session as Data_Provider_Session;
+use Ice\Data\Provider\Cli;
+use Ice\Data\Provider\Request;
+use Ice\Data\Provider\Router;
+use Ice\Data\Provider\Session;
 use Ice\Exception\Http_Not_Found;
 
 class Input
@@ -23,13 +23,6 @@ class Input
     {
         $configInput = array_merge($configInput, array_keys($data));
 
-        $dataProviderKeyMap = [
-            'request' => Data_Provider_Request::DEFAULT_DATA_PROVIDER_KEY,
-            'router' => Data_Provider_Router::DEFAULT_DATA_PROVIDER_KEY,
-            'session' => Data_Provider_Session::DEFAULT_DATA_PROVIDER_KEY,
-            'cli' => Data_Provider_Cli::DEFAULT_DATA_PROVIDER_KEY,
-        ];
-
         $input = [];
 
         foreach ($configInput as $name => $param) {
@@ -44,16 +37,12 @@ class Input
             }
 
             $dataProviderKeys = isset($param['providers'])
-                ? ($param['providers'] == 'any' ? ['default', 'request', 'router', 'cli', 'session'] : (array)$param['providers'])
+                ? ($param['providers'] == '*' ? ['default', Request::class, Router::class, Cli::class, Session::class] : (array)$param['providers'])
                 : ['default'];
 
             foreach ($dataProviderKeys as $dataProviderKey) {
                 if (isset($input[$name])) {
                     break;
-                }
-
-                if (isset($dataProviderKeyMap[$dataProviderKey])) {
-                    $dataProviderKey = $dataProviderKeyMap[$dataProviderKey];
                 }
 
                 if ($dataProviderKey == 'default') {

@@ -5,6 +5,7 @@ namespace Ice\Action;
 use FileAPI;
 use Ice\Core\Action;
 use Ice\Core\Module;
+use Ice\Data\Provider\Request;
 use Ice\Helper\File;
 
 class Form_FileUpload extends Action
@@ -21,9 +22,9 @@ class Form_FileUpload extends Action
             'view' => ['template' => '', 'viewRenderClass' => null],
             'actions' => [],
             'input' => [
-                'token' => ['providers' => 'request', 'validators' => 'Ice:Not_Empty'],
-                'formName' => ['providers' => 'request', 'validators' => 'Ice:Not_Empty'],
-                'fieldName' => ['providers' => 'request', 'validators' => 'Ice:Not_Empty'],
+                'token' => ['providers' => Request::class, 'validators' => 'Ice:Not_Empty'],
+                'formName' => ['providers' => Request::class, 'validators' => 'Ice:Not_Empty'],
+                'fieldName' => ['providers' => Request::class, 'validators' => 'Ice:Not_Empty'],
             ],
             'output' => [],
             'cache' => ['ttl' => -1, 'count' => 1000],

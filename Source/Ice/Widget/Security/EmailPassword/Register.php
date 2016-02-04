@@ -4,6 +4,7 @@ namespace Ice\Widget;
 
 use Ice\Action\Security_EmailPassword_Register_Submit;
 use Ice\Core\Widget_Security;
+use Ice\Data\Provider\Request;
 
 class Security_EmailPassword_Register extends Widget_Security
 {
@@ -13,9 +14,9 @@ class Security_EmailPassword_Register extends Widget_Security
             'render' => ['template' => Form::getClass(), 'class' => 'Ice:Php', 'layout' => null, 'resource' => null],
             'resource' => ['js' => null, 'css' => null, 'less' => null, 'img' => null],
             'input' => [
-                'email' => ['providers' => 'request'],
-                'password' => ['providers' => 'request'],
-                'password1' => ['providers' => 'request']
+                'email' => ['providers' => Request::class],
+                'password' => ['providers' => Request::class],
+                'password1' => ['providers' => Request::class]
             ],
             'access' => ['roles' => [], 'request' => null, 'env' => null]
         ];

@@ -3,6 +3,7 @@
 namespace Ice\Widget;
 
 use Ice\Core\Widget;
+use Ice\Data\Provider\Router;
 
 class Title_Route extends Widget
 {
@@ -19,21 +20,10 @@ class Title_Route extends Widget
             'resource' => ['js' => null, 'css' => null, 'less' => null, 'img' => null],
             'cache' => ['ttl' => -1, 'count' => 1000],
             'input' => [
-                'routeName' => ['providers' => 'router'],
-                'routeParams' => ['providers' => 'router']
+                'routeName' => ['providers' => Router::class],
+                'routeParams' => ['providers' => Router::class]
             ],
             'output' => [],
-            'action' => [
-                //  'class' => 'Ice:Render',
-                //  'params' => [
-                //      'widgets' => [
-                ////        'Widget_id' => Widget::class
-                //      ]
-                //  ],
-                //  'url' => true,
-                //  'method' => 'POST',
-                //  'callback' => null
-            ]
         ];
     }
 

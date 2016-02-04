@@ -2,6 +2,7 @@
 
 use Ice\Core\Action;
 use Ice\Core\Request;
+use Ice\Data\Provider\Router;
 use Ice\Exception\Redirect;
 use Ice\Helper\Api_Client_Yandex_Translate;
 
@@ -50,7 +51,7 @@ class Locale extends Action
             'view' => ['template' => ''],
             'input' => [
                 'locale' => [
-                    'providers' => 'router',
+                    'providers' => Router::class,
                     'default' => ''
                 ]
             ],

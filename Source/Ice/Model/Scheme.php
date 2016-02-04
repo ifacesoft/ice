@@ -43,10 +43,6 @@ class Scheme extends Model
 		            'fieldName' => 'table_name',
 		            'Ice\Widget\Model_Form' => [
 		                'type' => 'text',
-		                'roles' => [
-		                    0 => 'ROLE_ICE_GUEST',
-		                    1 => 'ROLE_ICE_USER',
-		                ],
 		            ],
 		            'Ice\Core\Validator' => [
 		                'Ice:Length_Max' => 255,
@@ -54,10 +50,6 @@ class Scheme extends Model
 		            ],
 		            'Ice\Widget\Model_Table' => [
 		                'type' => 'span',
-		                'roles' => [
-		                    0 => 'ROLE_ICE_GUEST',
-		                    1 => 'ROLE_ICE_USER',
-		                ],
 		            ],
 		        ],
 		        'revision' => [
@@ -74,10 +66,6 @@ class Scheme extends Model
 		            'fieldName' => 'revision',
 		            'Ice\Widget\Model_Form' => [
 		                'type' => 'text',
-		                'roles' => [
-		                    0 => 'ROLE_ICE_GUEST',
-		                    1 => 'ROLE_ICE_USER',
-		                ],
 		            ],
 		            'Ice\Core\Validator' => [
 		                'Ice:Length_Max' => 12,
@@ -85,10 +73,6 @@ class Scheme extends Model
 		            ],
 		            'Ice\Widget\Model_Table' => [
 		                'type' => 'span',
-		                'roles' => [
-		                    0 => 'ROLE_ICE_GUEST',
-		                    1 => 'ROLE_ICE_USER',
-		                ],
 		            ],
 		        ],
 		        'table__json' => [
@@ -105,10 +89,6 @@ class Scheme extends Model
 		            'fieldName' => 'table__json',
 		            'Ice\Widget\Model_Form' => [
 		                'type' => 'text',
-		                'roles' => [
-		                    0 => 'ROLE_ICE_GUEST',
-		                    1 => 'ROLE_ICE_USER',
-		                ],
 		            ],
 		            'Ice\Core\Validator' => [
 		                'Ice:Length_Max' => 1023,
@@ -116,10 +96,6 @@ class Scheme extends Model
 		            ],
 		            'Ice\Widget\Model_Table' => [
 		                'type' => 'span',
-		                'roles' => [
-		                    0 => 'ROLE_ICE_GUEST',
-		                    1 => 'ROLE_ICE_USER',
-		                ],
 		            ],
 		        ],
 		        'columns__json' => [
@@ -136,10 +112,6 @@ class Scheme extends Model
 		            'fieldName' => 'columns__json',
 		            'Ice\Widget\Model_Form' => [
 		                'type' => 'textarea',
-		                'roles' => [
-		                    0 => 'ROLE_ICE_GUEST',
-		                    1 => 'ROLE_ICE_USER',
-		                ],
 		            ],
 		            'Ice\Core\Validator' => [
 		                'Ice:Length_Max' => 65535,
@@ -147,10 +119,6 @@ class Scheme extends Model
 		            ],
 		            'Ice\Widget\Model_Table' => [
 		                'type' => 'span',
-		                'roles' => [
-		                    0 => 'ROLE_ICE_GUEST',
-		                    1 => 'ROLE_ICE_USER',
-		                ],
 		            ],
 		        ],
 		        'references__json' => [
@@ -167,10 +135,6 @@ class Scheme extends Model
 		            'fieldName' => 'references__json',
 		            'Ice\Widget\Model_Form' => [
 		                'type' => 'text',
-		                'roles' => [
-		                    0 => 'ROLE_ICE_GUEST',
-		                    1 => 'ROLE_ICE_USER',
-		                ],
 		            ],
 		            'Ice\Core\Validator' => [
 		                'Ice:Length_Max' => 1023,
@@ -178,10 +142,6 @@ class Scheme extends Model
 		            ],
 		            'Ice\Widget\Model_Table' => [
 		                'type' => 'span',
-		                'roles' => [
-		                    0 => 'ROLE_ICE_GUEST',
-		                    1 => 'ROLE_ICE_USER',
-		                ],
 		            ],
 		        ],
 		        'indexes__json' => [
@@ -198,10 +158,6 @@ class Scheme extends Model
 		            'fieldName' => 'indexes__json',
 		            'Ice\Widget\Model_Form' => [
 		                'type' => 'text',
-		                'roles' => [
-		                    0 => 'ROLE_ICE_GUEST',
-		                    1 => 'ROLE_ICE_USER',
-		                ],
 		            ],
 		            'Ice\Core\Validator' => [
 		                'Ice:Length_Max' => 1023,
@@ -209,10 +165,6 @@ class Scheme extends Model
 		            ],
 		            'Ice\Widget\Model_Table' => [
 		                'type' => 'span',
-		                'roles' => [
-		                    0 => 'ROLE_ICE_GUEST',
-		                    1 => 'ROLE_ICE_USER',
-		                ],
 		            ],
 		        ],
 		    ],
@@ -229,7 +181,7 @@ class Scheme extends Model
 		        'manyToOne' => [],
 		        'manyToMany' => [],
 		    ],
-		    'revision' => '02021334_mwb',
+		    'revision' => '02031159_ao6',
 		];
     }
 }

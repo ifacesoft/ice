@@ -10,6 +10,7 @@
 namespace Ice\SessionHandler;
 
 use Ice\Core;
+use Ice\Core\Session;
 use Ice\Core\SessionHandler;
 
 /**

@@ -130,9 +130,13 @@ return [
             'Ice\Core\Module' => [
                 'instance' => 'Ice:Repository'
             ],
+            'Ice\Core\Session' => [
+                'session' => 'Ice:File'
+            ],
             'Ice\Core\SessionHandler' => [
                 'instance' => 'Ice:Repository'
             ]
+
         ],
     ],
     'test' => [
@@ -229,8 +233,11 @@ return [
             'Ice\Core\Module' => [
                 'instance' => 'Ice:File'
             ],
+            'Ice\Core\Session' => [
+                'session' => 'Ice:File'
+            ],
             'Ice\Core\SessionHandler' => [
-                'instance' => 'Ice:File'
+                'instance' => 'Ice:Repository'
             ]
         ]
     ],
@@ -327,6 +334,9 @@ return [
             ],
             'Ice\Core\Module' => [
                 'instance' => 'Ice:Registry'
+            ],
+            'Ice\Core\Session' => [
+                'session' => 'Ice:File'
             ],
             'Ice\Core\SessionHandler' => [
                 'instance' => 'Ice:Registry'

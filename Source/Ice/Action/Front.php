@@ -2,9 +2,9 @@
 
 namespace Ice\Action;
 
-use Ice\App;
 use Ice\Core\Action;
 use Ice\Core\Widget;
+use Ice\Data\Provider\Router;
 use Ice\Widget\Layout;
 
 class Front extends Action
@@ -21,9 +21,9 @@ class Front extends Action
             'cache' => ['ttl' => -1, 'count' => 1000],
             'actions' => [],
             'input' => [
-                'widgetClass' => ['providers' => 'router'],
-                'widgetParams' => ['providers' => 'router'],
-                'response' => ['providers' => 'router']
+                'widgetClass' => ['providers' => Router::class],
+                'widgetParams' => ['providers' => Router::class],
+                'response' => ['providers' => Router::class]
             ],
             'output' => []
         ];

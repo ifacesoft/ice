@@ -23,17 +23,17 @@ class Session extends Model
 		    'scheme' => [
 		        'tableName' => 'ice_session',
 		        'engine' => 'InnoDB',
-		        'charset' => 'utf8_bin',
+		        'charset' => 'utf8_general_ci',
 		        'comment' => '',
 		    ],
 		    'columns' => [
 		        'session_pk' => [
 		            'scheme' => [
 		                'extra' => '',
-		                'type' => 'varbinary(128)',
-		                'dataType' => 'varbinary',
-		                'length' => '128',
-		                'characterSet' => null,
+		                'type' => 'varchar(64)',
+		                'dataType' => 'varchar',
+		                'length' => '64',
+		                'characterSet' => 'utf8',
 		                'nullable' => false,
 		                'default' => null,
 		                'comment' => '',
@@ -41,20 +41,12 @@ class Session extends Model
 		            'fieldName' => 'session_pk',
 		            'Ice\Widget\Model_Form' => [
 		                'type' => 'text',
-		                'roles' => [
-		                    0 => 'ROLE_ICE_GUEST',
-		                    1 => 'ROLE_ICE_USER',
-		                ],
 		            ],
 		            'Ice\Core\Validator' => [
-		                'Ice:Length_Max' => 128,
+		                'Ice:Length_Max' => 64,
 		            ],
 		            'Ice\Widget\Model_Table' => [
 		                'type' => 'span',
-		                'roles' => [
-		                    0 => 'ROLE_ICE_GUEST',
-		                    1 => 'ROLE_ICE_USER',
-		                ],
 		            ],
 		        ],
 		        'session_data' => [
@@ -71,10 +63,6 @@ class Session extends Model
 		            'fieldName' => 'session_data',
 		            'Ice\Widget\Model_Form' => [
 		                'type' => 'text',
-		                'roles' => [
-		                    0 => 'ROLE_ICE_GUEST',
-		                    1 => 'ROLE_ICE_USER',
-		                ],
 		            ],
 		            'Ice\Core\Validator' => [
 		                'Ice:Length_Max' => 65535,
@@ -82,10 +70,6 @@ class Session extends Model
 		            ],
 		            'Ice\Widget\Model_Table' => [
 		                'type' => 'span',
-		                'roles' => [
-		                    0 => 'ROLE_ICE_GUEST',
-		                    1 => 'ROLE_ICE_USER',
-		                ],
 		            ],
 		        ],
 		        'session_create_time' => [
@@ -102,28 +86,20 @@ class Session extends Model
 		            'fieldName' => 'session_create_time',
 		            'Ice\Widget\Model_Form' => [
 		                'type' => 'date',
-		                'roles' => [
-		                    0 => 'ROLE_ICE_GUEST',
-		                    1 => 'ROLE_ICE_USER',
-		                ],
 		            ],
 		            'Ice\Core\Validator' => [
 		                0 => 'Ice:Not_Null',
 		            ],
 		            'Ice\Widget\Model_Table' => [
 		                'type' => 'span',
-		                'roles' => [
-		                    0 => 'ROLE_ICE_GUEST',
-		                    1 => 'ROLE_ICE_USER',
-		                ],
 		            ],
 		        ],
 		        'session_update_time' => [
 		            'scheme' => [
 		                'extra' => '',
-		                'type' => 'int(10) unsigned',
-		                'dataType' => 'int',
-		                'length' => '10,0',
+		                'type' => 'datetime',
+		                'dataType' => 'datetime',
+		                'length' => '0',
 		                'characterSet' => null,
 		                'nullable' => false,
 		                'default' => null,
@@ -131,21 +107,13 @@ class Session extends Model
 		            ],
 		            'fieldName' => 'session_update_time',
 		            'Ice\Widget\Model_Form' => [
-		                'type' => 'number',
-		                'roles' => [
-		                    0 => 'ROLE_ICE_GUEST',
-		                    1 => 'ROLE_ICE_USER',
-		                ],
+		                'type' => 'date',
 		            ],
 		            'Ice\Core\Validator' => [
 		                0 => 'Ice:Not_Null',
 		            ],
 		            'Ice\Widget\Model_Table' => [
 		                'type' => 'span',
-		                'roles' => [
-		                    0 => 'ROLE_ICE_GUEST',
-		                    1 => 'ROLE_ICE_USER',
-		                ],
 		            ],
 		        ],
 		        'session_lifetime' => [
@@ -162,10 +130,6 @@ class Session extends Model
 		            'fieldName' => 'session_lifetime',
 		            'Ice\Widget\Model_Form' => [
 		                'type' => 'text',
-		                'roles' => [
-		                    0 => 'ROLE_ICE_GUEST',
-		                    1 => 'ROLE_ICE_USER',
-		                ],
 		            ],
 		            'Ice\Core\Validator' => [
 		                'Ice:Length_Max' => 7,
@@ -173,10 +137,6 @@ class Session extends Model
 		            ],
 		            'Ice\Widget\Model_Table' => [
 		                'type' => 'span',
-		                'roles' => [
-		                    0 => 'ROLE_ICE_GUEST',
-		                    1 => 'ROLE_ICE_USER',
-		                ],
 		            ],
 		        ],
 		        'ip' => [
@@ -193,10 +153,6 @@ class Session extends Model
 		            'fieldName' => 'ip',
 		            'Ice\Widget\Model_Form' => [
 		                'type' => 'text',
-		                'roles' => [
-		                    0 => 'ROLE_ICE_GUEST',
-		                    1 => 'ROLE_ICE_USER',
-		                ],
 		            ],
 		            'Ice\Core\Validator' => [
 		                'Ice:Length_Max' => 15,
@@ -204,10 +160,6 @@ class Session extends Model
 		            ],
 		            'Ice\Widget\Model_Table' => [
 		                'type' => 'span',
-		                'roles' => [
-		                    0 => 'ROLE_ICE_GUEST',
-		                    1 => 'ROLE_ICE_USER',
-		                ],
 		            ],
 		        ],
 		        'agent' => [
@@ -224,10 +176,6 @@ class Session extends Model
 		            'fieldName' => 'agent',
 		            'Ice\Widget\Model_Form' => [
 		                'type' => 'text',
-		                'roles' => [
-		                    0 => 'ROLE_ICE_GUEST',
-		                    1 => 'ROLE_ICE_USER',
-		                ],
 		            ],
 		            'Ice\Core\Validator' => [
 		                'Ice:Length_Max' => 255,
@@ -235,10 +183,6 @@ class Session extends Model
 		            ],
 		            'Ice\Widget\Model_Table' => [
 		                'type' => 'span',
-		                'roles' => [
-		                    0 => 'ROLE_ICE_GUEST',
-		                    1 => 'ROLE_ICE_USER',
-		                ],
 		            ],
 		        ],
 		        'user__fk' => [
@@ -255,20 +199,12 @@ class Session extends Model
 		            'fieldName' => 'user__fk',
 		            'Ice\Widget\Model_Form' => [
 		                'type' => 'number',
-		                'roles' => [
-		                    0 => 'ROLE_ICE_GUEST',
-		                    1 => 'ROLE_ICE_USER',
-		                ],
 		            ],
 		            'Ice\Core\Validator' => [
 		                0 => 'Ice:Not_Null',
 		            ],
 		            'Ice\Widget\Model_Table' => [
 		                'type' => 'span',
-		                'roles' => [
-		                    0 => 'ROLE_ICE_GUEST',
-		                    1 => 'ROLE_ICE_USER',
-		                ],
 		            ],
 		        ],
 		        'views' => [
@@ -285,20 +221,56 @@ class Session extends Model
 		            'fieldName' => 'views',
 		            'Ice\Widget\Model_Form' => [
 		                'type' => 'number',
-		                'roles' => [
-		                    0 => 'ROLE_ICE_GUEST',
-		                    1 => 'ROLE_ICE_USER',
-		                ],
 		            ],
 		            'Ice\Core\Validator' => [
 		                0 => 'Ice:Not_Null',
 		            ],
 		            'Ice\Widget\Model_Table' => [
 		                'type' => 'span',
-		                'roles' => [
-		                    0 => 'ROLE_ICE_GUEST',
-		                    1 => 'ROLE_ICE_USER',
-		                ],
+		            ],
+		        ],
+		        'byIp' => [
+		            'scheme' => [
+		                'extra' => '',
+		                'type' => 'tinyint(1)',
+		                'dataType' => 'tinyint',
+		                'length' => '3,0',
+		                'characterSet' => null,
+		                'nullable' => false,
+		                'default' => '0',
+		                'comment' => '',
+		            ],
+		            'fieldName' => 'byip',
+		            'Ice\Widget\Model_Form' => [
+		                'type' => 'checkbox',
+		            ],
+		            'Ice\Core\Validator' => [
+		                0 => 'Ice:Not_Null',
+		            ],
+		            'Ice\Widget\Model_Table' => [
+		                'type' => 'span',
+		            ],
+		        ],
+		        'byLk' => [
+		            'scheme' => [
+		                'extra' => '',
+		                'type' => 'tinyint(1)',
+		                'dataType' => 'tinyint',
+		                'length' => '3,0',
+		                'characterSet' => null,
+		                'nullable' => false,
+		                'default' => '0',
+		                'comment' => '',
+		            ],
+		            'fieldName' => 'bylk',
+		            'Ice\Widget\Model_Form' => [
+		                'type' => 'checkbox',
+		            ],
+		            'Ice\Core\Validator' => [
+		                0 => 'Ice:Not_Null',
+		            ],
+		            'Ice\Widget\Model_Table' => [
+		                'type' => 'span',
 		            ],
 		        ],
 		    ],
@@ -317,7 +289,7 @@ class Session extends Model
 		        'manyToOne' => [],
 		        'manyToMany' => [],
 		    ],
-		    'revision' => '02021334_90t',
+		    'revision' => '02031159_doc',
 		];
     }
 }

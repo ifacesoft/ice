@@ -118,11 +118,18 @@ abstract class Data_Provider
         }
 
         if (!$key) {
-            return Data_Provider::getInstance($class::getDefaultDataProviderKey(), $index);
+            return Data_Provider::getInstance($class, $index);
         }
 
         if ($class == __CLASS__) {
-            list($class, $key) = explode('/', $key);
+            $keyParts = explode('/', $key);
+
+            if (count($keyParts) < 2) {
+                $class = reset($keyParts);
+                $key = $class::getDefaultKey();
+            } else {
+                list($class, $key) = explode('/', $key);
+            }
 
             $class = Object::getClass(__CLASS__, $class);
 
@@ -141,27 +148,6 @@ abstract class Data_Provider
         }
 
         return self::$_dataProviders[$class][$key][$index] = new $class($key, $index);
-    }
-
-    /**
-     * Return default data provider key
-     *
-     * @return string
-     * @throws Exception
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since   0.0
-     */
-    protected static function getDefaultDataProviderKey()
-    {
-        Logger::getInstance(__CLASS__)->exception(
-            ['Need implements {$0} for {$1}', [__METHOD__, self::getClass()]],
-            __FILE__,
-            __LINE__
-        );
-        return null;
     }
 
     /**

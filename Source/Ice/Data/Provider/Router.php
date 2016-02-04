@@ -35,8 +35,6 @@ use Ice\Exception\Redirect;
  */
 class Router extends Data_Provider
 {
-    const DEFAULT_DATA_PROVIDER_KEY = 'Ice:Router/default';
-
     /**
      * @param string $key
      * @param string $index
@@ -60,21 +58,6 @@ class Router extends Data_Provider
     protected static function getDefaultKey()
     {
         return Core_Request::getMethod() . Core_Request::uri(true);
-    }
-
-    /**
-     * Return default data provider key
-     *
-     * @return string
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since   0.0
-     */
-    protected static function getDefaultDataProviderKey()
-    {
-        return Router::DEFAULT_DATA_PROVIDER_KEY;
     }
 
     /**

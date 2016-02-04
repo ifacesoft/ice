@@ -3,6 +3,7 @@
 namespace Ice\Widget;
 
 use Ice\Core\Route;
+use Ice\Data\Provider\Router;
 
 class Breadcrumbs_Route extends Breadcrumbs
 {
@@ -30,8 +31,8 @@ class Breadcrumbs_Route extends Breadcrumbs
             'resource' => ['js' => null, 'css' => null, 'less' => null, 'img' => null],
             'cache' => ['ttl' => -1, 'count' => 1000],
             'input' => [
-                'routeName' => ['providers' => 'router'],
-                'routeParams' => ['providers' => 'router']
+                'routeName' => ['providers' => Router::class],
+                'routeParams' => ['providers' => Router::class]
             ],
             'output' => [],
             'action' => [
