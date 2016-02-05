@@ -125,21 +125,34 @@ class String
      * Return random string
      *
      * @param  int $length
+     * @param array $blocks
      * @return string
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.5
+     * @version 1.1
      * @since   0.5
      */
-    public static function getRandomString($length = 12)
+    public static function getRandomString($length = 12, $blocks = [0, 1, 2])
     {
-        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $chArr = [
+            0 => '0123456789',
+            1 => 'abcdefghijklmnopqrstuvwxyz',
+            2 => 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+        ];
+
+        $characters = '';
+
+        foreach ($blocks as $block) {
+            $characters .= $chArr[$block];
+        }
+
         $charactersLength = strlen($characters);
         $randomString = '';
+
         for ($i = 0; $i < $length; $i++) {
             $randomString .= $characters[rand(0, $charactersLength - 1)];
         }
+
         return $randomString;
     }
 

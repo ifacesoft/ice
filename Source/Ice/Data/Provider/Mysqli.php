@@ -13,7 +13,9 @@ use Ice\Core\Data_Provider;
 use Ice\Core\Debuger;
 use Ice\Core\Exception;
 use Ice\Core\Logger;
+use Ice\Core\Profiler;
 use Ice\Exception\Error;
+use Ice\Helper\String;
 
 /**
  * Class Mysqli
@@ -55,10 +57,8 @@ class Mysqli extends Data_Provider
     /**
      * Get data from data provider by key
      *
-     * table:field/value or table
-     *
      * @param  string $key
-     * @return mixed
+     * @return array|null
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
@@ -67,48 +67,7 @@ class Mysqli extends Data_Provider
      */
     public function get($key = null)
     {
-        if (empty($key)) {
-            return null;
-        }
-
-        $sql = '';
-
-        foreach ((array)$key as $value) {
-            if (strpos($value, ':')) {
-                list($table, $field) = explode(':', $value);
-                list($field, $value) = explode('/', $field);
-
-                $sql .= empty($sql)
-                    ? $table . ' WHERE '
-                    : ' AND ';
-
-                $sql .= '`' . $field . '`="' . $value . '"';
-            } else {
-                $sql .= $value;
-                break;
-            }
-        }
-
-        $result = $this->getConnection()->query('SELECT * FROM ' . $sql, MYSQLI_USE_RESULT);
-
-        if ($this->getConnection()->errno) {
-            Logger::getInstance(__CLASS__)->error(
-                ['mysql - #' . $this->getConnection()->errno . ': {$0}', $this->getConnection()->error],
-                __FILE__,
-                __LINE__
-            );
-            return [];
-        }
-
-        $data = [];
-
-        while ($row = $result->fetch_assoc()) {
-            $data[] = $row;
-        }
-
-        $result->close();
-
-        return $data;
+        // TODO: Implement getKeys() method.
     }
 
     /**
@@ -142,7 +101,7 @@ class Mysqli extends Data_Provider
      */
     public function set($key, $value = null, $ttl = null)
     {
-        throw new \Exception('Implement set() method.');
+        // TODO: Implement getKeys() method.
     }
 
     /**

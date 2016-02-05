@@ -135,50 +135,33 @@ class Environment extends Config
      * Retern Data Provider by class name
      *
      * @param  string $class Class (found data provider for this class)
+     * @param $key
      * @param  string $index Index of data provider
      * @return Data_Provider
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
      * @since   0.0
      */
-    public function getProvider($class, $index)
+    public function getProvider($class, $key, $index = 'default')
     {
-        return Data_Provider::getInstance($this->getDataProviderKey($class, $index), $index);
+        return Data_Provider::getInstance($this->getDataProviderKey($class, $key), $index);
     }
 
     /**
      * Return data provider key by class name
      *
-     * @param  $class
-     * @param  $index
-     * @throws Exception
+     * @param $class
+     * @param $key
      * @return string
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 1.1
      * @since   0.0
      */
-    public function getDataProviderKey($class, $index)
+    public function getDataProviderKey($class, $key)
     {
-        $key = 'dataProviderKeys/' . $class::getBaseClass() . '/' . $index;
-
-        $dataProviderKey = $this->get($key);
-
-        if ($dataProviderKey === null) {
-            Logger::getInstance(__CLASS__)->exception(
-                ['In environment config param {$0} not found', $key],
-                __FILE__,
-                __LINE__
-            );
-        }
-
-        $dataProviderClass = is_array($dataProviderKey)
-            ? reset($dataProviderKey)
-            : $dataProviderKey;
-
-        return $dataProviderClass . '/' . $class;
+        $dataProviderKey = $this->get('dataProviderKeys/' . $class::getBaseClass() . '/' . $key);
+        return $pos = strpos($dataProviderKey, '/') ? $dataProviderKey : $dataProviderKey . '/' . $class;
     }
 }

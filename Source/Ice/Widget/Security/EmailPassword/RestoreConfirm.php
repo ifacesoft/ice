@@ -4,6 +4,8 @@ namespace Ice\Widget;
 
 use Ice\Action\Security_EmailPassword_RestoreConfirm_Submit;
 use Ice\Core\Widget_Security;
+use Ice\Data\Provider\Request;
+use Ice\Data\Provider\Router;
 
 class Security_EmailPassword_RestoreConfirm extends Widget_Security
 {
@@ -19,7 +21,7 @@ class Security_EmailPassword_RestoreConfirm extends Widget_Security
             'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'Widget: Access denied!'],
             'resource' => ['js' => null, 'css' => null, 'less' => null, 'img' => null],
             'cache' => ['ttl' => -1, 'count' => 1000],
-            'input' => ['token' => ['providers' => ['request', 'default', 'router']]],
+            'input' => ['token' => ['providers' => [Request::class, 'default', Router::class]]],
             'output' => [],
         ];
     }

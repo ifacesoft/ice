@@ -5,6 +5,8 @@ namespace Ice\Action;
 use Ice\Core\Action;
 use Ice\Core\Debuger;
 use Ice\Core\Widget;
+use Ice\Data\Provider\Request;
+use Ice\Data\Provider\Router;
 use Ice\Exception\Access_Denied;
 use Ice\Exception\Http_Forbidden;
 
@@ -23,10 +25,10 @@ class Render extends Action
             'cache' => ['ttl' => -1, 'count' => 1000],
             'actions' => [],
             'input' => [
-                'widgetClass' => ['providers' => ['default', 'router', 'request']],
-                'widgetParams' => ['providers' => ['default', 'router', 'request'], 'default' => []],
-                'widget' => ['default' => null, 'providers' => ['default', 'request']],
-                'widgets' => ['default' => [], 'providers' => ['default', 'request']]
+                'widgetClass' => ['providers' => ['default', Router::class, Request::class]],
+                'widgetParams' => ['providers' => ['default', Router::class, Request::class], 'default' => []],
+                'widget' => ['default' => null, 'providers' => ['default', Request::class]],
+                'widgets' => ['default' => [], 'providers' => ['default', Request::class]]
             ],
             'output' => []
         ];

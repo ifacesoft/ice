@@ -1076,15 +1076,13 @@ abstract class Model
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.5
+     * @version 1.1
      * @since   0.0
      */
-    public function getDataSource()
+    public static function getDataSource()
     {
-        /**
-         * @var Model $modelClass
-         */
-        $modelClass = get_class($this);
+        /** @var Model $modelClass */
+        $modelClass = self::getClass();
         $parentModelName = get_parent_class($modelClass);
 
         if ($parentModelName == Model_Defined::getClass() || $parentModelName == Model_Factory::getClass()) {

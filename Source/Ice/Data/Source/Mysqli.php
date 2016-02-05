@@ -17,6 +17,7 @@ use Ice\Core\Exception;
 use Ice\Core\Logger;
 use Ice\Core\Model;
 use Ice\Core\Module;
+use Ice\Core\Profiler;
 use Ice\Core\Query;
 use Ice\Core\Query_Builder;
 use Ice\Core\Query_Result;
@@ -460,9 +461,6 @@ class Mysqli extends Data_Source
     {
         $tables = [];
 
-        $dataProvider = $this->getSourceDataProvider();
-        $dataProvider->setScheme('information_schema');
-
         $tableDefault = [
             'dataSourceKey' => $this->getDataSourceKey(),
             'scheme' => [],
@@ -476,7 +474,7 @@ class Mysqli extends Data_Source
             ],
         ];
 
-        foreach ($dataProvider->get('TABLES:TABLE_SCHEMA/' . $this->scheme) as $table) {
+        foreach ($this->getSourceDataProvider()->get('information_schema:TABLES:TABLE_SCHEMA/' . $this->scheme) as $table) {
             if ($module->checkTableByPrefix($table['TABLE_NAME'], $this->getDataSourceKey())) {
                 if (!isset($tables[$table['TABLE_NAME']])) {
                     $tables[$table['TABLE_NAME']] = $tableDefault;
@@ -572,9 +570,6 @@ class Mysqli extends Data_Source
      */
     public function getIndexes($tableName)
     {
-        $dataProvider = $this->getSourceDataProvider();
-        $dataProvider->setScheme('information_schema');
-
         $constraints = [
             'PRIMARY KEY' => [
                 'PRIMARY' => []
@@ -583,15 +578,21 @@ class Mysqli extends Data_Source
             'UNIQUE' => []
         ];
 
-        $key = ['TABLE_CONSTRAINTS:TABLE_SCHEMA/' . $this->scheme, 'TABLE_CONSTRAINTS:TABLE_NAME/' . $tableName];
+        $key = [
+            'information_schema:TABLE_CONSTRAINTS:TABLE_SCHEMA/' . $this->scheme,
+            'information_schema:TABLE_CONSTRAINTS:TABLE_NAME/' . $tableName
+        ];
 
-        foreach ($dataProvider->get($key) as $constraint) {
+        foreach ($this->getSourceDataProvider()->get($key) as $constraint) {
             $constraints[$constraint['CONSTRAINT_TYPE']][$constraint['CONSTRAINT_NAME']] = [];
         }
 
-        $key = ['STATISTICS:TABLE_SCHEMA/' . $this->scheme, 'STATISTICS:TABLE_NAME/' . $tableName];
+        $key = [
+            'information_schema:STATISTICS:TABLE_SCHEMA/' . $this->scheme,
+            'information_schema:STATISTICS:TABLE_NAME/' . $tableName
+        ];
 
-        $indexes = $dataProvider->get($key);
+        $indexes = $this->getSourceDataProvider()->get($key);
 
         foreach ($constraints['PRIMARY KEY'] as $constraintName => &$constraint) {
             foreach ($indexes as $index) {
@@ -619,9 +620,12 @@ class Mysqli extends Data_Source
 
         $foreignKeys = [];
 
-        $key = ['KEY_COLUMN_USAGE:TABLE_SCHEMA/' . $this->scheme, 'KEY_COLUMN_USAGE:TABLE_NAME/' . $tableName];
+        $key = [
+            'information_schema:KEY_COLUMN_USAGE:TABLE_SCHEMA/' . $this->scheme,
+            'information_schema:KEY_COLUMN_USAGE:TABLE_NAME/' . $tableName
+        ];
 
-        $referenceColumns = Arrays::column($dataProvider->get($key), 'COLUMN_NAME', 'CONSTRAINT_NAME');
+        $referenceColumns = Arrays::column($this->getSourceDataProvider()->get($key), 'COLUMN_NAME', 'CONSTRAINT_NAME');
 
         foreach (array_keys($constraints['FOREIGN KEY']) as $constraintName) {
             $columnName = $referenceColumns[$constraintName];
@@ -646,14 +650,14 @@ class Mysqli extends Data_Source
      */
     public function getReferences($tableName)
     {
-        $dataProvider = $this->getSourceDataProvider();
-        $dataProvider->setScheme('information_schema');
-
         $references = [];
 
-        $key = ['REFERENTIAL_CONSTRAINTS:CONSTRAINT_SCHEMA/' . $this->scheme, 'CONSTRAINTS:TABLE_NAME/' . $tableName];
+        $key = [
+            'information_schema:REFERENTIAL_CONSTRAINTS:CONSTRAINT_SCHEMA/' . $this->scheme,
+            'information_schema:CONSTRAINTS:TABLE_NAME/' . $tableName
+        ];
 
-        foreach ($dataProvider->get($key) as $reference) {
+        foreach ($this->getSourceDataProvider()->get($key) as $reference) {
             $references[$reference['REFERENCED_TABLE_NAME']] = [
                 'constraintName' => $reference['CONSTRAINT_NAME'],
                 'onUpdate' => $reference['UPDATE_RULE'],
@@ -679,12 +683,12 @@ class Mysqli extends Data_Source
     {
         $columns = [];
 
-        $dataProvider = $this->getSourceDataProvider();
-        $dataProvider->setScheme('information_schema');
+        $key = [
+            'information_schema:COLUMNS:TABLE_SCHEMA/' . $this->scheme,
+            'information_schema:COLUMNS:TABLE_NAME/' . $tableName
+        ];
 
-        $key = ['COLUMNS:TABLE_SCHEMA/' . $this->scheme, 'COLUMNS:TABLE_NAME/' . $tableName];
-
-        foreach ($dataProvider->get($key) as $column) {
+        foreach ($this->getSourceDataProvider()->get($key) as $column) {
             $columnName = $column['COLUMN_NAME'];
             $default = $default = $column['COLUMN_DEFAULT'];
 
@@ -956,7 +960,7 @@ class Mysqli extends Data_Source
     /**
      * Execute native query
      *
-     * @param string $query
+     * @param string $sql
      * @return Query_Result
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -964,23 +968,9 @@ class Mysqli extends Data_Source
      * @version 1.1
      * @since   1.1
      */
-    public function executeNativeQuery($query)
+    public function executeNativeQuery($sql)
     {
-        $logger = Logger::getInstance(__CLASS__);
-
-        $result = $this->getConnection()->query($query);
-
-        if ($result === false) {
-            $errno = $this->getConnection()->errno;
-            $error = $this->getConnection()->error;
-
-            Logger::log(
-                '#' . $errno . ': ' . $error . ' - ' . $query,
-                'native query (error)',
-                'ERROR'
-            );
-            $logger->exception(['#' . $errno . ': {$0} - {$1}', [$error, $query]], __FILE__, __LINE__);
-        }
+        $result = $this->query($sql);
 
         $data[Query_Result::ROWS] = [];
 
@@ -995,8 +985,351 @@ class Mysqli extends Data_Source
         $data[Query_Result::NUM_ROWS] = count($data[Query_Result::ROWS]);
         $data[Query_Result::FOUND_ROWS] = $data[Query_Result::NUM_ROWS];
 
-        Logger::log($query, 'native query (new)', 'INFO');
-
         return $data;
+    }
+
+    /**
+     * @param $sql
+     * @return mixed
+     * @throws Exception
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 1.1
+     * @since   1.1
+     */
+    public function query($sql)
+    {
+        $startTime = Profiler::getMicrotime();
+        $startMemory = Profiler::getMemoryGetUsage();
+
+        $connection = $this->getSourceDataProvider()->getConnection();
+
+        $result = $connection->query($sql);
+
+        if ($result === false) {
+            $errno = $this->getConnection()->errno;
+            $error = $this->getConnection()->error;
+
+            Logger::log(
+                '#' . $errno . ': ' . $error . ' - ' . $sql,
+                'query (error)',
+                'ERROR'
+            );
+
+            Logger::getInstance(__CLASS__)
+                ->exception(['#' . $errno . ': {$0} - {$1}', [$error, $sql]], __FILE__, __LINE__);
+        }
+
+        Profiler::setPoint($sql, $startTime, $startMemory);
+        Logger::log(Profiler::getReport($sql), 'query (native)', 'INFO');
+
+        return $result;
+    }
+
+    /**
+     * Translate ice query language for get data
+     *
+     * @param array $iceql
+     * @return mixed
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 1.1
+     * @since   1.1
+     */
+    public function translateGet(array $iceql)
+    {
+        $tables = [];
+
+        foreach ($iceql as $tablePart => $wherePart) {
+            if (is_int($tablePart)) {
+                $tablePart = $wherePart;
+                $wherePart = [];
+            }
+
+            list($table, $columnsPart) = explode('/', $tablePart);
+
+            if ($pos = strpos($table, ':')) {
+                $tableAlias = substr($table, $pos + 1);
+                $table = substr($table, 0, $pos);
+            } else {
+                $tableAlias = String::getRandomString(3, 1);
+            }
+
+            $join = null;
+
+            if (strpos($tableAlias, '=')) {
+                $join = $tableAlias;
+                $tableAlias = substr($tableAlias, 0, strpos($tableAlias, '.'));
+            }
+
+            $tables[$tableAlias] = [
+                'table' => $table,
+                'join' => $join
+            ];
+
+            $columns = [];
+
+            foreach (explode(',', $columnsPart) as $column) {
+                $columnAlias = null;
+
+                if ($pos = strpos($column, ':')) {
+                    $columnAlias = substr($column, $pos + 1);
+                    $column = substr($column, 0, $pos);
+                }
+
+                $modifiers = explode('|', $column);
+
+                $column = array_shift($modifiers);
+
+                if (!$columnAlias) {
+                    $columnAlias = $column;
+                }
+
+                $columns[$columnAlias] = [
+                    'column' => $column,
+                    'order' => in_array('ASC', $modifiers) ? 'ASC' : (in_array('DESC', $modifiers) ? 'DESC' : null),
+                    'group' => in_array('GROUP', $modifiers)
+                ];
+            }
+
+            unset($column);
+
+            $tables[$tableAlias]['columns'] = $columns;
+
+            $wheres = [];
+
+            foreach (explode(',', $wherePart) as $where) {
+                list($where, $value) = explode(':', $where);
+
+                $whereModifiers = explode('|', $where);
+                $where = array_shift($whereModifiers);
+
+                $valueModifiers = explode('|', $value);
+
+                $wheres[$where] = [
+                    'value' => array_shift($valueModifiers),
+                    'condition' => in_array('OR', $whereModifiers) ? 'OR' : 'AND',
+                    'operator' => in_array('LIKE', $valueModifiers) ? 'LIKE' : (in_array('<>', $valueModifiers) ? '<>' : '='),
+                ];
+            }
+
+            $tables[$tableAlias]['where'] = $wheres;
+        }
+
+        $sql = "\n" . 'SELECT';
+
+        $isFirst = true;
+
+        foreach ($tables as $tableAlias => $table) {
+            foreach ($table['columns'] as $columnAlias => $column) {
+                if ($isFirst) {
+                    $isFirst = false;
+                } else {
+                    $sql .= ',';
+                }
+
+                $sql .= "\n\t`" . $tableAlias . '`.`' . $column['column'] . '`';
+
+                if ($column['column'] != $columnAlias) {
+                    $sql .= ' AS `' . $columnAlias . '`';
+                }
+            }
+        }
+
+        $isWhere = false;
+
+        foreach ($tables as $tableAlias => $table) {
+            $sql .= $table['join']
+                ? "\n" . 'LEFT JOIN ' . $table['table'] . ' `' . $tableAlias . '` ON (' . $table['join'] . ')'
+                : "\n" . 'FROM ' . $table['table'] . ' `' . $tableAlias . '`';
+
+            if (!empty($table['where'])) {
+                $isWhere = true;
+            }
+        }
+
+        if ($isWhere) {
+            $sql .= "\n" . 'WHERE';
+
+            $isFirst = true;
+
+            foreach ($tables as $tableAlias => $table) {
+                foreach ($table['where'] as $where => $value) {
+                    if ($isFirst) {
+                        $sql .= "\n\t`" . $tableAlias . '`.`' . $where . '`' . $value['operator'] . '"' . $value['value'] . '"';
+                        $isFirst = false;
+                    } else {
+                        $sql .= "\n\t" . $value['condition'] . ' `' . $tableAlias . '`.`' . $where . '`' . $value['operator'] . '"' . $value['value'] . '"';
+                    }
+                }
+            }
+        }
+
+        return $sql . "\n";
+    }
+
+    /**
+     * Translate ice query language for set data
+     *
+     * @param array $iceql
+     * @return mixed setted value
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 1.1
+     * @since   1.1
+     */
+    public function translateSet(array $iceql)
+    {
+        $tables = [];
+
+        foreach ($iceql as $tablePart => $wherePart) {
+            if (is_int($tablePart)) {
+                $tablePart = $wherePart;
+                $wherePart = [];
+            }
+
+            list($table, $columnsPart) = explode('/', $tablePart);
+
+            if ($pos = strpos($table, ':')) {
+                $tableAlias = substr($table, $pos + 1);
+                $table = substr($table, 0, $pos);
+            } else {
+                $tableAlias = String::getRandomString(3, 1);
+            }
+
+            $join = null;
+
+            if (strpos($tableAlias, '=')) {
+                $join = $tableAlias;
+                $tableAlias = substr($tableAlias, 0, strpos($tableAlias, '.'));
+            }
+
+            $tables[$tableAlias] = [
+                'table' => $table,
+                'join' => $join
+            ];
+
+            $columns = [];
+
+            foreach (explode(',', $columnsPart) as $column) {
+                $columnAlias = null;
+
+                if ($pos = strpos($column, ':')) {
+                    $columnAlias = substr($column, $pos + 1);
+                    $column = substr($column, 0, $pos);
+                }
+
+                $modifiers = explode('|', $column);
+
+                $column = array_shift($modifiers);
+
+                if (!$columnAlias) {
+                    $columnAlias = $column;
+                }
+
+                $columns[$columnAlias] = [
+                    'column' => $column,
+                    'order' => in_array('ASC', $modifiers) ? 'ASC' : (in_array('DESC', $modifiers) ? 'DESC' : null),
+                    'group' => in_array('GROUP', $modifiers)
+                ];
+            }
+
+            unset($column);
+
+            $tables[$tableAlias]['columns'] = $columns;
+
+            $wheres = [];
+
+            foreach (explode(',', $wherePart) as $where) {
+                list($where, $value) = explode(':', $where);
+
+                $whereModifiers = explode('|', $where);
+                $where = array_shift($whereModifiers);
+
+                $valueModifiers = explode('|', $value);
+
+                $wheres[$where] = [
+                    'value' => array_shift($valueModifiers),
+                    'condition' => in_array('OR', $whereModifiers) ? 'OR' : 'AND',
+                    'operator' => in_array('LIKE', $valueModifiers) ? 'LIKE' : (in_array('<>', $valueModifiers) ? '<>' : '='),
+                ];
+            }
+
+            $tables[$tableAlias]['where'] = $wheres;
+        }
+
+        $sql = "\n" . 'SELECT';
+
+        $isFirst = true;
+
+        foreach ($tables as $tableAlias => $table) {
+            foreach ($table['columns'] as $columnAlias => $column) {
+                if ($isFirst) {
+                    $isFirst = false;
+                } else {
+                    $sql .= ',';
+                }
+
+                $sql .= "\n\t`" . $tableAlias . '`.`' . $column['column'] . '`';
+
+                if ($column['column'] != $columnAlias) {
+                    $sql .= ' AS `' . $columnAlias . '`';
+                }
+            }
+        }
+
+        $isWhere = false;
+
+        foreach ($tables as $tableAlias => $table) {
+            $sql .= $table['join']
+                ? "\n" . 'LEFT JOIN ' . $table['table'] . ' `' . $tableAlias . '` ON (' . $table['join'] . ')'
+                : "\n" . 'FROM ' . $table['table'] . ' `' . $tableAlias . '`';
+
+            if (!empty($table['where'])) {
+                $isWhere = true;
+            }
+        }
+
+        if ($isWhere) {
+            $sql .= "\n" . 'WHERE';
+
+            $isFirst = true;
+
+            foreach ($tables as $tableAlias => $table) {
+                foreach ($table['where'] as $where => $value) {
+                    if ($isFirst) {
+                        $sql .= "\n\t`" . $tableAlias . '`.`' . $where . '`' . $value['operator'] . '"' . $value['value'] . '"';
+                        $isFirst = false;
+                    } else {
+                        $sql .= "\n\t" . $value['condition'] . ' `' . $tableAlias . '`.`' . $where . '`' . $value['operator'] . '"' . $value['value'] . '"';
+                    }
+                }
+            }
+        }
+
+        Debuger::dump($iceql);
+        Debuger::dump($tables);
+        Debuger::dump($sql);
+
+        return $sql . "\n";
+    }
+
+    /**
+     * Translate ice query language for delete data
+     *
+     * @param array $iceql
+     * @return bool|mixed
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 1.1
+     * @since   1.1
+     */
+    public function translateDelete(array $iceql)
+    {
+        // TODO: Implement translateDelete() method.
     }
 }

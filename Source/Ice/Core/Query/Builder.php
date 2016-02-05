@@ -1718,8 +1718,8 @@ class Query_Builder
      * @param  $fieldValue
      * @param  array $modelTableData
      * @param  string $sqlLogical
+     * @param bool $isUse
      * @return Query_Builder
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 1.1
@@ -2144,5 +2144,13 @@ class Query_Builder
     public function with($model, $fieldNames)
     {
         return $this;
+    }
+
+    public function inc($funcName, $step, $modelTableData = [])
+    {
+    }
+
+    public function dec($funcName, $step, $modelTableData = [])
+    {
     }
 }

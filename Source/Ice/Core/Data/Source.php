@@ -10,6 +10,7 @@
 namespace Ice\Core;
 
 use Ice\Core;
+use Ice\Helper\String;
 
 /**
  * Class Data_Source
@@ -529,4 +530,174 @@ abstract class Data_Source extends Container
      * @since   0
      */
     abstract public function getDataProviderClass();
+
+    /**
+     * Get by ice query language
+     *
+     * ```php
+     * // select
+     *  $iceql = [
+     *      'test.ice_session:s/session_data,ip|ASC|GROUP:client_ip,agent' => 'session_pk|OR:sdas|<>,views:0',
+     *      'test.ice_user:u.user_pk=s.user__fk/user_name' => 'user_active:1|<>'
+     *  ];
+     * ```
+     *
+     * @param  string|array $iceql
+     * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 1.1
+     * @since   1.1
+     */
+    public function get($iceql)
+    {
+        $iceql = (array)$iceql;
+
+        $result = $this->query($this->translateGet($iceql));
+
+        if ($this->getConnection()->errno) {
+            Logger::getInstance(__CLASS__)->error(
+                ['mysql - #' . $this->getConnection()->errno . ': {$0}', $this->getConnection()->error],
+                __FILE__,
+                __LINE__
+            );
+            return [];
+        }
+
+        $data = [];
+
+        while ($row = $result->fetch_assoc()) {
+            $data[] = $row;
+        }
+
+        $result->close();
+
+        return $data;
+    }
+
+    /**
+     * Translate ice query language for get data
+     *
+     * @param $iceql
+     * @return mixed
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since   0
+     */
+    abstract public function translateGet(array $iceql);
+
+    /**
+     * Set by ice query language
+     *
+     *```php
+     * // insert
+     *  $iceql = [
+     *      'test.ice_session:s/session_data:testtdate,ip:127.0.0.1,agent:firefox'
+     *  ];
+     *
+     * // update
+     *  $iceql = [
+     *      'test.ice_session:s/session_data:testtdate,ip:127.0.0.1,agent:firefox' => 'session_pk:4324'
+     *  ];
+     *```
+     *
+     * @param array $iceql
+     * @return mixed setted value
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since   0
+     */
+    public function set(array $iceql)
+    {
+        $iceql = (array)$iceql;
+
+        $result = $this->query($this->translateSet($iceql));
+
+        if ($this->getConnection()->errno) {
+            Logger::getInstance(__CLASS__)->error(
+                ['mysql - #' . $this->getConnection()->errno . ': {$0}', $this->getConnection()->error],
+                __FILE__,
+                __LINE__
+            );
+            return null;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Translate ice query language for set data
+     *
+     * @param $iceql
+     * @return mixed setted value
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since   0
+     */
+    abstract public function translateSet(array $iceql);
+
+    /**
+     * Delete by ice query language
+     *
+     * ```php
+     * // delete
+     *  $iceql = [
+     *      'test.ice_session:s => 'session_pk|OR:sdas|<>,views:0',
+     *  ];
+     * ```
+     *
+     * @param array $iceql
+     * @return bool|mixed
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since   0
+     */
+    public function delete(array $iceql)
+    {
+        $iceql = (array)$iceql;
+
+        $result = $this->query($this->translateSet($iceql));
+
+        if ($this->getConnection()->errno) {
+            Logger::getInstance(__CLASS__)->error(
+                ['mysql - #' . $this->getConnection()->errno . ': {$0}', $this->getConnection()->error],
+                __FILE__,
+                __LINE__
+            );
+            return null;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Translate ice query language for delete data
+     *
+     * @param $iceql
+     * @return bool|mixed
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since   0
+     */
+    abstract public function translateDelete(array $iceql);
+
+    /**
+     * Execute native query
+     *
+     * @param $sql
+     * @return mixed
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since   0
+     */
+    abstract public function query($sql);
 }

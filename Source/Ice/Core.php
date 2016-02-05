@@ -65,7 +65,7 @@ trait Core
     /**
      * Return dat provider for self class
      *
-     * @param  string|null $index
+     * @param  string|null $key
      * @return Data_Provider
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -73,9 +73,9 @@ trait Core
      * @version 0.0
      * @since   0.0
      */
-    public static function getDataProvider($index)
+    public static function getDataProvider($key)
     {
-        return Environment::getInstance()->getProvider(self::getClass(), $index);
+        return Environment::getInstance()->getProvider(self::getClass(), $key);
     }
 
     /**

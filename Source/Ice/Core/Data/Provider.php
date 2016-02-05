@@ -122,16 +122,13 @@ abstract class Data_Provider
         }
 
         if ($class == __CLASS__) {
-            $keyParts = explode('/', $key);
-
-            if (count($keyParts) < 2) {
-                $class = reset($keyParts);
-                $key = $class::getDefaultKey();
+            if ($pos = strpos($key, '/')) {
+                $class = Object::getClass(__CLASS__, substr($key, 0, $pos));
+                $key = substr($key, $pos + 1);
             } else {
-                list($class, $key) = explode('/', $key);
+                $class = Object::getClass(__CLASS__, $key);
+                $key = $class::getDefaultKey();
             }
-
-            $class = Object::getClass(__CLASS__, $class);
 
             return $class::getInstance($key, $index);
         }

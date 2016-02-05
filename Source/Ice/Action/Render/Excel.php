@@ -11,6 +11,8 @@ namespace Ice\Action;
 use Ice\Core\Action;
 use Ice\Core\Debuger;
 use Ice\Core\Widget;
+use Ice\Data\Provider\Request;
+use Ice\Data\Provider\Router;
 use Ice\Render\External_PHPExcel;
 
 class Render_Excel extends Action
@@ -28,8 +30,8 @@ class Render_Excel extends Action
             'cache' => ['ttl' => -1, 'count' => 1000],
             'actions' => [],
             'input' => [
-                'class' => ['providers' => ['default', 'router', 'request']],
-                'params' => ['providers' => ['default', 'router', 'request'], 'default' => []],
+                'class' => ['providers' => ['default', Router::class, Request::class]],
+                'params' => ['providers' => ['default', Router::class, Request::class], 'default' => []],
                 'widget' => ['default' => null, 'providers' => ['default', 'request']]
             ],
             'output' => []

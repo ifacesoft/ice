@@ -90,7 +90,6 @@ abstract class Container
             $params['instanceKey'] = $key;
 
             if ($object = $class::create($params)) {
-//                Debuger::dump([$dataProvider, $key, $object]);
                 $dataProvider->set($key, $object, $ttl);
             }
 
