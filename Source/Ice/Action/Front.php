@@ -4,7 +4,7 @@ namespace Ice\Action;
 
 use Ice\Core\Action;
 use Ice\Core\Widget;
-use Ice\Data\Provider\Router;
+use Ice\DataProvider\Router;
 use Ice\Widget\Layout;
 
 class Front extends Action

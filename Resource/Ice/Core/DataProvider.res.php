@@ -56,4 +56,8 @@ return [
         'tr' => '{$1}için uygular {$0} gerek ',
         'uk' => 'Треба реалізує {$0} {$1}',
     ],
+
+    'Error - Data provider "{$0}" connection failed' => [
+        'ru' => 'Error - Data provider "{$0}" connection failed',
+    ],
 ];

@@ -4,7 +4,7 @@ namespace Ice\Router;
 
 use Ice\Core\Route;
 use Ice\Core\Router;
-use Ice\Data\Provider\Router as DataProvider_Router;
+use Ice\DataProvider\Router as DataProvider_Router;
 
 class Ice extends Router
 {

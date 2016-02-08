@@ -6,7 +6,7 @@ use FileAPI;
 use Ice\Core\Action;
 use Ice\Core\Debuger;
 use Ice\Core\Module;
-use Ice\Data\Provider\Request;
+use Ice\DataProvider\Request;
 use Ice\Helper\File;
 
 class Widget_Form_File_Upload extends Action

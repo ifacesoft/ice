@@ -4,10 +4,10 @@ namespace Ice\Helper;
 
 use Ice\Core\Action;
 use Ice\Core\DataProvider;
-use Ice\Data\Provider\Cli;
-use Ice\Data\Provider\Request;
-use Ice\Data\Provider\Router;
-use Ice\Data\Provider\Session;
+use Ice\DataProvider\Cli;
+use Ice\DataProvider\Request;
+use Ice\DataProvider\Router;
+use Ice\DataProvider\Session;
 use Ice\Exception\Http_Not_Found;
 
 class Input

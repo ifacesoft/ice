@@ -6,7 +6,7 @@ use Ice\Core\Action;
 use Ice\Core\Data_Scheme;
 use Ice\Core\Model;
 use Ice\Core\Module;
-use Ice\Data\Provider\Cli;
+use Ice\DataProvider\Cli;
 use Ice\Exception\DataSource_Statement_TableNotFound;
 use Ice\Helper\Arrays;
 use Ice\Helper\Json;

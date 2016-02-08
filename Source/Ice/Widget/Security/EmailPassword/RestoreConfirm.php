@@ -4,8 +4,8 @@ namespace Ice\Widget;
 
 use Ice\Action\Security_EmailPassword_RestoreConfirm_Submit;
 use Ice\Core\Widget_Security;
-use Ice\Data\Provider\Request;
-use Ice\Data\Provider\Router;
+use Ice\DataProvider\Request;
+use Ice\DataProvider\Router;
 
 class Security_EmailPassword_RestoreConfirm extends Widget_Security
 {

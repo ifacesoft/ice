@@ -49,7 +49,7 @@ use mysqli_stmt;
  */
 class Mysqli extends Data_Source
 {
-    const DATA_PROVIDER_CLASS = 'Ice\Data\Provider\Mysqli';
+    const DATA_PROVIDER_CLASS = 'Ice\DataProvider\Mysqli';
     const QUERY_TRANSLATOR_CLASS = 'Ice\Query\Translator\Sql';
 
     const TRANSACTION_REPEATABLE_READ = 'REPEATABLE READ';

@@ -1,24 +1,21 @@
 <?php
 /**
- * Ice data provider implementation string class
+ * Ice data provider implementation session class
  *
  * @link      http://www.iceframework.net
  * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
  * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
-namespace Ice\Data\Provider;
+namespace Ice\DataProvider;
 
-use Ice\Core\Cache;
-use Ice\Core\Cacheable;
 use Ice\Core\DataProvider;
-use Ice\Core\Environment;
 use Ice\Core\Exception;
 
 /**
- * Class String
+ * Class Session
  *
- * Data provider for cache
+ * Data provider for session data
  *
  * @see Ice\Core\DataProvider
  *
@@ -27,7 +24,7 @@ use Ice\Core\Exception;
  * @package    Ice
  * @subpackage DataProvider
  */
-class Cacher extends DataProvider
+class Session extends DataProvider
 {
     const DEFAULT_KEY = 'default';
 
@@ -44,44 +41,6 @@ class Cacher extends DataProvider
     protected static function getDefaultKey()
     {
         return self::DEFAULT_KEY;
-    }
-
-    /**
-     * Get data from data provider by key
-     *
-     * @param  string $key
-     * @return Cacheable
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since   0.0
-     */
-    public function get($key = null)
-    {
-        /**
-         * @var Cache $cache
-         */
-        if ($cache = $this->getConnection()->get($key)) {
-            return $cache->validate();
-        }
-
-        return null;
-    }
-
-    /**
-     * Get instance connection of data provider
-     *
-     * @return DataProvider
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since   0.0
-     */
-    public function getConnection()
-    {
-        return parent::getConnection();
     }
 
     /**
@@ -107,18 +66,7 @@ class Cacher extends DataProvider
             return $key;
         }
 
-        if ($ttl == -1) {
-            return $value;
-        }
-
-        if ($ttl === null) {
-            $options = $this->getOptions();
-            $ttl = isset($options['ttl']) ? $options['ttl'] : 3600;
-        }
-
-        $this->getConnection()->set($key, Cache::create($value, microtime(true)), $ttl);
-
-        return $value;
+        return $_SESSION[$key] = $value;
     }
 
     /**
@@ -136,7 +84,36 @@ class Cacher extends DataProvider
      */
     public function delete($key, $force = true)
     {
-        return $this->getConnection()->delete($key, $force);
+        if ($force) {
+            unset($_SESSION[$key]);
+            return true;
+        }
+
+        $value = $this->get($key);
+
+        unset($_SESSION[$key]);
+
+        return $value;
+    }
+
+    /**
+     * Get data from data provider by key
+     *
+     * @param  string $key
+     * @return mixed
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since   0.0
+     */
+    public function get($key = null)
+    {
+        if (empty($key)) {
+            return $_SESSION;
+        }
+
+        return isset($_SESSION[$key]) ? $_SESSION[$key] : null;
     }
 
     /**
@@ -148,12 +125,12 @@ class Cacher extends DataProvider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.4
      * @since   0.0
      */
     public function incr($key, $step = 1)
     {
-        return $this->getConnection()->incr($key, $step);
+        return $_SESSION[$key] += $step;
     }
 
     /**
@@ -165,12 +142,12 @@ class Cacher extends DataProvider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.4
      * @since   0.0
      */
     public function decr($key, $step = 1)
     {
-        return $this->getConnection()->decr($key, $step);
+        return $_SESSION[$key] -= $step;
     }
 
     /**
@@ -183,7 +160,7 @@ class Cacher extends DataProvider
      */
     public function flushAll()
     {
-        return $this->getConnection()->flushAll();
+        $_SESSION = [];
     }
 
     /**
@@ -194,12 +171,13 @@ class Cacher extends DataProvider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @todo    0.4 implements filter by pattern
+     * @version 0.4
      * @since   0.0
      */
     public function getKeys($pattern = null)
     {
-        return $this->getConnection()->getKeys($pattern);
+        return array_keys($_SESSION);
     }
 
     /**
@@ -210,27 +188,12 @@ class Cacher extends DataProvider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.5
+     * @version 0.0
      * @since   0.0
      */
     protected function connect(&$connection)
     {
-        if (!Environment::isLoaded() || Environment::getInstance()->isDevelopment()) {
-            return $connection = Registry::getInstance($this->getKey(), $this->getIndex());
-        }
-
-        if (!Environment::getInstance()->isProduction()) {
-            return $connection = File::getInstance($this->getKey(), $this->getIndex());
-        }
-
-        /**
-         * @var DataProvider $dataProviderClass
-         */
-        $dataProviderClass = class_exists('Redis', false)
-            ? Redis::getClass()
-            : File::getClass();
-
-        return $connection = $dataProviderClass::getInstance($this->getKey(), $this->getIndex());
+        return isset($_SESSION);
     }
 
     /**
@@ -241,12 +204,12 @@ class Cacher extends DataProvider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.4
      * @since   0.0
      */
     protected function close(&$connection)
     {
-        $connection = null;
+        unset($_SESSION);
         return true;
     }
 }

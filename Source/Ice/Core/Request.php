@@ -10,7 +10,7 @@
 namespace Ice\Core;
 
 use Ice\Core;
-use Ice\Data\Provider\Request as DataProvider_Request;
+use Ice\DataProvider\Request as DataProvider_Request;
 use Ice\Exception\Access_Denied_Request;
 use Ice\Helper\Http;
 use Locale;

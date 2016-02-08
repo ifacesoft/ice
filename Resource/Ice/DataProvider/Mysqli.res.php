@@ -87,4 +87,10 @@ return [
     'Error - mysql - #1049: {$0}' => [
         'ru' => 'Error - mysql - #1049: {$0}',
     ],
+    'Error - mysql - #1046: {$0}' => [
+        'ru' => 'Error - mysql - #1046: {$0}',
+    ],
+    'Error - mysql - #1146: {$0}' => [
+        'ru' => 'Error - mysql - #1146: {$0}',
+    ],
 ];

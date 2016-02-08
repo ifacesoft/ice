@@ -2,7 +2,7 @@
 
 namespace Ice\Widget;
 
-use Ice\Data\Provider\Router;
+use Ice\DataProvider\Router;
 
 class Header_Route extends Header
 {

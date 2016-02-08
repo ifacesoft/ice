@@ -3,7 +3,7 @@
 namespace Ice\Widget;
 
 use Ice\Core\Widget;
-use Ice\Data\Provider\Router;
+use Ice\DataProvider\Router;
 
 class Title_Route extends Widget
 {

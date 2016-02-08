@@ -11,7 +11,7 @@ namespace Ice\Core;
 
 use Composer\Autoload\ClassLoader;
 use Ice\Core;
-use Ice\Data\Provider\Repository;
+use Ice\DataProvider\Repository;
 use Ice\Exception\FileNotFound;
 use Ice\Helper\Object;
 

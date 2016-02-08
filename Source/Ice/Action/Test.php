@@ -2,7 +2,7 @@
 namespace Ice\Action;
 
 use Ice\Core\Action;
-use Ice\Data\Provider\Request;
+use Ice\DataProvider\Request;
 
 class Test extends Action
 {

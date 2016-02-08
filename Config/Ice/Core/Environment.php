@@ -10,23 +10,23 @@
 return [
     'production' => [
         'Ice\Core\DataProvider' => [
-            'Ice\Data\Provider\Redis' => [
+            'Ice\DataProvider\Redis' => [
                 'session' => [
                     'ttl' => 60 * 60 * 24
                 ],
             ],
-            'Ice\Data\Provider\File' => [
+            'Ice\DataProvider\File' => [
                 'session' => [
                     'ttl' => 60 * 60 * 24
                 ],
             ],
-            'Ice\Data\Provider\Mysqli' => [
+            'Ice\DataProvider\Mysqli' => [
                 'default' => [
                     'username' => 'root',
                     'password' => '',
                 ]
             ],
-            'Ice\Data\Provider\Mongodb' => [
+            'Ice\DataProvider\Mongodb' => [
                 'default' => [
                 ]
             ]

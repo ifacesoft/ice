@@ -10,7 +10,7 @@
 namespace Ice\Core;
 
 use Ice\Core;
-use Ice\Data\Provider\Repository;
+use Ice\DataProvider\Repository;
 
 /**
  * Class Cache

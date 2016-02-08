@@ -5,7 +5,7 @@ namespace Ice\Widget;
 use Ice\Action\Resource_Dynamic as Action_Resource_Dynamic;
 use Ice\Core\Environment;
 use Ice\Core\Module;
-use Ice\Data\Provider\Router;
+use Ice\DataProvider\Router;
 use Ice\Helper\File;
 
 class Resource_Dynamic extends Resource

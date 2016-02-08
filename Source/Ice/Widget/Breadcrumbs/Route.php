@@ -3,7 +3,7 @@
 namespace Ice\Widget;
 
 use Ice\Core\Route;
-use Ice\Data\Provider\Router;
+use Ice\DataProvider\Router;
 
 class Breadcrumbs_Route extends Breadcrumbs
 {

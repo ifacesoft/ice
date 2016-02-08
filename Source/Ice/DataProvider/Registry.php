@@ -7,7 +7,7 @@
  * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
-namespace Ice\Data\Provider;
+namespace Ice\DataProvider;
 
 use ArrayObject;
 use Ice\Core\DataProvider;

@@ -8,8 +8,8 @@ use Ice\Core\Model;
 use Ice\Core\Security;
 use Ice\Core\Security_Account;
 use Ice\Core\Security_User;
-use Ice\Data\Provider\Security as DataProvider_Security;
-use Ice\Data\Provider\Session;
+use Ice\DataProvider\Security as DataProvider_Security;
+use Ice\DataProvider\Session;
 
 class Ice extends Security
 {

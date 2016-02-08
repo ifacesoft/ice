@@ -3,7 +3,7 @@
 namespace Ice\Core;
 
 use Ice\Action\Test;
-use Ice\Data\Provider\Router;
+use Ice\DataProvider\Router;
 use PHPUnit_Framework_TestCase;
 
 class ActionTest extends PHPUnit_Framework_TestCase

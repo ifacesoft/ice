@@ -1,6 +1,6 @@
 <?php
 
-namespace Ice\Data\Provider;
+namespace Ice\DataProvider;
 
 use Ice\Core\DataProvider;
 use Ice\Core\Exception;

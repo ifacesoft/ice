@@ -1,6 +1,6 @@
 <?php
 
-namespace Ice\Data\Provider;
+namespace Ice\DataProvider;
 
 class Security extends Registry
 {

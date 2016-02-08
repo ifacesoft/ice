@@ -1,21 +1,24 @@
 <?php
 /**
- * Ice data provider implementation cli class
+ * Ice data provider implementation string class
  *
  * @link      http://www.iceframework.net
  * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
  * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
-namespace Ice\Data\Provider;
+namespace Ice\DataProvider;
 
-use Ice\Core\Action;
+use Ice\Core\Cache;
+use Ice\Core\Cacheable;
 use Ice\Core\DataProvider;
+use Ice\Core\Environment;
+use Ice\Core\Exception;
 
 /**
- * Class Cli
+ * Class String
  *
- * Data provider for cli streams
+ * Data provider for cache
  *
  * @see Ice\Core\DataProvider
  *
@@ -24,7 +27,7 @@ use Ice\Core\DataProvider;
  * @package    Ice
  * @subpackage DataProvider
  */
-class Cli extends DataProvider
+class Cacher extends DataProvider
 {
     const DEFAULT_KEY = 'default';
 
@@ -35,8 +38,8 @@ class Cli extends DataProvider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
-     * @since   0.0
+     * @version 0.4
+     * @since   0.4
      */
     protected static function getDefaultKey()
     {
@@ -47,7 +50,7 @@ class Cli extends DataProvider
      * Get data from data provider by key
      *
      * @param  string $key
-     * @return mixed
+     * @return Cacheable
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
@@ -56,13 +59,29 @@ class Cli extends DataProvider
      */
     public function get($key = null)
     {
-        $this->getConnection();
-
-        if (!$key) {
-            return $_SERVER['argv'];
+        /**
+         * @var Cache $cache
+         */
+        if ($cache = $this->getConnection()->get($key)) {
+            return $cache->validate();
         }
 
-        return isset($_SERVER['argv'][$key]) ? $_SERVER['argv'][$key] : null;
+        return null;
+    }
+
+    /**
+     * Get instance connection of data provider
+     *
+     * @return DataProvider
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since   0.0
+     */
+    public function getConnection()
+    {
+        return parent::getConnection();
     }
 
     /**
@@ -71,12 +90,11 @@ class Cli extends DataProvider
      * @param  string $key
      * @param  $value
      * @param  null $ttl
-     * @throws \Exception
      * @return mixed setted value
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.5
+     * @version 0.0
      * @since   0.0
      */
     public function set($key, $value = null, $ttl = null)
@@ -89,9 +107,18 @@ class Cli extends DataProvider
             return $key;
         }
 
-        $this->getConnection();
+        if ($ttl == -1) {
+            return $value;
+        }
 
-        return $_SERVER['argv'][$key] = $value;
+        if ($ttl === null) {
+            $options = $this->getOptions();
+            $ttl = isset($options['ttl']) ? $options['ttl'] : 3600;
+        }
+
+        $this->getConnection()->set($key, Cache::create($value, microtime(true)), $ttl);
+
+        return $value;
     }
 
     /**
@@ -99,7 +126,7 @@ class Cli extends DataProvider
      *
      * @param  string $key
      * @param  bool $force if true return boolean else deleted value
-     * @throws \Exception
+     * @throws Exception
      * @return mixed|boolean
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -109,7 +136,7 @@ class Cli extends DataProvider
      */
     public function delete($key, $force = true)
     {
-        throw new \Exception('Implement delete() method.');
+        return $this->getConnection()->delete($key, $force);
     }
 
     /**
@@ -117,7 +144,6 @@ class Cli extends DataProvider
      *
      * @param  $key
      * @param  int $step
-     * @throws \Exception
      * @return mixed new value
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -127,7 +153,7 @@ class Cli extends DataProvider
      */
     public function incr($key, $step = 1)
     {
-        throw new \Exception('Implement inc() method.');
+        return $this->getConnection()->incr($key, $step);
     }
 
     /**
@@ -135,7 +161,6 @@ class Cli extends DataProvider
      *
      * @param  $key
      * @param  int $step
-     * @throws \Exception
      * @return mixed new value
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -145,7 +170,7 @@ class Cli extends DataProvider
      */
     public function decr($key, $step = 1)
     {
-        throw new \Exception('Implement dec() method.');
+        return $this->getConnection()->decr($key, $step);
     }
 
     /**
@@ -158,7 +183,7 @@ class Cli extends DataProvider
      */
     public function flushAll()
     {
-        throw new \Exception('Implement flushAll() method.');
+        return $this->getConnection()->flushAll();
     }
 
     /**
@@ -174,7 +199,7 @@ class Cli extends DataProvider
      */
     public function getKeys($pattern = null)
     {
-        // TODO: Implement getKeys() method.
+        return $this->getConnection()->getKeys($pattern);
     }
 
     /**
@@ -185,51 +210,27 @@ class Cli extends DataProvider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.5
      * @since   0.0
      */
     protected function connect(&$connection)
     {
-        $connection = [];
-
-        array_shift($_SERVER['argv']);
-
-        foreach ($_SERVER['argv'] as $key => $arg) {
-            $param = explode('=', $arg);
-
-            if (!isset($connection['actionClass'])) {
-                if (count($param) == 1) {
-                    $connection['actionClass'] = Action::getClass($arg);
-                    unset($_SERVER['argv'][$key]);
-                    continue;
-                }
-
-                if (count($param) == 2) {
-                    list($param, $value) = $param;
-
-                    if ($param == 'action') {
-                        $connection['actionClass'] = Action::getClass($value);
-                        unset($_SERVER['argv'][$key]);
-                        continue;
-                    }
-                }
-            }
-
-            if (count($param) == 2) {
-                list($param, $value) = $param;
-            } else {
-                $param = $arg;
-                $value = null;
-            }
-
-            $connection[$param] = $value;
-
-            unset($_SERVER['argv'][$key]);
+        if (!Environment::isLoaded() || Environment::getInstance()->isDevelopment()) {
+            return $connection = Registry::getInstance($this->getKey(), $this->getIndex());
         }
 
-        $_SERVER['argv'] = $connection;
+        if (!Environment::getInstance()->isProduction()) {
+            return $connection = File::getInstance($this->getKey(), $this->getIndex());
+        }
 
-        return $connection;
+        /**
+         * @var DataProvider $dataProviderClass
+         */
+        $dataProviderClass = class_exists('Redis', false)
+            ? Redis::getClass()
+            : File::getClass();
+
+        return $connection = $dataProviderClass::getInstance($this->getKey(), $this->getIndex());
     }
 
     /**

@@ -4,7 +4,7 @@ namespace Ice\Widget;
 
 use Ice\Action\Security_EmailPassword_Register_Submit;
 use Ice\Core\Widget_Security;
-use Ice\Data\Provider\Request;
+use Ice\DataProvider\Request;
 
 class Security_EmailPassword_Register extends Widget_Security
 {

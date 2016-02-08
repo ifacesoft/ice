@@ -15,7 +15,7 @@ use Ice\Core\DataProvider;
 use Ice\Core\Loader;
 use Ice\Core\Module;
 use Ice\Core\Route;
-use Ice\Data\Provider\Router;
+use Ice\DataProvider\Router;
 use Ice\Helper\Directory;
 use Ice\Helper\File;
 use JSMin;

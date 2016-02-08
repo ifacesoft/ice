@@ -10,7 +10,7 @@
 namespace Ice\Core;
 
 use Ice\Core;
-use Ice\Data\Provider\Cacher;
+use Ice\DataProvider\Cacher;
 use Ice\Helper\Arrays;
 use Ice\Helper\Serializer;
 

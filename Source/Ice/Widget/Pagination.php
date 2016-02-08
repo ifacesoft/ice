@@ -7,7 +7,7 @@ use Ice\Core\Query_Builder;
 use Ice\Core\Query_Result;
 use Ice\Core\Request;
 use Ice\Core\Widget;
-use Ice\Data\Provider\Request as DataProvider_Request;
+use Ice\DataProvider\Request as DataProvider_Request;
 
 class Pagination extends Widget
 {

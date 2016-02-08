@@ -6,7 +6,7 @@ use Ice\Action\Security_LoginPassword_Login_Submit;
 use Ice\Core\Model;
 use Ice\Core\Security_Account;
 use Ice\Core\Widget_Form_Security_Login;
-use Ice\Data\Provider\Request;
+use Ice\DataProvider\Request;
 
 class Security_LoginPassword_Login extends Widget_Form_Security_Login
 {

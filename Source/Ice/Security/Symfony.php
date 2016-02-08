@@ -7,8 +7,8 @@ use Doctrine\ORM\EntityManager;
 use Ice\Core\Debuger;
 use Ice\Core\Model;
 use Ice\Core\Security_Account;
-use Ice\Data\Provider\Security as DataProvider_Security;
-use Ice\Data\Provider\Session;
+use Ice\DataProvider\Security as DataProvider_Security;
+use Ice\DataProvider\Session;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 

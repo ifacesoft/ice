@@ -1,19 +1,33 @@
 <?php
+/**
+ * Ice data provider implementation object class
+ *
+ * @link      http://www.iceframework.net
+ * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
+ * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
+ */
 
-namespace Ice\Data\Provider;
+namespace Ice\DataProvider;
 
 use Ice\Core\DataProvider;
+use Ice\Core\Environment;
 use Ice\Core\Exception;
-use Ice\Core\Logger;
 
-class Mongodb extends DataProvider
+/**
+ * Class Object
+ *
+ * Data provider for object cache
+ *
+ * @see Ice\Core\DataProvider
+ *
+ * @author dp <denis.a.shestakov@gmail.com>
+ *
+ * @package    Ice
+ * @subpackage DataProvider
+ */
+class Repository extends DataProvider
 {
     const DEFAULT_KEY = 'default';
-
-    protected $options = [
-        'host' => 'localhost',
-        'port' => '27017'
-    ];
 
     /**
      * Return default key
@@ -22,8 +36,8 @@ class Mongodb extends DataProvider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
-     * @since   0.0
+     * @version 0.4
+     * @since   0.4
      */
     protected static function getDefaultKey()
     {
@@ -38,12 +52,27 @@ class Mongodb extends DataProvider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.4
-     * @since   0.4
+     * @version 0.0
+     * @since   0.0
      */
     public function get($key = null)
     {
-        // TODO: Implement get() method.
+        return $this->getConnection()->get($key);
+    }
+
+    /**
+     * Get instance connection of data provider
+     *
+     * @return DataProvider
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since   0.0
+     */
+    public function getConnection()
+    {
+        return parent::getConnection();
     }
 
     /**
@@ -51,17 +80,17 @@ class Mongodb extends DataProvider
      *
      * @param  string $key
      * @param  $value
-     * @param  null $ttl
+     * @param  integer $ttl
      * @return mixed setted value
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.4
-     * @since   0.4
+     * @version 0.0
+     * @since   0.0
      */
     public function set($key, $value = null, $ttl = null)
     {
-        // TODO: Implement set() method.
+        return $this->getConnection()->set($key, $value, $ttl);
     }
 
     /**
@@ -74,12 +103,12 @@ class Mongodb extends DataProvider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.4
-     * @since   0.4
+     * @version 0.0
+     * @since   0.0
      */
     public function delete($key, $force = true)
     {
-        // TODO: Implement delete() method.
+        return $this->getConnection()->delete($key, $force);
     }
 
     /**
@@ -91,12 +120,12 @@ class Mongodb extends DataProvider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.4
-     * @since   0.4
+     * @version 0.0
+     * @since   0.0
      */
     public function incr($key, $step = 1)
     {
-        // TODO: Implement inc() method.
+        return $this->getConnection()->incr($key, $step);
     }
 
     /**
@@ -108,27 +137,25 @@ class Mongodb extends DataProvider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.4
-     * @since   0.4
+     * @version 0.0
+     * @since   0.0
      */
     public function decr($key, $step = 1)
     {
-        // TODO: Implement dec() method.
+        return $this->getConnection()->decr($key, $step);
     }
 
     /**
      * Flush all stored data
      *
-     * @author anonymous <email>
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.4
-     * @since   0.4
+     * @version 0.0
+     * @since   0.0
      */
     public function flushAll()
     {
-        // TODO: Implement flushAll() method.
+        return $this->getConnection()->flushAll();
     }
 
     /**
@@ -139,27 +166,12 @@ class Mongodb extends DataProvider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.4
-     * @since   0.4
+     * @version 0.0
+     * @since   0.0
      */
     public function getKeys($pattern = null)
     {
-        // TODO: Implement getKeys() method.
-    }
-
-    /**
-     * Return connection of mongodb
-     *
-     * @return \Mongo
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since   0.4
-     */
-    public function getConnection()
-    {
-        return parent::getConnection();
+        return $this->getConnection()->getKeys($pattern);
     }
 
     /**
@@ -170,41 +182,43 @@ class Mongodb extends DataProvider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.4
-     * @since   0.4
+     * @version 0.5
+     * @since   0.0
      */
     protected function connect(&$connection)
     {
-        $options = $this->getOptions();
-
-        try {
-            $connection = new \MongoClient('mongodb://' . $options['host'] . ':' . $options['port']);
-        } catch (\Exception $e) {
-            Logger::getInstance(__CLASS__)
-                ->info(
-                    [
-                        'mongodb - #' . $e->getCode() . ': {$0}',
-                        $e->getMessage() . ' (' . $options['username'] . '@' . $options['host'] . ':' . $options['port'] . ')'
-                    ],
-                    Logger::WARNING
-                );
-            return false;
+        if (!Environment::isLoaded() || Environment::getInstance()->isDevelopment()) {
+            return $connection = Registry::getInstance($this->getKey(), $this->getIndex());
         }
 
-        return (bool)$connection;
+        if (!Environment::getInstance()->isProduction()) {
+            return $connection = File::getInstance($this->getKey(), $this->getIndex());
+        }
+
+        /**
+         * @var DataProvider $dataProviderClass
+         */
+        $dataProviderClass = function_exists('apc_store')
+            ? Apc::getClass()
+            : File::getClass();
+
+        return $connection = $dataProviderClass::getInstance($this->getKey(), $this->getIndex());
     }
 
     /**
      * Close connection with data provider
      *
-     * @param $connection
+     * @param  $connection
+     * @return boolean
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.4
-     * @since   0.4
+     * @version 0.0
+     * @since   0.0
      */
     protected function close(&$connection)
     {
+        $connection = null;
+        return true;
     }
 }

@@ -11,8 +11,8 @@ namespace Ice\Core;
 
 use Ice\App;
 use Ice\Core;
-use Ice\Data\Provider\Registry;
-use Ice\Data\Provider\Repository;
+use Ice\DataProvider\Registry;
+use Ice\DataProvider\Repository;
 use Ice\Exception\Http;
 use Ice\Exception\Redirect;
 use Ice\Helper\Access;

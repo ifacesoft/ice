@@ -13,9 +13,9 @@ use Ice\Core\Code_Generator;
 use Ice\Core\DataProvider;
 use Ice\Core\Debuger;
 use Ice\Core\Environment;
-use Ice\Data\Provider\Cacher;
-use Ice\Data\Provider\Registry;
-use Ice\Data\Provider\Repository;
+use Ice\DataProvider\Cacher;
+use Ice\DataProvider\Registry;
+use Ice\DataProvider\Repository;
 use Ice\Helper\Object;
 
 /**

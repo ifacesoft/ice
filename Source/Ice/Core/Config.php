@@ -10,7 +10,7 @@
 namespace Ice\Core;
 
 use Ice\Core;
-use Ice\Data\Provider\Repository;
+use Ice\DataProvider\Repository;
 use Ice\Exception\Config_Error;
 use Ice\Exception\Config_Param;
 use Ice\Exception\Config_Param_NotFound;

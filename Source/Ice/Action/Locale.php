@@ -2,7 +2,7 @@
 
 use Ice\Core\Action;
 use Ice\Core\Request;
-use Ice\Data\Provider\Router;
+use Ice\DataProvider\Router;
 use Ice\Exception\Redirect;
 use Ice\Helper\Api_Client_Yandex_Translate;
 

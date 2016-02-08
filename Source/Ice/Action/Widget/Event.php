@@ -12,7 +12,7 @@ namespace Ice\Action;
 use Ice\Core\Action;
 use Ice\Core\Debuger;
 use Ice\Core\Widget;
-use Ice\Data\Provider\Request;
+use Ice\DataProvider\Request;
 use Ice\Helper\Access;
 
 abstract class Widget_Event extends Render

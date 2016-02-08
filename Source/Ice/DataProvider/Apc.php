@@ -1,22 +1,21 @@
 <?php
 /**
- * Ice data provider implementation object class
+ * Ice data provider implementation apc class
  *
  * @link      http://www.iceframework.net
  * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
  * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
-namespace Ice\Data\Provider;
+namespace Ice\DataProvider;
 
 use Ice\Core\DataProvider;
-use Ice\Core\Environment;
 use Ice\Core\Exception;
 
 /**
- * Class Object
+ * Class Apc
  *
- * Data provider for object cache
+ * Data provider for apc cache
  *
  * @see Ice\Core\DataProvider
  *
@@ -25,7 +24,7 @@ use Ice\Core\Exception;
  * @package    Ice
  * @subpackage DataProvider
  */
-class Repository extends DataProvider
+class Apc extends DataProvider
 {
     const DEFAULT_KEY = 'default';
 
@@ -36,8 +35,8 @@ class Repository extends DataProvider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.4
-     * @since   0.4
+     * @version 0.0
+     * @since   0.0
      */
     protected static function getDefaultKey()
     {
@@ -45,42 +44,11 @@ class Repository extends DataProvider
     }
 
     /**
-     * Get data from data provider by key
-     *
-     * @param  string $key
-     * @return mixed
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since   0.0
-     */
-    public function get($key = null)
-    {
-        return $this->getConnection()->get($key);
-    }
-
-    /**
-     * Get instance connection of data provider
-     *
-     * @return DataProvider
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since   0.0
-     */
-    public function getConnection()
-    {
-        return parent::getConnection();
-    }
-
-    /**
      * Set data to data provider
      *
      * @param  string $key
      * @param  $value
-     * @param  integer $ttl
+     * @param  null $ttl
      * @return mixed setted value
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -90,7 +58,24 @@ class Repository extends DataProvider
      */
     public function set($key, $value = null, $ttl = null)
     {
-        return $this->getConnection()->set($key, $value, $ttl);
+        if (is_array($key) && $value === null) {
+            foreach ($key as $index => $value) {
+                $this->set($index, $value, $ttl);
+            }
+
+            return $key;
+        }
+
+        if ($ttl == -1) {
+            return $value;
+        }
+
+        if ($ttl === null) {
+            $options = $this->getOptions();
+            $ttl = isset($options['ttl']) ? $options['ttl'] : 3600;
+        }
+
+        return apc_store($this->getFullKey($key), $value, $ttl) ? $value : null;
     }
 
     /**
@@ -108,7 +93,35 @@ class Repository extends DataProvider
      */
     public function delete($key, $force = true)
     {
-        return $this->getConnection()->delete($key, $force);
+        $key = $this->getFullKey($key);
+
+        if ($force) {
+            return apc_delete($key);
+        }
+
+        $value = $this->get($key);
+
+        apc_delete($key);
+
+        return $value;
+    }
+
+    /**
+     * Get data from data provider by key
+     *
+     * @param  string $key
+     * @throws Exception
+     * @return mixed
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since   0.0
+     */
+    public function get($key = null)
+    {
+        $value = apc_fetch($this->getFullKey($key));
+        return $value === false ? null : $value;
     }
 
     /**
@@ -125,7 +138,7 @@ class Repository extends DataProvider
      */
     public function incr($key, $step = 1)
     {
-        return $this->getConnection()->incr($key, $step);
+        return apc_inc($this->getFullKey($key), $step);
     }
 
     /**
@@ -142,7 +155,7 @@ class Repository extends DataProvider
      */
     public function decr($key, $step = 1)
     {
-        return $this->getConnection()->decr($key, $step);
+        return apc_dec($this->getFullKey($key), $step);
     }
 
     /**
@@ -155,7 +168,7 @@ class Repository extends DataProvider
      */
     public function flushAll()
     {
-        return $this->getConnection()->flushAll();
+        return apc_clear_cache();
     }
 
     /**
@@ -171,7 +184,7 @@ class Repository extends DataProvider
      */
     public function getKeys($pattern = null)
     {
-        return $this->getConnection()->getKeys($pattern);
+        // TODO: Implement getKeys() method.
     }
 
     /**
@@ -182,27 +195,12 @@ class Repository extends DataProvider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.5
+     * @version 0.0
      * @since   0.0
      */
     protected function connect(&$connection)
     {
-        if (!Environment::isLoaded() || Environment::getInstance()->isDevelopment()) {
-            return $connection = Registry::getInstance($this->getKey(), $this->getIndex());
-        }
-
-        if (!Environment::getInstance()->isProduction()) {
-            return $connection = File::getInstance($this->getKey(), $this->getIndex());
-        }
-
-        /**
-         * @var DataProvider $dataProviderClass
-         */
-        $dataProviderClass = function_exists('apc_store')
-            ? Apc::getClass()
-            : File::getClass();
-
-        return $connection = $dataProviderClass::getInstance($this->getKey(), $this->getIndex());
+        return true;
     }
 
     /**
@@ -218,7 +216,6 @@ class Repository extends DataProvider
      */
     protected function close(&$connection)
     {
-        $connection = null;
         return true;
     }
 }

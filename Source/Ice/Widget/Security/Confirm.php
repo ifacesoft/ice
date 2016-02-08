@@ -10,8 +10,8 @@ namespace Ice\Widget;
 
 use Ice\Action\Security_Confirm_Submit;
 use Ice\Core\Widget_Security;
-use Ice\Data\Provider\Request;
-use Ice\Data\Provider\Router;
+use Ice\DataProvider\Request;
+use Ice\DataProvider\Router;
 
 class Security_Confirm extends Widget_Security
 {

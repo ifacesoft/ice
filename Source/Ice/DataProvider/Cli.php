@@ -1,22 +1,21 @@
 <?php
 /**
- * Ice data provider implementation redis class
+ * Ice data provider implementation cli class
  *
  * @link      http://www.iceframework.net
  * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
  * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
-namespace Ice\Data\Provider;
+namespace Ice\DataProvider;
 
+use Ice\Core\Action;
 use Ice\Core\DataProvider;
-use Ice\Core\Exception;
-use Ice\Core\Logger;
 
 /**
- * Class Redis
+ * Class Cli
  *
- * Data provider for redis storage
+ * Data provider for cli streams
  *
  * @see Ice\Core\DataProvider
  *
@@ -24,18 +23,10 @@ use Ice\Core\Logger;
  *
  * @package    Ice
  * @subpackage DataProvider
- *
- * @version 0.0
- * @since   0.0
  */
-class Redis extends DataProvider
+class Cli extends DataProvider
 {
     const DEFAULT_KEY = 'default';
-
-    protected $options = [
-        'host' => 'localhost',
-        'port' => 6379
-    ];
 
     /**
      * Return default key
@@ -44,12 +35,34 @@ class Redis extends DataProvider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.4
-     * @since   0.4
+     * @version 0.0
+     * @since   0.0
      */
     protected static function getDefaultKey()
     {
         return self::DEFAULT_KEY;
+    }
+
+    /**
+     * Get data from data provider by key
+     *
+     * @param  string $key
+     * @return mixed
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since   0.0
+     */
+    public function get($key = null)
+    {
+        $this->getConnection();
+
+        if (!$key) {
+            return $_SERVER['argv'];
+        }
+
+        return isset($_SERVER['argv'][$key]) ? $_SERVER['argv'][$key] : null;
     }
 
     /**
@@ -58,9 +71,13 @@ class Redis extends DataProvider
      * @param  string $key
      * @param  $value
      * @param  null $ttl
+     * @throws \Exception
      * @return mixed setted value
      *
      * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since   0.0
      */
     public function set($key, $value = null, $ttl = null)
     {
@@ -72,31 +89,9 @@ class Redis extends DataProvider
             return $key;
         }
 
-        if ($ttl == -1) {
-            return $value;
-        }
+        $this->getConnection();
 
-        if ($ttl === null) {
-            $options = $this->getOptions();
-            $ttl = isset($options['ttl']) ? $options['ttl'] : 3600;
-        }
-
-        return $this->getConnection()->set($this->getFullKey($key), $value, $ttl) ? $value : null;
-    }
-
-    /**
-     * Return data provider redis connection
-     *
-     * @return \Redis
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since   0.0
-     */
-    public function getConnection()
-    {
-        return parent::getConnection();
+        return $_SERVER['argv'][$key] = $value;
     }
 
     /**
@@ -104,7 +99,7 @@ class Redis extends DataProvider
      *
      * @param  string $key
      * @param  bool $force if true return boolean else deleted value
-     * @throws Exception
+     * @throws \Exception
      * @return mixed|boolean
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -114,33 +109,7 @@ class Redis extends DataProvider
      */
     public function delete($key, $force = true)
     {
-        if ($force) {
-            $this->getConnection()->delete($this->getFullKey($key));
-            return true;
-        }
-
-        $value = $this->get($key);
-
-        $this->getConnection()->delete($this->getFullKey($key));
-
-        return $value;
-    }
-
-    /**
-     * Get data from data provider by key
-     *
-     * @param  string $key
-     * @return mixed
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since   0.0
-     */
-    public function get($key = null)
-    {
-        $value = $this->getConnection()->get($this->getFullKey($key));
-        return $value === false ? null : $value;
+        throw new \Exception('Implement delete() method.');
     }
 
     /**
@@ -148,17 +117,17 @@ class Redis extends DataProvider
      *
      * @param  $key
      * @param  int $step
-     * @throws Exception
+     * @throws \Exception
      * @return mixed new value
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.4
+     * @version 0.0
      * @since   0.0
      */
     public function incr($key, $step = 1)
     {
-        return $this->getConnection()->incrBy($this->getFullKey($key), $step);
+        throw new \Exception('Implement inc() method.');
     }
 
     /**
@@ -166,17 +135,17 @@ class Redis extends DataProvider
      *
      * @param  $key
      * @param  int $step
-     * @throws Exception
+     * @throws \Exception
      * @return mixed new value
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.4
+     * @version 0.0
      * @since   0.0
      */
     public function decr($key, $step = 1)
     {
-        return $this->getConnection()->decrBy($this->getFullKey($key), $step);
+        throw new \Exception('Implement dec() method.');
     }
 
     /**
@@ -189,7 +158,7 @@ class Redis extends DataProvider
      */
     public function flushAll()
     {
-        $this->getConnection()->delete($this->getConnection()->getKeys($this->getKeyPrefix() . '*'));
+        throw new \Exception('Implement flushAll() method.');
     }
 
     /**
@@ -205,17 +174,7 @@ class Redis extends DataProvider
      */
     public function getKeys($pattern = null)
     {
-        $keyPrefix = $this->getKeyPrefix() . DataProvider::PREFIX_KEY_DELIMETER;
-
-        $size = strlen($keyPrefix);
-
-        $keys = [];
-
-        foreach ($this->getConnection()->getKeys($keyPrefix . $pattern . '*') as $key) {
-            $keys[] = substr($key, $size);
-        }
-
-        return $keys;
+        // TODO: Implement getKeys() method.
     }
 
     /**
@@ -231,27 +190,46 @@ class Redis extends DataProvider
      */
     protected function connect(&$connection)
     {
-        $options = $this->getOptions();
+        $connection = [];
 
-        $connection = new \Redis();
+        array_shift($_SERVER['argv']);
 
-        $isConnected = $connection->connect($options['host'], $options['port']);
+        foreach ($_SERVER['argv'] as $key => $arg) {
+            $param = explode('=', $arg);
 
-        if (!$isConnected) {
-            Logger::getInstance(__CLASS__)
-                ->exception('redis - ' . $this->getConnection()->getLastError(), __FILE__, __LINE__);
+            if (!isset($connection['actionClass'])) {
+                if (count($param) == 1) {
+                    $connection['actionClass'] = Action::getClass($arg);
+                    unset($_SERVER['argv'][$key]);
+                    continue;
+                }
+
+                if (count($param) == 2) {
+                    list($param, $value) = $param;
+
+                    if ($param == 'action') {
+                        $connection['actionClass'] = Action::getClass($value);
+                        unset($_SERVER['argv'][$key]);
+                        continue;
+                    }
+                }
+            }
+
+            if (count($param) == 2) {
+                list($param, $value) = $param;
+            } else {
+                $param = $arg;
+                $value = null;
+            }
+
+            $connection[$param] = $value;
+
+            unset($_SERVER['argv'][$key]);
         }
 
-        if (function_exists('igbinary_serialize')) {
-            $connection->setOption(\Redis::OPT_SERIALIZER, \Redis::SERIALIZER_IGBINARY);
-        } else {
-            $connection->setOption(\Redis::OPT_SERIALIZER, \Redis::SERIALIZER_PHP);
-        }
+        $_SERVER['argv'] = $connection;
 
-        $connection->setOption(\Redis::OPT_PREFIX, 'ice/');
-
-        return $isConnected;
-
+        return $connection;
     }
 
     /**
@@ -267,7 +245,7 @@ class Redis extends DataProvider
      */
     protected function close(&$connection)
     {
-        $this->getConnection()->close();
+        $connection = null;
         return true;
     }
 }

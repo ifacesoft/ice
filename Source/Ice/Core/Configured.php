@@ -3,7 +3,7 @@
 namespace Ice\Core;
 
 use Ice\Core;
-use Ice\Data\Provider\Repository;
+use Ice\DataProvider\Repository;
 use Ice\Helper\Object;
 
 trait Configured

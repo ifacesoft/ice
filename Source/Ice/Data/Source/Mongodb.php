@@ -17,7 +17,7 @@ use MongoId;
 
 class Mongodb extends Data_Source
 {
-    const DATA_PROVIDER_CLASS = 'Ice\Data\Provider\Mongodb';
+    const DATA_PROVIDER_CLASS = 'Ice\DataProvider\Mongodb';
     const QUERY_TRANSLATOR_CLASS = 'Ice\Query\Translator\Mongodb';
 
     /**

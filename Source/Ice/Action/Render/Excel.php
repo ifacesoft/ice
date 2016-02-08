@@ -11,8 +11,8 @@ namespace Ice\Action;
 use Ice\Core\Action;
 use Ice\Core\Debuger;
 use Ice\Core\Widget;
-use Ice\Data\Provider\Request;
-use Ice\Data\Provider\Router;
+use Ice\DataProvider\Request;
+use Ice\DataProvider\Router;
 use Ice\Render\External_PHPExcel;
 
 class Render_Excel extends Action

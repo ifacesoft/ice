@@ -1,21 +1,22 @@
 <?php
 /**
- * Ice data provider implementation session class
+ * Ice data provider implementation redis class
  *
  * @link      http://www.iceframework.net
  * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
  * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
-namespace Ice\Data\Provider;
+namespace Ice\DataProvider;
 
 use Ice\Core\DataProvider;
 use Ice\Core\Exception;
+use Ice\Core\Logger;
 
 /**
- * Class Session
+ * Class Redis
  *
- * Data provider for session data
+ * Data provider for redis storage
  *
  * @see Ice\Core\DataProvider
  *
@@ -23,10 +24,18 @@ use Ice\Core\Exception;
  *
  * @package    Ice
  * @subpackage DataProvider
+ *
+ * @version 0.0
+ * @since   0.0
  */
-class Session extends DataProvider
+class Redis extends DataProvider
 {
     const DEFAULT_KEY = 'default';
+
+    protected $options = [
+        'host' => 'localhost',
+        'port' => 6379
+    ];
 
     /**
      * Return default key
@@ -52,9 +61,6 @@ class Session extends DataProvider
      * @return mixed setted value
      *
      * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since   0.0
      */
     public function set($key, $value = null, $ttl = null)
     {
@@ -66,7 +72,31 @@ class Session extends DataProvider
             return $key;
         }
 
-        return $_SESSION[$key] = $value;
+        if ($ttl == -1) {
+            return $value;
+        }
+
+        if ($ttl === null) {
+            $options = $this->getOptions();
+            $ttl = isset($options['ttl']) ? $options['ttl'] : 3600;
+        }
+
+        return $this->getConnection()->set($this->getFullKey($key), $value, $ttl) ? $value : null;
+    }
+
+    /**
+     * Return data provider redis connection
+     *
+     * @return \Redis
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since   0.0
+     */
+    public function getConnection()
+    {
+        return parent::getConnection();
     }
 
     /**
@@ -85,13 +115,13 @@ class Session extends DataProvider
     public function delete($key, $force = true)
     {
         if ($force) {
-            unset($_SESSION[$key]);
+            $this->getConnection()->delete($this->getFullKey($key));
             return true;
         }
 
         $value = $this->get($key);
 
-        unset($_SESSION[$key]);
+        $this->getConnection()->delete($this->getFullKey($key));
 
         return $value;
     }
@@ -109,11 +139,8 @@ class Session extends DataProvider
      */
     public function get($key = null)
     {
-        if (empty($key)) {
-            return $_SESSION;
-        }
-
-        return isset($_SESSION[$key]) ? $_SESSION[$key] : null;
+        $value = $this->getConnection()->get($this->getFullKey($key));
+        return $value === false ? null : $value;
     }
 
     /**
@@ -121,6 +148,7 @@ class Session extends DataProvider
      *
      * @param  $key
      * @param  int $step
+     * @throws Exception
      * @return mixed new value
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -130,7 +158,7 @@ class Session extends DataProvider
      */
     public function incr($key, $step = 1)
     {
-        return $_SESSION[$key] += $step;
+        return $this->getConnection()->incrBy($this->getFullKey($key), $step);
     }
 
     /**
@@ -138,6 +166,7 @@ class Session extends DataProvider
      *
      * @param  $key
      * @param  int $step
+     * @throws Exception
      * @return mixed new value
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -147,7 +176,7 @@ class Session extends DataProvider
      */
     public function decr($key, $step = 1)
     {
-        return $_SESSION[$key] -= $step;
+        return $this->getConnection()->decrBy($this->getFullKey($key), $step);
     }
 
     /**
@@ -160,7 +189,7 @@ class Session extends DataProvider
      */
     public function flushAll()
     {
-        $_SESSION = [];
+        $this->getConnection()->delete($this->getConnection()->getKeys($this->getKeyPrefix() . '*'));
     }
 
     /**
@@ -171,13 +200,22 @@ class Session extends DataProvider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @todo    0.4 implements filter by pattern
-     * @version 0.4
+     * @version 0.0
      * @since   0.0
      */
     public function getKeys($pattern = null)
     {
-        return array_keys($_SESSION);
+        $keyPrefix = $this->getKeyPrefix() . DataProvider::PREFIX_KEY_DELIMETER;
+
+        $size = strlen($keyPrefix);
+
+        $keys = [];
+
+        foreach ($this->getConnection()->getKeys($keyPrefix . $pattern . '*') as $key) {
+            $keys[] = substr($key, $size);
+        }
+
+        return $keys;
     }
 
     /**
@@ -193,7 +231,27 @@ class Session extends DataProvider
      */
     protected function connect(&$connection)
     {
-        return isset($_SESSION);
+        $options = $this->getOptions();
+
+        $connection = new \Redis();
+
+        $isConnected = $connection->connect($options['host'], $options['port']);
+
+        if (!$isConnected) {
+            Logger::getInstance(__CLASS__)
+                ->exception('redis - ' . $this->getConnection()->getLastError(), __FILE__, __LINE__);
+        }
+
+        if (function_exists('igbinary_serialize')) {
+            $connection->setOption(\Redis::OPT_SERIALIZER, \Redis::SERIALIZER_IGBINARY);
+        } else {
+            $connection->setOption(\Redis::OPT_SERIALIZER, \Redis::SERIALIZER_PHP);
+        }
+
+        $connection->setOption(\Redis::OPT_PREFIX, 'ice/');
+
+        return $isConnected;
+
     }
 
     /**
@@ -204,12 +262,12 @@ class Session extends DataProvider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.4
+     * @version 0.0
      * @since   0.0
      */
     protected function close(&$connection)
     {
-        unset($_SESSION);
+        $this->getConnection()->close();
         return true;
     }
 }

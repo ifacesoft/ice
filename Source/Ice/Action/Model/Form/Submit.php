@@ -6,7 +6,7 @@ use Ice\Core\Action;
 use Ice\Core\Logger;
 use Ice\Core\Model;
 use Ice\Core\Request;
-use Ice\Data\Provider\Request as DataProvider_Request;
+use Ice\DataProvider\Request as DataProvider_Request;
 use Ice\Widget\Form;
 
 class Model_Form_Submit extends Widget_Event

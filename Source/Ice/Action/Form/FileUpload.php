@@ -5,7 +5,7 @@ namespace Ice\Action;
 use FileAPI;
 use Ice\Core\Action;
 use Ice\Core\Module;
-use Ice\Data\Provider\Request;
+use Ice\DataProvider\Request;
 use Ice\Helper\File;
 
 class Form_FileUpload extends Action
