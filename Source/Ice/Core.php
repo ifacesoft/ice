@@ -13,6 +13,7 @@ use Ice\Core\Code_Generator;
 use Ice\Core\Data_Provider;
 use Ice\Core\Debuger;
 use Ice\Core\Environment;
+use Ice\Core\Logger;
 use Ice\Data\Provider\Cacher;
 use Ice\Data\Provider\Registry;
 use Ice\Data\Provider\Repository;

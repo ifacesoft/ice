@@ -142,7 +142,7 @@ class String
 
         $characters = '';
 
-        foreach ($blocks as $block) {
+        foreach ((array)$blocks as $block) {
             $characters .= $chArr[$block];
         }
 

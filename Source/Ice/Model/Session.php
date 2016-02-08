@@ -30,10 +30,10 @@ class Session extends Model
 		        'session_pk' => [
 		            'scheme' => [
 		                'extra' => '',
-		                'type' => 'varchar(64)',
-		                'dataType' => 'varchar',
-		                'length' => '64',
-		                'characterSet' => 'utf8',
+		                'type' => 'varbinary(128)',
+		                'dataType' => 'varbinary',
+		                'length' => '128',
+		                'characterSet' => null,
 		                'nullable' => false,
 		                'default' => null,
 		                'comment' => '',
@@ -43,7 +43,7 @@ class Session extends Model
 		                'type' => 'text',
 		            ],
 		            'Ice\Core\Validator' => [
-		                'Ice:Length_Max' => 64,
+		                'Ice:Length_Max' => 128,
 		            ],
 		            'Ice\Widget\Model_Table' => [
 		                'type' => 'span',
@@ -72,7 +72,7 @@ class Session extends Model
 		                'type' => 'span',
 		            ],
 		        ],
-		        'session_create_time' => [
+		        'session_created_at' => [
 		            'scheme' => [
 		                'extra' => '',
 		                'type' => 'timestamp',
@@ -83,7 +83,7 @@ class Session extends Model
 		                'default' => 'CURRENT_TIMESTAMP',
 		                'comment' => '',
 		            ],
-		            'fieldName' => 'session_create_time',
+		            'fieldName' => 'session_created_at',
 		            'Ice\Widget\Model_Form' => [
 		                'type' => 'date',
 		            ],
@@ -94,7 +94,7 @@ class Session extends Model
 		                'type' => 'span',
 		            ],
 		        ],
-		        'session_update_time' => [
+		        'session_updated_at' => [
 		            'scheme' => [
 		                'extra' => '',
 		                'type' => 'datetime',
@@ -105,7 +105,29 @@ class Session extends Model
 		                'default' => null,
 		                'comment' => '',
 		            ],
-		            'fieldName' => 'session_update_time',
+		            'fieldName' => 'session_updated_at',
+		            'Ice\Widget\Model_Form' => [
+		                'type' => 'date',
+		            ],
+		            'Ice\Core\Validator' => [
+		                0 => 'Ice:Not_Null',
+		            ],
+		            'Ice\Widget\Model_Table' => [
+		                'type' => 'span',
+		            ],
+		        ],
+		        'session_deleted_at' => [
+		            'scheme' => [
+		                'extra' => '',
+		                'type' => 'datetime',
+		                'dataType' => 'datetime',
+		                'length' => '0',
+		                'characterSet' => null,
+		                'nullable' => false,
+		                'default' => null,
+		                'comment' => '',
+		            ],
+		            'fieldName' => 'session_deleted_at',
 		            'Ice\Widget\Model_Form' => [
 		                'type' => 'date',
 		            ],
@@ -133,6 +155,28 @@ class Session extends Model
 		            ],
 		            'Ice\Core\Validator' => [
 		                'Ice:Length_Max' => 7,
+		                0 => 'Ice:Not_Null',
+		            ],
+		            'Ice\Widget\Model_Table' => [
+		                'type' => 'span',
+		            ],
+		        ],
+		        'views' => [
+		            'scheme' => [
+		                'extra' => '',
+		                'type' => 'int(11)',
+		                'dataType' => 'int',
+		                'length' => '10,0',
+		                'characterSet' => null,
+		                'nullable' => false,
+		                'default' => null,
+		                'comment' => '',
+		            ],
+		            'fieldName' => 'views',
+		            'Ice\Widget\Model_Form' => [
+		                'type' => 'number',
+		            ],
+		            'Ice\Core\Validator' => [
 		                0 => 'Ice:Not_Null',
 		            ],
 		            'Ice\Widget\Model_Table' => [
@@ -207,28 +251,6 @@ class Session extends Model
 		                'type' => 'span',
 		            ],
 		        ],
-		        'views' => [
-		            'scheme' => [
-		                'extra' => '',
-		                'type' => 'int(11)',
-		                'dataType' => 'int',
-		                'length' => '10,0',
-		                'characterSet' => null,
-		                'nullable' => false,
-		                'default' => null,
-		                'comment' => '',
-		            ],
-		            'fieldName' => 'views',
-		            'Ice\Widget\Model_Form' => [
-		                'type' => 'number',
-		            ],
-		            'Ice\Core\Validator' => [
-		                0 => 'Ice:Not_Null',
-		            ],
-		            'Ice\Widget\Model_Table' => [
-		                'type' => 'span',
-		            ],
-		        ],
 		        'byIp' => [
 		            'scheme' => [
 		                'extra' => '',
@@ -289,7 +311,7 @@ class Session extends Model
 		        'manyToOne' => [],
 		        'manyToMany' => [],
 		    ],
-		    'revision' => '02031159_doc',
+		    'revision' => '02051628_51k',
 		];
     }
 }

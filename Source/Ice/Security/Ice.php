@@ -55,10 +55,25 @@ class Ice extends Security
         try {
             $user = $account->getUser();
 
+//            session_regenerate_id();
+
+//            if (ini_get("session.use_cookies")) {
+//                $params = session_get_cookie_params();
+//                session_regenerate_id();
+//
+//                setcookie(session_name(), session_id(), time() + $params["lifetime"],
+//                    $params["path"], $params["domain"],
+//                    $params["secure"], $params["httponly"]
+//                );
+//            }
+
             Session::getInstance()->set(Ice::SESSION_USER_KEY, $user->getPkValue());
             Session::getInstance()->set(Ice::SESSION_ACCOUNT_KEY, $account->getPkValue());
 
             Data_Provider_Security::getInstance()->set(Ice::SECURITY_USER, $user);
+
+
+
         } catch (\Exception $e) {
             $this->logout();
             $this->autologin();

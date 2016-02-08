@@ -23,9 +23,12 @@ use Ice\Core\Query_Builder;
 use Ice\Core\Query_Result;
 use Ice\Core\Query_Translator;
 use Ice\Exception\DataSource;
+use Ice\Exception\DataSource_Error;
 use Ice\Exception\DataSource_Insert;
 use Ice\Exception\DataSource_Insert_DuplicateEntry;
+use Ice\Exception\DataSource_Statement_Error;
 use Ice\Exception\DataSource_Statement_TableNotFound;
+use Ice\Exception\DataSource_Statement_UnknownColumn;
 use Ice\Helper\Arrays;
 use Ice\Helper\Model as Helper_Model;
 use Ice\Helper\String;
@@ -198,10 +201,13 @@ class Mysqli extends Data_Source
         if (!$statement) {
             switch ($this->getConnection()->errno) {
                 case 1146:
-                    $exceptionClass = DataSource_Statement_TableNotFound::getClass();
+                    $exceptionClass = DataSource_Statement_TableNotFound::class;
+                    break;
+                case 1054:
+                    $exceptionClass = DataSource_Statement_UnknownColumn::class;
                     break;
                 default:
-                    $exceptionClass = DataSource::getClass();
+                    $exceptionClass = DataSource_Statement_Error::class;
             }
 
             $logger->exception(
@@ -474,7 +480,9 @@ class Mysqli extends Data_Source
             ],
         ];
 
-        foreach ($this->getSourceDataProvider()->get('information_schema:TABLES:TABLE_SCHEMA/' . $this->scheme) as $table) {
+        $iceql = ['information_schema.TABLES/TABLE_NAME,ENGINE,TABLE_COLLATION,TABLE_COMMENT' => 'TABLE_SCHEMA:' . $this->scheme];
+
+        foreach ($this->get($iceql) as $table) {
             if ($module->checkTableByPrefix($table['TABLE_NAME'], $this->getDataSourceKey())) {
                 if (!isset($tables[$table['TABLE_NAME']])) {
                     $tables[$table['TABLE_NAME']] = $tableDefault;
@@ -578,21 +586,15 @@ class Mysqli extends Data_Source
             'UNIQUE' => []
         ];
 
-        $key = [
-            'information_schema:TABLE_CONSTRAINTS:TABLE_SCHEMA/' . $this->scheme,
-            'information_schema:TABLE_CONSTRAINTS:TABLE_NAME/' . $tableName
-        ];
+        $iceql = ['information_schema.TABLE_CONSTRAINTS/CONSTRAINT_TYPE,CONSTRAINT_NAME' => 'TABLE_SCHEMA:' . $this->scheme .',TABLE_NAME:' . $tableName];
 
-        foreach ($this->getSourceDataProvider()->get($key) as $constraint) {
+        foreach ($this->get($iceql) as $constraint) {
             $constraints[$constraint['CONSTRAINT_TYPE']][$constraint['CONSTRAINT_NAME']] = [];
         }
 
-        $key = [
-            'information_schema:STATISTICS:TABLE_SCHEMA/' . $this->scheme,
-            'information_schema:STATISTICS:TABLE_NAME/' . $tableName
-        ];
+        $iceql = ['information_schema.STATISTICS/INDEX_NAME,SEQ_IN_INDEX,COLUMN_NAME' => 'TABLE_SCHEMA:' . $this->scheme .',TABLE_NAME:' . $tableName];
 
-        $indexes = $this->getSourceDataProvider()->get($key);
+        $indexes = $this->get($iceql);
 
         foreach ($constraints['PRIMARY KEY'] as $constraintName => &$constraint) {
             foreach ($indexes as $index) {
@@ -620,12 +622,9 @@ class Mysqli extends Data_Source
 
         $foreignKeys = [];
 
-        $key = [
-            'information_schema:KEY_COLUMN_USAGE:TABLE_SCHEMA/' . $this->scheme,
-            'information_schema:KEY_COLUMN_USAGE:TABLE_NAME/' . $tableName
-        ];
+        $iceql = ['information_schema.KEY_COLUMN_USAGE/COLUMN_NAME,CONSTRAINT_NAME' => 'TABLE_SCHEMA:' . $this->scheme .',TABLE_NAME:' . $tableName];
 
-        $referenceColumns = Arrays::column($this->getSourceDataProvider()->get($key), 'COLUMN_NAME', 'CONSTRAINT_NAME');
+        $referenceColumns = Arrays::column($this->get($iceql), 'COLUMN_NAME', 'CONSTRAINT_NAME');
 
         foreach (array_keys($constraints['FOREIGN KEY']) as $constraintName) {
             $columnName = $referenceColumns[$constraintName];
@@ -652,12 +651,9 @@ class Mysqli extends Data_Source
     {
         $references = [];
 
-        $key = [
-            'information_schema:REFERENTIAL_CONSTRAINTS:CONSTRAINT_SCHEMA/' . $this->scheme,
-            'information_schema:CONSTRAINTS:TABLE_NAME/' . $tableName
-        ];
+        $iceql = ['information_schema.REFERENTIAL_CONSTRAINTS/REFERENCED_TABLE_NAME,CONSTRAINT_NAME,UPDATE_RULE,DELETE_RULE' => 'CONSTRAINT_SCHEMA:' . $this->scheme . ',TABLE_NAME:' . $tableName];
 
-        foreach ($this->getSourceDataProvider()->get($key) as $reference) {
+        foreach ($this->get($iceql) as $reference) {
             $references[$reference['REFERENCED_TABLE_NAME']] = [
                 'constraintName' => $reference['CONSTRAINT_NAME'],
                 'onUpdate' => $reference['UPDATE_RULE'],
@@ -683,12 +679,9 @@ class Mysqli extends Data_Source
     {
         $columns = [];
 
-        $key = [
-            'information_schema:COLUMNS:TABLE_SCHEMA/' . $this->scheme,
-            'information_schema:COLUMNS:TABLE_NAME/' . $tableName
-        ];
+        $iceql = ['information_schema.COLUMNS/COLUMN_NAME,COLUMN_DEFAULT,CHARACTER_MAXIMUM_LENGTH,DATETIME_PRECISION,NUMERIC_PRECISION,NUMERIC_SCALE,EXTRA,COLUMN_TYPE,DATA_TYPE,CHARACTER_SET_NAME,IS_NULLABLE,COLUMN_COMMENT' => 'TABLE_SCHEMA:' . $this->scheme . ',TABLE_NAME:' . $tableName];
 
-        foreach ($this->getSourceDataProvider()->get($key) as $column) {
+        foreach ($this->get($iceql) as $column) {
             $columnName = $column['COLUMN_NAME'];
             $default = $default = $column['COLUMN_DEFAULT'];
 

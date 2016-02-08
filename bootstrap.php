@@ -55,6 +55,7 @@ try {
     require_once ICE_DIR . 'Source/Ice/Data/Provider/File.php';
     require_once ICE_DIR . 'Source/Ice/Data/Provider/Apc.php';
     require_once ICE_DIR . 'Source/Ice/Data/Provider/Redis.php';
+    require_once ICE_DIR . 'Source/Ice/Data/Provider/Repository.php';
     require_once ICE_DIR . 'Source/Ice/Core/Render.php';
     require_once ICE_DIR . 'Source/Ice/Helper/Api/Client/Yandex/Translate.php';
 

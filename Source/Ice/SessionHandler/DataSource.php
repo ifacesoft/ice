@@ -139,11 +139,11 @@ class DataSource extends SessionHandler
         $this->session = Session::createQueryBuilder()
             ->eq(['/pk' => $session_id])
             ->limit(1)
-            ->getSelectQuery(['/data', '/create_time', '/update_time', '/lifetime', 'views'])
+            ->getSelectQuery(['/data', '/created_at', '/updated_at', '/lifetime', 'views'])
             ->getRow();
 
         if ($this->session) {
-            if ($this->session['session_lifetime'] > strtotime($this->session['session_update_time']) - strtotime($this->session['session_create_time'])) {
+            if ($this->session['session_lifetime'] > strtotime($this->session['session_updated_at']) - strtotime($this->session['session_created_at'])) {
                 return $this->session['session_data'];
             }
         }
@@ -151,7 +151,7 @@ class DataSource extends SessionHandler
         $this->session = [
             'session_pk' => $session_id,
             'session_data' => '',
-            'session_update_time' => Date::get(),
+            'session_updated_at' => Date::get(),
             'session_lifetime' => $this->lifetime,
             'ip' => Request::ip(),
             'agent' => Request::agent(),
@@ -193,7 +193,7 @@ class DataSource extends SessionHandler
             ->eq(['/pk' => $session_id])
             ->getUpdateQuery([
                 '/data' => $session_data,
-                '/update_time' => Date::get(),
+                '/updated_at' => Date::get(),
                 'views' => ++$this->session['views']
             ])
             ->getQueryResult();
