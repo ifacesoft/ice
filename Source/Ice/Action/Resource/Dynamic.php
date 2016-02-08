@@ -11,7 +11,7 @@ namespace Ice\Action;
 
 use CSSmin;
 use Ice\Core\Action;
-use Ice\Core\Data_Provider;
+use Ice\Core\DataProvider;
 use Ice\Core\Loader;
 use Ice\Core\Module;
 use Ice\Core\Route;
@@ -71,7 +71,7 @@ class Resource_Dynamic extends Action
          */
         $actionClass = self::getClass();
 
-        $dataProvider = Data_Provider::getInstance($actionClass::getRegistryDataProviderKey());
+        $dataProvider = DataProvider::getInstance($actionClass::getRegistryDataProviderKey());
 
         $customResources = $dataProvider->get($resourceType);
 

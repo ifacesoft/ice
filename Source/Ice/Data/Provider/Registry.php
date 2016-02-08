@@ -10,7 +10,7 @@
 namespace Ice\Data\Provider;
 
 use ArrayObject;
-use Ice\Core\Data_Provider;
+use Ice\Core\DataProvider;
 use Ice\Core\Exception;
 
 /**
@@ -18,14 +18,14 @@ use Ice\Core\Exception;
  *
  * Data provider for registry data
  *
- * @see Ice\Core\Data_Provider
+ * @see Ice\Core\DataProvider
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
  * @package    Ice
- * @subpackage Data_Provider
+ * @subpackage DataProvider
  */
-class Registry extends Data_Provider
+class Registry extends DataProvider
 {
     const DEFAULT_KEY = 'default';
 

@@ -13,7 +13,7 @@ use Ice\Core;
 use Ice\Helper\Object;
 
 /**
- * Class Data_Provider
+ * Class DataProvider
  *
  * Core data provider abstract class
  *
@@ -21,11 +21,8 @@ use Ice\Helper\Object;
  *
  * @package    Ice
  * @subpackage Core
- *
- * @version 0.0
- * @since   0.0
  */
-abstract class Data_Provider
+abstract class DataProvider
 {
     use Core;
 
@@ -34,7 +31,7 @@ abstract class Data_Provider
     /**
      * Stored data providers
      *
-     * @var Data_Provider[]
+     * @var DataProvider[]
      */
     private static $_dataProviders = [];
     protected $options = [];
@@ -95,7 +92,7 @@ abstract class Data_Provider
      *
      * @param  $key
      * @param  string $index
-     * @return Data_Provider
+     * @return DataProvider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
@@ -105,7 +102,7 @@ abstract class Data_Provider
     public static function getInstance($key = null, $index = 'default')
     {
         /**
-         * @var Data_Provider $class
+         * @var DataProvider $class
          */
         $class = self::getClass();
 
@@ -118,7 +115,7 @@ abstract class Data_Provider
         }
 
         if (!$key) {
-            return Data_Provider::getInstance($class, $index);
+            return DataProvider::getInstance($class, $index);
         }
 
         if ($class == __CLASS__) {
@@ -417,7 +414,7 @@ abstract class Data_Provider
      */
     public function getFullKey($key)
     {
-        return $this->getKeyPrefix() . Data_Provider::PREFIX_KEY_DELIMETER . $key;
+        return $this->getKeyPrefix() . DataProvider::PREFIX_KEY_DELIMETER . $key;
     }
 
     /**
@@ -433,13 +430,13 @@ abstract class Data_Provider
     protected function getKeyPrefix()
     {
         /**
-         * @var Data_Provider $class
+         * @var DataProvider $class
          */
         $class = get_class($this);
         return str_replace(
             '\\',
             '/',
-            Data_Provider::getModuleAlias() . '/' .
+            DataProvider::getModuleAlias() . '/' .
             $class::getClassName() . '/' .
             $this->getKey() . '/' .
             $this->getIndex()

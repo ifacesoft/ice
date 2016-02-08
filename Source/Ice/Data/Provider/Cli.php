@@ -10,21 +10,21 @@
 namespace Ice\Data\Provider;
 
 use Ice\Core\Action;
-use Ice\Core\Data_Provider;
+use Ice\Core\DataProvider;
 
 /**
  * Class Cli
  *
  * Data provider for cli streams
  *
- * @see Ice\Core\Data_Provider
+ * @see Ice\Core\DataProvider
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
  * @package    Ice
- * @subpackage Data_Provider
+ * @subpackage DataProvider
  */
-class Cli extends Data_Provider
+class Cli extends DataProvider
 {
     const DEFAULT_KEY = 'default';
 

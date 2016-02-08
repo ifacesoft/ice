@@ -263,7 +263,7 @@ class Install extends Action
 
         $environmentConfig = [
             'production' => [
-                'Ice\\Core\\Data_Provider' => [],
+                'Ice\\Core\\DataProvider' => [],
                 'dataProviderKeys' => [],
             ]
         ];
@@ -285,7 +285,7 @@ class Install extends Action
                 $dataSourceClass . '/default.' . $input['database'] => strtolower($input['alias'] . '_')
             ];
 
-            $environmentConfig['production']['Ice\\Core\\Data_Provider'] = [
+            $environmentConfig['production']['Ice\\Core\\DataProvider'] = [
                 $dataSourceClass => [
                     'default' => [
                         'host' => $input['host'],

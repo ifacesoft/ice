@@ -2,7 +2,7 @@
 
 namespace Ice\Data\Source;
 
-use Ice\Core\Data_Provider;
+use Ice\Core\DataProvider;
 use Ice\Core\Data_Source;
 use Ice\Core\Logger;
 use Ice\Core\Model;
@@ -452,7 +452,7 @@ class Mongodb extends Data_Source
     /**
      * Return data provider class
      *
-     * @return Data_Provider
+     * @return DataProvider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *

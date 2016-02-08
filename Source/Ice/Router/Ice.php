@@ -4,7 +4,7 @@ namespace Ice\Router;
 
 use Ice\Core\Route;
 use Ice\Core\Router;
-use Ice\Data\Provider\Router as Data_Provider_Router;
+use Ice\Data\Provider\Router as DataProvider_Router;
 
 class Ice extends Router
 {
@@ -23,7 +23,7 @@ class Ice extends Router
             return Route::getInstance($this->getParams()['routeName']);
         }
 
-        $route = Data_Provider_Router::getInstance()->getRoute($url, $method);
+        $route = DataProvider_Router::getInstance()->getRoute($url, $method);
 
         return $route ? $route['routeName'] : null;
     }
@@ -33,6 +33,6 @@ class Ice extends Router
      */
     public function getParams()
     {
-        return Data_Provider_Router::getInstance()->get();
+        return DataProvider_Router::getInstance()->get();
     }
 }

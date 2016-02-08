@@ -7,7 +7,7 @@ use Doctrine\ORM\EntityManager;
 use Ice\Core\Debuger;
 use Ice\Core\Model;
 use Ice\Core\Security_Account;
-use Ice\Data\Provider\Security as Data_Provider_Security;
+use Ice\Data\Provider\Security as DataProvider_Security;
 use Ice\Data\Provider\Session;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
@@ -66,7 +66,7 @@ class Symfony extends Ice
      */
     public function getSymfonyUser()
     {
-        if ($symfonyUser = Data_Provider_Security::getInstance()->get(Symfony::SECURITY_USER_SYMFONY)) {
+        if ($symfonyUser = DataProvider_Security::getInstance()->get(Symfony::SECURITY_USER_SYMFONY)) {
             return $symfonyUser;
         }
 
@@ -79,7 +79,7 @@ class Symfony extends Ice
             );
         }
 
-        return Data_Provider_Security::getInstance()->set(Symfony::SECURITY_USER_SYMFONY, $symfonyUser);
+        return DataProvider_Security::getInstance()->set(Symfony::SECURITY_USER_SYMFONY, $symfonyUser);
     }
 
     /**
@@ -109,7 +109,7 @@ class Symfony extends Ice
 //            $session->set('_security_' . $firewall, serialize($token));
 //            $session->save();
 
-            Data_Provider_Security::getInstance()->set(Symfony::SECURITY_USER_SYMFONY, $user);
+            DataProvider_Security::getInstance()->set(Symfony::SECURITY_USER_SYMFONY, $user);
         } catch (\Exception $e) {
             $this->logout();
             $this->autologin();
@@ -122,7 +122,7 @@ class Symfony extends Ice
 
     public function logout()
     {
-        Data_Provider_Security::getInstance()->delete(Symfony::SECURITY_USER_SYMFONY);
+        DataProvider_Security::getInstance()->delete(Symfony::SECURITY_USER_SYMFONY);
 
         $this->getKernel()->getContainer()->get('security.token_storage')->setToken(null);
 

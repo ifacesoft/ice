@@ -10,10 +10,9 @@
 namespace Ice;
 
 use Ice\Core\Code_Generator;
-use Ice\Core\Data_Provider;
+use Ice\Core\DataProvider;
 use Ice\Core\Debuger;
 use Ice\Core\Environment;
-use Ice\Core\Logger;
 use Ice\Data\Provider\Cacher;
 use Ice\Data\Provider\Registry;
 use Ice\Data\Provider\Repository;
@@ -67,7 +66,7 @@ trait Core
      * Return dat provider for self class
      *
      * @param  string|null $key
-     * @return Data_Provider
+     * @return DataProvider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *

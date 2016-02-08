@@ -8,7 +8,7 @@ use Ice\Core\Model;
 use Ice\Core\Security;
 use Ice\Core\Security_Account;
 use Ice\Core\Security_User;
-use Ice\Data\Provider\Security as Data_Provider_Security;
+use Ice\Data\Provider\Security as DataProvider_Security;
 use Ice\Data\Provider\Session;
 
 class Ice extends Security
@@ -43,7 +43,7 @@ class Ice extends Security
      */
     public function getUser()
     {
-        return Data_Provider_Security::getInstance()->get(Ice::SECURITY_USER);
+        return DataProvider_Security::getInstance()->get(Ice::SECURITY_USER);
     }
 
     /**
@@ -70,7 +70,7 @@ class Ice extends Security
             Session::getInstance()->set(Ice::SESSION_USER_KEY, $user->getPkValue());
             Session::getInstance()->set(Ice::SESSION_ACCOUNT_KEY, $account->getPkValue());
 
-            Data_Provider_Security::getInstance()->set(Ice::SECURITY_USER, $user);
+            DataProvider_Security::getInstance()->set(Ice::SECURITY_USER, $user);
 
 
 
@@ -86,7 +86,7 @@ class Ice extends Security
 
     public function logout()
     {
-        Data_Provider_Security::getInstance()->delete(Ice::SECURITY_USER);
+        DataProvider_Security::getInstance()->delete(Ice::SECURITY_USER);
 
         Session::getInstance()->flushAll();
 
@@ -104,7 +104,7 @@ class Ice extends Security
         /** @var Model $userModelClass */
         $userModelClass = Config::getInstance(Security::getClass())->get('userModelClass');
 
-        Data_Provider_Security::getInstance()->set(Ice::SECURITY_USER, $userModelClass::getModel($userKey, '*'));
+        DataProvider_Security::getInstance()->set(Ice::SECURITY_USER, $userModelClass::getModel($userKey, '*'));
         Session::getInstance()->set(Ice::SESSION_USER_KEY, $userKey);
     }
 

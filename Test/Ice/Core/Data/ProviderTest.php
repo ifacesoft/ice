@@ -4,7 +4,7 @@ namespace Ice\Core;
 
 use PHPUnit_Framework_TestCase;
 
-class Data_ProviderTest extends PHPUnit_Framework_TestCase
+class DataProviderTest extends PHPUnit_Framework_TestCase
 {
     public function testProviders()
     {
@@ -20,8 +20,8 @@ class Data_ProviderTest extends PHPUnit_Framework_TestCase
 
             Logger::getInstance(__CLASS__)->info('test ' . $dataProviderFile . '...', null, false);
 
-            /** @var Data_Provider $class */
-            $class = Data_Provider::getClass('Ice:' . basename($dataProviderFile, '.php'));
+            /** @var DataProvider $class */
+            $class = DataProvider::getClass('Ice:' . basename($dataProviderFile, '.php'));
 
             $dataProvider = $class::getInstance();
 

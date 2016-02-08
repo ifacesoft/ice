@@ -11,7 +11,7 @@ namespace Ice\Data\Provider;
 
 use Ice\Core\Action;
 use Ice\Core\Config;
-use Ice\Core\Data_Provider;
+use Ice\Core\DataProvider;
 use Ice\Core\Debuger;
 use Ice\Core\Environment;
 use Ice\Core\Exception;
@@ -26,14 +26,14 @@ use Ice\Exception\Redirect;
  *
  * Data provider for router data
  *
- * @see Ice\Core\Data_Provider
+ * @see Ice\Core\DataProvider
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
  * @package    Ice
- * @subpackage Data_Provider
+ * @subpackage DataProvider
  */
-class Router extends Data_Provider
+class Router extends DataProvider
 {
     /**
      * @param string $key

@@ -9,7 +9,7 @@
 
 return [
     'production' => [
-        'Ice\Core\Data_Provider' => [
+        'Ice\Core\DataProvider' => [
             'Ice\Data\Provider\Redis' => [
                 'session' => [
                     'ttl' => 60 * 60 * 24

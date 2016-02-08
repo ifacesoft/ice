@@ -2145,7 +2145,7 @@
                          coveredconditionals="0" statements="4" coveredstatements="0" elements="7" coveredelements="0"/>
             </file>
             <file name="/home/dp/PhpstormProjects/ice/Ice/Source/Ice/Core/Data/Provider.php">
-                <class name="Data_Provider" namespace="Ice\Core" fullPackage="Ice.Core" package="Ice" subpackage="Core">
+                <class name="DataProvider" namespace="Ice\Core" fullPackage="Ice.Core" package="Ice" subpackage="Core">
                     <metrics methods="13" coveredmethods="8" conditionals="0" coveredconditionals="0" statements="78"
                              coveredstatements="48" elements="91" coveredelements="56"/>
                 </class>
@@ -5135,8 +5135,8 @@
         </file>
         <package name="Ice\Data\Provider">
             <file name="/home/dp/PhpstormProjects/ice/Ice/Source/Ice/Data/Provider/Apc.php">
-                <class name="Apc" namespace="Ice\Data\Provider" fullPackage="Ice.Data_Provider" package="Ice"
-                       subpackage="Data_Provider">
+                <class name="Apc" namespace="Ice\Data\Provider" fullPackage="Ice.DataProvider" package="Ice"
+                       subpackage="DataProvider">
                     <metrics methods="11" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="28"
                              coveredstatements="0" elements="39" coveredelements="0"/>
                 </class>
@@ -5184,8 +5184,8 @@
                          coveredelements="0"/>
             </file>
             <file name="/home/dp/PhpstormProjects/ice/Ice/Source/Ice/Data/Provider/Cacher.php">
-                <class name="Cacher" namespace="Ice\Data\Provider" fullPackage="Ice.Data_Provider" package="Ice"
-                       subpackage="Data_Provider">
+                <class name="Cacher" namespace="Ice\Data\Provider" fullPackage="Ice.DataProvider" package="Ice"
+                       subpackage="DataProvider">
                     <metrics methods="12" coveredmethods="4" conditionals="0" coveredconditionals="0" statements="34"
                              coveredstatements="16" elements="46" coveredelements="20"/>
                 </class>
@@ -5240,8 +5240,8 @@
                          coveredelements="20"/>
             </file>
             <file name="/home/dp/PhpstormProjects/ice/Ice/Source/Ice/Data/Provider/Cli.php">
-                <class name="Cli" namespace="Ice\Data\Provider" fullPackage="Ice.Data_Provider" package="Ice"
-                       subpackage="Data_Provider">
+                <class name="Cli" namespace="Ice\Data\Provider" fullPackage="Ice.DataProvider" package="Ice"
+                       subpackage="DataProvider">
                     <metrics methods="11" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="47"
                              coveredstatements="27" elements="58" coveredelements="29"/>
                 </class>
@@ -5308,8 +5308,8 @@
                          coveredelements="29"/>
             </file>
             <file name="/home/dp/PhpstormProjects/ice/Ice/Source/Ice/Data/Provider/File.php">
-                <class name="File" namespace="Ice\Data\Provider" fullPackage="Ice.Data_Provider" package="Ice"
-                       subpackage="Data_Provider">
+                <class name="File" namespace="Ice\Data\Provider" fullPackage="Ice.DataProvider" package="Ice"
+                       subpackage="DataProvider">
                     <metrics methods="12" coveredmethods="6" conditionals="0" coveredconditionals="0" statements="44"
                              coveredstatements="31" elements="56" coveredelements="37"/>
                 </class>
@@ -5413,8 +5413,8 @@
                          coveredelements="4"/>
             </file>
             <file name="/home/dp/PhpstormProjects/ice/Ice/Source/Ice/Data/Provider/Mysqli.php">
-                <class name="Mysqli" namespace="Ice\Data\Provider" fullPackage="Ice.Data_Provider" package="Ice"
-                       subpackage="Data_Provider">
+                <class name="Mysqli" namespace="Ice\Data\Provider" fullPackage="Ice.DataProvider" package="Ice"
+                       subpackage="DataProvider">
                     <metrics methods="13" coveredmethods="3" conditionals="0" coveredconditionals="0" statements="66"
                              coveredstatements="18" elements="79" coveredelements="21"/>
                 </class>
@@ -5502,8 +5502,8 @@
                          coveredelements="21"/>
             </file>
             <file name="/home/dp/PhpstormProjects/ice/Ice/Source/Ice/Data/Provider/Redis.php">
-                <class name="Redis" namespace="Ice\Data\Provider" fullPackage="Ice.Data_Provider" package="Ice"
-                       subpackage="Data_Provider">
+                <class name="Redis" namespace="Ice\Data\Provider" fullPackage="Ice.DataProvider" package="Ice"
+                       subpackage="DataProvider">
                     <metrics methods="12" coveredmethods="6" conditionals="0" coveredconditionals="0" statements="48"
                              coveredstatements="27" elements="60" coveredelements="33"/>
                 </class>
@@ -5572,8 +5572,8 @@
                          coveredelements="33"/>
             </file>
             <file name="/home/dp/PhpstormProjects/ice/Ice/Source/Ice/Data/Provider/Registry.php">
-                <class name="Registry" namespace="Ice\Data\Provider" fullPackage="Ice.Data_Provider" package="Ice"
-                       subpackage="Data_Provider">
+                <class name="Registry" namespace="Ice\Data\Provider" fullPackage="Ice.DataProvider" package="Ice"
+                       subpackage="DataProvider">
                     <metrics methods="12" coveredmethods="10" conditionals="0" coveredconditionals="0" statements="45"
                              coveredstatements="37" elements="57" coveredelements="47"/>
                 </class>
@@ -5639,8 +5639,8 @@
                          coveredelements="47"/>
             </file>
             <file name="/home/dp/PhpstormProjects/ice/Ice/Source/Ice/Data/Provider/Repository.php">
-                <class name="Repository" namespace="Ice\Data\Provider" fullPackage="Ice.Data_Provider" package="Ice"
-                       subpackage="Data_Provider">
+                <class name="Repository" namespace="Ice\Data\Provider" fullPackage="Ice.DataProvider" package="Ice"
+                       subpackage="DataProvider">
                     <metrics methods="12" coveredmethods="8" conditionals="0" coveredconditionals="0" statements="20"
                              coveredstatements="11" elements="32" coveredelements="19"/>
                 </class>
@@ -5681,8 +5681,8 @@
                          coveredelements="19"/>
             </file>
             <file name="/home/dp/PhpstormProjects/ice/Ice/Source/Ice/Data/Provider/Request.php">
-                <class name="Request" namespace="Ice\Data\Provider" fullPackage="Ice.Data_Provider" package="Ice"
-                       subpackage="Data_Provider">
+                <class name="Request" namespace="Ice\Data\Provider" fullPackage="Ice.DataProvider" package="Ice"
+                       subpackage="DataProvider">
                     <metrics methods="11" coveredmethods="7" conditionals="0" coveredconditionals="0" statements="31"
                              coveredstatements="18" elements="42" coveredelements="25"/>
                 </class>
@@ -5770,8 +5770,8 @@
                          coveredelements="4"/>
             </file>
             <file name="/home/dp/PhpstormProjects/ice/Ice/Source/Ice/Data/Provider/Router.php">
-                <class name="Router" namespace="Ice\Data\Provider" fullPackage="Ice.Data_Provider" package="Ice"
-                       subpackage="Data_Provider">
+                <class name="Router" namespace="Ice\Data\Provider" fullPackage="Ice.DataProvider" package="Ice"
+                       subpackage="DataProvider">
                     <metrics methods="14" coveredmethods="4" conditionals="0" coveredconditionals="0" statements="95"
                              coveredstatements="51" elements="109" coveredelements="55"/>
                 </class>
@@ -5889,8 +5889,8 @@
                          coveredelements="55"/>
             </file>
             <file name="/home/dp/PhpstormProjects/ice/Ice/Source/Ice/Data/Provider/Session.php">
-                <class name="Session" namespace="Ice\Data\Provider" fullPackage="Ice.Data_Provider" package="Ice"
-                       subpackage="Data_Provider">
+                <class name="Session" namespace="Ice\Data\Provider" fullPackage="Ice.DataProvider" package="Ice"
+                       subpackage="DataProvider">
                     <metrics methods="11" coveredmethods="8" conditionals="0" coveredconditionals="0" statements="25"
                              coveredstatements="17" elements="36" coveredelements="25"/>
                 </class>

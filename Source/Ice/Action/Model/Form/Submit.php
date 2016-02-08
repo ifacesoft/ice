@@ -6,7 +6,7 @@ use Ice\Core\Action;
 use Ice\Core\Logger;
 use Ice\Core\Model;
 use Ice\Core\Request;
-use Ice\Data\Provider\Request as Data_Provider_Request;
+use Ice\Data\Provider\Request as DataProvider_Request;
 use Ice\Widget\Form;
 
 class Model_Form_Submit extends Widget_Event
@@ -23,8 +23,8 @@ class Model_Form_Submit extends Widget_Event
             'cache' => ['ttl' => -1, 'count' => 1000],
             'actions' => [],
             'input' => [
-                'widget' => ['providers' => Data_Provider_Request::class, 'validators' => 'Ice:Not_Empty'],
-                'widgets' => ['default' => [], 'providers' => ['default', Data_Provider_Request::class]]
+                'widget' => ['providers' => DataProvider_Request::class, 'validators' => 'Ice:Not_Empty'],
+                'widgets' => ['default' => [], 'providers' => ['default', DataProvider_Request::class]]
             ],
             'output' => []
         ];

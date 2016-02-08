@@ -9,7 +9,7 @@
 
 namespace Ice\Data\Provider;
 
-use Ice\Core\Data_Provider;
+use Ice\Core\DataProvider;
 use Ice\Core\Exception;
 use Ice\Core\Logger;
 
@@ -18,17 +18,17 @@ use Ice\Core\Logger;
  *
  * Data provider for redis storage
  *
- * @see Ice\Core\Data_Provider
+ * @see Ice\Core\DataProvider
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
  * @package    Ice
- * @subpackage Data_Provider
+ * @subpackage DataProvider
  *
  * @version 0.0
  * @since   0.0
  */
-class Redis extends Data_Provider
+class Redis extends DataProvider
 {
     const DEFAULT_KEY = 'default';
 
@@ -205,7 +205,7 @@ class Redis extends Data_Provider
      */
     public function getKeys($pattern = null)
     {
-        $keyPrefix = $this->getKeyPrefix() . Data_Provider::PREFIX_KEY_DELIMETER;
+        $keyPrefix = $this->getKeyPrefix() . DataProvider::PREFIX_KEY_DELIMETER;
 
         $size = strlen($keyPrefix);
 

@@ -15,9 +15,9 @@ use Ice\Core\Profiler;
 use Ice\Core\Request;
 use Ice\Core\Response;
 use Ice\Core\Session;
-use Ice\Data\Provider\Cli as Data_Provider_Cli;
-use Ice\Data\Provider\Request as Data_Provider_Request;
-use Ice\Data\Provider\Router as Data_Provider_Router;
+use Ice\Data\Provider\Cli as DataProvider_Cli;
+use Ice\Data\Provider\Request as DataProvider_Request;
+use Ice\Data\Provider\Router as DataProvider_Router;
 use Ice\Exception\Error;
 use Ice\Exception\Http_Bad_Request;
 use Ice\Exception\Http_Forbidden;
@@ -42,17 +42,17 @@ class App
         /** @var Action $actionClass */
         try {
             if (Request::isCli()) {
-                $actionClass = Data_Provider_Cli::getInstance()->get('actionClass');
+                $actionClass = DataProvider_Cli::getInstance()->get('actionClass');
             } else {
                 Request::init();
                 Session::init();
 
                 $actionClass = Request::isAjax()
-                    ? Data_Provider_Request::getInstance()->get('actionClass')
-                    : Data_Provider_Router::getInstance()->get('actionClass');
+                    ? DataProvider_Request::getInstance()->get('actionClass')
+                    : DataProvider_Router::getInstance()->get('actionClass');
 
                 if (!Request::isAjax()) {
-                    if ($response = Data_Provider_Router::getInstance()->get('response')) {
+                    if ($response = DataProvider_Router::getInstance()->get('response')) {
                         if (isset($response['contentType'])) {
                             App::getResponse()->setContentType($response['contentType']);
                         }

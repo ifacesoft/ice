@@ -10,7 +10,7 @@
 namespace Ice\Data\Source;
 
 use Ice\Core\Converter;
-use Ice\Core\Data_Provider;
+use Ice\Core\DataProvider;
 use Ice\Core\Data_Source;
 use Ice\Core\Debuger;
 use Ice\Core\Exception;
@@ -795,7 +795,7 @@ class Mysqli extends Data_Source
     /**
      * Return data provider class
      *
-     * @return Data_Provider
+     * @return DataProvider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *

@@ -9,7 +9,7 @@
 
 namespace Ice\Data\Provider;
 
-use Ice\Core\Data_Provider;
+use Ice\Core\DataProvider;
 use Ice\Core\Exception;
 use Ice\Core\Module;
 use Ice\Helper\Date;
@@ -22,14 +22,14 @@ use Ice\Helper\Hash;
  *
  * Data provider for file date storage
  *
- * @see Ice\Core\Data_Provider
+ * @see Ice\Core\DataProvider
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
  * @package    Ice
- * @subpackage Data_Provider
+ * @subpackage DataProvider
  */
-class File extends Data_Provider
+class File extends DataProvider
 {
     const DEFAULT_KEY = 'default';
 

@@ -496,7 +496,7 @@ abstract class Data_Source extends Container
     /**
      * Return source data provider
      *
-     * @return Data_Provider
+     * @return DataProvider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
@@ -508,7 +508,7 @@ abstract class Data_Source extends Container
         $sourceDataProviderClass = $this->getDataProviderClass();
 
         /**
-         * @var Data_Provider $sourceDataProvider
+         * @var DataProvider $sourceDataProvider
          */
         $sourceDataProvider = $sourceDataProviderClass::getInstance($this->key);
 
@@ -522,7 +522,7 @@ abstract class Data_Source extends Container
     /**
      * Return data provider class
      *
-     * @return Data_Provider
+     * @return DataProvider
      *
      * @author anonymous <email>
      *

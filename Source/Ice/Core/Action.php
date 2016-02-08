@@ -388,7 +388,7 @@ abstract class Action implements Cacheable
     {
         foreach (self::getConfig()->gets('output', false) as $name => $dataProviderKey) {
             if (!isset($output[$name])) {
-                $output[$name] = Data_Provider::getInstance($dataProviderKey)->get($name);
+                $output[$name] = DataProvider::getInstance($dataProviderKey)->get($name);
             }
         }
 

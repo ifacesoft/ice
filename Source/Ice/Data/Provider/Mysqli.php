@@ -9,7 +9,7 @@
 
 namespace Ice\Data\Provider;
 
-use Ice\Core\Data_Provider;
+use Ice\Core\DataProvider;
 use Ice\Core\Debuger;
 use Ice\Core\Exception;
 use Ice\Core\Logger;
@@ -22,14 +22,14 @@ use Ice\Helper\String;
  *
  * Data provider for Mysql connection
  *
- * @see Ice\Core\Data_Provider
+ * @see Ice\Core\DataProvider
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
  * @package    Ice
- * @subpackage Data_Provider
+ * @subpackage DataProvider
  */
-class Mysqli extends Data_Provider
+class Mysqli extends DataProvider
 {
     const DEFAULT_KEY = 'default';
 

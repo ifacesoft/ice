@@ -137,7 +137,7 @@ class Environment extends Config
      * @param  string $class Class (found data provider for this class)
      * @param $key
      * @param  string $index Index of data provider
-     * @return Data_Provider
+     * @return DataProvider
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
@@ -145,7 +145,7 @@ class Environment extends Config
      */
     public function getProvider($class, $key, $index = 'default')
     {
-        return Data_Provider::getInstance($this->getDataProviderKey($class, $key), $index);
+        return DataProvider::getInstance($this->getDataProviderKey($class, $key), $index);
     }
 
     /**

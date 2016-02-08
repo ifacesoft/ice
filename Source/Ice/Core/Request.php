@@ -10,7 +10,7 @@
 namespace Ice\Core;
 
 use Ice\Core;
-use Ice\Data\Provider\Request as Data_Provider_Request;
+use Ice\Data\Provider\Request as DataProvider_Request;
 use Ice\Exception\Access_Denied_Request;
 use Ice\Helper\Http;
 use Locale;
@@ -58,7 +58,7 @@ class Request
      */
     public static function getParams(array $filterParams = [])
     {
-        return Data_Provider_Request::getInstance()->get($filterParams);
+        return DataProvider_Request::getInstance()->get($filterParams);
     }
 
     /**

@@ -9,7 +9,7 @@
 
 namespace Ice\Data\Provider;
 
-use Ice\Core\Data_Provider;
+use Ice\Core\DataProvider;
 use Ice\Core\Environment;
 use Ice\Core\Exception;
 
@@ -18,14 +18,14 @@ use Ice\Core\Exception;
  *
  * Data provider for object cache
  *
- * @see Ice\Core\Data_Provider
+ * @see Ice\Core\DataProvider
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
  * @package    Ice
- * @subpackage Data_Provider
+ * @subpackage DataProvider
  */
-class Repository extends Data_Provider
+class Repository extends DataProvider
 {
     const DEFAULT_KEY = 'default';
 
@@ -63,7 +63,7 @@ class Repository extends Data_Provider
     /**
      * Get instance connection of data provider
      *
-     * @return Data_Provider
+     * @return DataProvider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
@@ -196,7 +196,7 @@ class Repository extends Data_Provider
         }
 
         /**
-         * @var Data_Provider $dataProviderClass
+         * @var DataProvider $dataProviderClass
          */
         $dataProviderClass = function_exists('apc_store')
             ? Apc::getClass()

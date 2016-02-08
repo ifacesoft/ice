@@ -9,7 +9,7 @@
 
 namespace Ice\Data\Provider;
 
-use Ice\Core\Data_Provider;
+use Ice\Core\DataProvider;
 use Ice\Core\Exception;
 
 /**
@@ -17,14 +17,14 @@ use Ice\Core\Exception;
  *
  * Data provider for request data
  *
- * @see Ice\Core\Data_Provider
+ * @see Ice\Core\DataProvider
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
  * @package    Ice
- * @subpackage Data_Provider
+ * @subpackage DataProvider
  */
-class Request extends Data_Provider
+class Request extends DataProvider
 {
     const DEFAULT_KEY = 'default';
 

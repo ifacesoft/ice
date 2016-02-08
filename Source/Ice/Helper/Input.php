@@ -3,7 +3,7 @@
 namespace Ice\Helper;
 
 use Ice\Core\Action;
-use Ice\Core\Data_Provider;
+use Ice\Core\DataProvider;
 use Ice\Data\Provider\Cli;
 use Ice\Data\Provider\Request;
 use Ice\Data\Provider\Router;
@@ -51,7 +51,7 @@ class Input
                 }
 
                 try { // пока провайдер роутер понимает только нативные роуты (не понмает, например, от Symfony)
-                    $input[$name] = Data_Provider::getInstance($dataProviderKey)->get($name);
+                    $input[$name] = DataProvider::getInstance($dataProviderKey)->get($name);
                 } catch (Http_Not_Found $e) {
                     //
                 }
