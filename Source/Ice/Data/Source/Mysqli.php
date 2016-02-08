@@ -19,7 +19,7 @@ use Ice\Core\Model;
 use Ice\Core\Module;
 use Ice\Core\Profiler;
 use Ice\Core\Query;
-use Ice\Core\Query_Builder;
+use Ice\Core\QueryBuilder;
 use Ice\Core\Query_Result;
 use Ice\Core\Query_Translator;
 use Ice\Exception\DataSource;
@@ -337,7 +337,7 @@ class Mysqli extends Data_Source
 
         $insertId = $statement->insert_id;
 
-        foreach ($query->getBindParts()[Query_Builder::PART_VALUES] as $row) {
+        foreach ($query->getBindParts()[QueryBuilder::PART_VALUES] as $row) {
             if ($pkFieldName) {
                 if (!isset($row[$pkFieldName])) {
                     $row[$pkFieldName] = $insertId;
@@ -400,7 +400,7 @@ class Mysqli extends Data_Source
         $modelclass = $query->getQueryBuilder()->getModelClass();
         $pkFieldNames = $modelclass::getScheme()->getPkFieldNames();
 
-        foreach ($query->getBindParts()[Query_Builder::PART_SET] as $row) {
+        foreach ($query->getBindParts()[QueryBuilder::PART_SET] as $row) {
             $insertKey = implode('_', array_intersect_key($row, array_flip($pkFieldNames)));
             $data[Query_Result::ROWS][$insertKey] = $row;
         }

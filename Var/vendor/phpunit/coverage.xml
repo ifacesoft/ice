@@ -3221,7 +3221,7 @@
                          coveredconditionals="0" statements="5" coveredstatements="0" elements="6" coveredelements="0"/>
             </file>
             <file name="/home/dp/PhpstormProjects/ice/Ice/Source/Ice/Core/Model/Scheme.php">
-                <class name="Model_Scheme" namespace="Ice\Core" fullPackage="Model">
+                <class name="ModelScheme" namespace="Ice\Core" fullPackage="Model">
                     <metrics methods="7" coveredmethods="6" conditionals="0" coveredconditionals="0" statements="51"
                              coveredstatements="31" elements="58" coveredelements="37"/>
                 </class>
@@ -3594,7 +3594,7 @@
                          coveredelements="86"/>
             </file>
             <file name="/home/dp/PhpstormProjects/ice/Ice/Source/Ice/Core/Query/Builder.php">
-                <class name="Query_Builder" namespace="Ice\Core" fullPackage="Ice.Core" package="Ice" subpackage="Core">
+                <class name="QueryBuilder" namespace="Ice\Core" fullPackage="Ice.Core" package="Ice" subpackage="Core">
                     <metrics methods="73" coveredmethods="18" conditionals="0" coveredconditionals="0" statements="496"
                              coveredstatements="148" elements="569" coveredelements="166"/>
                 </class>

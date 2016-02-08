@@ -14,8 +14,8 @@ class Request
 //    {
 //        $orderParams = [];
 //
-//        $ascPattern = '/(?:[^\/]+\/)?' . Query_Builder::SQL_ORDERING_ASC . '$/';
-//        $descPattern = '/(?:[^\/]+\/)?' . Query_Builder::SQL_ORDERING_DESC . '$/';
+//        $ascPattern = '/(?:[^\/]+\/)?' . QueryBuilder::SQL_ORDERING_ASC . '$/';
+//        $descPattern = '/(?:[^\/]+\/)?' . QueryBuilder::SQL_ORDERING_DESC . '$/';
 //
 //        foreach (Core_Request::getParams($params) as $name => $value) {
 //            if (!$value) {
@@ -23,9 +23,9 @@ class Request
 //            }
 //
 //            if (preg_match($ascPattern, $value)) {
-//                $orderParams[$name] = Query_Builder::SQL_ORDERING_ASC;
+//                $orderParams[$name] = QueryBuilder::SQL_ORDERING_ASC;
 //            } elseif (preg_match($descPattern, $value)) {
-//                $orderParams[$name] = Query_Builder::SQL_ORDERING_DESC;
+//                $orderParams[$name] = QueryBuilder::SQL_ORDERING_DESC;
 //            } else {
 //                $orderParams[$name] = '';
 //            }
@@ -38,8 +38,8 @@ class Request
 //    {
 //        $filterParams = [];
 //
-//        $checkAsc = '/' . Query_Builder::SQL_ORDERING_ASC;
-//        $checkDesc = '/' . Query_Builder::SQL_ORDERING_DESC;
+//        $checkAsc = '/' . QueryBuilder::SQL_ORDERING_ASC;
+//        $checkDesc = '/' . QueryBuilder::SQL_ORDERING_DESC;
 //
 //        foreach (Core_Request::getParams($params) as $name => $value) {
 //            if (strlen($value) < strlen($checkAsc)) {

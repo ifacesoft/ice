@@ -555,7 +555,7 @@ class Query_Result implements Cacheable
     //    {
     //        $pagination = ['foundRows' => $this->getFoundRows()];
     //
-    //        $limit = $this->getQuery()->getBodyParts()[Query_Builder::PART_LIMIT];
+    //        $limit = $this->getQuery()->getBodyParts()[QueryBuilder::PART_LIMIT];
     //
     //        if (empty($limit)) {
     //            $pagination['page'] = 1;

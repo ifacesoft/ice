@@ -15,7 +15,7 @@ use Ice\Core\Logger;
 use Ice\Core\Model;
 use Ice\Core\Module;
 use Ice\Core\Query;
-use Ice\Core\Query_Builder;
+use Ice\Core\QueryBuilder;
 use Ice\Core\Query_Result;
 use Ice\Core\Query_Translator;
 use Ice\Helper\Query as Helper_Query;
@@ -81,27 +81,27 @@ class Defined extends Data_Source
                     $whereQuery = null;
 
                     switch ($part[2]) {
-                        case Query_Builder::SQL_COMPARISON_OPERATOR_EQUAL:
+                        case QueryBuilder::SQL_COMPARISON_OPERATOR_EQUAL:
                             if (!isset($row[$part[1]]) || $row[$part[1]] != reset($part[3])) {
                                 return false;
                             }
                             break;
-                        case Query_Builder::SQL_COMPARISON_OPERATOR_NOT_EQUAL:
+                        case QueryBuilder::SQL_COMPARISON_OPERATOR_NOT_EQUAL:
                             if ($row[$part[1]] == reset($part[3])) {
                                 return false;
                             }
                             break;
-                        case Query_Builder::SQL_COMPARISON_KEYWORD_IN:
+                        case QueryBuilder::SQL_COMPARISON_KEYWORD_IN:
                             if (!in_array($row[$part[1]], $part[3])) {
                                 return false;
                             }
                             break;
-                        case Query_Builder::SQL_COMPARISON_KEYWORD_IS_NULL:
+                        case QueryBuilder::SQL_COMPARISON_KEYWORD_IS_NULL:
                             if ($row[$part[1]] !== null) {
                                 return false;
                             }
                             break;
-                        case Query_Builder::SQL_COMPARISON_KEYWORD_IS_NOT_NULL:
+                        case QueryBuilder::SQL_COMPARISON_KEYWORD_IS_NOT_NULL:
                             if ($row[$part[1]] === null) {
                                 return false;
                             }

@@ -3,7 +3,7 @@
 namespace Ice\Widget;
 
 use Ice\Action\Render;
-use Ice\Core\Query_Builder;
+use Ice\Core\QueryBuilder;
 use Ice\Core\Query_Result;
 use Ice\Core\Request;
 use Ice\Core\Widget;
@@ -396,7 +396,7 @@ class Pagination extends Widget
         return $this;
     }
 
-    public function queryBuilderPart(Query_Builder $queryBuilder, array $input)
+    public function queryBuilderPart(QueryBuilder $queryBuilder, array $input)
     {
         parent::queryBuilderPart($queryBuilder, $input);
 

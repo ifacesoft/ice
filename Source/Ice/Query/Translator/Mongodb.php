@@ -12,7 +12,7 @@ namespace Ice\Query\Translator;
 use Ice\Core\Debuger;
 use Ice\Core\Exception;
 use Ice\Core\Model;
-use Ice\Core\Query_Builder;
+use Ice\Core\QueryBuilder;
 use Ice\Core\Query_Translator;
 use Ice\Helper\Mapping;
 
@@ -33,24 +33,24 @@ class Mongodb extends Query_Translator
     const DEFAULT_KEY = 'instance';
 
     private static $operators = [
-        Query_Builder::SQL_COMPARISON_OPERATOR_GREATER => '$gt',
-        Query_Builder::SQL_COMPARISON_OPERATOR_LESS => '$lt',
-        Query_Builder::SQL_COMPARISON_OPERATOR_GREATER_OR_EQUAL => '$gte',
-        Query_Builder::SQL_COMPARISON_OPERATOR_LESS_OR_EQUAL => '$lte',
-        Query_Builder::SQL_COMPARISON_KEYWORD_REGEXP => '$regex',
-        Query_Builder::SQL_COMPARISON_OPERATOR_NOT_EQUAL => '$ne',
-        Query_Builder::SQL_COMPARISON_KEYWORD_IN => '$in',
-        Query_Builder::SQL_COMPARISON_KEYWORD_IS_NULL => '$notExists', // dummy
-        Query_Builder::SQL_COMPARISON_KEYWORD_IS_NOT_NULL => '$exists',
-        Query_Builder::SQL_COMPARISON_KEYWORD_LIKE => '$like', // dummy
-        Query_Builder::SQL_COMPARISON_KEYWORD_RLIKE => '$rlike', // dummy
-        Query_Builder::SQL_COMPARISON_KEYWORD_RLIKE_REVERSE => '$rlikeReverse', // dummy
-        Query_Builder::SEARCH_KEYWORD => '$search'
+        QueryBuilder::SQL_COMPARISON_OPERATOR_GREATER => '$gt',
+        QueryBuilder::SQL_COMPARISON_OPERATOR_LESS => '$lt',
+        QueryBuilder::SQL_COMPARISON_OPERATOR_GREATER_OR_EQUAL => '$gte',
+        QueryBuilder::SQL_COMPARISON_OPERATOR_LESS_OR_EQUAL => '$lte',
+        QueryBuilder::SQL_COMPARISON_KEYWORD_REGEXP => '$regex',
+        QueryBuilder::SQL_COMPARISON_OPERATOR_NOT_EQUAL => '$ne',
+        QueryBuilder::SQL_COMPARISON_KEYWORD_IN => '$in',
+        QueryBuilder::SQL_COMPARISON_KEYWORD_IS_NULL => '$notExists', // dummy
+        QueryBuilder::SQL_COMPARISON_KEYWORD_IS_NOT_NULL => '$exists',
+        QueryBuilder::SQL_COMPARISON_KEYWORD_LIKE => '$like', // dummy
+        QueryBuilder::SQL_COMPARISON_KEYWORD_RLIKE => '$rlike', // dummy
+        QueryBuilder::SQL_COMPARISON_KEYWORD_RLIKE_REVERSE => '$rlikeReverse', // dummy
+        QueryBuilder::SEARCH_KEYWORD => '$search'
     ];
 
     private static $orderings = [
-        Query_Builder::SQL_ORDERING_ASC => 1,
-        Query_Builder::SQL_ORDERING_DESC => -1
+        QueryBuilder::SQL_ORDERING_ASC => 1,
+        QueryBuilder::SQL_ORDERING_DESC => -1
     ];
 
     /**
@@ -230,7 +230,7 @@ class Mongodb extends Query_Translator
                     ? $fieldColumnMap[$fieldName]
                     : $fieldName;
 
-                $columnNames[$columnName][] = $comparisonOperator == Query_Builder::SQL_COMPARISON_OPERATOR_EQUAL
+                $columnNames[$columnName][] = $comparisonOperator == QueryBuilder::SQL_COMPARISON_OPERATOR_EQUAL
                     ? null
                     : Mongodb::$operators[$comparisonOperator];
             }

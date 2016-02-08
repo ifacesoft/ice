@@ -30,7 +30,7 @@ class Query
     use Stored;
 
     /**
-     * @var Query_Builder
+     * @var QueryBuilder
      */
     private $queryBuilder = null;
 
@@ -77,7 +77,7 @@ class Query
     /**
      * Create new instance of query
      *
-     * @param  Query_Builder $queryBuilder
+     * @param  QueryBuilder $queryBuilder
      * @param  $dataSourceKey
      * @return Query
      *
@@ -87,7 +87,7 @@ class Query
      * @version 0.6
      * @since   0.0
      */
-    public static function create(Query_Builder $queryBuilder, $dataSourceKey)
+    public static function create(QueryBuilder $queryBuilder, $dataSourceKey)
     {
         $query = new Query();
 
@@ -120,11 +120,11 @@ class Query
     /**
      * @param $modelClass
      * @param $tableAlias
-     * @return Query_Builder
+     * @return QueryBuilder
      */
     public static function getBuilder($modelClass, $tableAlias = null)
     {
-        return Query_Builder::create($modelClass, $tableAlias);
+        return QueryBuilder::create($modelClass, $tableAlias);
     }
 
     /**
@@ -139,7 +139,7 @@ class Query
      */
     public function isCalcFoundRows()
     {
-        $selectQueryParts = $this->queryBuilder->getSqlParts(Query_Builder::PART_SELECT);
+        $selectQueryParts = $this->queryBuilder->getSqlParts(QueryBuilder::PART_SELECT);
         return reset($selectQueryParts);
     }
 
@@ -158,7 +158,7 @@ class Query
     {
         $this->bindParts = $bindParts;
 
-        if ($this->queryBuilder->getQueryType() == Query_Builder::TYPE_SELECT) {
+        if ($this->queryBuilder->getQueryType() == QueryBuilder::TYPE_SELECT) {
             $this->bindHash = md5(json_encode($bindParts));
         }
 
@@ -366,7 +366,7 @@ class Query
     }
 
     /**
-     * @return Query_Builder
+     * @return QueryBuilder
      */
     public function getQueryBuilder()
     {

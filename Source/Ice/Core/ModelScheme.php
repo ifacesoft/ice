@@ -2,7 +2,7 @@
 
 namespace Ice\Core;
 
-class Model_Scheme extends Config
+class ModelScheme extends Config
 {
     const ONE_TO_MANY = 'oneToMany';
     const MANY_TO_ONE = 'manyToOne';
@@ -13,7 +13,7 @@ class Model_Scheme extends Config
      * @param null $postfix
      * @param bool $isRequired
      * @param null $ttl
-     * @return Model_Scheme
+     * @return ModelScheme
      */
     public static function getInstance($class, $postfix = null, $isRequired = false, $ttl = null)
     {

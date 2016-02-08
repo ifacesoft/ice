@@ -12,7 +12,7 @@ namespace Ice\Query\Translator;
 use Ice\Core\Exception;
 use Ice\Core\Model;
 use Ice\Core\Query;
-use Ice\Core\Query_Builder;
+use Ice\Core\QueryBuilder;
 use Ice\Core\Query_Translator;
 use Ice\Helper\Mapping;
 
@@ -307,26 +307,26 @@ class Sql extends Query_Translator
     private function buildWhere($comparisonOperator, $fieldName, $count)
     {
         switch ($comparisonOperator) {
-            case Query_Builder::SQL_COMPARISON_OPERATOR_EQUAL:
-            case Query_Builder::SQL_COMPARISON_OPERATOR_GREATER:
-            case Query_Builder::SQL_COMPARISON_OPERATOR_LESS:
-            case Query_Builder::SQL_COMPARISON_OPERATOR_GREATER_OR_EQUAL:
-            case Query_Builder::SQL_COMPARISON_OPERATOR_LESS_OR_EQUAL:
-            case Query_Builder::SQL_COMPARISON_KEYWORD_REGEXP:
-            case Query_Builder::SQL_COMPARISON_OPERATOR_NOT_EQUAL:
-            case Query_Builder::SQL_COMPARISON_KEYWORD_LIKE:
-            case Query_Builder::SQL_COMPARISON_KEYWORD_RLIKE:
+            case QueryBuilder::SQL_COMPARISON_OPERATOR_EQUAL:
+            case QueryBuilder::SQL_COMPARISON_OPERATOR_GREATER:
+            case QueryBuilder::SQL_COMPARISON_OPERATOR_LESS:
+            case QueryBuilder::SQL_COMPARISON_OPERATOR_GREATER_OR_EQUAL:
+            case QueryBuilder::SQL_COMPARISON_OPERATOR_LESS_OR_EQUAL:
+            case QueryBuilder::SQL_COMPARISON_KEYWORD_REGEXP:
+            case QueryBuilder::SQL_COMPARISON_OPERATOR_NOT_EQUAL:
+            case QueryBuilder::SQL_COMPARISON_KEYWORD_LIKE:
+            case QueryBuilder::SQL_COMPARISON_KEYWORD_RLIKE:
                 return $comparisonOperator . ' ?';
-            case Query_Builder::SQL_COMPARISON_KEYWORD_BETWEEN:
+            case QueryBuilder::SQL_COMPARISON_KEYWORD_BETWEEN:
                 return $comparisonOperator . ' ? AND ?';
-            case Query_Builder::SQL_COMPARISON_KEYWORD_IN:
-            case Query_Builder::SQL_COMPARISON_KEYWORD_NOT_IN:
+            case QueryBuilder::SQL_COMPARISON_KEYWORD_IN:
+            case QueryBuilder::SQL_COMPARISON_KEYWORD_NOT_IN:
                 return $comparisonOperator . ' (?' . ($count > 1 ? str_repeat(',?', $count - 1) : '') . ')';
-            case Query_Builder::SQL_COMPARISON_KEYWORD_IS_NULL:
-            case Query_Builder::SQL_COMPARISON_KEYWORD_IS_NOT_NULL:
+            case QueryBuilder::SQL_COMPARISON_KEYWORD_IS_NULL:
+            case QueryBuilder::SQL_COMPARISON_KEYWORD_IS_NOT_NULL:
                 return $comparisonOperator;
-            case Query_Builder::SQL_COMPARISON_KEYWORD_RLIKE_REVERSE:
-                return '? ' . Query_Builder::SQL_COMPARISON_KEYWORD_RLIKE . ' ' . $fieldName;
+            case QueryBuilder::SQL_COMPARISON_KEYWORD_RLIKE_REVERSE:
+                return '? ' . QueryBuilder::SQL_COMPARISON_KEYWORD_RLIKE . ' ' . $fieldName;
             default:
                 $this->getLogger()->exception(['Unknown comparison operator "{$0}"', $comparisonOperator], __FILE__, __LINE__);
         }
@@ -399,9 +399,9 @@ class Sql extends Query_Translator
             return $sql;
         }
 
-        if (isset($select['table']) && $select['table'] instanceof Query_Builder) {
+        if (isset($select['table']) && $select['table'] instanceof QueryBuilder) {
             $select['table']->setCalcFoundRows(false);
-            $select['table'] = $select['table']->getSelectQuery('*'); // todo Не доджно быть никаких Query, только Query_Builder
+            $select['table'] = $select['table']->getSelectQuery('*'); // todo Не доджно быть никаких Query, только QueryBuilder
         }
 
         $table = isset($select['table']) && $select['table'] instanceof Query

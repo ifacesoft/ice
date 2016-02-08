@@ -108,7 +108,7 @@ return [
             'Ice\Core\Data_Scheme' => [
                 'data_scheme' => 'Ice:Repository',
             ],
-            'Ice\Core\Model_Scheme' => [
+            'Ice\Core\ModelScheme' => [
                 'model_scheme' => 'Ice:Repository',
             ],
             'Ice\Core\Validator' => [
@@ -211,7 +211,7 @@ return [
             'Ice\Core\Data_Scheme' => [
                 'data_scheme' => 'Ice:File',
             ],
-            'Ice\Core\Model_Scheme' => [
+            'Ice\Core\ModelScheme' => [
                 'model_scheme' => 'Ice:File',
             ],
             'Ice\Core\Validator' => [
@@ -313,7 +313,7 @@ return [
             'Ice\Core\Data_Scheme' => [
                 'data_scheme' => 'Ice:Registry',
             ],
-            'Ice\Core\Model_Scheme' => [
+            'Ice\Core\ModelScheme' => [
                 'model_scheme' => 'Ice:Registry',
             ],
             'Ice\Core\Validator' => [

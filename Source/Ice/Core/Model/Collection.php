@@ -421,7 +421,7 @@ class Model_Collection implements IteratorAggregate, Countable
      *
      * @param  null $modelClass
      * @param  null $tableAlias
-     * @return Query_Builder
+     * @return QueryBuilder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *

@@ -3,7 +3,7 @@ namespace Ice\Widget;
 
 use Ice\Action\Render;
 use Ice\Core\Debuger;
-use Ice\Core\Query_Builder;
+use Ice\Core\QueryBuilder;
 use Ice\Core\Query_Result;
 use Ice\Core\Widget;
 
@@ -93,7 +93,7 @@ class Table_Rows extends Widget
 
         $queryBuilder = $queryResult->getQuery()->getQueryBuilder();
 
-        $limitQueryPart = $queryBuilder->getSqlParts()[Query_Builder::PART_LIMIT];
+        $limitQueryPart = $queryBuilder->getSqlParts()[QueryBuilder::PART_LIMIT];
 
 //        Debuger::dump($this->getDataParams());
 

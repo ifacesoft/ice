@@ -200,7 +200,7 @@ abstract class Model
     }
 
     /**
-     * @return Model_Scheme
+     * @return ModelScheme
      */
     public static function getScheme()
     {
@@ -216,7 +216,7 @@ abstract class Model
          */
         $modelClass = self::getClass();
 
-        $scheme = Model_Scheme::create(
+        $scheme = ModelScheme::create(
             $modelClass,
             array_merge_recursive($modelClass::config(), Config::getInstance($modelClass, null, false, -1)->gets())
         );
@@ -1062,7 +1062,7 @@ abstract class Model
 
     /**
      * @param null $tableAlias
-     * @return Query_Builder
+     * @return QueryBuilder
      */
     public static function createQueryBuilder($tableAlias = null)
     {
@@ -1188,7 +1188,7 @@ abstract class Model
             return $this->clearAffected();
         }
 
-        /** @var Model_Scheme $modelScheme */
+        /** @var ModelScheme $modelScheme */
         $modelScheme = $modelClass::getScheme();
 
         $this->insert(
@@ -1502,7 +1502,7 @@ abstract class Model
      *
      * @param  $modelClass
      * @param  null $tableAlias
-     * @return Query_Builder
+     * @return QueryBuilder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *

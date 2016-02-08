@@ -394,7 +394,7 @@ abstract class Widget extends Container
         }
     }
 
-    public function queryBuilderPart(Query_Builder $queryBuilder, array $input)
+    public function queryBuilderPart(QueryBuilder $queryBuilder, array $input)
     {
         foreach ($this->getParts() as $partName => $part) {
             if (isset($part['options']['widget'])) {
@@ -814,13 +814,13 @@ abstract class Widget extends Container
 //    {
 //        foreach ($params as $key => $value) {
 //
-//            $ascPattern = '/(?:[^\/]+\/)?' . Query_Builder::SQL_ORDERING_ASC . '$/';
-//            $descPattern = '/(?:[^\/]+\/)?' . Query_Builder::SQL_ORDERING_DESC . '$/';
+//            $ascPattern = '/(?:[^\/]+\/)?' . QueryBuilder::SQL_ORDERING_ASC . '$/';
+//            $descPattern = '/(?:[^\/]+\/)?' . QueryBuilder::SQL_ORDERING_DESC . '$/';
 //
 //            if (preg_match($ascPattern, $value)) {
-//                $value = Query_Builder::SQL_ORDERING_ASC;
+//                $value = QueryBuilder::SQL_ORDERING_ASC;
 //            } elseif (preg_match($descPattern, $value)) {
-//                $value = Query_Builder::SQL_ORDERING_DESC;
+//                $value = QueryBuilder::SQL_ORDERING_DESC;
 //            } else {
 //                $value = '';
 //            }
@@ -850,8 +850,8 @@ abstract class Widget extends Container
      */
     public function getParts($filterParts = null)
     {
-        $ascPattern = '/(?:[^\/]+\/)?' . Query_Builder::SQL_ORDERING_ASC . '$/';
-        $descPattern = '/(?:[^\/]+\/)?' . Query_Builder::SQL_ORDERING_DESC . '$/';
+        $ascPattern = '/(?:[^\/]+\/)?' . QueryBuilder::SQL_ORDERING_ASC . '$/';
+        $descPattern = '/(?:[^\/]+\/)?' . QueryBuilder::SQL_ORDERING_DESC . '$/';
 
         $parts = [];
 
@@ -864,9 +864,9 @@ abstract class Widget extends Container
 
             if (is_string($value) && !empty($value) && isset($part['options']['sort'])) {
                 if (preg_match($ascPattern, $value)) {
-                    $part['options']['sort'] = Query_Builder::SQL_ORDERING_ASC;
+                    $part['options']['sort'] = QueryBuilder::SQL_ORDERING_ASC;
                 } elseif (preg_match($descPattern, $value)) {
-                    $part['options']['sort'] = Query_Builder::SQL_ORDERING_DESC;
+                    $part['options']['sort'] = QueryBuilder::SQL_ORDERING_DESC;
                 } else {
                     $part['options']['sort'] = 'NONE';
                 }
@@ -900,9 +900,9 @@ abstract class Widget extends Container
             }
 
             if (is_string($value)) {
-                if ($param = strstr($value, '/' . Query_Builder::SQL_ORDERING_ASC, false) !== false) {
+                if ($param = strstr($value, '/' . QueryBuilder::SQL_ORDERING_ASC, false) !== false) {
                     $value = $param;
-                } elseif ($param = strstr($value, '/' . Query_Builder::SQL_ORDERING_DESC, false) !== false) {
+                } elseif ($param = strstr($value, '/' . QueryBuilder::SQL_ORDERING_DESC, false) !== false) {
                     $value = $param;
                 }
 
@@ -1410,7 +1410,7 @@ abstract class Widget extends Container
 
             $joinModelClasses = [$modelClass];
 
-            /** @var Query_Builder $queryBuilder */
+            /** @var QueryBuilder $queryBuilder */
             $queryBuilder = $modelClass::createQueryBuilder();
 
             $part['title'] = (array)$part['title'];

@@ -285,9 +285,9 @@ abstract class Data_Source extends Container
         $queryCommand = 'execute' . ucfirst(strtolower($queryType));
 
         try {
-            if (($queryType == Query_Builder::TYPE_SELECT && $ttl < 0)
-                || $queryType == Query_Builder::TYPE_CREATE
-                || $queryType == Query_Builder::TYPE_DROP
+            if (($queryType == QueryBuilder::TYPE_SELECT && $ttl < 0)
+                || $queryType == QueryBuilder::TYPE_CREATE
+                || $queryType == QueryBuilder::TYPE_DROP
             ) {
                 $queryResult = Query_Result::create($query, $this->$queryCommand($query));
 
@@ -298,7 +298,7 @@ abstract class Data_Source extends Container
             }
 
             switch ($queryType) {
-                case Query_Builder::TYPE_SELECT:
+                case QueryBuilder::TYPE_SELECT:
                     $cacher = Query_Result::getCacher($this->getDataSourceKey());
                     $queryHash = $query->getFullHash();
 
@@ -315,9 +315,9 @@ abstract class Data_Source extends Container
                     $cacher->set($queryHash, $queryResult, $ttl);
                     return $queryResult;
 
-                case Query_Builder::TYPE_INSERT:
-                case Query_Builder::TYPE_UPDATE:
-                case Query_Builder::TYPE_DELETE:
+                case QueryBuilder::TYPE_INSERT:
+                case QueryBuilder::TYPE_UPDATE:
+                case QueryBuilder::TYPE_DELETE:
                     $queryResult = Query_Result::create($query, $this->$queryCommand($query))->invalidate();
                     Profiler::setPoint($queryResult->__toString(), $startTime, $startMemory);
                     Logger::log(Profiler::getReport($queryResult->__toString()), 'query (new)', 'INFO');
