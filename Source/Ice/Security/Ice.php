@@ -3,11 +3,10 @@
 namespace Ice\Security;
 
 use Ice\Core\Config;
-use Ice\Core\Debuger;
 use Ice\Core\Model;
 use Ice\Core\Security;
-use Ice\Core\Security_Account;
-use Ice\Core\Security_User;
+use Ice\Core\Model\Security_Account;
+use Ice\Core\Model\Security_User;
 use Ice\DataProvider\Security as DataProvider_Security;
 use Ice\DataProvider\Session;
 
@@ -54,9 +53,9 @@ class Ice extends Security
     {
         try {
             $user = $account->getUser();
-
+//
 //            session_regenerate_id();
-
+//
 //            if (ini_get("session.use_cookies")) {
 //                $params = session_get_cookie_params();
 //                session_regenerate_id();
@@ -71,9 +70,6 @@ class Ice extends Security
             Session::getInstance()->set(Ice::SESSION_ACCOUNT_KEY, $account->getPkValue());
 
             DataProvider_Security::getInstance()->set(Ice::SECURITY_USER, $user);
-
-
-
         } catch (\Exception $e) {
             $this->logout();
             $this->autologin();

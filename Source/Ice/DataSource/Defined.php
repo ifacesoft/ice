@@ -7,17 +7,17 @@
  * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
-namespace Ice\Data\Source;
+namespace Ice\DataSource;
 
 use Ice\Core\DataProvider;
-use Ice\Core\Data_Source;
+use Ice\Core\DataSource;
 use Ice\Core\Logger;
 use Ice\Core\Model;
 use Ice\Core\Module;
 use Ice\Core\Query;
 use Ice\Core\QueryBuilder;
-use Ice\Core\Query_Result;
-use Ice\Core\Query_Translator;
+use Ice\Core\QueryResult;
+use Ice\Core\QueryTranslator;
 use Ice\Helper\Query as Helper_Query;
 
 /**
@@ -25,17 +25,17 @@ use Ice\Helper\Query as Helper_Query;
  *
  * Implements defined data source
  *
- * @see Ice\Core\Data_Source
+ * @see Ice\Core\DataSource
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
  * @package    Ice
- * @subpackage Data_Source
+ * @subpackage DataSource
  *
  * @version 0.0
  * @since   0.0
  */
-class Defined extends Data_Source
+class Defined extends DataSource
 {
     /**
      * Execute query select to data source
@@ -122,8 +122,8 @@ class Defined extends Data_Source
         $rows = array_filter($rows, $filterFunction(Helper_Query::convertWhereForFilter($query)));
 
         return [
-            Query_Result::ROWS => $rows,
-            Query_Result::NUM_ROWS => count($rows)
+            QueryResult::ROWS => $rows,
+            QueryResult::NUM_ROWS => count($rows)
         ];
     }
 
@@ -187,7 +187,7 @@ class Defined extends Data_Source
      */
     public function getDataScheme()
     {
-        return Data_Source::getDefault()->getDataScheme();
+        return DataSource::getDefault()->getDataScheme();
     }
 
     /**
@@ -305,7 +305,7 @@ class Defined extends Data_Source
     /**
      * Return query translator class
      *
-     * @return Query_Translator
+     * @return QueryTranslator
      *
      * @author anonymous <email>
      *

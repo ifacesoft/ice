@@ -6,7 +6,7 @@ use Application\Sonata\UserBundle\Entity\User;
 use Doctrine\ORM\EntityManager;
 use Ice\Core\Debuger;
 use Ice\Core\Model;
-use Ice\Core\Security_Account;
+use Ice\Core\Model\Security_Account;
 use Ice\DataProvider\Security as DataProvider_Security;
 use Ice\DataProvider\Session;
 use Symfony\Component\HttpKernel\Kernel;

@@ -2,7 +2,7 @@
 
 namespace Ice\Core;
 
-use Ice\Data\Source\Mongodb;
+use Ice\DataSource\Mongodb;
 use Ice\Model\Test;
 use PHPUnit_Framework_TestCase;
 
@@ -10,7 +10,7 @@ class Model_CollectionTest extends PHPUnit_Framework_TestCase
 {
     public function testCollection()
     {
-        foreach (Data_Source::getConfig()->gets() as $dataSourceClass => $config) {
+        foreach (DataSource::getConfig()->gets() as $dataSourceClass => $config) {
             foreach ($config as $key => $schemes) {
                 foreach ((array)$schemes as $scheme) {
                     $dataSourceKey = $dataSourceClass . '/' . $key . '.' . $scheme;

@@ -23,7 +23,7 @@ class Log_Error extends Model
     protected static function config()
     {
         return [
-            'dataSourceKey' => 'Ice\Data\Source\Mysqli/default.www',
+            'dataSourceKey' => 'Ice\DataSource\Mysqli/default.www',
             'scheme' => [
                 'tableName' => 'ice_log_error',
                 'engine' => 'InnoDB',

@@ -7,19 +7,19 @@
  * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
-namespace Ice\Query\Translator;
+namespace Ice\QueryTranslator;
 
 /**
  * Class Factory
  *
  * Translate with query translator factory
  *
- * @see Ice\Core\Query_Translator
+ * @see Ice\Core\QueryTranslator
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
  * @package    Ice
- * @subpackage Query_Translator
+ * @subpackage QueryTranslator
  *
  * @version 0.0
  * @since   0.0

@@ -7,11 +7,11 @@
  * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
-namespace Ice\Data\Source;
+namespace Ice\DataSource;
 
 use Ice\Core\Converter;
 use Ice\Core\DataProvider;
-use Ice\Core\Data_Source;
+use Ice\Core\DataSource;
 use Ice\Core\Debuger;
 use Ice\Core\Exception;
 use Ice\Core\Logger;
@@ -20,10 +20,8 @@ use Ice\Core\Module;
 use Ice\Core\Profiler;
 use Ice\Core\Query;
 use Ice\Core\QueryBuilder;
-use Ice\Core\Query_Result;
-use Ice\Core\Query_Translator;
-use Ice\Exception\DataSource;
-use Ice\Exception\DataSource_Error;
+use Ice\Core\QueryResult;
+use Ice\Core\QueryTranslator;
 use Ice\Exception\DataSource_Insert;
 use Ice\Exception\DataSource_Insert_DuplicateEntry;
 use Ice\Exception\DataSource_Statement_Error;
@@ -40,17 +38,17 @@ use mysqli_stmt;
  *
  * Implements mysqli data source
  *
- * @see Ice\Core\Data_Source
+ * @see Ice\Core\DataSource
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
  * @package    Ice
- * @subpackage Data_Source
+ * @subpackage DataSource
  */
-class Mysqli extends Data_Source
+class Mysqli extends DataSource
 {
     const DATA_PROVIDER_CLASS = 'Ice\DataProvider\Mysqli';
-    const QUERY_TRANSLATOR_CLASS = 'Ice\Query\Translator\Sql';
+    const QUERY_TRANSLATOR_CLASS = 'Ice\QueryTranslator\Sql';
 
     const TRANSACTION_REPEATABLE_READ = 'REPEATABLE READ';
     const TRANSACTION_READ_COMMITTED = 'READ COMMITTED';
@@ -128,7 +126,7 @@ class Mysqli extends Data_Source
 //
 //        call_user_func_array(array($statement, 'bind_result'), $bindResultVars);
 
-        $data[Query_Result::ROWS] = [];
+        $data[QueryResult::ROWS] = [];
 
         while ($row = $result->fetch_assoc()) {
             foreach ($query->getAfterSelectTriggers() as list($method, $params)) {
@@ -143,14 +141,14 @@ class Mysqli extends Data_Source
                 }
             }
 
-//            $data[Query_Result::ROWS][] = $row;
+//            $data[QueryResult::ROWS][] = $row;
 
             $id = implode('_', array_intersect_key($row, array_flip($pkFieldNames)));
 
             if ($id) {
-                $data[Query_Result::ROWS][$id] = $row;
+                $data[QueryResult::ROWS][$id] = $row;
             } else {
-                $data[Query_Result::ROWS][] = $row;
+                $data[QueryResult::ROWS][] = $row;
             }
         }
 
@@ -161,15 +159,15 @@ class Mysqli extends Data_Source
         unset($result);
         unset($statement);
 
-        $data[Query_Result::NUM_ROWS] = count($data[Query_Result::ROWS]);
+        $data[QueryResult::NUM_ROWS] = count($data[QueryResult::ROWS]);
 
         if ($query->isCalcFoundRows()) {
             $result = $this->getConnection()->query('SELECT FOUND_ROWS()');
             $foundRows = $result->fetch_row();
             $result->close();
-            $data[Query_Result::FOUND_ROWS] = reset($foundRows);
+            $data[QueryResult::FOUND_ROWS] = reset($foundRows);
         } else {
-            $data[Query_Result::FOUND_ROWS] = $data[Query_Result::NUM_ROWS];
+            $data[QueryResult::FOUND_ROWS] = $data[QueryResult::NUM_ROWS];
         }
 
         foreach ($query->getQueryBuilder()->getTransforms() as list($converterClass, $params)) {
@@ -349,11 +347,11 @@ class Mysqli extends Data_Source
 
             $insertKeys = array_intersect_key($row, array_flip($pkFieldNames));
 
-            $data[Query_Result::INSERT_ID][] = $insertKeys;
-            $data[Query_Result::ROWS][implode('_', $insertKeys)] = $row;
+            $data[QueryResult::INSERT_ID][] = $insertKeys;
+            $data[QueryResult::ROWS][implode('_', $insertKeys)] = $row;
         }
 
-        $data[Query_Result::AFFECTED_ROWS] = $statement->affected_rows;
+        $data[QueryResult::AFFECTED_ROWS] = $statement->affected_rows;
 
         $statement->close();
 
@@ -402,10 +400,10 @@ class Mysqli extends Data_Source
 
         foreach ($query->getBindParts()[QueryBuilder::PART_SET] as $row) {
             $insertKey = implode('_', array_intersect_key($row, array_flip($pkFieldNames)));
-            $data[Query_Result::ROWS][$insertKey] = $row;
+            $data[QueryResult::ROWS][$insertKey] = $row;
         }
 
-        $data[Query_Result::AFFECTED_ROWS] = $statement->affected_rows;
+        $data[QueryResult::AFFECTED_ROWS] = $statement->affected_rows;
 
         $statement->close();
 
@@ -446,7 +444,7 @@ class Mysqli extends Data_Source
             );
         }
 
-        $data[Query_Result::AFFECTED_ROWS] = $statement->affected_rows;
+        $data[QueryResult::AFFECTED_ROWS] = $statement->affected_rows;
 
         $statement->close();
 
@@ -744,7 +742,7 @@ class Mysqli extends Data_Source
             );
         }
 
-        $data[Query_Result::AFFECTED_ROWS] = $statement->affected_rows;
+        $data[QueryResult::AFFECTED_ROWS] = $statement->affected_rows;
 
         $statement->close();
 
@@ -785,7 +783,7 @@ class Mysqli extends Data_Source
             );
         }
 
-        $data[Query_Result::AFFECTED_ROWS] = $statement->affected_rows;
+        $data[QueryResult::AFFECTED_ROWS] = $statement->affected_rows;
 
         $statement->close();
 
@@ -810,7 +808,7 @@ class Mysqli extends Data_Source
     /**
      * Return query translator class
      *
-     * @return Query_Translator
+     * @return QueryTranslator
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
@@ -954,7 +952,7 @@ class Mysqli extends Data_Source
      * Execute native query
      *
      * @param string $sql
-     * @return Query_Result
+     * @return QueryResult
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
@@ -965,18 +963,18 @@ class Mysqli extends Data_Source
     {
         $result = $this->query($sql);
 
-        $data[Query_Result::ROWS] = [];
+        $data[QueryResult::ROWS] = [];
 
         if (is_object($result)) {
             if ($result->num_rows) {
-                $data[Query_Result::ROWS] = $result->fetch_all(MYSQLI_ASSOC);
+                $data[QueryResult::ROWS] = $result->fetch_all(MYSQLI_ASSOC);
             }
 
             $result->free_result();
         }
 
-        $data[Query_Result::NUM_ROWS] = count($data[Query_Result::ROWS]);
-        $data[Query_Result::FOUND_ROWS] = $data[Query_Result::NUM_ROWS];
+        $data[QueryResult::NUM_ROWS] = count($data[QueryResult::ROWS]);
+        $data[QueryResult::FOUND_ROWS] = $data[QueryResult::NUM_ROWS];
 
         return $data;
     }

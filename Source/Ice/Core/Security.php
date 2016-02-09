@@ -3,6 +3,8 @@
 namespace Ice\Core;
 
 use Ice\Core;
+use Ice\Core\Model\Security_Account;
+use Ice\Core\Model\Security_User;
 use Ice\Exception\Access_Denied_Security;
 
 abstract class Security extends Container

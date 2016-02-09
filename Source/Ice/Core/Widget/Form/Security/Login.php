@@ -2,6 +2,8 @@
 
 namespace Ice\Core;
 
+use Ice\Core\Model\Security_Account;
+
 abstract class Widget_Form_Security_Login extends Widget_Security
 {
     /**

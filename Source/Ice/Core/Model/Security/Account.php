@@ -1,6 +1,8 @@
 <?php
 
-namespace Ice\Core;
+namespace Ice\Core\Model;
+
+use Ice\Core\Model;
 
 interface Security_Account
 {
@@ -12,7 +14,7 @@ interface Security_Account
     public function isExpired();
 
     /**
-     * @return Security_User|Model
+     * @return User|Model
      */
     public function getUser();
 }

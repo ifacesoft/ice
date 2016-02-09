@@ -276,7 +276,7 @@ class Query
     /**
      * Return data source name
      *
-     * @return Data_Source
+     * @return DataSource
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
@@ -285,7 +285,7 @@ class Query
      */
     public function getDataSource()
     {
-        return Data_Source::getInstance($this->getDataSourceKey());
+        return DataSource::getInstance($this->getDataSourceKey());
     }
 
     /**
@@ -347,7 +347,7 @@ class Query
      * Execute query
      *
      * @param  int $ttl
-     * @return Query_Result
+     * @return QueryResult
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *

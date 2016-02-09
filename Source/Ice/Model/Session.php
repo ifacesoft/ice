@@ -19,7 +19,7 @@ class Session extends Model
     protected static function config()
     {
         return [
-		    'dataSourceKey' => 'Ice\Data\Source\Mysqli/default.ebs_stat',
+		    'dataSourceKey' => 'Ice\DataSource\Mysqli/default.ebs_stat',
 		    'scheme' => [
 		        'tableName' => 'ice_session',
 		        'engine' => 'InnoDB',

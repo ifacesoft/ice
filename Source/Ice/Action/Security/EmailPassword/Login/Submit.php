@@ -4,7 +4,7 @@ namespace Ice\Action;
 
 use Ice\Core\Logger;
 use Ice\Core\Model;
-use Ice\Core\Security_Account;
+use Ice\Core\Model\Security_Account;
 use Ice\Widget\Security_EmailPassword_Login;
 
 class Security_EmailPassword_Login_Submit extends Security

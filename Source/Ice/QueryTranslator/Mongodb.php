@@ -7,13 +7,13 @@
  * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
-namespace Ice\Query\Translator;
+namespace Ice\QueryTranslator;
 
 use Ice\Core\Debuger;
 use Ice\Core\Exception;
 use Ice\Core\Model;
 use Ice\Core\QueryBuilder;
-use Ice\Core\Query_Translator;
+use Ice\Core\QueryTranslator;
 use Ice\Helper\Mapping;
 
 /**
@@ -21,14 +21,14 @@ use Ice\Helper\Mapping;
  *
  * Translate with query translator mysqli
  *
- * @see Ice\Core\Query_Translator
+ * @see Ice\Core\QueryTranslator
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
  * @package    Ice
- * @subpackage Query_Translator
+ * @subpackage QueryTranslator
  */
-class Mongodb extends Query_Translator
+class Mongodb extends QueryTranslator
 {
     const DEFAULT_KEY = 'instance';
 

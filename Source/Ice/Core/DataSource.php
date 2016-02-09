@@ -13,7 +13,7 @@ use Ice\Core;
 use Ice\Helper\String;
 
 /**
- * Class Data_Source
+ * Class DataSource
  *
  * Core data source container abstract class
  *
@@ -24,7 +24,7 @@ use Ice\Helper\String;
  * @package    Ice
  * @subpackage Core
  */
-abstract class Data_Source extends Container
+abstract class DataSource extends Container
 {
     use Stored;
 
@@ -44,10 +44,10 @@ abstract class Data_Source extends Container
     /**
      * Return instance of data source
      *
-     * @param  Data_Source|string|null $key
+     * @param  DataSource|string|null $key
      * @param  null $ttl
      * @param array $params
-     * @return Data_Source
+     * @return DataSource
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
@@ -72,7 +72,7 @@ abstract class Data_Source extends Container
     protected static function getDefaultKey()
     {
         /**
-         * @var Data_Source $dataSourceClass
+         * @var DataSource $dataSourceClass
          */
         $dataSourceClass = self::getClass();
 
@@ -91,12 +91,12 @@ abstract class Data_Source extends Container
     public static function getDefaultClassKey()
     {
         /**
-         * @var Data_Source $dataSourceClass
+         * @var DataSource $dataSourceClass
          */
         $dataSourceClass = self::getClass();
 
         $key = 'defaultClassKey_' . $dataSourceClass;
-        $repository = Data_Source::getRepository();
+        $repository = DataSource::getRepository();
 
         if ($defaultClassKey = $repository->get($key)) {
             return $defaultClassKey;
@@ -256,7 +256,7 @@ abstract class Data_Source extends Container
      * Execute native query
      *
      * @param $query
-     * @return Query_Result
+     * @return QueryResult
      */
     abstract public function executeNativeQuery($query);
 
@@ -265,7 +265,7 @@ abstract class Data_Source extends Container
      *
      * @param Query $query
      * @param $ttl
-     * @return Query_Result
+     * @return QueryResult
      * @throws \Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
@@ -277,7 +277,7 @@ abstract class Data_Source extends Container
         $startTime = Profiler::getMicrotime();
         $startMemory = Profiler::getMemoryGetUsage();
 
-        /** @var Query_Result $queryResult */
+        /** @var QueryResult $queryResult */
         $queryResult = null;
 
         $queryType = $query->getQueryBuilder()->getQueryType();
@@ -289,7 +289,7 @@ abstract class Data_Source extends Container
                 || $queryType == QueryBuilder::TYPE_CREATE
                 || $queryType == QueryBuilder::TYPE_DROP
             ) {
-                $queryResult = Query_Result::create($query, $this->$queryCommand($query));
+                $queryResult = QueryResult::create($query, $this->$queryCommand($query));
 
                 Profiler::setPoint($queryResult->__toString(), $startTime, $startMemory);
                 Logger::log(Profiler::getReport($queryResult->__toString()), 'query (not cache)', 'WARN');
@@ -299,7 +299,7 @@ abstract class Data_Source extends Container
 
             switch ($queryType) {
                 case QueryBuilder::TYPE_SELECT:
-                    $cacher = Query_Result::getCacher($this->getDataSourceKey());
+                    $cacher = QueryResult::getCacher($this->getDataSourceKey());
                     $queryHash = $query->getFullHash();
 
                     if ($queryResult = $cacher->get($queryHash)) {
@@ -308,7 +308,7 @@ abstract class Data_Source extends Container
                         return $queryResult;
                     }
 
-                    $queryResult = Query_Result::create($query, $this->$queryCommand($query));
+                    $queryResult = QueryResult::create($query, $this->$queryCommand($query));
                     Profiler::setPoint($queryResult->__toString(), $startTime, $startMemory);
                     Logger::log(Profiler::getReport($queryResult->__toString()/* . "\n". print_r($queryResult->getRows(), true)*/), 'query (new)', 'INFO');
 
@@ -318,7 +318,7 @@ abstract class Data_Source extends Container
                 case QueryBuilder::TYPE_INSERT:
                 case QueryBuilder::TYPE_UPDATE:
                 case QueryBuilder::TYPE_DELETE:
-                    $queryResult = Query_Result::create($query, $this->$queryCommand($query))->invalidate();
+                    $queryResult = QueryResult::create($query, $this->$queryCommand($query))->invalidate();
                     Profiler::setPoint($queryResult->__toString(), $startTime, $startMemory);
                     Logger::log(Profiler::getReport($queryResult->__toString()), 'query (new)', 'INFO');
                     return $queryResult;
@@ -407,7 +407,7 @@ abstract class Data_Source extends Container
     /**
      * Return query translator class
      *
-     * @return Query_Translator
+     * @return QueryTranslator
      *
      * @author anonymous <email>
      *

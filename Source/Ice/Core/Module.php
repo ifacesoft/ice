@@ -135,7 +135,7 @@ class Module extends Config
 
     public function getDataSources()
     {
-        return $this->gets(Data_Source::getClass());
+        return $this->gets(DataSource::getClass());
     }
 
     public function getModelClass($tableName, $dataSourceKey)
@@ -303,7 +303,7 @@ class Module extends Config
         $tables = [];
 
         foreach ($this->getDataSourceKeys() as $dataSourceKey) {
-            $tables[$dataSourceKey] = Data_Source::getInstance($dataSourceKey)->getTables($this);
+            $tables[$dataSourceKey] = DataSource::getInstance($dataSourceKey)->getTables($this);
         }
 
         return $tables;

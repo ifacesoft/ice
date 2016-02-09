@@ -1,24 +1,24 @@
 <?php
 
-namespace Ice\Data\Source;
+namespace Ice\DataSource;
 
 use Ice\Core\DataProvider;
-use Ice\Core\Data_Source;
+use Ice\Core\DataSource;
 use Ice\Core\Logger;
 use Ice\Core\Model;
 use Ice\Core\Module;
 use Ice\Core\Query;
-use Ice\Core\Query_Result;
-use Ice\Core\Query_Translator;
+use Ice\Core\QueryResult;
+use Ice\Core\QueryTranslator;
 use Ice\Helper\Json;
 use Ice\Helper\String;
 use MongoCursor;
 use MongoId;
 
-class Mongodb extends Data_Source
+class Mongodb extends DataSource
 {
     const DATA_PROVIDER_CLASS = 'Ice\DataProvider\Mongodb';
-    const QUERY_TRANSLATOR_CLASS = 'Ice\Query\Translator\Mongodb';
+    const QUERY_TRANSLATOR_CLASS = 'Ice\QueryTranslator\Mongodb';
 
     /**
      * Return instance of mongodb
@@ -64,7 +64,7 @@ class Mongodb extends Data_Source
 
         $pkFieldName = count($pkFieldNames) == 1 ? reset($pkFieldNames) : null;
 
-        $data[Query_Result::ROWS] = [];
+        $data[QueryResult::ROWS] = [];
 
         $filter = isset($statement['where']) && isset($statement['where']['data'])
             ? $statement['where']['data']
@@ -92,7 +92,7 @@ class Mongodb extends Data_Source
             foreach ($cursor as $row) {
                 $pkFieldValue = $row['_id']->{'$id'};
                 unset($row['_id']);
-                $data[Query_Result::ROWS][$pkFieldValue] = array_merge([$pkFieldName => $pkFieldValue], $row);
+                $data[QueryResult::ROWS][$pkFieldValue] = array_merge([$pkFieldName => $pkFieldValue], $row);
             }
         } catch (\MongoException $e) {
             Logger::getInstance(__CLASS__)->exception(
@@ -106,7 +106,7 @@ class Mongodb extends Data_Source
             );
         }
 
-        $data[Query_Result::NUM_ROWS] = count($data[Query_Result::ROWS]);
+        $data[QueryResult::NUM_ROWS] = count($data[QueryResult::ROWS]);
 
         return $data;
     }
@@ -244,17 +244,17 @@ class Mongodb extends Data_Source
 
         $pkFieldName = count($pkFieldNames) == 1 ? reset($pkFieldNames) : null;
 
-        $data[Query_Result::ROWS] = [];
+        $data[QueryResult::ROWS] = [];
 
         foreach ($statement['insert']['data'] as $row) {
             $pkFieldValue = $row['_id']->{'$id'};
             unset($row['_id']);
             $insertId = [$pkFieldName => $pkFieldValue];
-            $data[Query_Result::INSERT_ID][] = $insertId;
-            $data[Query_Result::ROWS][$pkFieldValue] = array_merge($insertId, $row);
+            $data[QueryResult::INSERT_ID][] = $insertId;
+            $data[QueryResult::ROWS][$pkFieldValue] = array_merge($insertId, $row);
         }
 
-        $data[Query_Result::AFFECTED_ROWS] = count($statement['insert']['data']);
+        $data[QueryResult::AFFECTED_ROWS] = count($statement['insert']['data']);
 
         return $data;
     }
@@ -283,7 +283,7 @@ class Mongodb extends Data_Source
 
         $this->getConnection()->$tableName->update($statement['where']['data'], $statement['update']['data']);
 
-        $data[Query_Result::AFFECTED_ROWS] = 1;
+        $data[QueryResult::AFFECTED_ROWS] = 1;
 
         return $data;
     }
@@ -312,7 +312,7 @@ class Mongodb extends Data_Source
 
         $this->getConnection()->$tableName->remove($statement['where']['data']);
 
-        $data[Query_Result::AFFECTED_ROWS] = 1;
+        $data[QueryResult::AFFECTED_ROWS] = 1;
 
         return $data;
     }
@@ -467,7 +467,7 @@ class Mongodb extends Data_Source
     /**
      * Return query translator class
      *
-     * @return Query_Translator
+     * @return QueryTranslator
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *

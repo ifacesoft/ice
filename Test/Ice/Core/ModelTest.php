@@ -2,7 +2,7 @@
 
 namespace Ice\Core;
 
-use Ice\Data\Source\Mongodb;
+use Ice\DataSource\Mongodb;
 use Ice\Helper\String;
 use Ice\Model\Test;
 use PHPUnit_Framework_TestCase;
@@ -65,7 +65,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
             $test5 = Test::getSelectQuery('*', ['name2' => 'test3'], null, $dataSourceKey);
             $this->assertEquals($test4, $test5);
 
-            if ($dataSourceKey == 'Ice\Data\Source\Mongodb/default.test') {
+            if ($dataSourceKey == 'Ice\DataSource\Mongodb/default.test') {
                 continue;
             }
 

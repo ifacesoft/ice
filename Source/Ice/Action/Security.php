@@ -5,12 +5,12 @@ namespace Ice\Action;
 use Ebs\Model\Log_Security;
 use Ice\Core;
 use Ice\Core\Config;
-use Ice\Core\Data_Source;
+use Ice\Core\DataSource;
 use Ice\Core\Exception;
 use Ice\Core\Model;
 use Ice\Core\Security as Core_Security;
-use Ice\Core\Security_Account;
-use Ice\Core\Security_User;
+use Ice\Core\Model\Security_Account;
+use Ice\Core\Model\Security_User;
 use Ice\Core\Widget_Security;
 use Ice\Helper\Logger;
 use Ice\Helper\String;
@@ -74,7 +74,7 @@ abstract class Security extends Widget_Event
      *
      * @param array $accountData
      * @param array $input user defaults
-     * @param Data_Source|string|null $dataSource
+     * @param DataSource|string|null $dataSource
      * @return Model|Security_Account
      * @throws \Exception
      */
@@ -91,8 +91,8 @@ abstract class Security extends Widget_Event
             'form_class' => get_class($this)
         ]);
 
-        /** @var Data_Source $dataSource */
-        $dataSource = Data_Source::getInstance($dataSource);
+        /** @var DataSource $dataSource */
+        $dataSource = DataSource::getInstance($dataSource);
 
         try {
             $dataSource->beginTransaction();

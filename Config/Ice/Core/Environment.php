@@ -87,7 +87,7 @@ return [
             'Ice\Core\Render' => [
                 'instance' => 'Ice:Registry',
             ],
-            'Ice\Core\Query_Translator' => [
+            'Ice\Core\QueryTranslator' => [
                 'instance' => 'Ice:Repository',
             ],
             'Ice\Core\Query_Scope' => [
@@ -101,7 +101,7 @@ return [
             'Ice\Core\Code_Generator' => [
                 'instance' => 'Ice:Repository',
             ],
-            'Ice\Core\Data_Source' => [
+            'Ice\Core\DataSource' => [
                 'instance' => 'Ice:Repository',
                 'cache' => 'Ice:File'
             ],
@@ -190,7 +190,7 @@ return [
             'Ice\Core\Render' => [
                 'instance' => 'Ice:Registry',
             ],
-            'Ice\Core\Query_Translator' => [
+            'Ice\Core\QueryTranslator' => [
                 'instance' => 'Ice:File',
             ],
             'Ice\Core\Query_Scope' => [
@@ -204,7 +204,7 @@ return [
             'Ice\Core\Code_Generator' => [
                 'instance' => 'Ice:File',
             ],
-            'Ice\Core\Data_Source' => [
+            'Ice\Core\DataSource' => [
                 'instance' => 'Ice:File',
                 'cache' => 'Ice:File'
             ],
@@ -292,7 +292,7 @@ return [
             'Ice\Core\Render' => [
                 'instance' => 'Ice:Registry'
             ],
-            'Ice\Core\Query_Translator' => [
+            'Ice\Core\QueryTranslator' => [
                 'instance' => 'Ice:Registry',
             ],
             'Ice\Core\Query_Scope' => [
@@ -306,7 +306,7 @@ return [
             'Ice\Core\Code_Generator' => [
                 'instance' => 'Ice:Registry',
             ],
-            'Ice\Core\Data_Source' => [
+            'Ice\Core\DataSource' => [
                 'instance' => 'Ice:Registry',
                 'cache' => 'Ice:Registry'
             ],

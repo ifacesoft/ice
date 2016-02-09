@@ -30,8 +30,9 @@ class DataSource extends SessionHandler
 {
     use Core;
 
-    private $lifetime =  2592000;
+    private $lifetime = 2592000;
     private $session = null;
+
     /**
      * PHP >= 5.4.0<br/>
      * Close the session
@@ -145,21 +146,10 @@ class DataSource extends SessionHandler
         if ($this->session) {
             if ($this->session['session_lifetime'] > strtotime($this->session['session_updated_at']) - strtotime($this->session['session_created_at'])) {
                 return $this->session['session_data'];
+            } else {
+                session_regenerate_id();
             }
         }
-
-        $this->session = [
-            'session_pk' => $session_id,
-            'session_data' => '',
-            'session_updated_at' => Date::get(),
-            'session_lifetime' => $this->lifetime,
-            'ip' => Request::ip(),
-            'agent' => Request::agent(),
-            'user__fk' => Security::getInstance()->getUser()->getPkValue(),
-            'views' => 0
-        ];
-
-        Session::createQueryBuilder()->getInsertQuery($this->session)->getQueryResult();
 
         return '';
     }
@@ -189,13 +179,34 @@ class DataSource extends SessionHandler
      */
     public function write($session_id, $session_data)
     {
-        Session::createQueryBuilder()
-            ->eq(['/pk' => $session_id])
-            ->getUpdateQuery([
-                '/data' => $session_data,
-                '/updated_at' => Date::get(),
-                'views' => ++$this->session['views']
-            ])
-            ->getQueryResult();
+        if (isset($this->session['session_pk']) && $this->session['session_pk'] == $session_id) {
+            $this->session['session_data'] = $session_data;
+            $this->session['session_updated_at'] = Date::get();
+            $this->session['views']++;
+
+            Session::createQueryBuilder()
+                ->eq(['/pk' => $session_id])
+                ->getUpdateQuery($this->session)
+                ->getQueryResult();
+        } else {
+            $this->session = [
+                'session_pk' => $session_id,
+                'session_data' => $session_data,
+                'session_updated_at' => Date::get(),
+                'session_lifetime' => $this->lifetime,
+                'ip' => Request::ip(),
+                'agent' => Request::agent(),
+                'user__fk' => Security::getInstance()->getUser()->getPkValue(),
+                'views' => 1,
+            ];
+
+            if (isset($this->session['session_pk'])) {
+                $this->session['session__fk'] = $this->session['session_pk'];
+            }
+
+            Session::createQueryBuilder()
+                ->getInsertQuery($this->session)
+                ->getQueryResult();
+        }
     }
 }

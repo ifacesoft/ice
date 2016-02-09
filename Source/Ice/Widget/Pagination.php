@@ -4,7 +4,7 @@ namespace Ice\Widget;
 
 use Ice\Action\Render;
 use Ice\Core\QueryBuilder;
-use Ice\Core\Query_Result;
+use Ice\Core\QueryResult;
 use Ice\Core\Request;
 use Ice\Core\Widget;
 use Ice\DataProvider\Request as DataProvider_Request;
@@ -379,7 +379,7 @@ class Pagination extends Widget
         return $this;
     }
 
-    public function setQueryResult(Query_Result $queryResult)
+    public function setQueryResult(QueryResult $queryResult)
     {
         parent::setQueryResult($queryResult);
 

@@ -76,7 +76,7 @@ class Orm_Sync_DataSource extends Action
 //                $tableSource = &$sourceTables[$tableName]['source'];
 //
 //                if ($table['sourceHash'] != $tableSourceHash) {
-//                    Data_Source::getLogger()->info([
+//                    DataSource::getLogger()->info([
 //                        'Update source for model {$0}: {$1}',
 //                        [
 //                            $sourceTables[$tableName]['modelClass'],
@@ -92,7 +92,7 @@ class Orm_Sync_DataSource extends Action
 //                $tableIndexes = &$sourceTables[$tableName]['indexes'];
 //
 //                if ($table['indexesHash'] != $tableIndexesHash) {
-//                    Data_Source::getLogger()->info([
+//                    DataSource::getLogger()->info([
 //                        'Update indexes for model {$0}: {$1}',
 //                        [$sourceTables[$tableName]['modelClass'], Json::encode($table['indexes'])]
 //                    ]);
@@ -112,7 +112,7 @@ class Orm_Sync_DataSource extends Action
 //                    $table['referencesHash'] = '';
 //                }
 //                if ($table['referencesHash'] != $sourceTables[$tableName]['referencesHash']) {
-//                    Data_Source::getLogger()->info([
+//                    DataSource::getLogger()->info([
 //                        'Update references for model {$0}: {$1}',
 //                        [$sourceTables[$tableName]['modelClass'], Json::encode($table['references'])]
 //                    ]);
@@ -138,7 +138,7 @@ class Orm_Sync_DataSource extends Action
 //                        $references[$referenceClassName] = $columnName;
 //                    }
 //                    $table['oneToMany'] = $references;
-//                    Data_Source::getLogger()->info([
+//                    DataSource::getLogger()->info([
 //                        'Update OneToMany references for model {$0}: {$1}',
 //                        [$sourceTables[$tableName]['modelClass'], Json::encode($table['oneToMany'])]
 //                    ]);
@@ -164,7 +164,7 @@ class Orm_Sync_DataSource extends Action
 //                        $references[$referenceClassName] = $columnName;
 //                    }
 //                    $table['manyToOne'] = $references;
-//                    Data_Source::getLogger()->info([
+//                    DataSource::getLogger()->info([
 //                        'Update ManyToOne references for model {$0}: {$1}',
 //                        [$sourceTables[$tableName]['modelClass'], Json::encode($table['manyToOne'])]
 //                    ]);
@@ -194,7 +194,7 @@ class Orm_Sync_DataSource extends Action
 //                        $references[$referenceClassName] = $linkClassName;
 //                    }
 //                    $table['manyToMany'] = $references;
-//                    Data_Source::getLogger()->info([
+//                    DataSource::getLogger()->info([
 //                        'Update ManyToMany references for model {$0}: {$1}',
 //                        [$sourceTables[$tableName]['modelClass'], Json::encode($table['manyToMany'])]
 //                    ]);
@@ -211,7 +211,7 @@ class Orm_Sync_DataSource extends Action
 //                            'source' => $column['source'],
 //                            'sourceHash' => $column['sourceHash']
 //                        ];
-//                        Data_Source::getLogger()->info([
+//                        DataSource::getLogger()->info([
 //                            'Create field {$0} for model {$1}',
 //                            [$column['fieldName'], $sourceTables[$tableName]['modelClass']]
 //                        ]);
@@ -223,7 +223,7 @@ class Orm_Sync_DataSource extends Action
 //                    $columnSource = &$sourceTables[$tableName]['columns'][$columnName]['source'];
 //
 //                    if ($column['sourceHash'] != $columnSourceHash) {
-//                        Data_Source::getLogger()->info([
+//                        DataSource::getLogger()->info([
 //                            'Update field {$0} for model {$1}: {$2}',
 //                            [
 //                                $column['fieldName'],
@@ -240,7 +240,7 @@ class Orm_Sync_DataSource extends Action
 //                }
 //
 //                foreach ($dataSourceColumns as $columnName => $column) {
-//                    Data_Source::getLogger()->info([
+//                    DataSource::getLogger()->info([
 //                        'Remove field {$0} for model {$1}',
 //                        [$column['fieldName'], $sourceTables[$tableName]['modelClass']]
 //                    ]);

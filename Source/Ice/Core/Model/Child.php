@@ -29,7 +29,7 @@ abstract class Model_Child extends Model
     /**
      * Return query for get root Model
      *
-     * @return Query_Result
+     * @return QueryResult
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *

@@ -26,7 +26,7 @@ use Ice\Helper\Serializer;
  * @package    Ice
  * @subpackage Core
  */
-class Query_Result implements Cacheable
+class QueryResult implements Cacheable
 {
     use Stored;
 
@@ -44,13 +44,13 @@ class Query_Result implements Cacheable
      * @var array
      */
     protected $_default = [
-        Query_Result::ROWS => [],
-        Query_Result::NUM_ROWS => 0,
-        Query_Result::AFFECTED_ROWS => 0,
-        Query_Result::FOUND_ROWS => 0,
-        Query_Result::INSERT_ID => null,
-        Query_Result::QUERY_BODY => null,
-        Query_Result::QUERY_PARAMS => []
+        QueryResult::ROWS => [],
+        QueryResult::NUM_ROWS => 0,
+        QueryResult::AFFECTED_ROWS => 0,
+        QueryResult::FOUND_ROWS => 0,
+        QueryResult::INSERT_ID => null,
+        QueryResult::QUERY_BODY => null,
+        QueryResult::QUERY_PARAMS => []
     ];
 
     /**
@@ -88,7 +88,7 @@ class Query_Result implements Cacheable
      *
      * @param  Query $query
      * @param  array $result
-     * @return Query_Result
+     * @return QueryResult
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
@@ -96,7 +96,7 @@ class Query_Result implements Cacheable
      */
     public static function create(Query $query, array $result = [])
     {
-        $queryResult = new Query_Result();
+        $queryResult = new QueryResult();
 
         $queryResult->query = $query;
         $queryResult->result = Arrays::defaults($queryResult->_default, $result);
@@ -207,7 +207,7 @@ class Query_Result implements Cacheable
      */
     public function getNumRows()
     {
-        return $this->result[Query_Result::NUM_ROWS];
+        return $this->result[QueryResult::NUM_ROWS];
     }
 
     /**
@@ -224,12 +224,12 @@ class Query_Result implements Cacheable
     public function delete($pk = null)
     {
         if (empty($pk)) {
-            $this->result[Query_Result::ROWS] = [];
+            $this->result[QueryResult::ROWS] = [];
             return [];
         }
 
-        $row = $this->result[Query_Result::ROWS][$pk];
-        unset($this->result[Query_Result::ROWS][$pk]);
+        $row = $this->result[QueryResult::ROWS][$pk];
+        unset($this->result[QueryResult::ROWS][$pk]);
 
         return $row;
     }
@@ -239,7 +239,7 @@ class Query_Result implements Cacheable
      *
      * @param  $transformation
      * @param  $params
-     * @return Query_Result
+     * @return QueryResult
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
@@ -260,7 +260,7 @@ class Query_Result implements Cacheable
      * Filter data
      *
      * @param  $filterScheme
-     * @return Query_Result
+     * @return QueryResult
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
@@ -270,7 +270,7 @@ class Query_Result implements Cacheable
     public function filter($filterScheme)
     {
         $data = clone $this;
-        $data->result[Query_Result::ROWS] = Arrays::filterRows($data->result[Query_Result::ROWS], $filterScheme);
+        $data->result[QueryResult::ROWS] = Arrays::filterRows($data->result[QueryResult::ROWS], $filterScheme);
         return $data;
     }
 
@@ -291,7 +291,7 @@ class Query_Result implements Cacheable
      */
     public function offsetGet($offset)
     {
-        return $this->offsetExists($offset) ? $this->result[Query_Result::ROWS][$offset] : null;
+        return $this->offsetExists($offset) ? $this->result[QueryResult::ROWS][$offset] : null;
     }
 
     /**
@@ -314,7 +314,7 @@ class Query_Result implements Cacheable
      */
     public function offsetExists($offset)
     {
-        return isset($this->result[Query_Result::ROWS][$offset]);
+        return isset($this->result[QueryResult::ROWS][$offset]);
     }
 
     /**
@@ -338,9 +338,9 @@ class Query_Result implements Cacheable
     public function offsetSet($offset, $value)
     {
         if (is_null($offset)) {
-            $this->result[Query_Result::ROWS][] = $value;
+            $this->result[QueryResult::ROWS][] = $value;
         } else {
-            $this->result[Query_Result::ROWS][$offset] = $value;
+            $this->result[QueryResult::ROWS][$offset] = $value;
         }
     }
 
@@ -361,7 +361,7 @@ class Query_Result implements Cacheable
      */
     public function offsetUnset($offset)
     {
-        unset($this->result[Query_Result::ROWS][$offset]);
+        unset($this->result[QueryResult::ROWS][$offset]);
     }
 
     /**
@@ -381,7 +381,7 @@ class Query_Result implements Cacheable
      */
     public function count()
     {
-        return count($this->result[Query_Result::ROWS]);
+        return count($this->result[QueryResult::ROWS]);
     }
 
     /**
@@ -433,7 +433,7 @@ class Query_Result implements Cacheable
      */
     public function getInsertId()
     {
-        return $this->result[Query_Result::INSERT_ID];
+        return $this->result[QueryResult::INSERT_ID];
     }
 
     /**
@@ -448,7 +448,7 @@ class Query_Result implements Cacheable
      */
     public function getRandKey()
     {
-        return array_rand($this->getResult()[Query_Result::ROWS]);
+        return array_rand($this->getResult()[QueryResult::ROWS]);
     }
 
     /**
@@ -463,7 +463,7 @@ class Query_Result implements Cacheable
      */
     public function getAffectedRows()
     {
-        return $this->result[Query_Result::AFFECTED_ROWS];
+        return $this->result[QueryResult::AFFECTED_ROWS];
     }
 
     /**
@@ -478,7 +478,7 @@ class Query_Result implements Cacheable
      */
     public function getQueryBody()
     {
-        return $this->result[Query_Result::QUERY_BODY];
+        return $this->result[QueryResult::QUERY_BODY];
     }
 
     /**
@@ -493,7 +493,7 @@ class Query_Result implements Cacheable
      */
     public function getQueryParams()
     {
-        return $this->result[Query_Result::QUERY_PARAMS];
+        return $this->result[QueryResult::QUERY_PARAMS];
     }
 
     /**
@@ -535,10 +535,10 @@ class Query_Result implements Cacheable
         try {
             $string = print_r($this->getQuery()->getBody(), true) .
                 ' (' . implode(', ', $this->getQuery()->getBinds()) . ') result: \'' .
-                Query_Result::NUM_ROWS . '\' => ' . $this->getNumRows() . ', \'' .
-                Query_Result::AFFECTED_ROWS . '\' => ' . $this->getAffectedRows() . ', \'' .
-                Query_Result::FOUND_ROWS . '\' => ' . $this->getFoundRows() . ', \'' .
-                Query_Result::INSERT_ID . '\' => ' . print_r($this->getInsertId(), true);
+                QueryResult::NUM_ROWS . '\' => ' . $this->getNumRows() . ', \'' .
+                QueryResult::AFFECTED_ROWS . '\' => ' . $this->getAffectedRows() . ', \'' .
+                QueryResult::FOUND_ROWS . '\' => ' . $this->getFoundRows() . ', \'' .
+                QueryResult::INSERT_ID . '\' => ' . print_r($this->getInsertId(), true);
         } catch (\Exception $e) {
             Logger::getInstance(__CLASS__)->error('fail', __FILE__, __LINE__, $e);
         }
@@ -548,7 +548,7 @@ class Query_Result implements Cacheable
 
     public function getFoundRows()
     {
-        return $this->result[Query_Result::FOUND_ROWS];
+        return $this->result[QueryResult::FOUND_ROWS];
     }
     //
     //    public function getPagination()

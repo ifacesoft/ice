@@ -2291,7 +2291,7 @@
                          coveredelements="23"/>
             </file>
             <file name="/home/dp/PhpstormProjects/ice/Ice/Source/Ice/Core/Data/Source.php">
-                <class name="Data_Source" namespace="Ice\Core" fullPackage="Ice.Core" package="Ice" subpackage="Core">
+                <class name="DataSource" namespace="Ice\Core" fullPackage="Ice.Core" package="Ice" subpackage="Core">
                     <metrics methods="11" coveredmethods="4" conditionals="0" coveredconditionals="0" statements="82"
                              coveredstatements="48" elements="93" coveredelements="52"/>
                 </class>
@@ -4172,7 +4172,7 @@
                          coveredelements="166"/>
             </file>
             <file name="/home/dp/PhpstormProjects/ice/Ice/Source/Ice/Core/Query/Result.php">
-                <class name="Query_Result" namespace="Ice\Core" fullPackage="Ice.Core" package="Ice" subpackage="Core">
+                <class name="QueryResult" namespace="Ice\Core" fullPackage="Ice.Core" package="Ice" subpackage="Core">
                     <metrics methods="28" coveredmethods="9" conditionals="0" coveredconditionals="0" statements="72"
                              coveredstatements="23" elements="100" coveredelements="32"/>
                 </class>
@@ -4281,7 +4281,7 @@
                          coveredelements="32"/>
             </file>
             <file name="/home/dp/PhpstormProjects/ice/Ice/Source/Ice/Core/Query/Translator.php">
-                <class name="Query_Translator" namespace="Ice\Core" fullPackage="Ice.Core" package="Ice"
+                <class name="QueryTranslator" namespace="Ice\Core" fullPackage="Ice.Core" package="Ice"
                        subpackage="Core">
                     <metrics methods="4" coveredmethods="3" conditionals="0" coveredconditionals="0" statements="22"
                              coveredstatements="19" elements="26" coveredelements="22"/>
@@ -5935,9 +5935,9 @@
                          coveredelements="25"/>
             </file>
         </package>
-        <package name="Ice\Data\Source">
+        <package name="Ice\DataSource">
             <file name="/home/dp/PhpstormProjects/ice/Ice/Source/Ice/Data/Source/Mongodb.php">
-                <class name="Mongodb" namespace="Ice\Data\Source">
+                <class name="Mongodb" namespace="Ice\DataSource">
                     <metrics methods="18" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="165"
                              coveredstatements="0" elements="183" coveredelements="0"/>
                 </class>
@@ -6129,8 +6129,8 @@
                          coveredelements="0"/>
             </file>
             <file name="/home/dp/PhpstormProjects/ice/Ice/Source/Ice/Data/Source/Mysqli.php">
-                <class name="Mysqli" namespace="Ice\Data\Source" fullPackage="Ice.Data_Source" package="Ice"
-                       subpackage="Data_Source">
+                <class name="Mysqli" namespace="Ice\DataSource" fullPackage="Ice.DataSource" package="Ice"
+                       subpackage="DataSource">
                     <metrics methods="18" coveredmethods="4" conditionals="0" coveredconditionals="0" statements="356"
                              coveredstatements="76" elements="374" coveredelements="80"/>
                 </class>
@@ -7839,10 +7839,10 @@
                          coveredelements="64"/>
             </file>
         </package>
-        <package name="Ice\Query\Translator">
+        <package name="Ice\QueryTranslator">
             <file name="/home/dp/PhpstormProjects/ice/Ice/Source/Ice/Query/Translator/Sql.php">
-                <class name="Sql" namespace="Ice\Query\Translator" fullPackage="Ice.Query_Translator" package="Ice"
-                       subpackage="Query_Translator">
+                <class name="Sql" namespace="Ice\QueryTranslator" fullPackage="Ice.QueryTranslator" package="Ice"
+                       subpackage="QueryTranslator">
                     <metrics methods="14" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="226"
                              coveredstatements="102" elements="240" coveredelements="104"/>
                 </class>

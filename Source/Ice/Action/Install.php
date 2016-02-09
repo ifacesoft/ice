@@ -7,8 +7,8 @@ use Ice\Core\Config;
 use Ice\Core\Environment;
 use Ice\Core\Module;
 use Ice\Core\Route;
-use Ice\Data\Source\Mongodb;
-use Ice\Data\Source\Mysqli;
+use Ice\DataSource\Mongodb;
+use Ice\DataSource\Mysqli;
 use Ice\Helper\Console;
 use Ice\Helper\Directory;
 use Ice\Helper\File;
@@ -232,7 +232,7 @@ class Install extends Action
                 'description' => Json::decode(file_get_contents(MODULE_DIR . 'composer.json'))['description'],
                 'authors' => 'anonymous <email>',
                 'vcs' => $input['vcs'],
-                'Ice\Core\Data_Source' => [],
+                'Ice\Core\DataSource' => [],
             ],
             Module::$defaultConfig['module']
         );
@@ -281,7 +281,7 @@ class Install extends Action
                 default;
             }
 
-            $moduleConfig['module']['Ice\Core\Data_Source'] = [
+            $moduleConfig['module']['Ice\Core\DataSource'] = [
                 $dataSourceClass . '/default.' . $input['database'] => strtolower($input['alias'] . '_')
             ];
 

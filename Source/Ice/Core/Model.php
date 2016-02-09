@@ -1032,7 +1032,7 @@ abstract class Model
      * Create table by model
      *
      * @param  string|null $dataSourceKey
-     * @return Query_Result
+     * @return QueryResult
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
@@ -1049,7 +1049,7 @@ abstract class Model
      * Drop table by model
      *
      * @param  string|null $dataSourceKey
-     * @return Query_Result
+     * @return QueryResult
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
@@ -1072,7 +1072,7 @@ abstract class Model
     /**
      * Get dataSource for current model class
      *
-     * @return Data_Source
+     * @return DataSource
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
@@ -1086,10 +1086,10 @@ abstract class Model
         $parentModelName = get_parent_class($modelClass);
 
         if ($parentModelName == Model_Defined::getClass() || $parentModelName == Model_Factory::getClass()) {
-            return Data_Source::getInstance(Object::getClassName($parentModelName) . ':model/' . $modelClass);
+            return DataSource::getInstance(Object::getClassName($parentModelName) . ':model/' . $modelClass);
         }
 
-        return Data_Source::getInstance($modelClass::getDataSourceKey());
+        return DataSource::getInstance($modelClass::getDataSourceKey());
     }
 
     /**

@@ -21,9 +21,9 @@ return [
         'authors' => 'dp <denis.a.shestakov@gmail.com>',
         'vcs' => 'git',
         'source' => 'https://github.com/ifacesoft/Ice.git',
-        'Ice\Core\Data_Source' => [
-            'Ice\Data\Source\Mysqli/default.test' => 'ice_',
-            'Ice\Data\Source\Mongodb/default.test' => ''
+        'Ice\Core\DataSource' => [
+            'Ice\DataSource\Mysqli/default.test' => 'ice_',
+            'Ice\DataSource\Mongodb/default.test' => ''
         ],
         'configDir' => 'Config/',
         'sourceDir' => 'Source/',

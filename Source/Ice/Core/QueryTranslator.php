@@ -12,7 +12,7 @@ namespace Ice\Core;
 use Ice\Core;
 
 /**
- * Class Query_Translator
+ * Class QueryTranslator
  *
  * Core query translator abstract class
  *
@@ -23,7 +23,7 @@ use Ice\Core;
  * @package    Ice
  * @subpackage Core
  */
-abstract class Query_Translator extends Container
+abstract class QueryTranslator extends Container
 {
     use Stored;
 
@@ -33,7 +33,7 @@ abstract class Query_Translator extends Container
      * @param  null $key
      * @param  null $ttl
      * @param array $params
-     * @return Query_Translator
+     * @return QueryTranslator
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *

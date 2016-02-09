@@ -7,13 +7,13 @@
  * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
-namespace Ice\Query\Translator;
+namespace Ice\QueryTranslator;
 
 use Ice\Core\Exception;
 use Ice\Core\Model;
 use Ice\Core\Query;
 use Ice\Core\QueryBuilder;
-use Ice\Core\Query_Translator;
+use Ice\Core\QueryTranslator;
 use Ice\Helper\Mapping;
 
 /**
@@ -21,14 +21,14 @@ use Ice\Helper\Mapping;
  *
  * Translate with query translator mysqli
  *
- * @see Ice\Core\Query_Translator
+ * @see Ice\Core\QueryTranslator
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
  * @package    Ice
- * @subpackage Query_Translator
+ * @subpackage QueryTranslator
  */
-class Sql extends Query_Translator
+class Sql extends QueryTranslator
 {
     const SQL_CALC_FOUND_ROWS = 'SQL_CALC_FOUND_ROWS';
     const SQL_STATEMENT_CREATE = 'CREATE TABLE IF NOT EXISTS';

@@ -122,9 +122,9 @@ return [
         'en' => 'Validator:Not_Empty -> param \'{$0}\' with value \'{$1}\' is not valid',
         'ru' => 'Validator:Not_Empty -> param \'{$0}\' with value \'{$1}\' is not valid',
     ],
-    'Validator:Is_Query_Result -> param \'{$0}\' with value \'{$1}\' is not valid' => [
-        'en' => 'Validator:Is_Query_Result -> param \'{$0}\' with value \'{$1}\' is not valid',
-        'ru' => 'Validator:Is_Query_Result -> param \'{$0}\' with value \'{$1}\' is not valid',
+    'Validator:Is_QueryResult -> param \'{$0}\' with value \'{$1}\' is not valid' => [
+        'en' => 'Validator:Is_QueryResult -> param \'{$0}\' with value \'{$1}\' is not valid',
+        'ru' => 'Validator:Is_QueryResult -> param \'{$0}\' with value \'{$1}\' is not valid',
     ],
     'Validator:Is_Widget_Data -> param \'{$0}\' with value \'{$1}\' is not valid' => [
         'en' => 'Validator:Is_Widget_Data -> param \'{$0}\' with value \'{$1}\' is not valid',

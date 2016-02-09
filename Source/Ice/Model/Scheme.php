@@ -21,7 +21,7 @@ class Scheme extends Model
     protected static function config()
     {
         return [
-		    'dataSourceKey' => 'Ice\Data\Source\Mysqli/default.ebs_text',
+		    'dataSourceKey' => 'Ice\DataSource\Mysqli/default.ebs_text',
 		    'scheme' => [
 		        'tableName' => 'ice_scheme',
 		        'engine' => 'InnoDB',

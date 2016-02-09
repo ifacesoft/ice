@@ -385,7 +385,7 @@ abstract class Widget extends Container
         return $this;
     }
 
-    public function setQueryResult(Query_Result $queryResult)
+    public function setQueryResult(QueryResult $queryResult)
     {
         foreach ($this->getParts() as $part) {
             if (isset($part['options']['widget'])) {

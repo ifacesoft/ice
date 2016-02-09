@@ -1,6 +1,6 @@
 <?php
 
-namespace Ice\Core;
+namespace Ice\Core\Model;
 
 interface Security_User
 {
