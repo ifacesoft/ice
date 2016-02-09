@@ -15,6 +15,7 @@ class Mapping
     public static function columnNames($modelClass, $fieldNames)
     {
         $modelMapping = $modelClass::getScheme()->getFieldColumnMap();
+
         return array_map(
             function ($fieldName) use ($modelMapping) {
                 return $modelMapping[$fieldName];

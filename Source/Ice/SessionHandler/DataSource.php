@@ -1,11 +1,4 @@
 <?php
-/**
- * Ice core session class
- *
- * @link      http://www.iceframework.net
- * @copyright Copyright (c) 2014 Ifacesoft | dp <denis.a.shestakov@gmail.com>
- * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
- */
 
 namespace Ice\SessionHandler;
 
@@ -28,10 +21,7 @@ use Ice\Model\Session;
  */
 class DataSource extends SessionHandler
 {
-    use Core;
-
     private $lifetime = 2592000;
-    private $session = null;
 
     /**
      * PHP >= 5.4.0<br/>
@@ -152,15 +142,8 @@ class DataSource extends SessionHandler
                 session_regenerate_id();
             }
         } else {
-            $this->session = [
-                'session_data' => '',
-                'user__fk' => Security::getInstance()->getUser()->getPkValue(),
-                'session_updated_at' => Date::get(),
-                'session_lifetime' => $this->lifetime,
-                'ip' => Request::ip(),
-                'agent' => Request::agent(),
-                'views' => 0,
-            ];
+            $this->session = ['session_data' => ''];
+            $this->session = array_merge($this->session, $this->getConstFields());
         }
 
         return $this->session['session_data'];
@@ -193,9 +176,10 @@ class DataSource extends SessionHandler
     {
         $this->session['session_data'] = $session_data;
         $this->session['session_updated_at'] = Date::get();
-        $this->session['views']++;
 
         if (isset($this->session['session_pk']) && $this->session['session_pk'] == $session_id) {
+            $this->session['views']++;
+
             Session::createQueryBuilder()
                 ->eq(['/pk' => $session_id])
                 ->getUpdateQuery($this->session)
@@ -210,12 +194,28 @@ class DataSource extends SessionHandler
             unset($this->session['session_created_at']);
             unset($this->session['session_deleted_at']);
 
-            $this->session['user__fk'] = Security::getInstance()->getUser()->getPkValue();
-            $this->session['views'] = 1;
+            $this->session = array_merge($this->session, $this->getVarFields());
 
             Session::createQueryBuilder()
                 ->getInsertQuery($this->session)
                 ->getQueryResult();
         }
+    }
+
+    function getConstFields()
+    {
+        return [
+            'ip' => Request::ip(),
+            'agent' => Request::agent(),
+            'session_lifetime' => $this->lifetime
+        ];
+    }
+
+    function getVarFields()
+    {
+        return [
+            'user__fk' => Security::getInstance()->getUser()->getPkValue(),
+            'views' => 1
+        ];
     }
 }

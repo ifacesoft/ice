@@ -15,6 +15,8 @@ abstract class SessionHandler extends Container implements SessionHandlerInterfa
 {
     use Core;
 
+    protected $session = null;
+
     /**
      * Init object
      *
@@ -50,4 +52,8 @@ abstract class SessionHandler extends Container implements SessionHandlerInterfa
     {
         return 'default';
     }
+
+    abstract function getConstFields();
+
+    abstract function getVarFields();
 }
