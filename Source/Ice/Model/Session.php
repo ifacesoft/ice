@@ -72,6 +72,28 @@ class Session extends Model
 		                'type' => 'span',
 		            ],
 		        ],
+		        'session__fk' => [
+		            'scheme' => [
+		                'extra' => '',
+		                'type' => 'varbinary(128)',
+		                'dataType' => 'varbinary',
+		                'length' => '128',
+		                'characterSet' => null,
+		                'nullable' => true,
+		                'default' => null,
+		                'comment' => '',
+		            ],
+		            'fieldName' => 'session__fk',
+		            'Ice\Widget\Model_Form' => [
+		                'type' => 'text',
+		            ],
+		            'Ice\Core\Validator' => [
+		                'Ice:Length_Max' => 128,
+		            ],
+		            'Ice\Widget\Model_Table' => [
+		                'type' => 'span',
+		            ],
+		        ],
 		        'session_created_at' => [
 		            'scheme' => [
 		                'extra' => '',
@@ -302,16 +324,30 @@ class Session extends Model
 		                1 => 'session_pk',
 		            ],
 		        ],
-		        'FOREIGN KEY' => [],
+		        'FOREIGN KEY' => [
+		            'session__fk' => [
+		                'FK_ice_session_ice_session' => 'session__fk',
+		            ],
+		        ],
 		        'UNIQUE' => [],
 		    ],
-		    'references' => [],
+		    'references' => [
+		        'ice_session' => [
+		            'constraintName' => 'FK_ice_session_ice_session',
+		            'onUpdate' => 'NO ACTION',
+		            'onDelete' => 'NO ACTION',
+		        ],
+		    ],
 		    'relations' => [
-		        'oneToMany' => [],
-		        'manyToOne' => [],
+		        'oneToMany' => [
+		            'Ice\Model\Session' => 'session__fk',
+		        ],
+		        'manyToOne' => [
+		            'Ice\Model\Session' => 'session__fk',
+		        ],
 		        'manyToMany' => [],
 		    ],
-		    'revision' => '02051628_51k',
+		    'revision' => '02090848_zep',
 		];
     }
 }

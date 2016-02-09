@@ -71,7 +71,10 @@ class DataSource extends SessionHandler
      */
     public function destroy($session_id)
     {
-        Session::createQueryBuilder()->getDeleteQuery($session_id)->getQueryResult();
+        Session::createQueryBuilder()
+            ->eq(['/pk' => $session_id])
+            ->getUpdateQuery(['/deleted_at' => Date::get()])
+            ->getQueryResult();
 
     }
 
@@ -140,13 +143,14 @@ class DataSource extends SessionHandler
         $this->session = Session::createQueryBuilder()
             ->eq(['/pk' => $session_id])
             ->limit(1)
-            ->getSelectQuery(['/data', '/created_at', '/updated_at', '/lifetime', 'views'])
+            ->getSelectQuery(['/data', '/created_at', '/updated_at', '/deleted_at', '/lifetime', 'views', '/_fk'])
             ->getRow();
 
         if ($this->session) {
-            if ($this->session['session_lifetime'] > strtotime($this->session['session_updated_at']) - strtotime($this->session['session_created_at'])) {
+            if ($this->session['session_deleted_at'] == Date::ZERO && $this->session['session_lifetime'] > strtotime($this->session['session_updated_at']) - strtotime($this->session['session_created_at'])) {
                 return $this->session['session_data'];
             } else {
+                $this->session = ['session_pk' => $this->session['session_pk']];
                 session_regenerate_id();
             }
         }
@@ -190,6 +194,7 @@ class DataSource extends SessionHandler
                 ->getQueryResult();
         } else {
             $this->session = [
+                'session__fk' => isset($this->session['session_pk']) && $this->session['session_pk'] != $session_id ? $this->session['session_pk'] : null,
                 'session_pk' => $session_id,
                 'session_data' => $session_data,
                 'session_updated_at' => Date::get(),
@@ -199,10 +204,6 @@ class DataSource extends SessionHandler
                 'user__fk' => Security::getInstance()->getUser()->getPkValue(),
                 'views' => 1,
             ];
-
-            if (isset($this->session['session_pk'])) {
-                $this->session['session__fk'] = $this->session['session_pk'];
-            }
 
             Session::createQueryBuilder()
                 ->getInsertQuery($this->session)

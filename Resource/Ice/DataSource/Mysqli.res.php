@@ -31,4 +31,7 @@ return [
     'DataSource - #1234: {$0}' => [
         'ru' => 'DataSource - #1234: {$0}',
     ],
+    'DataSource_Insert_DuplicateEntry - #1062: {$0} - {$1} [{$2}]' => [
+        'ru' => 'DataSource_Insert_DuplicateEntry - #1062: {$0} - {$1} [{$2}]',
+    ],
 ];

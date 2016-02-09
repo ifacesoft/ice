@@ -84,8 +84,6 @@ class Ice extends Security
     {
         DataProvider_Security::getInstance()->delete(Ice::SECURITY_USER);
 
-        Session::getInstance()->flushAll();
-
         $this->autologin();
     }
 
