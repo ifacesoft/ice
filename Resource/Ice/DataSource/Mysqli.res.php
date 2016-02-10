@@ -34,4 +34,7 @@ return [
     'DataSource_Insert_DuplicateEntry - #1062: {$0} - {$1} [{$2}]' => [
         'ru' => 'DataSource_Insert_DuplicateEntry - #1062: {$0} - {$1} [{$2}]',
     ],
+    'DataSource_Statement_UnknownColumn - #1054: {$0}' => [
+        'ru' => 'DataSource_Statement_UnknownColumn - #1054: {$0}',
+    ],
 ];

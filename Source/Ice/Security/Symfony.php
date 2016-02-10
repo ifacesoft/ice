@@ -11,6 +11,7 @@ use Ice\DataProvider\Security as DataProvider_Security;
 use Ice\DataProvider\Session;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
+use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
 
 class Symfony extends Ice
 {
@@ -37,11 +38,16 @@ class Symfony extends Ice
             return true;
         }
 
+        /** @var AuthorizationChecker $securityAuthorizationChecker */
         $securityAuthorizationChecker = $this->getKernel()->getContainer()->get('security.authorization_checker');
 
         foreach ($roles as $role) {
-            if (true === $securityAuthorizationChecker->isGranted($role)) {
-                return true;
+            try {
+                if (true === $securityAuthorizationChecker->isGranted($role)) {
+                    return true;
+                }
+            } catch (\Exception $e) {
+                return false;
             }
         }
 

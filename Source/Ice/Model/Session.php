@@ -30,10 +30,10 @@ class Session extends Model
 		        'session_pk' => [
 		            'scheme' => [
 		                'extra' => '',
-		                'type' => 'varbinary(128)',
-		                'dataType' => 'varbinary',
-		                'length' => '128',
-		                'characterSet' => null,
+		                'type' => 'varchar(64)',
+		                'dataType' => 'varchar',
+		                'length' => '64',
+		                'characterSet' => 'utf8',
 		                'nullable' => false,
 		                'default' => null,
 		                'comment' => '',
@@ -43,7 +43,7 @@ class Session extends Model
 		                'type' => 'text',
 		            ],
 		            'Ice\Core\Validator' => [
-		                'Ice:Length_Max' => 128,
+		                'Ice:Length_Max' => 64,
 		            ],
 		            'Ice\Widget\Model_Table' => [
 		                'type' => 'span',
@@ -75,10 +75,10 @@ class Session extends Model
 		        'session__fk' => [
 		            'scheme' => [
 		                'extra' => '',
-		                'type' => 'varbinary(128)',
-		                'dataType' => 'varbinary',
-		                'length' => '128',
-		                'characterSet' => null,
+		                'type' => 'varchar(64)',
+		                'dataType' => 'varchar',
+		                'length' => '64',
+		                'characterSet' => 'utf8',
 		                'nullable' => true,
 		                'default' => null,
 		                'comment' => '',
@@ -88,7 +88,7 @@ class Session extends Model
 		                'type' => 'text',
 		            ],
 		            'Ice\Core\Validator' => [
-		                'Ice:Length_Max' => 128,
+		                'Ice:Length_Max' => 64,
 		            ],
 		            'Ice\Widget\Model_Table' => [
 		                'type' => 'span',
@@ -146,7 +146,7 @@ class Session extends Model
 		                'length' => '0',
 		                'characterSet' => null,
 		                'nullable' => false,
-		                'default' => null,
+		                'default' => '0000-00-00 00:00:00',
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'session_deleted_at',
@@ -177,28 +177,6 @@ class Session extends Model
 		            ],
 		            'Ice\Core\Validator' => [
 		                'Ice:Length_Max' => 7,
-		                0 => 'Ice:Not_Null',
-		            ],
-		            'Ice\Widget\Model_Table' => [
-		                'type' => 'span',
-		            ],
-		        ],
-		        'views' => [
-		            'scheme' => [
-		                'extra' => '',
-		                'type' => 'int(11)',
-		                'dataType' => 'int',
-		                'length' => '10,0',
-		                'characterSet' => null,
-		                'nullable' => false,
-		                'default' => null,
-		                'comment' => '',
-		            ],
-		            'fieldName' => 'views',
-		            'Ice\Widget\Model_Form' => [
-		                'type' => 'number',
-		            ],
-		            'Ice\Core\Validator' => [
 		                0 => 'Ice:Not_Null',
 		            ],
 		            'Ice\Widget\Model_Table' => [
@@ -273,42 +251,20 @@ class Session extends Model
 		                'type' => 'span',
 		            ],
 		        ],
-		        'byIp' => [
+		        'views' => [
 		            'scheme' => [
 		                'extra' => '',
-		                'type' => 'tinyint(1)',
-		                'dataType' => 'tinyint',
-		                'length' => '3,0',
+		                'type' => 'int(11)',
+		                'dataType' => 'int',
+		                'length' => '10,0',
 		                'characterSet' => null,
 		                'nullable' => false,
-		                'default' => '0',
+		                'default' => null,
 		                'comment' => '',
 		            ],
-		            'fieldName' => 'byip',
+		            'fieldName' => 'views',
 		            'Ice\Widget\Model_Form' => [
-		                'type' => 'checkbox',
-		            ],
-		            'Ice\Core\Validator' => [
-		                0 => 'Ice:Not_Null',
-		            ],
-		            'Ice\Widget\Model_Table' => [
-		                'type' => 'span',
-		            ],
-		        ],
-		        'byLk' => [
-		            'scheme' => [
-		                'extra' => '',
-		                'type' => 'tinyint(1)',
-		                'dataType' => 'tinyint',
-		                'length' => '3,0',
-		                'characterSet' => null,
-		                'nullable' => false,
-		                'default' => '0',
-		                'comment' => '',
-		            ],
-		            'fieldName' => 'bylk',
-		            'Ice\Widget\Model_Form' => [
-		                'type' => 'checkbox',
+		                'type' => 'number',
 		            ],
 		            'Ice\Core\Validator' => [
 		                0 => 'Ice:Not_Null',
@@ -334,8 +290,8 @@ class Session extends Model
 		    'references' => [
 		        'ice_session' => [
 		            'constraintName' => 'FK_ice_session_ice_session',
-		            'onUpdate' => 'NO ACTION',
-		            'onDelete' => 'NO ACTION',
+		            'onUpdate' => 'CASCADE',
+		            'onDelete' => 'CASCADE',
 		        ],
 		    ],
 		    'relations' => [
@@ -347,7 +303,7 @@ class Session extends Model
 		        ],
 		        'manyToMany' => [],
 		    ],
-		    'revision' => '02090848_zep',
+		    'revision' => '02100807_hvr',
 		];
     }
 }
