@@ -37,4 +37,10 @@ return [
     'DataSource_Statement_UnknownColumn - #1054: {$0}' => [
         'ru' => 'DataSource_Statement_UnknownColumn - #1054: {$0}',
     ],
+    'DataSource_Statement_TableNotFound - #1146: {$0}' => [
+        'ru' => 'DataSource_Statement_TableNotFound - #1146: {$0}',
+    ],
+    'DataSource_Statement_Error - #1066: {$0}' => [
+        'ru' => 'DataSource_Statement_Error - #1066: {$0}',
+    ],
 ];
