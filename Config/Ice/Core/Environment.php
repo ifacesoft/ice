@@ -134,9 +134,8 @@ return [
                 'session' => 'Ice:File'
             ],
             'Ice\Core\SessionHandler' => [
-                'instance' => 'Ice:Repository'
-            ]
-
+                'instance' => 'Ice:Registry',
+            ],
         ],
     ],
     'test' => [
@@ -236,9 +235,6 @@ return [
             'Ice\Core\Session' => [
                 'session' => 'Ice:File'
             ],
-            'Ice\Core\SessionHandler' => [
-                'instance' => 'Ice:Repository'
-            ]
         ]
     ],
     'development' => [
@@ -338,9 +334,6 @@ return [
             'Ice\Core\Session' => [
                 'session' => 'Ice:File'
             ],
-            'Ice\Core\SessionHandler' => [
-                'instance' => 'Ice:Registry'
-            ]
         ],
     ]
 ];

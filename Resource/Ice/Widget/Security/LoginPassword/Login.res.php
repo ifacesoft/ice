@@ -21,4 +21,7 @@ return [
     'Error - Authentication data is not valid. Please, check input.' => [
         'ru' => 'Error - Authentication data is not valid. Please, check input.',
     ],
+    'Error - Unknown accountModelClass' => [
+        'ru' => 'Error - Unknown accountModelClass',
+    ],
 ];
