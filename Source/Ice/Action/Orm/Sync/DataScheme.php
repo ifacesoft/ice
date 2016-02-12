@@ -4,6 +4,7 @@ namespace Ice\Action;
 
 use Ice\Core\Action;
 use Ice\Core\Data_Scheme;
+use Ice\Core\Logger;
 use Ice\Core\Model;
 use Ice\Core\Module;
 use Ice\DataProvider\Cli;
@@ -208,7 +209,9 @@ class Orm_Sync_DataScheme extends Action
                 foreach ($dataSchemeColumns as $columnName => $column) {
                     $this->getLogger()->info([
                         'Remove field {$0} for model {$1}',
-                        [$column['fieldName'], $schemeTables[$tableName]['modelClass']]
+                        [$column['fieldName'], $schemeTables[$tableName]['modelClass']],
+                        Logger::INFO,
+                        true
                     ]);
                     unset($schemeTables[$tableName]['columns'][$columnName]);
                     $isModelFieldsUpdated = true;
@@ -271,7 +274,11 @@ class Orm_Sync_DataScheme extends Action
             $dataSourceKey
         )->getQueryResult();
 
-        $this->getLogger()->info(['{$0}: Model {$1} successfully created', [$dataSourceKey, $modelClass]]);
+        $this->getLogger()->info(
+            ['{$0}: Model {$1} successfully created', [$dataSourceKey, $modelClass]],
+            Logger::INFO,
+            true
+        );
     }
 
     private function deleteModel($modelFilePath, $tableName, $schemeTables, $dataSourceKey)
@@ -283,7 +290,9 @@ class Orm_Sync_DataScheme extends Action
         Scheme::createQueryBuilder()->getDeleteQuery($tableName, $dataSourceKey)->getQueryResult();
 
         $this->getLogger()->info(
-            ['{$0}: Model {$1} successfully deleted', [$dataSourceKey, $schemeTables[$tableName]['modelClass']]]
+            ['{$0}: Model {$1} successfully deleted', [$dataSourceKey, $schemeTables[$tableName]['modelClass']]],
+            Logger::INFO,
+            true
         );
     }
 
@@ -306,7 +315,9 @@ class Orm_Sync_DataScheme extends Action
 
         $this->getLogger()->info([
             '{$0}: Scheme of model {$1} successfully updated: {$2}',
-            [$dataSourceKey, $modelClass, $diffScheme]
+            [$dataSourceKey, $modelClass, $diffScheme],
+            Logger::INFO,
+            true
         ]);
 
         return true;
@@ -338,7 +349,9 @@ class Orm_Sync_DataScheme extends Action
 
         $this->getLogger()->info([
             '{$0}: Indexes of model {$1} successfully updated! [added: {$2}; removed: {$3}]',
-            [$dataSourceKey, $modelClass, $addedDiffIndexes, $removedDiffIndexes]
+            [$dataSourceKey, $modelClass, $addedDiffIndexes, $removedDiffIndexes],
+            Logger::INFO,
+            true
         ]);
 
         return true;
@@ -396,7 +409,9 @@ class Orm_Sync_DataScheme extends Action
 
         $this->getLogger()->info([
             '{$0}: OneToMany relations of model {$1} successfully updated: {$2}',
-            [$dataSourceKey, $modelClass, $diffOneToMany]
+            [$dataSourceKey, $modelClass, $diffOneToMany],
+            Logger::INFO,
+            true
         ]);
 
         return true;
@@ -422,7 +437,9 @@ class Orm_Sync_DataScheme extends Action
 
         $this->getLogger()->info([
             '{$0}: ManyToOne relations of model {$1} successfully updated: {$2}',
-            [$dataSourceKey, $modelClass, $diffManyToOne]
+            [$dataSourceKey, $modelClass, $diffManyToOne],
+            Logger::INFO,
+            true
         ]);
 
         return true;
@@ -448,7 +465,9 @@ class Orm_Sync_DataScheme extends Action
 
         $this->getLogger()->info([
             '{$0}: ManyToMany relations of model {$1} successfully updated: {$2}',
-            [$dataSourceKey, $modelClass, $diffManyToMany]
+            [$dataSourceKey, $modelClass, $diffManyToMany],
+            Logger::INFO,
+            true
         ]);
 
         return true;
@@ -460,7 +479,9 @@ class Orm_Sync_DataScheme extends Action
 
         $this->getLogger()->info([
             '{$0}: Field {$1} in model {$2} successfully created',
-            [$dataSourceKey, $modelFieldScheme['fieldName'], $modelClass]
+            [$dataSourceKey, $modelFieldScheme['fieldName'], $modelClass],
+            Logger::INFO,
+            true
         ]);
     }
 
@@ -478,7 +499,9 @@ class Orm_Sync_DataScheme extends Action
 
         $this->getLogger()->info([
             '{$0}: Field {$1} in model {$2} successfully updated: {$3}',
-            [$dataSourceKey, $fieldName, $modelClass, $diffField]
+            [$dataSourceKey, $fieldName, $modelClass, $diffField],
+            Logger::INFO,
+            true
         ]);
 
         return true;

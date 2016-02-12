@@ -102,7 +102,7 @@ abstract class Action implements Cacheable
         $actionClass = self::getClass();
 
         if (Request::isCli()) {
-            $logger->info(['{$0}call: {$1}...', [str_repeat("\t", $level), $actionClass]], Logger::MESSAGE);
+            $logger->info(['{$0}call: {$1}...', [str_repeat("\t", $level), $actionClass]], Logger::MESSAGE, true);
         }
 
         if ($actionClass::getConfig()->get('cache/ttl') != -1) {
@@ -150,9 +150,7 @@ abstract class Action implements Cacheable
             $newLevel = $level + 1;
 
             foreach ($actionData as $subActionClass => $actionItem) {
-                /**
-                 * @var Action $subActionClass
-                 */
+                /**@var Action $subActionClass */
                 list($subActionClass, $subActionParams) = each($actionItem);
 
                 $result = [];
@@ -185,7 +183,8 @@ abstract class Action implements Cacheable
         if (Request::isCli()) {
             $logger->info(
                 ['{$0}{$1} complete!', [str_repeat("\t", $level), $actionClass::getClassName()]],
-                Logger::MESSAGE
+                Logger::MESSAGE,
+                true
             );
         }
 

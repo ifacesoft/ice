@@ -1,6 +1,8 @@
 <?php
-namespace Ice\Core;
+namespace Ice\Core\Action;
 
-abstract class Action_Thread extends Action
+use Ice\Core\Action;
+
+abstract class Thread extends Action
 {
 }
