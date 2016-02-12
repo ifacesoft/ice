@@ -18,7 +18,7 @@ class Token extends Model
     protected static function config()
     {
         return [
-		    'dataSourceKey' => 'Ice\DataSource\Mysqli/default.ebs',
+		    'dataSourceKey' => 'Ice\DataSource\Mysqli/default.lan',
 		    'scheme' => [
 		        'tableName' => 'ice_token',
 		        'engine' => 'InnoDB',
