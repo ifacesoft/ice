@@ -36,7 +36,7 @@ class City extends Model
 		                'characterSet' => null,
 		                'nullable' => false,
 		                'default' => null,
-		                'comment' => 'ID Города',
+		                'comment' => '',
 		            ],
 		            'fieldName' => 'city_pk',
 		            'Ice\Widget\Model_Form' => [
@@ -64,7 +64,7 @@ class City extends Model
 		                'characterSet' => 'utf8',
 		                'nullable' => true,
 		                'default' => null,
-		                'comment' => 'Название города',
+		                'comment' => '',
 		            ],
 		            'fieldName' => 'city_name',
 		            'Ice\Widget\Model_Form' => [
@@ -94,7 +94,7 @@ class City extends Model
 		                'characterSet' => 'utf8',
 		                'nullable' => true,
 		                'default' => null,
-		                'comment' => 'Краткое наименование',
+		                'comment' => '',
 		            ],
 		            'fieldName' => 'city_short',
 		            'Ice\Widget\Model_Form' => [
@@ -124,7 +124,7 @@ class City extends Model
 		                'characterSet' => null,
 		                'nullable' => true,
 		                'default' => null,
-		                'comment' => 'Страна',
+		                'comment' => '',
 		            ],
 		            'fieldName' => 'country__fk',
 		            'Ice\Widget\Model_Form' => [
@@ -155,7 +155,11 @@ class City extends Model
 		                'fk_ice_city_ice_country' => 'country__fk',
 		            ],
 		        ],
-		        'UNIQUE' => [],
+		        'UNIQUE' => [
+		            'city_name' => [
+		                1 => 'city_name',
+		            ],
+		        ],
 		    ],
 		    'references' => [
 		        'ice_country' => [

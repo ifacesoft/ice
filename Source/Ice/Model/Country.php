@@ -34,7 +34,7 @@ class Country extends Model
 		                'characterSet' => null,
 		                'nullable' => false,
 		                'default' => null,
-		                'comment' => 'ID Страны',
+		                'comment' => '',
 		            ],
 		            'fieldName' => 'country_pk',
 		            'Ice\Widget\Model_Form' => [
@@ -62,7 +62,7 @@ class Country extends Model
 		                'characterSet' => 'utf8',
 		                'nullable' => true,
 		                'default' => null,
-		                'comment' => 'Название страны',
+		                'comment' => '',
 		            ],
 		            'fieldName' => 'country_name',
 		            'Ice\Widget\Model_Form' => [

@@ -378,7 +378,7 @@ class Query
      *
      * @desc Результат запроса - единственное значение.
      *
-     * @param  null $fieldName
+     * @param null|string $fieldName
      * @param  null $ttl
      * @return mixed
      * @author dp <denis.a.shestakov@gmail.com>
@@ -386,7 +386,7 @@ class Query
      * @version 1.1
      * @since   0.0
      */
-    public function getValue($fieldName = null, $ttl = null)
+    public function getValue($fieldName = '/pk', $ttl = null)
     {
         $row = $this->getRow(null, $ttl);
 
@@ -467,7 +467,7 @@ class Query
     /**
      * Return column in data
      *
-     * @param  null $fieldName
+     * @param null|string $fieldName
      * @param  null $indexKey
      * @param  null $ttl
      * @return array
@@ -476,7 +476,7 @@ class Query
      * @version 1.0
      * @since   0.0
      */
-    public function getColumn($fieldName = null, $indexKey = null, $ttl = null)
+    public function getColumn($fieldName = '/pk', $indexKey = null, $ttl = null)
     {
         $modelClass = $this->getQueryBuilder()->getModelClass();
 
