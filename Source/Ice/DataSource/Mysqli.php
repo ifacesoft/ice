@@ -24,6 +24,7 @@ use Ice\Core\QueryResult;
 use Ice\Core\QueryTranslator;
 use Ice\Exception\DataSource_Insert;
 use Ice\Exception\DataSource_Insert_DuplicateEntry;
+use Ice\Exception\DataSource_Select_Error;
 use Ice\Exception\DataSource_Statement_Error;
 use Ice\Exception\DataSource_Statement_TableNotFound;
 use Ice\Exception\DataSource_Statement_UnknownColumn;
@@ -152,14 +153,18 @@ class Mysqli extends DataSource
             }
         }
 
+        $data[QueryResult::NUM_ROWS] = count($data[QueryResult::ROWS]);
+
+        if ($result->num_rows != $data[QueryResult::NUM_ROWS]) {
+            throw new DataSource_Select_Error('Real selected rows not equal result num rows: duplicate primary key');
+        }
+
         $result->free_result();
         $statement->free_result();
         $statement->close();
 
         unset($result);
         unset($statement);
-
-        $data[QueryResult::NUM_ROWS] = count($data[QueryResult::ROWS]);
 
         if ($query->isCalcFoundRows()) {
             $result = $this->getConnection()->query('SELECT FOUND_ROWS()');
@@ -584,13 +589,13 @@ class Mysqli extends DataSource
             'UNIQUE' => []
         ];
 
-        $iceql = ['information_schema.TABLE_CONSTRAINTS/CONSTRAINT_TYPE,CONSTRAINT_NAME' => 'TABLE_SCHEMA:' . $this->scheme .',TABLE_NAME:' . $tableName];
+        $iceql = ['information_schema.TABLE_CONSTRAINTS/CONSTRAINT_TYPE,CONSTRAINT_NAME' => 'TABLE_SCHEMA:' . $this->scheme . ',TABLE_NAME:' . $tableName];
 
         foreach ($this->get($iceql) as $constraint) {
             $constraints[$constraint['CONSTRAINT_TYPE']][$constraint['CONSTRAINT_NAME']] = [];
         }
 
-        $iceql = ['information_schema.STATISTICS/INDEX_NAME,SEQ_IN_INDEX,COLUMN_NAME' => 'TABLE_SCHEMA:' . $this->scheme .',TABLE_NAME:' . $tableName];
+        $iceql = ['information_schema.STATISTICS/INDEX_NAME,SEQ_IN_INDEX,COLUMN_NAME' => 'TABLE_SCHEMA:' . $this->scheme . ',TABLE_NAME:' . $tableName];
 
         $indexes = $this->get($iceql);
 
@@ -620,7 +625,7 @@ class Mysqli extends DataSource
 
         $foreignKeys = [];
 
-        $iceql = ['information_schema.KEY_COLUMN_USAGE/COLUMN_NAME,CONSTRAINT_NAME' => 'TABLE_SCHEMA:' . $this->scheme .',TABLE_NAME:' . $tableName];
+        $iceql = ['information_schema.KEY_COLUMN_USAGE/COLUMN_NAME,CONSTRAINT_NAME' => 'TABLE_SCHEMA:' . $this->scheme . ',TABLE_NAME:' . $tableName];
 
         $referenceColumns = Arrays::column($this->get($iceql), 'COLUMN_NAME', 'CONSTRAINT_NAME');
 

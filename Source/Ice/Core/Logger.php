@@ -362,7 +362,7 @@ class Logger
             'lastTemplate' => Render::getLastTemplate()
         ];
 
-        ini_set('memory_limit', '1G');
+        ini_set('memory_limit', '4G');
 
         Helper_Logger::outputFile($exception, $output, $this->class);
 //        Helper_Logger::outputDb($exception);

@@ -304,13 +304,13 @@ abstract class DataSource extends Container
 
                     if ($queryResult = $cacher->get($queryHash)) {
                         Profiler::setPoint($queryResult->__toString(), $startTime, $startMemory);
-                        Logger::log(Profiler::getReport($queryResult->__toString()/* . "\n". print_r($queryResult->getRows(), true)*/), 'query (cache)', 'LOG');
+                        Logger::log(Profiler::getReport($queryResult->__toString()), 'query (cache)', 'LOG');
                         return $queryResult;
                     }
 
                     $queryResult = QueryResult::create($query, $this->$queryCommand($query));
                     Profiler::setPoint($queryResult->__toString(), $startTime, $startMemory);
-                    Logger::log(Profiler::getReport($queryResult->__toString()/* . "\n". print_r($queryResult->getRows(), true)*/), 'query (new)', 'INFO');
+                    Logger::log(Profiler::getReport($queryResult->__toString()), 'query (new)', 'INFO');
 
                     $cacher->set($queryHash, $queryResult, $ttl);
                     return $queryResult;
@@ -335,7 +335,7 @@ abstract class DataSource extends Container
         } catch (\Exception $e) {
             Logger::log(
                 $e->getMessage() . ': ' .
-                print_r($query->getBody(), true) . ' (' . print_r($query->getBinds(), true) . ')',
+                preg_replace('/\s\s+/', ' ', print_r($query->getBody(), true) . ' (' . print_r($query->getBinds(), true) . ')'),
                 'query (error)',
                 'ERROR'
             );

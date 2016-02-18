@@ -533,12 +533,12 @@ class QueryResult implements Cacheable
         $string = '';
 
         try {
-            $string = print_r($this->getQuery()->getBody(), true) .
+            $string = preg_replace('/\s+/', ' ', print_r($this->getQuery()->getBody(), true)) .
                 ' (' . implode(', ', $this->getQuery()->getBinds()) . ') result: \'' .
                 QueryResult::NUM_ROWS . '\' => ' . $this->getNumRows() . ', \'' .
                 QueryResult::AFFECTED_ROWS . '\' => ' . $this->getAffectedRows() . ', \'' .
                 QueryResult::FOUND_ROWS . '\' => ' . $this->getFoundRows() . ', \'' .
-                QueryResult::INSERT_ID . '\' => ' . print_r($this->getInsertId(), true);
+                QueryResult::INSERT_ID . '\' => ' . preg_replace('/\s+/', ' ', print_r($this->getInsertId(), true));
         } catch (\Exception $e) {
             Logger::getInstance(__CLASS__)->error('fail', __FILE__, __LINE__, $e);
         }
