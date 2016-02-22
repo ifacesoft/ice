@@ -1,6 +1,6 @@
 <?php
 return [
-    'Error - Unknown comparison operator "{$0}"' => [
-        'ru' => 'Error - Unknown comparison operator "{$0}"',
+    'Unknown comparison operator "{$0}"' => [
+        'ru' => 'Unknown comparison operator "{$0}"',
     ],
 ];

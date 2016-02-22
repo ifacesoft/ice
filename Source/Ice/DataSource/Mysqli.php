@@ -229,18 +229,16 @@ class Mysqli extends DataSource
             $types .= gettype($bind)[0];
         }
 
-        $values = [str_replace('N', 's', $types)];
+        if ($types) {
+            $bindParams = array_merge([str_replace('N', 's', $types)], $binds);
 
-        if (!empty($types)) {
-            $values = array_merge($values, $binds);
-
-            if (call_user_func_array(array($statement, 'bind_param'), $this->makeValuesReferenced($values)) === false) {
+            if (call_user_func_array(array($statement, 'bind_param'), $this->makeValuesReferenced($bindParams)) === false) {
                 $logger->exception(
                     'Bind params failure',
                     __FILE__,
                     __LINE__,
                     null,
-                    ['types' => $types, 'values' => $values, 'body' => $body, 'binds' => $binds]
+                    ['types' => $types, 'values' => array_slice($bindParams, 1), 'body' => $body, 'binds' => $binds]
                 );
             }
         }

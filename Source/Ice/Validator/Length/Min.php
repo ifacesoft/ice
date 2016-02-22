@@ -65,4 +65,9 @@ class Length_Min extends Validator
     {
         // TODO: Implement init() method.
     }
+
+    public function getMessage()
+    {
+        return 'Length of param \'{$0}\' mast be more then {$2} characters';
+    }
 }

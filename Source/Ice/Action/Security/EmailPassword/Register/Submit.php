@@ -50,7 +50,7 @@ class Security_EmailPassword_Register_Submit extends Security
             );
         } catch (Not_Valid $e) {
             return [
-                'error' => $logger->info('Введены невалидные данные. Проверьте ввод.', Logger::DANGER)
+                'error' => $logger->info($e->getMessage(), Logger::DANGER)
             ];
         } catch (DataSource_Insert_DuplicateEntry $e) {
             return [

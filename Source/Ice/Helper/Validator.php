@@ -6,6 +6,18 @@ use Ice\Core\Validator as Core_Validator;
 
 class Validator
 {
+    /**
+     * @param $validatorClass
+     * @param $validatorParams
+     * @param $param
+     * @param $value
+     * @throws Exception
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 1.1
+     * @since   0.0
+     */
     public static function validate($validatorClass, $validatorParams, $param, $value)
     {
         /**
@@ -13,20 +25,29 @@ class Validator
          */
         $validatorClass = Core_Validator::getClass($validatorClass);
 
-        if ($validatorClass::getInstance()->validate($value, $validatorParams)) {
+        /** @var Core_Validator $validator */
+        $validator = $validatorClass::getInstance();
+
+        if ($validatorParams && isset($validatorParams['message'])) {
+            $message = $validatorParams['message'];
+            unset($validatorParams['message']);
+        } else {
+            $message = $validator->getMessage();
+        }
+
+        if ($validatorParams && isset($validatorParams['exception'])) {
+            $exceptionClass = Exception::getClass($validatorParams['exception']);
+            unset($validatorParams['exception']);
+        } else {
+            $exceptionClass = Exception::getClass('Ice:Not_Valid');
+        }
+
+        if ($validator->validate($value, $validatorParams)) {
             return;
         }
 
-        $validator = 'Validator:' . $validatorClass::getClassName() . ' -> ';
+        $exceptionMessage = [$message, array_merge([$param, print_r($value, true)], (array)$validatorParams)];
 
-        $message = empty($validatorParams) || !isset($validatorParams['message'])
-            ? [$validator . 'param \'{$0}\' with value \'{$1}\' is not valid', [$param, print_r($value, true)]]
-            : [$validator . $validatorParams['message'], [$param, print_r($value, true)]];
-
-        $exceptionClass = empty($validatorParams) || !isset($validatorParams['exception'])
-            ? Exception::getClass('Ice:Not_Valid')
-            : Exception::getClass($validatorParams['exception']);
-
-        Core_Logger::getInstance(__CLASS__)->exception($message, __FILE__, __LINE__, null, null, -1, $exceptionClass);
+        Core_Logger::getInstance(__CLASS__)->exception($exceptionMessage, __FILE__, __LINE__, null, null, -1, $exceptionClass);
     }
 }

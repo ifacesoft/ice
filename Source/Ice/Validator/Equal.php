@@ -1,6 +1,7 @@
 <?php
 namespace Ice\Validator;
 
+use Ice\Core\Debuger;
 use Ice\Core\Validator;
 
 /**
@@ -62,5 +63,10 @@ class Equal extends Validator
     protected function init(array $data)
     {
         // TODO: Implement init() method.
+    }
+
+    public function getMessage()
+    {
+        return 'Param \'{$0}\' not equal {$2}';
     }
 }

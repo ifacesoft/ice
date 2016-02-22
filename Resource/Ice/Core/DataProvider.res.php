@@ -57,7 +57,7 @@ return [
         'uk' => 'Треба реалізує {$0} {$1}',
     ],
 
-    'Error - Data provider "{$0}" connection failed' => [
-        'ru' => 'Error - Data provider "{$0}" connection failed',
+    'Data provider "{$0}" connection failed' => [
+        'ru' => 'Data provider "{$0}" connection failed',
     ],
 ];

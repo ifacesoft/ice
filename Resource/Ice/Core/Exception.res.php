@@ -86,15 +86,15 @@ return [
         'tr' => 'FileNotFound - Dizi',
         'uk' => 'Filename - Масив',
     ],
-    'Error - Array' => [
-        'en' => 'Error - Array',
+    'Array' => [
+        'en' => 'Array',
         'be' => 'Памылка - Масіў',
-        'ca' => 'Error - Matriu De',
+        'ca' => 'Matriu De',
         'cs' => 'Chyba - Pole',
         'da' => 'Fejl - Array',
         'de' => 'Fehler - Array',
         'el' => 'Σφάλμα - Πίνακα',
-        'es' => 'Error - Matriz',
+        'es' => 'Matriz',
         'et' => 'Viga - Massiivi',
         'fi' => 'Virhe - Array',
         'fr' => 'Erreur - Tableau',
@@ -167,11 +167,11 @@ return [
     'RouteNotFound - Route {$0} not found' => [
         'ru' => 'RouteNotFound - Route {$0} not found',
     ],
-    'Error - For part {$0} with event {$1} of widget {$2} must be defined action param' => [
-        'ru' => 'Error - For part {$0} with event {$1} of widget {$2} must be defined action param',
+    'For part {$0} with event {$1} of widget {$2} must be defined action param' => [
+        'ru' => 'For part {$0} with event {$1} of widget {$2} must be defined action param',
     ],
-    'Error - action class not found' => [
-        'ru' => 'Error - action class not found',
+    'action class not found' => [
+        'ru' => 'action class not found',
     ],
     'Not_Configured - Check config of widget {$0} for {$1}' => [
         'ru' => 'Not_Configured - Check config of widget {$0} for {$1}',
@@ -191,8 +191,8 @@ return [
     'Http_Forbidden - Access denied: scheme not allowed' => [
         'ru' => 'Http_Forbidden - Access denied: scheme not allowed',
     ],
-    'Error - Action class not found' => [
-        'ru' => 'Error - Action class not found',
+    'Action class not found' => [
+        'ru' => 'Action class not found',
     ],
     'Redirect - /ice/admin/database/dashboard' => [
         'ru' => 'Redirect - /ice/admin/database/dashboard',
@@ -215,11 +215,11 @@ return [
     'Http_Forbidden - Access denied: table not allowed' => [
         'ru' => 'Http_Forbidden - Access denied: table not allowed',
     ],
-    'Error - fix' => [
-        'ru' => 'Error - fix',
+    'fix' => [
+        'ru' => 'fix',
     ],
-    'Error - Book not found' => [
-        'ru' => 'Error - Book not found',
+    'Book not found' => [
+        'ru' => 'Book not found',
     ],
     'Redirect - /ice/admin/tool/order/table' => [
         'ru' => 'Redirect - /ice/admin/tool/order/table',

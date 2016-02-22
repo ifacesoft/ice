@@ -65,4 +65,9 @@ class Email extends Validator
     {
         // TODO: Implement init() method.
     }
+
+    public function getMessage()
+    {
+        return 'Email \'{$1}\' not valid';
+    }
 }

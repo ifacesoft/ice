@@ -153,7 +153,7 @@ return [
         'en' => 'Calling subAction "{$0}" in action "{$1}" failed',
         'ru' => 'Называя subAction "{$0}" в действии "{$1}" не удалось',
     ],
-    'Error - Calling subAction "{$0}" in action "{$1}" failed' => [
-        'ru' => 'Error - Calling subAction "{$0}" in action "{$1}" failed',
+    'Calling subAction "{$0}" in action "{$1}" failed' => [
+        'ru' => 'Calling subAction "{$0}" in action "{$1}" failed',
     ],
 ];

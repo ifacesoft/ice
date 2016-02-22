@@ -37,10 +37,13 @@ return [
     'Ice\Core\SessionHandler' => [
         'defaultClassName' => 'Ice\SessionHandler\DataProvider',
     ],
+    'Ice\Core\DataSource' => [
+        'defaultClassName' => 'Ice\DataSource\Mysqli',
+    ],
     'Ice\Core\Render' => [
         'defaultClassName' => 'Ice\Render\Php',
     ],
-    'Ice\MessageTransport' => [
+    'Ice\Core\MessageTransport' => [
         'defaultClassName' => 'Ice\MessageTransport\PHPMailer'
     ],
 

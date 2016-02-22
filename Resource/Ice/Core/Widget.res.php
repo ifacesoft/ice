@@ -1,9 +1,9 @@
 <?php
 return [
-    'Error - Render widget {$0} was failed' => [
-        'ru' => 'Error - Render widget {$0} was failed',
+    'Render widget {$0} was failed' => [
+        'ru' => 'Render widget {$0} was failed',
     ],
-    'Error - Widget {$0} init failed' => [
-        'ru' => 'Error - Widget {$0} init failed',
+    'Widget {$0} init failed' => [
+        'ru' => 'Widget {$0} init failed',
     ],
 ];

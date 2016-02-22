@@ -12,7 +12,7 @@ return [
         'en' => 'Could not defined condition for join part of sql query',
         'ru' => 'Может не определены условия для объединения в SQL-запросе',
     ],
-    'Error - Could not defined condition join part of query for {$0} with {$1}' => [
-        'ru' => 'Error - Could not defined condition join part of query for {$0} with {$1}',
+    'Could not defined condition join part of query for {$0} with {$1}' => [
+        'ru' => 'Could not defined condition join part of query for {$0} with {$1}',
     ],
 ];

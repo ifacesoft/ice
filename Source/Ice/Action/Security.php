@@ -97,6 +97,8 @@ abstract class Security extends Widget_Event
         try {
             $dataSource->beginTransaction();
 
+            $confirm = null;
+
             if ($securityForm->isConfirm()) {
                 $accountData['token'] = Token::create([
                     '/' => md5(String::getRandomString()),
@@ -105,7 +107,10 @@ abstract class Security extends Widget_Event
                     '/data' => ['account_expired' => $securityForm->getExpired()]
                 ])->save();
 
-                $this->sendConfirm($accountData['token'], $input);
+                $confirm = [
+                    'token' => $accountData['token'],
+                    'input' => $input
+                ];
 
                 if ($securityForm->isConfirmRequired()) {
                     $accountData['/expired'] = '0000-00-00';
@@ -128,6 +133,10 @@ abstract class Security extends Widget_Event
             $account = $accountModelClass::create($accountData)->save();
 
             $dataSource->commitTransaction();
+
+            if ($confirm) {
+                $this->sendConfirm($confirm['token'], $confirm['input']);
+            }
 
             $log->set('account_key', $account->getPkValue());
             $securityForm->getLogger()->save($log);

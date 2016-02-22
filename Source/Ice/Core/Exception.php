@@ -84,8 +84,8 @@ abstract class Exception extends ErrorException
         }
 
         $message = $errno <= 0
-            ? $resource->get($exceptionClassName . ' - ' . $message, $params, $class)
-            : $exceptionClassName . ' - ' . $message;
+            ? $resource->get(/*$exceptionClassName . ' - ' . */$message, $params, $class)
+            : /*$exceptionClassName . ' - ' . */$message;
 
         if (!$errfile) {
             $debug = debug_backtrace();

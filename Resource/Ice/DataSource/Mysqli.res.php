@@ -46,8 +46,8 @@ return [
     'DataSource_Insert - #1452: {$0} - {$1} [{$2}]' => [
         'ru' => 'DataSource_Insert - #1452: {$0} - {$1} [{$2}]',
     ],
-    'Error - #1305: {$0} - {$1}' => [
-        'ru' => 'Error - #1305: {$0} - {$1}',
+    '#1305: {$0} - {$1}' => [
+        'ru' => '#1305: {$0} - {$1}',
     ],
     'DataSource_Statement_Error - #1390: {$0}' => [
         'ru' => 'DataSource_Statement_Error - #1390: {$0}',
