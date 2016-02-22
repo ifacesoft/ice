@@ -17,7 +17,7 @@ class Country extends Model
     protected static function config()
     {
         return [
-		    'dataSourceKey' => 'Ice\DataSource\Mysqli/default.test',
+		    'dataSourceKey' => 'Ice\DataSource\Mysqli/default.lan',
 		    'scheme' => [
 		        'tableName' => 'ice_country',
 		        'engine' => 'InnoDB',
@@ -91,7 +91,11 @@ class Country extends Model
 		            ],
 		        ],
 		        'FOREIGN KEY' => [],
-		        'UNIQUE' => [],
+		        'UNIQUE' => [
+		            'country_name' => [
+		                1 => 'country_name',
+		            ],
+		        ],
 		    ],
 		    'references' => [],
 		    'relations' => [

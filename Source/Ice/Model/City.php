@@ -173,10 +173,14 @@ class City extends Model
 		            'Ice\Model\Country' => 'country__fk',
 		        ],
 		        'manyToOne' => [
+		            'Ebs\Model\Journal' => 'city_id',
 		            'Ebs\Model\Publisher' => 'city_id',
 		            'Ebs\Model\Subscriber' => 'city_id',
 		        ],
 		        'manyToMany' => [
+		            'Ebs\Model\Publisher' => [
+		                0 => 'Ebs\Model\Journal',
+		            ],
 		            'Ebs\Model\Access_Type' => [
 		                0 => 'Ebs\Model\Subscriber',
 		            ],
