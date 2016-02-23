@@ -176,7 +176,7 @@ class Arrays
             !(is_object($columnKey) && method_exists($columnKey, '__toString'))
         ) {
             Core_Logger::getInstance(__CLASS__)->exception(
-                'array_column(): The column key should be either a string or an integer',
+                'array_column(): The column key should be either a string or an integer or array',
                 __FILE__,
                 __LINE__
             );
@@ -186,10 +186,11 @@ class Arrays
             !is_int($indexKey) &&
             !is_float($indexKey) &&
             !is_string($indexKey) &&
+            !is_array($indexKey) &&
             !(is_object($indexKey) && method_exists($indexKey, '__toString'))
         ) {
             Core_Logger::getInstance(__CLASS__)->exception(
-                'array_column(): The index key should be either a string or an integer',
+                'array_column(): The index key should be either a string or an integer or array',
                 __FILE__,
                 __LINE__
             );
@@ -198,6 +199,7 @@ class Arrays
         if (isset($indexKey)) {
             if (is_float($indexKey) || is_int($indexKey)) {
                 $indexKey = (int)$indexKey;
+            } elseif (is_array($indexKey)) {
             } else {
                 $indexKey = (string)$indexKey;
             }
@@ -209,7 +211,9 @@ class Arrays
             $value = null;
             $valueSet = false;
 
-            if ($indexKey !== null && array_key_exists($indexKey, $row)) {
+            if ($indexKey !== null && is_array($indexKey)) {
+                $key = implode('__', array_intersect_key($row, array_flip($indexKey)));
+            } elseif ($indexKey !== null && array_key_exists($indexKey, $row)) {
                 $key = (string)$row[$indexKey];
             } elseif ($indexKey === '') {
                 $key = '';
@@ -223,11 +227,8 @@ class Arrays
                 $value = reset($row);
             } else {
                 if (is_array($columnKey)) {
-                    $values = array_intersect_key($row, array_flip($columnKey));
-                    if (!empty($values)) {
                         $valueSet = true;
-                        $value = implode('_', $values);
-                    }
+                        $value = implode('__', array_intersect_key($row, array_flip($columnKey)));
                 } else {
                     if (array_key_exists($columnKey, $row)) {
                         $valueSet = true;
@@ -242,7 +243,6 @@ class Arrays
                 } else {
                     $resultArray[$key] = $value;
                 }
-
             }
         }
 

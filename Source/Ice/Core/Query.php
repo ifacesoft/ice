@@ -480,12 +480,14 @@ class Query
     {
         $modelClass = $this->getQueryBuilder()->getModelClass();
 
-        if ($fieldName) {
-            $fieldName = $modelClass::getFieldName($fieldName);
+        $fieldName = (array)$fieldName;
+        foreach ($fieldName as &$name) {
+            $name = $modelClass::getFieldName($name);
         }
 
-        if ($indexKey) {
-            $indexKey = $modelClass::getFieldName($indexKey);
+        $indexKey = (array)$indexKey;
+        foreach ($indexKey as &$key) {
+            $key = $modelClass::getFieldName($key);
         }
 
         return empty($fieldName)
