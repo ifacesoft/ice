@@ -200,6 +200,9 @@ class Arrays
             if (is_float($indexKey) || is_int($indexKey)) {
                 $indexKey = (int)$indexKey;
             } elseif (is_array($indexKey)) {
+                if (empty($indexKey)) {
+                    $indexKey = null;
+                }
             } else {
                 $indexKey = (string)$indexKey;
             }
