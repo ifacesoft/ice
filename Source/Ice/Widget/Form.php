@@ -3,6 +3,7 @@
 namespace Ice\Widget;
 
 use Ice\Core\Action;
+use Ice\Core\Debuger;
 use Ice\Core\Module;
 use Ice\Core\Validator;
 use Ice\Core\Widget;

@@ -48,7 +48,8 @@ class Length_Min extends Validator
      */
     public function validate($data, $scheme = null)
     {
-        return strlen($data) >= (int)$scheme;
+        $scheme = (array) $scheme;
+        return strlen($data) >= (int)reset($scheme);
     }
 
     /**
