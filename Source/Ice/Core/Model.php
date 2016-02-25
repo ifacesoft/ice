@@ -1574,6 +1574,8 @@ abstract class Model
          */
         foreach ($modelScheme->gets('relations/manyToMany') as $relationClass => $relationClassLink) {
             if ($relationClass == $modelClass) {
+                $relationClassLink = reset($relationClassLink);
+
                 $relationClassLinkName = $relationClassLink::getClassName();
 
                 $relationClassLinkFieldColumnMap = $relationClassLink::getScheme()->getFieldColumnMap();

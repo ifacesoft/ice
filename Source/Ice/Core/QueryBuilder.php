@@ -926,6 +926,7 @@ class QueryBuilder
      * @param array $joins
      * @return bool
      * @throws Error
+     * @throws QueryBuilder_Join
      */
     private function addJoin($joinType, $modelClass, $tableAlias, array $joins)
     {
