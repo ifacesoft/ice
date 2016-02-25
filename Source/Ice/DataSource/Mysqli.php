@@ -155,9 +155,9 @@ class Mysqli extends DataSource
 
         $data[QueryResult::NUM_ROWS] = count($data[QueryResult::ROWS]);
 
-        if ($result->num_rows != $data[QueryResult::NUM_ROWS]) {
-            throw new DataSource_Select_Error('Real selected rows not equal result num rows: duplicate primary key');
-        }
+//        if ($result->num_rows != $data[QueryResult::NUM_ROWS]) {
+//            throw new DataSource_Select_Error('Real selected rows not equal result num rows: duplicate primary key');
+//        }
 
         $result->free_result();
         $statement->free_result();
