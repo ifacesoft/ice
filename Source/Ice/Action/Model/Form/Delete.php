@@ -7,6 +7,7 @@ use Ice\Core\Logger;
 use Ice\Core\Model;
 use Ice\Core\Request;
 use Ice\Widget\Form;
+use Ice\DataProvider\Request as DataProvider_Request;
 
 /**
  * Class Model_Delete
@@ -35,7 +36,7 @@ class Model_Form_Delete extends Widget_Event
             'cache' => ['ttl' => -1, 'count' => 1000],
             'actions' => [],
             'input' => [
-                'widget' => ['providers' => 'request', 'validators' => 'Ice:Not_Empty'],
+                'widget' => ['providers' => DataProvider_Request::class, 'validators' => 'Ice:Not_Empty'],
                 'widgets' => ['default' => [], 'providers' => ['default', Request::class]]
             ],
             'output' => []

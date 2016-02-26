@@ -3,8 +3,7 @@ namespace Ice\Action;
 
 use Ice\Core\Action;
 use Ice\Core\Model;
-use Ice\Core\Request;
-use Ice\Widget\Menu\Pagination;
+use Ice\DataProvider\Request;
 
 /**
  * Class Data_Model
@@ -60,7 +59,7 @@ class Crud extends Action
         return [
             'view' => ['viewRenderClass' => 'Ice:Php'],
             'input' => [
-                'page' => ['dataProviderKey' => 'request', 'default' => 1],
+                'page' => ['dataProviderKey' => Request::class, 'default' => 1],
                 'limit' => ['default' => 15],
                 'modelClassName' => ['validators' => 'Ice:Not_Empty'],
 //                'formFilterFields' => ['validators' => 'Ice:Not_Empty'],
