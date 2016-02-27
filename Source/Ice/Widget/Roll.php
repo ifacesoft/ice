@@ -122,8 +122,12 @@ class Roll extends Widget
      * @param  string $template
      * @return $this
      */
-    public function a($columnName, array $options = [], $template = 'Ice\Widget\Table\Rows\A')
+    public function a($columnName, array $options = [], $template = null)
     {
+        if (!$template) {
+            $template = 'Ice\Widget\Table\Rows\A';
+        }
+
         return $this->addPart($columnName, $options, $template, __FUNCTION__);
     }
 
