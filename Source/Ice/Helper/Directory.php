@@ -10,6 +10,7 @@
 namespace Ice\Helper;
 
 use FilesystemIterator;
+use Ice\Core\Debuger;
 use Ice\Core\Logger as Core_Logger;
 use Ice\Core\Module;
 use RecursiveDirectoryIterator;
@@ -104,7 +105,7 @@ class Directory
                 __LINE__
             );
         }
-
+        
         $old = umask(0);
         mkdir($path, $chmod);
         umask($old);
@@ -125,6 +126,7 @@ class Directory
      *
      * @version 0.0
      * @since   0.0
+     * @return mixed
      */
     public static function remove($dirPath)
     {

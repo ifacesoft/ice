@@ -214,4 +214,8 @@ class Console
 
         return $var;
     }
+
+    public static function scp($source, $dest, $keyPath, $user, $host, $port = '22') {
+        return Console::run('scp -r -P ' . $port . ' -i ' . $keyPath . ' ' . $user . '@' . $host . ':' . $source . ' ' . $dest);
+    }
 }
