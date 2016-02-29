@@ -21,8 +21,6 @@ class Validator
      */
     public static function validate($validatorClass, $validatorParams, $param, $value)
     {
-        Debuger::dump([$validatorClass, $validatorParams, $param, $value]);
-
         /**
          * @var Core_Validator $validatorClass
          */
