@@ -35,15 +35,15 @@ class LettersNumbers extends Validator
      * ```
      *
      * @param  $data
-     * @param  mixed|null $scheme
+     * @param  array $scheme
      * @return boolean
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.1
-     * @since   0.1
+     * @version 0.0
+     * @since   0.0
      */
-    public function validate($data, $scheme = null)
+    public function validate($data, array $scheme = [])
     {
         return ctype_alnum($data);
     }

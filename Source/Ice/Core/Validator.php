@@ -196,7 +196,7 @@ abstract class Validator extends Container
      * @version 0
      * @since   0
      */
-    abstract public function validate($value, $params = null);
+    abstract public function validate($value, array $params = []);
     
     public function  getMessage() {
         return 'param \'{$0}\' with value \'{$1}\' is not valid';

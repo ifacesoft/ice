@@ -37,7 +37,7 @@ class Equal extends Validator
      * ```
      *
      * @param  $data
-     * @param  mixed|null $scheme
+     * @param  array $scheme
      * @return boolean
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -45,9 +45,9 @@ class Equal extends Validator
      * @version 0.0
      * @since   0.0
      */
-    public function validate($data, $scheme = null)
+    public function validate($data, array $scheme = [])
     {
-        return in_array($data, (array)$scheme);
+        return in_array($data, $scheme);
     }
 
     /**

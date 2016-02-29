@@ -36,7 +36,7 @@ class Numeric_Positive extends Numeric
      *  'name' => 'Ice:Not_Null'
      *
      * @param  $data
-     * @param  null $scheme
+     * @param  array $scheme
      * @return boolean
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -44,7 +44,7 @@ class Numeric_Positive extends Numeric
      * @version 0.0
      * @since   0.0
      */
-    public function validate($data, $scheme = null)
+    public function validate($data, array $scheme = [])
     {
         return parent::validate($data, $scheme) && $data > 0;
     }

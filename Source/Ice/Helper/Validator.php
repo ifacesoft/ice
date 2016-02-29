@@ -21,6 +21,8 @@ class Validator
      */
     public static function validate($validatorClass, $validatorParams, $param, $value)
     {
+        Debuger::dump([$validatorClass, $validatorParams, $param, $value]);
+
         /**
          * @var Core_Validator $validatorClass
          */
@@ -43,7 +45,7 @@ class Validator
             $exceptionClass = Exception::getClass('Ice:Not_Valid');
         }
 
-        if ($validator->validate($value, $validatorParams)) {
+        if ($validator->validate($value, (array)$validatorParams)) {
             return;
         }
 

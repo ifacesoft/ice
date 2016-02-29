@@ -31,17 +31,17 @@ class Length_Equal extends Validator
      *  'name' => 'Ice:Not_Null'
      *
      * @param  $data
-     * @param  null $scheme
+     * @param  array $scheme
      * @return boolean
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 1.0
-     * @since   1.0
+     * @version 0.0
+     * @since   0.0
      */
-    public function validate($data, $scheme = null)
+    public function validate($data, array $scheme = [])
     {
-        return strlen($data) === (int)$scheme;
+        return strlen($data) === (int)reset($scheme);
     }
 
     /**

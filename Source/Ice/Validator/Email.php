@@ -38,7 +38,7 @@ class Email extends Validator
      *  'name' => 'Ice:Not_Null'
      *
      * @param  $data
-     * @param  null $scheme
+     * @param  array $scheme
      * @return boolean
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -46,7 +46,7 @@ class Email extends Validator
      * @version 0.0
      * @since   0.0
      */
-    public function validate($data, $scheme = null)
+    public function validate($data, array $scheme = [])
     {
         return (bool)filter_var($data, FILTER_VALIDATE_EMAIL);
     }
