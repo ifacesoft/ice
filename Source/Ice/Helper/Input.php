@@ -4,10 +4,12 @@ namespace Ice\Helper;
 
 use Ice\Core\Action;
 use Ice\Core\DataProvider;
+use Ice\Core\Debuger;
 use Ice\DataProvider\Cli;
 use Ice\DataProvider\Request;
 use Ice\DataProvider\Router;
 use Ice\DataProvider\Session;
+use Ice\Exception\Error;
 use Ice\Exception\Http_Not_Found;
 
 class Input
@@ -57,7 +59,13 @@ class Input
                 }
             }
 
-            $input[$name] = Input::getParam($name, $input[$name], $param);
+//            if (!isset($input[$name]) && (!isset($param['required']) || $param['required'] === true)) {
+//                throw new Error('Param {$0} is required in input');
+//            } else {
+//                $input[$name] = null;
+//            }
+
+            $input[$name] =  Input::getParam($name, $input[$name], $param);
         }
 
         return $input;
