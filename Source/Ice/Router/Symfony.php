@@ -12,10 +12,28 @@ class Symfony extends Ice
             $routeName = $this->getName();
         }
 
+        $routeName = (array) $routeName;
+        
+        $routeParams = [];
+        $urlWithGet = false;
+        
         $url = null;
 
         try {
-            if ($url = parent::getUrl($routeName, $params, $withGet)) {
+            if (count($routeName) == 3) {
+                list($routeName, $routeParams, $urlWithGet) = $routeName;
+                $routeParams = array_merge($params, $routeParams);
+            } elseif (count($routeName) == 2) {
+                list($routeName, $routeParams) = $routeName;
+                $routeParams = array_merge($params, $routeParams);
+                $urlWithGet = $withGet;
+            } else {
+                $routeName = reset($routeName);
+                $routeParams = $params;
+                $urlWithGet = $withGet;
+            }
+
+            if ($url = parent::getUrl($routeName, $routeParams, $urlWithGet)) {
                 return $url;
             }
         } catch (RouteNotFound $e) {
@@ -24,8 +42,8 @@ class Symfony extends Ice
 
         global $kernel;
 
-        if ($url = $kernel->getContainer()->get('router')->generate($routeName, array_merge($this->getParams(), $params))) {
-            return $withGet ? $url : strtok($url,'?');
+        if ($url = $kernel->getContainer()->get('router')->generate($routeName, array_merge($this->getParams(), $routeParams))) {
+            return $urlWithGet ? $url : strtok($url,'?');
         }
 
         return $url;

@@ -280,9 +280,11 @@ abstract class Widget extends Container
 
             $this->setData($data);
 
+//            Debuger::dump(Input::get($configInput, $data));die();
             $this->bind(Input::get($configInput, $data));
 
             $this->loadResource();
+
 
             $this->output = array_merge(Input::get($configOutput, $data), (array)$this->build($this->getValues()));
         } catch (Http $e) {

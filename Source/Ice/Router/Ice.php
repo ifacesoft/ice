@@ -8,9 +8,34 @@ use Ice\DataProvider\Router as DataProvider_Router;
 
 class Ice extends Router
 {
+    /**
+     * @param null $routeName
+     * @param array $params
+     * @param bool $withGet
+     * @return null|string
+     * @throws \Ice\Exception\RouteNotFound
+     */
     public function getUrl($routeName = null, array $params = [], $withGet = false)
     {
-        if ($url = Route::getInstance($routeName)->getUrl(array_merge($this->getParams(), $params))) {
+        $routeName = (array) $routeName;
+
+        $routeParams = [];
+        $urlWithGet = false;
+
+        if (count($routeName) == 3) {
+            list($routeName, $routeParams, $urlWithGet) = $routeName;
+            $routeParams = array_merge($params, $routeParams);
+        } elseif (count($routeName) == 2) {
+            list($routeName, $routeParams) = $routeName;
+            $routeParams = array_merge($params, $routeParams);
+            $urlWithGet = $withGet;
+        } else {
+            $routeName = reset($routeName);
+            $routeParams = $params;
+            $urlWithGet = $withGet;
+        }
+        
+        if ($url = Route::getInstance($routeName)->getUrl(array_merge($this->getParams(), $routeParams))) {
             return $url;
         }
 

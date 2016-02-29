@@ -40,6 +40,10 @@ class Route extends Config
     {
         $routes = self::getRoutes();
 
+        if (is_array($routeName)) {
+            $routeName = reset($routeName);
+        }
+
         if (!isset($routes[$routeName])) {
             throw new RouteNotFound(['Route {$0} not found', $routeName]);
         }
