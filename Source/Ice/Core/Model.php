@@ -79,11 +79,11 @@ abstract class Model
     private $fk = [];
 
     /**
-     * Extended data of model
+     * Raw data of model
      *
      * @var array
      */
-    private $data = [];
+    private $raw = [];
 
     /**
      * Affected fields
@@ -156,7 +156,7 @@ abstract class Model
             }
         }
 
-        $this->data = $row;
+        $this->raw = $row;
     }
 
     /**
@@ -636,7 +636,7 @@ abstract class Model
                 );
             }
 
-            $row = array_merge($this->data, [strtolower(Object::getClassName($fieldModelName)) . '_pk' => $key]);
+            $row = array_merge($this->raw, [strtolower(Object::getClassName($fieldModelName)) . '_pk' => $key]);
             $joinModel = $fieldModelName::create($row);
 
             if (!$joinModel) {
@@ -664,8 +664,8 @@ abstract class Model
 //            return $this->fk[$fieldName];
 //        }
 
-        if (isset($this->data[$fieldName])) {
-            return $this->data[$fieldName];
+        if (isset($this->raw[$fieldName])) {
+            return $this->raw[$fieldName];
         }
 
         Logger::getInstance(__CLASS__)->exception(
@@ -1534,13 +1534,13 @@ abstract class Model
             return null;
         }
 
-        $data = empty($this->fk[$fieldFk])
-            ? $this->data
-            : array_merge($this->data, $this->fk[$fieldFk]);
+        $raw = empty($this->fk[$fieldFk])
+            ? $this->raw
+            : array_merge($this->raw, $this->fk[$fieldFk]);
 
         return $lazy
             ? $modelClass::getModel($this->row[$fieldFk], $fieldNames)
-            : $modelClass::create($data);
+            : $modelClass::create($raw);
     }
 
     /**
@@ -1607,5 +1607,13 @@ abstract class Model
     public static function getResource()
     {
         return Resource::create(self::getClass());
+    }
+
+    /**
+     * @return array
+     */
+    public function getRaw()
+    {
+        return $this->raw;
     }
 }
