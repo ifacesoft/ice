@@ -205,9 +205,11 @@ class Console
 
         ob_start();
 
-        Logger::getInstance(__CLASS__)->info($commandString, Logger::INFO, false);
+        $returnCode = -1;
 
-        passthru($commandString);
+        passthru(str_replace(' && \\' . "\n", ' && ', $commandString), $returnCode);
+
+        Logger::getInstance(__CLASS__)->info($commandString . ' [code:  ' . $returnCode . ']', Logger::INFO, false);
 
         $var = ob_get_contents();
         ob_end_clean();
@@ -236,5 +238,12 @@ class Console
         }
 
         return Console::run('ssh -p ' . $port . ' -i ' . $keyPath . ' ' . $user . '@' . $host . ' ' . escapeshellarg($commandString));
+    }
+
+    public static function getCommand($string)
+    {
+        return file_exists('/usr/bin/' . $string) ? '/usr/bin/' . $string : '/usr/local/bin/' . $string;
+        return trim(Console::run('which ' . $string));
+
     }
 }
