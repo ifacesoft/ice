@@ -73,6 +73,9 @@ abstract class Container
             }
         }
 
+        $startTime = Profiler::getMicrotime();
+        $startMemory = Profiler::getMemoryGetUsage();
+
         if (!$key || $key == 'default') {
             $key = $class::getDefaultKey();
         }
@@ -83,17 +86,37 @@ abstract class Container
         try {
             $dataProvider = $class::getDataProvider('instance');
 
+            /** @var DataProvider $dataProviderClass */
+            $dataProviderClass = get_class($dataProvider);
+            $dataProviderClassName = $dataProviderClass::getClassName();
+
             if ($ttl != -1 && $object = $dataProvider->get($key)) {
+                $message = $class . ' - ' . print_r($key, true);
+
+                Profiler::setPoint($message, $startTime, $startMemory);
+                Logger::log(Profiler::getReport($message), 'container (cache - ' . $dataProviderClassName .  ')', 'LOG');
                 return $object;
             }
 
             $params['instanceKey'] = $key;
 
             if ($object = $class::create($params)) {
-                $dataProvider->set($key, $object, $ttl);
+                $message = $class . ' - ' . print_r($key, true);
+
+                Profiler::setPoint($message, $startTime, $startMemory);
+                if ($ttl == -1) {
+                    Logger::log(Profiler::getReport($message), 'container (not cache)', 'WARN');
+                } else {
+                    Logger::log(Profiler::getReport($message), 'container (new - ' . $dataProviderClassName .  ')', 'INFO');
+                    $dataProvider->set($key, $object, $ttl);
+                }
             }
 
         } catch (FileNotFound $e) {
+            $message = $class . ' - ' . print_r($key, true);
+            Profiler::setPoint($message, $startTime, $startMemory);
+            Logger::log(Profiler::getReport($message), 'container (error)', 'Error');
+
             if ($baseClass == Code_Generator::getClass()) {
                 $logger->exception(['Code generator for {$0} not found', $key], __FILE__, __LINE__, $e);
             }
@@ -104,6 +127,7 @@ abstract class Container
             } else {
                 $logger->error(['File {$0} not found', $key], __FILE__, __LINE__, $e);
             }
+
         }
 
         return $object;

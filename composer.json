@@ -53,6 +53,7 @@
     "phpunit/phpunit-selenium": "dev-master",
     "phpunit/phpunit-story": "dev-master",
     "facebook/xhprof": "dev-master",
+    "perftools/xhgui": "dev-master",
     "composer/composer": "dev-master"
   }
 }

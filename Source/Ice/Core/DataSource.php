@@ -292,7 +292,7 @@ abstract class DataSource extends Container
                 $queryResult = QueryResult::create($query, $this->$queryCommand($query));
 
                 Profiler::setPoint($queryResult->__toString(), $startTime, $startMemory);
-                Logger::log(Profiler::getReport($queryResult->__toString()), 'query (not cache)', 'WARN');
+                Logger::log(Profiler::getReport($queryResult->__toString()), 'data source (not cache)', 'WARN');
 
                 return $queryResult;
             }
@@ -300,17 +300,22 @@ abstract class DataSource extends Container
             switch ($queryType) {
                 case QueryBuilder::TYPE_SELECT:
                     $cacher = QueryResult::getCacher($this->getDataSourceKey());
+
+                    /** @var DataProvider $dataProviderClass */
+                    $dataProviderClass = get_class($cacher);
+                    $dataProviderClassName = $dataProviderClass::getClassName();
+
                     $queryHash = $query->getFullHash();
 
                     if ($queryResult = $cacher->get($queryHash)) {
                         Profiler::setPoint($queryResult->__toString(), $startTime, $startMemory);
-                        Logger::log(Profiler::getReport($queryResult->__toString()), 'query (cache)', 'LOG');
+                        Logger::log(Profiler::getReport($queryResult->__toString()), 'data source (cache - ' . $dataProviderClassName .  ')', 'LOG');
                         return $queryResult;
                     }
 
                     $queryResult = QueryResult::create($query, $this->$queryCommand($query));
                     Profiler::setPoint($queryResult->__toString(), $startTime, $startMemory);
-                    Logger::log(Profiler::getReport($queryResult->__toString()), 'query (new)', 'INFO');
+                    Logger::log(Profiler::getReport($queryResult->__toString()), 'data source (new - ' . $dataProviderClassName .  ')', 'INFO');
 
                     $cacher->set($queryHash, $queryResult, $ttl);
                     return $queryResult;
@@ -320,7 +325,7 @@ abstract class DataSource extends Container
                 case QueryBuilder::TYPE_DELETE:
                     $queryResult = QueryResult::create($query, $this->$queryCommand($query))->invalidate();
                     Profiler::setPoint($queryResult->__toString(), $startTime, $startMemory);
-                    Logger::log(Profiler::getReport($queryResult->__toString()), 'query (new)', 'INFO');
+                    Logger::log(Profiler::getReport($queryResult->__toString()), 'data source (query)', 'INFO');
                     return $queryResult;
 
                 default:
@@ -333,12 +338,10 @@ abstract class DataSource extends Container
                     );
             }
         } catch (\Exception $e) {
-            Logger::log(
-                $e->getMessage() . ': ' .
-                preg_replace('/\s\s+/', ' ', print_r($query->getBody(), true) . ' (' . print_r($query->getBinds(), true) . ')'),
-                'query (error)',
-                'ERROR'
-            );
+            $message = $e->getMessage() . ': ' . preg_replace('/\s\s+/', ' ', print_r($query->getBody(), true) . ' (' . print_r($query->getBinds(), true) . ')');
+            
+            Profiler::setPoint($message, $startTime, $startMemory);
+            Logger::log(Profiler::getReport($message), 'data source (error)', 'ERROR');
 
             throw $e;
         }

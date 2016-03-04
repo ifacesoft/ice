@@ -209,11 +209,11 @@ class Console
 
         passthru(str_replace(' && \\' . "\n", ' && ', $commandString), $returnCode);
 
-        Logger::getInstance(__CLASS__)->info($commandString . ' [code:  ' . $returnCode . ']', Logger::INFO, false);
-
         $var = ob_get_contents();
         ob_end_clean();
 
+        Logger::getInstance(__CLASS__)->info($commandString . ' [code:  ' . $returnCode . ']', Logger::INFO, false);
+        
         return $var;
     }
 

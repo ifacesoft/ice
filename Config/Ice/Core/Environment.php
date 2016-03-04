@@ -63,9 +63,6 @@ return [
                 'routes' => 'Ice:Repository',
                 'model_scheme' => 'Ice:Repository',
             ],
-            'Ice\Core\Converter' => [
-                'instance' => 'Ice:Repository',
-            ],
             'Ice\Core\Widget' => [
                 'instance' => 'Ice:Repository',
             ],
@@ -102,7 +99,7 @@ return [
                 'instance' => 'Ice:Repository',
             ],
             'Ice\Core\DataSource' => [
-                'instance' => 'Ice:Repository',
+                'instance' => 'Ice:Registry',
                 'cache' => 'Ice:File'
             ],
             'Ice\Core\Data_Scheme' => [
@@ -165,9 +162,6 @@ return [
                 'routes' => 'Ice:File',
                 'model_scheme' => 'Ice:File',
             ],
-            'Ice\Core\Converter' => [
-                'instance' => 'Ice:File',
-            ],
             'Ice\Core\Widget' => [
                 'instance' => 'Ice:File',
             ],
@@ -204,7 +198,6 @@ return [
                 'instance' => 'Ice:File',
             ],
             'Ice\Core\DataSource' => [
-                'instance' => 'Ice:File',
                 'cache' => 'Ice:File'
             ],
             'Ice\Core\Data_Scheme' => [
@@ -264,9 +257,6 @@ return [
                 'routes' => 'Ice:Registry',
                 'model_scheme' => 'Ice:Registry',
             ],
-            'Ice\Core\Converter' => [
-                'instance' => 'Ice:Registry',
-            ],
             'Ice\Core\Widget' => [
                 'instance' => 'Ice:Registry',
             ],
@@ -303,7 +293,6 @@ return [
                 'instance' => 'Ice:Registry',
             ],
             'Ice\Core\DataSource' => [
-                'instance' => 'Ice:Registry',
                 'cache' => 'Ice:Registry'
             ],
             'Ice\Core\Data_Scheme' => [

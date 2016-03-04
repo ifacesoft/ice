@@ -9,7 +9,6 @@
 
 namespace Ice\DataSource;
 
-use Ice\Core\Converter;
 use Ice\Core\DataProvider;
 use Ice\Core\DataSource;
 use Ice\Core\Debuger;
@@ -24,7 +23,6 @@ use Ice\Core\QueryResult;
 use Ice\Core\QueryTranslator;
 use Ice\Exception\DataSource_Insert;
 use Ice\Exception\DataSource_Insert_DuplicateEntry;
-use Ice\Exception\DataSource_Select_Error;
 use Ice\Exception\DataSource_Statement_Error;
 use Ice\Exception\DataSource_Statement_TableNotFound;
 use Ice\Exception\DataSource_Statement_UnknownColumn;
@@ -130,12 +128,12 @@ class Mysqli extends DataSource
         $data[QueryResult::ROWS] = [];
 
         while ($row = $result->fetch_assoc()) {
-            foreach ($query->getAfterSelectTriggers() as list($method, $params)) {
-                $row = $modelClass::$method($row, $params);
+            foreach ($query->getAfterSelectTriggers() as list($afterSelectTrigger, $params, $triggerModelClass)) {
+                $row = $triggerModelClass::$afterSelectTrigger($row, $params);
 
                 if (!$row) {
                     $logger->exception(
-                        ['Trigger(method) {$0} of model {$1} must return row. Fix it.', [$method, $modelClass]],
+                        ['Trigger (method) {$0} form model {$1} must return row. Fix it.', [$afterSelectTrigger, $triggerModelClass]],
                         __FILE__,
                         __LINE__
                     );
@@ -175,8 +173,16 @@ class Mysqli extends DataSource
             $data[QueryResult::FOUND_ROWS] = $data[QueryResult::NUM_ROWS];
         }
 
-        foreach ($query->getQueryBuilder()->getTransforms() as list($converterClass, $params)) {
-            $data = Converter::getInstance($converterClass)->convert($data, $params);
+        foreach ($query->getQueryBuilder()->getTransforms() as list($transform, $params, $transformModelClass)) {
+            $data = $transformModelClass::$transform($data, $params);
+
+            if (!$data) {
+                $logger->exception(
+                    ['Transform (method) {$0} for model {$1} must return row. Fix it.', [$transform, $transformModelClass]],
+                    __FILE__,
+                    __LINE__
+                );
+            }
         }
 
         return $data;
