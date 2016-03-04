@@ -95,8 +95,6 @@ class Roll extends Widget
 
         $limitQueryPart = $queryBuilder->getSqlParts()[QueryBuilder::PART_LIMIT];
 
-//        Debuger::dump($this->getDataParams());
-
         $limit = isset($this->getDataParams()['limit'])
             ? $this->getDataParams()['limit']
             : $limitQueryPart['limit'];
@@ -140,6 +138,19 @@ class Roll extends Widget
      * @return $this
      */
     public function span($columnName, array $options = [], $template = 'Ice\Widget\Table\Rows\Span')
+    {
+        return $this->addPart($columnName, $options, $template, __FUNCTION__);
+    }
+
+    /**
+     * Build text part
+     *
+     * @param  $columnName
+     * @param  array $options
+     * @param  string $template
+     * @return $this
+     */
+    public function text($columnName, array $options = [], $template = 'Ice\Widget\Table\Rows\Text')
     {
         return $this->addPart($columnName, $options, $template, __FUNCTION__);
     }

@@ -441,22 +441,22 @@ abstract class Widget extends Container
         $offset = $this->getOffset();
         $index = isset($data['index']) ? $data['index'] : 0;
 
-        foreach ($this->getRows() as $values) {
+        $values = $this->getValues();
+
+        foreach ($this->getRows() as $row) {
             $column = isset($data['column']) ? $data['column'] : 'A';
 
-            $isRow = !empty($values);
+            $isRow = !empty($row);
 
-            if (!$isRow) {
-                $values = $this->getValues();
-            }
+            $row = array_merge($values, $row);
 
-            $empty = empty($values);
+            $empty = empty($row);
 
-            if (empty($values)) {
+            if (empty($row)) {
                 $part['empty'] = true;
             }
 
-            $row = [];
+            $rowTable = [];
 
             foreach ($this->getParts($this->getFilterParts()) as $partName => $part) {
                 $part['empty'] = $empty;
@@ -503,7 +503,7 @@ abstract class Widget extends Container
                     }
                 }
 
-                $this->partParams($partName, $part, $values);
+                $this->partParams($partName, $part, $row);
 
                 if (!empty($part['options']['route'])) {
                     if ($part['options']['route'] === true) {
@@ -603,7 +603,7 @@ abstract class Widget extends Container
 
                 $part['widgetOptions'] = $this->options;
 
-                $row[$partName] = $part;
+                $rowTable[$partName] = $part;
 
                 if ($isRow) {
                     $column++;
@@ -616,7 +616,7 @@ abstract class Widget extends Container
                 $index++;
             }
 
-            $this->result[++$offset] = $row;
+            $this->result[++$offset] = $rowTable;
         }
 
         return $this->result;
