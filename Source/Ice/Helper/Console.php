@@ -213,11 +213,12 @@ class Console
         ob_end_clean();
 
         Logger::getInstance(__CLASS__)->info($commandString . ' [code:  ' . $returnCode . ']', Logger::INFO, false);
-        
+
         return $var;
     }
 
-    public static function scp($source, $dest, $keyPath, $user, $host, $port = '22') {
+    public static function scp($source, $dest, $keyPath, $user, $host, $port = '22')
+    {
         return Console::run('scp -r -P ' . $port . ' -i ' . $keyPath . ' ' . $user . '@' . $host . ':' . $source . ' ' . $dest);
     }
 
@@ -244,6 +245,5 @@ class Console
     {
         return file_exists('/usr/bin/' . $string) ? '/usr/bin/' . $string : '/usr/local/bin/' . $string;
         return trim(Console::run('which ' . $string));
-
     }
 }
