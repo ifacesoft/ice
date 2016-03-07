@@ -1610,10 +1610,16 @@ abstract class Model
     }
 
     /**
-     * @return array
+     * @param null $fieldName
+     * @return mixed
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 1.1
+     * @since   1.1
      */
-    public function getRaw()
+    public function getRaw($fieldName = null)
     {
-        return $this->raw;
+        return $fieldName === null ? $this->raw : $this->raw[$fieldName];
     }
 }
