@@ -67,14 +67,18 @@ class Model_Form_Submit extends Widget_Event
 
             return array_merge(
                 parent::run($input),
-                ['success' => $logger->info(['Model {$0} successfully saved', get_class($input['model'])], Logger::SUCCESS)]
+//                ['success' => $logger->info(['Model {$0} successfully saved', get_class($input['model'])], Logger::SUCCESS, true)]
+                ['success' => $logger->info(['Сохранение прошло успешно', get_class($input['model'])], Logger::SUCCESS, true)]
             );
         } catch (\Exception $e) {
             $message = ['Save model: {$0}', $e->getMessage()];
 
             $logger->error($message, __FILE__, __LINE__, $e);
 
-            return ['error' => $logger->info($message, Logger::DANGER)];
+            return
+//                ['error' => $logger->info($message, Logger::DANGER, true)]
+                ['error' => $logger->info('Сохранение не удалось', Logger::DANGER, true)]
+                ;
         }
     }
 }
