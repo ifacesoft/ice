@@ -245,15 +245,18 @@ class Sql extends QueryTranslator
                 list($logicalOperator, $fieldName, $comparisonOperator, $count) = $fieldNameArr;
 
                 if (isset($fields[$fieldName])) {
-                    $fieldName = $fields[$fieldName];
+                    $fieldName = '`' . $tableAlias . '`.`' . $fields[$fieldName] . '`';
                 }
 
                 $sql .= $sql
                     ? ' ' . $logicalOperator . "\n\t"
                     : "\n" . self::SQL_CLAUSE_WHERE . "\n\t";
 
-                $sql .= '`' . $tableAlias . '`.`' . $fieldName . '` ' .
-                    $this->buildWhere($comparisonOperator, $fieldName, $count);
+                $sql .=  $fieldName . ' ' . $this->buildWhere($comparisonOperator, ltrim($fieldName, '('), $count);
+
+                if ($fieldName[0] == '(') {
+                    $sql .= ')';
+                }
             }
         }
 
