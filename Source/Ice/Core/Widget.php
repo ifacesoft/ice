@@ -524,6 +524,20 @@ abstract class Widget extends Container
 
                     $routeParams = array_merge($part['params'], (array)$routeParams);
 
+                    if (isset($part['options']['render'])) {
+                        if ($part['options']['render'] === true) {
+                            $part['options']['render'] = isset($part['params'][$part['value']]);
+                        } else {
+                            $part['options']['render'] = isset($part['params'][$part['options']['render']]);
+                        }
+                    } else {
+                        $part['options']['render'] = true;
+                    }
+
+                    if (!$part['options']['render']) {
+                        continue;
+                    }
+
                     if (!array_key_exists('href', $part['options'])) {
                         $part['options']['href'] = Router::getInstance()->getUrl($routeName, $routeParams, $withGet);
                     }
