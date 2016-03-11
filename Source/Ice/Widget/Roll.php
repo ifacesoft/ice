@@ -1,8 +1,7 @@
 <?php
 namespace Ice\Widget;
 
-use Ice\Action\Render;
-use Ice\Core\Debuger;
+
 use Ice\Core\QueryBuilder;
 use Ice\Core\QueryResult;
 use Ice\Core\Widget;
