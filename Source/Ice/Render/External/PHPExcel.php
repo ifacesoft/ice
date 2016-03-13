@@ -89,7 +89,7 @@ class External_PHPExcel extends Render
 
         $widget->renderExternal(__CLASS__, ['sheet' => $xls->getActiveSheet(), 'column' => 'A', 'index' => 1]);
 
-        foreach(range('A','I') as $columnID) {
+        foreach(range('A', 'K') as $columnID) {
             $xls->getActiveSheet()->getColumnDimension($columnID)->setAutoSize(true);
         }
 

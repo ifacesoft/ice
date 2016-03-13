@@ -1499,7 +1499,7 @@ class QueryBuilder
             }
         }
 
-        if (!$fieldName || $fieldName == '/pk') {
+        if ($fieldName == '/pk') {
             $fieldName = $modelClass::getScheme()->getPkFieldNames();
         }
 
@@ -1997,6 +1997,7 @@ class QueryBuilder
         list($modelClass, $tableAlias) = $this->getModelClassTableAlias($modelTableData);
         list($fieldName, $fieldAlias) = $this->getFieldNameAlias($funcName, $modelClass);
 
+
 // TODO: Это доработать когда смогу брать кеш теги из сабквери билдер
 // Проблема: ->groupConcat(['CONCAT(" ",author_surname," ",author_name,".",author_patronymic,".")' => 'authors'])
 //        $fieldColumnMap = $modelClass::getScheme()->getFieldColumnMap();
@@ -2015,7 +2016,7 @@ class QueryBuilder
         $fieldColumns = $modelScheme->getFieldColumnMap();
 
         $this->select(
-            strtoupper($fieldName) . '(' .
+            ($fieldName ? strtoupper($fieldName) : '') . '(' .
             (isset($fieldColumns[$argumentString]) ? $tableAlias . '.' . $fieldColumns[$argumentString] : $argumentString) .
             ')',
             $fieldAlias,

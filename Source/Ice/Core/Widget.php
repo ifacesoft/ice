@@ -512,17 +512,29 @@ abstract class Widget extends Container
                     $part['options']['route'] = (array)$part['options']['route'];
 
                     if (count($part['options']['route']) == 3) {
-                        list($routeName, $routeParams, $withGet) = $part['options']['route'];
+                        list($routeName, $tempRouteParams, $withGet) = $part['options']['route'];
                     } elseif (count($part['options']['route']) == 2) {
-                        list($routeName, $routeParams) = $part['options']['route'];
+                        list($routeName, $tempRouteParams) = $part['options']['route'];
                         $withGet = false;
                     } else {
                         $routeName = reset($part['options']['route']);
-                        $routeParams = [];
+                        $tempRouteParams = [];
                         $withGet = false;
                     }
 
-                    $routeParams = array_merge($part['params'], (array)$routeParams);
+                    $routeParams = $part['params'];
+
+                    foreach ((array) $tempRouteParams as $routeParamKey => $routeParamValue) {
+                        if (is_int($routeParamKey)) {
+                            $routeParams[$routeParamValue] = array_key_exists($routeParamValue, $row)
+                                ? $row[$routeParamValue]
+                                : null;
+
+                            continue;
+                        }
+
+                        $routeParams[$routeParamKey] = $routeParamValue;
+                    }
 
                     if (isset($part['options']['render'])) {
                         if ($part['options']['render'] === true) {
