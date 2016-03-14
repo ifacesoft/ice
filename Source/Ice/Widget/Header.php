@@ -74,6 +74,17 @@ class Header extends Widget
      * @param string $template
      * @return Header
      */
+    public function h4a($name, array $options = [], $template = 'Ice\Widget\Header\H4a')
+    {
+        return $this->addPart($name, $options, $template, __FUNCTION__);
+    }
+
+    /**
+     * @param $name
+     * @param array $options
+     * @param string $template
+     * @return Header
+     */
     public function h5($name, array $options = [], $template = 'Ice\Widget\Header\H5')
     {
         return $this->addPart($name, $options, $template, __FUNCTION__);
