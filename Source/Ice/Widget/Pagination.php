@@ -81,11 +81,7 @@ class Pagination extends Widget
     public function setFoundRows($foundRows)
     {
         $this->foundRows = $foundRows;
-        return $this;
-    }
 
-    public function render()
-    {
         $limit = $this->getValue('limit');
 
         if (!$limit) {
@@ -93,7 +89,7 @@ class Pagination extends Widget
         }
 
         if (ceil($this->foundRows / $limit) < 2) {
-            return '';
+            return;
         }
 
         $page = $this->getValue('page');
@@ -115,8 +111,6 @@ class Pagination extends Widget
             ->fastNext($page + 10, $pageCount)
             ->fastFastNext($page + 100, $pageCount)
             ->last($page, $pageCount);
-
-        return parent::render();
     }
 
     public function li($name, array $options = [], $template = 'Ice\Widget\Pagination\Li')
