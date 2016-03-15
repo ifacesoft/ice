@@ -15,6 +15,7 @@ use FirePHP;
 use Ice\Core;
 use Ice\Exception\Error;
 use Ice\Helper\Console;
+use Ice\Helper\Date;
 use Ice\Helper\Directory;
 use Ice\Helper\File;
 use Ice\Helper\Http;
@@ -270,7 +271,7 @@ class Logger
 
         $message = print_r($message, true);
 
-        File::createData($logFile, $message . "\n", false, FILE_APPEND);
+        File::createData($logFile, '[' . Date::get() . '] ' . $message . "\n", false, FILE_APPEND);
 
         if (Request::isCli()) {
             $message = Console::getText(' ' . $message . ' ', Console::C_BLACK, self::$consoleColors[$type]) . "\n";
@@ -559,7 +560,7 @@ class Logger
             $logFile = $logFilename . '_' . crc32(substr($logFile, 255 - 11));
         }
 
-        File::createData($logFile, $label . ': ' . $value . "\n\n", false, FILE_APPEND);
+        File::createData($logFile, '[' . Date::get() . '] ' . $label . ': ' . $value . "\n", false, FILE_APPEND);
 
         if (Environment::getInstance()->isProduction()) {
             return;

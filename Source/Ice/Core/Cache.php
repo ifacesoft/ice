@@ -87,27 +87,18 @@ class Cache
 
         $repository = Cache::getRepository($cacheable);
 
-//        Debuger::dump(Cache::getKeys($validateTags));
-
         foreach (Cache::getKeys($validateTags) as $key) {
             $time = $repository->get($key);
-
-//            Debuger::dump($time);
 
             if (!$time) {
                 $time = microtime(true);
                 $repository->set($key, $time);
             }
 
-//            Debuger::dump([$time, $cacheTime, $time >= $cacheTime]);
-
             if ($time >= $cacheTime) {
-//                Debuger::dump([$time => $cacheTime, $validateTags, $key => '2invalid!!!!']);
                 return null;
             }
         }
-
-//        Debuger::dump([$validateTags, 'valid!!!!']);
 
         return $cacheable;
     }

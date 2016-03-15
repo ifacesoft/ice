@@ -8,12 +8,12 @@
 
 namespace Ice\Widget;
 
-use Ice\Action\Security_Confirm_Submit;
+use Ice\Action\Security_EmailPassword_RegisterConfirm_Submit;
 use Ice\Core\Widget_Security;
 use Ice\DataProvider\Request;
 use Ice\DataProvider\Router;
 
-class Security_Confirm extends Widget_Security
+class Security_EmailPassword_RegisterConfirm extends Widget_Security
 {
     /**
      * Widget config
@@ -40,17 +40,21 @@ class Security_Confirm extends Widget_Security
     protected function build(array $input)
     {
         $this
-            ->setRedirect('ice_main', 1000)
-            ->setHorizontal()
-            ->text('token')
+            ->widget('header', ['widget' => $this->getWidget(Header::class)->h1('Register confirmation')])
+            ->text(
+                'token',
+                [
+                    'placeholder' => 'token_placeholder',
+                    'required' => true,
+                ]
+            )
             ->div('ice-message', ['label' => '&nbsp;'])
             ->button(
-                'confirm',
+                'register_confirm',
                 [
-                    'classes' => 'btn-primary',
                     'submit' => [
-                        'action' => Security_Confirm_Submit::class,
-                        'url' => 'ice_security_confirm'
+                        'action' => Security_EmailPassword_RegisterConfirm_Submit::class,
+                        'url' => 'ice_security_register_confirm_request'
                     ]
                 ]
             );

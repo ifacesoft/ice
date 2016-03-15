@@ -545,15 +545,16 @@ abstract class Model
      *
      * @param  null $fieldName
      * @param  bool $isNotNull
-     * @throws Exception
+     * @param null $defaultCallback  return default value via callback method or function
      * @return mixed
-     *
+     * @throws Exception
+     * @throws \Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
      * @since   0.0
      */
-    public function get($fieldName = null, $isNotNull = true)
+    public function get($fieldName = null, $isNotNull = true, $defaultCallback = null)
     {
         if ($fieldName === null) {
             return array_merge((array)$this->pk, array_filter($this->row, function ($value) { return $value !== null; }));

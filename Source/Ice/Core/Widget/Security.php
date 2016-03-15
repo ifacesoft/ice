@@ -2,6 +2,7 @@
 
 namespace Ice\Core;
 
+use Ice\Core\Model\Security_Account;
 use Ice\Helper\Date;
 use Ice\Widget\Form;
 
@@ -153,6 +154,4 @@ abstract class Widget_Security extends Form
         $this->autologin = $autologin;
         return $this;
     }
-
-
 }

@@ -3,11 +3,12 @@
 namespace Ice\Widget;
 
 use Ice\Action\Security_EmailPassword_RestoreConfirm_Submit;
+use Ice\Action\Security_LoginPassword_RestorePasswordConfirm_Submit;
 use Ice\Core\Widget_Security;
 use Ice\DataProvider\Request;
 use Ice\DataProvider\Router;
 
-class Security_EmailPassword_RestoreConfirm extends Widget_Security
+class Security_LoginPassword_RestorePasswordConfirm extends Widget_Security
 {
     /**
      * Widget config
@@ -34,18 +35,35 @@ class Security_EmailPassword_RestoreConfirm extends Widget_Security
     protected function build(array $input)
     {
         $this
-            ->setRedirect('ice_main', 1000)
-            ->setHorizontal()
-            ->text('token')
-            ->text('password')
+            ->widget('header', ['widget' => $this->getWidget(Header::class)->h1('Restore password confirmation')])
+            ->text(
+                'token',
+                [
+                    'placeholder' => 'token_placeholder',
+                    'required' => true,
+                ]
+            )
+            ->text(
+                'new_password',
+                [
+                    'placeholder' => 'new_password_placeholder',
+                    'required' => true,
+                ]
+            )
+            ->text(
+                'confirm_password',
+                [
+                    'placeholder' => 'confirm_password_placeholder',
+                    'required' => true,
+                ]
+            )
             ->div('ice-message', ['label' => '&nbsp;'])
             ->button(
-                'confirm',
+                'restore_password_confirm',
                 [
-                    'classes' => 'btn-primary',
                     'submit' => [
-                        'action' => Security_EmailPassword_RestoreConfirm_Submit::class,
-                        'url' => 'ice_security_restore_confirm'
+                        'action' => Security_LoginPassword_RestorePasswordConfirm_Submit::class,
+                        'url' => 'ice_security_restore_password_confirm_request'
                     ]
                 ]
             );

@@ -6,7 +6,7 @@ use Ice\Core\Logger;
 use Ice\Core\Model;
 use Ice\Core\Widget_Security;
 
-class Security_EmailPassword_RestoreRequest_Submit extends Security
+class Security_EmailPassword_RestorePassword_Submit extends Security
 {
     public function run(array $input)
     {
@@ -32,14 +32,14 @@ class Security_EmailPassword_RestoreRequest_Submit extends Security
 
             if (!$account) {
                 return [
-                    'error' => $logger->info('Пользователь с таким электронным адресом не найден.', Logger::DANGER)
+                    'error' => $logger->info('Пользователь с таким электронным адресом не найден.', Logger::DANGER, true)
                 ];
             }
 
-            $this->restoreRequest($account, $input);
+            $this->restorePassword($account, $input);
 
             return array_merge(
-                ['success' => $logger->info('Ключ для восстановления пароля отправлен вам на электронный адрес', Logger::SUCCESS)],
+                ['success' => $logger->info('Ключ для восстановления пароля отправлен вам на электронный адрес', Logger::SUCCESS, true)],
                 parent::run($input)
             );
 
@@ -47,9 +47,8 @@ class Security_EmailPassword_RestoreRequest_Submit extends Security
             $logger->error('Запрос на восстановление пароля не удался', __FILE__, __LINE__, $e);
 
             return [
-                'error' => $logger->info('Запрос на восстановление пароля не удался', Logger::DANGER)
+                'error' => $logger->info('Запрос на восстановление пароля не удался', Logger::DANGER, true)
             ];
         }
     }
-
 }

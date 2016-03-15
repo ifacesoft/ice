@@ -3,6 +3,8 @@
 namespace Ice\Core\Model;
 
 use Ice\Core\Model;
+use Ice\Model\User;
+
 
 interface Security_Account
 {
@@ -17,4 +19,6 @@ interface Security_Account
      * @return User|Model
      */
     public function getUser();
+    
+    public function securityVerify(array $values);
 }

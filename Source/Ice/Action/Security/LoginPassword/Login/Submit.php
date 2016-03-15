@@ -51,11 +51,11 @@ class Security_LoginPassword_Login_Submit extends Security
             $this->signIn($account, $input);
 
             return array_merge(
-                ['success' => $form->getLogger()->info('Login successfully', Logger::SUCCESS)],
+                ['success' => $form->getLogger()->info('Login successfully', Logger::SUCCESS, true)],
                 parent::run($input)
             );
         } catch (\Exception $e) {
-            return ['error' => $form->getLogger()->info($e->getMessage(), Logger::DANGER)];
+            return ['error' => $form->getLogger()->info($e->getMessage(), Logger::DANGER, true)];
         }
     }
 }

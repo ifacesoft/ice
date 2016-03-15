@@ -10,7 +10,7 @@
                type="text"
                class="<?= $element ?> <?= $name ?><?php if (!isset($options['resetFormClass'])) : ?> form-control<?php endif; ?><?php if (!empty($options['classes'])) : ?> <?= $options['classes'] ?><?php endif; ?>"
                name="<?= $name ?>"
-               value="<?= isset($params[$value]) ? $params[$value] : '' ?>"
+               value="<?= isset($params[$value]) ? htmlentities($params[$value], ENT_QUOTES) : '' ?>"
                data-params='<?= $dataParams ?>'
                data-for="<?= $widgetId ?>"
             <?php if (isset($options['onchange'])) : ?>

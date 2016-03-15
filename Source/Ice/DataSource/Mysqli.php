@@ -1310,10 +1310,6 @@ class Mysqli extends DataSource
             }
         }
 
-        Debuger::dump($iceql);
-        Debuger::dump($tables);
-        Debuger::dump($sql);
-
         return $sql . "\n";
     }
 

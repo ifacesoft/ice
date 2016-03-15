@@ -16,13 +16,13 @@ return [
         'en' => 'password_placeholder',
         'ru' => 'password_placeholder',
     ],
-    'Password1' => [
-        'en' => 'Password1',
+    'confirm_password' => [
+        'en' => 'confirm_password',
         'ru' => 'Пароль1',
     ],
-    'password1_placeholder' => [
-        'en' => 'password1_placeholder',
-        'ru' => 'password1_placeholder',
+    'confirm_password_placeholder' => [
+        'en' => 'confirm_password_placeholder',
+        'ru' => 'confirm_password_placeholder',
     ],
     'Sign up' => [
         'en' => 'Sign up',

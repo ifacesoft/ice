@@ -10,7 +10,7 @@
                class="<?= $element ?> <?= $name ?><?php if (!isset($options['resetFormClass'])) : ?> form-control<?php endif; ?><?php if (!empty($options['classes'])) : ?> <?= $options['classes'] ?><?php endif; ?>"
                id="<?= $partId ?>"
                name="<?= $name ?>"
-               value="<?= isset($params[$value]) ? $params[$value] : '' ?>"
+               value="<?= isset($params[$value]) ? intval($params[$value]) : '' ?>"
                <?php if (!empty($options['placeholder'])) : ?>placeholder="<?= $options['placeholder'] ?>"<?php endif; ?>
                data-for="<?= $widgetId ?>"
                <?php if (isset($onchange)) : ?>onchange='<?= $onchange ?>'<?php endif; ?>

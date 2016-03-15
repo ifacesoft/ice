@@ -17,7 +17,7 @@
                    <?php if (!empty($options['disabled'])) : ?>disabled="disabled"<?php endif; ?>
                    <?php if (!empty($options['readonly'])) : ?>readonly="readonly" <?php endif; ?>
             />
-            <?= $label ?>
+            <?= htmlentities($label, ENT_QUOTES) ?>
         </div>
     </label>
 </div>

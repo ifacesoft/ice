@@ -20,7 +20,7 @@
                 <?php if (!empty($options['autofocus'])) : ?>autofocus="autofocus" <?php endif; ?>
         >
             <?php foreach ($options['rows'] as $option) : ?>
-                <option value="<?= $option[$name] ?>"
+                <option value="<?= htmlentities($option[$name], ENT_QUOTES) ?>"
                     <?php if ($params[$name] == $option[$value]) : ?> selected="selected"<?php endif; ?>
                 ><?= \Ice\Helper\String::truncate(implode(', ', array_intersect_key($option, array_flip((array)$title))), isset($options['truncate']) ? $options['truncate'] : 100) ?></option>
             <?php endforeach; ?>

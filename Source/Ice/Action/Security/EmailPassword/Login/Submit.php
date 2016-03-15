@@ -44,18 +44,18 @@ class Security_EmailPassword_Login_Submit extends Security
                 $form->getLogger()->exception(['Account with email {$0} not found', $values['email']], __FILE__, __LINE__);
             }
 
-            if (!$form->verify($account, $values)) {
+            if (!$account->securityVerify($values)) {
                 $form->getLogger()->exception('Authentication data is not valid. Please, check input.', __FILE__, __LINE__);
             }
 
             $this->signIn($account, $input);
 
             return array_merge(
-                ['success' => $form->getLogger()->info('Login successfully', Logger::SUCCESS)],
+                ['success' => $form->getLogger()->info('Login successfully', Logger::SUCCESS, true)],
                 parent::run($input)
             );
         } catch (\Exception $e) {
-            return ['error' => $form->getLogger()->info($e->getMessage(), Logger::DANGER)];
+            return ['error' => $form->getLogger()->info($e->getMessage(), Logger::DANGER, true)];
         }
     }
 }

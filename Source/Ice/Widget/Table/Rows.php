@@ -95,8 +95,6 @@ class Table_Rows extends Widget
 
         $limitQueryPart = $queryBuilder->getSqlParts()[QueryBuilder::PART_LIMIT];
 
-//        Debuger::dump($this->getDataParams());
-
         $limit = isset($this->getDataParams()['limit'])
             ? $this->getDataParams()['limit']
             : $limitQueryPart['limit'];

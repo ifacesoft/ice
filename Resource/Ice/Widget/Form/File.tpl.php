@@ -1,56 +1,27 @@
-<div<?php if (!isset($options['resetFormClass'])) : ?> class="form-group"<?php endif; ?>>
-    <div class="b-upload b-upload_dnd">
-        <div class="b-upload__dnd"><?= $label ?></div>
-        <div class="b-upload__dnd-not-supported" style="display: none;">
-            <div class="btn btn-success js-fileapi-wrapper">
-                <span>Choose files</span>
-                <input id="<?= $partId ?>"
-                       name="filedata" multiple="" type="file">
-            </div>
-        </div>
-        <div class="js-files b-upload__files">
-            <div class="js-file-tpl b-thumb" data-id="<%=uid%>" title="<%-name%>, <%-sizeText%>">
-                <div class="b-thumb__preview">
-                    <div class="b-thumb__preview__pic"></div>
-                </div>
-                <div class="b-thumb__progress progress progress-small">
-                    <div class="bar"></div>
-                </div>
-                <div class="b-thumb__name"><%-name%></div>
-            </div>
-        </div>
-    </div>
-    <script>
-        $(function () {
-            $('#<?= $partId ?>').fileapi({
-                url: '/ice/widget/form/file/upload',
-                paramName: 'filedata',
-                data: {
-                    token: '<?= $dataToken ?>',
-                    formName: '<?= $widgetClassName ?>',
-                    fieldName: '<?= $name ?>'
-                },
-                autoUpload: <?php if (!empty($options['autoUpload']) && $options['autoUpload'] == false) : ?>false<?php else : ?>true<?php endif; ?>,
-                elements: {
-                    list: '.js-files',
-                    file: {
-                        tpl: '.js-file-tpl',
-                        preview: {
-                            el: '.b-thumb__preview',
-                            width: 80,
-                            height: 80
-                        },
-                        upload: {show: '.progress'},
-                        complete: {hide: '.progress'},
-                        progress: '.progress .bar'
-                    },
-                    dnd: {
-                        el: '.b-upload__dnd',
-                        hover: 'b-upload__dnd_hover',
-                        fallback: '.b-upload__dnd-not-supported'
-                    }
-                }
-            });
-        });
-    </script>
+<div <?php if (!isset($options['resetFormClass'])) : ?>class="form-group"<?php endif; ?>>
+    <label
+        for="<?= $partId ?>"
+        class="control-label<?php if (!empty($options['srOnly'])) : ?> sr-only<?php endif; ?><?php if (!empty($widgetOptions['horizontal'])) : ?> col-md-<?= $widgetOptions['horizontal'] ?><?php endif; ?>"
+        ><?= $label ?></label>
+
+    <?php if (!empty($widgetOptions['horizontal'])) : ?>
+    <div class="col-md-<?= 12 - $widgetOptions['horizontal'] ?>"><?php endif; ?>
+        <img src="<?php echo isset($params[$value]) ?  $params[$value] : ''; ?>" width="100px" />
+        <input id="<?= $partId ?>"
+               type="file"
+               class="<?= $element ?> <?= $name ?><?php if (!isset($options['resetFormClass'])) : ?> form-control<?php endif; ?><?php if (!empty($options['classes'])) : ?> <?= $options['classes'] ?><?php endif; ?>"
+               name="<?= $name ?>"
+               data-params='<?= $dataParams ?>'
+               data-for="<?= $widgetId ?>"
+            <?php if (isset($options['onchange'])) : ?>
+                onchange="<?= $options['onchange'] ?>"
+                data-action='<?= $options['dataAction'] ?>'
+            <?php endif; ?>
+               <?php if (!empty($options['placeholder'])) : ?>placeholder="<?= $options['placeholder'] ?>"<?php endif; ?>
+               <?php if (!empty($options['disabled'])) : ?>disabled="disabled"<?php endif; ?>
+               <?php if (!empty($options['readonly'])) : ?>readonly="readonly"<?php endif; ?>
+               <?php if (!empty($options['required'])) : ?>required="required"<?php endif; ?>
+               <?php if (!empty($options['autofocus'])) : ?>autofocus="autofocus" <?php endif; ?>
+            >
+        <?php if (!empty($widgetOptions['horizontal'])) : ?></div><?php endif; ?>
 </div>

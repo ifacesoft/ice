@@ -11,12 +11,12 @@ class Security_EmailPassword_Register extends Widget_Security
     protected static function config()
     {
         return [
-            'render' => ['template' => Form::getClass(), 'class' => 'Ice:Php', 'layout' => null, 'resource' => null],
+            'render' => ['template' => Form::getClass(), 'class' => 'Ice:Php', 'layout' => null, 'resource' => true],
             'resource' => ['js' => null, 'css' => null, 'less' => null, 'img' => null],
             'input' => [
                 'email' => ['providers' => Request::class],
                 'password' => ['providers' => Request::class],
-                'password1' => ['providers' => Request::class]
+                'confirm_password' => ['providers' => Request::class]
             ],
             'access' => ['roles' => [], 'request' => null, 'env' => null]
         ];
@@ -29,9 +29,9 @@ class Security_EmailPassword_Register extends Widget_Security
     public function bind(array $params)
     {
         foreach ($params as $key => $value) {
-            if ($key == 'password1') {
+            if ($key == 'confirm_password') {
                 [
-                    $this->validateScheme['password1']['Ice:Equal'] = [
+                    $this->validateScheme['confirm_password']['Ice:Equal'] = [
                         'value' => $this->getValue('password'),
                         'message' => 'Passwords must be equals'
                     ]
@@ -47,10 +47,10 @@ class Security_EmailPassword_Register extends Widget_Security
     protected function build(array $input)
     {
         $this
+            ->widget('header', ['widget' => $this->getWidget(Header::class)->h1('Register')])
             ->text(
                 'email',
                 [
-                    'label' => 'Email',
                     'required' => true,
                     'placeholder' => 'email_placeholder',
                     'validators' => 'Ice:Email'
@@ -59,22 +59,25 @@ class Security_EmailPassword_Register extends Widget_Security
             ->password(
                 'password',
                 [
-                    'label' => 'Password',
                     'required' => true,
                     'placeholder' => 'password_placeholder',
                     'validators' => ['Ice:Length_Min' => 5]
                 ]
             )
             ->password(
-                'password1',
-                ['label' => 'Password1', 'placeholder' => 'password1_placeholder']
+                'confirm_password',
+                [
+                    'placeholder' => 'confirm_password_placeholder',
+                    'required' => true,
+                ]
             )
+            ->div('ice-message', ['label' => '&nbsp;'])
             ->button(
                 'register',
                 [
                     'submit' => [
                         'action' => Security_EmailPassword_Register_Submit::class,
-                        'url' => 'ice_security_register'
+                        'url' => 'ice_security_register_request'
                     ]
                 ]
             );

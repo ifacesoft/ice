@@ -16,11 +16,11 @@ return [
         'ru' => 'Введите пароль',
         'en' => 'Enter password',
     ],
-    'password1' => [
+    'confirm_password' => [
         'ru' => 'Подтверждение пароля',
         'en' => 'Confirm password',
     ],
-    'password1_placeholder' => [
+    'confirm_password_placeholder' => [
         'ru' => 'Повторно введите свой пароль',
         'en' => 'Enter password again',
     ],

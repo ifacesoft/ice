@@ -1,7 +1,6 @@
 <?php
 namespace Ice\Core;
 
-use Ebs\Widget\Admin_Database_Form;
 use Ice\Exception\Access_Denied;
 use Ice\Exception\Error;
 use Ice\Exception\Http;
@@ -283,7 +282,6 @@ abstract class Widget extends Container
             $this->bind(Input::get($configInput, $data));
 
             $this->loadResource();
-
 
             $this->output = array_merge(Input::get($configOutput, $data), (array)$this->build($this->getValues()));
         } catch (Http $e) {
@@ -933,7 +931,7 @@ abstract class Widget extends Container
                     $value = $param;
                 }
 
-                $value = htmlentities($value, ENT_QUOTES);
+//                $value = htmlentities($value, ENT_QUOTES);
             }
 
             $values[$partName] = $value;
@@ -953,6 +951,10 @@ abstract class Widget extends Container
     public function getPart($partName)
     {
         return isset($this->parts[$partName]) ? $this->parts[$partName] : null;
+    }
+
+    public function setPart($partName, $part) {
+        $this->parts[$partName] = $part;
     }
 
     /**
@@ -1405,6 +1407,7 @@ abstract class Widget extends Container
                         $options[$event]['url'] = '/';
                     }
                 }
+
                 $options['url'] = isset($options[$event]['url']) ? $options[$event]['url'] : '';
                 $options['method'] = isset($options[$event]['method']) ? $options[$event]['method'] : 'POST';
 

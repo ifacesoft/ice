@@ -60,9 +60,9 @@ abstract class Security extends Widget_Event
             return $securityForm->getLogger()->exception([$error, [], $securityForm->getResource()], __FILE__, __LINE__);
         }
 
-        $securityForm->getLogger()->save($log);
-
         Core_Security::getInstance()->login($account);
+
+        $securityForm->getLogger()->save($log);
 
         $this->getLogger()->save($log);
 
@@ -132,12 +132,12 @@ abstract class Security extends Widget_Event
             /** @var Security_Account|Model $account */
             $account = $accountModelClass::create($accountData)->save();
 
-            $dataSource->commitTransaction();
-
             if ($confirm) {
-                $this->sendConfirm($confirm['token'], $confirm['input']);
+                $this->sendRegisterConfirm($confirm['token'], $confirm['input']);
             }
 
+            $dataSource->commitTransaction();
+            
             $log->set('account_key', $account->getPkValue());
             $securityForm->getLogger()->save($log);
         } catch (\Exception $e) {
@@ -160,7 +160,7 @@ abstract class Security extends Widget_Event
      * @param Token $token
      * @throws Exception
      */
-    public function sendConfirm(Token $token, array $input)
+    public function sendRegisterConfirm(Token $token, array $input)
     {
         Logger::getInstance(__CLASS__)
             ->exception(['Implement {$0} for {$1}', [__FUNCTION__, get_class($this)]], __FILE__, __LINE__);
@@ -172,7 +172,7 @@ abstract class Security extends Widget_Event
      * @param Token $token
      * @throws Exception
      */
-    public function sendRestoreConfirm(Token $token, array $input)
+    public function sendRestorePasswordConfirm(Token $token, array $input)
     {
         Logger::getInstance(__CLASS__)
             ->exception(['Implement {$0} for {$1}', [__FUNCTION__, get_class($this)]], __FILE__, __LINE__);
@@ -183,7 +183,7 @@ abstract class Security extends Widget_Event
      * @param array $input
      * @return Security_Account|Model
      */
-    final protected function confirm(Token $token, array $input)
+    final protected function registerConfirm(Token $token, array $input)
     {
         /** @var Widget_Security $securityForm */
         $securityForm = $input['widget'];
@@ -235,7 +235,7 @@ abstract class Security extends Widget_Event
      * @return null
      * @throws Exception
      */
-    final protected function restoreRequest($account, $input)
+    final protected function restorePassword($account, $input)
     {
         /** @var Widget_Security $securityForm */
         $securityForm = $input['widget'];
@@ -266,8 +266,54 @@ abstract class Security extends Widget_Event
 
         $account->set(['token' => $token])->save();
 
-        $this->sendRestoreConfirm($token, $input);
+        $this->sendRestorePasswordConfirm($token, $input);
 
+        $securityForm->getLogger()->save($log);
+
+        $this->getLogger()->save($log);
+
+        return $account;
+    }
+
+    final protected function changePassword($account, $accountData, $input)
+    {
+        /** @var Widget_Security $securityForm */
+        $securityForm = $input['widget'];
+
+        $log = Log_Security::create([
+            'account_class' => get_class($account),
+            'account_key' => $account->getPkValue(),
+            'form_class' => get_class($this)
+        ]);
+
+        if ($account->isExpired()) {
+            $error = 'Account is expired';
+
+            $log->set('error', $error);
+
+            $securityForm->getLogger()->save($log);
+
+            return $securityForm->getLogger()->exception([$error, [], $securityForm->getResource()], __FILE__, __LINE__);
+        }
+
+        $userModelClass = Config::getInstance(Core_Security::getClass())->get('userModelClass');
+
+        /** @var Security_User|Model $user */
+        $user = $account->fetchOne($userModelClass, '/active', true);
+
+        if (!$user || !$user->isActive()) {
+            $error = 'User is blocked or not found';
+
+            $log->set('error', $error);
+
+            $securityForm->getLogger()->save($log);
+
+            return $securityForm->getLogger()->exception([$error, [], $securityForm->getResource()], __FILE__, __LINE__);
+        }
+
+        /** @var Security_Account|Model $account */
+        $account = $account->set($accountData)->save();
+        
         $securityForm->getLogger()->save($log);
 
         $this->getLogger()->save($log);

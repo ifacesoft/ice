@@ -5,12 +5,26 @@ use Ice\Action\Security_LoginEmailPassword_Login_Submit;
 use Ice\Core\Model;
 use Ice\Core\Model\Security_Account;
 use Ice\Core\Widget_Form_Security_Login;
+use Ice\Core\Widget_Security;
 use Ice\DataProvider\Request;
 
-class Security_LoginEmailPassword_Login extends Widget_Form_Security_Login
+class Security_LoginEmailPassword_Login extends Widget_Security
 {
     private $accountLoginPasswordModelClass = null;
     private $accountEmailPasswordModelClass = null;
+
+    protected static function config()
+    {
+        return [
+            'render' => ['template' => Form::getClass(), 'class' => 'Ice:Php', 'layout' => null, 'resource' => true],
+            'resource' => ['js' => null, 'css' => null, 'less' => null, 'img' => null],
+            'input' => [
+                'username' => ['providers' => Request::class],
+                'password' => ['providers' => Request::class]
+            ],
+            'access' => ['roles' => [], 'request' => null, 'env' => null],
+        ];
+    }
 
     /**
      * @return null
@@ -21,67 +35,7 @@ class Security_LoginEmailPassword_Login extends Widget_Form_Security_Login
     }
 
     /**
-     * @return null
-     */
-    public function getAccountEmailPasswordModelClass()
-    {
-        return $this->accountEmailPasswordModelClass;
-    }
-
-    protected static function config()
-    {
-        return [
-            'render' => ['template' => Form::getClass(), 'class' => 'Ice:Php', 'layout' => null, 'resource' => null],
-            'resource' => ['js' => null, 'css' => null, 'less' => null, 'img' => null],
-            'input' => [
-                'username' => ['providers' => Request::class],
-                'password' => ['providers' => Request::class]
-            ],
-            'access' => ['roles' => [], 'request' => null, 'env' => null],
-        ];
-    }
-
-    protected function build(array $input)
-    {
-        $this
-            ->text(
-                'username',
-                [
-                    'label' => 'Username',
-                    'required' => true,
-                    'placeholder' => 'username_placeholder',
-                    'validators' => ['Ice:Length_Min' => 2, 'Ice:LettersNumbers'],
-                    'srOnly' => true,
-                    'resetFormClass' => true
-                ]
-            )
-            ->password(
-                'password',
-                [
-                    'label' => 'Password',
-                    'required' => true,
-                    'placeholder' => 'password_placeholder',
-                    'validators' => ['Ice:Length_Min' => 5],
-                    'srOnly' => true,
-                    'resetFormClass' => true
-                ]
-            )
-            ->button(
-                'signin',
-                [
-                    'label' => 'Sign in',
-                    'submit' => [
-                        'action' => Security_LoginEmailPassword_Login_Submit::class,
-                        'url' => 'ice_security_login',
-                    ]
-                ]
-            );
-
-        return [];
-    }
-
-    /**
-     * @param Security_Account $accountLoginPasswordModelClass
+     * @param null $accountLoginPasswordModelClass
      * @return $this
      */
     public function setAccountLoginPasswordModelClass($accountLoginPasswordModelClass)
@@ -91,7 +45,15 @@ class Security_LoginEmailPassword_Login extends Widget_Form_Security_Login
     }
 
     /**
-     * @param Security_Account $accountEmailPasswordModelClass
+     * @return null
+     */
+    public function getAccountEmailPasswordModelClass()
+    {
+        return $this->accountEmailPasswordModelClass;
+    }
+
+    /**
+     * @param null $accountEmailPasswordModelClass
      * @return $this
      */
     public function setAccountEmailPasswordModelClass($accountEmailPasswordModelClass)
@@ -100,15 +62,37 @@ class Security_LoginEmailPassword_Login extends Widget_Form_Security_Login
         return $this;
     }
 
-    /**
-     * Verify account by form values
-     *
-     * @param Security_Account|Model $account
-     * @param array $values
-     * @return boolean
-     */
-    public function verify(Security_Account $account, $values)
+    protected function build(array $input)
     {
-        return false;
+        $this
+            ->widget('header', ['widget' => $this->getWidget(Header::class)->h1('Login')])
+            ->text(
+                'username',
+                [
+                    'required' => true,
+                    'placeholder' => 'username_placeholder',
+                    'validators' => ['Ice:Length_Min' => 3],
+                ]
+            )
+            ->password(
+                'password',
+                [
+                    'required' => true,
+                    'placeholder' => 'password_placeholder',
+                    'validators' => ['Ice:Length_Min' => 5],
+                ]
+            )
+            ->div('ice-message', ['label' => '&nbsp;'])
+            ->button(
+                'login',
+                [
+                    'submit' => [
+                        'action' => Security_LoginEmailPassword_Login_Submit::class,
+                        'url' => 'ice_security_login_request',
+                    ]
+                ]
+            );
+
+        return [];
     }
 }

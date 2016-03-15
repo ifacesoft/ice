@@ -18,7 +18,7 @@
                 <?php if (isset($options['onchange'])) : ?>onchange="<?= $options['onchange'] ?>" data-action='<?= $options['dataAction'] ?>'<?php endif; ?>
             <?php if ($options['disabled']) : ?> disabled="disabled"<?php endif; ?>>
             <?php foreach ($options['rows'] as $option) : ?>
-                <option value="<?= $option[$value] ?>"
+                <option value="<?= htmlentities($option[$name], ENT_QUOTES) ?>"
                     <?php if ($params[$name] == $option[$value]) : ?> selected="selected"<?php endif; ?>
                 ><?= $option[$label] ?></option>
             <?php endforeach; ?>
