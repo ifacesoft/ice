@@ -44,7 +44,7 @@ class Security_LoginPassword_Login_Submit extends Security
                 $form->getLogger()->exception(['Account with login {$0} not found', $values['login']], __FILE__, __LINE__);
             }
 
-            if (!$form->verify($account, $values)) {
+            if (!$account->securityVerify($values)) {
                 $form->getLogger()->exception('Authentication data is not valid. Please, check input.', __FILE__, __LINE__);
             }
 

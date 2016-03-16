@@ -31,12 +31,9 @@ abstract class Router extends Container
 
     /**
      * @param null $routeName
-     * @param array $params
-     * @param bool $withGet
-     * @deprecated 2.0 argument params is depricated (use first argument as array -> [$routeName, $routeParams)
      * @return mixed
      */
-    public abstract function getUrl($routeName = null, array $params = [], $withGet = false);
+    public abstract function getUrl($routeName = null);
 
     public abstract function getName($url = null, $method = null);
 

@@ -508,16 +508,18 @@ abstract class Widget extends Container
                     }
 
                     $part['options']['route'] = (array)$part['options']['route'];
+                    $tempRouteParams = [];
+                    $withGet = false;
+                    $withDomain = false;
 
-                    if (count($part['options']['route']) == 3) {
+                    if (count($part['options']['route']) == 4) {
+                        list($routeName, $tempRouteParams, $withGet, $withDomain) = $part['options']['route'];
+                    } elseif (count($part['options']['route']) == 3) {
                         list($routeName, $tempRouteParams, $withGet) = $part['options']['route'];
                     } elseif (count($part['options']['route']) == 2) {
                         list($routeName, $tempRouteParams) = $part['options']['route'];
-                        $withGet = false;
                     } else {
                         $routeName = reset($part['options']['route']);
-                        $tempRouteParams = [];
-                        $withGet = false;
                     }
 
                     $routeParams = $part['params'];
@@ -549,7 +551,7 @@ abstract class Widget extends Container
                     }
 
                     if (!array_key_exists('href', $part['options'])) {
-                        $part['options']['href'] = Router::getInstance()->getUrl($routeName, $routeParams, $withGet);
+                        $part['options']['href'] = Router::getInstance()->getUrl([$routeName, $routeParams, $withGet, $withDomain]);
                     }
 
                     if (!array_key_exists('active', $part['options'])) {
@@ -1117,8 +1119,8 @@ abstract class Widget extends Container
 
         try {
             $this->redirect = $route === true
-                ? Router::getInstance()->getUrl(null, $params)
-                : Router::getInstance()->getUrl($route, $params);
+                ? Router::getInstance()->getUrl([null, $params])
+                : Router::getInstance()->getUrl([$route, $params]);
         } catch (RouteNotFound $e) {
             $this->redirect = $route;
         }
@@ -1401,8 +1403,8 @@ abstract class Widget extends Container
                 if (isset($options[$event]['url'])) {
                     try {
                         $options[$event]['url'] = $options[$event]['url'] === true
-                            ? Router::getInstance()->getUrl($partName)
-                            : Router::getInstance()->getUrl($options[$event]['url']);
+                            ? Router::getInstance()->getUrl([$partName])
+                            : Router::getInstance()->getUrl([$options[$event]['url']]);
                     } catch (RouteNotFound $e) {
                         $options[$event]['url'] = '/';
                     }

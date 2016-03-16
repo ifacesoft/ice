@@ -2,6 +2,7 @@
 
 namespace Ice\Router;
 
+use Ice\Core\Request;
 use Ice\Core\Route;
 use Ice\Core\Router;
 use Ice\DataProvider\Router as DataProvider_Router;
@@ -10,36 +11,42 @@ class Ice extends Router
 {
     /**
      * @param null $routeName
-     * @param array $params
-     * @param bool $withGet
      * @return null|string
      * @throws \Ice\Exception\RouteNotFound
      */
-    public function getUrl($routeName = null, array $params = [], $withGet = false)
+    public function getUrl($routeName = null)
     {
         $routeName = (array) $routeName;
 
         $routeParams = [];
         $urlWithGet = false;
+        $withDomain = false;
 
-        if (count($routeName) == 3) {
+        if (count($routeName) == 4) {
+            list($routeName, $routeParams, $urlWithGet, $withDomain) = $routeName;
+        } elseif (count($routeName) == 3) {
             list($routeName, $routeParams, $urlWithGet) = $routeName;
-            $routeParams = array_merge($params, $routeParams);
         } elseif (count($routeName) == 2) {
             list($routeName, $routeParams) = $routeName;
-            $routeParams = array_merge($params, $routeParams);
-            $urlWithGet = $withGet;
         } else {
             $routeName = reset($routeName);
-            $routeParams = $params;
-            $urlWithGet = $withGet;
         }
         
-        if ($url = Route::getInstance($routeName)->getUrl(array_merge($this->getParams(), $routeParams))) {
-            return $url;
+        $url = Route::getInstance($routeName)->getUrl(array_merge($this->getParams(), $routeParams));
+
+        if (!$url) {
+            return '';
         }
 
-        return null;
+        if (!$urlWithGet) {
+            $url = strtok($url,'?');
+        }
+
+        if ($withDomain) {
+            return Request::protocol() . Request::host() . $url;
+        }
+
+        return $url;
     }
 
     public function getName($url = null, $method = null)

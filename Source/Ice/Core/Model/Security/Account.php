@@ -21,4 +21,6 @@ interface Security_Account
     public function getUser();
     
     public function securityVerify(array $values);
+    
+    public function securityHash(array $values);
 }

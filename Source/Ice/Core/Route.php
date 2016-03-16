@@ -188,24 +188,27 @@ class Route extends Config
     }
 
     /**
-     * Generate url by route
+     * Generate url by route with query string
      *
      * @param  array $params
-     * @param bool $withGet
      * @return string
      * @throws \Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
+     * @todo из квери стринг убирать параметры, которые присутствуют в роуте
+     * 
      * @version 1.1
      * @since   0.0
      */
-    public function getUrl(array $params = [], $withGet = false)
+    public function getUrl(array $params = [])
     {
         $params = array_filter($params, function ($param) {
             return !is_array($param);
         });
 
-        return Replace::getInstance()->fetch($this->getRoute(), $params, null, Render::TEMPLATE_TYPE_STRING);
+        $url = Replace::getInstance()->fetch($this->getRoute(), $params, null, Render::TEMPLATE_TYPE_STRING);
+        
+        return $params ? $url . '?' . http_build_query($params) : $url;
     }
     //
     //    /**

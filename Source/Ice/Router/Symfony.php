@@ -2,48 +2,53 @@
 namespace Ice\Router;
 
 use Ice\Core\Debuger;
+use Ice\Core\Request;
 use Ice\Exception\RouteNotFound;
 
 class Symfony extends Ice
 {
-    public function getUrl($routeName = null, array $params = [], $withGet = false)
+    public function getUrl($routeName = null)
     {
         if (!$routeName) {
             $routeName = $this->getName();
         }
 
-        $routeName = (array) $routeName;
-        
+        $routeName = (array)$routeName;
+
         $routeParams = [];
         $urlWithGet = false;
-        
+        $withDomain = false;
+
         $url = null;
 
         try {
-            if (count($routeName) == 3) {
+            if (count($routeName) == 4) {
+                list($routeName, $routeParams, $urlWithGet, $withDomain) = $routeName;
+            } elseif (count($routeName) == 3) {
                 list($routeName, $routeParams, $urlWithGet) = $routeName;
-                $routeParams = array_merge($params, $routeParams);
             } elseif (count($routeName) == 2) {
                 list($routeName, $routeParams) = $routeName;
-                $routeParams = array_merge($params, $routeParams);
-                $urlWithGet = $withGet;
             } else {
                 $routeName = reset($routeName);
-                $routeParams = $params;
-                $urlWithGet = $withGet;
             }
 
-            if ($url = parent::getUrl($routeName, $routeParams, $urlWithGet)) {
-                return $url;
-            }
+            $url = parent::getUrl([$routeName, $routeParams, $urlWithGet, $withDomain]);
         } catch (RouteNotFound $e) {
             //
         }
 
         global $kernel;
 
-        if ($url = $kernel->getContainer()->get('router')->generate($routeName, array_merge($this->getParams(), $routeParams))) {
-            return $urlWithGet ? $url : strtok($url,'?');
+        if (!$url) {
+            $url = $kernel->getContainer()->get('router')->generate($routeName, array_merge($this->getParams(), $routeParams));
+        }
+
+        if (!$urlWithGet) {
+            $url = strtok($url, '?');
+        }
+
+        if ($withDomain) {
+            return Request::protocol() . Request::host() . $url;
         }
 
         return $url;

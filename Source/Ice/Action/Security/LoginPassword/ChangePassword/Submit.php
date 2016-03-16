@@ -50,7 +50,7 @@ class Security_LoginPassword_ChangePassword_Submit extends Security
                 $form->getLogger()->exception('Authentication data is not valid. Please, check input.', __FILE__, __LINE__);
             }
 
-            $accountData = ['password' => password_hash($values['new_password'], PASSWORD_DEFAULT)];
+            $accountData = ['password' => $account->securityHash($values)];
 
             $this->changePassword($account, $accountData, $input);
 

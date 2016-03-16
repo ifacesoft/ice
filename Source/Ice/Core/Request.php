@@ -290,4 +290,11 @@ class Request
 
         throw new Access_Denied_Request($message);
     }
+
+    public static function protocol()
+    {
+        return isset($_SERVER['SERVER_PROTOCOL']) && stripos($_SERVER['SERVER_PROTOCOL'],'https')
+            ? 'https://'
+            : 'http://';
+    }
 }
