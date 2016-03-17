@@ -94,7 +94,7 @@ abstract class Container
                 $message = $class . ' - ' . print_r($key, true);
 
                 Profiler::setPoint($message, $startTime, $startMemory);
-                Logger::log(Profiler::getReport($message), 'container (cache - ' . $dataProviderClassName .  ')', 'LOG');
+//                Logger::log(Profiler::getReport($message), 'container (cache - ' . $dataProviderClassName .  ')', 'LOG');
                 return $object;
             }
 
@@ -105,9 +105,9 @@ abstract class Container
 
                 Profiler::setPoint($message, $startTime, $startMemory);
                 if ($ttl == -1) {
-                    Logger::log(Profiler::getReport($message), 'container (not cache)', 'WARN');
+//                    Logger::log(Profiler::getReport($message), 'container (not cache)', 'WARN');
                 } else {
-                    Logger::log(Profiler::getReport($message), 'container (new - ' . $dataProviderClassName .  ')', 'INFO');
+//                    Logger::log(Profiler::getReport($message), 'container (new - ' . $dataProviderClassName .  ')', 'INFO');
                     $dataProvider->set($key, $object, $ttl);
                 }
             }
@@ -115,7 +115,7 @@ abstract class Container
         } catch (FileNotFound $e) {
             $message = $class . ' - ' . print_r($key, true);
             Profiler::setPoint($message, $startTime, $startMemory);
-            Logger::log(Profiler::getReport($message), 'container (error)', 'Error');
+//            Logger::log(Profiler::getReport($message), 'container (error)', 'Error');
 
             if ($baseClass == Code_Generator::getClass()) {
                 $logger->exception(['Code generator for {$0} not found', $key], __FILE__, __LINE__, $e);

@@ -17,13 +17,13 @@ class Symfony extends Ice
 
         $routeParams = [];
         $urlWithGet = false;
-        $withDomain = false;
+        $urlWithDomain = false;
 
         $url = null;
 
         try {
             if (count($routeName) == 4) {
-                list($routeName, $routeParams, $urlWithGet, $withDomain) = $routeName;
+                list($routeName, $routeParams, $urlWithGet, $urlWithDomain) = $routeName;
             } elseif (count($routeName) == 3) {
                 list($routeName, $routeParams, $urlWithGet) = $routeName;
             } elseif (count($routeName) == 2) {
@@ -32,7 +32,7 @@ class Symfony extends Ice
                 $routeName = reset($routeName);
             }
 
-            $url = parent::getUrl([$routeName, $routeParams, $urlWithGet, $withDomain]);
+            $url = parent::getUrl([$routeName, $routeParams, $urlWithGet, $urlWithDomain]);
         } catch (RouteNotFound $e) {
             //
         }
@@ -47,7 +47,7 @@ class Symfony extends Ice
             $url = strtok($url, '?');
         }
 
-        if ($withDomain) {
+        if ($urlWithDomain) {
             return Request::protocol() . Request::host() . $url;
         }
 

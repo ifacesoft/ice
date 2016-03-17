@@ -125,9 +125,34 @@ class Mysqli extends DataSource
 //
 //        call_user_func_array(array($statement, 'bind_result'), $bindResultVars);
 
+        $rows = $result->fetch_all(MYSQLI_ASSOC);
+
+        $data[QueryResult::NUM_ROWS] = count($rows);
+
+//        if ($result->num_rows != $data[QueryResult::NUM_ROWS]) {
+//            throw new DataSource_Select_Error('Real selected rows not equal result num rows: duplicate primary key');
+//        }
+
+        $result->free_result();
+        $statement->free_result();
+        $statement->close();
+
+        unset($result);
+        unset($statement);
+
+        if ($query->isCalcFoundRows()) {
+            $result = $this->query('SELECT FOUND_ROWS()');
+            $foundRows = $result->fetch_row();
+            $result->close();
+            $data[QueryResult::FOUND_ROWS] = reset($foundRows);
+        } else {
+            $data[QueryResult::FOUND_ROWS] = $data[QueryResult::NUM_ROWS];
+        }
+
         $data[QueryResult::ROWS] = [];
 
-        while ($row = $result->fetch_assoc()) {
+        foreach ($rows as $row) {
+//        while ($row = $result->fetch_assoc()) {
             foreach ($query->getAfterSelectTriggers() as list($afterSelectTrigger, $params, $triggerModelClass)) {
                 $row = $triggerModelClass::$afterSelectTrigger($row, $params);
 
@@ -149,28 +174,7 @@ class Mysqli extends DataSource
             } else {
                 $data[QueryResult::ROWS][] = $row;
             }
-        }
-
-        $data[QueryResult::NUM_ROWS] = count($data[QueryResult::ROWS]);
-
-//        if ($result->num_rows != $data[QueryResult::NUM_ROWS]) {
-//            throw new DataSource_Select_Error('Real selected rows not equal result num rows: duplicate primary key');
 //        }
-
-        $result->free_result();
-        $statement->free_result();
-        $statement->close();
-
-        unset($result);
-        unset($statement);
-
-        if ($query->isCalcFoundRows()) {
-            $result = $this->getConnection()->query('SELECT FOUND_ROWS()');
-            $foundRows = $result->fetch_row();
-            $result->close();
-            $data[QueryResult::FOUND_ROWS] = reset($foundRows);
-        } else {
-            $data[QueryResult::FOUND_ROWS] = $data[QueryResult::NUM_ROWS];
         }
 
         foreach ($query->getQueryBuilder()->getTransforms() as list($transform, $params, $transformModelClass)) {

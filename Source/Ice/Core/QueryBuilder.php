@@ -1737,54 +1737,59 @@ class QueryBuilder
         );
     }
 
-    public function afterSelect($trigger, $params = [], $modelClass = null)
+    public function afterSelect($trigger, $params = [], $modelClass = null, $isUse = true)
     {
-        return $this->addTrigger('afterSelect', $trigger, $params, $modelClass);
+        return $this->addTrigger('afterSelect', $trigger, $params, $modelClass, $isUse);
     }
 
-    private function addTrigger($type, $trigger, $params, $modelClass)
+    private function addTrigger($type, $trigger, $params, $modelClass, $isUse)
     {
+        if (!$isUse) {
+            return $this;
+        }
+        
         $modelClass = $modelClass
             ? Model::getClass($modelClass)
             : $this->getModelClass();
         
         $this->triggers[$type][] = [$trigger . 'Trigger', $params, $modelClass];
+        
         return $this;
     }
 
-    public function beforeSelect($trigger, $params = [], $modelClass = null)
+    public function beforeSelect($trigger, $params = [], $modelClass = null, $isUse = true)
     {
-        return $this->addTrigger('beforeSelect', $trigger, $params, $modelClass);
+        return $this->addTrigger('beforeSelect', $trigger, $params, $modelClass, $isUse);
     }
 
-    public function afterInsert($trigger, $params = [], $modelClass = null)
+    public function afterInsert($trigger, $params = [], $modelClass = null, $isUse = true)
     {
-        return $this->addTrigger('afterInsert', $trigger, $params, $modelClass);
+        return $this->addTrigger('afterInsert', $trigger, $params, $modelClass, $isUse);
     }
 
-    public function beforeInsert($trigger, $params = [], $modelClass = null)
+    public function beforeInsert($trigger, $params = [], $modelClass = null, $isUse = true)
     {
-        return $this->addTrigger('beforeInsert', $trigger, $params, $modelClass);
+        return $this->addTrigger('beforeInsert', $trigger, $params, $modelClass, $isUse);
     }
 
-    public function afterUpdate($trigger, $params = [], $modelClass = null)
+    public function afterUpdate($trigger, $params = [], $modelClass = null, $isUse = true)
     {
-        return $this->addTrigger('afterUpdate', $trigger, $params, $modelClass);
+        return $this->addTrigger('afterUpdate', $trigger, $params, $modelClass, $isUse);
     }
 
-    public function beforeUpdate($trigger, $params = [], $modelClass = null)
+    public function beforeUpdate($trigger, $params = [], $modelClass = null, $isUse = true)
     {
-        return $this->addTrigger('beforeUpdate', $trigger, $params, $modelClass);
+        return $this->addTrigger('beforeUpdate', $trigger, $params, $modelClass, $isUse);
     }
 
-    public function afterDelete($trigger, $params = [], $modelClass = null)
+    public function afterDelete($trigger, $params = [], $modelClass = null, $isUse = true)
     {
-        return $this->addTrigger('afterDelete', $trigger, $params, $modelClass);
+        return $this->addTrigger('afterDelete', $trigger, $params, $modelClass, $isUse);
     }
 
-    public function beforeDelete($trigger, $params = [], $modelClass = null)
+    public function beforeDelete($trigger, $params = [], $modelClass = null, $isUse = true)
     {
-        return $this->addTrigger('beforeDelete', $trigger, $params, $modelClass);
+        return $this->addTrigger('beforeDelete', $trigger, $params, $modelClass, $isUse);
     }
 
     /**
@@ -1919,8 +1924,12 @@ class QueryBuilder
         return $this;
     }
 
-    public function addTransform($transform, array $data = [], $modelClass = null)
+    public function addTransform($transform, array $data = [], $modelClass = null, $isUse = true)
     {
+        if (!$isUse) {
+            return $this;
+        }
+        
         $modelClass = $modelClass
             ? Model::getClass($modelClass)
             : $this->getModelClass();

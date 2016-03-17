@@ -16,14 +16,18 @@ class Ice extends Router
      */
     public function getUrl($routeName = null)
     {
+        if (!$routeName) {
+            $routeName = $this->getName();
+        }
+        
         $routeName = (array) $routeName;
 
         $routeParams = [];
         $urlWithGet = false;
-        $withDomain = false;
+        $urlWithDomain = false;
 
         if (count($routeName) == 4) {
-            list($routeName, $routeParams, $urlWithGet, $withDomain) = $routeName;
+            list($routeName, $routeParams, $urlWithGet, $urlWithDomain) = $routeName;
         } elseif (count($routeName) == 3) {
             list($routeName, $routeParams, $urlWithGet) = $routeName;
         } elseif (count($routeName) == 2) {
@@ -42,7 +46,7 @@ class Ice extends Router
             $url = strtok($url,'?');
         }
 
-        if ($withDomain) {
+        if ($urlWithDomain) {
             return Request::protocol() . Request::host() . $url;
         }
 

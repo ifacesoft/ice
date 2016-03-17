@@ -1403,8 +1403,8 @@ abstract class Widget extends Container
                 if (isset($options[$event]['url'])) {
                     try {
                         $options[$event]['url'] = $options[$event]['url'] === true
-                            ? Router::getInstance()->getUrl([$partName])
-                            : Router::getInstance()->getUrl([$options[$event]['url']]);
+                            ? Router::getInstance()->getUrl($partName)
+                            : Router::getInstance()->getUrl($options[$event]['url']);
                     } catch (RouteNotFound $e) {
                         $options[$event]['url'] = '/';
                     }

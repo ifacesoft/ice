@@ -103,6 +103,8 @@ abstract class Model
      */
     private function __construct(array $row)
     {
+        $this->raw = $row;
+
         /**
          * @var Model $modelClass
          */
@@ -120,7 +122,7 @@ abstract class Model
 
             if (array_key_exists($fieldName, $row)) {
                 $this->set($fieldName, $row[$fieldName]);
-                unset($row[$fieldName]);
+                unset($this->raw[$fieldName]);
                 continue;
             }
 
@@ -129,7 +131,7 @@ abstract class Model
                 $shortFieldName = '/' . substr($fieldName, $length + 1);
                 if (array_key_exists($shortFieldName, $row)) {
                     $this->set($fieldName, $row[$shortFieldName]);
-                    unset($row[$shortFieldName]);
+                    unset($this->raw[$shortFieldName]);
                     continue;
                 }
 
@@ -138,7 +140,7 @@ abstract class Model
                     $extFieldName = strstr($shortFieldName, $ext, true);
                     if ($extFieldName !== false && array_key_exists($extFieldName, $row)) {
                         $this->set($extFieldName, $row[$extFieldName]);
-                        unset($row[$extFieldName]);
+                        unset($this->raw[$extFieldName]);
 
                         continue 2;
                     }
@@ -149,14 +151,12 @@ abstract class Model
                 $extFieldName = strstr($fieldName, $ext, true);
                 if ($extFieldName !== false && array_key_exists($extFieldName, $row)) {
                     $this->set($extFieldName, $row[$extFieldName]);
-                    unset($row[$extFieldName]);
+                    unset($this->raw[$extFieldName]);
 
                     continue 2;
                 }
             }
         }
-
-        $this->raw = $row;
     }
 
     /**
@@ -380,7 +380,7 @@ abstract class Model
             return false;
         }
 
-        if (!$fieldValue) {
+        if ($fieldValue === null) {
             return true;
         }
 
