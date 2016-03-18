@@ -89,7 +89,6 @@ class Ice extends Security
             $this->setUser($user);
         } catch (\Exception $e) {
             $this->logout();
-            $this->autologin();
 
             return $this->getLogger()->exception('Ice security login failed', __FILE__, __LINE__, $e);
         }
@@ -100,7 +99,7 @@ class Ice extends Security
     public function logout()
     {
         $this->setUser(null);
-//        $this->autologin();
+        $this->autologin();
     }
 
     protected function autologin()

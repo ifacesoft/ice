@@ -129,7 +129,6 @@ class Symfony extends Ice
             $this->setSymfonyUser($symfonyUser);
         } catch (\Exception $e) {
             $this->logout();
-            $this->autologin();
 
             return $this->getLogger()->exception('Symfony security login failed', __FILE__, __LINE__, $e);
         }
