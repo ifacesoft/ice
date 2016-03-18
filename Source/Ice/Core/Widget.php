@@ -1531,12 +1531,20 @@ abstract class Widget extends Container
             $values[$part['value']] = $model ? $model->get($part['value'], false) : '&nbsp;';
         }
 
-        $part['params'] = $part['value'] == $partName
-            ? [$part['name'] => array_key_exists($part['value'], $values) ? $values[$part['value']] : null]
-            : [
-                $part['name'] => array_key_exists($part['value'], $values) ? $values[$part['value']] : $part['value'],
-                $partName => array_key_exists($partName, $values) ? $values[$partName] : null
-            ];
+        if ($part['value'] == $partName) {
+            $paramValue = array_key_exists($part['value'], $values) ? $values[$part['value']] : null;
+
+            if ($paramValue === null && isset($part['options']['default'])) {
+                $paramValue = $part['options']['default'];
+            }
+
+            $part['params'] = [$part['name'] => $paramValue];
+        } else {
+           $part['params'] = [
+               $part['name'] => array_key_exists($part['value'], $values) ? $values[$part['value']] : $part['value'],
+               $part['partName'] => array_key_exists($partName, $values) ? $values[$partName] : null
+           ];
+        }
 
         if (isset($part['options']['params'])) {
             foreach ((array)$part['options']['params'] as $key => $value) {
@@ -1547,7 +1555,7 @@ abstract class Widget extends Container
                 if (is_string($value)) {
                     $part['params'][$key] = $key == $value
                         ? (array_key_exists($value, $values) ? $values[$value] : null)
-                        : (array_key_exists($value, $values) ? $values[$value] : $value);
+                        : (array_key_exists($value, $values) ? $values[$value] : $value); //(isset($part['options']['default']) ? $part['options']['default'] : $value)
                 } else {
                     $part['params'][$key] = $value;
                 }
