@@ -345,7 +345,7 @@ abstract class Model
 
     public function getPkValue()
     {
-        return implode('__', $this->getPk());
+        return $this->getPk() ? implode('__', $this->getPk()) : null;
     }
 
     /**

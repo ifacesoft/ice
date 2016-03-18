@@ -3,18 +3,25 @@
 namespace Ice\Security;
 
 use Ice\Core\Config;
+use Ice\Core\Debuger;
 use Ice\Core\Model;
 use Ice\Core\Security;
 use Ice\Core\Model\Security_Account;
 use Ice\Core\Model\Security_User;
 use Ice\DataProvider\Security as DataProvider_Security;
 use Ice\DataProvider\Session;
+use Ice\Exception\Security_Auth;
+use Ice\Model\Account_Phone_Password;
+use Ice\Model\User;
 
 class Ice extends Security
 {
-    const SECURITY_USER = 'user';
+    const SESSION_USER_CLASS = 'userClass';
     const SESSION_USER_KEY = 'userKey';
+    const SESSION_ACCOUNT_CLASS = 'accountClass';
     const SESSION_ACCOUNT_KEY = 'accountKey';
+
+    private $user = null;
 
     /**
      * Check access by roles
@@ -34,15 +41,23 @@ class Ice extends Security
      */
     public function isAuth()
     {
-        return (bool) Session::getInstance()->get(Ice::SESSION_ACCOUNT_KEY);
+        return (bool)$this->getDataProviderSession('auth')->get(Ice::SESSION_ACCOUNT_KEY);
     }
 
     /**
-     * @return Security_User
+     * @return User
      */
     public function getUser()
     {
-        return DataProvider_Security::getInstance()->get(Ice::SECURITY_USER);
+        return $this->user;
+    }
+
+    /**
+     * @param User $user
+     */
+    protected function setUser($user)
+    {
+        $this->user = $user;
     }
 
     /**
@@ -66,10 +81,12 @@ class Ice extends Security
 //                );
 //            }
 
-            Session::getInstance()->set(Ice::SESSION_USER_KEY, $user->getPkValue());
-            Session::getInstance()->set(Ice::SESSION_ACCOUNT_KEY, $account->getPkValue());
+            $this->getDataProviderSession('auth')->set(Ice::SESSION_USER_CLASS, get_class($user));
+            $this->getDataProviderSession('auth')->set(Ice::SESSION_USER_KEY, $user->getPkValue());
+            $this->getDataProviderSession('auth')->set(Ice::SESSION_ACCOUNT_CLASS, get_class($account));
+            $this->getDataProviderSession('auth')->set(Ice::SESSION_ACCOUNT_KEY, $account->getPkValue());
 
-            DataProvider_Security::getInstance()->set(Ice::SECURITY_USER, $user);
+            $this->setUser($user);
         } catch (\Exception $e) {
             $this->logout();
             $this->autologin();
@@ -82,24 +99,36 @@ class Ice extends Security
 
     public function logout()
     {
-        DataProvider_Security::getInstance()->delete(Ice::SECURITY_USER);
-
-        $this->autologin();
+        $this->setUser(null);
+//        $this->autologin();
     }
 
     protected function autologin()
     {
-        $userKey = Session::getInstance()->get(Ice::SESSION_USER_KEY);
+        /** @var Model $userModelClass */
+        $userModelClass = $this->getDataProviderSession('auth')->get(Ice::SESSION_USER_CLASS);
+
+        if (!$userModelClass) {
+            $userModelClass = Config::getInstance(Security::getClass())->get('userModelClass');
+        }
+
+        $userKey = $this->getDataProviderSession('auth')->get(Ice::SESSION_USER_KEY);
 
         if (!$userKey) {
             $userKey = 1;
+            $user = $userModelClass::getModel($userKey, '*');
+            $this->login(Account_Phone_Password::create(['user' => $user]));
+        } else {
+            $user = $userModelClass::getModel($userKey, '*');
         }
 
-        /** @var Model $userModelClass */
-        $userModelClass = Config::getInstance(Security::getClass())->get('userModelClass');
-
-        DataProvider_Security::getInstance()->set(Ice::SECURITY_USER, $userModelClass::getModel($userKey, '*'));
-        Session::getInstance()->set(Ice::SESSION_USER_KEY, $userKey);
+        if (!$user) {
+            throw new Security_Auth(['AutoLogin failed. User {$0} with key {$1} not found', [$userModelClass, $userKey]]);
+        }
+        
+        $this->setUser($user);
+        
+        return true;
     }
 
     /**

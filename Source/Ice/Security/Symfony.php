@@ -15,7 +15,7 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
 
 class Symfony extends Ice
 {
-    const SECURITY_USER_SYMFONY = 'symfonyUser';
+    private $symfonyUser = null;
 
     /**
      * @return Kernel
@@ -68,11 +68,20 @@ class Symfony extends Ice
     }
 
     /**
+     * @param User $symfonyUser
+     */
+    protected function setSymfonyUser($symfonyUser)
+    {
+        $this->symfonyUser = $symfonyUser;
+    }
+
+    /**
      * @return User
      */
     public function getSymfonyUser()
     {
-        if ($symfonyUser = DataProvider_Security::getInstance()->get(Symfony::SECURITY_USER_SYMFONY)) {
+        /** @var User $symfonyUser */
+        if ($symfonyUser = $this->symfonyUser) {
             return $symfonyUser;
         }
 
@@ -81,11 +90,13 @@ class Symfony extends Ice
         if (!is_object($symfonyUser)) {
             $symfonyUser = $this->getEntityManager()->find(
                 User::class,
-                Session::getInstance()->get(Ice::SESSION_USER_KEY)
+                $this->getDataProviderSession('auth')->get(Ice::SESSION_USER_KEY)
             );
         }
 
-        return DataProvider_Security::getInstance()->set(Symfony::SECURITY_USER_SYMFONY, $symfonyUser);
+        $this->setSymfonyUser($symfonyUser);
+        
+        return $symfonyUser;
     }
 
     /**
@@ -97,25 +108,25 @@ class Symfony extends Ice
         parent::login($account);
 
         try {
-            /** @var User $user */
-            $user = $this->getEntityManager()->find(
+            /** @var User $symfonyUser */
+            $symfonyUser = $this->getEntityManager()->find(
                 User::class,
-                Session::getInstance()->get(Ice::SESSION_USER_KEY)
+                $this->getDataProviderSession('auth')->get(Ice::SESSION_USER_KEY)
             );
 
-            if (!$user) {
+            if (!$symfonyUser) {
                 $this->getLogger()->exception('Symfony user not found', __FILE__, __LINE__);
             }
 
             $firewall = 'main';
-            $token = new UsernamePasswordToken($user, null, $firewall, $user->getRoles());
+            $token = new UsernamePasswordToken($symfonyUser, null, $firewall, $symfonyUser->getRoles());
             $this->getKernel()->getContainer()->get('security.token_storage')->setToken($token);
 //            $this->getKernel()->getContainer()->get('security.authentication.manager')->authenticate($token);
 //            $session = $this->getKernel()->getContainer()->get('session');
 //            $session->set('_security_' . $firewall, serialize($token));
 //            $session->save();
 
-            DataProvider_Security::getInstance()->set(Symfony::SECURITY_USER_SYMFONY, $user);
+            $this->setSymfonyUser($symfonyUser);
         } catch (\Exception $e) {
             $this->logout();
             $this->autologin();
@@ -128,10 +139,9 @@ class Symfony extends Ice
 
     public function logout()
     {
-        DataProvider_Security::getInstance()->delete(Symfony::SECURITY_USER_SYMFONY);
-
+        $this->setSymfonyUser(null);
         $this->getKernel()->getContainer()->get('security.token_storage')->setToken(null);
-
+        
         parent::logout();
     }
 

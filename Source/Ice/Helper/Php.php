@@ -8,6 +8,7 @@
  */
 
 namespace Ice\Helper;
+
 use Ice\Core\Debuger;
 
 /**
@@ -70,6 +71,16 @@ class Php
         $var = String::getRandomString();
     }
 
+    /**
+     * @param $type
+     * @param $var
+     * @return array|bool|float|int|object|string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 1.0
+     * @since   1.0
+     */
     public static function castTo($type, $var)
     {
         $varType = gettype($var);
@@ -100,6 +111,16 @@ class Php
         return $var;
     }
 
+    /**
+     * @param $filePath
+     * @return array
+     *
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 1.0
+     * @since   1.0
+     */
     public static function getClassNamesFromFile($filePath)
     {
         $phpString = file_get_contents($filePath);
@@ -107,6 +128,15 @@ class Php
         return $classNames;
     }
 
+    /**
+     * @param $php_code
+     * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 1.0
+     * @since   1.0
+     */
     public static function getClassNamesFromPhpString($php_code)
     {
         $classNames = array();
@@ -122,5 +152,24 @@ class Php
             }
         }
         return $classNames;
+    }
+
+
+    /**
+     * Make a string with _ characters to camelCase method name
+     *
+     * @param $name
+     * @param null $prefix
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 1.1
+     * @since   1.1
+     */
+    public static function camelCaseMethodName($name, $prefix = null)
+    {
+        $name = ucwords(str_replace('_', ' ', $name));
+        return $prefix ? $prefix . $name : lcfirst($name);
     }
 }

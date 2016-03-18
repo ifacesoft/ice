@@ -10,6 +10,7 @@
 namespace Ice\Core;
 
 use Ice\Core;
+use Ice\DataProvider\Session;
 use Ice\Exception\FileNotFound;
 use Ice\Helper\Object;
 
@@ -206,5 +207,9 @@ abstract class Container
     public function getLogger()
     {
         return Logger::getInstance(get_class($this));
+    }
+    
+    protected function getDataProviderSession($index = 'default') {
+        return Session::getInstance(get_class($this), $index);
     }
 }

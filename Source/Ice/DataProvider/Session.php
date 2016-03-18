@@ -10,6 +10,7 @@
 namespace Ice\DataProvider;
 
 use Ice\Core\DataProvider;
+use Ice\Core\Debuger;
 use Ice\Core\Exception;
 
 /**
@@ -53,7 +54,7 @@ class Session extends DataProvider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 1.1
      * @since   0.0
      */
     public function set($key, $value = null, $ttl = null)
@@ -66,7 +67,7 @@ class Session extends DataProvider
             return $key;
         }
 
-        return $_SESSION[$key] = $value;
+        return $_SESSION[$this->getKey()][$this->getIndex()][$key] = $value;
     }
 
     /**
@@ -79,19 +80,19 @@ class Session extends DataProvider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 1.1
      * @since   0.0
      */
     public function delete($key, $force = true)
     {
         if ($force) {
-            unset($_SESSION[$key]);
+            unset($_SESSION[$this->getKey()][$this->getIndex()][$key]);
             return true;
         }
 
         $value = $this->get($key);
 
-        unset($_SESSION[$key]);
+        unset($_SESSION[$this->getKey()][$this->getIndex()][$key]);
 
         return $value;
     }
@@ -104,7 +105,7 @@ class Session extends DataProvider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.4
+     * @version 1.1
      * @since   0.0
      */
     public function get($key = null)
@@ -113,7 +114,7 @@ class Session extends DataProvider
             return $_SESSION;
         }
 
-        return isset($_SESSION[$key]) ? $_SESSION[$key] : null;
+        return isset($_SESSION[$this->getKey()][$this->getIndex()][$key]) ? $_SESSION[$this->getKey()][$this->getIndex()][$key] : null;
     }
 
     /**
@@ -125,12 +126,12 @@ class Session extends DataProvider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.4
+     * @version 1.1
      * @since   0.0
      */
     public function incr($key, $step = 1)
     {
-        return $_SESSION[$key] += $step;
+        return $_SESSION[$this->getKey()][$this->getIndex()][$key] += $step;
     }
 
     /**
@@ -142,12 +143,12 @@ class Session extends DataProvider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.4
+     * @version 1.1
      * @since   0.0
      */
     public function decr($key, $step = 1)
     {
-        return $_SESSION[$key] -= $step;
+        return $_SESSION[$this->getKey()][$this->getIndex()][$key] -= $step;
     }
 
     /**
@@ -155,12 +156,12 @@ class Session extends DataProvider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 1.1
      * @since   0.0
      */
     public function flushAll()
     {
-        $_SESSION = [];
+        $_SESSION[$this->getKey()][$this->getIndex()] = [];
     }
 
     /**
@@ -172,12 +173,12 @@ class Session extends DataProvider
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @todo    0.4 implements filter by pattern
-     * @version 0.4
+     * @version 1.1
      * @since   0.0
      */
     public function getKeys($pattern = null)
     {
-        return array_keys($_SESSION);
+        return array_keys([$this->getKey()][$this->getIndex()]);
     }
 
     /**
@@ -188,12 +189,13 @@ class Session extends DataProvider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 1.1
      * @since   0.0
      */
     protected function connect(&$connection)
     {
-        return isset($_SESSION);
+        $_SESSION[$this->getKey()][$this->getIndex()] = [];
+        return true;
     }
 
     /**
@@ -204,12 +206,12 @@ class Session extends DataProvider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.4
+     * @version 1.1
      * @since   0.0
      */
     protected function close(&$connection)
     {
-        unset($_SESSION);
+        unset($_SESSION[$this->getKey()][$this->getIndex()]);
         return true;
     }
 }
