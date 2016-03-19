@@ -1,6 +1,7 @@
 <?php
 namespace Ice\Action;
 
+use Ice\Core\Debuger;
 use Ice\Widget\Security_EmailPassword_ChangePassword;
 use Ice\Widget\Security_LoginEmailPassword_ChangePassword;
 use Ice\Widget\Security_LoginPassword_ChangePassword;
@@ -19,8 +20,7 @@ class Security_LoginEmailPassword_ChangePassword_Submit extends Security
 
         $output = Security_LoginPassword_ChangePassword_Submit::call([
             'widgets' => $input['widgets'],
-            'widget' => Security_LoginPassword_ChangePassword::getInstance($form->getInstanceKey())
-                ->setAccountModelClass($form->getAccountLoginPasswordModelClass())
+            'widget' => $form
         ]);
 
         if (!isset($output['error'])) {
@@ -29,8 +29,7 @@ class Security_LoginEmailPassword_ChangePassword_Submit extends Security
 
         return Security_EmailPassword_ChangePassword_Submit::call([
             'widgets' => $input['widgets'],
-            'widget' => Security_EmailPassword_ChangePassword::getInstance($form->getInstanceKey())
-                ->setAccountModelClass($form->getAccountEmailPasswordModelClass())
+            'widget' => $form
         ]);
     }
 }

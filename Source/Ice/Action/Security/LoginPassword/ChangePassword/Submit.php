@@ -21,7 +21,7 @@ class Security_LoginPassword_ChangePassword_Submit extends Security
         /** @var Security_LoginPassword_ChangePassword $form */
         $form = $input['widget'];
 
-        $accountModelClass = $form->getAccountModelClass();
+        $accountModelClass = $form->getAccountLoginPasswordModelClass();
 
         if (!$accountModelClass) {
             return $form->getLogger()
