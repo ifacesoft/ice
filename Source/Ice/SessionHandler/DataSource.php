@@ -21,7 +21,8 @@ use Ice\Model\Session;
  */
 class DataSource extends SessionHandler
 {
-    private $lifetime = 2592000;
+    private $session_lifetime = 2592000;
+    private $cookie_lifetime = 7200;
 
     /**
      * PHP >= 5.4.0<br/>
@@ -137,7 +138,7 @@ class DataSource extends SessionHandler
             ->getRow();
 
         if ($this->session) {
-            if ($this->session['session_deleted_at'] != Date::ZERO || $this->session['session_lifetime'] <= strtotime($this->session['session_updated_at']) - strtotime($this->session['session_created_at'])) {
+            if ($this->session['session_deleted_at'] != Date::ZERO || $this->session['cookie_lifetime'] <= strtotime($this->session['session_updated_at']) - strtotime($this->session['session_created_at'])) {
                 $this->session['session_data'] = '';
                 session_regenerate_id();
             }
@@ -207,7 +208,8 @@ class DataSource extends SessionHandler
         return [
             'ip' => Request::ip(),
             'agent' => Request::agent(),
-            'session_lifetime' => $this->lifetime
+            'session_lifetime' => $this->session_lifetime,
+            'cookie_lifetime' => $this->cookie_lifetime
         ];
     }
 

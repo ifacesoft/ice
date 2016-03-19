@@ -183,6 +183,29 @@ class Session extends Model
 		                'type' => 'span',
 		            ],
 		        ],
+		        'cookie_lifetime' => [
+		            'scheme' => [
+		                'extra' => '',
+		                'type' => 'mediumint(9)',
+		                'dataType' => 'mediumint',
+		                'length' => '7,0',
+		                'characterSet' => null,
+		                'nullable' => false,
+		                'default' => null,
+		                'comment' => '',
+		            ],
+		            'fieldName' => 'cookie_lifetime',
+		            'Ice\Widget\Model_Form' => [
+		                'type' => 'text',
+		            ],
+		            'Ice\Core\Validator' => [
+		                'Ice:Length_Max' => 7,
+		                0 => 'Ice:Not_Null',
+		            ],
+		            'Ice\Widget\Model_Table' => [
+		                'type' => 'span',
+		            ],
+		        ],
 		        'ip' => [
 		            'scheme' => [
 		                'extra' => '',
@@ -303,7 +326,9 @@ class Session extends Model
 		        ],
 		        'manyToMany' => [],
 		    ],
-		    'revision' => '03191138_lny',
+		    'revision' => '03191727_frt',
 		];
     }
+
+	
 }

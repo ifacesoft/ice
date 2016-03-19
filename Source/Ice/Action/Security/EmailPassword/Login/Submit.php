@@ -19,7 +19,7 @@ class Security_EmailPassword_Login_Submit extends Security
         /** @var Security_EmailPassword_Login $form */
         $form = $input['widget'];
 
-        $accountModelClass = $form->getAccountModelClass();
+        $accountModelClass = $form->getAccountEmailPasswordModelClass();
 
         if (!$accountModelClass) {
             return $form->getLogger()
