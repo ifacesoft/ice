@@ -26,6 +26,28 @@ class Security_LoginEmailPassword_ChangePassword extends Widget_Security
     }
 
     /**
+     * @param array $params
+     * @return $this
+     */
+    public function bind(array $params)
+    {
+        foreach ($params as $key => $value) {
+            if ($key == 'confirm_password') {
+                [
+                    $this->validateScheme['confirm_password']['Ice:Equal'] = [
+                        'value' => $this->getValue('new_password'),
+                        'message' => 'Passwords must be equals'
+                    ]
+                ];
+            }
+
+            parent::bind([$key => $value]);
+        }
+
+        return $this;
+    }
+
+    /**
      * @return null
      */
     public function getAccountLoginPasswordModelClass()
