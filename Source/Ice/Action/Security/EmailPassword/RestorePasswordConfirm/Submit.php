@@ -51,6 +51,7 @@ class Security_EmailPassword_RestorePasswordConfirm_Submit extends Security
 
             $this->changePassword($account, $accountData, $input);
 
+            $account->set(['token__fk' => null])->save();
             $token->remove();
 
             return array_merge(

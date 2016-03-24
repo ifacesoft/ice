@@ -3,8 +3,6 @@
 namespace Ice\Action;
 
 use Ice\Core\Logger;
-use Ice\Core\Model;
-use Ice\Core\Model\Security_Account;
 use Ice\Core\Widget_Security;
 use Ice\Helper\Date;
 use Ice\Model\Token;
@@ -50,6 +48,7 @@ class Security_LoginPassword_RestorePasswordConfirm_Submit extends Security
 
             $this->changePassword($account, $accountData, $input);
 
+            $account->set(['token__fk' => null])->save();
             $token->remove();
 
             return array_merge(
