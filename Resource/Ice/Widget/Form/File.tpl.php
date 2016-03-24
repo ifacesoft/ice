@@ -7,8 +7,9 @@
     <?php if (!empty($widgetOptions['horizontal'])) : ?>
     <div class="col-md-<?= 12 - $widgetOptions['horizontal'] ?>"><?php endif; ?>
         <img src="<?php echo isset($params[$value]) ?  $params[$value] : ''; ?>" width="100px" />
+        <input type="file" id="<?= $partId ?>_file" class="form-control" />
         <input id="<?= $partId ?>"
-               type="file"
+               type="hidden"
                class="<?= $element ?> <?= $name ?><?php if (!isset($options['resetFormClass'])) : ?> form-control<?php endif; ?><?php if (!empty($options['classes'])) : ?> <?= $options['classes'] ?><?php endif; ?>"
                name="<?= $name ?>"
                data-params='<?= $dataParams ?>'
@@ -23,5 +24,17 @@
                <?php if (!empty($options['required'])) : ?>required="required"<?php endif; ?>
                <?php if (!empty($options['autofocus'])) : ?>autofocus="autofocus" <?php endif; ?>
             >
+
         <?php if (!empty($widgetOptions['horizontal'])) : ?></div><?php endif; ?>
 </div>
+<script>
+    $("#<?= $partId ?>_file").change(function(event) {
+        $.each(event.target.files, function(index, file) {
+            var reader = new FileReader();
+            reader.onload = function(event) {
+                $('input[name=<?= $name ?>]').val(event.target.result);
+            };
+            reader.readAsDataURL(file);
+        });
+    });
+</script>

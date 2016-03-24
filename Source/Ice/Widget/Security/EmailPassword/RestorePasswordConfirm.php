@@ -43,14 +43,14 @@ class Security_EmailPassword_RestorePasswordConfirm extends Widget_Security
                     'required' => true,
                 ]
             )
-            ->text(
+            ->password(
                 'new_password',
                 [
                     'placeholder' => 'new_password_placeholder',
                     'required' => true,
                 ]
             )
-            ->text(
+            ->password(
                 'confirm_password',
                 [
                     'placeholder' => 'confirm_password_placeholder',

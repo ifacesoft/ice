@@ -45,5 +45,4 @@ class Security_EmailPassword_RegisterConfirm_Submit extends Security
             ];
         }
     }
-
 }

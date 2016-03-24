@@ -10,6 +10,11 @@ use Ice\DataProvider\Router;
 
 class Security_LoginEmailPassword_RestorePasswordConfirm extends Widget_Security
 {
+    private $accountLoginPasswordModelClass = null;
+    private $accountEmailPasswordModelClass = null;
+    private $accountLoginPasswordSubmitClass = null;
+    private $accountEmailPasswordSubmitClass = null;
+
     /**
      * Widget config
      *
@@ -27,6 +32,28 @@ class Security_LoginEmailPassword_RestorePasswordConfirm extends Widget_Security
         ];
     }
 
+    /**
+     * @param array $params
+     * @return $this
+     */
+    public function bind(array $params)
+    {
+        foreach ($params as $key => $value) {
+            if ($key == 'confirm_password') {
+                [
+                    $this->validateScheme['confirm_password']['Ice:Equal'] = [
+                        'value' => $this->getValue('new_password'),
+                        'message' => 'Passwords must be equals'
+                    ]
+                ];
+            }
+
+            parent::bind([$key => $value]);
+        }
+
+        return $this;
+    }
+
     /** Build widget
      *
      * @param array $input
@@ -35,6 +62,10 @@ class Security_LoginEmailPassword_RestorePasswordConfirm extends Widget_Security
     protected function build(array $input)
     {
         $this
+//            ->setAccountLoginPasswordModelClass(Account_Login_Password::class)
+//            ->setAccountEmailPasswordModelClass(Account_Email_Password::class)
+//            ->setAccountLoginPasswordActionClass(Security_LoginPassword_RestorePassword_Submit::class)
+//            ->setAccountEmailPasswordActionClass(Security_EmailPassword_RestorePassword_Submit::class)
             ->widget('header', ['widget' => $this->getWidget(Header::class)->h1('Restore password confirmation')])
             ->text(
                 'token',
@@ -43,14 +74,14 @@ class Security_LoginEmailPassword_RestorePasswordConfirm extends Widget_Security
                     'required' => true,
                 ]
             )
-            ->text(
+            ->password(
                 'new_password',
                 [
                     'placeholder' => 'new_password_placeholder',
                     'required' => true,
                 ]
             )
-            ->text(
+            ->password(
                 'confirm_password',
                 [
                     'placeholder' => 'confirm_password_placeholder',
@@ -67,5 +98,77 @@ class Security_LoginEmailPassword_RestorePasswordConfirm extends Widget_Security
                     ]
                 ]
             );
+    }
+
+    /**
+     * @return null
+     */
+    public function getAccountLoginPasswordModelClass()
+    {
+        return $this->accountLoginPasswordModelClass;
+    }
+
+    /**
+     * @param null $accountLoginPasswordModelClass
+     * @return $this
+     */
+    public function setAccountLoginPasswordModelClass($accountLoginPasswordModelClass)
+    {
+        $this->accountLoginPasswordModelClass = $accountLoginPasswordModelClass;
+        return $this;
+    }
+
+    /**
+     * @return null
+     */
+    public function getAccountEmailPasswordModelClass()
+    {
+        return $this->accountEmailPasswordModelClass;
+    }
+
+    /**
+     * @param null $accountEmailPasswordModelClass
+     * @return $this
+     */
+    public function setAccountEmailPasswordModelClass($accountEmailPasswordModelClass)
+    {
+        $this->accountEmailPasswordModelClass = $accountEmailPasswordModelClass;
+        return $this;
+    }
+
+    /**
+     * @return null
+     */
+    public function getAccountLoginPasswordSubmitClass()
+    {
+        return $this->accountLoginPasswordSubmitClass;
+    }
+
+    /**
+     * @param null $accountLoginPasswordSubmitClass
+     * @return $this
+     */
+    public function setAccountLoginPasswordActionClass($accountLoginPasswordSubmitClass)
+    {
+        $this->accountLoginPasswordSubmitClass = $accountLoginPasswordSubmitClass;
+        return $this;
+    }
+
+    /**
+     * @return null
+     */
+    public function getAccountEmailPasswordSubmitClass()
+    {
+        return $this->accountEmailPasswordSubmitClass;
+    }
+
+    /**
+     * @param null $accountEmailPasswordSubmitClass
+     * @return $this
+     */
+    public function setAccountEmailPasswordActionClass($accountEmailPasswordSubmitClass)
+    {
+        $this->accountEmailPasswordSubmitClass = $accountEmailPasswordSubmitClass;
+        return $this;
     }
 }

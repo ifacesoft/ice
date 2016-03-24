@@ -15,6 +15,7 @@ use Ice\Core\Widget_Security;
 use Ice\Helper\Logger;
 use Ice\Helper\String;
 use Ice\Model\Token;
+use Ice\Core\Logger as Core_Logger;
 
 abstract class Security extends Widget_Event
 {
@@ -162,7 +163,7 @@ abstract class Security extends Widget_Event
      */
     public function sendRegisterConfirm(Token $token, array $input)
     {
-        Logger::getInstance(__CLASS__)
+        Core_Logger::getInstance(__CLASS__)
             ->exception(['Implement {$0} for {$1}', [__FUNCTION__, get_class($this)]], __FILE__, __LINE__);
     }
 
@@ -174,7 +175,7 @@ abstract class Security extends Widget_Event
      */
     public function sendRestorePasswordConfirm(Token $token, array $input)
     {
-        Logger::getInstance(__CLASS__)
+        Core_Logger::getInstance(__CLASS__)
             ->exception(['Implement {$0} for {$1}', [__FUNCTION__, get_class($this)]], __FILE__, __LINE__);
     }
 
@@ -215,7 +216,7 @@ abstract class Security extends Widget_Event
         $tokenData = $token->get('/data');
 
         $account->set(['/expired' => $tokenData['account_expired'], 'token__fk' => null])->save();
-        $token->remove();
+        $token->remove(); //todo: удалять токены в екшине
 
         $userModelClass = Config::getInstance(Core_Security::getClass())->get('userModelClass');
 

@@ -18,7 +18,7 @@ class Security_LoginPassword_RestorePassword_Submit extends Security
 
         try {
             /** @var Model $accountModelClass */
-            $accountModelClass = $securityForm->getAccountModelClass();
+            $accountModelClass = $securityForm->getAccountLoginPasswordModelClass();
 
             if (!$accountModelClass) {
                 return $logger
@@ -29,11 +29,11 @@ class Security_LoginPassword_RestorePassword_Submit extends Security
                     );
             }
 
-            $account = $accountModelClass::getSelectQuery('/pk', ['email' => $securityForm->getValue('email')])->getModel();
+            $account = $accountModelClass::getSelectQuery(['/pk', '/expired'], ['login' => $securityForm->getValue('login')])->getModel();
 
             if (!$account) {
                 return [
-                    'error' => $logger->info('Пользователь с таким электронным адресом не найден.', Logger::DANGER, true)
+                    'error' => $logger->info('Пользователь с таким логином не найден.', Logger::DANGER, true)
                 ];
             }
 

@@ -19,7 +19,11 @@ class Security_LoginEmailPassword_RestorePassword_Submit extends Security
         /** @var Security_LoginEmailPassword_RestorePassword $form */
         $form = $input['widget'];
 
-        $output = Security_LoginPassword_RestorePassword_Submit::call([
+        $form->bind(['login' => $form->getValue('username')]);
+
+        $accountLoginPasswordSubmitClass = $form->getAccountLoginPasswordSubmitClass();
+
+        $output = $accountLoginPasswordSubmitClass::call([
             'widgets' => $input['widgets'],
             'widget' => $form
         ]);
@@ -28,7 +32,11 @@ class Security_LoginEmailPassword_RestorePassword_Submit extends Security
             return $output;
         }
 
-        return Security_EmailPassword_RestorePassword_Submit::call([
+        $form->bind(['email' => $form->getValue('username')]);
+
+        $accountEmailPasswordSubmitClass = $form->getAccountEmailPasswordSubmitClass();
+
+        return $accountEmailPasswordSubmitClass::call([
             'widgets' => $input['widgets'],
             'widget' => $form
         ]);
