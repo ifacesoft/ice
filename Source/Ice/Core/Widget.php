@@ -1,6 +1,8 @@
 <?php
 namespace Ice\Core;
 
+use DateTime;
+use DateTimeZone;
 use Ice\Exception\Access_Denied;
 use Ice\Exception\Error;
 use Ice\Exception\Http;
@@ -1564,7 +1566,12 @@ abstract class Widget extends Container
         }
 
         if (isset($part['options']['dateFormat'])) {
-            $part['params'][$part['name']] = date($part['options']['dateFormat'], strtotime($part['params'][$part['name']]));
+            $date = array_key_exists('dateTimezone', $part['options'])
+                ? new DateTime($part['params'][$part['name']], new DateTimeZone($part['options']['dateTimezone'] ?: 'Europe/Moscow'))
+                : new DateTime($part['params'][$part['name']]);
+            
+            $part['params'][$part['name']] = $date->format($part['options']['dateFormat']);
+            
             unset($part['options']['dateFormat']);
         }
 
