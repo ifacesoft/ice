@@ -1515,11 +1515,8 @@ abstract class Model
         $selfModelClass = get_class($this);
 
         return $modelClass
-            ? Query::getBuilder($modelClass, $tableAlias)
-                ->inner($selfModelClass)
-                ->pk($this->getPk(), $selfModelClass)
-            : Query::getBuilder($selfModelClass)
-                ->pk($this->getPk());
+            ? Query::getBuilder($modelClass, $tableAlias)->inner($selfModelClass)->pk($this->getPk(), $selfModelClass)
+            : Query::getBuilder($selfModelClass)->pk($this->getPk());
     }
 
     public function fetchOne($modelClass, $fieldNames, $lazy = false)

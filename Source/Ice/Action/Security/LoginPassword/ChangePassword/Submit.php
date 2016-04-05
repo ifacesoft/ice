@@ -39,7 +39,7 @@ class Security_LoginPassword_ChangePassword_Submit extends Security
             $account = $accountModelClass::createQueryBuilder()
                 ->eq(['user' => Core_Security::getInstance()->getUser()])
                 ->limit(1)
-                ->getSelectQuery(['password', '/expired', 'user__fk'])
+                ->getSelectQuery(['/pk', 'password', '/expired', 'user__fk'])
                 ->getModel();
 
             if (!$account) {

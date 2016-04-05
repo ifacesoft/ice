@@ -37,7 +37,7 @@ class Security_LoginPassword_Login_Submit extends Security
             $account = $accountModelClass::createQueryBuilder()
                 ->eq(['login' => $values['login']])
                 ->limit(1)
-                ->getSelectQuery(['password', '/expired', 'user__fk'])
+                ->getSelectQuery(['/pk', 'password', '/expired', 'user__fk'])
                 ->getModel();
 
             if (!$account) {

@@ -176,7 +176,7 @@ class Model_CollectionTest extends PHPUnit_Framework_TestCase
                     );
 
                     Query::getBuilder(Test::getClass())->inPk([reset($firstId), $id3, $id6])
-                        ->getSelectQuery('/name', [], $dataSourceKey)
+                        ->getSelectQuery(['/pk', '/name'], [], $dataSourceKey)
                         ->getModelCollection()
                         ->remove($dataSourceKey);
 

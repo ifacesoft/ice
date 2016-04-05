@@ -52,7 +52,7 @@ class Breadcrumbs_Route extends Breadcrumbs
         $result = parent::build($input);
 
         $this->setItems(Route::getInstance($input['routeName'])->getParentRoute(), $input['routeParams']);
-        $this->li($input['routeName'], ['route' => true, 'params' => $input['routeParams']]);
+        $this->li($input['routeName'], ['route' => [$input['routeName'], $input['routeParams']]]);
 
         return $result;
     }
@@ -61,7 +61,7 @@ class Breadcrumbs_Route extends Breadcrumbs
     {
         if ($route) {
             $this->setItems($route->getParentRoute(), $params);
-            $this->item($route->getName(), ['route' => true, 'params' => $params]);
+            $this->item($route->getName(), ['route' => [$route->getName(), $params]]);
         }
     }
 }

@@ -65,6 +65,10 @@ class Input
 //                $input[$name] = null;
 //            }
 
+            if (!isset($input[$name])) {
+                $input[$name] = null;
+            }
+
             $input[$name] =  Input::getParam($name, $input[$name], $param);
         }
 

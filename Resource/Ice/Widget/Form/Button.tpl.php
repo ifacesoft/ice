@@ -5,4 +5,5 @@
         data-name="<?= $name ?>"
         data-params='<?= $dataParams ?>'
         data-for="<?= $widgetId ?>"
+        <?php if (!empty($options['disabled'])) : ?>disabled="disabled"<?php endif; ?>
         type="<?php if (isset($options['submit'])) : ?>submit<?php else : ?>button<?php endif; ?>"><?= $label ?></button>

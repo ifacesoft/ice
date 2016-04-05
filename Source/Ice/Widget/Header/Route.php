@@ -35,7 +35,7 @@ class Header_Route extends Header
     {
         $this->h1(
             $input['routeName'],
-            ['route' => true, 'classes' => 'page-header', 'params' => $input['routeParams']]
+            ['route' => [$input['routeName'], $input['routeParams']], 'classes' => 'page-header']
         );
     }
 }

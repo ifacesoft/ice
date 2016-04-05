@@ -6,9 +6,10 @@ use Ice\Action\Render;
 use Ice\Core\Debuger;
 use Ice\Core\QueryBuilder;
 use Ice\Core\QueryResult;
-use Ice\Core\Request;
+use Ice\Core\Router;
 use Ice\Core\Widget;
 use Ice\DataProvider\Request as DataProvider_Request;
+use Ice\DataProvider\Router as DataProvider_Router;
 
 class Pagination extends Widget
 {
@@ -29,10 +30,9 @@ class Pagination extends Widget
             'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'Widget: Access denied!'],
             'resource' => ['js' => null, 'css' => null, 'less' => null, 'img' => null],
             'cache' => ['ttl' => -1, 'count' => 1000],
-            'actions' => [],
             'input' => [
-                'page' => ['providers' => DataProvider_Request::class, 'default' => 1],
-                'limit' => ['providers' => DataProvider_Request::class, 'default' => 15]
+                'page' => ['providers' => [DataProvider_Router::class, DataProvider_Request::class], 'default' => 1],
+                'limit' => ['providers' => [DataProvider_Router::class, DataProvider_Request::class], 'default' => 15]
             ],
             'output' => [],
         ];
@@ -44,16 +44,27 @@ class Pagination extends Widget
     public function getEvent()
     {
         if ($this->event !== null) {
+
+            $routeParams = [];
+
+            foreach ($this->event['url'][1] as $routeKey => $routeParam) {
+                if (is_int($routeKey)) {
+                    $routeParams[$routeParam] = $this->getValue($routeParam);
+                    continue;
+                }
+
+                $routeParams[$routeKey] = $routeParam;
+            }
+
+            $this->event['url'][1] = $routeParams;
+
             return $this->event;
         }
 
         return [
             'action' => Render::class,
-            'data' => [
-                'widgets' => [
-                    $this->getInstanceKey() => get_class($this)
-                ]
-            ],
+            'data' => ['widgets' => [$this->getInstanceKey() => get_class($this)]],
+            'url' => [Router::getInstance()->getName(), ['page' => $this->getPage(), 'limit' => $this->getLimit()], true],
             'method' => 'GET'
         ];
     }
@@ -64,6 +75,26 @@ class Pagination extends Widget
      */
     public function setEvent($event)
     {
+        if (!isset($event['url'])) {
+            $event['url'] = [Router::getInstance()->getName(), ['page', 'limit'], true];
+        }
+
+        $event['url'] = (array)$event['url'];
+
+        if (!isset($event['url'][1])) {
+            $event['url'][1] = ['page', 'limit'];
+        } else {
+            $event['url'][1] = (array)$event['url'][1];
+
+            if (!isset($event['url'][1]['page']) && !in_array('page', $event['url'][1])) {
+                $event['url'][1][] = 'page';
+            }
+
+            if (!isset($event['url'][1]['limit']) && !in_array('limit', $event['url'][1])) {
+                $event['url'][1][] = 'limit';
+            }
+        }
+
         $this->event = $event;
         return $this;
     }
@@ -119,7 +150,7 @@ class Pagination extends Widget
     {
         return $this->addPart(
             $name,
-            array_merge($options, ['onclick' => $this->getEvent(), 'href' => $this->getFullUrl(Request::uri(true))]),
+            array_merge($options, ['onclick' => $this->getEvent()]),
             $template,
             __FUNCTION__
         );
@@ -409,11 +440,13 @@ class Pagination extends Widget
         return [];
     }
 
-    public function getLimit() {
+    public function getLimit()
+    {
         return $this->getValue('limit');
     }
 
-    public function getPage() {
+    public function getPage()
+    {
         return $this->getValue('page');
     }
 }

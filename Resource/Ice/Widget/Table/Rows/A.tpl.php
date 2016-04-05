@@ -6,7 +6,7 @@
    <?php if (!empty($options['target'])) : ?>target="<?= $options['target'] ?>"<?php endif; ?>
    data-name="<?= $name ?>"
    data-params='<?= $dataParams ?>'
-   data-for="<?= $widgetId ?>">
+   data-for="<?= $widgetId ?>" disabled="disabled">
     <?php if (isset($oneToMany)) : ?>
         <?= implode(', ', $oneToMany) ?>
     <?php elseif (isset($manyToMany)) : ?>

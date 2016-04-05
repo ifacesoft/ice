@@ -405,7 +405,8 @@ class Sql extends QueryTranslator
 
         if (isset($select['table']) && $select['table'] instanceof QueryBuilder) {
             $select['table']->setCalcFoundRows(false);
-            $select['table'] = $select['table']->getSelectQuery('*'); // todo Не доджно быть никаких Query, только QueryBuilder
+
+            $select['table'] = $select['table']->getSelectQuery('/pk'); // todo Не доджно быть никаких Query, только QueryBuilder
         }
 
         $table = isset($select['table']) && $select['table'] instanceof Query
@@ -445,8 +446,17 @@ class Sql extends QueryTranslator
              */
             $joinModelClass = $joinTable['class'];
 
-            $sql .= "\n" . $joinTable['type'] . "\n\t`" .
-                $joinModelClass::getSchemeName() . '`.`' . $joinModelClass::getTableName() . '` `' . $tableAlias . '` ON (' . $joinTable['on'] . ')';
+            if ($joinModelClass instanceof QueryBuilder) {
+                $joinModelClass->setCalcFoundRows(false);
+                $joinModelClass = $joinModelClass->getSelectQuery('/pk'); // todo Не доджно быть никаких Query, только QueryBuilder
+            }
+
+            $table = $joinModelClass instanceof Query
+                ? '(' . $joinModelClass->getBody() . ')'
+                : '`' . $joinModelClass::getSchemeName() . '`.`' . $joinModelClass::getTableName() . '`';
+
+            $sql .= "\n" . $joinTable['type'] . "\n\t" . $table .  ' `' . $tableAlias . '` ON (' . $joinTable['on'] . ')';
+
         }
 
         return $sql;
@@ -528,7 +538,7 @@ class Sql extends QueryTranslator
             foreach ($fieldNames as $fieldName) {
                 $groups[] = isset($fieldColumnMap[$fieldName])
                     ? '`' . $tableAlias . '`.`' . $fieldColumnMap[$fieldName] . '`'
-                    : $fieldName; // custom field (check yourself)
+                    : '`' . trim($fieldName, '`') . '`';
             }
         }
 

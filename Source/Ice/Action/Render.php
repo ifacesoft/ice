@@ -72,7 +72,13 @@ class Render extends Action
                     $widget->setResource(is_object($input['widget']) ? $input['widget']->getResource() : $input['widget']['resourceClass']);
                 }
 
-                $widgets[$widget->getWidgetId()] = $widget->render();
+                $output = $widget->getOutput();
+
+                $widgets[$widget->getWidgetId()] = [
+                    'content' => $widget->render(),
+                    'params' => isset($output['callbackParams']) ? $output['callbackParams'] : [],
+                    'callback' => isset($output['callback']) ? $output['callback'] : null
+                ];
             }
         }
 

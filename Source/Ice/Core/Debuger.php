@@ -42,10 +42,10 @@ class Debuger
      *
      * @version 0.0
      * @since   0.0
+     * @return mixed
      */
     public static function dump($arg)
     {
-        foreach (func_get_args() as $arg) {
             $var = stripslashes(Php::varToPhpString($arg));
 
             if (!Request::isAjax()) {
@@ -67,8 +67,6 @@ class Debuger
             File::createData($logFile, $var, false, FILE_APPEND);
 
             Logger::fb($arg, 'debug', 'INFO');
-        }
-
         return $arg;
     }
 }

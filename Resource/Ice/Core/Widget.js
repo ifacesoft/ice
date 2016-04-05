@@ -37,12 +37,12 @@ var Ice_Core_Widget = {
             url = location.href;
         }
 
-        if (method == 'GET') {
-            var a = document.createElement('a');
-            a.href = url;
-            url = a.pathname + '?' + $.param(data) + a.hash;
-            data = {};
-        }
+        // if (method == 'GET') {
+        //     var a = document.createElement('a');
+        //     a.href = url;
+        //     url = a.pathname + '?' + $.param(data) + a.hash;
+        //     data = {};
+        // }
 
         var dataAction = Ice.jsonToObject($element.attr('data-action'));
 
@@ -109,7 +109,12 @@ var Ice_Core_Widget = {
                                     for (widgetId in result.widgets) {
                                         $widget = $('#' + widgetId);
                                         if ($widget.length) {
-                                            $widget.replaceWith(result.widgets[widgetId]);
+                                            $widget.replaceWith(result.widgets[widgetId].content);
+
+                                            if (result.widgets[widgetId].callback) {
+                                                eval('var widgetCallback = ' + result.widgets[widgetId].callback);
+                                                widgetCallback(result.widgets[widgetId].params);
+                                            }
                                         } else {
                                             Ice.notify($('#iceMessages'), '<div class="alert alert-danger">#' + widgetId + ' not found</div>', 5000);
                                         }

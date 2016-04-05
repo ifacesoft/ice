@@ -43,7 +43,7 @@ abstract class Model_Factory extends Model_Defined
         return Query::getBuilder(self::getClass())
             ->eq(['/delegate_name' => $delegateName])
             ->is('/active')
-            ->getSelectQuery('/delegate_name')
+            ->getSelectQuery(['/pk', '/delegate_name'])
             ->getModel($sourceName, $ttl);
     }
 }

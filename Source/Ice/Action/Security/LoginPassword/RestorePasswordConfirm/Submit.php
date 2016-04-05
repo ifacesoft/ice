@@ -38,7 +38,7 @@ class Security_LoginPassword_RestorePasswordConfirm_Submit extends Security
             /** @var Security_Account|Model $account */
             $account = $accountModelClass::createQueryBuilder()
                 ->inner(Token::class, '/pk', 'Token.id=' . $accountModelClassName . '.token_id AND Token.token="' . $token->get('token') . '"')
-                ->getSelectQuery(['password', '/expired', 'user__fk'])
+                ->getSelectQuery(['/pk', 'password', '/expired', 'user__fk'])
                 ->getModel();
             if (!$account) {
                 $securityForm->getLogger()->exception('Account not found', __FILE__, __LINE__);

@@ -414,13 +414,6 @@ abstract class Widget extends Container
         }
     }
 
-    public function getFullUrl($url)
-    {
-        $queryString = http_build_query($this->getDataParams());
-
-        return $url . ($queryString ? '?' . $queryString : '');
-    }
-
     /**
      * @param array $data
      * @return array|null
@@ -524,18 +517,20 @@ abstract class Widget extends Container
                         $routeName = reset($part['options']['route']);
                     }
 
-                    $routeParams = $part['params'];
+                    $routeParams = [];//$part['params'];
 
-                    foreach ((array) $tempRouteParams as $routeParamKey => $routeParamValue) {
+                    foreach ((array)$tempRouteParams as $routeParamKey => $routeParamValue) {
                         if (is_int($routeParamKey)) {
                             $routeParams[$routeParamValue] = array_key_exists($routeParamValue, $row)
                                 ? $row[$routeParamValue]
-                                : null;
+                                : $routeParamValue;
 
                             continue;
                         }
 
-                        $routeParams[$routeParamKey] = $routeParamValue;
+                        $routeParams[$routeParamKey] = array_key_exists($routeParamValue, $row)
+                            ? $row[$routeParamValue]
+                            : $routeParamValue;
                     }
 
                     if (isset($part['options']['render'])) {
@@ -553,7 +548,17 @@ abstract class Widget extends Container
                     }
 
                     if (!array_key_exists('href', $part['options'])) {
-                        $part['options']['href'] = Router::getInstance()->getUrl([$routeName, $routeParams, $withGet, $withDomain]);
+                        try {
+                            $part['options']['href'] = Router::getInstance()->getUrl([$routeName, $routeParams, $withGet, $withDomain]);
+                        } catch (\Exception $e) {
+                            throw new Error(
+                                [
+                                    'Url generation was failed for route {$0} in widget {$1}  (part: {$2})',
+                                    [$routeName, $widgetClass::getClassName(), $partName]
+                                ],
+                                [$routeName, $routeParams, $withGet, $withDomain]
+                            );
+                        }
                     }
 
                     if (!array_key_exists('active', $part['options'])) {
@@ -957,7 +962,8 @@ abstract class Widget extends Container
         return isset($this->parts[$partName]) ? $this->parts[$partName] : null;
     }
 
-    public function setPart($partName, $part) {
+    public function setPart($partName, $part)
+    {
         $this->parts[$partName] = $part;
     }
 
@@ -991,7 +997,7 @@ abstract class Widget extends Container
         $code = 'Ice_Core_Widget.click($(this), \'' . $url . '\', \'' . $method . '\'';
 
         if (isset($event['callback'])) {
-            $code .= ', \'' . $event['callback'] . '\'';
+            $code .= ', ' . $event['callback'];
         }
 
         return $code . '); return false;';
@@ -1365,7 +1371,9 @@ abstract class Widget extends Container
 
     private function partEvents($partName, array &$options)
     {
+
         foreach (['onclick', 'onchange', 'submit'] as $event) {
+
             if (array_key_exists($event, $options)) {
                 if ($options[$event] === true) {
                     throw new Error(
@@ -1542,10 +1550,10 @@ abstract class Widget extends Container
 
             $part['params'] = [$part['name'] => $paramValue];
         } else {
-           $part['params'] = [
-               $part['name'] => array_key_exists($part['value'], $values) ? $values[$part['value']] : $part['value'],
-               $part['partName'] => array_key_exists($partName, $values) ? $values[$partName] : null
-           ];
+            $part['params'] = [
+                $part['name'] => array_key_exists($part['value'], $values) ? $values[$part['value']] : $part['value'],
+                $part['partName'] => array_key_exists($partName, $values) ? $values[$partName] : null
+            ];
         }
 
         if (isset($part['options']['params'])) {
@@ -1569,9 +1577,9 @@ abstract class Widget extends Container
             $date = array_key_exists('dateTimezone', $part['options'])
                 ? new DateTime($part['params'][$part['name']], new DateTimeZone($part['options']['dateTimezone'] ?: 'Europe/Moscow'))
                 : new DateTime($part['params'][$part['name']]);
-            
+
             $part['params'][$part['name']] = $date->format($part['options']['dateFormat']);
-            
+
             unset($part['options']['dateFormat']);
         }
 
@@ -1633,5 +1641,13 @@ abstract class Widget extends Container
         $part['partId'] = $part['widgetId'] . '_' . $part['partName'];
 
         return $renderClass::getInstance()->fetch($part['template'], $part);
+    }
+
+    /**
+     * @return array
+     */
+    public function getOutput()
+    {
+        return $this->output;
     }
 }

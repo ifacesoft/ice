@@ -23,6 +23,7 @@ use Ice\Core\QueryResult;
 use Ice\Core\QueryTranslator;
 use Ice\Exception\DataSource_Insert;
 use Ice\Exception\DataSource_Insert_DuplicateEntry;
+use Ice\Exception\DataSource_Select_Error;
 use Ice\Exception\DataSource_Statement_Error;
 use Ice\Exception\DataSource_Statement_TableNotFound;
 use Ice\Exception\DataSource_Statement_UnknownColumn;

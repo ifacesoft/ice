@@ -1078,7 +1078,6 @@ class QueryBuilder
          */
         list($modelClass, $tableAlias) = $this->getModelClassTableAlias($modelTableData);
 
-
         if ($modelClass instanceof Query) {
             $modelClass = $modelClass->getQueryBuilder();
         }
@@ -1091,19 +1090,30 @@ class QueryBuilder
         }
 
         if ($tableAlias && !isset($this->sqlParts[self::PART_SELECT][$modelClass][$tableAlias])) {
-            $pkFieldNames = $modelClass::getScheme()->getPkFieldNames();
+//            $pkFieldNames = $modelClass::getScheme()->getPkFieldNames();
             $this->sqlParts[self::PART_SELECT][$modelClass][$tableAlias] = [
                 'table' => $table,
-                'columns' => $table instanceof QueryBuilder ? [] : array_combine($pkFieldNames, $pkFieldNames)
+                'columns' => [] //$table instanceof QueryBuilder ? [] : array_combine($pkFieldNames, $pkFieldNames)
             ];
         }
 
+        if ($fieldName === null) {
+            return $this; // todo: убрать когда отрефакторятся не обязательные поля (/pk ...)
+        }
+
         if ($fieldName == '/pk') {
-            return $this;
+            $fieldName = $modelClass::getScheme()->getPkFieldNames();
+
+            if (count($fieldName) === 1) {
+                $fieldName = reset($fieldName);
+            }
         }
 
         if ($fieldName == '*') {
-            $fieldName = $modelClass::getScheme()->getFieldNames();
+            $fieldName = array_merge(
+                $modelClass::getScheme()->getFieldNames(), 
+                $modelClass::getScheme()->getPkFieldNames()
+            );
         }
 //
         if (is_array($fieldName)) {
@@ -1189,7 +1199,7 @@ class QueryBuilder
     {
         $this->queryType = QueryBuilder::TYPE_SELECT;
 
-        $this->select($fieldNames, null, $modelTableData);
+        $this->select(array_merge(['/pk'], (array)$fieldNames), null, $modelTableData);
 
         return $this->getQuery($dataSourceKey);
     }
