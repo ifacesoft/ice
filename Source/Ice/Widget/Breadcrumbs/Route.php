@@ -2,6 +2,7 @@
 
 namespace Ice\Widget;
 
+use Ice\Core\Debuger;
 use Ice\Core\Route;
 use Ice\DataProvider\Router;
 
@@ -35,15 +36,6 @@ class Breadcrumbs_Route extends Breadcrumbs
                 'routeParams' => ['providers' => Router::class]
             ],
             'output' => [],
-            'action' => [
-                //  'class' => 'Ice:Render',
-                //  'params' => [
-                //      'widgets' => [
-                ////        'Widget_id' => Widget::class
-                //      ]
-                //  ],
-                //  'method' => 'POST'
-            ]
         ];
     }
 

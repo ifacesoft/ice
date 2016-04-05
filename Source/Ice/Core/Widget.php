@@ -521,14 +521,14 @@ abstract class Widget extends Container
 
                     foreach ((array)$tempRouteParams as $routeParamKey => $routeParamValue) {
                         if (is_int($routeParamKey)) {
-                            $routeParams[$routeParamValue] = array_key_exists($routeParamValue, $row)
+                            $routeParams[$routeParamValue] = !is_array($routeParamValue) && array_key_exists($routeParamValue, $row)
                                 ? $row[$routeParamValue]
                                 : $routeParamValue;
 
                             continue;
                         }
 
-                        $routeParams[$routeParamKey] = array_key_exists($routeParamValue, $row)
+                        $routeParams[$routeParamKey] = !is_array($routeParamValue) && array_key_exists($routeParamValue, $row)
                             ? $row[$routeParamValue]
                             : $routeParamValue;
                     }
