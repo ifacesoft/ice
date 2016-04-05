@@ -1144,7 +1144,7 @@ class QueryBuilder
             $fieldAlias = $fieldName;
         }
 
-        $this->sqlParts[self::PART_SELECT][$modelClass][$tableAlias]['columns'][$fieldName] = $fieldAlias;
+        $this->sqlParts[self::PART_SELECT][$modelClass][$tableAlias]['columns'][$fieldAlias] = $fieldName;
 
         $this->appendCacheTag($modelClass, $fieldName, true, false);
 

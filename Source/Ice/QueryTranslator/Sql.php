@@ -371,7 +371,7 @@ class Sql extends QueryTranslator
             foreach ($tableAliases as $tableAlias => $select) {
                 $fieldColumnMap = $modelClass::getScheme()->getFieldColumnMap();
 
-                foreach ($select['columns'] as $fieldName => $fieldAlias) {
+                foreach ($select['columns'] as $fieldAlias => $fieldName) {
                     $isSpatial = (boolean)strpos($fieldName, '__geo');
 
                     if (isset($fieldColumnMap[$fieldName])) {
