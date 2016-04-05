@@ -64,4 +64,5 @@ return [
     ],
     '_Security' => '/security',
     '_Private' => '/private',
+    '_CKEditor' => '/ckeditor',
 ];

@@ -118,6 +118,11 @@ class Form extends Widget
         return $this->addPart($fieldName, $options, $template, __FUNCTION__);
     }
 
+    public function html($fieldName, array $options = [], $template = 'Ice\Widget\Form\Html')
+    {
+        return $this->addPart($fieldName, $options, $template, __FUNCTION__);
+    }
+
     /**
      * Add hidden type field
      *

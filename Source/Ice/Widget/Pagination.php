@@ -64,7 +64,7 @@ class Pagination extends Widget
         return [
             'action' => Render::class,
             'data' => ['widgets' => [$this->getInstanceKey() => get_class($this)]],
-            'url' => [Router::getInstance()->getName(), ['page' => $this->getPage(), 'limit' => $this->getLimit()], true],
+            'url' => [Router::getInstance()->getName(), $this->getDataParams(), true],
             'method' => 'GET'
         ];
     }
