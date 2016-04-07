@@ -42,8 +42,4 @@ class Cli extends Render
     {
         return $data['cli'];
     }
-
-    protected function init(array $data)
-    {
-    }
 }

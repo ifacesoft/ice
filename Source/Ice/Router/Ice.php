@@ -55,11 +55,17 @@ class Ice extends Router
 
     public function getName($url = null, $method = null)
     {
+        $provider = DataProvider_Router::getInstance();
+
         if (!$url) {
-            return Route::getInstance($this->getParams()['routeName']);
+            $url = $provider->get('url');
         }
 
-        $route = DataProvider_Router::getInstance()->getRoute($url, $method);
+        if (!$method) {
+            $method = $provider->get('method');
+        }
+        
+        $route = $provider->getRoute($url, $method);
 
         return $route ? $route['routeName'] : null;
     }

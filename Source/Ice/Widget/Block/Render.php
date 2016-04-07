@@ -33,7 +33,7 @@ class Block_Render extends Block
                 $instanceKey = null;
             }
 
-            $this->widget($name, ['widget' => [$widgetClass, $widgetParams, $instanceKey]]);
+            $this->widget($name, ['widget' => $this->getWidget([$widgetClass, $widgetParams, $instanceKey])]);
         }
 
         return [];

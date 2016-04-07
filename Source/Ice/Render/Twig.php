@@ -38,8 +38,10 @@ class Twig extends Render
 
     protected $templateDirs = [];
 
-    protected function init(array $data)
+    public function __construct(array $data)
     {
+        parent::__construct($data);
+
         //        $twigPath = VENDOR_DIR . $config->get('vendor') . '/lib/';
 //
 //        include_once $twigPath . 'Twig/Environment.php';

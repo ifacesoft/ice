@@ -27,34 +27,10 @@ class Bootstrap extends Container
 
     private $moduleConfigPath = null;
 
-//    /**
-//     * Bootstrap constructor.
-//     * @param $moduleConfigPath
-//     */
-//    private function __construct($moduleConfigPath)
-//    {
-//        $this->moduleConfigPath = $moduleConfigPath;
-//    }
-
-    /**
-     * @return string
-     */
-    public function getModuleConfigPath()
+    protected function __construct(array $data)
     {
-        return $this->moduleConfigPath;
-    }
+        parent::__construct($data);
 
-    /**
-     * Initialization requered parameters, constants and includes core files
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.2
-     * @since   0.0
-     * @param array $data
-     */
-    protected function init(array $data)
-    {
         setlocale(LC_ALL, 'en_US.UTF-8');
         setlocale(LC_NUMERIC, 'C');
 
@@ -62,5 +38,13 @@ class Bootstrap extends Container
 
         Loader::init($data['loader'], !empty($data['force']));
         Logger::init();
+    }
+
+    /**
+     * @return string
+     */
+    public function getModuleConfigPath()
+    {
+        return $this->moduleConfigPath;
     }
 }

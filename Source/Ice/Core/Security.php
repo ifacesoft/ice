@@ -11,6 +11,13 @@ abstract class Security extends Container
 {
     use Core;
 
+    public function __construct(array $data)
+    {
+        parent::__construct($data);
+
+        $this->autologin();
+    }
+
     public static function checkAccess($roles, $message)
     {
         if (!$roles || Security::getInstance()->check((array)$roles)) {
@@ -75,11 +82,6 @@ abstract class Security extends Container
      * @return bool
      */
     abstract public function isAuth();
-
-    protected function init(array $data)
-    {
-        $this->autologin();
-    }
 
     abstract protected function autologin();
 

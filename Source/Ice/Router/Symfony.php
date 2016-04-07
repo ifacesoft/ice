@@ -56,18 +56,22 @@ class Symfony extends Ice
 
     public function getName($url = null, $method = null)
     {
-        global $kernel;
+        $routeName = null;
 
         try {
-            if ($routeName = $kernel->getContainer()->get('request')->get('_route')) {
-                return $routeName;
-            }
+            $routeName = parent::getName($url, $method);
         } catch (\Exception $e) {
-            //
+           //
         }
 
-        if ($routeName = parent::getName($url, $method)) {
-            return $routeName;
+        if (!$routeName) {
+            global $kernel;
+
+            try {
+                $routeName = $kernel->getContainer()->get('request')->get('_route');
+            } catch (\Exception $e) {
+                //
+            }
         }
 
         return $routeName;

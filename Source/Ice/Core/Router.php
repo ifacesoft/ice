@@ -38,8 +38,4 @@ abstract class Router extends Container
     public abstract function getName($url = null, $method = null);
 
     public abstract function getParams();
-
-    protected function init(array $data)
-    {
-    }
 }

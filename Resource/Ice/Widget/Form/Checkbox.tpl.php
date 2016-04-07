@@ -2,7 +2,7 @@
     <label
         class="<?php if (!empty($widgetOptions['horizontal'])) : ?> col-md-<?= 12 - $widgetOptions['horizontal'] ?> col-md-offset-<?= $widgetOptions['horizontal'] ?><?php endif; ?>"
         for="<?= $partId ?>">
-        <div class="checkbox">
+        <div class="checkbox" style="margin-left: 20px;">
             <input type="hidden" id="<?= $partId . '_hidden' ?>" name="<?= $name ?>" value="0"/>
             <input id="<?= $partId ?>"
                    type="checkbox"

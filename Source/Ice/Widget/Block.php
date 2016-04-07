@@ -31,7 +31,6 @@ class Block extends Widget
      */
     protected function build(array $input)
     {
-
         return [];
     }
 }

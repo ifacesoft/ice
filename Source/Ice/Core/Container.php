@@ -29,6 +29,15 @@ abstract class Container
     private $instanceKey = null;
 
     /**
+     * Container constructor.
+     * @param array $data
+     */
+    protected function __construct(array $data)
+    {
+        $this->instanceKey = $data['instanceKey'];
+    }
+
+    /**
      * Get instance from container
      *
      * @param  string $key
@@ -166,19 +175,10 @@ abstract class Container
      * @version 1.1
      * @since   0.4
      */
-    final private static function create($params)
+    final private static function create(array $params)
     {
         $class = get_called_class();
-
-        /** @var Container $object */
-        $object = new $class();
-
-        $object->instanceKey = $params['instanceKey'];
-        unset($params['instanceKey']);
-
-        $object->init($params);
-
-        return $object;
+        return new $class($params);
     }
 
     /**
@@ -188,18 +188,6 @@ abstract class Container
     {
         return $this->instanceKey;
     }
-
-    /**
-     * Init object
-     *
-     * @param array $data
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 1.1
-     * @since   1.1
-     */
-    protected abstract function init(array $data);
 
     /**
      * @return Logger

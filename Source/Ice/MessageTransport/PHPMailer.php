@@ -12,9 +12,9 @@ class PHPMailer extends MessageTransport
     /** @var \PHPMailer */
     private $phpMailer = null;
 
-    protected function init(array $data)
+    public function __construct(array $data)
     {
-        parent::init($data);
+        parent::__construct($data);
 
         $key = $this->getInstanceKey();
 

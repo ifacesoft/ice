@@ -20,6 +20,28 @@ class Form extends Widget
 
     private $submitPartName = null;
 
+    public function __construct(array $data)
+    {
+        parent::__construct($data);
+
+        /** @var Form $formClass */
+        $formClass = get_class($this);
+
+        $tempDir = Module::getInstance()->get(Module::TEMP_DIR) . '/' . $formClass::getClassName();
+
+        foreach (array_keys($this->getParts($this->getFilterParts())) as $key) {
+            if (isset($params[$key])) {
+                continue;
+            }
+
+            $path = implode('/', [$tempDir, $key, $this->getToken()]);
+
+            if (file_exists($path)) {
+                $this->bind([$key => Directory::getFileNames($path)]);
+            }
+        }
+    }
+
     /**
      * Widget config
      *
@@ -64,33 +86,6 @@ class Form extends Widget
                 'method' => $submitOptions['method']
             ]
         );
-    }
-
-    /**
-     * Init widget parts and other
-     * @param array $input
-     * @return array|void
-     */
-    public function init(array $input)
-    {
-        parent::init($input);
-
-        /** @var Form $formClass */
-        $formClass = get_class($this);
-
-        $tempDir = Module::getInstance()->get(Module::TEMP_DIR) . '/' . $formClass::getClassName();
-
-        foreach (array_keys($this->getParts($this->getFilterParts())) as $key) {
-            if (isset($params[$key])) {
-                continue;
-            }
-
-            $path = implode('/', [$tempDir, $key, $this->getToken()]);
-
-            if (file_exists($path)) {
-                $this->bind([$key => Directory::getFileNames($path)]);
-            }
-        }
     }
 
     public static function schemeColumnPlugin($columnName, $table)

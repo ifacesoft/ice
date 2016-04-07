@@ -123,19 +123,4 @@ class Php extends Render
             ? Emmet::translate($layout . '{{$content}}', ['content' => ob_get_clean()])
             : ob_get_clean();
     }
-
-
-    /**
-     * Init object
-     *
-     * @param array $data
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 1.1
-     * @since   1.1
-     */
-    protected function init(array $data)
-    {
-    }
 }

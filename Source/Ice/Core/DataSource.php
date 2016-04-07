@@ -41,6 +41,18 @@ abstract class DataSource extends Container
      */
     private $key = null;
 
+    public function __construct(array $data)
+    {
+        parent::__construct($data);
+
+        list($key, $scheme) = explode('.', $this->getInstanceKey());
+
+        $this->key = $key;
+        $this->scheme = $scheme;
+        $this->getSourceDataProvider()->setScheme($scheme);
+    }
+
+
     /**
      * Return instance of data source
      *
@@ -486,15 +498,6 @@ abstract class DataSource extends Container
      * @since   0
      */
     abstract public function releaseSavePoint($savePoint);
-
-    protected function init(array $data)
-    {
-        list($key, $scheme) = explode('.', $this->getInstanceKey());
-
-        $this->key = $key;
-        $this->scheme = $scheme;
-        $this->getSourceDataProvider()->setScheme($scheme);
-    }
 
     /**
      * Return source data provider

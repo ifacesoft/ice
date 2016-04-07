@@ -44,8 +44,10 @@ class Smarty extends Render
      */
     private $_smarty = null;
 
-    protected function init(array $data)
+    public function __construct(array $data)
     {
+        parent::__construct($data);
+
         $config = Config::getInstance(__CLASS__);
 
 //        include_once VENDOR_DIR . $config->get('vendor') . '/libs/Smarty.class.php';

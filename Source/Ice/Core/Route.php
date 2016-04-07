@@ -210,9 +210,9 @@ class Route extends Config
             return $param !== null && $param !== '' && !is_array($param) ;
         });
 
-        $url = Replace::getInstance()->fetch($this->getRoute(), $params, null, Render::TEMPLATE_TYPE_STRING);
-        
-        return $params ? $url . '?' . http_build_query($params) : $url;
+        $url = Replace::getInstance()->fetch($this->getRoute(), array_intersect_key($params, $this->gets('params')), null, Render::TEMPLATE_TYPE_STRING);
+
+        return $params ? $url . '?' . http_build_query(array_diff_key($params, $this->gets('params'))) : $url;
     }
     //
     //    /**

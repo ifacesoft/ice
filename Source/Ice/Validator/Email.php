@@ -51,21 +51,6 @@ class Email extends Validator
         return (bool)filter_var($data, FILTER_VALIDATE_EMAIL);
     }
 
-    /**
-     * Init object
-     *
-     * @param array $data
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 1.1
-     * @since   1.1
-     */
-    protected function init(array $data)
-    {
-        // TODO: Implement init() method.
-    }
-
     public function getMessage()
     {
         return 'Email \'{$1}\' not valid';

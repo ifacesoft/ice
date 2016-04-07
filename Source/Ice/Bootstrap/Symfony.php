@@ -7,18 +7,18 @@ use Ice\Core\Bootstrap;
 
 class Symfony extends Bootstrap
 {
-    protected static function getDefaultKey()
-    {
-        return MODULE_CONFIG_PATH;
-    }
-
-    public function init(array $data)
+    protected function __construct(array $data)
     {
         $data['force'] = true;
 
-        parent::init($data);
+        parent::__construct($data);
 
 //        set_error_handler('Ice\Core\Logger::errorHandler');
 //        register_shutdown_function('Ice\Core\Logger::shutdownHandler');
+    }
+
+    protected static function getDefaultKey()
+    {
+        return MODULE_CONFIG_PATH;
     }
 }

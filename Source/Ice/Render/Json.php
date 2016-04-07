@@ -46,8 +46,4 @@ class Json extends Render
     {
         return Helper_Json::encode($data);
     }
-
-    protected function init(array $data)
-    {
-    }
 }

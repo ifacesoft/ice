@@ -53,6 +53,7 @@ abstract class Widget extends Container
     private $options = [];
 
     private $parentWidgetId = null;
+    private $parentWidgetClass = null;
     /**
      * Redirect url
      *
@@ -258,8 +259,12 @@ abstract class Widget extends Container
         return $this->setResource($resource);
     }
 
-    protected function init(array $data)
+    protected function __construct(array $data)
     {
+        parent::__construct($data);
+
+        unset($data['instanceKey']);
+
         $startTime = Profiler::getMicrotime();
         $startMemory = Profiler::getMemoryGetUsage();
 
@@ -274,6 +279,11 @@ abstract class Widget extends Container
             if (isset($data['parentWidgetId'])) {
                 $this->parentWidgetId = $data['parentWidgetId'];
                 unset($data['parentWidgetId']);
+            }
+
+            if (isset($data['parentWidgetClass'])) {
+                $this->parentWidgetClass = $data['parentWidgetClass'];
+                unset($data['parentWidgetClass']);
             }
 
             $configInput = $widgetClass::getConfig()->gets('input', false);
@@ -298,7 +308,7 @@ abstract class Widget extends Container
             Logger::fb(Profiler::getReport($key), 'widget', 'INFO');
         }
     }
-
+    
     /**
      * Widget config
      *
@@ -672,7 +682,8 @@ abstract class Widget extends Container
                 'result' => $this->getResult(),
                 'widgetId' => $this->getWidgetId(),
                 'widgetClass' => $this->getWidgetClass(),
-                'parentWidgetId' => $this->getParentWidgetId(),
+                'parentWidgetId' => $this->getParentWidgetId(), // Widget_Admin_Access_Book_Packet_Table_admin_block
+//                'parentWidgetClass' => $this->getParentWidgetClass(), // "Ebs\\Widget\\Admin_Access_Book_Packet_Table
                 'widgetData' => $this->getData(),
                 'widgetResource' => $this->getResource(),
                 'classes' => trim($this->classes),
@@ -1180,6 +1191,22 @@ abstract class Widget extends Container
         $this->parentWidgetId = $parentWidgetId;
     }
 
+    /**
+     * @return null
+     */
+    public function getParentWidgetClass()
+    {
+        return $this->parentWidgetClass;
+    }
+
+    /**
+     * @param null $parentWidgetClass
+     */
+    public function setParentWidgetClass($parentWidgetClass)
+    {
+        $this->parentWidgetClass = $parentWidgetClass;
+    }
+
     public function cloneWidget()
     {
         return clone $this;
@@ -1196,8 +1223,6 @@ abstract class Widget extends Container
         if (!$options['widget']) {
             return $this;
         }
-
-        $options['params']['parentWidgetId'] = $this->getWidgetId();
 
         $options['widget'] = $this->getWidget($options['widget']);
 
@@ -1269,11 +1294,16 @@ abstract class Widget extends Container
             $key = $instanceKey;
         }
 
+        /** @var Widget $widgetClass */
         $widgetClass = $widgetClass[0] == '_'
             ? get_class($this) . $widgetClass
             : Widget::getClass($widgetClass);
 
+        /** @var Widget $widget */
         $widget = null;
+
+        $widgetParams['parentWidgetId'] = $this->getInstanceKey();
+        $widgetParams['parentWidgetClass'] = get_class($this);
 
 //        try {
         $widget = $widgetClass::getInstance($key . $postfixKey, null, $widgetParams);
@@ -1420,7 +1450,7 @@ abstract class Widget extends Container
                     }
                 }
 
-                $options['url'] = isset($options[$event]['url']) ? $options[$event]['url'] : '';
+                $options['url'] = isset($options[$event]['url']) ? $options[$event]['url'] : '/';
                 $options['method'] = isset($options[$event]['method']) ? $options[$event]['method'] : 'POST';
 
                 $actionData['ajax'] = array_key_exists('ajax', $options[$event]) ? $options[$event]['ajax'] : true;
@@ -1669,5 +1699,15 @@ abstract class Widget extends Container
     public function getOutput()
     {
         return $this->output;
+    }
+
+    protected function getRenderEvent()
+    {
+        return [
+            'action' => Render::class,
+            'data' => ['widgets' => [$this->getParentWidgetId() => $this->getParentWidgetClass()]],
+            'url' => [Router::getInstance()->getName(), $this->getDataParams(), true],
+            'method' => 'GET'
+        ];
     }
 }

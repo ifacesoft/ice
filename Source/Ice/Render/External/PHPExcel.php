@@ -15,19 +15,11 @@ class External_PHPExcel extends Render
 {
     const TEMPLATE_EXTENTION = '.xlsx.php';
 
-    /**
-     * Init object
-     *
-     * @param array $data
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 1.1
-     * @since   1.1
-     */
-    protected function init(array $data)
+    public function __construct(array $data)
     {
-//        PHPExcel_Shared_Font::setAutoSizeMethod(PHPExcel_Shared_Font::AUTOSIZE_METHOD_EXACT);
+        parent::__construct($data);
+
+        //        PHPExcel_Shared_Font::setAutoSizeMethod(PHPExcel_Shared_Font::AUTOSIZE_METHOD_EXACT);
     }
 
     /**
