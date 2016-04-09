@@ -10,6 +10,7 @@ use Ice\Core\Router;
 use Ice\Core\Widget;
 use Ice\DataProvider\Request as DataProvider_Request;
 use Ice\DataProvider\Router as DataProvider_Router;
+use Ice\WidgetComponent\HtmlTag;
 
 class Pagination extends Widget
 {
@@ -143,12 +144,7 @@ class Pagination extends Widget
 
     public function li($name, array $options = [], $template = 'Ice\Widget\Pagination\Li')
     {
-        return $this->addPart(
-            $name,
-            array_merge($options, ['onclick' => $this->getEvent()]),
-            $template,
-            __FUNCTION__
-        );
+        return $this->addPart(new HtmlTag($name, $options, $template, $this));
     }
 
     /**

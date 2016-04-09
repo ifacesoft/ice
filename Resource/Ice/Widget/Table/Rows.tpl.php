@@ -25,20 +25,14 @@
         $colspan = isset($part['options']['colspan']) ? $part['options']['colspan'] : 1;
         $count += $colspan;
         if ($count <= $columnCount) : ?>
-            <td<?php if (isset($part['options']['rowspan'])) : ?> rowspan="<?= $part['options']['rowspan'] ?>"<?php endif;
+            <td class="<?= $part['name'] ?>"<?php if (isset($part['options']['rowspan'])) : ?> rowspan="<?= $part['options']['rowspan'] ?>"<?php endif;
             ?><?php if (isset($part['options']['colspan'])) : ?> colspan="<?= $part['options']['colspan'] ?>"<?php endif;
-            ?>>
-        <?php else :
-            $count = 1
-            ?>
+            ?>><?php else : $count = 1 ?>
             </tr>
             <tr class="secondary_row">
-            <td<?php if (isset($part['options']['rowspan'])) : ?> rowspan="<?= $part['options']['rowspan'] ?>"<?php endif;
+            <td class="<?= $part['name'] ?>"<?php if (isset($part['options']['rowspan'])) : ?> rowspan="<?= $part['options']['rowspan'] ?>"<?php endif;
             ?><?php if (isset($part['options']['colspan'])) : ?> colspan="<?= $part['options']['colspan'] ?>"<?php endif;
-            ?>>
-        <?php endif; ?>
-        <?= $widget->renderPart($part) ?>
-        </td>
+            ?>><?php endif; ?><?= $widget->renderPart($part) ?></td>
     <?php endforeach; ?>
     </tr>
 <?php endforeach; ?>

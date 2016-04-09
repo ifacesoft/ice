@@ -138,7 +138,7 @@ abstract class Action implements Cacheable
         $startTimeAfter = Profiler::getMicrotime();
         $startMemoryAfter = Profiler::getMemoryGetUsage();
 
-        $rawActions = array_merge($action->actions, $actionClass::getConfig()->gets('actions', false));
+        $rawActions = array_merge($action->actions, $actionClass::getConfig()->gets('actions', []));
 
         /**
          * @var string $actionKey
@@ -385,7 +385,7 @@ abstract class Action implements Cacheable
      */
     public function setOutput($output)
     {
-        foreach (self::getConfig()->gets('output', false) as $name => $dataProviderKey) {
+        foreach (self::getConfig()->gets('output', []) as $name => $dataProviderKey) {
             if (!isset($output[$name])) {
                 $output[$name] = DataProvider::getInstance($dataProviderKey)->get($name);
             }
@@ -466,7 +466,7 @@ abstract class Action implements Cacheable
         /** @var Action|Configured $actionClass */
         $actionClass = get_class($this);
 
-        $this->initInput($actionClass::getConfig()->gets('input'), $data);
+        $this->initInput($actionClass::getConfig()->gets('input', []), $data);
 
         $env = isset($this->input['env'])
             ? $this->input['env']
@@ -494,7 +494,7 @@ abstract class Action implements Cacheable
         $extendFields = ['actions', 'template', 'layout', 'viewRenderClass', 'env'];
 
         $configInput = array_merge(
-            $actionClass::getConfig()->gets('input', false),
+            $actionClass::getConfig()->gets('input', []),
             $configInput, ['actions', 'template', 'layout', 'viewRenderClass', 'env']
         );
 

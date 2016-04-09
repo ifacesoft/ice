@@ -310,7 +310,7 @@ class Router extends DataProvider
                     'url' => $url,
                     'method' => $method,
                     'redirect' => $redirect,
-                    'routeParams' => (array)$route->gets('request/' . $method, false)
+                    'routeParams' => (array)$route->gets('request/' . $method, [])
                 ];
             }
 

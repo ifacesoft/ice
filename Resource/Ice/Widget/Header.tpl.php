@@ -1,6 +1,7 @@
 <div id="<?= $widgetId ?>"
      class="<?= $widgetClass ?>"
      data-widget='<?= $dataWidget ?>'
+     data-params='<?= $dataParams ?>'
      data-for="<?= $parentWidgetId ?>"
 >
     <?php $parts = reset($result) ?>

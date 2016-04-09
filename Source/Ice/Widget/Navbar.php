@@ -3,6 +3,7 @@
 namespace Ice\Widget;
 
 use Ice\Core\Widget;
+use Ice\WidgetComponent\HtmlTag;
 
 abstract class Navbar extends Widget
 {
@@ -14,7 +15,7 @@ abstract class Navbar extends Widget
      */
     public function brand($name, array $options = [], $template = 'Ice\Widget\Navbar\Brand')
     {
-        return $this->addPart($name, $options, $template, __FUNCTION__);
+        return $this->addPart(new HtmlTag($name, $options, $template, $this));
     }
 
     /**

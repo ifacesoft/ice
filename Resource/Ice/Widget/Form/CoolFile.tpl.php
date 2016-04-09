@@ -1,10 +1,10 @@
 <div<?php if (!isset($options['resetFormClass'])) : ?> class="form-group"<?php endif; ?>>
     <div class="b-upload b-upload_dnd">
-        <div class="b-upload__dnd"><?= $label ?></div>
+        <div class="b-upload__dnd"><?= $component->getLabel() ?></div>
         <div class="b-upload__dnd-not-supported" style="display: none;">
             <div class="btn btn-success js-fileapi-wrapper">
                 <span>Choose files</span>
-                <input id="<?= $partId ?>"
+                <input id="<?= $component->getPartId() ?>"
                        name="filedata" multiple="" type="file">
             </div>
         </div>
@@ -22,13 +22,13 @@
     </div>
     <script>
         $(function () {
-            $('#<?= $partId ?>').fileapi({
+            $('#<?= $component->getPartId() ?>').fileapi({
                 url: '/ice/widget/form/file/upload',
                 paramName: 'filedata',
                 data: {
                     token: '<?= $dataToken ?>',
                     formName: '<?= $widgetClassName ?>',
-                    fieldName: '<?= $name ?>'
+                    fieldName: '<?= $component->getName() ?>'
                 },
                 autoUpload: <?php if (!empty($options['autoUpload']) && $options['autoUpload'] == false) : ?>false<?php else : ?>true<?php endif; ?>,
                 elements: {

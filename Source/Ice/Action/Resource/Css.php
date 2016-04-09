@@ -57,10 +57,10 @@ class Resource_Css extends Action
     {
         $resources = [];
         $cache = [];
-        $compiledResourceDir = Module::getInstance()->get('compiledResourceDir');
+        $compiledResourceDir = Module::getInstance()->get(Module::COMPILED_RESOURCE_DIR);
 
         foreach (array_keys(Module::getAll()) as $name) {
-            if (file_exists($cssSource = Module::getInstance($name)->get('path') . 'Resource/css/style.css')) {
+            if (file_exists($cssSource = Module::getInstance($name)->get(Module::RESOURCE_DIR) . 'css/style.css')) {
                 $resources[] = [
                     'source' => $cssSource,
                     'resource' => $compiledResourceDir . $name . '/style.pack.css',
@@ -75,7 +75,7 @@ class Resource_Css extends Action
             foreach ($config as $name => $configResources) {
                 foreach ($configResources as $resourceKey => $resourceItem) {
                     $source = $from == 'modules' // else from vendors
-                        ? Module::getInstance($name)->get('path') . 'Resource/'
+                        ? Module::getInstance($name)->get(Module::RESOURCE_DIR)
                         : VENDOR_DIR . $name . '/';
 
                     $res = $from == 'modules' // else from vendors

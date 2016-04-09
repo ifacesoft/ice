@@ -75,9 +75,10 @@ class Data_Scheme
      *
      * @param  Module $module1
      * @return array
+     * @throws \Ice\Exception\Config_Error
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.5
+     * @version 1.1
      * @since   0.5
      */
     public static function getTables(Module $module1)

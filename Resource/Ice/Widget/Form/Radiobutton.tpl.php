@@ -1,14 +1,14 @@
 <?php foreach ($options['items'] as $key => $radio) : ?>
     <div class="radio">
-        <label for="<?= $partId ?>_<?= $key ?>">
+        <label for="<?= $component->getPartId() ?>_<?= $key ?>">
             <input type="radio"
-                   class="<?= $element ?> <?= $name ?>_<?= $key ?><?php if (!empty($options['classes'])) : ?> <?= $options['classes'] ?><?php endif; ?>"
-                   id="<?= $partId ?>_<?= $key ?>"
-                   name="<?= $name ?>"
+                   class="<?= $component->getComponentName() ?>_<?= $key ?><?php if (!empty($options['classes'])) : ?> <?= $options['classes'] ?><?php endif; ?>"
+                   id="<?= $component->getPartId() ?>_<?= $key ?>"
+                   name="<?= $component->getName() ?>"
                    value="<?= $key ?>"
                    <?php if (isset($onchange)) : ?>onchange='<?= $onchange ?>'<?php endif; ?>
                    <?php if ($params[$name] == $key) { ?>checked="checked" <?php } ?>
-                   data-for="<?= $widgetId ?>"
+                   data-for="<?= $component->getWidgetId() ?>"
                    <?php if (!empty($options['disabled'])) : ?>disabled="disabled"<?php endif; ?>
                    <?php if (!empty($options['readonly'])) : ?>readonly="readonly" <?php endif; ?>
             >

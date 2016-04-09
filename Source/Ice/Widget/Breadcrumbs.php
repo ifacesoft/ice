@@ -2,6 +2,7 @@
 namespace Ice\Widget;
 
 use Ice\Core\Widget;
+use Ice\WidgetComponent\HtmlTag;
 
 class Breadcrumbs extends Widget
 {
@@ -33,12 +34,12 @@ class Breadcrumbs extends Widget
      */
     public function item($columnName, array $options = [], $template = 'Ice\Widget\Breadcrumbs\Item')
     {
-        return $this->addPart($columnName, $options, $template, __FUNCTION__);
+        return $this->addPart(new HtmlTag($columnName, $options, $template, $this));
     }
 
     public function li($columnName, array $options = [], $template = 'Ice\Widget\Breadcrumbs\Li')
     {
-        return $this->addPart($columnName, $options, $template, __FUNCTION__);
+        return $this->addPart(new HtmlTag($columnName, $options, $template, $this));
     }
 
     /**

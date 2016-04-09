@@ -3,6 +3,7 @@
 namespace Ice\Widget;
 
 use Ice\Core\Widget;
+use Ice\WidgetComponent\HtmlResourceTag;
 
 abstract class Resource extends Widget
 {
@@ -16,7 +17,7 @@ abstract class Resource extends Widget
      */
     public function link($columnName, array $options = [], $template = 'Ice\Widget\Resource\Link')
     {
-        return $this->addPart($columnName, $options, $template, __FUNCTION__);
+        return $this->addPart(new HtmlResourceTag($columnName, $options, $template, $this));
     }
 
     /**
@@ -29,6 +30,6 @@ abstract class Resource extends Widget
      */
     public function script($columnName, array $options = [], $template = 'Ice\Widget\Resource\Script')
     {
-        return $this->addPart($columnName, $options, $template, __FUNCTION__);
+        return $this->addPart(new HtmlResourceTag($columnName, $options, $template, $this));
     }
 }

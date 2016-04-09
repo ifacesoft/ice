@@ -1,5 +1,5 @@
 <?php if (isset($params[$label])) : ?>
     <?= $params[$label] ?>
 <?php else : ?>
-    <?= $label ?>
+    <?= $component->getLabel() ?>
 <?php endif; ?>

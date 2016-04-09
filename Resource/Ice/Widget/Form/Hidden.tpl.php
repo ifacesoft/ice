@@ -1,5 +1,5 @@
-<input id="<?= $partId ?>"
+<input id="<?= $component->getPartId() ?>"
        type="hidden"
-       name="<?= $name ?>"
+       name="<?= $component->getName() ?>"
        value="<?= isset($params[$value]) ? htmlentities($params[$value], ENT_QUOTES) : '' ?>"
 >

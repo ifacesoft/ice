@@ -5,6 +5,7 @@ namespace Ice\Widget;
 use Ice\Core\QueryBuilder;
 use Ice\Core\QueryResult;
 use Ice\Core\Widget;
+use Ice\WidgetComponent\HtmlTag;
 
 class Roll extends Widget
 {
@@ -125,7 +126,7 @@ class Roll extends Widget
             $template = 'Ice\Widget\Table\Rows\A';
         }
 
-        return $this->addPart($columnName, $options, $template, __FUNCTION__);
+        return $this->addPart(new HtmlTag($columnName, $options, $template, $this));
     }
 
     /**
@@ -138,7 +139,7 @@ class Roll extends Widget
      */
     public function span($columnName, array $options = [], $template = 'Ice\Widget\Table\Rows\Span')
     {
-        return $this->addPart($columnName, $options, $template, __FUNCTION__);
+        return $this->addPart(new HtmlTag($columnName, $options, $template, $this));
     }
 
     /**
@@ -151,6 +152,6 @@ class Roll extends Widget
      */
     public function text($columnName, array $options = [], $template = 'Ice\Widget\Table\Rows\Text')
     {
-        return $this->addPart($columnName, $options, $template, __FUNCTION__);
+        return $this->addPart(new HtmlTag($columnName, $options, $template, $this));
     }
 }

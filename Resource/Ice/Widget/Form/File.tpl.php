@@ -1,19 +1,19 @@
 <div <?php if (!isset($options['resetFormClass'])) : ?>class="form-group"<?php endif; ?>>
     <label
-        for="<?= $partId ?>"
+        for="<?= $component->getPartId() ?>"
         class="control-label<?php if (!empty($options['srOnly'])) : ?> sr-only<?php endif; ?><?php if (!empty($widgetOptions['horizontal'])) : ?> col-md-<?= $widgetOptions['horizontal'] ?><?php endif; ?>"
-        ><?= $label ?></label>
+        ><?= $component->getLabel() ?></label>
 
     <?php if (!empty($widgetOptions['horizontal'])) : ?>
     <div class="col-md-<?= 12 - $widgetOptions['horizontal'] ?>"><?php endif; ?>
         <img src="<?php echo isset($params[$value]) ?  $params[$value] : ''; ?>" width="100px" />
-        <input type="file" id="<?= $partId ?>_file" class="form-control" />
-        <input id="<?= $partId ?>"
+        <input type="file" id="<?= $component->getPartId() ?>_file" class="form-control" />
+        <input id="<?= $component->getPartId() ?>"
                type="hidden"
-               class="<?= $element ?> <?= $name ?><?php if (!isset($options['resetFormClass'])) : ?> form-control<?php endif; ?><?php if (!empty($options['classes'])) : ?> <?= $options['classes'] ?><?php endif; ?>"
-               name="<?= $name ?>"
-               data-params='<?= $dataParams ?>'
-               data-for="<?= $widgetId ?>"
+               class="<?= $component->getComponentName() ?><?php if (!isset($options['resetFormClass'])) : ?> form-control<?php endif; ?><?php if (!empty($options['classes'])) : ?> <?= $options['classes'] ?><?php endif; ?>"
+               name="<?= $component->getName() ?>"
+               data-params='<?= $component->getParams() ?>'
+               data-for="<?= $component->getWidgetId() ?>"
             <?php if (isset($options['onchange'])) : ?>
                 onchange="<?= $options['onchange'] ?>"
                 data-action='<?= $options['dataAction'] ?>'
@@ -28,11 +28,11 @@
         <?php if (!empty($widgetOptions['horizontal'])) : ?></div><?php endif; ?>
 </div>
 <script>
-    $("#<?= $partId ?>_file").change(function(event) {
+    $("#<?= $component->getPartId() ?>_file").change(function(event) {
         $.each(event.target.files, function(index, file) {
             var reader = new FileReader();
             reader.onload = function(event) {
-                $('input[name=<?= $name ?>]').val(event.target.result);
+                $('input[name=<?= $component->getName() ?>]').val(event.target.result);
             };
             reader.readAsDataURL(file);
         });

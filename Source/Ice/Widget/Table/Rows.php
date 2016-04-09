@@ -6,6 +6,7 @@ use Ice\Core\Debuger;
 use Ice\Core\QueryBuilder;
 use Ice\Core\QueryResult;
 use Ice\Core\Widget;
+use Ice\WidgetComponent\HtmlTag;
 
 class Table_Rows extends Widget
 {
@@ -122,7 +123,7 @@ class Table_Rows extends Widget
      */
     public function a($columnName, array $options = [], $template = 'Ice\Widget\Table\Rows\A')
     {
-        return $this->addPart($columnName, $options, $template, __FUNCTION__);
+        return $this->addPart(new HtmlTag($columnName, $options, $template, $this));
     }
 
     /**
@@ -135,6 +136,19 @@ class Table_Rows extends Widget
      */
     public function span($columnName, array $options = [], $template = 'Ice\Widget\Table\Rows\Span')
     {
-        return $this->addPart($columnName, $options, $template, __FUNCTION__);
+        return $this->addPart(new HtmlTag($columnName, $options, $template, $this));
+    }
+
+    /**
+     * Build checkbox tag part
+     *
+     * @param  $columnName
+     * @param  array $options
+     * @param  string $template
+     * @return $this
+     */
+    public function checkbox($columnName, array $options = [], $template = 'Ice\Widget\Table\Rows\Checkbox')
+    {
+        return $this->addPart(new HtmlTag($columnName, $options, $template, $this));
     }
 }

@@ -1,7 +1,7 @@
 <tbody>
 <tr>
     <?php foreach ($options['widget']->getParts() as $name => $part) { ?>
-        <td><?= $name ?></td>
+        <td><?= $component->getName() ?></td>
     <?php } ?>
 </tr>
 </tbody>

@@ -132,7 +132,7 @@ class Resource_Dynamic extends Action
             'css' => []
         ];
 
-        $compiledResourceDir = Module::getInstance()->get('compiledResourceDir');
+        $compiledResourceDir = Module::getInstance()->get(Module::COMPILED_RESOURCE_DIR);
 
         $moduleAlias = Module::getInstance()->getAlias();
 

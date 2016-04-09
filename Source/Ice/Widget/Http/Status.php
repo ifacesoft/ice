@@ -72,7 +72,7 @@ class Http_Status extends Block
     {
         Http::setHeader(Http::getStatusCodeHeader($input['code']), true, $input['code']);
 
-        $this->setTemplate('_' . $input['code']);
+        $this->setTemplateClass('_' . $input['code']);
 
         $stackTrace = Environment::getInstance()->isProduction()
             ? '' :

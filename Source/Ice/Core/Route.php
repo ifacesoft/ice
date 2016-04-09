@@ -159,7 +159,7 @@ class Route extends Config
 
                 if (isset($route['alias'])) {
                     foreach ($route['alias'] as $method => $alias) {
-                        $route['request'][$method] = $routes[$route['alias'][$method]]->gets('request/' . $method, false);
+                        $route['request'][$method] = $routes[$route['alias'][$method]]->gets('request/' . $method, []);
                     }
                 }
 
@@ -184,7 +184,7 @@ class Route extends Config
 
     public function getResponseRedirect($method)
     {
-        return Route::getUrl($this->gets('request/' . $method . '/response/redirect', false));
+        return Route::getUrl($this->gets('request/' . $method . '/response/redirect', []));
     }
 
     /**

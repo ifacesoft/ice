@@ -80,7 +80,7 @@ abstract class DataProvider
             $dataProviderKey = __CLASS__ . '/' . get_class($this) . '/' . $key;
 
             if (Environment::isLoaded()) {
-                foreach (Environment::getInstance()->gets($dataProviderKey, false) as $key => $value) {
+                foreach (Environment::getInstance()->gets($dataProviderKey, []) as $key => $value) {
                     $this->options[$key] = is_array($value) ? reset($value) : $value;
                 }
             }

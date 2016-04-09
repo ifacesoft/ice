@@ -1,1 +1,1 @@
-<div id="<?= $partId ?>"></div>
+<div id="<?= $component->getPartId() ?>"></div>

@@ -94,7 +94,7 @@ class Config
 
         $config = [];
 
-        if ($class != __CLASS__ && $coreConfig = Config::getInstance(__CLASS__)->gets($class, false)) {
+        if ($class != __CLASS__ && $coreConfig = Config::getInstance(__CLASS__)->gets($class, [])) {
             $config = array_merge_recursive($coreConfig, $config);
         }
 
@@ -143,7 +143,7 @@ class Config
      * Get config param values
      *
      * @param  string|null $key
-     * @param  bool $isRequired
+     * @param  bool $isRequired_default
      * @return array
      * @throws Config_Error
      * @author dp <denis.a.shestakov@gmail.com>
@@ -151,10 +151,10 @@ class Config
      * @version 1.1
      * @since   0.0
      */
-    public function gets($key = null, $isRequired = true)
+    public function gets($key = null, $isRequired_default = true)
     {
         try {
-            return Helper_Config::gets($this->config, $key, $isRequired);
+            return Helper_Config::gets($this->config, $key, $isRequired_default);
         } catch (Config_Param_NotFound $e) {
             throw new Config_Error(['Param not found for {$0}', $this->getName()], [], $e);
         }
@@ -198,7 +198,7 @@ class Config
      */
     public static function getDefault($key)
     {
-        return Config::getInstance(__CLASS__)->gets('defaults/' . $key, false);
+        return Config::getInstance(__CLASS__)->gets('defaults/' . $key, []);
     }
 
     /**
@@ -220,7 +220,7 @@ class Config
      * Get config param value
      *
      * @param  string|null $key
-     * @param  bool $isRequired
+     * @param  bool $isRequired_default
      * @throws Exception
      * @return string
      *
@@ -229,9 +229,9 @@ class Config
      * @version 0.0
      * @since   0.0
      */
-    public function get($key = null, $isRequired = true)
+    public function get($key = null, $isRequired_default = true)
     {
-        $params = $this->gets($key, $isRequired);
+        $params = $this->gets($key, $isRequired_default);
 
         return empty($params) ? null : reset($params);
     }

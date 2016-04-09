@@ -1,9 +1,11 @@
-<li id="<?= $partId ?>"
-    class="<?= $element ?> <?= $name ?><?php if (!empty($options['classes'])) : ?> <?= $options['classes'] ?><?php endif; ?>
-<?php if (!empty($options['active'])) : ?> active<?php endif; ?>"
+<li id="<?= $component->getPartId() ?>"
+    class="<?= $component->getComponentName() ?>
+<?php if (!empty($options['classes'])) : ?> <?= $options['classes'] ?><?php endif; ?>
+<?php if ($component->isActive()) : ?> active<?php endif; ?>
+"
     <?php if (isset($options['onclick'])) : ?>onclick="<?= $options['onclick'] ?>"
     data-action='<?= $options['dataAction'] ?>'<?php endif; ?>
-    data-name="<?= $name ?>"
-    data-params='<?= $dataParams ?>'
-    data-for="<?= $widgetId ?>"><?= $label ?>
+    data-name="<?= $component->getName() ?>"
+    data-params='<?= $component->getParams() ?>'
+    data-for="<?= $component->getWidgetId() ?>"><?= $component->getLabel() ?>
 </li>

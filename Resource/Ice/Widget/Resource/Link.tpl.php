@@ -1,1 +1,1 @@
-<link href="<?= $label ?>" rel="stylesheet">
+<link href="<?= $component->getLabel() ?>" rel="stylesheet">

@@ -1,11 +1,11 @@
 <span
-    id="<?= $partId ?><?php if (isset($offset)) : ?>_<?= $offset ?><?php endif; ?>"
-    class="<?= $element ?> <?= $name ?><?php if (!empty($options['classes'])) : ?> <?= $options['classes'] ?><?php endif; ?>"
+    id="<?= $component->getPartId() ?><?php if (isset($offset)) : ?>_<?= $offset ?><?php endif; ?>"
+    class="<?= $component->getComponentName() ?><?php if (!empty($options['classes'])) : ?> <?= $options['classes'] ?><?php endif; ?>"
     <?php if (!empty($options['style'])) : ?>style="<?= $options['style'] ?>"<?php endif; ?>
     <?php if (isset($options['onclick'])) : ?>onclick="<?= $options['onclick'] ?>" data-action='<?= $options['dataAction'] ?>'<?php endif; ?>
-    data-name="<?= $name ?>"
-    data-params='<?= $dataParams ?>'
-    data-for="<?= $widgetId ?>">
+    data-name="<?= $component->getName() ?>"
+    data-params='<?= $component->getParams() ?>'
+    data-for="<?= $component->getWidgetId() ?>">
     <?php if (isset($oneToMany)) : ?>
         <?= implode(', ', $oneToMany) ?>
     <?php elseif (isset($manyToMany)) : ?>
@@ -13,6 +13,6 @@
     <?php elseif (isset($params[$label])) : ?>
         <?= $params[$label] ?>
     <?php else : ?>
-        <?= $label ?>
+        <?= $component->getLabel() ?>
     <?php endif; ?>
 </span>

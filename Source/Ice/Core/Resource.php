@@ -207,7 +207,11 @@ class Resource implements Cacheable
             ? File::loadData($moduleResourceFile)
             : [];
 
-        File::createData($moduleResourceFile, array_merge($moduleResourceData, array_diff_key($data, $moduleResourceData)));
+        $resourceData = array_merge($moduleResourceData, array_diff_key($data, $moduleResourceData));
+
+        ksort($resourceData);
+
+        File::createData($moduleResourceFile, $resourceData);
 
         return $message;
     }

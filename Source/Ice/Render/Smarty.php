@@ -64,7 +64,7 @@ class Smarty extends Render
 
         $this->_smarty->setTemplateDir($templateDirs);
         $this->_smarty->setCompileDir(Module::getInstance()->get('cacheDir') . $config->get('templates_c'));
-        $this->_smarty->addPluginsDir($config->gets('plugins', false));
+        $this->_smarty->addPluginsDir($config->gets('plugins', []));
         //        $this->_smarty->setCacheDir('/web/www.example.com/smarty/cache');
         //        $this->_smarty->setConfigDir('/web/www.example.com/smarty/configs');
         $this->_smarty->debugging = false;

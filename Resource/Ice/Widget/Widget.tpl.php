@@ -1,1 +1,1 @@
-<?= $options['widget'] ?>
+<?= $component->getWidget() ?>

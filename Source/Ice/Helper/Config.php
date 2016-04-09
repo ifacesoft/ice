@@ -12,14 +12,14 @@ class Config
      *
      * @param  array $config
      * @param  $key
-     * @param  bool $isRequired
+     * @param  bool $isRequired_default
      * @return array
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
      * @since   0.4
      */
-    public static function gets(array $config, $key = null, $isRequired = true)
+    public static function gets(array $config, $key = null, $isRequired_default = true)
     {
         if (empty($key)) {
             return $config;
@@ -38,7 +38,7 @@ class Config
 
             return (array)$params;
         } catch (\Exception $e) {
-            if ($isRequired) {
+            if ($isRequired_default === true) {
                 Logger::getInstance(__CLASS__)->exception(
                     ['Could not found required param {$0}', $key],
                     __FILE__,
@@ -50,7 +50,7 @@ class Config
                 );
             }
 
-            return [];
+            return (array)$isRequired_default;
         }
     }
 

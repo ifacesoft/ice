@@ -3,11 +3,14 @@
 namespace Ice\Widget;
 
 use Ice\Core\Action;
-use Ice\Core\Debuger;
 use Ice\Core\Module;
 use Ice\Core\Validator;
 use Ice\Core\Widget;
 use Ice\Helper\Directory;
+use Ice\WidgetComponent\FormElement;
+use Ice\WidgetComponent\FormElement_Button;
+use Ice\WidgetComponent\FormElement_Period;
+use Ice\WidgetComponent\FormElement_Text;
 
 class Form extends Widget
 {
@@ -110,12 +113,12 @@ class Form extends Widget
      */
     public function text($fieldName, array $options = [], $template = 'Ice\Widget\Form\Text')
     {
-        return $this->addPart($fieldName, $options, $template, __FUNCTION__);
+        return $this->addPart(new FormElement_Text($fieldName, $options, $template, $this));
     }
 
     public function html($fieldName, array $options = [], $template = 'Ice\Widget\Form\Html')
     {
-        return $this->addPart($fieldName, $options, $template, __FUNCTION__);
+        return $this->addPart(new FormElement($fieldName, $options, $template, $this));
     }
 
     /**
@@ -133,7 +136,7 @@ class Form extends Widget
      */
     public function hidden($fieldName, array $options = [], $template = 'Ice\Widget\Form\Hidden')
     {
-        return $this->addPart($fieldName, $options, $template, __FUNCTION__);
+        return $this->addPart(new FormElement($fieldName, $options, $template, $this));
     }
 
     /**
@@ -151,7 +154,7 @@ class Form extends Widget
      */
     public function password($fieldName, array $options = [], $template = 'Ice\Widget\Form\Password')
     {
-        return $this->addPart($fieldName, $options, $template, __FUNCTION__);
+        return $this->addPart(new FormElement($fieldName, $options, $template, $this));
     }
 
     /**
@@ -169,7 +172,7 @@ class Form extends Widget
      */
     public function number($fieldName, array $options = [], $template = 'Ice\Widget\Form\Number')
     {
-        return $this->addPart($fieldName, $options, $template, __FUNCTION__);
+        return $this->addPart(new FormElement($fieldName, $options, $template, $this));
     }
 
     /**
@@ -187,7 +190,7 @@ class Form extends Widget
      */
     public function date($fieldName, array $options = [], $template = 'Ice\Widget\Form\Date')
     {
-        return $this->addPart($fieldName, $options, $template, __FUNCTION__);
+        return $this->addPart(new FormElement($fieldName, $options, $template, $this));
     }
 
     /**
@@ -205,7 +208,7 @@ class Form extends Widget
      */
     public function checkbox($fieldName, array $options = [], $template = 'Ice\Widget\Form\Checkbox')
     {
-        return $this->addPart($fieldName, $options, $template, __FUNCTION__);
+        return $this->addPart(new FormElement($fieldName, $options, $template, $this));
     }
 
     /**
@@ -223,7 +226,7 @@ class Form extends Widget
      */
     public function radio($fieldName, array $options = [], $template = 'Ice\Widget\Form\Radiobutton')
     {
-        return $this->addPart($fieldName, $options, $template, __FUNCTION__);
+        return $this->addPart(new FormElement($fieldName, $options, $template, $this));
     }
 
     /**
@@ -241,7 +244,7 @@ class Form extends Widget
      */
     public function combobox($fieldName, array $options = [], $template = 'Ice\Widget\Form\Combobox')
     {
-        return $this->addPart($fieldName, $options, $template, __FUNCTION__);
+        return $this->addPart(new FormElement($fieldName, $options, $template, $this));
     }
 
     /**
@@ -282,7 +285,7 @@ class Form extends Widget
      */
     public function chosen($fieldName, array $options = [], $template = 'Ice\Widget\Form\Chosen')
     {
-        return $this->addPart($fieldName, $options, $template, __FUNCTION__);
+        return $this->addPart(new FormElement($fieldName, $options, $template, $this));
     }
 
     /**
@@ -300,7 +303,7 @@ class Form extends Widget
      */
     public function map($fieldName, array $options = [], $template = 'Ice\Widget\Form\Map')
     {
-        return $this->addPart($fieldName, $options, $template, __FUNCTION__);
+        return $this->addPart(new FormElement($fieldName, $options, $template, $this));
     }
 
     /**
@@ -318,7 +321,7 @@ class Form extends Widget
      */
     public function textarea($fieldName, array $options = [], $template = 'Ice\Widget\Form\Textarea')
     {
-        return $this->addPart($fieldName, $options, $template, __FUNCTION__);
+        return $this->addPart(new FormElement($fieldName, $options, $template, $this));
     }
 
     /**
@@ -333,7 +336,7 @@ class Form extends Widget
      */
     public function file($fieldName, array $options = [], $template = 'Ice\Widget\Form\File')
     {
-        return $this->addPart($fieldName, $options, $template, __FUNCTION__);
+        return $this->addPart(new FormElement($fieldName, $options, $template, $this));
     }
 
     /**
@@ -348,23 +351,7 @@ class Form extends Widget
      */
     public function period($fieldName, array $options = [], $template = 'Ice\Widget\Form\Period')
     {
-        $fields = [$fieldName . '_from', $fieldName . '_to'];
-
-        if (!empty($options['default'])) {
-            foreach ($fields as $name) {
-                if ($this->getValue($name) === null) {
-                    $this->bind([$name => $options['default'][$name]]);
-                }
-            }
-        }
-
-        if (empty($options['params'])) {
-            $options['params'] = $fields;
-        } else {
-            $options['params'] += $fields;
-        }
-
-        return $this->addPart($fieldName, $options, $template, __FUNCTION__);
+        return $this->addPart(new FormElement_Period($fieldName, $options, $template, $this));
     }
 
     /**
@@ -379,11 +366,7 @@ class Form extends Widget
      */
     public function button($fieldName, array $options = [], $template = 'Ice\Widget\Form\Button')
     {
-        if (isset($options['submit'])) {
-            $this->submitPartName = $fieldName;
-        }
-
-        return $this->addPart($fieldName, $options, $template, __FUNCTION__);
+        return $this->addPart(new FormElement_Button($fieldName, $options, $template, $this));
     }
 
     /**
@@ -420,17 +403,17 @@ class Form extends Widget
             : array_intersect_key($this->validateScheme, array_flip($filterParts));
     }
 
-    protected function addPart($partName, array $options, $template, $element)
-    {
-        parent::addPart($partName, $options, $template, $element);
-
-        if (!empty($this->parts[$partName]['options']['validators'])) {
-            $this->validateScheme[$partName] = $this->parts[$partName]['options']['validators'];
-            unset($this->parts[$partName]['options']['validators']);
-        }
-
-        return $this;
-    }
+//    protected function addPart($partName, array $options, $template, $element)
+//    {
+//        parent::addPart($partName, $options, $template, $element);
+//
+//        if (!empty($this->parts[$partName]['options']['validators'])) {
+//            $this->validateScheme[$partName] = $this->parts[$partName]['options']['validators'];
+//            unset($this->parts[$partName]['options']['validators']);
+//        }
+//
+//        return $this;
+//    }
 
     /**
      * @param int $offset input offset

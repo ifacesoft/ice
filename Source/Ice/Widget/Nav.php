@@ -3,6 +3,7 @@
 namespace Ice\Widget;
 
 use Ice\Core\Widget;
+use Ice\WidgetComponent\HtmlTag;
 
 class Nav extends Widget
 {
@@ -31,7 +32,7 @@ class Nav extends Widget
      */
     public function li($name, array $options = [], $template = 'Ice\Widget\Nav\Li')
     {
-        return $this->addPart($name, $options, $template, __FUNCTION__);
+        return $this->addPart(new HtmlTag($name, $options, $template, $this));
     }
 
     /**
@@ -42,7 +43,7 @@ class Nav extends Widget
      */
     public function dropdown($name, array $options = [], $template = 'Ice\Widget\Nav\Dropdown')
     {
-        return $this->addPart($name, $options, $template, __FUNCTION__);
+        return $this->addPart(new HtmlTag($name, $options, $template, $this));
     }
 
     /**
