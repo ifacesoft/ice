@@ -471,7 +471,7 @@ abstract class Widget extends Container
 
 //                $part['widgetOptions'] = $this->options;
 
-                $rowTable[$partName] = $part;
+                $rowTable[$partName] = $part->build($row, $this);
 
 //                if ($isRow) {
 //                    $column++;
@@ -1141,89 +1141,6 @@ abstract class Widget extends Container
 
         return $access;
     }
-
-//TODO: ОЧЕНЬ важнл!!!
-//    private function partParams($partName, WidgetComponent $part, array $values)
-//    {
-//        $value = isset($values[$part['value']]) ? $values[$part['value']] : 0;
-//        $valueFieldName = $part['value'];
-//
-//
-//        if ($part['value'] == $partName) {
-//            $paramValue = array_key_exists($part['value'], $values) ? $values[$part['value']] : null;
-//
-//            if ($paramValue === null && isset($part['options']['default'])) {
-//                $paramValue = $part['options']['default'];
-//            }
-//
-//            $part['params'] = [$part['name'] => $paramValue];
-//        } else {
-//            $part['params'] = [
-//                $part['name'] => array_key_exists($part['value'], $values) ? $values[$part['value']] : $part['value'],
-//                $part['partName'] => array_key_exists($partName, $values) ? $values[$partName] : null
-//            ];
-//        }
-//
-//        if (isset($part['options']['params'])) {
-//            foreach ((array)$part['options']['params'] as $key => $value) {
-//                if (is_int($key)) {
-//                    $key = $value;
-//                }
-//
-//                if (is_string($value)) {
-//                    $part['params'][$key] = $key == $value
-//                        ? (array_key_exists($value, $values) ? $values[$value] : null)
-//                        : (array_key_exists($value, $values) ? $values[$value] : $value); //(isset($part['options']['default']) ? $part['options']['default'] : $value)
-//                } else {
-//                    $part['params'][$key] = $value;
-//                }
-//            }
-//            unset($part['options']['params']);
-//        }
-//
-//        if (isset($part['options']['dateFormat'])) {
-//            $date = array_key_exists('dateTimezone', $part['options'])
-//                ? new DateTime($part['params'][$part['name']], new DateTimeZone($part['options']['dateTimezone'] ?: 'Europe/Moscow'))
-//                : new DateTime($part['params'][$part['name']]);
-//
-//            $part['params'][$part['name']] = $date->format($part['options']['dateFormat']);
-//
-//            unset($part['options']['dateFormat']);
-//        }
-//
-//        if (isset($part['options']['valueTemplate'])) {
-//            if ($part['options']['valueTemplate'] === true) {
-//                $part['options']['valueTemplate'] = $partName;
-//            }
-//
-//            if ($part['resource']) {
-//                $part['options']['valueTemplate'] = $part['resource']->get($part['options']['valueTemplate'], $part['params']);
-//            }
-//
-//            if ($render = strstr($part['options']['valueTemplate'], '/', true)) {
-//                $renderClass = Render::getClass($render);
-//                if (Loader::load($renderClass, false)) {
-//                    $part['options']['valueTemplate'] = substr($part['options']['valueTemplate'], strlen($render) + 1);
-//                } else {
-//                    $renderClass = Replace::getClass();
-//                }
-//            } else {
-//                $renderClass = Replace::getClass();
-//            }
-//
-//            $part['params'][$part['title']] =
-//                $renderClass::getInstance()->fetch(
-//                    $part['options']['valueTemplate'],
-//                    $part['params'],
-//                    null,
-//                    Render::TEMPLATE_TYPE_STRING
-//                );
-//
-//            unset($part['options']['valueTemplate']);
-//        }
-//
-//        $part['dataParams'] = Json::encode($part['params']);
-//    }
 
     /**
      * @param Render $renderClass

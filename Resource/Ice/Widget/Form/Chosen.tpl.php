@@ -11,7 +11,7 @@
                 name="<?= $component->getName() ?>"
                 data-for="<?= $component->getWidgetId() ?>"
                 data-name="<?= $component->getName() ?>"
-                data-params='<?= $component->getParams() ?>'
+                data-params='<?= $component->getDataParams() ?>'
             <?php if (!empty($options['placeholder'])) : ?> data-placeholder="<?= $options['placeholder'] ?>"<?php endif; ?>
                 <?php if (!empty($options['multiple'])) : ?>multiple<?php endif; ?>
                 <?php if (!empty($options['size'])) : ?>size="<?= $options['size'] ?>"<?php endif; ?>

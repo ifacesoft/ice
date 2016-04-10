@@ -4,7 +4,7 @@
     <?php if (!empty($options['style'])) : ?>style="<?= $options['style'] ?>"<?php endif; ?>
     <?php if (isset($options['onclick'])) : ?>onclick="<?= $options['onclick'] ?>" data-action='<?= $options['dataAction'] ?>'<?php endif; ?>
     data-name="<?= $component->getName() ?>"
-    data-params='<?= $component->getParams() ?>'
+    data-params='<?= $component->getDataParams() ?>'
     data-for="<?= $component->getWidgetId() ?>">
     <?php if (isset($oneToMany)) : ?>
         <?= implode(', ', $oneToMany) ?>

@@ -3,16 +3,38 @@
 namespace Ice\WidgetComponent;
 
 use Ice\Core\Action;
+use Ice\Core\Debuger;
+use Ice\Core\Request;
+use Ice\Core\Resource;
+use Ice\Core\Route;
 use Ice\Core\Router;
+use Ice\Core\Widget;
 use Ice\Core\WidgetComponent;
 use Ice\Core\Widget as Core_Widget;
 use Ice\Exception\Error;
 use Ice\Exception\RouteNotFound;
 use Ice\Helper\Json;
+use Ice\Helper\String;
 
 class HtmlTag extends WidgetComponent
 {
-    private $active = false;
+    private $active = null;
+    private $route = null;
+    private $href = null;
+
+    /**
+     * WidgetComponent config
+     *
+     * @return array
+     */
+    protected static function config()
+    {
+        return [
+            'render' => ['template' => true, 'class' => 'Ice:Php', 'layout' => null, 'resource' => null],
+            'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'WidgetComponent: Access denied!'],
+            'cache' => ['ttl' => -1, 'count' => 1000],
+        ];
+    }
 
     public function __construct($name, array $options, $template, Core_Widget $widget)
     {
@@ -22,91 +44,173 @@ class HtmlTag extends WidgetComponent
             $this->active = (bool)$options['active'];
         }
 
-        $this->partEvents($name, $options);
-        $this->partRoute($name, $options);
+        $this->partEvents($options);
+//        $this->initRoute($options);
     }
 
-    private function partRoute($name, $options)
+    public function build(array $row, Widget $widget)
     {
-        if (!empty($part['options']['route'])) {
-            if ($part['options']['route'] === true) {
-                $part['options']['route'] = $partName;
-            }
+        /** @var HtmlTag $component */
+        $component = parent::build($row, $widget);
 
-            $part['options']['route'] = (array)$part['options']['route'];
-            $tempRouteParams = [];
-            $withGet = false;
-            $withDomain = false;
+        return $component
+            ->buildRoute($row)
+            ->buildRouteLabel($row)
+            ->buildHref($row)
+            ->buildActive($row);
+    }
+    
+    protected function buildRoute($row)
+    {
+        $route = $this->getOption('route');
 
-            if (count($part['options']['route']) == 4) {
-                list($routeName, $tempRouteParams, $withGet, $withDomain) = $part['options']['route'];
-            } elseif (count($part['options']['route']) == 3) {
-                list($routeName, $tempRouteParams, $withGet) = $part['options']['route'];
-            } elseif (count($part['options']['route']) == 2) {
-                list($routeName, $tempRouteParams) = $part['options']['route'];
-            } else {
-                $routeName = reset($part['options']['route']);
-            }
+        if (!$route) {
+            return $this;
+        }
 
-            $routeParams = [];//$part['params'];
+        if ($route === true) {
+            $route = $this->getComponentName();
+        }
 
-            foreach ((array)$tempRouteParams as $routeParamKey => $routeParamValue) {
-                if (is_int($routeParamKey)) {
-                    $routeParams[$routeParamValue] = !is_array($routeParamValue) && array_key_exists($routeParamValue, $row)
-                        ? $row[$routeParamValue]
-                        : $routeParamValue;
+        $route = (array)$route;
 
-                    continue;
-                }
+        $tempRouteParams = [];
+        $withGet = false;
+        $withDomain = false;
 
-                $routeParams[$routeParamKey] = !is_array($routeParamValue) && array_key_exists($routeParamValue, $row)
+        if (count($route) == 4) {
+            list($routeName, $tempRouteParams, $withGet, $withDomain) = $route;
+        } elseif (count($route) == 3) {
+            list($routeName, $tempRouteParams, $withGet) = $route;
+        } elseif (count($route) == 2) {
+            list($routeName, $tempRouteParams) = $route;
+        } else {
+            $routeName = reset($route);
+        }
+
+        $routeParams = [];
+
+        foreach ((array)$tempRouteParams as $routeParamKey => $routeParamValue) {
+            if (is_int($routeParamKey)) {
+                $routeParams[$routeParamValue] = !is_array($routeParamValue) && array_key_exists($routeParamValue, $row)
                     ? $row[$routeParamValue]
                     : $routeParamValue;
-            }
 
-            if (isset($part['options']['render'])) {
-                if ($part['options']['render'] === true) {
-                    $part['options']['render'] = isset($part['params'][$part['value']]);
-                } else {
-                    $part['options']['render'] = isset($part['params'][$part['options']['render']]);
-                }
-            } else {
-                $part['options']['render'] = true;
-            }
-
-            if (!$part['options']['render']) {
                 continue;
             }
 
-            if (!array_key_exists('href', $part['options'])) {
-                try {
-                    $part['options']['href'] = Router::getInstance()->getUrl([$routeName, $routeParams, $withGet, $withDomain]);
-                } catch (\Exception $e) {
-                    throw new Error(
-                        [
-                            'Url generation was failed for route {$0} in widget {$1}  (part: {$2})',
-                            [$routeName, $widgetClass::getClassName(), $partName]
-                        ],
-                        [$routeName, $routeParams, $withGet, $withDomain]
-                    );
-                }
-            }
-
-            if (!array_key_exists('active', $part['options'])) {
-                $part['options']['active'] = String::startsWith(Request::uri(), $part['options']['href']);
-            }
-
-            if (!array_key_exists('label', $part['options']) && $routeName == $partName) {
-                $part['label'] = Resource::create(Route::getClass())->get($routeName, $routeParams);
-
-                $part['label'] = $part['label'] && $part['resource']
-                    ? $part['resource']->get($part['label'], $resourceParams)
-                    : $part['label'];
-            }
+            $routeParams[$routeParamKey] = !is_array($routeParamValue) && array_key_exists($routeParamValue, $row)
+                ? $row[$routeParamValue]
+                : $routeParamValue;
         }
+
+        $this->setRoute([$routeName, $tempRouteParams, $withGet, $withDomain]);
+
+        return $this;
+
     }
 
-    private function partEvents($partName, array &$options)
+    /**
+     * @return null
+     */
+    public function getRoute()
+    {
+        return $this->route;
+    }
+
+    /**
+     * @param null $route
+     */
+    public function setRoute($route)
+    {
+        $this->route = $route;
+    }
+
+    protected function buildRouteLabel($params)
+    {
+        $route = $this->getRoute();
+
+        if ($route && !$this->getOption('label')) {
+            list($routeName, $routeParams, $withGet, $withDomain) = $route;
+            $this->setLabel(Resource::create(Route::getClass())->get($routeName, $routeParams));
+
+            if ($resource = $this->getResource()) {
+                $this->setLabel($resource->get($this->getLabel()), $params);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return null
+     */
+    public function getHref()
+    {
+        return $this->href;
+    }
+
+    /**
+     * @param null $href
+     */
+    public function setHref($href)
+    {
+        $this->href = $href;
+    }
+
+    protected function buildHref($params)
+    {
+        $this->setHref($this->getOption('href'));
+
+        $route = $this->getRoute();
+
+        if ($route && !$this->getHref()) {
+            list($routeName, $routeParams, $withGet, $withDomain) = $route;
+            try {
+                $this->setHref(Router::getInstance()->getUrl([$routeName, $routeParams, $withGet, $withDomain]));
+            } catch (\Exception $e) {
+                throw new Error(
+                    [
+                        'Url generation was failed for route {$0} in widget {$1}  (part: {$2})',
+                        [$routeName, $this->getWidgetId(), $this->getComponentName()]
+                    ],
+                    [$routeName, $routeParams, $withGet, $withDomain]
+                );
+            }
+        }
+
+        return $this;
+    }
+
+
+    /**
+     * @return bool
+     */
+    public function isActive()
+    {
+        return $this->active;
+    }
+
+    /**
+     * @param bool|null $active
+     */
+    public function setActive($active)
+    {
+        $this->active = $active;
+    }
+
+    protected function buildActive($params)
+    {
+        if ($href = $this->getHref() && $this->getOption('active') === null) {
+            $this->setActive(String::startsWith(Request::uri(), $href));
+        } else {
+            $this->setActive((bool) $this->getOption('active'));
+        }
+
+        return $this;
+    }
+
+    private function partEvents(array &$options)
     {
         foreach (['onclick', 'onchange', 'submit'] as $event) {
 
@@ -185,13 +289,5 @@ class HtmlTag extends WidgetComponent
         }
 
         return $code . '); return false;';
-    }
-
-    /**
-     * @return bool
-     */
-    public function isActive()
-    {
-        return $this->active;
     }
 }

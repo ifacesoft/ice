@@ -1,4 +1,6 @@
 <li>
-    <a href="<?php if (!empty($options['href'])) : ?><?= $options['href'] ?><?php endif; ?>#<?= $component->getComponentName() ?>"><?= $component->getLabel() ?></a>
+    <a id="<?= $component->getPartId() ?><?php if (isset($offset)) : ?>_<?= $offset ?><?php endif; ?>"
+       href="<?= $component->getHref() ?>#<?= $component->getComponentName() ?>"
+    ><?= $component->getLabel() ?></a>
     <?= $options['nav'] ?>
 </li>

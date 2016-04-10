@@ -10,7 +10,7 @@
                 name="<?= $component->getName() ?><?php if (!empty($options['multiple'])) : ?>[]<?php endif; ?>"
                 data-for="<?= $component->getWidgetId() ?>"
                 data-name="<?= $component->getName() ?>"
-                data-params='<?= $component->getParams() ?>'
+                data-params='<?= $component->getDataParams() ?>'
                 <?php if (!empty($options['multiple'])) : ?>multiple="multiple"<?php endif; ?>
                 <?php if (!empty($options['size'])) : ?>size="<?= $options['size'] ?>"<?php endif; ?>
                 <?php if (isset($options['onchange'])) : ?>onchange="<?= $options['onchange'] ?>" data-action='<?= $options['dataAction'] ?>'<?php endif; ?>

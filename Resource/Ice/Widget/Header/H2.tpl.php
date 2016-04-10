@@ -4,6 +4,6 @@
     <?php if (isset($options['onclick'])) : ?>onclick="<?= $options['onclick'] ?>"
     data-action='<?= $options['dataAction'] ?>'<?php endif; ?>
     data-name="<?= $component->getName() ?>"
-    data-params='<?= $component->getParams() ?>'
+    data-params='<?= $component->getDataParams() ?>'
     data-for="<?= $component->getWidgetId() ?>"
 ><?= $component->getLabel() ?></h2>

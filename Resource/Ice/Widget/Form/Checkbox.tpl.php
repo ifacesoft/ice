@@ -13,7 +13,7 @@
                    <?php if (!empty($params[$name])) { ?>checked="checked"<?php } ?>
                    data-for="<?= $component->getWidgetId() ?>"
                    data-name="<?= $component->getName() ?>"
-                   data-params='<?= $component->getParams() ?>'
+                   data-params='<?= $component->getDataParams() ?>'
                    <?php if (!empty($options['disabled'])) : ?>disabled="disabled"<?php endif; ?>
                    <?php if (!empty($options['readonly'])) : ?>readonly="readonly" <?php endif; ?>
             />

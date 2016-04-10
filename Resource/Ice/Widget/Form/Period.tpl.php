@@ -10,7 +10,7 @@
                class="<?= $component->getComponentName() ?>_from<?php if (!isset($options['resetFormClass'])) : ?> form-control<?php endif; ?><?php if (!empty($options['classes'])) : ?> <?= $options['classes'] ?><?php endif; ?>"
                name="<?= $component->getName() ?>_from"
                value="<?= isset($params[$name . '_from']) ? $params[$name . '_from'] : '' ?>"
-               data-params='<?= $component->getParams() ?>'
+               data-params='<?= $component->getDataParams() ?>'
                data-for="<?= $component->getWidgetId() ?>"
             <?php if (isset($options['onchange'])) : ?>
                 onchange="<?= $options['onchange'] ?>"
@@ -27,7 +27,7 @@
                class="<?= $component->getComponentName() ?>_to<?php if (!isset($options['resetFormClass'])) : ?> form-control<?php endif; ?><?php if (!empty($options['classes'])) : ?> <?= $options['classes'] ?><?php endif; ?>"
                name="<?= $component->getName() ?>_to"
                value="<?= isset($params[$name . '_to']) ? $params[$name . '_to'] : '' ?>"
-               data-params='<?= $component->getParams() ?>'
+               data-params='<?= $component->getDataParams() ?>'
                data-for="<?= $component->getWidgetId() ?>"
             <?php if (isset($options['onchange'])) : ?>
                 onchange="<?= $options['onchange'] ?>"

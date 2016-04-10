@@ -20,7 +20,7 @@ trait Configured
      */
     public static function getConfig()
     {
-        $class = self::getClass();
+        $class = get_called_class();
 
         $baseClass = Object::getBaseClass($class);
 

@@ -4,7 +4,7 @@
            placeholder="<?= $options['placeholder'] ?>"
            name="<?= $fieldName ?>" value="<?= $value ?>"
            <?php if (isset($onchange)) : ?>onchange='<?= $onchange ?>'<?php endif; ?>
-           data-params='<?= $component->getParams() ?>'
+           data-params='<?= $component->getDataParams() ?>'
            data-widget='<?= $dataWidget ?>'
            data-for="<?= $parentWidgetId ?>"
            <?php if (!empty($options['disabled'])) : ?>disabled="disabled"<?php endif; ?>

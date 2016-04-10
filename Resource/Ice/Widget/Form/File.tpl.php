@@ -12,7 +12,7 @@
                type="hidden"
                class="<?= $component->getComponentName() ?><?php if (!isset($options['resetFormClass'])) : ?> form-control<?php endif; ?><?php if (!empty($options['classes'])) : ?> <?= $options['classes'] ?><?php endif; ?>"
                name="<?= $component->getName() ?>"
-               data-params='<?= $component->getParams() ?>'
+               data-params='<?= $component->getDataParams() ?>'
                data-for="<?= $component->getWidgetId() ?>"
             <?php if (isset($options['onchange'])) : ?>
                 onchange="<?= $options['onchange'] ?>"
