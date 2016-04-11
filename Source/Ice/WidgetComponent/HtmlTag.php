@@ -209,6 +209,7 @@ class HtmlTag extends WidgetComponent
                 'params' => empty($event['params']) ? [] : (array)$event['params'],
                 'ajax' => array_key_exists('ajax', $event) ? (bool)$event['ajax'] : true, // todo: нужно ли?
                 'callback' => empty($event['callback']) ? null : $event['callback'],
+                'confirm_message' => empty($event['confirm_message']) ? null : $event['confirm_message'],
                 'beforeCall' => empty($event['beforeCall']) ? null : $event['beforeCall'],
                 'afterCall' => empty($event['afterCall']) ? null : $event['afterCall'],
             ];
@@ -270,6 +271,10 @@ class HtmlTag extends WidgetComponent
             $code .= ', ' . $event['callback'];
         }
 
+        if (isset($event['confirm_message'])) {
+            $code .= ', \'' . $event['confirm_message'] . '\'';
+        }
+        
         $code .=  ');';
 
         if (isset($event['afterCall'])) {

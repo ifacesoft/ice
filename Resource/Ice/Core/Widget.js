@@ -2,7 +2,13 @@
  * Created by dp on 28.05.15.
  */
 var Ice_Core_Widget = {
-    click: function ($element, url, method, callback) {
+    click: function ($element, url, method, callback, confirm_message) {
+        if(confirm_message !== undefined) {
+            if(!confirm(confirm_message)){
+                return false;
+            }
+        }
+
         var $form = $element.prop('tagName') == 'FORM'
             ? $element
             : null;
