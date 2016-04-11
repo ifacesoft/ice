@@ -1,4 +1,4 @@
-<div<?php if (!isset($options['resetFormClass'])) : ?> class="form-group"<?php endif; ?>>
+<div<?php if (!$component->getOption('resetFormClass')) : ?> class="form-group"<?php endif; ?>>
     <div class="b-upload b-upload_dnd">
         <div class="b-upload__dnd"><?= $component->getLabel() ?></div>
         <div class="b-upload__dnd-not-supported" style="display: none;">

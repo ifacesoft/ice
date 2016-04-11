@@ -34,6 +34,6 @@ class Title_Route extends Widget
      */
     protected function build(array $input)
     {
-        $this->text($input['routeName'], ['route' => [$input['routeName'], $input['routeParams']]]);
+        $this->text($input['routeName'], ['route' => ['name' => $input['routeName'], 'params' => $input['routeParams']]]);
     }
 }

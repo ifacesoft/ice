@@ -1,33 +1,32 @@
 <thead>
 <tr>
-    <?php if ($options['widget']->isShowCount()) : ?>
-    <th rowspan="<?= $options['widget']->getColumnCount() ? ceil(count($options['widget']->getParts()) / $options['widget']->getColumnCount()) : 1 ?>">
+    <?php if ($component->getWidget()->isShowCount()) : ?>
+    <th rowspan="<?= $component->getWidget()->getColumnCount() ? ceil(count($component->getWidget()->getParts()) / $component->getWidget()->getColumnCount()) : 1 ?>">
             #</th><?php endif; ?>
     <?php
     $count = 0;
-    foreach ($options['widget']->getParts() as $name => $column) :
-    $label = isset($column['options']['label']) ? $column['options']['label'] : $name;
-    $colspan = isset($column['options']['colspan']) ? $column['options']['colspan'] : 1;
+    foreach ($component->getWidget()->getParts() as $name => $column) : ?>
+    <?php
+    $colspan = $column->getOption('colspan') ? $column->getOption('colspan') : 1;
     $count += $colspan;
-    if ($count <= $options['widget']->getColumnCount()) : ?>
-    <th<?php if (isset($column['options']['rowspan'])) : ?> rowspan="<?= $column['options']['rowspan'] ?>"<?php endif;
-    ?><?php if (isset($column['options']['colspan'])) : ?> colspan="<?= $column['options']['colspan'] ?>"<?php endif;
+    ?>
+    <?php if ($count <= $component->getWidget()->getColumnCount()) : ?>
+    <th<?php if ($column->getOption('rowspan')) : ?> rowspan="<?= $column->getOption('rowspan') ?>"<?php endif;
+    ?><?php if ($column->getOption('colspan')) : ?> colspan="<?= $column->getOption('colspan') ?>"<?php endif;
     ?>>
         <?php else :
         $count = 1
         ?>
 </tr>
 <tr>
-    <th<?php if (isset($column['options']['rowspan'])) : ?> rowspan="<?= $column['options']['rowspan'] ?>"<?php endif;
-    ?><?php if (isset($column['options']['colspan'])) : ?> colspan="<?= $column['options']['colspan'] ?>"<?php endif;
-    ?>>
-        <?php endif; ?>
-        <?= $label && isset($resource) && $resource instanceof Ice\Core\Resource ? $resource->get($label) : $label ?>
-        <?php if (isset($column['options']['sortable']) && $column['options']['sortable'] === true) : ?>
+    <th<?php if ($column->getOption('rowspan')) : ?> rowspan="<?= $column->getOption('rowspan') ?>"<?php endif;
+    ?><?php if ($column->getOption('colspan')) : ?> colspan="<?= $column->getOption('colspan') ?>"<?php endif;
+    ?>><?php endif; ?><?= $column->getLabel() ?>
+        <?php if ($column->getOption('sortable')) : ?>
             <a href="<?= $column['href'] ?>" onclick='<?= $column['onclick'] ?>'
                data-widget='<?= $dataWidget ?>'
                data-for="<?= $parentWidgetId ?>"
-               data-name='<?= $column['name'] ?>'
+               data-name='<?= $column->getName() ?>'
                data-params='<?= $column['dataParams'] ?>'
                class="btn btn-default btn-sm<?php if ($column['dataValue']) : ?> active<?php endif; ?>">
                 <?php if ($column['dataValue'] == 'ASC') : ?>
@@ -37,9 +36,7 @@
                 <?php else : ?>
                     &darr;&uarr;
                 <?php endif; ?>
-            </a>
-        <?php endif; ?>
-    </th>
+            </a><?php endif; ?></th>
     <?php endforeach; ?>
 </tr>
 </thead>

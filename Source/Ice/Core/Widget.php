@@ -224,7 +224,7 @@ abstract class Widget extends Container
         }
 
         if ($this->resourceClass === true) {
-            $this->resourceClass = $widgetClass::getClassName();
+            $this->resourceClass = $widgetClass::getClass();
         }
 
         return $this;
@@ -274,6 +274,7 @@ abstract class Widget extends Container
      */
     public function getRender()
     {
+        /** @var Render $renderClass */
         $renderClass = Render::getClass($this->renderClass);
 
         return $renderClass::getInstance();
@@ -389,8 +390,8 @@ abstract class Widget extends Container
     public function setQueryResult(QueryResult $queryResult)
     {
         foreach ($this->getParts() as $part) {
-            if (isset($part['options']['widget'])) {
-                $part['options']['widget']->setQueryResult($queryResult);
+            if ($part instanceof WidgetComponent_Widget) {
+                $part->getWidget()->setQueryResult($queryResult);
             }
         }
     }
@@ -398,8 +399,8 @@ abstract class Widget extends Container
     public function queryBuilderPart(QueryBuilder $queryBuilder, array $input)
     {
         foreach ($this->getParts() as $partName => $part) {
-            if (isset($part['options']['widget'])) {
-                $part['options']['widget']->queryBuilderPart($queryBuilder, $input);
+            if ($part instanceof WidgetComponent_Widget) {
+                $part->getWidget()->queryBuilderPart($queryBuilder, $input);
             }
         }
     }
@@ -427,63 +428,22 @@ abstract class Widget extends Container
 
         $this->result = [];
 
-        /** @var Widget $widgetClass */
-        $widgetClass = get_class($this);
-
         $offset = $this->getOffset();
-        $index = isset($data['index']) ? $data['index'] : 0;
 
         $values = $this->getValues();
 
         foreach ($this->getRows() as $row) {
-//            $column = isset($data['column']) ? $data['column'] : 'A';
-
-//            $isRow = !empty($row);
-
             $row = array_merge($values, $row);
-
-//            $empty = empty($row);
-
-//            if (empty($row)) {
-//                $part['empty'] = true;
-//            }
 
             $rowTable = [];
 
             foreach ($this->getParts($this->getFilterParts()) as $partName => $part) {
-//                $part['empty'] = $empty;
-
-//                if (isset($data['sheet'])) {
-//                    $part['sheet'] = $data['sheet'];
-//                }
-
-//                $this->partParams($partName, $part, $row);
 
                 $part->setOffset(++$offset);
 
-//                $part['index'] = $index + $this->indexOffset;
-//                $part['column'] = $column;
-
-//                if (isset($part['options']['indexOffset'])) {
-//                    $part['options']['indexOffset'] += $part['index'];
-//                    $part['index'] = $part['options']['indexOffset'];
-//                }
-
-//                $part['widgetOptions'] = $this->options;
-
                 $rowTable[$partName] = $part->build($row, $this);
-
-//                if ($isRow) {
-//                    $column++;
-//                } else {
-//                    $index++;
-//                }
             }
-
-//            if ($isRow) {
-//                $index++;
-//            }
-
+            
             $this->result[$offset] = $rowTable;
         }
 
@@ -507,7 +467,7 @@ abstract class Widget extends Container
                 'widget' => $this,
                 'result' => $this->getResult(),
                 'widgetId' => $this->getWidgetId(),
-                'widgetClass' => $this->getWidgetClass(),
+                'widgetClass' => $this->getWidgetClassName(),
                 'parentWidgetId' => $this->getParentWidgetId(), // Widget_Admin_Access_Book_Packet_Table_admin_block
 //                'parentWidgetClass' => $this->getParentWidgetClass(), // "Ebs\\Widget\\Admin_Access_Book_Packet_Table
                 'widgetData' => $this->getData(),
@@ -520,7 +480,7 @@ abstract class Widget extends Container
         );
     }
 
-    private function getWidgetClass()
+    private function getWidgetClassName()
     {
         /** @var Widget $widgetClass */
         $widgetClass = get_class($this);
@@ -567,12 +527,13 @@ abstract class Widget extends Container
 
         $dataParams = $this->getValues();
 
-        // Todo: Это работает ВАЖНО!
-//        foreach ($this->getParts() as $part) {
-//            if (isset($part['options']['widget'])) {
-//                $dataParams = array_merge($part['options']['widget']->getDataParams(), $dataParams);
-//            }
-//        }
+
+        foreach ($this->getParts() as $part) {
+
+            if ($part instanceof WidgetComponent_Widget) {
+                $dataParams = array_merge($part->getWidget()->getDataParams(), $dataParams);
+            }
+        }
 
         return $dataParams;
     }
@@ -585,8 +546,8 @@ abstract class Widget extends Container
         $this->dataParams = array_merge($this->getDataParams(), $dataParams);
 
         foreach ($this->getParts() as $part) {
-            if (isset($part['options']['widget'])) {
-                $part['options']['widget']->setDataParams($this->dataParams);
+            if ($part instanceof WidgetComponent_Widget) {
+                $part->getWidget()->setDataParams($this->dataParams);
             }
         }
     }
@@ -670,7 +631,7 @@ abstract class Widget extends Container
      * Compiled widget parts
      *
      * @param null $filterParts
-     * @return array
+     * @return WidgetComponent[]
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @todo: Зачечем весь этот код?
@@ -1125,23 +1086,6 @@ abstract class Widget extends Container
 //        throw new Error('token expired');
     }
 
-    public function getActionAccess($class)
-    {
-        $access = [];
-
-        foreach ($this->getParts() as $part) {
-            if (isset($part['options']['action']) && $part['options']['action'] == $class && isset($part['options']['access'])) {
-                $access = array_merge_recursive($access, $part['options']['access']);
-            }
-        }
-
-        if (!isset($access['roles'])) {
-            $access['roles'] = ['ROLE_ICE_GUEST', 'ROLE_ICE_USER'];
-        }
-
-        return $access;
-    }
-
     /**
      * @param Render $renderClass
      * @param array $data
@@ -1168,13 +1112,18 @@ abstract class Widget extends Container
         return $this->output;
     }
 
-    protected function getRenderEvent()
+    public function getRenderEvent()
     {
         return [
+            'type' => 'onclick',
             'action' => Render::class,
-            'data' => ['widgets' => [$this->getParentWidgetId() => $this->getParentWidgetClass()]],
-            'url' => [Router::getInstance()->getName(), $this->getDataParams(), true],
-            'method' => 'GET'
+            'params' => ['widgets' => [$this->getParentWidgetId() => $this->getParentWidgetClass()]],
+//            'url' => [Router::getInstance()->getName(), $this->getDataParams(), true],
+//            'method' => 'GET',
+            'ajax' => true, // todo: нужно ли?
+            'callback' => null,
+            'beforeCall' => null,
+            'afterCall' => null
         ];
     }
 }

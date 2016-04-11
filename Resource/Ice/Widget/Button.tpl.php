@@ -1,8 +1,6 @@
 <button id="<?= $component->getPartId() ?>"
         class="btn <?= $component->getName() ?><?php if (!empty($options['classes'])) : ?> <?= $options['classes'] ?><?php endif; ?>"
-        <?php if (isset($options['onclick'])) : ?>onclick="<?= $options['onclick'] ?>"
-        data-action='<?= $options['dataAction'] ?>'<?php endif; ?>
+    <?= $component->getEventAttributesCode() ?>
         data-name="<?= $component->getName() ?>"
-        data-params='<?= $component->getDataParams() ?>'
         data-for="<?= $component->getWidgetId() ?>"
         type="button"><?= $component->getLabel() ?></button>

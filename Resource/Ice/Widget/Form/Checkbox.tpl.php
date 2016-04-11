@@ -10,14 +10,14 @@
                    name="<?= $component->getName() ?>"
                    value="1"
                    <?php if (isset($onchange)) : ?>onchange='<?= $onchange ?>'<?php endif; ?>
-                   <?php if (!empty($params[$name])) { ?>checked="checked"<?php } ?>
+                   <?php if ($component->getValue()) : ?>checked="checked"<?php endif; ?>
                    data-for="<?= $component->getWidgetId() ?>"
                    data-name="<?= $component->getName() ?>"
-                   data-params='<?= $component->getDataParams() ?>'
+                <?= $component->getEventAttributesCode() ?>
                    <?php if (!empty($options['disabled'])) : ?>disabled="disabled"<?php endif; ?>
                    <?php if (!empty($options['readonly'])) : ?>readonly="readonly" <?php endif; ?>
             />
-            <?= htmlentities($label, ENT_QUOTES) ?>
+            <?= $component->getLabel() ?>
         </div>
     </label>
 </div>

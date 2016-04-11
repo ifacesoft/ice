@@ -14,7 +14,7 @@
         <?php unset($parts['header']); ?>
     <?php endif; ?>
 
-    <?php foreach ($parts as $part) : ?>
+    <?php foreach ($parts as $partName => $part) : ?>
         <?= $widget->renderPart($part) ?>
     <?php endforeach; ?>
 </form>

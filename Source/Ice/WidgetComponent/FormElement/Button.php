@@ -2,8 +2,12 @@
 
 namespace Ice\WidgetComponent;
 
+use Ice\Widget\Form;
+
 class FormElement_Button extends FormElement
 {
+    private $buttonType = 'button';
+
     /**
      * WidgetComponent config
      *
@@ -17,13 +21,22 @@ class FormElement_Button extends FormElement
             'cache' => ['ttl' => -1, 'count' => 1000],
         ];
     }
-    
-    public function __construct($name, array $options, $template, $componentName)
+
+    public function __construct($componentName, array $options, $template, Form $widget)
     {
-        parent::__construct($name, $options, $template, $componentName);
+        parent::__construct($componentName, $options, $template, $widget);
 
         if (isset($options['submit'])) {
-            $this->submitPartName = $name;
+            $widget->setSubmitComponentName($componentName);
+            $this->buttonType = 'submit';
         }
+    }
+
+    /**
+     * @return string
+     */
+    public function getButtonType()
+    {
+        return $this->buttonType;
     }
 }

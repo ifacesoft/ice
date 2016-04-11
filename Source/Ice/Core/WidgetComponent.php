@@ -21,6 +21,7 @@ abstract class WidgetComponent
     private $label = null;
     private $labelTemplate = null;
     private $params = [];
+    private $active = null;
 
     /**
      * WidgetComponent config
@@ -38,12 +39,12 @@ abstract class WidgetComponent
 
     /**
      * WidgetComponent constructor.
-     * @param $componentName
+     * @param $componentComponentName
      * @param array $options
      * @param $template
      * @param Widget $widget
      */
-    public function __construct($componentName, array $options, $template, Widget $widget)
+    public function __construct($componentComponentName, array $options, $template, Widget $widget)
     {
         if (isset($options['roles'])) {
             if (!isset($options['access'])) {
@@ -58,9 +59,9 @@ abstract class WidgetComponent
             Access::check($options['access']);
         }
 
-        $this->componentName = $componentName;
+        $this->componentName = $componentComponentName;
         $this->options = $options;
-        
+
         if (isset($this->options['template'])) { // todo: когда-нибудь убрать этот костыль
             $this->options['labelTemplate'] = $this->options['template'];
             unset($this->options['template']);
@@ -68,11 +69,7 @@ abstract class WidgetComponent
         $this->options['template'] = $template;
 
         $this->widgetId = $widget->getWidgetId();
-        $this->partId = $this->widgetId . '_' . $componentName;
-
-        // Todo: Это используется
-        //        $part['title'] = isset($part['options']['title']) ? $part['options']['title'] : $name;
-//        unset($part['options']['title']);
+        $this->partId = $this->widgetId . '_' . $componentComponentName;
     }
 
     /**
@@ -132,14 +129,15 @@ abstract class WidgetComponent
      */
     public function build(array $row, Widget $widget)
     {
-        $this->params = $this->getParams($row);
-
+        $this->params = $this->buildParams($row);
+        
         return $this
             ->setTemplateClass($this->getOption('template'))
             ->setResourceClass($this->getOption('resource'), $widget)
             ->setRenderClass($this->getOption('render'))
-            ->buildLabelTemplate($this->params)
-            ->buildLabel($this->params);
+            ->buildLabelTemplate($this->getParams())
+            ->buildLabel($this->getParams())
+            ->buildActive();
     }
 
     /**
@@ -211,7 +209,7 @@ abstract class WidgetComponent
         }
 
         if ($this->resourceClass === true) {
-            $this->resourceClass = $widgetComponentClass::getClassName();
+            $this->resourceClass = get_class($widget);
         }
 
         return $this;
@@ -255,32 +253,31 @@ abstract class WidgetComponent
         return $this;
     }
 
-//    private function partParams($partName, WidgetComponent $part, array $values)
     protected function buildParams($values)
     {
-        $this->params = [
-            $this->getComponentName() => array_key_exists($this->getComponentName(), $values) 
-                ? $values[$this->getComponentName()] 
+        $params = [
+            $this->getComponentName() => array_key_exists($this->getComponentName(), $values)
+                ? $values[$this->getComponentName()]
                 : null
         ];
 
-        $params = (array)$this->getOption('params');
-
-            foreach ($params as $key => $value) {
-                if (is_int($key)) {
-                    $key = $value;
-                }
-
-                if (is_string($value)) {
-                    $this->params[$key] = $key == $value
-                        ? (array_key_exists($value, $values) ? $values[$value] : null)
-                        : (array_key_exists($value, $values) ? $values[$value] : $value); //(isset($part['options']['default']) ? $part['options']['default'] : $value)
-                } else {
-                    $this->params[$key] = $value;
-                }
+        foreach ((array)$this->getOption('params') as $key => $value) {
+            if (is_int($key)) {
+                $key = $value;
             }
+
+            if (is_string($value)) {
+                $params[$key] = $key == $value
+                    ? (array_key_exists($value, $values) ? $values[$value] : null)
+                    : (array_key_exists($value, $values) ? $values[$value] : $value); //(isset($part['options']['default']) ? $part['options']['default'] : $value)
+            } else {
+                $params[$key] = $value;
+            }
+        }
+
+        return $params;
     }
-    
+
     private function buildLabelTemplate($params)// todo: пусть сам label уже будет labelTemplate
     {
         $this->labelTemplate = $this->getOption('labelTemplate');
@@ -304,12 +301,11 @@ abstract class WidgetComponent
         return $this->labelTemplate;
     }
 
-
     private function buildLabel($row)
     {
         $this->setLabel($this->getOption('label'));
 
-        if (!$this->getLabel()) {
+        if (!$this->label || $this->label === true) {
             $this->setLabel($this->getComponentName());
         }
 
@@ -339,9 +335,9 @@ abstract class WidgetComponent
     /**
      * @return null
      */
-    public function getLabel()
+    public function getLabel() // todo: развести на отдельные сушности params, etc. для label, value, нпример $label => ['test {$test}', ['param1'= 'val', 'param2']
     {
-        return $this->label;
+        return isset($this->getParams()[$this->label]) ? $this->getParams()[$this->label] : $this->label;
     }
 
     /**
@@ -352,14 +348,45 @@ abstract class WidgetComponent
         $this->label = $label;
     }
 
+    /**
+     * @return bool
+     */
+    public function isActive()
+    {
+        return $this->active;
+    }
+
+    /**
+     * @param bool|null $active
+     */
+    public function setActive($active)
+    {
+        $this->active = $active;
+    }
+
+    protected function buildActive()
+    {
+        $this->setActive((bool)$this->getOption('active'));
+
+        return $this;
+    }
+
+    public function mergeOptions(array $options)
+    {
+        $this->options = array_merge($this->options, $options);
+    }
 
     /**
      * @param $name
      * @param null $default
      * @return mixed
      */
-    public function getOption($name, $default = null)
+    public function getOption($name = null, $default = null)
     {
+        if ($name === null) {
+            return $this->options;
+        }
+
         return array_key_exists($name, $this->options) ? $this->options[$name] : $default;
     }
 

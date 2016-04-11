@@ -2,7 +2,7 @@
 
 namespace Ice\WidgetComponent;
 
-class FormElement_Period extends FormElement
+class FormElement_Period extends FormElement_TextInput
 {
     /**
      * WidgetComponent config
@@ -17,12 +17,12 @@ class FormElement_Period extends FormElement
             'cache' => ['ttl' => -1, 'count' => 1000],
         ];
     }
-    
-    public function __construct($name, array $options, $template, $componentName)
-    {
-        parent::__construct($name, $options, $template, $componentName);
 
-        $fields = [$name . '_from', $name . '_to'];
+    public function __construct($componentName, array $options, $template, Core_Widget $widget)
+    {
+        parent::__construct($componentName, $options, $template, $widget);
+
+        $fields = [$componentName . '_from', $componentName . '_to'];
 
         if (!empty($options['default'])) {
             foreach ($fields as $paramName) {

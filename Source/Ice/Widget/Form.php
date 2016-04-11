@@ -3,6 +3,7 @@
 namespace Ice\Widget;
 
 use Ice\Core\Action;
+use Ice\Core\Debuger;
 use Ice\Core\Module;
 use Ice\Core\Validator;
 use Ice\Core\Widget;
@@ -10,7 +11,7 @@ use Ice\Helper\Directory;
 use Ice\WidgetComponent\FormElement;
 use Ice\WidgetComponent\FormElement_Button;
 use Ice\WidgetComponent\FormElement_Period;
-use Ice\WidgetComponent\FormElement_Text;
+use Ice\WidgetComponent\FormElement_TextInput;
 
 class Form extends Widget
 {
@@ -21,7 +22,7 @@ class Form extends Widget
      */
     protected $validateScheme = [];
 
-    private $submitPartName = null;
+    private $submitComponentName = null;
 
     public function __construct(array $data)
     {
@@ -74,19 +75,29 @@ class Form extends Widget
 
     protected function getCompiledResult()
     {
-        $submitOptions = $this->submitPartName ? $this->getPart($this->submitPartName)['options'] : null;
+        $compiledResult = parent::getCompiledResult();
 
-        if ($submitOptions && !empty($submitOptions['params'])) {
-            $this->setDataParams(array_merge($this->getDataParams(), $submitOptions['params']));
+        /** @var FormElement $component */
+        $component = $this->getPart($this->submitComponentName);
+
+        if (!$component) {
+            return array_merge(
+                $compiledResult,
+                ['onSubmit' => '', 'url' => '/', 'method' => 'POST']
+            );
+        }
+
+        if (!empty($submitOptions['params'])) {
+            $this->setDataParams(array_merge($this->getDataParams(), $component->getParams()));
         }
 
         return array_merge(
-            parent::getCompiledResult(),
+            $compiledResult,
             [
-                'dataAction' => $submitOptions['dataAction'],
-                'onSubmit' => $submitOptions['submit'],
-                'url' => $submitOptions['url'],
-                'method' => $submitOptions['method']
+                'dataAction' => $component->getDataAction(),
+                'onSubmit' => $component->getEventCode(),
+                'url' => $component->getHref(),
+                'method' => $component->getRoute() ? $component->getRoute()['method'] : 'POST'
             ]
         );
     }
@@ -113,12 +124,12 @@ class Form extends Widget
      */
     public function text($fieldName, array $options = [], $template = 'Ice\Widget\Form\Text')
     {
-        return $this->addPart(new FormElement_Text($fieldName, $options, $template, $this));
+        return $this->addPart(new FormElement_TextInput($fieldName, $options, $template, $this));
     }
 
     public function html($fieldName, array $options = [], $template = 'Ice\Widget\Form\Html')
     {
-        return $this->addPart(new FormElement($fieldName, $options, $template, $this));
+        return $this->addPart(new FormElement_TextInput($fieldName, $options, $template, $this));
     }
 
     /**
@@ -154,7 +165,7 @@ class Form extends Widget
      */
     public function password($fieldName, array $options = [], $template = 'Ice\Widget\Form\Password')
     {
-        return $this->addPart(new FormElement($fieldName, $options, $template, $this));
+        return $this->addPart(new FormElement_TextInput($fieldName, $options, $template, $this));
     }
 
     /**
@@ -172,7 +183,7 @@ class Form extends Widget
      */
     public function number($fieldName, array $options = [], $template = 'Ice\Widget\Form\Number')
     {
-        return $this->addPart(new FormElement($fieldName, $options, $template, $this));
+        return $this->addPart(new FormElement_TextInput($fieldName, $options, $template, $this));
     }
 
     /**
@@ -190,7 +201,7 @@ class Form extends Widget
      */
     public function date($fieldName, array $options = [], $template = 'Ice\Widget\Form\Date')
     {
-        return $this->addPart(new FormElement($fieldName, $options, $template, $this));
+        return $this->addPart(new FormElement_TextInput($fieldName, $options, $template, $this));
     }
 
     /**
@@ -285,7 +296,7 @@ class Form extends Widget
      */
     public function chosen($fieldName, array $options = [], $template = 'Ice\Widget\Form\Chosen')
     {
-        return $this->addPart(new FormElement($fieldName, $options, $template, $this));
+        return $this->addPart(new FormElement_TextInput($fieldName, $options, $template, $this));
     }
 
     /**
@@ -321,7 +332,7 @@ class Form extends Widget
      */
     public function textarea($fieldName, array $options = [], $template = 'Ice\Widget\Form\Textarea')
     {
-        return $this->addPart(new FormElement($fieldName, $options, $template, $this));
+        return $this->addPart(new FormElement_TextInput($fieldName, $options, $template, $this));
     }
 
     /**
@@ -425,5 +436,13 @@ class Form extends Widget
         $this->setOption('horizontal', $offset);
 
         return $this;
+    }
+
+    /**
+     * @param null $submitComponentName
+     */
+    public function setSubmitComponentName($submitComponentName)
+    {
+        $this->submitComponentName = $submitComponentName;
     }
 }

@@ -5,11 +5,6 @@ namespace Ice\WidgetComponent;
 class FormElement_OneToManyToMany extends FormElement
 {
     /**
-     * @var string
-     */
-    private $placeholder = null;
-
-    /**
      * WidgetComponent config
      *
      * @return array
@@ -22,14 +17,7 @@ class FormElement_OneToManyToMany extends FormElement
             'cache' => ['ttl' => -1, 'count' => 1000],
         ];
     }
-    
-    public function __construct($name, array $options, $template, $componentName)
-    {
-        parent::__construct($name, $options, $template, $componentName);
 
-        $this->placeholder = $this->getPlaceholder($options);
-    }
-    
     public function initValues() {
         if (isset($part['options']['oneToManyToMany'])) {
             /** @var Model $linkModelClass1 */

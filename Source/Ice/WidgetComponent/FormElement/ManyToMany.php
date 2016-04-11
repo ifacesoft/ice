@@ -2,13 +2,10 @@
 
 namespace Ice\WidgetComponent;
 
+use Ice\Core\Widget as Core_Widget;
+
 class FormElement_ManyToMany extends FormElement
 {
-    /**
-     * @var string
-     */
-    private $placeholder = null;
-
     /**
      * WidgetComponent config
      *
@@ -22,14 +19,7 @@ class FormElement_ManyToMany extends FormElement
             'cache' => ['ttl' => -1, 'count' => 1000],
         ];
     }
-    
-    public function __construct($name, array $options, $template, $componentName)
-    {
-        parent::__construct($name, $options, $template, $componentName);
 
-        $this->placeholder = $this->getPlaceholder($options);
-    }
-    
     public function initValues() {
         if (isset($part['options']['manyToMany'])) {
             /** @var Model $linkModelClass */

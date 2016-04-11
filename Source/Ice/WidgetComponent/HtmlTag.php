@@ -2,25 +2,24 @@
 
 namespace Ice\WidgetComponent;
 
+use Ice\Action\Render;
 use Ice\Core\Action;
 use Ice\Core\Debuger;
 use Ice\Core\Request;
 use Ice\Core\Resource;
 use Ice\Core\Route;
 use Ice\Core\Router;
-use Ice\Core\Widget;
 use Ice\Core\WidgetComponent;
 use Ice\Core\Widget as Core_Widget;
 use Ice\Exception\Error;
-use Ice\Exception\RouteNotFound;
 use Ice\Helper\Json;
 use Ice\Helper\String;
 
 class HtmlTag extends WidgetComponent
 {
-    private $active = null;
     private $route = null;
     private $href = null;
+    private $event = null;
 
     /**
      * WidgetComponent config
@@ -36,30 +35,23 @@ class HtmlTag extends WidgetComponent
         ];
     }
 
-    public function __construct($name, array $options, $template, Core_Widget $widget)
+    public function __construct($componentName, array $options, $template, Core_Widget $widget)
     {
-        parent::__construct($name, $options, $template, $widget);
-
-        if (!empty($options['active'])) {
-            $this->active = (bool)$options['active'];
-        }
-
-        $this->partEvents($options);
-//        $this->initRoute($options);
+        parent::__construct($componentName, $options, $template, $widget);
     }
 
-    public function build(array $row, Widget $widget)
+    public function build(array $row, Core_Widget $widget)
     {
         /** @var HtmlTag $component */
         $component = parent::build($row, $widget);
 
         return $component
             ->buildRoute($row)
-            ->buildRouteLabel($row)
-            ->buildHref($row)
-            ->buildActive($row);
+            ->buildRouteLabel($this->getParams())
+            ->buildHref()
+            ->buildEvent($widget);
     }
-    
+
     protected function buildRoute($row)
     {
         $route = $this->getOption('route');
@@ -68,29 +60,33 @@ class HtmlTag extends WidgetComponent
             return $this;
         }
 
-        if ($route === true) {
-            $route = $this->getComponentName();
+        if (is_string($route)) {
+            $route = ['name' => $route];
         }
 
-        $route = (array)$route;
+        if ($route === true) {
+            $route = ['name' => $this->getComponentName()];
+        }
 
-        $tempRouteParams = [];
-        $withGet = false;
-        $withDomain = false;
+        $this->route = array_merge(
+            [
+                'name' => $this->getComponentName(),
+                'params' => [],
+                'withGet' => false,
+                'withDomain' => false,
+                'method' => 'POST'
 
-        if (count($route) == 4) {
-            list($routeName, $tempRouteParams, $withGet, $withDomain) = $route;
-        } elseif (count($route) == 3) {
-            list($routeName, $tempRouteParams, $withGet) = $route;
-        } elseif (count($route) == 2) {
-            list($routeName, $tempRouteParams) = $route;
-        } else {
-            $routeName = reset($route);
+            ],
+            (array)$route
+        );
+
+        if (isset($this->route[0])) {
+            throw new Error('Use deprecated init route. Define named options', $this);
         }
 
         $routeParams = [];
 
-        foreach ((array)$tempRouteParams as $routeParamKey => $routeParamValue) {
+        foreach ((array)$this->route['params'] as $routeParamKey => $routeParamValue) {
             if (is_int($routeParamKey)) {
                 $routeParams[$routeParamValue] = !is_array($routeParamValue) && array_key_exists($routeParamValue, $row)
                     ? $row[$routeParamValue]
@@ -104,7 +100,7 @@ class HtmlTag extends WidgetComponent
                 : $routeParamValue;
         }
 
-        $this->setRoute([$routeName, $tempRouteParams, $withGet, $withDomain]);
+        $this->route['params'] = $routeParams;
 
         return $this;
 
@@ -131,8 +127,7 @@ class HtmlTag extends WidgetComponent
         $route = $this->getRoute();
 
         if ($route && !$this->getOption('label')) {
-            list($routeName, $routeParams, $withGet, $withDomain) = $route;
-            $this->setLabel(Resource::create(Route::getClass())->get($routeName, $routeParams));
+            $this->setLabel(Resource::create(Route::getClass())->get($route['name'], $route['params']));
 
             if ($resource = $this->getResource()) {
                 $this->setLabel($resource->get($this->getLabel()), $params);
@@ -158,23 +153,22 @@ class HtmlTag extends WidgetComponent
         $this->href = $href;
     }
 
-    protected function buildHref($params)
+    protected function buildHref()
     {
         $this->setHref($this->getOption('href'));
 
         $route = $this->getRoute();
 
         if ($route && !$this->getHref()) {
-            list($routeName, $routeParams, $withGet, $withDomain) = $route;
             try {
-                $this->setHref(Router::getInstance()->getUrl([$routeName, $routeParams, $withGet, $withDomain]));
+                $this->setHref(Router::getInstance()->getUrl([$route['name'], $route['params'], $route['withGet'], $route['withDomain']]));
             } catch (\Exception $e) {
                 throw new Error(
                     [
                         'Url generation was failed for route {$0} in widget {$1}  (part: {$2})',
-                        [$routeName, $this->getWidgetId(), $this->getComponentName()]
+                        [$route['name'], $this->getWidgetId(), $this->getComponentName()]
                     ],
-                    [$routeName, $routeParams, $withGet, $withDomain]
+                    $this
                 );
             }
         }
@@ -182,112 +176,135 @@ class HtmlTag extends WidgetComponent
         return $this;
     }
 
-
-    /**
-     * @return bool
-     */
-    public function isActive()
+    protected function buildActive()
     {
-        return $this->active;
-    }
+        parent::buildActive();
 
-    /**
-     * @param bool|null $active
-     */
-    public function setActive($active)
-    {
-        $this->active = $active;
-    }
-
-    protected function buildActive($params)
-    {
-        if ($href = $this->getHref() && $this->getOption('active') === null) {
-            $this->setActive(String::startsWith(Request::uri(), $href));
-        } else {
-            $this->setActive((bool) $this->getOption('active'));
+        if ($this->getOption('active') !== null) {
+            if ($href = $this->getHref()) {
+                $this->setActive(String::startsWith(Request::uri(), $href));
+            }
         }
 
         return $this;
     }
 
-    private function partEvents(array &$options)
+    private function buildEvent(Core_Widget $widget)
     {
-        foreach (['onclick', 'onchange', 'submit'] as $event) {
+        $event = array_intersect_key($this->getOption(), array_flip(['onclick', 'onchange', 'submit']));
 
-            if (array_key_exists($event, $options)) {
-                if ($options[$event] === true) {
-                    throw new Error(
-                        ['Temporary For part {$0} with event {$1} of widget {$2} must be defined action param',
-                            [$partName, $event, get_class($this)]
-                        ]
-                    );
-                }
-
-                if (is_string($options[$event])) {
-                    $options['dataAction'] = Json::encode([
-                        'class' => '',
-                        'data' => []
-                    ]);
-                    continue;
-                }
-
-                $actionData = [];
-
-                if (isset($options[$event]['action'])) {
-                    if ($options[$event]['action'][0] == '_') {
-                        /** @var Widget $widgetClass */
-                        $widgetClass = get_class($this);
-                        $options[$event]['action'] = $widgetClass::getModuleAlias() . ':' .
-                            $widgetClass::getClassName() . $options[$event]['action'];
-                    }
-
-                    $actionData['class'] = Action::getClass($options[$event]['action']);
-                    unset($options[$event]['action']);
-                }
-
-                if (isset($options[$event]['data'])) {
-                    $actionData['data'] = $options[$event]['data'];
-                    unset($options[$event]['data']);
-                }
-
-                if (isset($options[$event]['url'])) {
-                    try {
-                        $options[$event]['url'] = $options[$event]['url'] === true
-                            ? Router::getInstance()->getUrl($partName)
-                            : Router::getInstance()->getUrl($options[$event]['url']);
-                    } catch (RouteNotFound $e) {
-                        $options[$event]['url'] = '/';
-                    }
-                }
-
-                $options['url'] = isset($options[$event]['url']) ? $options[$event]['url'] : '/';
-                $options['method'] = isset($options[$event]['method']) ? $options[$event]['method'] : 'POST';
-
-                $actionData['ajax'] = array_key_exists('ajax', $options[$event]) ? $options[$event]['ajax'] : true;
-
-                $options['dataAction'] = Json::encode($actionData);
-
-                $options[$event] = $actionData['ajax']
-                    ? $this->getOnclick($options['url'], $options['method'], $options[$event])
-                    : '';
-            }
+        if (!$event) {
+            return $this;
         }
+
+        $eventType = key($event);
+        $event = reset($event);
+
+        if ($event === true) {
+            $this->event = $widget->getRenderEvent();
+        } else {
+            $this->event = [
+                'type' => $eventType,
+                'class' => empty($event['action']) ? Render::class : $event['action'],
+                'params' => empty($event['params']) ? [] : (array)$event['params'],
+                'ajax' => array_key_exists('ajax', $event) ? (bool)$event['ajax'] : true, // todo: нужно ли?
+                'callback' => empty($event['callback']) ? null : $event['callback'],
+                'beforeCall' => empty($event['beforeCall']) ? null : $event['beforeCall'],
+                'afterCall' => empty($event['afterCall']) ? null : $event['afterCall'],
+            ];
+
+            if ($this->event['class'][0] == '_') {
+                $this->event['class'] = get_class($widget) . $this->event['class'];
+            }
+
+            $this->event['class'] = Action::getClass($this->event['class']);
+        }
+        return $this;
     }
 
     /**
-     * @param $url
-     * @param $method
-     * @param array $event
+     * @return null
+     */
+    public function getEvent()
+    {
+        return $this->event;
+    }
+
+    /**
+     * @param null $event
+     */
+    public function setEvent($event)
+    {
+        $this->event = $event;
+    }
+
+    /**
      * @return string
      */
-    protected function getOnclick($url, $method, array $event)
+    public function getDataParams()
     {
-        $code = 'Ice_Core_Widget.click($(this), \'' . $url . '\', \'' . $method . '\'';
+        return Json::encode($this->getParams());
+    }
+
+    public function getDataAction()
+    {
+        return Json::encode($this->getEvent());
+    }
+
+    public function getEventCode() {
+        $event = $this->getEvent();
+
+        if (!$event['ajax']) {
+            return '';
+        }
+        
+        $code = '';
+        
+        if (isset($event['beforeCall'])) {
+            $code .= $event['beforeCall'] . '; ';
+        }
+
+        $code .= 'Ice_Core_Widget.click($(this), \'' . $this->getHref() . '\', \'' . $this->getMethod() . '\'';
 
         if (isset($event['callback'])) {
             $code .= ', ' . $event['callback'];
         }
 
-        return $code . '); return false;';
+        $code .=  ');';
+
+        if (isset($event['afterCall'])) {
+            $code .= ' ' . $event['afterCall'] . ';';
+        }
+
+        return $code . ' return false;';
+    }
+    
+    public function getEventAttributesCode()
+    {
+        $event = $this->getEvent();
+
+        if (!$event['ajax']) {
+            return '';
+        }
+        
+        $code = ' ';
+
+        switch ($event['type']) {
+            case 'submit':
+                $code .= 'onsubmit="';
+                break;
+            case 'onchange':
+                $code .= 'onchange="';
+                break;
+            default:
+                $code .= 'onclick="';
+        }
+        
+        return $code . $this->getEventCode() . '" data-action=\'' . $this->getDataAction() . '\' data-params=\'' . $this->getDataParams() . '\'';
+    }
+
+    public function getMethod()
+    {
+        return $this->getRoute()['method'];
     }
 }

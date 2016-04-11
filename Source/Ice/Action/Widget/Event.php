@@ -14,6 +14,7 @@ use Ice\Core\Debuger;
 use Ice\Core\Widget;
 use Ice\DataProvider\Request;
 use Ice\Helper\Access;
+use Ice\WidgetComponent\FormElement;
 
 abstract class Widget_Event extends Render
 {
@@ -29,16 +30,16 @@ abstract class Widget_Event extends Render
 
             $widget = $widgetClass::getInstance($input['widget']['name']);
 
-            $widget->setResource($input['widget']['resourceClass']);
+            $widget->setResourceClass($input['widget']['resourceClass']);
 
             $widget->checkToken($input['widget']['token']);
-
-            Access::check($widget->getActionAccess(get_class($this)));
 
             $request = Request::getInstance();
 
             foreach ($widget->getParts() as $part) {
-                $widget->bind([$part['name'] => $request->get($part['name'])]);
+                if ($part instanceof FormElement) {
+                    $widget->bind([$part->getName() => $request->get($part->getName())]);
+                }
             }
 
             $input['widget'] = $widget;

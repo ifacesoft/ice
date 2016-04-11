@@ -24,9 +24,9 @@ class Widget extends WidgetComponent
         ];
     }
     
-    public function __construct($name, array $options, $template, Core_Widget $widget)
+    public function __construct($componentName, array $options, $template, Core_Widget $widget)
     {
-        parent::__construct($name, $options, $template, $widget);
+        parent::__construct($componentName, $options, $template, $widget);
 
         $this->widget = $widget->getWidget($options['widget']);
 
@@ -49,7 +49,7 @@ class Widget extends WidgetComponent
     }
 
     /**
-     * @return $this|null
+     * @return Core_Widget
      */
     public function getWidget()
     {

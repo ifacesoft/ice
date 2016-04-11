@@ -4,7 +4,6 @@
 <?php if ($component->isActive()) : ?> active<?php endif; ?>
 ">
     <a href="<?= $component->getHref() ?>#<?= $component->getComponentName() ?>"
-       <?php if (isset($options['onclick'])) : ?>onclick="<?= $options['onclick'] ?>"
-       data-action='<?= $options['dataAction'] ?>'<?php endif; ?>
+        <?= $component->getEventAttributesCode() ?>
        data-for="<?= $component->getWidgetId() ?>"><?= $component->getLabel() ?></a>
 </li>

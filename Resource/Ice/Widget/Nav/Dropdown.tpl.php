@@ -3,7 +3,7 @@
             class="caret"></span></a>
     <ul class="dropdown-menu" role="menu">
         <?php foreach ($options as $label => $url) { ?>
-            <li><a href="<?= $url ?>"><?= $component->getLabel() ?></a></li>
+            <li><a href="<?= $url ?>"><?= $label ?></a></li>
         <?php } ?>
     </ul>
 </li>

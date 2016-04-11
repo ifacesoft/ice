@@ -22,16 +22,16 @@
     <?php
     $count = 0;
     foreach ($parts as $columnName => $part) :
-        $colspan = isset($part['options']['colspan']) ? $part['options']['colspan'] : 1;
+        $colspan = $part->getOption('colspan') ? $part->getOption('colspan') : 1;
         $count += $colspan;
         if ($count <= $columnCount) : ?>
-            <td class="<?= $part['name'] ?>"<?php if (isset($part['options']['rowspan'])) : ?> rowspan="<?= $part['options']['rowspan'] ?>"<?php endif;
-            ?><?php if (isset($part['options']['colspan'])) : ?> colspan="<?= $part['options']['colspan'] ?>"<?php endif;
+            <td class="<?= $part->getComponentName() ?>"<?php if ($part->getOption('rowspan')) : ?> rowspan="<?= $part->getOption('rowspan') ?>"<?php endif;
+            ?><?php if ($part->getOption('colspan')) : ?> colspan="<?= $part->getOption('colspan') ?>"<?php endif;
             ?>><?php else : $count = 1 ?>
             </tr>
             <tr class="secondary_row">
-            <td class="<?= $part['name'] ?>"<?php if (isset($part['options']['rowspan'])) : ?> rowspan="<?= $part['options']['rowspan'] ?>"<?php endif;
-            ?><?php if (isset($part['options']['colspan'])) : ?> colspan="<?= $part['options']['colspan'] ?>"<?php endif;
+            <td class="<?= $part->getComponentName() ?>"<?php if ($part->getOption('rowspan')) : ?> rowspan="<?= $part->getOption('rowspan') ?>"<?php endif;
+            ?><?php if ($part->getOption('colspan')) : ?> colspan="<?= $part->getOption('colspan') ?>"<?php endif;
             ?>><?php endif; ?><?= $widget->renderPart($part) ?></td>
     <?php endforeach; ?>
     </tr>

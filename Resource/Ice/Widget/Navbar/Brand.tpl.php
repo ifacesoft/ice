@@ -1,8 +1,6 @@
 <div
     id="<?= $component->getPartId() ?><?php if (isset($offset)) : ?>_<?= $offset ?><?php endif; ?>"
-    class="navbar-header <?= $component->getName() ?><?php if (!empty($options['classes'])) : ?> <?= $options['classes'] ?><?php endif; ?>"
-    data-name="<?= $component->getName() ?>"
-    data-params='<?= $component->getDataParams() ?>'
+    class="navbar-header <?= $component->getComponentName() ?><?php if (!empty($options['classes'])) : ?> <?= $options['classes'] ?><?php endif; ?>"
     data-for="<?= $component->getWidgetId() ?>">
     <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
             aria-expanded="false" aria-controls="navbar">
@@ -13,7 +11,6 @@
     </button>
     <a class="navbar-brand"
        href="<?= $component->getHref() ?>#<?= $component->getComponentName() ?>"
-       <?php if (isset($options['onclick'])) : ?>onclick="<?= $options['onclick'] ?>"
-       data-action='<?= $options['dataAction'] ?>'<?php endif; ?>
+        <?= $component->getEventAttributesCode() ?>
        <?php if (!empty($options['target'])) : ?>target="<?= $options['target'] ?>"<?php endif; ?>><?= $component->getLabel() ?></a>
 </div>
