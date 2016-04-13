@@ -9,7 +9,7 @@ use Ice\Core\Request;
 use Ice\DataProvider\Request as DataProvider_Request;
 use Ice\Widget\Form;
 
-class Model_Form_Submit extends Widget_Event
+class Model_Form_Submit extends Widget_Form_Event
 {
     /**
      * Action config

@@ -20,7 +20,7 @@ abstract class WidgetComponent
     private $partId = null;
     private $label = null;
     private $labelTemplate = null;
-    private $params = [];
+    protected $params = null;
     private $active = null;
 
     /**
@@ -70,6 +70,8 @@ abstract class WidgetComponent
 
         $this->widgetId = $widget->getWidgetId();
         $this->partId = $this->widgetId . '_' . $componentComponentName;
+        
+        $this->initParams($widget);
     }
 
     /**
@@ -129,7 +131,7 @@ abstract class WidgetComponent
      */
     public function build(array $row, Widget $widget)
     {
-        $this->params = $this->buildParams($row);
+        $this->buildParams($row);
         
         return $this
             ->setTemplateClass($this->getOption('template'))
@@ -138,6 +140,10 @@ abstract class WidgetComponent
             ->buildLabelTemplate($this->getParams())
             ->buildLabel($this->getParams())
             ->buildActive();
+    }
+
+    public function cloneComponent() {
+        return clone $this;
     }
 
     /**
@@ -212,6 +218,10 @@ abstract class WidgetComponent
             $this->resourceClass = get_class($widget);
         }
 
+        if ($this->resourceClass === false) {
+            $this->resourceClass = null;
+        }
+
         return $this;
     }
 
@@ -255,11 +265,9 @@ abstract class WidgetComponent
 
     protected function buildParams($values)
     {
-        $params = [
-            $this->getComponentName() => array_key_exists($this->getComponentName(), $values)
+        $this->params[$this->getComponentName()] = array_key_exists($this->getComponentName(), $values)
                 ? $values[$this->getComponentName()]
-                : null
-        ];
+                : null;
 
         foreach ((array)$this->getOption('params') as $key => $value) {
             if (is_int($key)) {
@@ -267,15 +275,13 @@ abstract class WidgetComponent
             }
 
             if (is_string($value)) {
-                $params[$key] = $key == $value
+                $this->params[$key] = $key == $value
                     ? (array_key_exists($value, $values) ? $values[$value] : null)
                     : (array_key_exists($value, $values) ? $values[$value] : $value); //(isset($part['options']['default']) ? $part['options']['default'] : $value)
             } else {
-                $params[$key] = $value;
+                $this->params[$key] = $value;
             }
         }
-
-        return $params;
     }
 
     private function buildLabelTemplate($params)// todo: пусть сам label уже будет labelTemplate
@@ -405,5 +411,10 @@ abstract class WidgetComponent
     public function getParams()
     {
         return $this->params;
+    }
+
+    protected function initParams(Widget $widget)
+    {
+        $this->params = [];
     }
 }

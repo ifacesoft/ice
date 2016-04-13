@@ -35,6 +35,12 @@ class Date
     const FUTURE = '2099-12-31 00:00:00';
     const FORMAT_MYSQL_DATE = 'Y-m-d';
 
+//$UTC = new DateTimeZone("UTC");
+//$newTZ = new DateTimeZone("America/New_York");
+//$date = new DateTime( "2011-01-01 15:00:00", $UTC );
+//$date->setTimezone( $newTZ );
+//echo $date->format('Y-m-d H:i:s');
+
     /**
      * Return revision by current time
      *

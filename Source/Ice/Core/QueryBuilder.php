@@ -1820,7 +1820,7 @@ class QueryBuilder
 
             $this->widgets[] = $widget;
         }
-
+        
         return $this;
     }
 

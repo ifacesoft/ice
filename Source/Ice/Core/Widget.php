@@ -1,8 +1,12 @@
 <?php
 namespace Ice\Core;
 
+
+use Ice\Action\Widget_Form_Event;
+use Ice\Exception\Access_Denied;
 use Ice\Exception\Http;
 use Ice\Exception\RouteNotFound;
+use Ice\Helper\Access;
 use Ice\Helper\Input;
 use Ice\Helper\Json;
 use Ice\Helper\Object;
@@ -83,11 +87,16 @@ abstract class Widget extends Container
 
     /**
      * @param $name
-     * @return array
+     * @param null $default
+     * @return mixed
      */
-    public function getOption($name)
+    public function getOption($name = null, $default = null)
     {
-        return $this->options[$name];
+        if ($name === null) {
+            return $this->options;
+        }
+
+        return array_key_exists($name, $this->options) ? $this->options[$name] : $default;
     }
 
     /**
@@ -215,7 +224,7 @@ abstract class Widget extends Container
         /** @var Widget $widgetClass */
         $widgetClass = get_class($this);
 
-        $this->resourceClass = $resourceClass
+        $this->resourceClass = $resourceClass !== null
             ? $resourceClass
             : $widgetClass::getConfig()->get('render/resource', null);
 
@@ -225,6 +234,10 @@ abstract class Widget extends Container
 
         if ($this->resourceClass === true) {
             $this->resourceClass = $widgetClass::getClass();
+        }
+
+        if ($this->resourceClass === false) {
+            $this->resourceClass = null;
         }
 
         return $this;
@@ -334,8 +347,12 @@ abstract class Widget extends Container
     {
 //        /** @var Widget $widgetClass */
 //        $widgetClass = self::getClass();
-//
-//        Access::check($widgetClass::getConfig()->gets('access'));
+//        try {
+//            Access::check($widgetClass::getConfig()->gets('access'));
+//        } catch (Access_Denied $e) {
+//            //
+//            return null;
+//        }
 
         return parent::getInstance($key, $ttl, $params);
     }
@@ -398,7 +415,7 @@ abstract class Widget extends Container
 
     public function queryBuilderPart(QueryBuilder $queryBuilder, array $input)
     {
-        foreach ($this->getParts() as $partName => $part) {
+        foreach ($this->getParts() as $part) {
             if ($part instanceof WidgetComponent_Widget) {
                 $part->getWidget()->queryBuilderPart($queryBuilder, $input);
             }
@@ -429,21 +446,21 @@ abstract class Widget extends Container
         $this->result = [];
 
         $offset = $this->getOffset();
-
         $values = $this->getValues();
 
         foreach ($this->getRows() as $row) {
+            $offset++;
+
             $row = array_merge($values, $row);
 
             $rowTable = [];
 
-            foreach ($this->getParts($this->getFilterParts()) as $partName => $part) {
+            foreach ($this->getParts($this->getFilterParts(), $row) as $partName => $part) {
+                $rowTable[$partName] = $part->cloneComponent()->build($row, $this);// todo: избавиться от клонирования (дублирования билдинга)
 
-                $part->setOffset(++$offset);
-
-                $rowTable[$partName] = $part->build($row, $this);
+                $part->setOffset($offset);
             }
-            
+
             $this->result[$offset] = $rowTable;
         }
 
@@ -527,12 +544,8 @@ abstract class Widget extends Container
 
         $dataParams = $this->getValues();
 
-
         foreach ($this->getParts() as $part) {
-
-            if ($part instanceof WidgetComponent_Widget) {
-                $dataParams = array_merge($part->getWidget()->getDataParams(), $dataParams);
-            }
+            $dataParams = array_merge($part->getParams(), $dataParams);
         }
 
         return $dataParams;
@@ -581,6 +594,23 @@ abstract class Widget extends Container
      */
     protected function addPart(WidgetComponent $part)
     {
+        try {
+            $roles = $part->getOption('roles');
+            $access = $part->getOption('access');
+
+            if (!$access) {
+                $access = [];
+            }
+
+            if ($roles) {
+                $access['roles'] = $roles;
+            }
+
+            Access::check($access);
+        } catch (Access_Denied $e) {
+            return $this;
+        }
+
         $componentName = $part->getComponentName();
 
         if (!empty($options['rewrite']) && isset($this->parts[$componentName])) {
@@ -638,7 +668,7 @@ abstract class Widget extends Container
      * @version 1.0
      * @since   1.0
      */
-    public function getParts($filterParts = null)
+    public function getParts($filterParts = null, $row = null)
     {
         $ascPattern = '/(?:[^\/]+\/)?' . QueryBuilder::SQL_ORDERING_ASC . '$/';
         $descPattern = '/(?:[^\/]+\/)?' . QueryBuilder::SQL_ORDERING_DESC . '$/';
@@ -663,7 +693,7 @@ abstract class Widget extends Container
 //                }
 //            }
 //
-            $parts[$partName] = $part;
+            $parts[$partName] = $row ? $part->build($row, $this) : $part;
         }
 
         return $parts;
@@ -949,6 +979,12 @@ abstract class Widget extends Container
      */
     public function widget($columnName, array $options = [], $template = 'Ice\Widget\Widget')
     {
+        try {
+            Access::check($options['widget']::getConfig()->gets('access'));
+        } catch (Access_Denied $e) {
+            return $this;
+        }
+
         return $this->addPart(new WidgetComponent_Widget($columnName, $options, $template, $this));
     }
 
@@ -1016,23 +1052,6 @@ abstract class Widget extends Container
 //        }
 
         return $widget;
-    }
-
-    /**
-     * @param array|null $filterParts
-     * @return Widget[]
-     */
-    protected function getWidgets($filterParts = null)
-    {
-        $widgets = [];
-
-        foreach ($this->getParts($filterParts) as $partName => $part) {
-            if (isset($part['options']['widget'])) {
-                $widgets[$partName] = $part['options']['widget'];
-            }
-        }
-
-        return $widgets;
     }
 
     private function loadResource()
@@ -1122,8 +1141,7 @@ abstract class Widget extends Container
 //            'method' => 'GET',
             'ajax' => true, // todo: нужно ли?
             'callback' => null,
-            'beforeCall' => null,
-            'afterCall' => null
+            'confirm_massage' => null
         ];
     }
 }

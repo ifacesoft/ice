@@ -37,11 +37,11 @@ abstract class Model_Table_Rows extends Table_Rows
         /** @var Model $modelClass */
         $modelClass = $this->getInstanceKey();
 
+        $this->setResourceClass($modelClass);
+
         if (!isset($input[$modelClass])) {
             throw new Not_Configured(['Check config of widget {$0} for {$1}', [get_class($this), $modelClass]]);
         }
-
-        $this->setResource($modelClass);
 
         $currentTableName = $modelClass::getTableName();
 

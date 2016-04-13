@@ -144,7 +144,7 @@ class Pagination extends Widget
 
     public function li($name, array $options = [], $template = 'Ice\Widget\Pagination\Li')
     {
-        return $this->addPart(new HtmlTag($name, $options, $template, $this));
+        return $this->addPart(new HtmlTag($name, array_merge($options, ['onclick' => $this->getEvent()]), $template, $this));
     }
 
     /**

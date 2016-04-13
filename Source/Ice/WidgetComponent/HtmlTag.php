@@ -207,11 +207,8 @@ class HtmlTag extends WidgetComponent
                 'type' => $eventType,
                 'class' => empty($event['action']) ? Render::class : $event['action'],
                 'params' => empty($event['params']) ? [] : (array)$event['params'],
-                'ajax' => array_key_exists('ajax', $event) ? (bool)$event['ajax'] : true, // todo: нужно ли?
                 'callback' => empty($event['callback']) ? null : $event['callback'],
-                'confirm_message' => empty($event['confirm_message']) ? null : $event['confirm_message'],
-                'beforeCall' => empty($event['beforeCall']) ? null : $event['beforeCall'],
-                'afterCall' => empty($event['afterCall']) ? null : $event['afterCall'],
+                'confirm_message' => empty($event['confirm_message']) ? null : $event['confirm_message']
             ];
 
             if ($this->event['class'][0] == '_') {
@@ -220,6 +217,7 @@ class HtmlTag extends WidgetComponent
 
             $this->event['class'] = Action::getClass($this->event['class']);
         }
+
         return $this;
     }
 
@@ -252,20 +250,15 @@ class HtmlTag extends WidgetComponent
         return Json::encode($this->getEvent());
     }
 
-    public function getEventCode() {
+    public function getEventCode()
+    {
         $event = $this->getEvent();
 
-        if (!$event['ajax']) {
+        if (!$event) {
             return '';
         }
-        
-        $code = '';
-        
-        if (isset($event['beforeCall'])) {
-            $code .= $event['beforeCall'] . '; ';
-        }
 
-        $code .= 'Ice_Core_Widget.click($(this), \'' . $this->getHref() . '\', \'' . $this->getMethod() . '\'';
+        $code = 'Ice_Core_Widget.click($(this), \'' . $this->getHref() . '\', \'' . $this->getMethod() . '\'';
 
         if (isset($event['callback'])) {
             $code .= ', ' . $event['callback'];
@@ -274,24 +267,18 @@ class HtmlTag extends WidgetComponent
         if (isset($event['confirm_message'])) {
             $code .= ', \'' . $event['confirm_message'] . '\'';
         }
-        
-        $code .=  ');';
 
-        if (isset($event['afterCall'])) {
-            $code .= ' ' . $event['afterCall'] . ';';
-        }
-
-        return $code . ' return false;';
+        return $code . '); return false;';
     }
-    
+
     public function getEventAttributesCode()
     {
         $event = $this->getEvent();
 
-        if (!$event['ajax']) {
+        if (!$event) {
             return '';
         }
-        
+
         $code = ' ';
 
         switch ($event['type']) {
@@ -304,7 +291,7 @@ class HtmlTag extends WidgetComponent
             default:
                 $code .= 'onclick="';
         }
-        
+
         return $code . $this->getEventCode() . '" data-action=\'' . $this->getDataAction() . '\' data-params=\'' . $this->getDataParams() . '\'';
     }
 

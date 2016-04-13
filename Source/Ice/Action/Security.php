@@ -17,7 +17,7 @@ use Ice\Helper\String;
 use Ice\Model\Token;
 use Ice\Core\Logger as Core_Logger;
 
-abstract class Security extends Widget_Event
+abstract class Security extends Widget_Form_Event
 {
     /**
      * @param Security_Account|Model $account

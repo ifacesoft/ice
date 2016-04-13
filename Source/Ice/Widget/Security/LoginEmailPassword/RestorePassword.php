@@ -43,7 +43,7 @@ class Security_LoginEmailPassword_RestorePassword extends Widget_Security
                     'validators' => ['Ice:Length_Min' => 3],
                 ]
             )
-            ->div('ice-message', ['label' => '&nbsp;'])
+            ->div('ice-message', ['label' => '&nbsp;', 'resource' => false])
             ->button(
                 'restore_password',
                 [

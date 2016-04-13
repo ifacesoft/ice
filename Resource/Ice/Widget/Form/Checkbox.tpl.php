@@ -1,6 +1,6 @@
 <div class="form-group">
     <label
-        class="<?php if (!empty($widgetOptions['horizontal'])) : ?> col-md-<?= 12 - $widgetOptions['horizontal'] ?> col-md-offset-<?= $widgetOptions['horizontal'] ?><?php endif; ?>"
+        class="<?php if ($component->getHorizontal()) : ?> col-md-<?= 12 - $component->getHorizontal() ?> col-md-offset-<?= $component->getHorizontal() ?><?php endif; ?>"
         for="<?= $component->getPartId() ?>">
         <div class="checkbox" style="margin-left: 20px;">
             <input type="hidden" id="<?= $component->getPartId() . '_hidden' ?>" name="<?= $component->getName() ?>" value="0"/>

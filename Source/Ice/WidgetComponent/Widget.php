@@ -55,4 +55,9 @@ class Widget extends WidgetComponent
     {
         return $this->widget;
     }
+
+    public function getParams()
+    {
+        return array_merge($this->getWidget()->getDataParams(), parent::getParams());
+    }
 }

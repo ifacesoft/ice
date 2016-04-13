@@ -71,7 +71,7 @@ class Security_EmailPassword_Register extends Widget_Security
                     'required' => true,
                 ]
             )
-            ->div('ice-message', ['label' => '&nbsp;'])
+            ->div('ice-message', ['label' => '&nbsp;', 'resource' => false])
             ->button(
                 'register',
                 [

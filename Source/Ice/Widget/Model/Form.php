@@ -79,6 +79,8 @@ abstract class Model_Form extends Form
         /** @var Model $modelClass */
         $modelClass = $this->getInstanceKey();
 
+        $this->setResourceClass($modelClass);
+        
         /** @var Widget $widgetClass */
         $widgetClass = get_class($this);
 
@@ -87,8 +89,6 @@ abstract class Model_Form extends Form
         } catch (\Exception $e) {
             throw new Not_Configured(['Check config of widget {$0} for {$1}', [get_class($this), $modelClass]], [], $e);
         }
-
-        $this->setResource($modelClass);
 
         $pkFieldName = $modelClass::getPkFieldName();
 
@@ -127,7 +127,7 @@ abstract class Model_Form extends Form
             throw new Http_Forbidden(['Access forbidden or all fields of model {$0} on {$1}', [$modelClass, get_class($this)]]);
         }
 
-        $this->div('ice-message', ['label' => '&nbsp;']);
+        $this->div('ice-message', ['label' => '&nbsp;', 'resource' => false]);
 
         foreach ($models[$modelClass]['actions'] as $name => $options) {
             $this->button($name, $options);

@@ -35,7 +35,7 @@ class Security_EmailPassword_RestorePassword extends Widget_Security
                     'validators' => 'Ice:Email'
                 ]
             )
-            ->div('ice-message', ['label' => '&nbsp;'])
+            ->div('ice-message', ['label' => '&nbsp;', 'resource' => false])
             ->button(
                 'restore_password',
                 [

@@ -25,11 +25,6 @@ class FormElement_TextInput extends FormElement
         ];
     }
     
-    public function __construct($name, array $options, $template, $componentName)
-    {
-        parent::__construct($name, $options, $template, $componentName);
-    }
-
     public function build(array $row, Core_Widget $widget)
     {
         /** @var FormElement_TextInput $component */

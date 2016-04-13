@@ -2,19 +2,18 @@
 
 namespace Ice\WidgetComponent;
 
-use DateTime;
-use DateTimeZone;
-use Ice\Core\Loader;
-use Ice\Core\Render;
+use Ice\Core\Debuger;
+use Ice\Core\Request;
 use Ice\Core\Widget as Core_Widget;
-use Ice\Helper\Json;
-use Ice\Render\Replace;
+use Ice\DataProvider\Router;
+use Ice\Helper\Input;
 
 class FormElement extends HtmlTag
 {
     private $validators = null;
     private $name = null;
     private $value = null;
+    private $horizontal = null;
 
     /**
      * WidgetComponent config
@@ -34,12 +33,8 @@ class FormElement extends HtmlTag
     {
         parent::__construct($componentName, $options, $template, $widget);
 
-        $this->setName($options);
-        $this->setValue($options);
-
-        if (!empty($options['validators'])) {
-            $this->validators = $options['validators'];
-        }
+        $this->setName();
+        $this->setValue();
     }
 
     /**
@@ -50,9 +45,9 @@ class FormElement extends HtmlTag
         return $this->name;
     }
 
-    private function setName($options)
+    private function setName()
     {
-        $this->name = isset($options['name']) ? $options['name'] : $this->getComponentName();
+        $this->name = $this->getOption('name') ? $this->getOption('name') : $this->getComponentName();
     }
 
     /**
@@ -66,9 +61,9 @@ class FormElement extends HtmlTag
     }
 
 
-    private function setValue($options)
+    private function setValue()
     {
-        $this->value = isset($options['value']) ? $options['value'] : null;
+        $this->value = $this->getOption('value') ? $this->getOption('value') : null;
 
         if ($this->value === null) {
             $this->value = array_key_exists('default', $this->getOption())
@@ -77,16 +72,85 @@ class FormElement extends HtmlTag
         }
     }
 
+    protected function initParams(Core_Widget $widget)
+    {
+        parent::initParams($widget);
+
+//        $config = ['providers' => $this->getOption('providers') ?: ['default', Request::class]];
+//
+//        if ($default = $this->getOption('default')) {
+//            $config['default'] = $default;
+//        }
+//
+//        $input = Input::get([$this->getValue() => $config]);
+//
+//        $this->params[$this->getName()] = $input[$this->getValue()];
+    }
+
+
+    public function build(array $row, Core_Widget $widget)
+    {
+        /** @var FormElement $component */
+        $component = parent::build($row, $widget);
+
+        return $component
+            ->buildValidators()
+            ->buildHorizontal($widget);
+    }
+
+
     protected function buildParams($values)
     {
         parent::buildParams($values);
 
-        $params = [];
-
-        $params[$this->name] = $this->value == $this->getComponentName()
+        $this->params[$this->name] = $this->value == $this->getComponentName()
             ? (array_key_exists($this->value, $values) ? $values[$this->value] : null)
             : (array_key_exists($this->value, $values) ? $values[$this->value] : $this->value);
-        
-        return array_merge(parent::buildParams($values), $params);
+    }
+
+
+    private function buildHorizontal(Core_Widget $widget)
+    {
+        $this->setHorizontal($widget->getOption('horizontal'));
+
+        return $this;
+    }
+
+    /**
+     * @return null
+     */
+    public function getHorizontal()
+    {
+        return $this->horizontal;
+    }
+
+    /**
+     * @param null $horizontal
+     */
+    public function setHorizontal($horizontal)
+    {
+        $this->horizontal = $horizontal;
+    }
+
+    /**
+     * @return null
+     */
+    public function getValidators()
+    {
+        return $this->validators;
+    }
+
+    /**
+     * @param null $validators
+     */
+    protected function setValidators($validators)
+    {
+        $this->validators = $validators;
+    }
+
+    private function buildValidators()
+    {
+        $this->setValidators($this->getOption('validators'));
+        return $this;
     }
 }

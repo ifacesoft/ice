@@ -44,7 +44,7 @@ class Security_LoginPassword_Login extends Widget_Security
                     'validators' => ['Ice:Length_Min' => 5]
                 ]
             )
-            ->div('ice-message', ['label' => '&nbsp;'])
+            ->div('ice-message', ['label' => '&nbsp;', 'resource' => false])
             ->button(
                 'login',
                 [

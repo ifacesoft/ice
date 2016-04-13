@@ -1,38 +1,27 @@
-<?php if (count($result) == 1) : ?>
-    <?php
-    $parts = reset($result);
-    $part = reset($parts);
-
-    if ($part['empty']) {
-        return;
-    }
-    ?>
-<?php endif; ?>
-
 <tbody id="<?= $widgetId ?>"
        class="<?= $widgetClass ?>"
        data-widget='<?= $dataWidget ?>'
        data-params='<?= $dataParams ?>'
        data-for="<?= $parentWidgetId ?>"
 >
-<?php foreach ($result as $offset => $parts) : ?>
+<?php foreach ($result as $offset => $row) : ?>
     <tr class="primary_row">
     <?php if ($isShowCount) : ?>
-        <td rowspan="<?= $columnCount ? ceil(count($parts) / $columnCount) : 1 ?>"><?= $offset ?></td><?php endif; ?>
+        <td rowspan="<?= $columnCount ? ceil(count($row) / $columnCount) : 1 ?>"><?= $offset ?></td><?php endif; ?>
     <?php
     $count = 0;
-    foreach ($parts as $columnName => $part) :
-        $colspan = $part->getOption('colspan') ? $part->getOption('colspan') : 1;
+    foreach ($row as $columnName => $component) :
+        $colspan = $component->getOption('colspan') ? $component->getOption('colspan') : 1;
         $count += $colspan;
         if ($count <= $columnCount) : ?>
-            <td class="<?= $part->getComponentName() ?>"<?php if ($part->getOption('rowspan')) : ?> rowspan="<?= $part->getOption('rowspan') ?>"<?php endif;
-            ?><?php if ($part->getOption('colspan')) : ?> colspan="<?= $part->getOption('colspan') ?>"<?php endif;
+            <td class="<?= $component->getComponentName() ?>"<?php if ($component->getOption('rowspan')) : ?> rowspan="<?= $component->getOption('rowspan') ?>"<?php endif;
+            ?><?php if ($component->getOption('colspan')) : ?> colspan="<?= $component->getOption('colspan') ?>"<?php endif;
             ?>><?php else : $count = 1 ?>
             </tr>
             <tr class="secondary_row">
-            <td class="<?= $part->getComponentName() ?>"<?php if ($part->getOption('rowspan')) : ?> rowspan="<?= $part->getOption('rowspan') ?>"<?php endif;
-            ?><?php if ($part->getOption('colspan')) : ?> colspan="<?= $part->getOption('colspan') ?>"<?php endif;
-            ?>><?php endif; ?><?= $widget->renderPart($part) ?></td>
+            <td class="<?= $component->getComponentName() ?>"<?php if ($component->getOption('rowspan')) : ?> rowspan="<?= $component->getOption('rowspan') ?>"<?php endif;
+            ?><?php if ($component->getOption('colspan')) : ?> colspan="<?= $component->getOption('colspan') ?>"<?php endif;
+            ?>><?php endif; ?><?= $widget->renderPart($component) ?></td>
     <?php endforeach; ?>
     </tr>
 <?php endforeach; ?>

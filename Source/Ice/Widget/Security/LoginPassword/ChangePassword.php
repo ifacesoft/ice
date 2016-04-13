@@ -72,7 +72,7 @@ class Security_LoginPassword_ChangePassword extends Widget_Security
                     'placeholder' => 'confirm_password_placeholder'
                 ]
             )
-            ->div('ice-message', ['label' => '&nbsp;'])
+            ->div('ice-message', ['label' => '&nbsp;', 'resource' => false])
             ->button(
                 'change_password',
                 [

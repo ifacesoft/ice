@@ -52,14 +52,9 @@ var Ice_Core_Widget = {
 
         var dataAction = Ice.jsonToObject($element.attr('data-action'));
 
-        if (!dataAction.ajax) {
-            location.href = url;
-            return;
-        }
-
         data.widget = Ice.jsonToObject($widget.attr('data-widget'));
 
-        data = Ice.objectMerge(data, dataAction.data);
+        data = Ice.objectMerge(data, dataAction.params);
 
         var widgetCallback = function (result) {
             if (callback) {

@@ -16,7 +16,7 @@ use Ice\DataProvider\Request;
 use Ice\Helper\Access;
 use Ice\WidgetComponent\FormElement;
 
-abstract class Widget_Event extends Render
+abstract class Widget_Form_Event extends Render
 {
     protected function initInput(array $configInput, array $data = [])
     {

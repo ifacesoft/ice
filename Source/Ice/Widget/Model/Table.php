@@ -38,7 +38,7 @@ abstract class Model_Table extends Table
         /** @var Model $modelClass */
         $modelClass = $this->getInstanceKey();
 
-        $this->setResource($modelClass);
+        $this->setResourceClass($modelClass);
 
         $tableRows = $this->getWidget(['_Rows', [], $modelClass]);
 

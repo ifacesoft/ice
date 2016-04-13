@@ -22,7 +22,7 @@ use Ice\DataProvider\Request as DataProvider_Request;
  * @package    Ice
  * @subpackage Action
  */
-class Model_Form_Delete extends Widget_Event
+class Model_Form_Delete extends Widget_Form_Event
 {
     /**
      * Action config
