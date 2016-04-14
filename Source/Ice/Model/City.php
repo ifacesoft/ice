@@ -39,20 +39,9 @@ class City extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'city_pk',
-		            'Ice\Widget\Model_Form' => [
+		            'options' => [
+		                'name' => 'city_pk',
 		                'type' => 'number',
-		                'roles' => [
-		                    0 => 'ROLE_ICE_GUEST',
-		                    1 => 'ROLE_ICE_USER',
-		                ],
-		            ],
-		            'Ice\Core\Validator' => [],
-		            'Ice\Widget\Model_Table' => [
-		                'type' => 'span',
-		                'roles' => [
-		                    0 => 'ROLE_ICE_GUEST',
-		                    1 => 'ROLE_ICE_USER',
-		                ],
 		            ],
 		        ],
 		        'city_name' => [
@@ -67,21 +56,11 @@ class City extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'city_name',
-		            'Ice\Widget\Model_Form' => [
+		            'options' => [
+		                'name' => 'city_name',
 		                'type' => 'text',
-		                'roles' => [
-		                    0 => 'ROLE_ICE_GUEST',
-		                    1 => 'ROLE_ICE_USER',
-		                ],
-		            ],
-		            'Ice\Core\Validator' => [
-		                'Ice:Length_Max' => 255,
-		            ],
-		            'Ice\Widget\Model_Table' => [
-		                'type' => 'span',
-		                'roles' => [
-		                    0 => 'ROLE_ICE_GUEST',
-		                    1 => 'ROLE_ICE_USER',
+		                'validators' => [
+		                    'Ice:Length_Max' => 255,
 		                ],
 		            ],
 		        ],
@@ -97,21 +76,11 @@ class City extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'city_short',
-		            'Ice\Widget\Model_Form' => [
+		            'options' => [
+		                'name' => 'city_short',
 		                'type' => 'text',
-		                'roles' => [
-		                    0 => 'ROLE_ICE_GUEST',
-		                    1 => 'ROLE_ICE_USER',
-		                ],
-		            ],
-		            'Ice\Core\Validator' => [
-		                'Ice:Length_Max' => 32,
-		            ],
-		            'Ice\Widget\Model_Table' => [
-		                'type' => 'span',
-		                'roles' => [
-		                    0 => 'ROLE_ICE_GUEST',
-		                    1 => 'ROLE_ICE_USER',
+		                'validators' => [
+		                    'Ice:Length_Max' => 32,
 		                ],
 		            ],
 		        ],
@@ -127,20 +96,9 @@ class City extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'country__fk',
-		            'Ice\Widget\Model_Form' => [
+		            'options' => [
+		                'name' => 'country__fk',
 		                'type' => 'number',
-		                'roles' => [
-		                    0 => 'ROLE_ICE_GUEST',
-		                    1 => 'ROLE_ICE_USER',
-		                ],
-		            ],
-		            'Ice\Core\Validator' => [],
-		            'Ice\Widget\Model_Table' => [
-		                'type' => 'span',
-		                'roles' => [
-		                    0 => 'ROLE_ICE_GUEST',
-		                    1 => 'ROLE_ICE_USER',
-		                ],
 		            ],
 		        ],
 		    ],

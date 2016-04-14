@@ -40,17 +40,15 @@ class Scheme extends Model
 		                'default' => null,
 		                'comment' => '',
 		            ],
-		            'fieldName' => 'table_name',
-		            'Ice\Widget\Model_Form' => [
+		            'options' => [
+		                'name' => 'table_name',
 		                'type' => 'text',
+		                'validators' => [
+		                    'Ice:Length_Max' => 255,
+		                    0 => 'Ice:Not_Null',
+		                ],
 		            ],
-		            'Ice\Core\Validator' => [
-		                'Ice:Length_Max' => 255,
-		                0 => 'Ice:Not_Null',
-		            ],
-		            'Ice\Widget\Model_Table' => [
-		                'type' => 'span',
-		            ],
+		            'fieldName' => 'table_name',
 		        ],
 		        'revision' => [
 		            'scheme' => [
@@ -63,17 +61,15 @@ class Scheme extends Model
 		                'default' => null,
 		                'comment' => '',
 		            ],
-		            'fieldName' => 'revision',
-		            'Ice\Widget\Model_Form' => [
+		            'options' => [
+		                'name' => 'revision',
 		                'type' => 'text',
+		                'validators' => [
+		                    'Ice:Length_Max' => 12,
+		                    0 => 'Ice:Not_Null',
+		                ],
 		            ],
-		            'Ice\Core\Validator' => [
-		                'Ice:Length_Max' => 12,
-		                0 => 'Ice:Not_Null',
-		            ],
-		            'Ice\Widget\Model_Table' => [
-		                'type' => 'span',
-		            ],
+		            'fieldName' => 'revision',
 		        ],
 		        'table__json' => [
 		            'scheme' => [
@@ -86,17 +82,15 @@ class Scheme extends Model
 		                'default' => '[]',
 		                'comment' => '',
 		            ],
-		            'fieldName' => 'table__json',
-		            'Ice\Widget\Model_Form' => [
+		            'options' => [
+		                'name' => 'table__json',
 		                'type' => 'text',
+		                'validators' => [
+		                    'Ice:Length_Max' => 1023,
+		                    0 => 'Ice:Not_Null',
+		                ],
 		            ],
-		            'Ice\Core\Validator' => [
-		                'Ice:Length_Max' => 1023,
-		                0 => 'Ice:Not_Null',
-		            ],
-		            'Ice\Widget\Model_Table' => [
-		                'type' => 'span',
-		            ],
+		            'fieldName' => 'table__json',
 		        ],
 		        'columns__json' => [
 		            'scheme' => [
@@ -109,17 +103,15 @@ class Scheme extends Model
 		                'default' => '[]',
 		                'comment' => '',
 		            ],
-		            'fieldName' => 'columns__json',
-		            'Ice\Widget\Model_Form' => [
+		            'options' => [
+		                'name' => 'columns__json',
 		                'type' => 'textarea',
+		                'validators' => [
+		                    'Ice:Length_Max' => 65535,
+		                    0 => 'Ice:Not_Null',
+		                ],
 		            ],
-		            'Ice\Core\Validator' => [
-		                'Ice:Length_Max' => 65535,
-		                0 => 'Ice:Not_Null',
-		            ],
-		            'Ice\Widget\Model_Table' => [
-		                'type' => 'span',
-		            ],
+		            'fieldName' => 'columns__json',
 		        ],
 		        'references__json' => [
 		            'scheme' => [
@@ -132,17 +124,15 @@ class Scheme extends Model
 		                'default' => '[]',
 		                'comment' => '',
 		            ],
-		            'fieldName' => 'references__json',
-		            'Ice\Widget\Model_Form' => [
+		            'options' => [
+		                'name' => 'references__json',
 		                'type' => 'text',
+		                'validators' => [
+		                    'Ice:Length_Max' => 1023,
+		                    0 => 'Ice:Not_Null',
+		                ],
 		            ],
-		            'Ice\Core\Validator' => [
-		                'Ice:Length_Max' => 1023,
-		                0 => 'Ice:Not_Null',
-		            ],
-		            'Ice\Widget\Model_Table' => [
-		                'type' => 'span',
-		            ],
+		            'fieldName' => 'references__json',
 		        ],
 		        'indexes__json' => [
 		            'scheme' => [
@@ -155,17 +145,15 @@ class Scheme extends Model
 		                'default' => '[]',
 		                'comment' => '',
 		            ],
-		            'fieldName' => 'indexes__json',
-		            'Ice\Widget\Model_Form' => [
+		            'options' => [
+		                'name' => 'indexes__json',
 		                'type' => 'text',
+		                'validators' => [
+		                    'Ice:Length_Max' => 1023,
+		                    0 => 'Ice:Not_Null',
+		                ],
 		            ],
-		            'Ice\Core\Validator' => [
-		                'Ice:Length_Max' => 1023,
-		                0 => 'Ice:Not_Null',
-		            ],
-		            'Ice\Widget\Model_Table' => [
-		                'type' => 'span',
-		            ],
+		            'fieldName' => 'indexes__json',
 		        ],
 		    ],
 		    'indexes' => [
@@ -181,7 +169,7 @@ class Scheme extends Model
 		        'manyToOne' => [],
 		        'manyToMany' => [],
 		    ],
-		    'revision' => '04131354_bil',
+		    'revision' => '04140910_gwg',
 		];
     }
 }

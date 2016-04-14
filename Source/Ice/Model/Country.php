@@ -37,20 +37,9 @@ class Country extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'country_pk',
-		            'Ice\Widget\Model_Form' => [
+		            'options' => [
+		                'name' => 'country_pk',
 		                'type' => 'number',
-		                'roles' => [
-		                    0 => 'ROLE_ICE_GUEST',
-		                    1 => 'ROLE_ICE_USER',
-		                ],
-		            ],
-		            'Ice\Core\Validator' => [],
-		            'Ice\Widget\Model_Table' => [
-		                'type' => 'span',
-		                'roles' => [
-		                    0 => 'ROLE_ICE_GUEST',
-		                    1 => 'ROLE_ICE_USER',
-		                ],
 		            ],
 		        ],
 		        'country_name' => [
@@ -65,21 +54,11 @@ class Country extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'country_name',
-		            'Ice\Widget\Model_Form' => [
+		            'options' => [
+		                'name' => 'country_name',
 		                'type' => 'text',
-		                'roles' => [
-		                    0 => 'ROLE_ICE_GUEST',
-		                    1 => 'ROLE_ICE_USER',
-		                ],
-		            ],
-		            'Ice\Core\Validator' => [
-		                'Ice:Length_Max' => 255,
-		            ],
-		            'Ice\Widget\Model_Table' => [
-		                'type' => 'span',
-		                'roles' => [
-		                    0 => 'ROLE_ICE_GUEST',
-		                    1 => 'ROLE_ICE_USER',
+		                'validators' => [
+		                    'Ice:Length_Max' => 255,
 		                ],
 		            ],
 		        ],

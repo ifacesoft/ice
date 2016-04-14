@@ -16,6 +16,24 @@ use Ice\WidgetComponent\FormElement_TextInput;
 class Form extends Widget
 {
     /**
+     * Field type map
+     *
+     * @var array
+     */
+    public static $typeMap = [
+        'int' => 'number',
+        'varchar' => 'text',
+        'datetime' => 'date',
+        'timestamp' => 'date',
+        'tinyint' => 'checkbox',
+        'point' => 'map',
+        'bigint' => 'number',
+        'text' => 'textarea',
+        'double' => 'text',
+        'longtext' => 'textarea'
+    ];
+
+    /**
      * Validate scheme for validate fields
      *
      * @var array
@@ -104,9 +122,11 @@ class Form extends Widget
 
     public static function schemeColumnPlugin($columnName, $table)
     {
-        return isset(Model_Form::$typeMap[$table['columns'][$columnName]['scheme']['dataType']])
-            ? Model_Form::$typeMap[$table['columns'][$columnName]['scheme']['dataType']]
-            : 'text';
+        return [
+            'type' => isset(Form::$typeMap[$table['columns'][$columnName]['scheme']['dataType']])
+                ? Form::$typeMap[$table['columns'][$columnName]['scheme']['dataType']]
+                : 'text'
+        ];
     }
 
     /**

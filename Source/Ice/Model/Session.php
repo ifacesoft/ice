@@ -38,16 +38,14 @@ class Session extends Model
 		                'default' => null,
 		                'comment' => '',
 		            ],
-		            'fieldName' => 'session_pk',
-		            'Ice\Widget\Model_Form' => [
+		            'options' => [
+		                'name' => 'session_pk',
 		                'type' => 'text',
+		                'validators' => [
+		                    'Ice:Length_Max' => 64,
+		                ],
 		            ],
-		            'Ice\Core\Validator' => [
-		                'Ice:Length_Max' => 64,
-		            ],
-		            'Ice\Widget\Model_Table' => [
-		                'type' => 'span',
-		            ],
+		            'fieldName' => 'session_pk',
 		        ],
 		        'session_data' => [
 		            'scheme' => [
@@ -60,17 +58,15 @@ class Session extends Model
 		                'default' => null,
 		                'comment' => '',
 		            ],
-		            'fieldName' => 'session_data',
-		            'Ice\Widget\Model_Form' => [
+		            'options' => [
+		                'name' => 'session_data',
 		                'type' => 'text',
+		                'validators' => [
+		                    'Ice:Length_Max' => 65535,
+		                    0 => 'Ice:Not_Null',
+		                ],
 		            ],
-		            'Ice\Core\Validator' => [
-		                'Ice:Length_Max' => 65535,
-		                0 => 'Ice:Not_Null',
-		            ],
-		            'Ice\Widget\Model_Table' => [
-		                'type' => 'span',
-		            ],
+		            'fieldName' => 'session_data',
 		        ],
 		        'session__fk' => [
 		            'scheme' => [
@@ -83,16 +79,14 @@ class Session extends Model
 		                'default' => null,
 		                'comment' => '',
 		            ],
-		            'fieldName' => 'session__fk',
-		            'Ice\Widget\Model_Form' => [
+		            'options' => [
+		                'name' => 'session__fk',
 		                'type' => 'text',
+		                'validators' => [
+		                    'Ice:Length_Max' => 64,
+		                ],
 		            ],
-		            'Ice\Core\Validator' => [
-		                'Ice:Length_Max' => 64,
-		            ],
-		            'Ice\Widget\Model_Table' => [
-		                'type' => 'span',
-		            ],
+		            'fieldName' => 'session__fk',
 		        ],
 		        'session_created_at' => [
 		            'scheme' => [
@@ -105,16 +99,14 @@ class Session extends Model
 		                'default' => 'CURRENT_TIMESTAMP',
 		                'comment' => '',
 		            ],
-		            'fieldName' => 'session_created_at',
-		            'Ice\Widget\Model_Form' => [
+		            'options' => [
+		                'name' => 'session_created_at',
 		                'type' => 'date',
+		                'validators' => [
+		                    0 => 'Ice:Not_Null',
+		                ],
 		            ],
-		            'Ice\Core\Validator' => [
-		                0 => 'Ice:Not_Null',
-		            ],
-		            'Ice\Widget\Model_Table' => [
-		                'type' => 'span',
-		            ],
+		            'fieldName' => 'session_created_at',
 		        ],
 		        'session_updated_at' => [
 		            'scheme' => [
@@ -127,16 +119,14 @@ class Session extends Model
 		                'default' => null,
 		                'comment' => '',
 		            ],
-		            'fieldName' => 'session_updated_at',
-		            'Ice\Widget\Model_Form' => [
+		            'options' => [
+		                'name' => 'session_updated_at',
 		                'type' => 'date',
+		                'validators' => [
+		                    0 => 'Ice:Not_Null',
+		                ],
 		            ],
-		            'Ice\Core\Validator' => [
-		                0 => 'Ice:Not_Null',
-		            ],
-		            'Ice\Widget\Model_Table' => [
-		                'type' => 'span',
-		            ],
+		            'fieldName' => 'session_updated_at',
 		        ],
 		        'session_deleted_at' => [
 		            'scheme' => [
@@ -149,16 +139,14 @@ class Session extends Model
 		                'default' => '0000-00-00 00:00:00',
 		                'comment' => '',
 		            ],
-		            'fieldName' => 'session_deleted_at',
-		            'Ice\Widget\Model_Form' => [
+		            'options' => [
+		                'name' => 'session_deleted_at',
 		                'type' => 'date',
+		                'validators' => [
+		                    0 => 'Ice:Not_Null',
+		                ],
 		            ],
-		            'Ice\Core\Validator' => [
-		                0 => 'Ice:Not_Null',
-		            ],
-		            'Ice\Widget\Model_Table' => [
-		                'type' => 'span',
-		            ],
+		            'fieldName' => 'session_deleted_at',
 		        ],
 		        'session_lifetime' => [
 		            'scheme' => [
@@ -171,17 +159,15 @@ class Session extends Model
 		                'default' => null,
 		                'comment' => '',
 		            ],
-		            'fieldName' => 'session_lifetime',
-		            'Ice\Widget\Model_Form' => [
+		            'options' => [
+		                'name' => 'session_lifetime',
 		                'type' => 'text',
+		                'validators' => [
+		                    'Ice:Length_Max' => 7,
+		                    0 => 'Ice:Not_Null',
+		                ],
 		            ],
-		            'Ice\Core\Validator' => [
-		                'Ice:Length_Max' => 7,
-		                0 => 'Ice:Not_Null',
-		            ],
-		            'Ice\Widget\Model_Table' => [
-		                'type' => 'span',
-		            ],
+		            'fieldName' => 'session_lifetime',
 		        ],
 		        'cookie_lifetime' => [
 		            'scheme' => [
@@ -194,17 +180,15 @@ class Session extends Model
 		                'default' => null,
 		                'comment' => '',
 		            ],
-		            'fieldName' => 'cookie_lifetime',
-		            'Ice\Widget\Model_Form' => [
+		            'options' => [
+		                'name' => 'cookie_lifetime',
 		                'type' => 'text',
+		                'validators' => [
+		                    'Ice:Length_Max' => 7,
+		                    0 => 'Ice:Not_Null',
+		                ],
 		            ],
-		            'Ice\Core\Validator' => [
-		                'Ice:Length_Max' => 7,
-		                0 => 'Ice:Not_Null',
-		            ],
-		            'Ice\Widget\Model_Table' => [
-		                'type' => 'span',
-		            ],
+		            'fieldName' => 'cookie_lifetime',
 		        ],
 		        'ip' => [
 		            'scheme' => [
@@ -217,17 +201,15 @@ class Session extends Model
 		                'default' => null,
 		                'comment' => '',
 		            ],
-		            'fieldName' => 'ip',
-		            'Ice\Widget\Model_Form' => [
+		            'options' => [
+		                'name' => 'ip',
 		                'type' => 'text',
+		                'validators' => [
+		                    'Ice:Length_Max' => 15,
+		                    0 => 'Ice:Not_Null',
+		                ],
 		            ],
-		            'Ice\Core\Validator' => [
-		                'Ice:Length_Max' => 15,
-		                0 => 'Ice:Not_Null',
-		            ],
-		            'Ice\Widget\Model_Table' => [
-		                'type' => 'span',
-		            ],
+		            'fieldName' => 'ip',
 		        ],
 		        'agent' => [
 		            'scheme' => [
@@ -240,17 +222,15 @@ class Session extends Model
 		                'default' => null,
 		                'comment' => '',
 		            ],
-		            'fieldName' => 'agent',
-		            'Ice\Widget\Model_Form' => [
+		            'options' => [
+		                'name' => 'agent',
 		                'type' => 'text',
+		                'validators' => [
+		                    'Ice:Length_Max' => 255,
+		                    0 => 'Ice:Not_Null',
+		                ],
 		            ],
-		            'Ice\Core\Validator' => [
-		                'Ice:Length_Max' => 255,
-		                0 => 'Ice:Not_Null',
-		            ],
-		            'Ice\Widget\Model_Table' => [
-		                'type' => 'span',
-		            ],
+		            'fieldName' => 'agent',
 		        ],
 		        'user__fk' => [
 		            'scheme' => [
@@ -263,16 +243,14 @@ class Session extends Model
 		                'default' => null,
 		                'comment' => '',
 		            ],
-		            'fieldName' => 'user__fk',
-		            'Ice\Widget\Model_Form' => [
+		            'options' => [
+		                'name' => 'user__fk',
 		                'type' => 'number',
+		                'validators' => [
+		                    0 => 'Ice:Not_Null',
+		                ],
 		            ],
-		            'Ice\Core\Validator' => [
-		                0 => 'Ice:Not_Null',
-		            ],
-		            'Ice\Widget\Model_Table' => [
-		                'type' => 'span',
-		            ],
+		            'fieldName' => 'user__fk',
 		        ],
 		        'views' => [
 		            'scheme' => [
@@ -285,16 +263,14 @@ class Session extends Model
 		                'default' => null,
 		                'comment' => '',
 		            ],
-		            'fieldName' => 'views',
-		            'Ice\Widget\Model_Form' => [
+		            'options' => [
+		                'name' => 'views',
 		                'type' => 'number',
+		                'validators' => [
+		                    0 => 'Ice:Not_Null',
+		                ],
 		            ],
-		            'Ice\Core\Validator' => [
-		                0 => 'Ice:Not_Null',
-		            ],
-		            'Ice\Widget\Model_Table' => [
-		                'type' => 'span',
-		            ],
+		            'fieldName' => 'views',
 		        ],
 		    ],
 		    'indexes' => [
@@ -326,7 +302,7 @@ class Session extends Model
 		        ],
 		        'manyToMany' => [],
 		    ],
-		    'revision' => '04131354_xnd',
+		    'revision' => '04140910_ton',
 		];
     }
 

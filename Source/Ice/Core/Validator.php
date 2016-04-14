@@ -11,6 +11,7 @@ namespace Ice\Core;
 
 use Ice\Core;
 use Ice\Helper\Validator as Helper_Validator;
+use Ice\Widget\Form;
 use Ice\Widget\Model_Form;
 
 /**
@@ -118,7 +119,7 @@ abstract class Validator extends Container
     {
         $validators = [];
 
-        switch ($table['columns'][$columnName][Model_Form::getClass()]['type']) {
+        switch ($table['columns'][$columnName]['options']['type']) {
             case 'text':
             case 'textarea':
                 $validators['Ice:Length_Max'] = (int)$table['columns'][$columnName]['scheme']['length'];
@@ -132,7 +133,7 @@ abstract class Validator extends Container
             $validators[] = 'Ice:Not_Null';
         }
 
-        return $validators;
+        return $validators ? ['validators' => $validators] : [];
     }
 
     /**

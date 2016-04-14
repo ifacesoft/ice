@@ -472,7 +472,7 @@ class Mysqli extends DataSource
      * @return array
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.5
+     * @version 1.1
      * @since   0.0
      */
     public function getTables(Module $module)
@@ -560,15 +560,27 @@ class Mysqli extends DataSource
                         $tablePrefixes += $prefixes;
                     }
 
+                    if (!isset($columns[$columnName]['options'])) {
+                        $columns[$columnName]['options'] = [];
+                    }
+
+                    /** @depricated @todo: удалить когда извавимся от fieldName */
                     $columns[$columnName]['fieldName'] = Helper_Model::getFieldNameByColumnName(
+                        $columnName,
+                        $data,
+                        $tablePrefixes
+                    );
+                    
+                    $columns[$columnName]['options']['name'] = Helper_Model::getFieldNameByColumnName(
                         $columnName,
                         $data,
                         $tablePrefixes
                     );
 
                     foreach (Model::getConfig()->gets('schemeColumnPlugins') as $columnPluginClass) {
-                        $columns[$columnName][$columnPluginClass] =
-                            $columnPluginClass::schemeColumnPlugin($columnName, $data);
+                        $columns[$columnName]['options'] = array_merge(
+                            $columns[$columnName]['options'],
+                            $columnPluginClass::schemeColumnPlugin($columnName, $data));
                     }
                 }
             }

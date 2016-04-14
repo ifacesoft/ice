@@ -850,47 +850,6 @@ abstract class Model
     }
 
     /**
-     * Return form of self model class
-     *
-     * @param  array $filterFields
-     * @return Model_Form
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since   0.0
-     */
-    public static function getWidgetForm(array $filterFields = [])
-    {
-        return Model_Form::getInstance(strtolower(self::getClassName()))->addFilterFields($filterFields);
-    }
-
-    /**
-     * Return data of self model class
-     *
-     * @return Model_Table
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.6
-     * @since   0.0
-     */
-    public static function getWidgetTable()
-    {
-        $modelClass = self::getClass();
-
-        $tableData = Model_Table::getInstance(strtolower(self::getClassName()));
-
-        $tableData->bind(['modelClassName' => $modelClass]);
-
-        foreach ($modelClass::getPlugin(Model_Table::getClass()) as $fieldName => $columnType) {
-            $tableData->$columnType($fieldName, $modelClass::getFieldTitle($fieldName));
-        }
-
-        return $tableData;
-    }
-
-    /**
      * Return model validate scheme
      *
      * @param  $pluginClass

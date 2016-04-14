@@ -38,20 +38,9 @@ class Token extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'token_pk',
-		            'Ice\Widget\Model_Form' => [
+		            'options' => [
+		                'name' => 'token_pk',
 		                'type' => 'number',
-		                'roles' => [
-		                    0 => 'ROLE_ICE_GUEST',
-		                    1 => 'ROLE_ICE_USER',
-		                ],
-		            ],
-		            'Ice\Core\Validator' => [],
-		            'Ice\Widget\Model_Table' => [
-		                'type' => 'span',
-		                'roles' => [
-		                    0 => 'ROLE_ICE_GUEST',
-		                    1 => 'ROLE_ICE_USER',
-		                ],
 		            ],
 		        ],
 		        'token' => [
@@ -66,21 +55,11 @@ class Token extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'token',
-		            'Ice\Widget\Model_Form' => [
+		            'options' => [
+		                'name' => 'token',
 		                'type' => 'text',
-		                'roles' => [
-		                    0 => 'ROLE_ICE_GUEST',
-		                    1 => 'ROLE_ICE_USER',
-		                ],
-		            ],
-		            'Ice\Core\Validator' => [
-		                'Ice:Length_Max' => 64,
-		            ],
-		            'Ice\Widget\Model_Table' => [
-		                'type' => 'span',
-		                'roles' => [
-		                    0 => 'ROLE_ICE_GUEST',
-		                    1 => 'ROLE_ICE_USER',
+		                'validators' => [
+		                    'Ice:Length_Max' => 64,
 		                ],
 		            ],
 		        ],
@@ -96,20 +75,9 @@ class Token extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'token_expired',
-		            'Ice\Widget\Model_Form' => [
+		            'options' => [
+		                'name' => 'token_expired',
 		                'type' => 'date',
-		                'roles' => [
-		                    0 => 'ROLE_ICE_GUEST',
-		                    1 => 'ROLE_ICE_USER',
-		                ],
-		            ],
-		            'Ice\Core\Validator' => [],
-		            'Ice\Widget\Model_Table' => [
-		                'type' => 'span',
-		                'roles' => [
-		                    0 => 'ROLE_ICE_GUEST',
-		                    1 => 'ROLE_ICE_USER',
-		                ],
 		            ],
 		        ],
 		        'token_data__json' => [
@@ -124,21 +92,11 @@ class Token extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'token_data__json',
-		            'Ice\Widget\Model_Form' => [
+		            'options' => [
+		                'name' => 'token_data__json',
 		                'type' => 'textarea',
-		                'roles' => [
-		                    0 => 'ROLE_ICE_GUEST',
-		                    1 => 'ROLE_ICE_USER',
-		                ],
-		            ],
-		            'Ice\Core\Validator' => [
-		                'Ice:Length_Max' => 65535,
-		            ],
-		            'Ice\Widget\Model_Table' => [
-		                'type' => 'span',
-		                'roles' => [
-		                    0 => 'ROLE_ICE_GUEST',
-		                    1 => 'ROLE_ICE_USER',
+		                'validators' => [
+		                    'Ice:Length_Max' => 65535,
 		                ],
 		            ],
 		        ],
@@ -154,21 +112,11 @@ class Token extends Model
 		                'comment' => '',
 		            ],
 		            'fieldName' => 'modelClass',
-		            'Ice\Widget\Model_Form' => [
+		            'options' => [
+		                'name' => 'modelClass',
 		                'type' => 'text',
-		                'roles' => [
-		                    0 => 'ROLE_ICE_GUEST',
-		                    1 => 'ROLE_ICE_USER',
-		                ],
-		            ],
-		            'Ice\Core\Validator' => [
-		                'Ice:Length_Max' => 255,
-		            ],
-		            'Ice\Widget\Model_Table' => [
-		                'type' => 'span',
-		                'roles' => [
-		                    0 => 'ROLE_ICE_GUEST',
-		                    1 => 'ROLE_ICE_USER',
+		                'validators' => [
+		                    'Ice:Length_Max' => 255,
 		                ],
 		            ],
 		        ],
