@@ -198,7 +198,7 @@ class Config
      */
     public static function getDefault($key)
     {
-        return Config::getInstance(__CLASS__)->gets('defaults/' . $key, []);
+        return Config::getInstance(__CLASS__)->getConfig('defaults/' . $key);
     }
 
     /**

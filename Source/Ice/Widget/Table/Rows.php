@@ -7,7 +7,10 @@ use Ice\Core\QueryBuilder;
 use Ice\Core\QueryResult;
 use Ice\Core\Widget;
 use Ice\WidgetComponent\HtmlTag;
-use Ice\WidgetComponent\TablePart;
+use Ice\WidgetComponent\TableCell_A;
+use Ice\WidgetComponent\TableCell_OneToMany;
+use Ice\WidgetComponent\TableCell;
+use Ice\WidgetComponent\TableCell_Span;
 
 class Table_Rows extends Widget
 {
@@ -122,9 +125,22 @@ class Table_Rows extends Widget
      * @param  string $template
      * @return $this
      */
-    public function a($columnName, array $options = [], $template = 'Ice\Widget\Table\Rows\A')
+    public function a($columnName, array $options = [], $template = null)
     {
-        return $this->addPart(new TablePart($columnName, $options, $template, $this));
+        return $this->addPart(new TableCell_A($columnName, $options, $template, $this));
+    }
+
+    /**
+     * Build a tag part
+     *
+     * @param $columnName
+     * @param  array $options
+     * @param string $template
+     * @return $this
+     */
+    public function text($columnName, array $options = [], $template = null)
+    {
+        return $this->span($columnName, $options);
     }
 
     /**
@@ -135,9 +151,13 @@ class Table_Rows extends Widget
      * @param  string $template
      * @return $this
      */
-    public function span($columnName, array $options = [], $template = 'Ice\Widget\Table\Rows\Span')
+    public function span($columnName, array $options = [], $template = null)
     {
-        return $this->addPart(new TablePart($columnName, $options, $template, $this));
+        if (isset($options['route']) || isset($options['href'])) {
+            return $this->a($columnName, $options);
+        }
+
+        return $this->addPart(new TableCell_Span($columnName, $options, $template, $this));
     }
 
     /**
@@ -145,11 +165,25 @@ class Table_Rows extends Widget
      *
      * @param  $columnName
      * @param  array $options
-     * @param  string $template
      * @return $this
      */
-    public function checkbox($columnName, array $options = [], $template = 'Ice\Widget\Table\Rows\Checkbox')
+    public function checkbox($columnName, array $options = [])
     {
-        return $this->addPart(new TablePart($columnName, $options, $template, $this));
+        return $this->span($columnName, $options);
+    }
+
+    public function number($columnName, array $options = [])
+    {
+        return $this->span($columnName, $options);
+    }
+
+    public function date($columnName, array $options = [])
+    {
+        return $this->span($columnName, $options);
+    }
+
+    public function oneToMany($columnName, array $options = [])
+    {
+        return $this->span($columnName, $options);
     }
 }

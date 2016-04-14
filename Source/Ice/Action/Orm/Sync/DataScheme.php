@@ -200,17 +200,11 @@ class Orm_Sync_DataScheme extends Action
                                 'name' => $schemeTables[$tableName]['columns'][$columnName]['fieldName']
                             ];
                         }
-                        
-                        foreach (array_merge(Model::getConfig()->gets('schemeColumnPlugins'), ['Ice\Widget\Model_Table', 'Ice\Widget\Model_Form']) as $columnPluginClass) {
-                            if (isset($schemeTables[$tableName]['columns'][$columnName][$columnPluginClass])) {
-                                unset($schemeTables[$tableName]['columns'][$columnName][$columnPluginClass]);
-                            }
-                            
-                            $schemeTables[$tableName]['columns'][$columnName]['options'] = array_merge(
-                                $column['options'],
-                                $schemeTables[$tableName]['columns'][$columnName]['options']
-                            );
-                        }
+
+                        $schemeTables[$tableName]['columns'][$columnName]['options'] = array_merge(
+                            $column['options'],
+                            $schemeTables[$tableName]['columns'][$columnName]['options']
+                        );
                     }
 
                     if (!$isModelFieldsUpdated) {

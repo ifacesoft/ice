@@ -123,7 +123,7 @@ class Route extends Config
                     continue;
                 }
 
-                $route = array_merge_recursive($route, $defaultConfig);
+                $route = array_merge_recursive($route, $defaultConfig->gets());
                 $route['route'] = $context . $route['route'];
 
                 if (substr_count($route['route'], '{$') != count($route['params'])) {

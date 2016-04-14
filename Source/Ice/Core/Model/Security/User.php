@@ -10,4 +10,6 @@ interface Security_User
      * @return bool
      */
     public function isActive();
+    
+    public function getTimezone();
 }

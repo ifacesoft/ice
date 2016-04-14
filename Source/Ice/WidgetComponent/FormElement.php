@@ -76,7 +76,7 @@ class FormElement extends HtmlTag
     {
         parent::initParams($widget);
 
-//        $config = ['providers' => $this->getOption('providers') ?: ['default', Request::class]];
+//        $config = ['providers' => $this->getOption('providers') ? $this->getOption('providers') : ['default', Request::class]];
 //
 //        if ($default = $this->getOption('default')) {
 //            $config['default'] = $default;

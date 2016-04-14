@@ -12,9 +12,11 @@ namespace Ice\QueryTranslator;
 use Ice\Core\Debuger;
 use Ice\Core\Exception;
 use Ice\Core\Model;
+use Ice\Core\Module;
 use Ice\Core\Query;
 use Ice\Core\QueryBuilder;
 use Ice\Core\QueryTranslator;
+use Ice\Core\Security;
 use Ice\Helper\Mapping;
 
 /**
@@ -252,7 +254,7 @@ class Sql extends QueryTranslator
                     ? ' ' . $logicalOperator . "\n\t"
                     : "\n" . self::SQL_CLAUSE_WHERE . "\n\t";
 
-                $sql .=  $fieldName . ' ' . $this->buildWhere($comparisonOperator, ltrim($fieldName, '('), $count);
+                $sql .= $fieldName . ' ' . $this->buildWhere($comparisonOperator, ltrim($fieldName, '('), $count);
 
                 if ($fieldName[0] == '(') {
                     $sql .= ')';
@@ -367,26 +369,41 @@ class Sql extends QueryTranslator
         $modelClass = null;
         $tableAlias = null;
 
+        $modelSchemes = [];
+
         foreach ($part as $modelClass => $tableAliases) {
+            if (!isset($modelSchemes[$modelClass])) {
+                $modelSchemes[$modelClass] = $modelClass::getScheme();
+            }
+
             foreach ($tableAliases as $tableAlias => $select) {
-                $fieldColumnMap = $modelClass::getScheme()->getFieldColumnMap();
+                $fieldColumnMap = $modelSchemes[$modelClass]->getFieldColumnMap();
 
                 foreach ($select['columns'] as $fieldAlias => $fieldName) {
                     $isSpatial = (boolean)strpos($fieldName, '__geo');
 
                     if (isset($fieldColumnMap[$fieldName])) {
-                        $fieldName = $fieldColumnMap[$fieldName];
+                        $columnName = $fieldColumnMap[$fieldName];
 
                         if ($isSpatial) {
-                            $fieldAlias = 'asText(`' . $tableAlias . '`.`' . $fieldName . '`)' . ' AS `' . $fieldAlias . '`';
+                            $fieldAlias = 'asText(`' . $tableAlias . '`.`' . $columnName . '`)' . ' AS `' . $fieldAlias . '`';
                         } else {
-                            $fieldAlias = $fieldAlias == $fieldName
-                                ? '`' . $tableAlias . '`.`' . $fieldName . '`'
-                                : (
-                                $tableAlias === ''
-                                    ? $fieldName . ' AS `' . $fieldAlias . '`'
-                                    : '`' . $tableAlias . '`.`' . $fieldName . '` AS `' . $fieldAlias . '`'
-                                );
+                            $dateTimezone = $modelSchemes[$modelClass]->get('columns/' . $columnName . '/options/dateTimezone', null);
+
+                            if ($fieldAlias == $columnName) {
+                                $column = $tableAlias . '.`' . $columnName . '`';  // $tableAlias not need escaping (has some broken query)
+                                $column = $this->dateTimezoneSelect($dateTimezone, $column, $columnName);
+                                $fieldAlias = $column;
+                            } else {
+                                if ($tableAlias === '') {
+                                    $column = '`' . $columnName . '`';
+                                } else {
+                                    $column = $tableAlias . '.`' . $columnName . '`';
+                                }
+
+                                $column = $this->dateTimezoneSelect($dateTimezone, $column);
+                                $fieldAlias = $column . ' AS `' . $fieldAlias . '`';
+                            }
                         }
                     } else {
                         $fieldAlias = $tableAlias === ''
@@ -455,7 +472,7 @@ class Sql extends QueryTranslator
                 ? '(' . $joinModelClass->getBody() . ')'
                 : '`' . $joinModelClass::getSchemeName() . '`.`' . $joinModelClass::getTableName() . '`';
 
-            $sql .= "\n" . $joinTable['type'] . "\n\t" . $table .  ' `' . $tableAlias . '` ON (' . $joinTable['on'] . ')';
+            $sql .= "\n" . $joinTable['type'] . "\n\t" . $table . ' `' . $tableAlias . '` ON (' . $joinTable['on'] . ')';
 
         }
 
@@ -630,5 +647,32 @@ class Sql extends QueryTranslator
             "\n" . ') ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;';
 
         return $sql;
+    }
+
+    private function dateTimezoneSelect($dateTimezone, $column, $alias = null)
+    {
+        if ($dateTimezone === null) {
+            return $column;
+        }
+
+        if ($dateTimezone === true) {
+            $dateTimezone = $column == 'User.`created_at`'
+                ? null
+                : Security::getInstance()->getUser()->getTimezone();
+        }
+
+        $dateDefaults = Module::getInstance()->getDefault('date');
+
+        if (!$dateTimezone) {
+            $dateTimezone = $dateDefaults->get('timezone');
+        }
+
+        $timezone = $dateDefaults->get('storage_timezone');
+
+        if ($dateTimezone != $timezone) {
+            $column = 'CONVERT_TZ(' . $column . ',"' . $timezone . '","' . $dateTimezone . '")';
+        }
+
+        return $alias ? $column . ' AS `' . $alias . '`' : $column;
     }
 }

@@ -4,6 +4,8 @@ namespace Ice\Core;
 
 use Ice\Helper\Access;
 use Ice\Render\Replace;
+use Symfony\Bundle\DebugBundle\DebugBundle;
+use Symfony\Component\Debug\Debug;
 
 abstract class WidgetComponent
 {
@@ -19,7 +21,6 @@ abstract class WidgetComponent
     private $widgetId = null;
     private $partId = null;
     private $label = null;
-    private $labelTemplate = null;
     protected $params = null;
     private $active = null;
 
@@ -137,8 +138,6 @@ abstract class WidgetComponent
             ->setTemplateClass($this->getOption('template'))
             ->setResourceClass($this->getOption('resource'), $widget)
             ->setRenderClass($this->getOption('render'))
-            ->buildLabelTemplate($this->getParams())
-            ->buildLabel($this->getParams())
             ->buildActive();
     }
 
@@ -284,65 +283,23 @@ abstract class WidgetComponent
         }
     }
 
-    private function buildLabelTemplate($params)// todo: пусть сам label уже будет labelTemplate
-    {
-        $this->labelTemplate = $this->getOption('labelTemplate');
-
-        if ($this->labelTemplate === true) {
-            $this->labelTemplate = $this->getComponentName();
-        }
-
-        if ($this->labelTemplate && $resource = $this->getResource()) {
-            $this->labelTemplate = $resource->get($this->labelTemplate, $params);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return null
-     */
-    public function getLabelTemplate()
-    {
-        return $this->labelTemplate;
-    }
-
-    private function buildLabel($row)
-    {
-        $this->setLabel($this->getOption('label'));
-
-        if (!$this->label || $this->label === true) {
-            $this->setLabel($this->getComponentName());
-        }
-
-        if ($labelTemplate = $this->getLabelTemplate()) {
-            if ($render = strstr($labelTemplate, '/', true)) {
-                $renderClass = Render::getClass($render);
-
-                if (Loader::load($renderClass, false)) {
-                    $labelTemplate = substr($labelTemplate, strlen($render) + 1);
-                } else {
-                    $renderClass = Replace::getClass();
-                }
-            } else {
-                $renderClass = Replace::getClass();
-            }
-
-            $this->setLabel($renderClass::getInstance()->fetch($labelTemplate, $row, null, Render::TEMPLATE_TYPE_STRING));
-        } else {
-            if ($resource = $this->getResource()) {
-                $this->setLabel($resource->get($this->label, $row));
-            }
-        }
-
-        return $this;
-    }
-
     /**
      * @return null
      */
     public function getLabel() // todo: развести на отдельные сушности params, etc. для label, value, нпример $label => ['test {$test}', ['param1'= 'val', 'param2']
     {
+        if ($this->label === null) {
+            $this->setLabel($this->getOption('label', true));
+
+            if ($this->label === true) {
+                $this->setLabel($this->getComponentName());
+            }
+
+            if ($resource = $this->getResource()) {
+                $this->setLabel($resource->get($this->label, $this->getParams()));
+            }
+        }
+
         return isset($this->getParams()[$this->label]) ? $this->getParams()[$this->label] : $this->label;
     }
 

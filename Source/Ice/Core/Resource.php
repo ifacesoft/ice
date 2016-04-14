@@ -10,6 +10,7 @@ namespace Ice\Core;
 
 use Ice\Core;
 use Ice\DataProvider\Cacher;
+use Ice\DataProvider\Repository;
 use Ice\Exception\FileNotFound;
 use Ice\Helper\Api_Client_Yandex_Translate;
 use Ice\Helper\File;
@@ -79,10 +80,10 @@ class Resource implements Cacheable
 
         $locale = Request::locale();
 
-        $cacher = Cacher::getInstance($this->class, __CLASS__);
+        $repository = Repository::getInstance($this->class, __CLASS__);
         $key = $locale . '/' . crc32(Json::encode([$message, $params]));
 
-        if ($localizedMessage = $cacher->get($key)) {
+        if ($localizedMessage = $repository->get($key)) {
             return $localizedMessage;
         }
 
@@ -94,9 +95,21 @@ class Resource implements Cacheable
             $this->resource[$message][$locale] = $this->set(rtrim($message, ';'));
         }
 
-        return $cacher->set(
+        if ($render = strstr($this->resource[$message][$locale], '/', true)) {
+            $renderClass = Render::getClass($render);
+
+            if (Loader::load($renderClass, false)) {
+                $this->resource[$message][$locale] = substr($this->resource[$message][$locale], strlen($render) + 1);
+            } else {
+                $renderClass = Replace::getClass();
+            }
+        } else {
+            $renderClass = Replace::getClass();
+        }
+        
+        return $repository->set(
             $key,
-            Replace::getInstance()->fetch(
+            $renderClass::getInstance()->fetch(
                 $this->resource[$message][$locale],
                 (array)$params,
                 null,
