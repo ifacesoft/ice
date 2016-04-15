@@ -10,10 +10,12 @@ use Ice\Core\Widget;
 use Ice\Helper\Directory;
 use Ice\WidgetComponent\FormElement;
 use Ice\WidgetComponent\FormElement_Button;
+use Ice\WidgetComponent\FormElement_Chosen;
 use Ice\WidgetComponent\FormElement_ManyToMany;
 use Ice\WidgetComponent\FormElement_OneToMany;
 use Ice\WidgetComponent\FormElement_Period;
 use Ice\WidgetComponent\FormElement_TextInput;
+use Ice\WidgetComponent\FormElement_Typehead;
 
 class Form extends Widget
 {
@@ -405,29 +407,57 @@ class Form extends Widget
     /**
      * @param $fieldName
      * @param array $options
-     * @return Form
+     * @return $this
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 1.1
-     * @since   1.0
+     * @since   1.1
      */
     public function oneToMany($fieldName, array $options = [])
     {
-        return $this->addPart(new FormElement_OneToMany($fieldName, $options, null, $this));
+        return $this->addPart(new FormElement_Typehead($fieldName, $options, null, $this));
     }
 
     /**
      * @param $fieldName
      * @param array $options
-     * @return Form
+     * @return $this
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 1.1
-     * @since   1.0
+     * @since   1.1
      */
-    public function ManyToMany($fieldName, array $options = [])
+    public function manyToMany($fieldName, array $options = [])
     {
-        return $this->addPart(new FormElement_ManyToMany($fieldName, $options, null, $this));
+        return $this->addPart(new FormElement_Chosen($fieldName, $options, null, $this));
+    }
+
+    /**
+     * @param $fieldName
+     * @param array $options
+     * @return $this
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 1.1
+     * @since   1.1
+     */
+    public function oneToManyToMany($fieldName, array $options = [])
+    {
+        return $this->addPart(new FormElement_Chosen($fieldName, $options, null, $this));
+    }
+
+    /**
+     * @param $fieldName
+     * @param array $options
+     * @return $this
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 1.1
+     * @since   1.1
+     */
+    public function manyToOne($fieldName, array $options = [])
+    {
+        return $this->addPart(new FormElement_Chosen($fieldName, $options, null, $this));
     }
 
     /**

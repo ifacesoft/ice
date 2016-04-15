@@ -186,4 +186,19 @@ class Table_Rows extends Widget
     {
         return $this->span($columnName, $options);
     }
+
+    public function manyToMOne($columnName, array $options = [])
+    {
+        return $this->span($columnName, $options);
+    }
+
+    public function manyToMany($columnName, array $options = [])
+    {
+        return $this->span($columnName, $options);
+    }
+
+    public function oneToManyToMany($columnName, array $options = [])
+    {
+        return $this->span($columnName, $options);
+    }
 }
