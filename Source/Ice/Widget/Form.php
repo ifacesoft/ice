@@ -10,6 +10,8 @@ use Ice\Core\Widget;
 use Ice\Helper\Directory;
 use Ice\WidgetComponent\FormElement;
 use Ice\WidgetComponent\FormElement_Button;
+use Ice\WidgetComponent\FormElement_ManyToMany;
+use Ice\WidgetComponent\FormElement_OneToMany;
 use Ice\WidgetComponent\FormElement_Period;
 use Ice\WidgetComponent\FormElement_TextInput;
 
@@ -398,6 +400,34 @@ class Form extends Widget
     public function button($fieldName, array $options = [], $template = 'Ice\Widget\Form\Button')
     {
         return $this->addPart(new FormElement_Button($fieldName, $options, $template, $this));
+    }
+
+    /**
+     * @param $fieldName
+     * @param array $options
+     * @return Form
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 1.1
+     * @since   1.0
+     */
+    public function oneToMany($fieldName, array $options = [])
+    {
+        return $this->addPart(new FormElement_OneToMany($fieldName, $options, null, $this));
+    }
+
+    /**
+     * @param $fieldName
+     * @param array $options
+     * @return Form
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 1.1
+     * @since   1.0
+     */
+    public function ManyToMany($fieldName, array $options = [])
+    {
+        return $this->addPart(new FormElement_ManyToMany($fieldName, $options, null, $this));
     }
 
     /**
