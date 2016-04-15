@@ -1,8 +1,5 @@
-<li id="<?= $component->getPartId() ?>"
-    class="<?= $component->getComponentName() ?>
-<?php if (!empty($options['classes'])) : ?> <?= $options['classes'] ?><?php endif; ?>
-<?php if ($component->isActive()) : ?> active<?php endif; ?>
-"
+<li <?= $component->getIdAttribute() ?>
+    <?= $component->getClassAttribute() ?>
     <?= $component->getEventAttributesCode() ?>
-    data-for="<?= $component->getWidgetId() ?>"><?= $component->getLabel() ?>
+    ><?= $component->getLabel() ?>
 </li>

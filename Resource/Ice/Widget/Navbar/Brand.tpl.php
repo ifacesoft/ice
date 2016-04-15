@@ -1,7 +1,4 @@
-<div
-    id="<?= $component->getPartId() ?><?php if (isset($offset)) : ?>_<?= $offset ?><?php endif; ?>"
-    class="navbar-header <?= $component->getComponentName() ?><?php if (!empty($options['classes'])) : ?> <?= $options['classes'] ?><?php endif; ?>"
-    data-for="<?= $component->getWidgetId() ?>">
+<div <?= $component->getIdAttribute() ?> <?= $component->getClassAttribute('navbar-header') ?>>
     <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
             aria-expanded="false" aria-controls="navbar">
         <span class="sr-only">Toggle navigation</span>

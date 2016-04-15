@@ -3,9 +3,6 @@
 namespace Ice\Core;
 
 use Ice\Helper\Access;
-use Ice\Render\Replace;
-use Symfony\Bundle\DebugBundle\DebugBundle;
-use Symfony\Component\Debug\Debug;
 
 abstract class WidgetComponent
 {
@@ -23,6 +20,8 @@ abstract class WidgetComponent
     private $label = null;
     protected $params = null;
     private $active = null;
+    private $classes = null;
+    private $id = [];
 
     /**
      * WidgetComponent config
@@ -137,8 +136,7 @@ abstract class WidgetComponent
         return $this
             ->setTemplateClass($this->getOption('template'))
             ->setResourceClass($this->getOption('resource'), $widget)
-            ->setRenderClass($this->getOption('render'))
-            ->buildActive();
+            ->setRenderClass($this->getOption('render'));
     }
 
     public function cloneComponent() {
@@ -288,6 +286,8 @@ abstract class WidgetComponent
      */
     public function getLabel() // todo: развести на отдельные сушности params, etc. для label, value, нпример $label => ['test {$test}', ['param1'= 'val', 'param2']
     {
+        $params = $this->getParams();
+
         if ($this->label === null) {
             $this->setLabel($this->getOption('label', true));
 
@@ -296,11 +296,11 @@ abstract class WidgetComponent
             }
 
             if ($resource = $this->getResource()) {
-                $this->setLabel($resource->get($this->label, $this->getParams()));
+                $this->setLabel($resource->get($this->label, $params));
             }
         }
 
-        return isset($this->getParams()[$this->label]) ? $this->getParams()[$this->label] : $this->label;
+        return empty($params[$this->label]) ? $this->label : $params[$this->label];
     }
 
     /**
@@ -316,22 +316,20 @@ abstract class WidgetComponent
      */
     public function isActive()
     {
-        return $this->active;
+        if ($this->active !== null) {
+            return $this->active;
+        }
+
+        return $this->setActive((bool)$this->getOption('active', false));
     }
 
     /**
      * @param bool|null $active
+     * @return bool|null
      */
-    public function setActive($active)
+    protected function setActive($active)
     {
-        $this->active = $active;
-    }
-
-    protected function buildActive()
-    {
-        $this->setActive((bool)$this->getOption('active'));
-
-        return $this;
+        return $this->active = $active;
     }
 
     public function mergeOptions(array $options)
@@ -373,5 +371,48 @@ abstract class WidgetComponent
     protected function initParams(Widget $widget)
     {
         $this->params = [];
+    }
+
+    protected function getClasses($classes = '') {
+        if ($this->classes !== null) {
+            return $this->classes;
+        }
+
+        $class = (array)$this->getOption('classes', []);
+
+        if ($class) {
+            $classes .= ' ' . implode(' ', $class);
+        }
+
+        if ($this->isActive()) {
+            $classes .= ' active';
+        }
+        
+        return $this->classes = $this->getComponentName() . ' ' . $classes;
+    }
+
+    /**
+     * @param string $classes
+     * @return null
+     */
+    public function getClassAttribute($classes = '')
+    {
+        return 'class="' . $this->getClasses($classes) . '"';
+    }
+
+    public function getId($postfix = '') {
+        if (isset($this->id[$postfix])) {
+            return $this->id[$postfix];
+        }
+        
+        if ($postfix) {
+            $postfix = '_' . $postfix;
+        }
+        
+        return $this->id[$postfix] = $this->getPartId() . '_' . $this->getOffset() . $postfix;
+    }
+    
+    public function getIdAttribute($postfix = '') {
+        return 'id="' . $this->getId($postfix) . '" data-for="' . $this->getWidgetId() . '"';
     }
 }

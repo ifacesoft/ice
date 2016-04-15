@@ -1,7 +1,13 @@
-<button id="<?= $component->getPartId() ?><?php if (isset($offset)) : ?>_<?= $offset ?><?php endif; ?>"
-        class="btn <?= $component->getName() ?><?php if (!empty($options['classes'])) : ?> <?= $options['classes'] ?><?php endif; ?>"
+<button <?= $component->getIdAttribute() ?>
+    <?= $component->getClassAttribute() ?>
     <?= $component->getButtonType() == 'submit' ? $component->getButtonType() : $component->getEventAttributesCode() ?>
+    <?php if (isset($options['tooltip'])) : ?>
+        data-toggle="tooltip"
+        <?php if (isset($options['tooltip']['position'])) : ?>
+            data-placement="<?= $options['tooltip']['position'] ?>"
+        <?php endif; ?>
+        title="<?= $resource->get($options['tooltip']['title']); ?>"
+    <?php endif; ?>
         data-name="<?= $component->getName() ?>"
-        data-for="<?= $component->getWidgetId() ?>"
         <?php if (!empty($options['disabled'])) : ?>disabled="disabled"<?php endif; ?>
         type="<?= $component->getButtonType() ?>"><?= $component->getLabel() ?></button>

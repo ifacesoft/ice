@@ -1,21 +1,19 @@
 <div class="form-group">
     <label
         class="<?php if ($component->getHorizontal()) : ?> col-md-<?= 12 - $component->getHorizontal() ?> col-md-offset-<?= $component->getHorizontal() ?><?php endif; ?>"
-        for="<?= $component->getPartId() ?>">
+        for="<?= $component->getId() ?>">
         <div class="checkbox" style="margin-left: 20px;">
-            <input type="hidden" id="<?= $component->getPartId() . '_hidden' ?>" name="<?= $component->getName() ?>" value="0"/>
-            <input id="<?= $component->getPartId() ?>"
+            <input <?= $component->getIdAttribute('hidden') ?> type="hidden" name="<?= $component->getName() ?>" value="0"/>
+            <input <?= $component->getIdAttribute() ?>
                    type="checkbox"
-                   class="<?= $component->getComponentName() ?><?php if (!empty($options['classes'])) : ?> <?= $options['classes'] ?><?php endif; ?>"
+                <?= $component->getClassAttribute() ?>
                    name="<?= $component->getName() ?>"
                    value="1"
-                   <?php if (isset($onchange)) : ?>onchange='<?= $onchange ?>'<?php endif; ?>
                    <?php if ($component->getValue()) : ?>checked="checked"<?php endif; ?>
-                   data-for="<?= $component->getWidgetId() ?>"
                    data-name="<?= $component->getName() ?>"
                 <?= $component->getEventAttributesCode() ?>
-                   <?php if (!empty($options['disabled'])) : ?>disabled="disabled"<?php endif; ?>
-                   <?php if (!empty($options['readonly'])) : ?>readonly="readonly" <?php endif; ?>
+                   <?php if ($component->getOption('disabled', false)) : ?>disabled="disabled"<?php endif; ?>
+                   <?php if ($component->getOption('readonly', false)) : ?>readonly="readonly"<?php endif; ?>
             />
             <?= $component->getLabel() ?>
         </div>

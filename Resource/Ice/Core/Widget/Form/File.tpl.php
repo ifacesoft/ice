@@ -1,5 +1,5 @@
 <div class="form-group">
-    <div id="<?= $formName . '_' . $fieldName ?>" class="b-upload b-upload_dnd">
+    <div <?= $component->getIdAttribute() ?> class="b-upload b-upload_dnd">
         <div class="b-upload__dnd"><?= $title ?></div>
         <div class="b-upload__dnd-not-supported" style="display: none;">
             <div class="btn btn-success js-fileapi-wrapper">
@@ -21,7 +21,7 @@
     </div>
     <script>
         $(function () {
-            $('#<?= $formName . '_' . $fieldName ?>').fileapi({
+            $('#<?= $component->getId() ?>').fileapi({
                 url: '/ice/widget/form/file/upload',
                 paramName: 'filedata',
                 data: {

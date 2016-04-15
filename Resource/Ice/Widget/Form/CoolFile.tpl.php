@@ -4,7 +4,7 @@
         <div class="b-upload__dnd-not-supported" style="display: none;">
             <div class="btn btn-success js-fileapi-wrapper">
                 <span>Choose files</span>
-                <input id="<?= $component->getPartId() ?>"
+                <input <?= $component->getIdAttribute() ?>
                        name="filedata" multiple="" type="file">
             </div>
         </div>
@@ -22,7 +22,7 @@
     </div>
     <script>
         $(function () {
-            $('#<?= $component->getPartId() ?>').fileapi({
+            $('#<?= $component->getId() ?>').fileapi({
                 url: '/ice/widget/form/file/upload',
                 paramName: 'filedata',
                 data: {
