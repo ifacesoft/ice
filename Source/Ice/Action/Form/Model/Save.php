@@ -22,17 +22,6 @@ class Model_Form_Save extends Widget
             'cache' => ['ttl' => -1, 'count' => 1000],
             'input' => ['form' => ['validators' => 'Ice:Not_Empty'],],
             'output' => [],
-            'action' => [
-                //  'class' => 'Ice:Render',
-                //  'params' => [
-                //      'widgets' => [
-                ////        'Widget_id' => Widget::class
-                //      ]
-                //  ],
-                //  'url' => true,
-                //  'method' => 'POST',
-                //  'callback' => null
-            ]
         ];
     }
 

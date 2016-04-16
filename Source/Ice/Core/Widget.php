@@ -1,8 +1,6 @@
 <?php
 namespace Ice\Core;
 
-
-use Ice\Action\Widget_Form_Event;
 use Ice\Exception\Access_Denied;
 use Ice\Exception\Http;
 use Ice\Exception\RouteNotFound;
@@ -13,6 +11,7 @@ use Ice\Helper\Object;
 use Ice\Helper\String;
 use Ice\Widget\Resource_Dynamic;
 use Ice\WidgetComponent\HtmlTag;
+use Ice\WidgetComponent\HtmlTag_A;
 use Ice\WidgetComponent\Widget as WidgetComponent_Widget;
 
 
@@ -781,9 +780,9 @@ abstract class Widget extends Container
      * @param  string $template
      * @return $this
      */
-    public function a($columnName, array $options = [], $template = 'Ice\Widget\A')
+    public function a($columnName, array $options = [], $template = null)
     {
-        return $this->addPart(new HtmlTag($columnName, $options, $template, $this));
+        return $this->addPart(new HtmlTag_A($columnName, $options, $template, $this));
     }
 
     /**

@@ -49,17 +49,6 @@ class Http_Status extends Block
                 'stackTrace' => ['default' => '']
             ],
             'output' => [],
-            'action' => [
-                //  'class' => 'Ice:Render',
-                //  'params' => [
-                //      'widgets' => [
-                ////        'Widget_id' => Widget::class
-                //      ]
-                //  ],
-                //  'url' => true,
-                //  'method' => 'POST',
-                //  'callback' => null
-            ]
         ];
     }
 

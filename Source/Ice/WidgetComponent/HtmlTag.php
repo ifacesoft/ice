@@ -299,4 +299,34 @@ class HtmlTag extends WidgetComponent
     {
         return $this->getRoute()['method'];
     }
+
+    public function getHtmlTagAttributes() {
+        $htmlTagAttributes = '';
+
+        if ($style = $this->getOption('stile', null)) {
+            if ($htmlTagAttributes) {
+                $htmlTagAttributes .= ' ';
+            }
+
+            $htmlTagAttributes .= 'style"=' . $style . '"';
+        }
+
+        if ($style = $this->getOption('style', null)) {
+            if ($htmlTagAttributes) {
+                $htmlTagAttributes .= ' ';
+            }
+
+            $htmlTagAttributes .= 'style"=' . $style . '"';
+        }
+
+        if ($title = $this->getOption('title', null)) {
+            if ($htmlTagAttributes) {
+                $htmlTagAttributes .= ' ';
+            }
+
+            $htmlTagAttributes .= 'title"=' . $title . '"';
+        }
+        
+        return $htmlTagAttributes;
+    }
 }

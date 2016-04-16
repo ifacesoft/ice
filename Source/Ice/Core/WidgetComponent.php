@@ -415,4 +415,8 @@ abstract class WidgetComponent
     public function getIdAttribute($postfix = '') {
         return 'id="' . $this->getId($postfix) . '" data-for="' . $this->getWidgetId() . '"';
     }
+    
+    public function get($param, $default = null) {
+        return isset($this->params[$param]) ? $this->params[$param] : $default;
+    }
 }
