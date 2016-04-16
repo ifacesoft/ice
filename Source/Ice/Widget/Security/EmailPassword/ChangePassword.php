@@ -77,10 +77,8 @@ class Security_EmailPassword_ChangePassword extends Widget_Security
             ->button(
                 'change_password',
                 [
-                    'submit' => [
-                        'action' => Security_EmailPassword_ChangePassword_Submit::class,
-                        'url' => 'ice_security_change_password_request'
-                    ]
+                    'route' => 'ice_security_change_password_request',
+                    'submit' => Security_EmailPassword_ChangePassword_Submit::class
                 ]
             );
 

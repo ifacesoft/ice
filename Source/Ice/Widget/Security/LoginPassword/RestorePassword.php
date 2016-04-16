@@ -39,10 +39,8 @@ class Security_LoginPassword_RestorePassword extends Widget_Security
             ->button(
                 'restore_password',
                 [
-                    'submit' => [
-                        'action' => Security_LoginPassword_RestorePassword_Submit::class,
-                        'url' => 'ice_security_restore_password_request'
-                    ]
+                    'route' => 'ice_security_restore_password_request',
+                    'submit' => Security_LoginPassword_RestorePassword_Submit::class
                 ]
             );
 

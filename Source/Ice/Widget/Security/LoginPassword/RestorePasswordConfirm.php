@@ -61,10 +61,8 @@ class Security_LoginPassword_RestorePasswordConfirm extends Widget_Security
             ->button(
                 'restore_password_confirm',
                 [
-                    'submit' => [
-                        'action' => Security_LoginPassword_RestorePasswordConfirm_Submit::class,
-                        'url' => 'ice_security_restore_password_confirm_request'
-                    ]
+                    'route' => 'ice_security_restore_password_confirm_request',
+                    'submit' => Security_LoginPassword_RestorePasswordConfirm_Submit::class
                 ]
             );
     }

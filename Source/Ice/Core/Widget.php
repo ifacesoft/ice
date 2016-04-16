@@ -1136,9 +1136,7 @@ abstract class Widget extends Container
             'type' => 'onclick',
             'action' => Render::class,
             'params' => ['widgets' => [$this->getParentWidgetId() => $this->getParentWidgetClass()]],
-//            'url' => [Router::getInstance()->getName(), $this->getDataParams(), true],
-//            'method' => 'GET',
-            'ajax' => true, // todo: нужно ли?
+            'ajax' => true,
             'callback' => null,
             'confirm_massage' => null
         ];

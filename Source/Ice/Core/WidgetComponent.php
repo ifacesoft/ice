@@ -9,7 +9,6 @@ abstract class WidgetComponent
     use Configured;
 
     private $options = [];
-
     private $componentName = null;
     private $templateClass = null;
     private $resourceClass = null;
@@ -132,7 +131,7 @@ abstract class WidgetComponent
     public function build(array $row, Widget $widget)
     {
         $this->buildParams($row);
-        
+
         return $this
             ->setTemplateClass($this->getOption('template'))
             ->setResourceClass($this->getOption('resource'), $widget)

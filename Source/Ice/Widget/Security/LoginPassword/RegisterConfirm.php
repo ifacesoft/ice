@@ -52,10 +52,8 @@ class Security_LoginPassword_RegisterConfirm extends Widget_Security
             ->button(
                 'register_confirm',
                 [
-                    'submit' => [
-                        'action' => Security_LoginPassword_RegisterConfirm_Submit::class,
-                        'url' => 'ice_security_register_confirm_request'
-                    ]
+                    'route' => 'ice_security_register_confirm_request',
+                    'submit' => Security_LoginPassword_RegisterConfirm_Submit::class
                 ]
             );
     }

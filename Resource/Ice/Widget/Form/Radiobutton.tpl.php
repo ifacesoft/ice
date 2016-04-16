@@ -1,4 +1,4 @@
-<?php foreach ($options['items'] as $key => $radio) : ?>
+<?php foreach ($component->getOption('items', []) as $key => $radio) : ?>
     <div class="radio">
         <label for="<?= $component->getId($key) ?>">
             <input <?= $component->getIdAttribute($key) ?>
@@ -6,7 +6,7 @@
                 type="radio"
                 name="<?= $component->getName() ?>"
                 value="<?= $key ?>"
-                <?php if ($params[$name] == $key) { ?>checked="checked" <?php } ?>
+                <?php if ($component->get($component->getName()) == $key) { ?>checked="checked" <?php } ?>
                 data-for="<?= $component->getWidgetId() ?>"
                 <?= $component->getEventAttributesCode() ?>
                 <?php if ($component->getOption('disabled', false)) : ?>disabled="disabled"<?php endif; ?>

@@ -1,6 +1,7 @@
-<h4 <?= $component->getIdAttribute() ?>
-    <?= $component->getClassAttribute() ?>
-><a href="<?= $component->getHref() ?>#<?= $component->getComponentName() ?>"
+<h4 <?= $component->getClassAttribute() ?>>
+    <a <?= $component->getIdAttribute() ?>
         <?= $component->getEventAttributesCode() ?>
-    ><?php if (isset($params[$label])) : ?><?= $params[$label] ?><?php else : ?><?= $component->getLabel() ?><?php endif; ?></a>
+        <?= $component->getHtmlTagAttributes() ?>
+        href="<?= $component->getHref() ?>#<?= $component->getComponentName() ?>"
+    ><?= $component->getLabel() ?></a>
 </h4>

@@ -200,6 +200,14 @@ class HtmlTag extends WidgetComponent
         $eventType = key($event);
         $event = reset($event);
 
+        if ($event === null) {
+            return $this;
+        }
+
+        if (is_string($event)) {
+            $event = ['action' => $event];
+        }
+        
         if ($event === true) {
             $this->event = $widget->getRenderEvent();
         } else {

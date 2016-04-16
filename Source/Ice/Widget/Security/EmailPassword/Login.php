@@ -48,10 +48,8 @@ class Security_EmailPassword_Login extends Widget_Security
             ->button(
                 'login',
                 [
-                    'submit' => [
-                        'action' => Security_EmailPassword_Login_Submit::class,
-                        'url' => 'ice_security_login_request',
-                    ]
+                    'route' => 'ice_security_login_request',
+                    'submit' => Security_EmailPassword_Login_Submit::class
                 ]
             );
 

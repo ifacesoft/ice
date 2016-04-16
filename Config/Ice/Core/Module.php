@@ -14,7 +14,7 @@ return [
     'alias' => 'Ice',
     'module' => [
         'name' => 'Ice',
-        'version' => '1.0.6',
+        'version' => '1.0.*',
         'description' => 'Ice Open Source PHP Framework',
         'url' => 'http://iceframework.net',
         'type' => 'module',

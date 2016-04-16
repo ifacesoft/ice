@@ -29,40 +29,23 @@ class FormElement extends HtmlTag
         ];
     }
 
-    public function __construct($componentName, array $options, $template, Core_Widget $widget)
-    {
-        parent::__construct($componentName, $options, $template, $widget);
-
-        $this->setName();
-        $this->setValue();
-    }
-
     /**
      * @return string
      */
     public function getName()
     {
-        return $this->name;
+        if ($this->name !== null) {
+            return $this->name;
+        }
+
+        return $this->name = $this->getOption('name') ? $this->getOption('name') : $this->getComponentName();
     }
 
-    private function setName()
-    {
-        $this->name = $this->getOption('name') ? $this->getOption('name') : $this->getComponentName();
-    }
+    public function getRawValue() {
+        if ($this->value !== null) {
+            return $this->value;
+        }
 
-    /**
-     * @return null
-     */
-    public function getValue()
-    {
-        return array_key_exists($this->value, $this->getParams())
-            ? htmlentities($this->getParams()[$this->value], ENT_QUOTES)
-            : '';
-    }
-
-
-    private function setValue()
-    {
         $this->value = $this->getOption('value') ? $this->getOption('value') : null;
 
         if ($this->value === null) {
@@ -70,6 +53,18 @@ class FormElement extends HtmlTag
                 ? $this->getOption('default')
                 : $this->getComponentName();
         }
+
+        return $this->value;
+    }
+
+    /**
+     * @return null
+     */
+    public function getValue()
+    {
+        return array_key_exists($this->getRawValue(), $this->getParams())
+            ? htmlentities($this->get($this->getRawValue()), ENT_QUOTES)
+            : '';
     }
 
     protected function initParams(Core_Widget $widget)
@@ -103,9 +98,13 @@ class FormElement extends HtmlTag
     {
         parent::buildParams($values);
 
-        $this->params[$this->name] = $this->value == $this->getComponentName()
-            ? (array_key_exists($this->value, $values) ? $values[$this->value] : null)
-            : (array_key_exists($this->value, $values) ? $values[$this->value] : $this->value);
+        $name = $this->getName();
+
+        if ($this->params[$name] === null) {
+            $this->params[$name] = $this->value == $this->getComponentName()
+                ? (array_key_exists($this->value, $values) ? $values[$this->value] : null)
+                : (array_key_exists($this->value, $values) ? $values[$this->value] : $this->value);
+        }
     }
 
 
