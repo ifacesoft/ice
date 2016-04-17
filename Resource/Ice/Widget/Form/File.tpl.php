@@ -12,7 +12,6 @@
             <?= $component->getClassAttribute($component->getOption('resetFormClass', false) ? '' : 'form-control') ?>
             type="hidden"
             name="<?= $component->getName() ?>"
-            <?= $component->getPlaceholderAttribute() ?>
             <?= $component->getEventAttributesCode() ?>
             <?php if ($component->getOption('disabled', false)) : ?>disabled="disabled"<?php endif; ?>
             <?php if ($component->getOption('readonly', false)) : ?>readonly="readonly"<?php endif; ?>

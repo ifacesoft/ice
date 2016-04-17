@@ -276,21 +276,7 @@ abstract class Model
             !$this->setSpatialValue($fieldName, $fieldValue, $isAffected) &&
             !$this->setFkValue($fieldName, $fieldValue, $isAffected)
         ) {
-            /**
-             * @var Model $modelClass
-             */
-            $modelClass = get_class($this);
-
-            Logger::getInstance(__CLASS__)->exception(
-                [
-                    'Could not set value: Field "{$0}" not found in Model "{$1}"',
-                    [$fieldName, $modelClass::getClassName()]
-                ],
-                __FILE__,
-                __LINE__,
-                null,
-                $fieldValue
-            );
+            $this->raw[$fieldName] = $fieldValue;
         }
 
         return $this;

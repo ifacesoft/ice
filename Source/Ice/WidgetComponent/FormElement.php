@@ -75,23 +75,7 @@ class FormElement extends HtmlTag
             : '';
     }
 
-    protected function initParams(Core_Widget $widget)
-    {
-        parent::initParams($widget);
-
-//        $config = ['providers' => $this->getOption('providers') ? $this->getOption('providers') : ['default', Request::class]];
-//
-//        if ($default = $this->getOption('default')) {
-//            $config['default'] = $default;
-//        }
-//
-//        $input = Input::get([$this->getValue() => $config]);
-//
-//        $this->params[$this->getName()] = $input[$this->getValue()];
-    }
-
-
-    public function build(array $row)
+        public function build(array $row)
     {
         /** @var FormElement $component */
         $component = parent::build($row);
@@ -111,6 +95,18 @@ class FormElement extends HtmlTag
             $this->params[$name] = $this->value == $this->getComponentName()
                 ? (array_key_exists($this->value, $values) ? $values[$this->value] : null)
                 : (array_key_exists($this->value, $values) ? $values[$this->value] : $this->value);
+        }
+
+        if ($providers = $this->getOption('providers')) {
+            $config = ['providers' => $providers];
+
+            if ($default = $this->getOption('default')) {
+                $config['default'] = $default;
+            }
+
+            $input = Input::get([$this->getName() => $config]);
+
+            $this->params[$this->getName()] = $input[$this->getName()];
         }
     }
 

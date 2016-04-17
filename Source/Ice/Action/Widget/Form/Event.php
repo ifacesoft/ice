@@ -36,11 +36,11 @@ abstract class Widget_Form_Event extends Render
 
             $request = Request::getInstance();
 
-            foreach ($widget->getParts() as $part) {
-                if ($part instanceof FormElement) {
-                    $widget->bind([$part->getName() => $request->get($part->getName())]);
-                }
-            }
+//            foreach ($widget->getParts() as $part) {
+//                if ($part instanceof FormElement) {
+//                    $widget->bind([$part->getName() => $request->get($part->getName())]);
+//                }
+//            }
 
             $input['widget'] = $widget;
         }

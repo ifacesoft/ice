@@ -190,7 +190,7 @@ class HtmlTag extends WidgetComponent
             }
         }
 
-        return $this->href ? $this->href : Router::getInstance()->getUrl();
+        return $this->href ? $this->href : Request::uri();
     }
 
     /**
