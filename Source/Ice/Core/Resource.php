@@ -8,6 +8,7 @@
  */
 namespace Ice\Core;
 
+use FOS\UserBundle\Command\DeactivateUserCommand;
 use Ice\Core;
 use Ice\DataProvider\Cacher;
 use Ice\DataProvider\Repository;
@@ -16,6 +17,7 @@ use Ice\Helper\Api_Client_Yandex_Translate;
 use Ice\Helper\File;
 use Ice\Helper\Json;
 use Ice\Helper\String;
+use Ice\Render\Php;
 use Ice\Render\Replace;
 
 /**
@@ -72,7 +74,7 @@ class Resource implements Cacheable
      * @version 0.0
      * @since   0.0
      */
-    public function get($message, $params = null, $class = null)
+    public function get($message, $params = [], $class = null)
     {
         if ($class) {
             return Resource::create($class)->get($message, $params);
@@ -95,22 +97,24 @@ class Resource implements Cacheable
             $this->resource[$message][$locale] = $this->set(rtrim($message, ';'));
         }
 
-        if ($render = strstr($this->resource[$message][$locale], '/', true)) {
+        $resourceMessage = $this->resource[$message][$locale];
+
+        if ($render = strstr($resourceMessage, '/', true)) {
             $renderClass = Render::getClass($render);
 
             if (Loader::load($renderClass, false)) {
-                $this->resource[$message][$locale] = substr($this->resource[$message][$locale], strlen($render) + 1);
+                $resourceMessage = substr($this->resource[$message][$locale], strlen($render) + 1);
             } else {
                 $renderClass = Replace::getClass();
             }
         } else {
             $renderClass = Replace::getClass();
         }
-        
+
         return $repository->set(
             $key,
             $renderClass::getInstance()->fetch(
-                $this->resource[$message][$locale],
+                $resourceMessage,
                 (array)$params,
                 null,
                 Render::TEMPLATE_TYPE_STRING

@@ -17,8 +17,8 @@ abstract class WidgetComponent
     private $offset = null;
 
     private $widgetId = null;
-    
-    private $label = null;
+
+    protected $label = null;
     protected $params = null;
     private $active = null;
     private $classes = null;
@@ -75,7 +75,7 @@ abstract class WidgetComponent
             ->setRenderClass($this->getOption('render'));
 
         $this->widgetId = $widget->getWidgetId();
-       
+
         $this->initParams($widget);
     }
 
@@ -140,7 +140,8 @@ abstract class WidgetComponent
         return $this;
     }
 
-    public function cloneComponent() {
+    public function cloneComponent()
+    {
         return clone $this;
     }
 
@@ -264,8 +265,8 @@ abstract class WidgetComponent
     protected function buildParams($values)
     {
         $this->params[$this->getComponentName()] = array_key_exists($this->getComponentName(), $values)
-                ? $values[$this->getComponentName()]
-                : null;
+            ? $values[$this->getComponentName()]
+            : null;
 
         foreach ((array)$this->getOption('params') as $key => $value) {
             if (is_int($key)) {
@@ -285,20 +286,20 @@ abstract class WidgetComponent
     /**
      * @return null
      */
-    public function getLabel() // todo: развести на отдельные сушности params, etc. для label, value, нпример $label => ['test {$test}', ['param1'= 'val', 'param2']
+    public function getLabel()
     {
-        $params = $this->getParams();
+        if ($this->label !== null) {
+            return $this->label;
+        }
 
-        if ($this->label === null) {
-            $this->setLabel($this->getOption('label', true));
+        $this->setLabel($this->getOption('label', true));
 
-            if ($this->label === true) {
-                $this->setLabel($this->getComponentName());
-            }
+        if ($this->label === true) {
+            $this->setLabel($this->getComponentName());
+        }
 
-            if ($resource = $this->getResource()) {
-                $this->setLabel($resource->get($this->label, $params));
-            }
+        if ($resource = $this->getResource()) {
+            $this->setLabel($resource->get($this->label, $this->getParams()));
         }
 
         return $this->label;
@@ -306,10 +307,11 @@ abstract class WidgetComponent
 
     /**
      * @param null $label
+     * @return null
      */
     public function setLabel($label)
     {
-        $this->label = $label;
+        return $this->label = $label;
     }
 
     /**
@@ -374,7 +376,8 @@ abstract class WidgetComponent
         $this->params = [];
     }
 
-    protected function getClasses($classes = '') {
+    protected function getClasses($classes = '')
+    {
         if ($this->classes !== null) {
             return $this->classes;
         }
@@ -388,7 +391,7 @@ abstract class WidgetComponent
         if ($this->isActive()) {
             $classes .= ' active';
         }
-        
+
         return $this->classes = $this->getComponentName() . ' ' . $classes;
     }
 
@@ -401,27 +404,31 @@ abstract class WidgetComponent
         return 'class="' . $this->getClasses($classes) . '"';
     }
 
-    public function getId($postfix = '') {
+    public function getId($postfix = '')
+    {
         if (isset($this->id[$postfix])) {
             return $this->id[$postfix];
         }
-        
+
         if ($postfix) {
             $postfix = '_' . $postfix;
         }
-        
+
         return $this->id[$postfix] = $this->getPartId() . '_' . $this->getOffset() . $postfix;
     }
-    
-    public function getIdAttribute($postfix = '') {
+
+    public function getIdAttribute($postfix = '')
+    {
         return 'id="' . $this->getId($postfix) . '" data-for="' . $this->getWidgetId() . '"';
     }
-    
-    public function get($param, $default = null) {
+
+    public function get($param, $default = null)
+    {
         return isset($this->params[$param]) ? $this->params[$param] : $default;
     }
-    
-    public function ifOption($name, $value, $default = null) {
+
+    public function ifOption($name, $value, $default = null)
+    {
         return $this->getOption($name, $default) === $value;
     }
 }

@@ -23,7 +23,7 @@ class HtmlTag extends WidgetComponent
     private $widgetClass = null;
     private $parentWidgetClass = null;
     private $parentWidgetId = null;
-
+    private $row = [];
     /**
      * WidgetComponent config
      *
@@ -73,22 +73,37 @@ class HtmlTag extends WidgetComponent
 
     public function build(array $row)
     {
+        $this->row = $row;
+
         /** @var HtmlTag $component */
         $component = parent::build($row);
 
         return $component
-            ->buildRoute($row)
-            ->buildRouteLabel($this->getParams())
-            ->buildHref()
             ->buildEvent();
     }
 
-    protected function buildRoute($row)
+    /**
+     * @return null
+     */
+    public function getRow()
     {
+        return $this->row;
+    }
+
+    /**
+     * @return null
+     * @throws Error
+     */
+    public function getRoute()
+    {
+//        if ($this->route !== null) { // todo: Где вызывается перый раз, надо искать
+//            return $this->route;
+//        }
+
         $route = $this->getOption('route');
 
         if (!$route) {
-            return $this;
+            return $this->route;
         }
 
         if (is_string($route)) {
@@ -117,6 +132,8 @@ class HtmlTag extends WidgetComponent
 
         $routeParams = [];
 
+        $row = $this->getRow();
+
         foreach ((array)$this->route['params'] as $routeParamKey => $routeParamValue) {
             if (is_int($routeParamKey)) {
                 $routeParams[$routeParamValue] = !is_array($routeParamValue) && array_key_exists($routeParamValue, $row)
@@ -133,66 +150,35 @@ class HtmlTag extends WidgetComponent
 
         $this->route['params'] = $routeParams;
 
-        return $this;
-
-    }
-
-    /**
-     * @return null
-     */
-    public function getRoute()
-    {
         return $this->route;
     }
 
     /**
      * @param null $route
+     * @return null
      */
     public function setRoute($route)
     {
-        $this->route = $route;
-    }
-
-    protected function buildRouteLabel($params)
-    {
-        $route = $this->getRoute();
-
-        if ($route && !$this->getOption('label')) {
-            $this->setLabel(Resource::create(Route::getClass())->get($route['name'], $route['params']));
-
-            if ($resource = $this->getResource()) {
-                $this->setLabel($resource->get($this->getLabel()), $params);
-            }
-        }
-
-        return $this;
+        return $this->route = $route;
     }
 
     /**
      * @return null
+     * @throws Error
      */
     public function getHref()
     {
-        return $this->href;
-    }
+        if ($this->href !== null) {
+            return $this->href;
+        }
 
-    /**
-     * @param null $href
-     */
-    public function setHref($href)
-    {
-        $this->href = $href;
-    }
-
-    protected function buildHref()
-    {
-        $this->setHref($this->getOption('href'));
+        $this->setHref($this->getOption('href', null));
 
         $route = $this->getRoute();
 
-        if ($route && !$this->getHref()) {
+        if ($route && !$this->href) {
             try {
-                $this->setHref(Router::getInstance()->getUrl([$route['name'], $route['params'], $route['withGet'], $route['withDomain']]));
+                return $this->setHref(Router::getInstance()->getUrl([$route['name'], $route['params'], $route['withGet'], $route['withDomain']]));
             } catch (\Exception $e) {
                 throw new Error(
                     [
@@ -204,20 +190,47 @@ class HtmlTag extends WidgetComponent
             }
         }
 
-        return $this;
+        return $this->href ? $this->href : Router::getInstance()->getUrl();
     }
 
-    protected function buildActive()
+    /**
+     * @param null $href
+     * @return null
+     */
+    public function setHref($href)
     {
-        parent::buildActive();
+        return $this->href = $href;
+    }
 
-        if ($this->getOption('active') !== null) {
+    public function getLabel()
+    {
+        if ($this->getOption('label') !== null) {
+            return parent::getLabel();
+        }
+
+        if ($route = $this->getRoute()) {
+            $label = $this->setLabel(Resource::create(Route::getClass())->get($route['name'], $route['params']));
+
+            if ($resource = $this->getResource()) {
+                $label = $this->setLabel($resource->get($label, $this->getParams()));
+            }
+
+            return $label;
+        }
+
+        return parent::getLabel();
+    }
+
+
+    public function isActive()
+    {
+        if ($this->getOption('active') === null) {
             if ($href = $this->getHref()) {
-                $this->setActive(String::startsWith(Request::uri(), $href));
+                return $this->setActive(String::startsWith(Request::uri(), $href));
             }
         }
 
-        return $this;
+        return parent::isActive();
     }
 
     private function buildEvent()
@@ -349,7 +362,9 @@ class HtmlTag extends WidgetComponent
 
     public function getMethod()
     {
-        return $this->getRoute()['method'];
+        $route = $this->getRoute();
+
+        return isset($route['method']) ? $route['method'] : 'POST';
     }
 
     public function getHtmlTagAttributes()

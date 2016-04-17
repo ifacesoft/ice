@@ -1,5 +1,5 @@
 <input <?= $component->getIdAttribute() ?>
-       type="hidden"
-       name="<?= $component->getName() ?>"
-       value="<?= isset($params[$value]) ? htmlentities($params[$value], ENT_QUOTES) : '' ?>"
+    type="hidden"
+    name="<?= $component->getName() ?>"
+    value="<?= htmlentities($component->getValue(), ENT_QUOTES) ?>"
 >

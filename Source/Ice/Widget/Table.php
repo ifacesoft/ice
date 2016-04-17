@@ -39,7 +39,7 @@ class Table extends Widget
         return $this->getWidget($widgetClass)
             ->setEvent([
                 'action' => Render::class,
-                'data' => [
+                'params' => [
                     'widgets' => [
                         $this->getInstanceKey() => get_class($this)
                     ]
