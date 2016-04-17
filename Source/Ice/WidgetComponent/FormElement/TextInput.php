@@ -25,16 +25,16 @@ class FormElement_TextInput extends FormElement
         ];
     }
     
-    public function build(array $row, Core_Widget $widget)
+    public function build(array $row)
     {
         /** @var FormElement_TextInput $component */
-        $component = parent::build($row, $widget);
+        $component = parent::build($row);
 
         return $component
-            ->buildPlaceholder($row, $widget);
+            ->buildPlaceholder();
     }
 
-    private function buildPlaceholder($row, Core_Widget $widget)
+    private function buildPlaceholder()
     {
         $this->placeholder = $this->getOption('placeholder');
         

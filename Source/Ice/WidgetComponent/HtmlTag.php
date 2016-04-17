@@ -20,6 +20,9 @@ class HtmlTag extends WidgetComponent
     private $route = null;
     private $href = null;
     private $event = null;
+    private $widgetClass = null;
+    private $parentWidgetClass = null;
+    private $parentWidgetId = null;
 
     /**
      * WidgetComponent config
@@ -38,18 +41,46 @@ class HtmlTag extends WidgetComponent
     public function __construct($componentName, array $options, $template, Core_Widget $widget)
     {
         parent::__construct($componentName, $options, $template, $widget);
+
+        $this->widgetClass = get_class($widget);
+        $this->parentWidgetClass = $widget->getParentWidgetClass();
+        $this->parentWidgetId = $widget->getParentWidgetId();
     }
 
-    public function build(array $row, Core_Widget $widget)
+    /**
+     * @return null
+     */
+    public function getParentWidgetClass()
+    {
+        return $this->parentWidgetClass;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getWidgetClass()
+    {
+        return $this->widgetClass;
+    }
+
+    /**
+     * @return null
+     */
+    public function getParentWidgetId()
+    {
+        return $this->parentWidgetId;
+    }
+
+    public function build(array $row)
     {
         /** @var HtmlTag $component */
-        $component = parent::build($row, $widget);
+        $component = parent::build($row);
 
         return $component
             ->buildRoute($row)
             ->buildRouteLabel($this->getParams())
             ->buildHref()
-            ->buildEvent($widget);
+            ->buildEvent();
     }
 
     protected function buildRoute($row)
@@ -189,7 +220,7 @@ class HtmlTag extends WidgetComponent
         return $this;
     }
 
-    private function buildEvent(Core_Widget $widget)
+    private function buildEvent()
     {
         $event = array_intersect_key($this->getOption(), array_flip(['onclick', 'onchange', 'submit']));
 
@@ -207,20 +238,29 @@ class HtmlTag extends WidgetComponent
         if (is_string($event)) {
             $event = ['action' => $event];
         }
-        
+
         if ($event === true) {
-            $this->event = $widget->getRenderEvent();
+            $this->event = [
+                'type' => 'onclick',
+                'action' => Render::class,
+                'params' => ['widgets' => [$this->getParentWidgetId() => $this->getParentWidgetClass()]],
+                'ajax' => true,
+                'callback' => null,
+                'confirm_massage' => null,
+                'code' => ''
+            ];
         } else {
             $this->event = [
                 'type' => $eventType,
                 'class' => empty($event['action']) ? Render::class : $event['action'],
                 'params' => empty($event['params']) ? [] : (array)$event['params'],
                 'callback' => empty($event['callback']) ? null : $event['callback'],
-                'confirm_message' => empty($event['confirm_message']) ? null : $event['confirm_message']
+                'confirm_message' => empty($event['confirm_message']) ? null : $event['confirm_message'],
+                'code' => empty($event['code']) ? '' : $event['code'],
             ];
 
             if ($this->event['class'][0] == '_') {
-                $this->event['class'] = get_class($widget) . $this->event['class'];
+                $this->event['class'] = $this->getWidgetClass() . $this->event['class'];
             }
 
             $this->event['class'] = Action::getClass($this->event['class']);
@@ -266,6 +306,10 @@ class HtmlTag extends WidgetComponent
             return '';
         }
 
+        if ($event['code']) {
+            return $event['code'];
+        }
+
         $code = 'Ice_Core_Widget.click($(this), \'' . $this->getHref() . '\', \'' . $this->getMethod() . '\'';
 
         if (isset($event['callback'])) {
@@ -308,7 +352,8 @@ class HtmlTag extends WidgetComponent
         return $this->getRoute()['method'];
     }
 
-    public function getHtmlTagAttributes() {
+    public function getHtmlTagAttributes()
+    {
         $htmlTagAttributes = '';
 
         if ($style = $this->getOption('stile', null)) {
@@ -334,7 +379,7 @@ class HtmlTag extends WidgetComponent
 
             $htmlTagAttributes .= 'title"=' . $title . '"';
         }
-        
+
         return $htmlTagAttributes;
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Ice\Core;
 
+use Ebs\Widget\Order_Basket_Form;
 use Ice\Helper\Access;
 
 abstract class WidgetComponent
@@ -14,8 +15,9 @@ abstract class WidgetComponent
     private $resourceClass = null;
     private $renderClass = null;
     private $offset = null;
+
     private $widgetId = null;
-    private $partId = null;
+    
     private $label = null;
     protected $params = null;
     private $active = null;
@@ -67,9 +69,13 @@ abstract class WidgetComponent
         }
         $this->options['template'] = $template;
 
+        $this
+            ->setTemplateClass($this->getOption('template'))
+            ->setResourceClass($this->getOption('resource'), $widget)
+            ->setRenderClass($this->getOption('render'));
+
         $this->widgetId = $widget->getWidgetId();
-        $this->partId = $this->widgetId . '_' . $componentComponentName;
-        
+       
         $this->initParams($widget);
     }
 
@@ -110,7 +116,7 @@ abstract class WidgetComponent
      */
     public function getPartId()
     {
-        return $this->partId;
+        return $this->getWidgetId() . '_' . $this->getComponentName();
     }
 
     /**
@@ -125,17 +131,13 @@ abstract class WidgetComponent
 
     /**
      * @param array $row
-     * @param Widget $widget
      * @return $this
      */
-    public function build(array $row, Widget $widget)
+    public function build(array $row)
     {
         $this->buildParams($row);
 
-        return $this
-            ->setTemplateClass($this->getOption('template'))
-            ->setResourceClass($this->getOption('resource'), $widget)
-            ->setRenderClass($this->getOption('render'));
+        return $this;
     }
 
     public function cloneComponent() {
@@ -299,7 +301,7 @@ abstract class WidgetComponent
             }
         }
 
-        return empty($params[$this->label]) ? $this->label : $params[$this->label];
+        return $this->label;
     }
 
     /**
@@ -417,5 +419,9 @@ abstract class WidgetComponent
     
     public function get($param, $default = null) {
         return isset($this->params[$param]) ? $this->params[$param] : $default;
+    }
+    
+    public function ifOption($name, $value, $default = null) {
+        return $this->getOption($name, $default) === $value;
     }
 }

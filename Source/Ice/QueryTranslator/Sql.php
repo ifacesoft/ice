@@ -391,14 +391,14 @@ class Sql extends QueryTranslator
                             $dateTimezone = $modelSchemes[$modelClass]->get('columns/' . $columnName . '/options/dateTimezone', null);
 
                             if ($fieldAlias == $columnName) {
-                                $column = $tableAlias . '.`' . $columnName . '`';  // $tableAlias not need escaping (has some broken query)
+                                $column = '`' . $tableAlias . '`.`' . $columnName . '`';
                                 $column = $this->dateTimezoneSelect($dateTimezone, $column, $columnName);
                                 $fieldAlias = $column;
                             } else {
                                 if ($tableAlias === '') {
                                     $column = '`' . $columnName . '`';
                                 } else {
-                                    $column = $tableAlias . '.`' . $columnName . '`';
+                                    $column = '`' . $tableAlias . '`.`' . $columnName . '`';
                                 }
 
                                 $column = $this->dateTimezoneSelect($dateTimezone, $column);
@@ -656,7 +656,7 @@ class Sql extends QueryTranslator
         }
 
         if ($dateTimezone === true) {
-            $dateTimezone = $column == 'User.`created_at`'
+            $dateTimezone = $column == '`User`.`created_at`'
                 ? null
                 : Security::getInstance()->getUser()->getTimezone();
         }

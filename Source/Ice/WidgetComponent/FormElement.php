@@ -29,6 +29,14 @@ class FormElement extends HtmlTag
         ];
     }
 
+    public function __construct($componentName, array $options, $template, Core_Widget $widget)
+    {
+        parent::__construct($componentName, $options, $template, $widget);
+
+        $this->horizontal = $widget->getOption('horizontal', 0);
+    }
+
+
     /**
      * @return string
      */
@@ -83,14 +91,13 @@ class FormElement extends HtmlTag
     }
 
 
-    public function build(array $row, Core_Widget $widget)
+    public function build(array $row)
     {
         /** @var FormElement $component */
-        $component = parent::build($row, $widget);
+        $component = parent::build($row);
 
         return $component
-            ->buildValidators()
-            ->buildHorizontal($widget);
+            ->buildValidators();
     }
 
 
@@ -107,28 +114,12 @@ class FormElement extends HtmlTag
         }
     }
 
-
-    private function buildHorizontal(Core_Widget $widget)
-    {
-        $this->setHorizontal($widget->getOption('horizontal'));
-
-        return $this;
-    }
-
     /**
      * @return null
      */
     public function getHorizontal()
     {
-        return $this->horizontal;
-    }
-
-    /**
-     * @param null $horizontal
-     */
-    public function setHorizontal($horizontal)
-    {
-        $this->horizontal = $horizontal;
+            return $this->horizontal;
     }
 
     /**

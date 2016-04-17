@@ -1,6 +1,7 @@
 <?php
 namespace Ice\Core;
 
+use Ebs\Widget\Order_Basket_Form;
 use Ice\Exception\Access_Denied;
 use Ice\Exception\Http;
 use Ice\Exception\RouteNotFound;
@@ -455,7 +456,7 @@ abstract class Widget extends Container
             $rowTable = [];
 
             foreach ($this->getParts($this->getFilterParts(), $row) as $partName => $part) {
-                $rowTable[$partName] = $part->cloneComponent()->build($row, $this);// todo: избавиться от клонирования (дублирования билдинга)
+                $rowTable[$partName] = $part->cloneComponent()->build($row);// todo: избавиться от клонирования (дублирования билдинга)
 
                 $part->setOffset($offset);
             }
@@ -1004,7 +1005,7 @@ abstract class Widget extends Container
      */
     public function getWidget($widgetClass, $postfixKey = '')
     {
-        if (is_object($widgetClass)) {
+        if ($widgetClass instanceof Widget) {
             return $widgetClass;
         }
 
@@ -1049,6 +1050,10 @@ abstract class Widget extends Container
 //        } catch (\Exception $e) {
 //            //todo: заменять на виджет сообщения об ошибке
 //        }
+
+        if (!$widget->getResource()) {
+            $widget->setResourceClass($this->getResource());
+        }
 
         return $widget;
     }
