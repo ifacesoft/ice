@@ -2,7 +2,7 @@
 
 namespace Ice\WidgetComponent;
 
-class TableCell_A extends TableCell
+class TableCell_A extends ValueElement
 {
     /**
      * WidgetComponent config

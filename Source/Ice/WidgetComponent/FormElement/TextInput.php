@@ -2,8 +2,6 @@
 
 namespace Ice\WidgetComponent;
 
-use Ice\Core\Widget as Core_Widget;
-
 class FormElement_TextInput extends FormElement
 {
     /**

@@ -2,7 +2,7 @@
 
 namespace Ice\WidgetComponent;
 
-class TableCell_Span extends TableCell
+class TableCell_Span extends ValueElement
 {
     /**
      * WidgetComponent config

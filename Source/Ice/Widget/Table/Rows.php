@@ -9,7 +9,7 @@ use Ice\Core\Widget;
 use Ice\WidgetComponent\HtmlTag;
 use Ice\WidgetComponent\TableCell_A;
 use Ice\WidgetComponent\TableCell_OneToMany;
-use Ice\WidgetComponent\TableCell;
+use Ice\WidgetComponent\ValueElement;
 use Ice\WidgetComponent\TableCell_Span;
 
 class Table_Rows extends Widget

@@ -264,6 +264,8 @@ abstract class WidgetComponent
 
     protected function buildParams($values)
     {
+        $this->params = []; // костыль - при клоннинге не оцищается парамс??
+
         $this->params[$this->getComponentName()] = array_key_exists($this->getComponentName(), $values)
             ? $values[$this->getComponentName()]
             : null;
@@ -425,6 +427,11 @@ abstract class WidgetComponent
     public function get($param, $default = null)
     {
         return isset($this->params[$param]) ? $this->params[$param] : $default;
+    }
+
+    public function set($param, $value)
+    {
+        return $this->params[$param] = $value;
     }
 
     public function ifOption($name, $value, $default = null)

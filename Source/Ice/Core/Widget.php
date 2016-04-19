@@ -456,8 +456,8 @@ abstract class Widget extends Container
             $rowTable = [];
 
             foreach ($this->getParts($this->getFilterParts(), $row) as $partName => $part) {
-                $rowTable[$partName] = $part->cloneComponent()->build($row);// todo: избавиться от клонирования (дублирования билдинга)
-
+                $rowTable[$partName] = $part->cloneComponent();// todo: избавиться от клонирования (дублирования билдинга)
+                $rowTable[$partName]->build($row);
                 $rowTable[$partName]->setOffset($offset);
             }
 

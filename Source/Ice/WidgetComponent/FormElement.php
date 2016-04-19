@@ -3,12 +3,13 @@
 namespace Ice\WidgetComponent;
 
 use Ice\Core\Debuger;
+use Ice\Core\Model;
 use Ice\Core\Request;
 use Ice\Core\Widget as Core_Widget;
 use Ice\DataProvider\Router;
 use Ice\Helper\Input;
 
-class FormElement extends HtmlTag
+class FormElement extends ValueElement
 {
     private $validators = null;
     private $name = null;
@@ -36,7 +37,6 @@ class FormElement extends HtmlTag
         $this->horizontal = $widget->getOption('horizontal', 0);
     }
 
-
     /**
      * @return string
      */
@@ -49,33 +49,7 @@ class FormElement extends HtmlTag
         return $this->name = $this->getOption('name') ? $this->getOption('name') : $this->getComponentName();
     }
 
-    public function getRawValue() {
-        if ($this->value !== null) {
-            return $this->value;
-        }
-
-        $this->value = $this->getOption('value') ? $this->getOption('value') : null;
-
-        if ($this->value === null) {
-            $this->value = array_key_exists('default', $this->getOption())
-                ? $this->getOption('default')
-                : $this->getComponentName();
-        }
-
-        return $this->value;
-    }
-
-    /**
-     * @return null
-     */
-    public function getValue()
-    {
-        return array_key_exists($this->getRawValue(), $this->getParams())
-            ? htmlentities($this->get($this->getRawValue()), ENT_QUOTES)
-            : '';
-    }
-
-        public function build(array $row)
+    public function build(array $row)
     {
         /** @var FormElement $component */
         $component = parent::build($row);
@@ -84,30 +58,34 @@ class FormElement extends HtmlTag
             ->buildValidators();
     }
 
-
     protected function buildParams($values)
     {
         parent::buildParams($values);
 
         $name = $this->getName();
 
-        if ($this->params[$name] === null) {
+        $this->params[$name] = $this->getFromProviders($name, $values);
+
+        if (!isset($this->params[$name])) {
             $this->params[$name] = $this->value == $this->getComponentName()
                 ? (array_key_exists($this->value, $values) ? $values[$this->value] : null)
                 : (array_key_exists($this->value, $values) ? $values[$this->value] : $this->value);
         }
+    }
 
-        if ($providers = $this->getOption('providers')) {
-            $config = ['providers' => $providers];
+    protected function getFromProviders($name, array $data)
+    {
+        $providers = (array)$this->getOption('providers');
 
-            if ($default = $this->getOption('default')) {
-                $config['default'] = $default;
-            }
+        $providers[] = 'default';
 
-            $input = Input::get([$this->getName() => $config]);
+        $config = ['providers' => $providers];
 
-            $this->params[$this->getName()] = $input[$this->getName()];
+        if ($default = $this->getOption('default')) {
+            $config['default'] = $default;
         }
+
+        return $input = Input::get([$name => $config], $data)[$name];
     }
 
     /**
@@ -115,7 +93,7 @@ class FormElement extends HtmlTag
      */
     public function getHorizontal()
     {
-            return $this->horizontal;
+        return $this->horizontal;
     }
 
     /**
@@ -138,5 +116,10 @@ class FormElement extends HtmlTag
     {
         $this->setValidators($this->getOption('validators'));
         return $this;
+    }
+
+    public function save(Model $model)
+    {
+        return [$this->getName() => html_entity_decode($this->getValue())];
     }
 }

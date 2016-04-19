@@ -8,6 +8,7 @@ use Ice\Core\Module;
 use Ice\Core\Validator;
 use Ice\Core\Widget;
 use Ice\Helper\Directory;
+use Ice\WidgetComponent\Form_Model_OneToMany;
 use Ice\WidgetComponent\FormElement;
 use Ice\WidgetComponent\FormElement_Button;
 use Ice\WidgetComponent\FormElement_Chosen;
@@ -415,7 +416,7 @@ class Form extends Widget
      */
     public function oneToMany($fieldName, array $options = [])
     {
-        return $this->addPart(new FormElement_Typehead($fieldName, $options, null, $this));
+        return $this->addPart(new Form_Model_OneToMany($fieldName, $options, null, $this));
     }
 
     /**
@@ -443,7 +444,7 @@ class Form extends Widget
      */
     public function oneToManyToMany($fieldName, array $options = [])
     {
-        return $this->addPart(new FormElement_Chosen($fieldName, $options, null, $this));
+        return $this->addPart(new FormElement_Typehead($fieldName, $options, null, $this));
     }
 
     /**
