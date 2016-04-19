@@ -9,6 +9,7 @@
 namespace Ice\WidgetComponent;
 
 
+use Ice\Core\Debuger;
 use Ice\Core\Module;
 use Ice\Helper\Date;
 use Ice\Helper\String;
@@ -36,6 +37,12 @@ class ValueElement extends HtmlTag
      */
     public function getValue()
     {
+        $value = $this->get($this->getRawValue());
+
+        if ($value === null || $value === '') {
+            return $value;
+        }
+        
         $resourceClass = $this->getOption('valueResource', null);
 
         if ($resourceClass === null) {
@@ -49,12 +56,10 @@ class ValueElement extends HtmlTag
 
         $template = null;
 
-        $value = $this->get($this->getRawValue());
-
         if ($resource) {
             $template = $this->getOption('valueHardResource', null)
-                ? $this->getComponentName() . '_' . $this->get($this->value)
-                : $this->value;
+                ? $this->getComponentName() . '_' . $value
+                : $this->getRawValue();
         }
 
         if ($template) {
@@ -62,13 +67,18 @@ class ValueElement extends HtmlTag
         }
 
         if ($dateFormat = $this->getOption('dateFormat')) {
+            if ($dateFormat === true) {
+                $dateDefaults = Module::getInstance()->getDefault('date');
+                $dateFormat = $dateDefaults->get('format');
+            }
+
             $value = Date::get(strtotime($this->value), $dateFormat);
         }
 
         if ($truncate = $this->getOption('truncate')) {
             $value = String::truncate($value, $truncate);
         }
-        
+
         return htmlentities($value);
     }
 

@@ -133,9 +133,9 @@ class FormElement extends ValueElement
             return;
         }
 
-        $value = $this->getValue();
+        $value = html_entity_decode($this->getValue());
 
-        if ($value === null || $value == '') {
+        if ($value === null || $value === '') {
            return;
         }
 
@@ -145,11 +145,11 @@ class FormElement extends ValueElement
 
         switch ($option['comparison']) {
             case '=':
-                $queryBuilder->eq([$this->getName() => $this->getValue()]);
+                $queryBuilder->eq([$this->getName() => $value]);
                 break;
             case 'like':
             default:
-                $queryBuilder->like($this->getName(), '%' . html_entity_decode($this->getValue()) . '%');
+                $queryBuilder->like($this->getName(), '%' . $value . '%');
         }
     }
 }
