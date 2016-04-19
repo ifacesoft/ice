@@ -94,30 +94,24 @@ class Form_Model_OneToMany extends FormElement_Typehead
         $name = $this->getName();
         $typeahead = $this->getName() . '_typeahead';
 
-        $nameValue = $this->get($this->getName());
-        $typeaheadValue = $this->get($this->getName() . '_typeahead');
+        $typeaheadValue = $this->get($typeahead);
+
+        if ($typeaheadValue === null || $typeaheadValue == '') {
+            $this->set($name, null);
+            $this->set($typeahead, null);
+            return;
+        }
 
         /** @var Model $modelClass */
         $modelClass = $this->getItemModel();
 
-        $nameModel = $modelClass::getModel($nameValue, [$modelClass::getPkFieldName(), $this->getItemTitle()]);
         $typeaheadModel = $modelClass::getSelectQuery([$modelClass::getPkFieldName(), $this->getItemTitle()], [$this->getItemTitle() => $typeaheadValue])->getModel();
 
-
-        if ($nameModel) {
-            if ($typeaheadModel) {
-                if ($nameModel->getPkValue() != $typeaheadModel->getPkValue()) {
-                    $this->set($name, $typeaheadModel->getPkValue());
-                }
-            } else {
-                $this->set($typeahead, $nameModel->get($this->getItemTitle()));
-            }
+        if ($typeaheadModel) {
+            $this->set($name, $typeaheadModel->getPkValue());
         } else {
-            if ($typeaheadModel) {
-                $this->set($name, $typeaheadModel->getPkValue());
-            } else {
-                $this->set($name, 0);
-            }
+            $this->set($name, null);
+            $this->set($typeahead, null);
         }
     }
 }

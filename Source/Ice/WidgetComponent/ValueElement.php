@@ -11,6 +11,7 @@ namespace Ice\WidgetComponent;
 
 use Ice\Core\Module;
 use Ice\Helper\Date;
+use Ice\Helper\String;
 
 class ValueElement extends HtmlTag
 {
@@ -64,6 +65,10 @@ class ValueElement extends HtmlTag
             $value = Date::get(strtotime($this->value), $dateFormat);
         }
 
+        if ($truncate = $this->getOption('truncate')) {
+            $value = String::truncate($value, $truncate);
+        }
+        
         return htmlentities($value);
     }
 

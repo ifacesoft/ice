@@ -4,7 +4,9 @@ namespace Ice\WidgetComponent;
 
 use Ice\Core\Debuger;
 use Ice\Core\Model;
+use Ice\Core\QueryBuilder;
 use Ice\Core\Request;
+use Ice\Core\Security;
 use Ice\Core\Widget as Core_Widget;
 use Ice\DataProvider\Router;
 use Ice\Helper\Input;
@@ -64,13 +66,13 @@ class FormElement extends ValueElement
 
         $name = $this->getName();
 
-        $this->params[$name] = $this->getFromProviders($name, $values);
+        $this->params[$name] = $this->getFromProviders($this->getName(), $values);
 
-        if (!isset($this->params[$name])) {
-            $this->params[$name] = $this->value == $this->getComponentName()
-                ? (array_key_exists($this->value, $values) ? $values[$this->value] : null)
-                : (array_key_exists($this->value, $values) ? $values[$this->value] : $this->value);
-        }
+//        if (!isset($this->params[$name])) {
+//            $this->params[$name] = $this->value == $this->getComponentName()
+//                ? (array_key_exists($this->value, $values) ? $values[$this->value] : null)
+//                : (array_key_exists($this->value, $values) ? $values[$this->value] : $this->value);
+//        }
     }
 
     protected function getFromProviders($name, array $data)
@@ -121,5 +123,33 @@ class FormElement extends ValueElement
     public function save(Model $model)
     {
         return [$this->getName() => html_entity_decode($this->getValue())];
+    }
+
+    public function filter(QueryBuilder $queryBuilder)
+    {
+        $option = array_merge($this->getOption(), $this->getOption('filter', []));
+
+        if (!isset($option['access']['roles']) || !Security::getInstance()->check((array)$option['access']['roles'])) {
+            return;
+        }
+
+        $value = $this->getValue();
+
+        if ($value === null || $value == '') {
+           return;
+        }
+
+        if (!isset($option['comparison'])) {
+            $option['comparison'] = 'like';
+        }
+
+        switch ($option['comparison']) {
+            case '=':
+                $queryBuilder->eq([$this->getName() => $this->getValue()]);
+                break;
+            case 'like':
+            default:
+                $queryBuilder->like($this->getName(), '%' . html_entity_decode($this->getValue()) . '%');
+        }
     }
 }

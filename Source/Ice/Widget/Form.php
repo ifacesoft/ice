@@ -3,17 +3,15 @@
 namespace Ice\Widget;
 
 use Ice\Core\Action;
-use Ice\Core\Debuger;
 use Ice\Core\Module;
 use Ice\Core\Validator;
 use Ice\Core\Widget;
 use Ice\Helper\Directory;
+use Ice\WidgetComponent\Form_ListBox;
 use Ice\WidgetComponent\Form_Model_OneToMany;
 use Ice\WidgetComponent\FormElement;
 use Ice\WidgetComponent\FormElement_Button;
 use Ice\WidgetComponent\FormElement_Chosen;
-use Ice\WidgetComponent\FormElement_ManyToMany;
-use Ice\WidgetComponent\FormElement_OneToMany;
 use Ice\WidgetComponent\FormElement_Period;
 use Ice\WidgetComponent\FormElement_TextInput;
 use Ice\WidgetComponent\FormElement_Typehead;
@@ -283,6 +281,23 @@ class Form extends Widget
         return $this->addPart(new FormElement($fieldName, $options, $template, $this));
     }
 
+    /**
+     * Add combobox type field
+     *
+     * @param  $fieldName
+     * @param  array $options
+     * @return Form
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 1.1
+     * @since   1.1
+     */
+    public function listbox($fieldName, array $options = [])
+    {
+        return $this->addPart(new Form_ListBox($fieldName, $options, null, $this));
+    }
+    
     /**
      * Add choseh type field
      *

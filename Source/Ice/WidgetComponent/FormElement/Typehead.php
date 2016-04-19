@@ -89,5 +89,7 @@ class FormElement_Typehead extends FormElement_TextInput
     protected function buildParams($values)
     {
         parent::buildParams($values);
+
+        $this->params[$this->getName() . '_typeahead'] = $this->getFromProviders($this->getName() . '_typeahead', $values);
     }
 }

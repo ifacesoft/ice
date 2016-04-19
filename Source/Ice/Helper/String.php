@@ -165,6 +165,10 @@ class String
 
     public static function truncate($string, $length = 100, $append = "&hellip;")
     {
+        if (!is_numeric($length)) {
+            $length = 100;
+        }
+
         return mb_strimwidth($string, 0, $length, $append);
     }
 }
