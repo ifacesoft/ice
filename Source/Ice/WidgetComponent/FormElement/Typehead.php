@@ -83,7 +83,7 @@ class FormElement_Typehead extends FormElement_TextInput
      */
     public function getItemValue()
     {
-        return $this->get($this->getName() . '_typeahead') ? $this->get($this->getName() . '_typeahead') : '';
+        return $this->get($this->getName() . '_typeahead') ? htmlentities($this->get($this->getName() . '_typeahead')) : '';
     }
 
     protected function buildParams($values)

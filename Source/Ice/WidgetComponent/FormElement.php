@@ -131,6 +131,8 @@ class FormElement extends ValueElement
 
     public function filter(QueryBuilder $queryBuilder)
     {
+        parent::filter($queryBuilder);
+        
         $option = array_merge($this->getOption(), $this->getOption('filter', []));
 
         if (!isset($option['access']['roles']) || !Security::getInstance()->check((array)$option['access']['roles'])) {

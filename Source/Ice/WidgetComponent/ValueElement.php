@@ -8,9 +8,9 @@
 
 namespace Ice\WidgetComponent;
 
-
 use Ice\Core\Debuger;
 use Ice\Core\Module;
+use Ice\Core\QueryBuilder;
 use Ice\Helper\Date;
 use Ice\Helper\String;
 
@@ -42,7 +42,7 @@ class ValueElement extends HtmlTag
         if ($value === null || $value === '') {
             return $value;
         }
-        
+
         $resourceClass = $this->getOption('valueResource', null);
 
         if ($resourceClass === null) {
@@ -78,6 +78,8 @@ class ValueElement extends HtmlTag
         if ($truncate = $this->getOption('truncate')) {
             $value = String::truncate($value, $truncate);
         }
+
+
 
         return htmlentities($value);
     }
