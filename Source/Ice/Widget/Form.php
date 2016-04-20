@@ -7,6 +7,7 @@ use Ice\Core\Module;
 use Ice\Core\Validator;
 use Ice\Core\Widget;
 use Ice\Helper\Directory;
+use Ice\WidgetComponent\Form_File;
 use Ice\WidgetComponent\Form_ListBox;
 use Ice\WidgetComponent\Form_Model_OneToMany;
 use Ice\WidgetComponent\FormElement;
@@ -378,16 +379,15 @@ class Form extends Widget
     /**
      * @param $fieldName
      * @param array $options
-     * @param string $template
      * @return Form
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 1.1
      * @since   1.0
      */
-    public function file($fieldName, array $options = [], $template = 'Ice\Widget\Form\File')
+    public function file($fieldName, array $options = [])
     {
-        return $this->addPart(new FormElement($fieldName, $options, $template, $this));
+        return $this->addPart(new Form_File($fieldName, $options, null, $this));
     }
 
     /**

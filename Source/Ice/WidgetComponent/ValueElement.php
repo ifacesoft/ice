@@ -33,9 +33,10 @@ class ValueElement extends HtmlTag
     }
 
     /**
+     * @param bool $encode
      * @return null
      */
-    public function getValue()
+    public function getValue($encode = true)
     {
         $value = $this->get($this->getRawValue());
 
@@ -81,7 +82,7 @@ class ValueElement extends HtmlTag
 
 
 
-        return htmlentities($value);
+        return $encode ? htmlentities($value) : $value;
     }
 
     protected function getRawValue()

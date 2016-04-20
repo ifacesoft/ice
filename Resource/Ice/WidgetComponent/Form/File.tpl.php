@@ -6,7 +6,9 @@
 
     <?php if ($component->getHorizontal()) : ?>
     <div class="col-md-<?= 12 - $component->getHorizontal() ?>"><?php endif; ?>
-        <img src="<?php $component->getValue() ?>" width="100px"/>
+        <?php if ($component->getShowFile()) : ?>
+            <img src="<?= $component->getShowFile() ?>" width="100px"/>
+        <?php endif; ?>
         <input <?= $component->getIdAttribute('file') ?> type="file" class="form-control"/>
         <input <?= $component->getIdAttribute() ?>
             <?= $component->getClassAttribute($component->getOption('resetFormClass', false) ? '' : 'form-control') ?>

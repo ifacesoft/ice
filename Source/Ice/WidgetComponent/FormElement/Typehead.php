@@ -16,7 +16,6 @@ class FormElement_Typehead extends FormElement_TextInput
     private $items = null;
     private $itemId = null;
     private $itemTitle = null;
-    private $itemValue = null;
 
     /**
      * @return null
