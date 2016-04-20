@@ -122,6 +122,10 @@ class FormElement extends ValueElement
 
     public function save(Model $model)
     {
+        if ($this->getOption('readonly', false) || $this->getOption('disabled', false)) {
+            return [];
+        }
+
         return [$this->getName() => html_entity_decode($this->getValue())];
     }
 

@@ -79,25 +79,35 @@ class Form_Model_OneToMany extends FormElement_Typehead
 
         $typeaheadValue = $this->get($typeahead);
 
-        if ($typeaheadValue === null || $typeaheadValue === '') {
-            $this->set($name, null);
-            $this->set($typeahead, null);
-            return;
-        }
-
         /** @var Model $modelClass */
         $modelClass = $this->getItemModel();
+
+        if ($typeaheadValue === null || $typeaheadValue === '') {
+            if ($value = $this->get($name)) {
+                $model = $modelClass::getModel($value, [$modelClass::getPkFieldName(), $this->getItemTitle()]);
+
+                if ($model) {
+                    $this->set($typeahead, $model->get($this->getItemTitle()));
+
+                    return;
+                }
+            }
+
+            $this->set($name, null);
+            $this->set($typeahead, null);
+
+            return;
+        }
 
         $typeaheadModel = $modelClass::getSelectQuery([$modelClass::getPkFieldName(), $this->getItemTitle()], [$this->getItemTitle() => $typeaheadValue])->getModel();
 
         if ($typeaheadModel) {
             $this->set($name, $typeaheadModel->getPkValue());
         } else {
-
             if ($this->getOption('itemAutoCreate', false)) {
                 $this->set($name, $modelClass::create([$this->getItemTitle() => $typeaheadValue])->save()->getPkValue());
             } else {
-                $this->set($name, null);
+                $this->set($name, 0);
 //            $this->set($typeahead, null); // не обнуляем - ищем по вхождению
             }
         }
