@@ -9,7 +9,7 @@ return [
                         'Ice' => [
                             'vendor_css' => [
                                 'path' => 'css/vendor/',
-                                'css' => ['empty.css'],
+                                'css' => ['alxlit/bootstrap-chosen/bootstrap-chosen.css'],
                                 'isCopy' => false,
                             ],
                             'vendor' => [

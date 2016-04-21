@@ -267,6 +267,7 @@ class HtmlTag extends WidgetComponent
                 'type' => $eventType,
                 'class' => empty($event['action']) ? Render::class : $event['action'],
                 'params' => empty($event['params']) ? [] : (array)$event['params'],
+                'ajax' => isset($event['ajax']) ? $event['ajax'] : true,
                 'callback' => empty($event['callback']) ? null : $event['callback'],
                 'confirm_message' => empty($event['confirm_message']) ? null : $event['confirm_message'],
                 'code' => empty($event['code']) ? '' : $event['code'],

@@ -15,7 +15,6 @@ class FormElement extends ValueElement
 {
     private $validators = null;
     private $name = null;
-    private $value = null;
     private $horizontal = null;
 
     /**
@@ -126,36 +125,39 @@ class FormElement extends ValueElement
             return [];
         }
 
-        return [$this->getName() => html_entity_decode($this->getValue())];
+        $value = $this->getValue();
+
+        return [$this->getName() => is_array($value) ? $value : html_entity_decode($value)];
     }
 
     public function filter(QueryBuilder $queryBuilder)
     {
-        parent::filter($queryBuilder);
-        
         $option = array_merge($this->getOption(), $this->getOption('filter', []));
 
         if (!isset($option['access']['roles']) || !Security::getInstance()->check((array)$option['access']['roles'])) {
             return;
         }
 
-        $value = html_entity_decode($this->getValue());
+        $value = $this->getValue();
 
-        if ($value === null || $value === '') {
-           return;
+        if ($value === null || $value === '' || (is_array($value)) && empty($value)) {
+            return;
         }
 
         if (!isset($option['comparison'])) {
             $option['comparison'] = 'like';
         }
+        foreach ((array)$value as $val) {
+            $val = html_entity_decode($val);
 
-        switch ($option['comparison']) {
-            case '=':
-                $queryBuilder->eq([$this->getName() => $value]);
-                break;
-            case 'like':
-            default:
-                $queryBuilder->like($this->getName(), '%' . $value . '%');
+            switch ($option['comparison']) {
+                case '=':
+                    $queryBuilder->eq([$this->getName() => $val]);
+                    break;
+                case 'like':
+                default:
+                    $queryBuilder->like($this->getName(), '%' . $val . '%');
+            }
         }
     }
 }

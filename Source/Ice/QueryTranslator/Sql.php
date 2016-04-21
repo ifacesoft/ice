@@ -9,7 +9,6 @@
 
 namespace Ice\QueryTranslator;
 
-use Ice\Core\Debuger;
 use Ice\Core\Exception;
 use Ice\Core\Model;
 use Ice\Core\Module;

@@ -842,7 +842,7 @@ class QueryBuilder
      * @version 0.6
      * @since   0.0
      */
-    public function inner($modelTableData, $fieldNames = '/pk', $condition = null)
+    public function inner($modelTableData, $fieldNames = null, $condition = null)
     {
         return $this->select($fieldNames, null, $modelTableData)
             ->join(QueryBuilder::SQL_CLAUSE_INNER_JOIN, $modelTableData, $condition);
@@ -1332,6 +1332,7 @@ class QueryBuilder
             ]
         );
 
+
         $this->appendCacheTag($modelClass, $fieldNames, false, true);
 
         $this->bindParts[$part] = array_merge($this->bindParts[$part], $data);
@@ -1410,6 +1411,10 @@ class QueryBuilder
 
         $pkFieldNames = $modelClass::getScheme()->getPkFieldNames();
 
+        if ($this->count($pkFieldNames) > 1) {
+           throw  new Error('not implemented');
+        }
+        
         return $this->in(reset($pkFieldNames), $value, $modelTableData, $sqlLogical);
     }
 

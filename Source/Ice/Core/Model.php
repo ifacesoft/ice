@@ -9,6 +9,7 @@
 
 namespace Ice\Core;
 
+use Assetic\Test\Filter\PackerFilterTest;
 use Ice\Core;
 use Ice\Helper\Arrays;
 use Ice\Helper\Json;
@@ -531,7 +532,7 @@ abstract class Model
      *
      * @param  null $fieldName
      * @param  bool $isNotNull
-     * @param null $defaultCallback  return default value via callback method or function
+     * @param null $defaultCallback return default value via callback method or function
      * @return mixed
      * @throws Exception
      * @throws \Exception
@@ -543,7 +544,9 @@ abstract class Model
     public function get($fieldName = null, $isNotNull = true, $defaultCallback = null)
     {
         if ($fieldName === null) {
-            return array_merge((array)$this->pk, array_filter($this->row, function ($value) { return $value !== null; }));
+            return array_merge((array)$this->pk, array_filter($this->row, function ($value) {
+                return $value !== null;
+            }));
         }
 
         if (is_array($fieldName)) {
@@ -1564,5 +1567,70 @@ abstract class Model
     public function getRaw($fieldName = null)
     {
         return $fieldName === null ? $this->raw : $this->raw[$fieldName];
+    }
+
+    /**
+     * @param Model $linkModelClass
+     * @param $linkKeyName
+     * @param $linkForeignKeyName
+     * @param $keys
+     * @return $this
+     */
+    public function removeLinks($linkModelClass, $linkKeyName, $linkForeignKeyName, $keys = null)
+    {
+        if ($keys !== null && empty($keys)) {
+            return $this;
+        }
+
+        $pkValue = $this->getPkValue();
+
+        $links = [];
+
+        foreach ($keys as $key) {
+            $links[] = [
+                $linkKeyName => $pkValue,
+                $linkForeignKeyName => $key
+            ];
+        }
+
+        // $linkModelClass::createQueryBuilder()->getDeleteQuery($links)->getQueryResult();
+
+        foreach ($links as $link) {
+            $linkModelClass::createQueryBuilder()
+                ->eq($link)
+                ->getDeleteQuery()
+                ->getQueryResult();
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Model $linkModelClass
+     * @param $linkKeyName
+     * @param $linkForeignKeyName
+     * @param $keys
+     * @return $this
+     */
+    public function addLinks($linkModelClass, $linkKeyName, $linkForeignKeyName, $keys)
+    {
+        if (empty($keys)) {
+            return $this;
+        }
+
+        $pkValue = $this->getPkValue();
+
+        $links = [];
+
+        foreach ($keys as $key) {
+            $links[] = [
+                $linkKeyName => $pkValue,
+                $linkForeignKeyName => $key
+            ];
+        }
+
+        $linkModelClass::createQueryBuilder()->getInsertQuery($links)->getQueryResult();
+
+        return $this;
     }
 }

@@ -3,12 +3,14 @@
 namespace Ice\Widget;
 
 use Ice\Core\Action;
+use Ice\Core\Debuger;
 use Ice\Core\Module;
 use Ice\Core\Validator;
 use Ice\Core\Widget;
 use Ice\Helper\Directory;
 use Ice\WidgetComponent\Form_File;
 use Ice\WidgetComponent\Form_ListBox;
+use Ice\WidgetComponent\Form_Model_ManyToMany;
 use Ice\WidgetComponent\Form_Model_OneToMany;
 use Ice\WidgetComponent\FormElement;
 use Ice\WidgetComponent\FormElement_Button;
@@ -117,7 +119,7 @@ class Form extends Widget
             $compiledResult,
             [
                 'dataAction' => $component->getDataAction(),
-                'onSubmit' => $component->getEventCode(),
+                'onSubmit' => $component->getEvent()['ajax'] ? $component->getEventCode() : '',
                 'url' => $component->getHref(),
                 'method' => $component->getRoute() ? $component->getRoute()['method'] : 'POST'
             ]
@@ -445,7 +447,7 @@ class Form extends Widget
      */
     public function manyToMany($fieldName, array $options = [])
     {
-        return $this->addPart(new FormElement_Chosen($fieldName, $options, null, $this));
+        return $this->addPart(new Form_Model_ManyToMany($fieldName, $options, null, $this));
     }
 
     /**

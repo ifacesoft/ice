@@ -9,19 +9,20 @@
     <div class="col-md-<?= 12 - $component->getHorizontal() ?>"><?php endif; ?>
         <input id="<?= $component->getId() ?>_typeahead"
             <?= $component->getClassAttribute($component->getOption('resetFormClass', false) ? '' : 'form-control') ?>
-            type="text"
+               type="text"
                name="<?= $component->getName() ?>_typeahead"
                value="<?= $component->getItemValue() ?>"
             <?= $component->getPlaceholderAttribute() ?>
             <?= $component->getEventAttributesCode() ?>
-            <?php if ($component->getOption('disabled', false)) : ?>disabled="disabled"<?php endif; ?>
-            <?php if ($component->getOption('readonly', false)) : ?>readonly="readonly"<?php endif; ?>
-            <?php if ($component->getOption('required', false)) : ?>required="required"<?php endif; ?>
-            <?php if ($component->getOption('autofocus', false)) : ?>autofocus="autofocus"<?php endif; ?>
+               <?php if ($component->getOption('disabled', false)) : ?>disabled="disabled"<?php endif; ?>
+               <?php if ($component->getOption('readonly', false)) : ?>readonly="readonly"<?php endif; ?>
+               <?php if ($component->getOption('required', false)) : ?>required="required"<?php endif; ?>
+               <?php if ($component->getOption('autofocus', false)) : ?>autofocus="autofocus"<?php endif; ?>
         >
-        <input <?= $component->getIdAttribute() ?> type="hidden"
-               name="<?= $component->getName() ?>"
-               value="<?= $component->getValue() ?>">
+        <input <?= $component->getIdAttribute() ?>
+            type="hidden"
+            name="<?= $component->getName() ?>"
+            value="<?= $component->getValue() ?>">
         <?php if ($component->getHorizontal()) : ?></div><?php endif; ?>
     <script>
         $(function () {
@@ -43,8 +44,8 @@
                     displayKey: '<?= $component->getItemTitle() ?>',
                     source: states,
 
-                }).on('typeahead:select', function(ev, suggestion) {
-                $('#<?= $component->getId() ?>').val(suggestion.<?= $component->getItemId() ?>)
+                }).on('typeahead:select', function (ev, suggestion) {
+                $('#<?= $component->getId() ?>').val(suggestion.<?= $component->getItemKey() ?>)
             });
         });
     </script>

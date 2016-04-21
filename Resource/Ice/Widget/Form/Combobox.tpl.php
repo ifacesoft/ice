@@ -5,8 +5,9 @@
     ><?= $component->getLabel() ?></label>
     <?php if ($component->getHorizontal()) : ?>
     <div class="col-md-<?= 12 - $component->getHorizontal() ?>"><?php endif; ?>
-        <select i<?= $component->getIdAttribute() ?>
-                <?= $component->getClassAttribute($component->getOption('resetFormClass', false) ? '' : 'form-control') ?>name="<?= $component->getName() ?><?php if (!empty($options['multiple'])) : ?>[]<?php endif; ?>"
+        <select <?= $component->getIdAttribute() ?>
+                <?= $component->getClassAttribute($component->getOption('resetFormClass', false) ? '' : 'form-control') ?>
+            name="<?= $component->getName() ?><?php if (!empty($options['multiple'])) : ?>[]<?php endif; ?>"
                 <?php if (!empty($options['multiple'])) : ?>multiple="multiple"<?php endif; ?>
                 <?php if (!empty($options['size'])) : ?>size="<?= $options['size'] ?>"<?php endif; ?>
             <?= $component->getEventAttributesCode() ?>
@@ -16,9 +17,9 @@
                 <?php if ($component->getOption('autofocus', false)) : ?>autofocus="autofocus"<?php endif; ?>
         >
             <?php foreach ($component->getOption('rows', []) as $option) : ?>
-                <option value="<?= htmlentities($option[$component->getName()], ENT_QUOTES) ?>"
+                <option value="<?= htmlentities($option[$component->getName()]) ?>"
                     <?php if ($component->get($component->getName()) == $option[$component->getRawValue()]) : ?> selected="selected"<?php endif; ?>
-                ><?= \Ice\Helper\String::truncate(implode(', ', array_intersect_key($option, array_flip((array)$component->getOption('title')))), $component->getOption('truncate', 100)) ?></option>
+                ><?= \Ice\Helper\String::truncate(implode(', ', array_intersect_key($option, array_flip((array)$component->getName()))), $component->getOption('truncate', 100)) ?></option>
             <?php endforeach; ?>
         </select>
         <?php if ($component->getHorizontal()) : ?></div><?php endif; ?>

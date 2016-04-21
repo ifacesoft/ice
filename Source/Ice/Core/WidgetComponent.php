@@ -300,11 +300,13 @@ abstract class WidgetComponent
             $this->setLabel($this->getComponentName());
         }
 
+        $params = $this->getParams();
+
         if ($resource = $this->getResource()) {
-            $this->setLabel($resource->get($this->label, $this->getParams()));
+            $this->setLabel($resource->get($this->label, $params));
         }
 
-        return $this->label;
+        return empty($params[$this->label]) ? $this->label : $params[$this->label]; // todo: возможно стоит перейти на value даже на простых тегах
     }
 
     /**

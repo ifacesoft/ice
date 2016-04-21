@@ -10,5 +10,21 @@ namespace Ice\WidgetComponent;
 
 class FormElement_Chosen extends FormElement_TextInput
 {
+    public function getItemKey()
+    {
+        return $this->getOption('itemKey', 'id');
+    }
 
+    public function getItemTitle()
+    {
+        return $this->getOption('itemTitle', 'name');
+    }
+
+    /**
+     * @return null
+     */
+    public function getItems()
+    {
+        return $this->getOption('rows', []);
+    }
 }

@@ -8,9 +8,7 @@
 
 namespace Ice\WidgetComponent;
 
-use Ice\Core\Debuger;
 use Ice\Core\Module;
-use Ice\Core\QueryBuilder;
 use Ice\Helper\Date;
 use Ice\Helper\String;
 
@@ -80,12 +78,10 @@ class ValueElement extends HtmlTag
             $value = String::truncate($value, $truncate);
         }
 
-
-
-        return $encode ? htmlentities($value) : $value;
+        return $encode && !is_array($value) ? htmlentities($value) : $value;
     }
 
-    protected function getRawValue()
+    public function getRawValue()
     {
         if ($this->value !== null) {
             return $this->value;
