@@ -554,7 +554,7 @@ class Sql extends QueryTranslator
             foreach ($fieldNames as $fieldName) {
                 $groups[] = isset($fieldColumnMap[$fieldName])
                     ? '`' . $tableAlias . '`.`' . $fieldColumnMap[$fieldName] . '`'
-                    : '`' . trim($fieldName, '`') . '`';
+                    : $fieldName; // Если не поняли что за колонка отдаем как есть.
             }
         }
 

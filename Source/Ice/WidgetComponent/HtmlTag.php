@@ -111,12 +111,12 @@ class HtmlTag extends WidgetComponent
         }
 
         if ($route === true) {
-            $route = ['name' => $this->getComponentName()];
+            $route = ['name' => true];
         }
 
         $this->route = array_merge(
             [
-                'name' => $this->getComponentName(),
+                'name' => true,
                 'params' => [],
                 'withGet' => false,
                 'withDomain' => false,
@@ -125,6 +125,10 @@ class HtmlTag extends WidgetComponent
             ],
             (array)$route
         );
+
+        if ($this->route['name'] === true) {
+            $this->route['name'] = $this->getComponentName();
+        }
 
         if (isset($this->route[0])) {
             throw new Error('Use deprecated init route. Define named options', $this);
