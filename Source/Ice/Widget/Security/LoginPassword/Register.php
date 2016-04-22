@@ -70,7 +70,7 @@ class Security_LoginPassword_Register extends Widget_Security
                     'placeholder' => 'confirm_password_placeholder'
                 ]
             )
-            ->div('ice-message', ['label' => '&nbsp;', 'resource' => false])
+            ->div('ice-message', ['value' => '&nbsp;', 'encode' => false, 'resource' => false])
             ->button(
                 'register',
                 [

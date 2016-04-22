@@ -4,6 +4,9 @@ namespace Ice\Core;
 
 use Ebs\Widget\Order_Basket_Form;
 use Ice\Helper\Access;
+use Ice\Helper\Date;
+use Ice\Helper\Input;
+use Ice\Helper\String;
 
 abstract class WidgetComponent
 {
@@ -18,8 +21,11 @@ abstract class WidgetComponent
 
     private $widgetId = null;
 
+    private $value = null;
     protected $label = null;
+
     protected $params = null;
+
     private $active = null;
     private $classes = null;
     private $id = [];
@@ -135,6 +141,8 @@ abstract class WidgetComponent
      */
     public function build(array $row)
     {
+        $this->params = [];
+
         $this->buildParams($row);
 
         return $this;
@@ -262,29 +270,6 @@ abstract class WidgetComponent
         return $this;
     }
 
-    protected function buildParams($values)
-    {
-        $this->params = []; // костыль - при клоннинге не оцищается парамс??
-
-        $this->params[$this->getComponentName()] = array_key_exists($this->getComponentName(), $values)
-            ? $values[$this->getComponentName()]
-            : null;
-
-        foreach ((array)$this->getOption('params') as $key => $value) {
-            if (is_int($key)) {
-                $key = $value;
-            }
-
-            if (is_string($value)) {
-                $this->params[$key] = $key == $value
-                    ? (array_key_exists($value, $values) ? $values[$value] : null)
-                    : (array_key_exists($value, $values) ? $values[$value] : $value); //(isset($part['options']['default']) ? $part['options']['default'] : $value)
-            } else {
-                $this->params[$key] = $value;
-            }
-        }
-    }
-
     /**
      * @return null
      */
@@ -306,7 +291,7 @@ abstract class WidgetComponent
             $this->setLabel($resource->get($this->label, $params));
         }
 
-        return empty($params[$this->label]) ? $this->label : $params[$this->label]; // todo: возможно стоит перейти на value даже на простых тегах
+        return $this->label;
     }
 
     /**
@@ -439,5 +424,158 @@ abstract class WidgetComponent
     public function ifOption($name, $value, $default = null)
     {
         return $this->getOption($name, $default) === $value;
+    }
+
+    /**
+     * @param bool $encode
+     * @return null
+     */
+    public function getValue($encode = null)
+    {
+        $value = $this->get($this->getValueKey());
+
+        if ($value === null) {
+            $value = $this->getValueKey();
+        }
+
+        if ($value === '') {
+            return $value;
+        }
+
+        $resourceClass = $this->getOption('valueResource', null);
+
+        if ($resourceClass === null) {
+            $resourceClass = $this->getOption('valueHardResource', null);
+        }
+
+        /** @var Resource $resource */
+        $resource = $resourceClass === true
+            ? $this->getResource()
+            : ($resourceClass === null ? $resourceClass : $resourceClass::create());
+
+        $template = null;
+
+        if ($resource) {
+            $template = $this->getOption('valueHardResource', null)
+                ? $this->getComponentName() . '_' . $value
+                : $this->getValueKey();
+        }
+
+        if ($template) {
+            $value = $resource->get($template, $this->getParams());
+        }
+
+        if ($dateFormat = $this->getOption('dateFormat')) {
+            if ($dateFormat === true) {
+                $dateDefaults = Module::getInstance()->getDefault('date');
+                $dateFormat = $dateDefaults->get('format');
+            }
+
+            $value = Date::get(strtotime($this->value), $dateFormat);
+        }
+
+        if ($truncate = $this->getOption('truncate')) {
+            $value = String::truncate($value, $truncate);
+        }
+
+        if ($encode === null) {
+            $encode = $this->getOption('encode', true);
+        }
+
+        return $encode && !is_array($value) ? htmlentities($value) : $value;
+    }
+
+    public function getValueKey()
+    {
+        if ($this->value !== null) {
+            return $this->value;
+        }
+
+        $value = $this->getOption('value', true);
+
+        if ($value === true) {
+            $value = $this->getComponentName();
+        }
+
+        return $this->setValue($value);
+    }
+
+    private function setValue($value)
+    {
+        return $this->value = $value;
+    }
+
+    protected function getFromProviders($name, array $data)
+    {
+        $providers = (array)$this->getOption('providers');
+
+        $providers[] = 'default';
+
+        $config = ['providers' => $providers];
+
+        $default = $this->getOption('default');
+
+        if ($default !== null) {
+            $config['default'] = $default;
+        }
+
+        return Input::get([$name => $config], $data)[$name];
+    }
+
+    protected function buildParams($values)
+    {
+//        $this->params[$this->getComponentName()] = array_key_exists($this->getComponentName(), $values)
+//            ? $values[$this->getComponentName()]
+//            : null;
+
+        foreach ((array)$this->getOption('params') as $key => $param) {
+            if (is_int($key)) {
+                $key = $param;
+            }
+
+            if ($this->get($key)) {
+                continue;
+            }
+
+            if (!is_string($param)) {
+                $this->set($key, $param);
+            }
+
+            $param = $key == $param
+                ? (array_key_exists($param, $values) ? $values[$param] : null)
+                : (array_key_exists($param, $values) ? $values[$param] : $param);
+
+            $this->set($key, $param);
+        }
+
+        $valueKey = $this->getValueKey();
+
+        if ($this->get($valueKey) === null) {
+            $value = $valueKey == $this->getComponentName()
+                ? (array_key_exists($valueKey, $values) ? $values[$valueKey] : null)
+                : (array_key_exists($valueKey, $values) ? $values[$valueKey] : $valueKey);
+
+            $this->set($valueKey, $value);
+        }
+
+        if ($this->get($valueKey) === null) {
+            $this->set($valueKey, $this->getFromProviders($valueKey, $values));
+        }
+
+        if ($this->get($valueKey) === null) {
+            return;
+        }
+
+        $dateFormat = $this->getOption('dateFormat');
+
+        if ($dateFormat === true) {
+            $dateDefaults = Module::getInstance()->getDefault('date');
+            $dateFormat = $dateDefaults->get('format');
+        }
+
+        if ($dateFormat) {
+            $this->set($valueKey, Date::get(strtotime($this->getValueKey()), $dateFormat));
+            $this->setOption('dateFormat', null);
+        }
     }
 }

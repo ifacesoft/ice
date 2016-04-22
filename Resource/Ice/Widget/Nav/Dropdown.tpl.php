@@ -1,5 +1,5 @@
 <li class="dropdown">
-    <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><?= $component->getLabel() ?> <span
+    <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><?= $component->getValue() ?> <span
             class="caret"></span></a>
     <ul class="dropdown-menu" role="menu">
         <?php foreach ($options as $label => $url) { ?>

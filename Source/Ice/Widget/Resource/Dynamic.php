@@ -72,7 +72,7 @@ class Resource_Dynamic extends Resource
         }
 
         foreach ($javascripts as $js => $sources) {
-            $this->script($js, ['resource' => null]);
+            $this->script($js, ['resource' => false]);
         }
 
         $styleCacheFile = Module::getInstance()->get(Module::COMPILED_RESOURCE_DIR) . 'style.' . $input['routeName'] . '.cache.php';
@@ -96,7 +96,7 @@ class Resource_Dynamic extends Resource
         }
 
         foreach ($styles as $css => $sources) {
-            $this->link($css, ['resource' => null]);
+            $this->link($css, ['resource' => false]);
         }
 
         $this->loaded = true;

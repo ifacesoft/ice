@@ -1,1 +1,1 @@
-<?= $component->getLabel() ?>
+<?= $component->getValue() ?>

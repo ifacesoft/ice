@@ -9,5 +9,5 @@
     <a class="navbar-brand"
        href="<?= $component->getHref() ?>#<?= $component->getComponentName() ?>"
         <?= $component->getEventAttributesCode() ?>
-       <?php if (!empty($options['target'])) : ?>target="<?= $options['target'] ?>"<?php endif; ?>><?= $component->getLabel() ?></a>
+       <?php if (!empty($options['target'])) : ?>target="<?= $options['target'] ?>"<?php endif; ?>><?= $component->getValue() ?></a>
 </div>

@@ -44,7 +44,7 @@ class Security_EmailPassword_Login extends Widget_Security
                     'validators' => ['Ice:Length_Min' => 5]
                 ]
             )
-            ->div('ice-message', ['label' => '&nbsp;', 'resource' => false])
+            ->div('ice-message', ['value' => '&nbsp;', 'encode' => false, 'resource' => false])
             ->button(
                 'login',
                 [

@@ -65,28 +65,15 @@ class FormElement extends ValueElement
 
         $name = $this->getName();
 
-        $this->params[$name] = $this->getFromProviders($this->getName(), $values);
+        if (!isset($this->params[$name])) {
+            $this->params[$name] = $this->getFromProviders($this->getName(), $values);
+        }
 
 //        if (!isset($this->params[$name])) {
 //            $this->params[$name] = $this->value == $this->getComponentName()
 //                ? (array_key_exists($this->value, $values) ? $values[$this->value] : null)
 //                : (array_key_exists($this->value, $values) ? $values[$this->value] : $this->value);
 //        }
-    }
-
-    protected function getFromProviders($name, array $data)
-    {
-        $providers = (array)$this->getOption('providers');
-
-        $providers[] = 'default';
-
-        $config = ['providers' => $providers];
-
-        if ($default = $this->getOption('default')) {
-            $config['default'] = $default;
-        }
-
-        return $input = Input::get([$name => $config], $data)[$name];
     }
 
     /**

@@ -1,1 +1,1 @@
-<script src="<?= $component->getLabel() ?>"></script>
+<script src="<?= $component->getValue() ?>"></script>

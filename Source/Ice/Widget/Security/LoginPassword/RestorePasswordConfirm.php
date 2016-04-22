@@ -57,7 +57,7 @@ class Security_LoginPassword_RestorePasswordConfirm extends Widget_Security
                     'required' => true,
                 ]
             )
-            ->div('ice-message', ['label' => '&nbsp;', 'resource' => false])
+            ->div('ice-message', ['value' => '&nbsp;', 'encode' => false, 'resource' => false])
             ->button(
                 'restore_password_confirm',
                 [

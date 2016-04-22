@@ -18,7 +18,7 @@
         >
             <?php foreach ($component->getOption('rows', []) as $option) : ?>
                 <option value="<?= htmlentities($option[$component->getName()]) ?>"
-                    <?php if ($component->get($component->getName()) == $option[$component->getRawValue()]) : ?> selected="selected"<?php endif; ?>
+                    <?php if ($component->get($component->getName()) == $option[$component->getValueKey()]) : ?> selected="selected"<?php endif; ?>
                 ><?= \Ice\Helper\String::truncate(implode(', ', array_intersect_key($option, array_flip((array)$component->getName()))), $component->getOption('truncate', 100)) ?></option>
             <?php endforeach; ?>
         </select>

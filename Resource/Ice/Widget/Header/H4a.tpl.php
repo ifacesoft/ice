@@ -3,5 +3,5 @@
         <?= $component->getEventAttributesCode() ?>
         <?= $component->getHtmlTagAttributes() ?>
         href="<?= $component->getHref() ?>#<?= $component->getComponentName() ?>"
-    ><?= $component->getLabel() ?></a>
+    ><?= $component->getValue() ?></a>
 </h4>

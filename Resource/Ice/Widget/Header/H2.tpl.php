@@ -1,4 +1,4 @@
 <h2 <?= $component->getIdAttribute() ?>
     <?= $component->getClassAttribute() ?>
     <?= $component->getEventAttributesCode() ?>
-><?= $component->getLabel() ?></h2>
+><?= $component->getValue() ?></h2>

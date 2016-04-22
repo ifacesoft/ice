@@ -1411,7 +1411,7 @@ class QueryBuilder
 
         $pkFieldNames = $modelClass::getScheme()->getPkFieldNames();
 
-        if ($this->count($pkFieldNames) > 1) {
+        if (count($pkFieldNames) > 1) {
            throw  new Error('not implemented');
         }
         

@@ -5,7 +5,7 @@
         <a <?= $component->getIdAttribute() ?>
             href="<?= $component->getHref() ?>#<?= $component->getComponentName() ?>"
             <?= $component->getEventAttributesCode() ?>
-        ><?= $component->getLabel() ?></a>
+        ><?= $component->getValue() ?></a>
     </li>
 <?php if (!empty($options['next'])) : ?>
     <li><span><?= $options['next'] ?></span></li>

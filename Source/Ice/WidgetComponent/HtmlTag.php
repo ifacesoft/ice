@@ -121,7 +121,6 @@ class HtmlTag extends WidgetComponent
                 'withGet' => false,
                 'withDomain' => false,
                 'method' => 'POST'
-
             ],
             (array)$route
         );
@@ -205,26 +204,6 @@ class HtmlTag extends WidgetComponent
     {
         return $this->href = $href;
     }
-
-    public function getLabel()
-    {
-        if ($this->getOption('label') !== null) {
-            return parent::getLabel();
-        }
-
-        if ($route = $this->getRoute()) {
-            $label = $this->setLabel(Resource::create(Route::getClass())->get($route['name'], $route['params']));
-
-            if ($resource = $this->getResource()) {
-                $label = $this->setLabel($resource->get($label, $this->getParams()));
-            }
-
-            return $label;
-        }
-
-        return parent::getLabel();
-    }
-
 
     public function isActive()
     {
@@ -401,5 +380,20 @@ class HtmlTag extends WidgetComponent
         }
 
         return $htmlTagAttributes;
+    }
+
+    protected function buildParams($values)
+    {
+        if ($route = $this->getRoute()) {
+            if ($this->getOption('value') === null) {
+                $valueKey = $this->getValueKey();
+
+                if ($this->get($valueKey) === null) {
+                    $this->set($valueKey, Resource::create(Route::getClass())->get($route['name'], $route['params']));
+                }
+            }
+        }
+
+        parent::buildParams($values);
     }
 }

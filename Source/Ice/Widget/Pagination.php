@@ -166,7 +166,7 @@ class Pagination extends Widget
             $this->li(
                 __FUNCTION__,
                 [
-                    'label' => $title,
+                    'value' => $title,
                     'params' => ['page' => $pageCount],
                     'prev' => $isHellip ? ' &hellip; ' : '',
                     'resource' => false,
@@ -197,7 +197,7 @@ class Pagination extends Widget
             $this->li(
                 __FUNCTION__,
                 [
-                    'label' => $title,
+                    'value' => $title,
                     'params' => ['page' => $page],
                     'prev' => $isHellip ? ' &hellip; ' : '',
                     'resource' => false,
@@ -225,7 +225,7 @@ class Pagination extends Widget
             $this->li(
                 __FUNCTION__,
                 [
-                    'label' => $title,
+                    'value' => $title,
                     'params' => ['page' => $page],
                     'prev' => $isHellip ? ' &hellip; ' : '',
                     'resource' => false,
@@ -245,7 +245,7 @@ class Pagination extends Widget
     private function nextNext($page, $pageCount)
     {
         if ($page < $pageCount) {
-            $this->li(__FUNCTION__, ['label' => $page, 'params' => ['page' => $page], 'resource' => false, 'active' => false]);
+            $this->li(__FUNCTION__, ['value' => $page, 'params' => ['page' => $page], 'resource' => false, 'active' => false]);
         }
 
         return $this;
@@ -259,7 +259,7 @@ class Pagination extends Widget
     private function next($page, $pageCount)
     {
         if ($page < $pageCount) {
-            $this->li(__FUNCTION__, ['label' => $page, 'params' => ['page' => $page], 'resource' => false, 'active' => false]);
+            $this->li(__FUNCTION__, ['value' => $page, 'params' => ['page' => $page], 'resource' => false, 'active' => false]);
         }
 
         return $this;
@@ -280,7 +280,7 @@ class Pagination extends Widget
 
         $this->li(
             __FUNCTION__,
-            ['label' => $title, 'params' => ['page' => $page], 'active' => true, 'style' => 'z-index: 0;', 'resource' => false]
+            ['value' => $title, 'params' => ['page' => $page], 'active' => true, 'style' => 'z-index: 0;', 'resource' => false]
         );
 
         return $this;
@@ -293,7 +293,7 @@ class Pagination extends Widget
     private function prev($page)
     {
         if ($page > 1) {
-            $this->li(__FUNCTION__, ['label' => $page, 'params' => ['page' => $page], 'resource' => false, 'active' => false]);
+            $this->li(__FUNCTION__, ['value' => $page, 'params' => ['page' => $page], 'resource' => false, 'active' => false]);
         }
 
         return $this;
@@ -306,7 +306,7 @@ class Pagination extends Widget
     private function prevPrev($page)
     {
         if ($page > 1) {
-            $this->li(__FUNCTION__, ['label' => $page, 'params' => ['page' => $page], 'resource' => false, 'active' => false]);
+            $this->li(__FUNCTION__, ['value' => $page, 'params' => ['page' => $page], 'resource' => false, 'active' => false]);
         }
 
         return $this;
@@ -331,7 +331,7 @@ class Pagination extends Widget
             $this->li(
                 __FUNCTION__,
                 [
-                    'label' => $title,
+                    'value' => $title,
                     'params' => ['page' => $page],
                     'next' => $isHellip ? ' &hellip; ' : '',
                     'resource' => false,
@@ -362,7 +362,7 @@ class Pagination extends Widget
             $this->li(
                 __FUNCTION__,
                 [
-                    'label' => $title,
+                    'value' => $title,
                     'params' => ['page' => $page],
                     'next' => $isHellip ? ' &hellip; ' : '',
                     'resource' => false,
@@ -393,7 +393,7 @@ class Pagination extends Widget
             $this->li(
                 __FUNCTION__,
                 [
-                    'label' => $title,
+                    'value' => $title,
                     'params' => ['page' => $page],
                     'next' => $isHellip ? ' &hellip; ' : '',
                     'resource' => false,
