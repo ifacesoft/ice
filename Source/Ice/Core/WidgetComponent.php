@@ -451,7 +451,7 @@ abstract class WidgetComponent
         /** @var Resource $resource */
         $resource = $resourceClass === true
             ? $this->getResource()
-            : ($resourceClass === null ? $resourceClass : $resourceClass::create());
+            : ($resourceClass === null ? $resourceClass : Resource::create($resourceClass));
 
         $template = null;
 

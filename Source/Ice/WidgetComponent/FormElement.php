@@ -59,6 +59,18 @@ class FormElement extends ValueElement
             ->buildValidators();
     }
 
+    public function getValue($encode = null)
+    {
+        $value =  parent::getValue($encode);
+
+        if ($value != $this->getValueKey()) {
+            return $value;
+        }
+
+        return '';
+    }
+
+
     protected function buildParams($values)
     {
         parent::buildParams($values);
