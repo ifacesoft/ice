@@ -18,10 +18,9 @@
             <?php if ($component->getOption('autofocus', false)) : ?>autofocus="autofocus"<?php endif; ?>
         >
             <?php foreach ($component->getItems() as $item) : ?>
-                <?php var_dump([$item[$component->getItemKey()], $component->getValue()]) ?>
                 <option value="<?= htmlentities($item[$component->getItemKey()]) ?>"
-                    <?php if (in_array($item[$component->getItemKey()], $component->getValue())) : ?>selected="selected"<?php endif; ?>
-                ><?= htmlentities($item[$component->getItemTitle()]) ?></option>
+                    <?php if ((is_array($component->getValue()) && in_array($item[$component->getItemKey()], $component->getValue())) || $item[$component->getItemKey()] == $component->getValue()) : ?>selected="selected"<?php endif; ?>
+                ><?= $item[$component->getItemTitle()] ?></option>
             <?php endforeach; ?>
         </select>
         <?php if ($component->getHorizontal()) : ?></div><?php endif; ?>

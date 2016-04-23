@@ -17,7 +17,7 @@ class FormElement_Chosen extends FormElement_TextInput
 
     public function getItemTitle()
     {
-        return $this->getOption('itemTitle', 'name');
+        return htmlentities($this->getOption('itemTitle', 'name'));
     }
 
     /**

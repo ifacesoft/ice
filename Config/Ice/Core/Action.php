@@ -11,6 +11,7 @@ return [
                                 'path' => 'css/vendor/',
                                 'css' => ['alxlit/bootstrap-chosen/bootstrap-chosen.css'],
                                 'isCopy' => false,
+                                'css_replace' => ['url("', 'url("/resource/vendor/chosen/'],
                             ],
                             'vendor' => [
                                 'path' => 'vendor/',

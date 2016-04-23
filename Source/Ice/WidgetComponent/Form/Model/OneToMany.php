@@ -5,7 +5,7 @@ namespace Ice\WidgetComponent;
 use Ice\Core\Model;
 use Ice\Core\QueryBuilder;
 
-class Form_Model_OneToMany extends FormElement_Typehead
+class Form_Model_OneToMany extends FormElement_Chosen
 {
     /**
      * WidgetComponent config
@@ -15,7 +15,7 @@ class Form_Model_OneToMany extends FormElement_Typehead
     protected static function config()
     {
         return [
-            'render' => ['template' => FormElement_Typehead::class, 'class' => 'Ice:Php', 'layout' => null, 'resource' => null],
+            'render' => ['template' => FormElement_Chosen::class, 'class' => 'Ice:Php', 'layout' => null, 'resource' => null],
             'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'WidgetComponent: Access denied!'],
             'cache' => ['ttl' => -1, 'count' => 1000],
         ];
