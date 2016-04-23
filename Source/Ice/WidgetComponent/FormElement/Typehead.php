@@ -38,7 +38,7 @@ class FormElement_Typehead extends FormElement_TextInput
 
     public function getItemsJson()
     {
-        return Json::encode($this->getItems());
+        return Json::encode(array_values($this->getItems()));
     }
 
     /**
