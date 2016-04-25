@@ -26,7 +26,7 @@
         <?php if ($component->getHorizontal()) : ?></div><?php endif; ?>
     <script>
         $(function () {
-            $("#<?= $component->getId() ?>").chosen({max_selected_options: 5});
+            $("#<?= $component->getId() ?>").chosen({max_selected_options: 5<?php if ($component->getOption('required', false) === false) : ?>, allow_single_deselect: true<?php endif; ?>});
         });
     </script>
 </div>

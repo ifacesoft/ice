@@ -97,7 +97,7 @@ class Form_Model_ManyToMany extends FormElement_Chosen
 
     protected function buildParams($values)
     {
-        parent::buildParams($values);
+
 
         $rows = $this->get($this->getName());
 
@@ -114,7 +114,8 @@ class Form_Model_ManyToMany extends FormElement_Chosen
 
         $this->set($this->getName(), empty($rows) ? [] : $rows);
 
-
+        parent::buildParams($values);
+        
 //        $name = $this->getName();
 //        $typeahead = $this->getName() . '_typeahead';
 //
@@ -157,7 +158,7 @@ class Form_Model_ManyToMany extends FormElement_Chosen
     public function filter(QueryBuilder $queryBuilder)
     {
         $modelClass = $this->getItemModelClass();
-        
+
         foreach ($this->get($this->getName()) as $value) {
             $queryBuilder->pk($value, $modelClass);
         }

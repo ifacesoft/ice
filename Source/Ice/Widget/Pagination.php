@@ -27,7 +27,7 @@ class Pagination extends Widget
     protected static function config()
     {
         return [
-            'render' => ['template' => true, 'class' => 'Ice:Php', 'layout' => null, 'resource' => false],
+            'render' => ['template' => true, 'class' => 'Ice:Php', 'layout' => null, 'resource' => __CLASS__],
             'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'Widget: Access denied!'],
             'resource' => ['js' => null, 'css' => null, 'less' => null, 'img' => null],
             'cache' => ['ttl' => -1, 'count' => 1000],
@@ -162,14 +162,13 @@ class Pagination extends Widget
                 $pageCount - ($page + 1) != 1 &&
                 $pageCount - ($page + 0) != 1;
 
-            $title = $this->isShort ? $pageCount : '&gt;&gt;&gt; ' . $pageCount;
             $this->li(
                 __FUNCTION__,
                 [
-                    'value' => $title,
+                    'value' => $this->isShort ? '{$page}' : '&gt;&gt;&gt; {$page}',
                     'params' => ['page' => $pageCount],
                     'prev' => $isHellip ? ' &hellip; ' : '',
-                    'resource' => false,
+                    'valueResource' => true,
                     'active' => false
 
                 ]
@@ -193,14 +192,13 @@ class Pagination extends Widget
                 $pageCount - ($page + 1) != 1 &&
                 $pageCount - ($page + 0) != 1;
 
-            $title = $this->isShort ? $page : '&gt;&gt; ' . $page;
             $this->li(
                 __FUNCTION__,
                 [
-                    'value' => $title,
+                    'value' => $this->isShort ? '{$page}' : '&gt;&gt; {$page}',
                     'params' => ['page' => $page],
                     'prev' => $isHellip ? ' &hellip; ' : '',
-                    'resource' => false,
+                    'valueResource' => true,
                     'active' => false
                 ]
             );
@@ -221,14 +219,13 @@ class Pagination extends Widget
                 $pageCount - ($page + 1) != 1 &&
                 $pageCount - ($page + 0) != 1;
 
-            $title = $this->isShort ? $page : '&gt; ' . $page;
             $this->li(
                 __FUNCTION__,
                 [
-                    'value' => $title,
+                    'value' => $this->isShort ? '{$page}' : '&gt; {$page}',
                     'params' => ['page' => $page],
                     'prev' => $isHellip ? ' &hellip; ' : '',
-                    'resource' => false,
+                    'valueResource' => true,
                     'active' => false
                 ]
             );
@@ -245,7 +242,7 @@ class Pagination extends Widget
     private function nextNext($page, $pageCount)
     {
         if ($page < $pageCount) {
-            $this->li(__FUNCTION__, ['value' => $page, 'params' => ['page' => $page], 'resource' => false, 'active' => false]);
+            $this->li(__FUNCTION__, ['value' => '{$page}', 'params' => ['page' => $page], 'valueResource' => true, 'active' => false]);
         }
 
         return $this;
@@ -259,7 +256,7 @@ class Pagination extends Widget
     private function next($page, $pageCount)
     {
         if ($page < $pageCount) {
-            $this->li(__FUNCTION__, ['value' => $page, 'params' => ['page' => $page], 'resource' => false, 'active' => false]);
+            $this->li(__FUNCTION__, ['value' => '{$page}', 'params' => ['page' => $page], 'valueResource' => true, 'active' => false]);
         }
 
         return $this;
@@ -276,11 +273,15 @@ class Pagination extends Widget
             ? $this->foundRows - ($pageCount - 1) * $this->getValue('limit')
             : $this->getValue('limit');
 
-        $title = $this->isShort ? $page : $page . ' ( ' . $limit . ' / ' . $this->foundRows . ' )';
-
         $this->li(
             __FUNCTION__,
-            ['value' => $title, 'params' => ['page' => $page], 'active' => true, 'style' => 'z-index: 0;', 'resource' => false]
+            [
+                'value' => $this->isShort ? '{$page}' : '{$page} ( {$limit} / {$foundRows} )',
+                'params' => ['page' => $page, 'limit' => $limit, 'foundRows' => $this->foundRows],
+                'active' => true,
+                'style' => 'z-index: 0;',
+                'valueResource' => true
+            ]
         );
 
         return $this;
@@ -293,7 +294,7 @@ class Pagination extends Widget
     private function prev($page)
     {
         if ($page > 1) {
-            $this->li(__FUNCTION__, ['value' => $page, 'params' => ['page' => $page], 'resource' => false, 'active' => false]);
+            $this->li(__FUNCTION__, ['value' => '{$page}', 'params' => ['page' => $page], 'valueResource' => true, 'active' => false]);
         }
 
         return $this;
@@ -306,7 +307,7 @@ class Pagination extends Widget
     private function prevPrev($page)
     {
         if ($page > 1) {
-            $this->li(__FUNCTION__, ['value' => $page, 'params' => ['page' => $page], 'resource' => false, 'active' => false]);
+            $this->li(__FUNCTION__, ['value' => '{$page}', 'params' => ['page' => $page], 'valueResource' => true, 'active' => false]);
         }
 
         return $this;
@@ -327,14 +328,13 @@ class Pagination extends Widget
                 $currentPage - 10 - $page != 1 &&
                 $currentPage - 100 - $page != 1;
 
-            $title = $this->isShort ? $page : $page . ' &lt;';
             $this->li(
                 __FUNCTION__,
                 [
-                    'value' => $title,
+                    'value' => $this->isShort ? '{$page}' : '{$page} &lt;',
                     'params' => ['page' => $page],
                     'next' => $isHellip ? ' &hellip; ' : '',
-                    'resource' => false,
+                    'valueResource' => true,
                     'active' => false
                 ]
             );
@@ -358,14 +358,13 @@ class Pagination extends Widget
                 $currentPage - 10 - $page != 1 &&
                 $currentPage - 100 - $page != 1;
 
-            $title = $this->isShort ? $page : $page . ' &lt;&lt;';
             $this->li(
                 __FUNCTION__,
                 [
-                    'value' => $title,
+                    'value' => $this->isShort ? '{$page}' : '{$page} &lt;&lt;',
                     'params' => ['page' => $page],
                     'next' => $isHellip ? ' &hellip; ' : '',
-                    'resource' => false,
+                    'valueResource' => true,
                     'active' => false
                 ]
             );
@@ -389,14 +388,14 @@ class Pagination extends Widget
                 $currentPage - 10 - $page != 1 &&
                 $currentPage - 100 - $page != 1;
 
-            $title = $this->isShort ? $page : $page . ' &lt;&lt;&lt;';
+
             $this->li(
                 __FUNCTION__,
                 [
-                    'value' => $title,
+                    'value' => $this->isShort ? '{$page}' : '{$page} &lt;&lt;&lt;',
                     'params' => ['page' => $page],
                     'next' => $isHellip ? ' &hellip; ' : '',
-                    'resource' => false,
+                    'valueResource' => true,
                     'active' => false
                 ]
             );

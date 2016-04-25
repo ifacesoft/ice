@@ -24,7 +24,7 @@ abstract class WidgetComponent
     private $value = null;
     protected $label = null;
 
-    protected $params = null;
+    protected $params = [];
 
     private $active = null;
     private $classes = null;
@@ -81,8 +81,6 @@ abstract class WidgetComponent
             ->setRenderClass($this->getOption('render'));
 
         $this->widgetId = $widget->getWidgetId();
-
-        $this->initParams($widget);
     }
 
     /**
@@ -360,11 +358,6 @@ abstract class WidgetComponent
         return $this->params;
     }
 
-    protected function initParams(Widget $widget)
-    {
-        $this->params = [];
-    }
-
     protected function getClasses($classes = '')
     {
         if ($this->classes !== null) {
@@ -437,9 +430,10 @@ abstract class WidgetComponent
         if ($value === null) {
             $value = $this->getValueKey();
         }
-
+       
         if ($value === '') {
-            return $value;
+            $default = '';
+            $value = $this->getValueKey();
         }
 
         $resourceClass = $this->getOption('valueResource', null);
@@ -463,6 +457,10 @@ abstract class WidgetComponent
 
         if ($template) {
             $value = $resource->get($template, $this->getParams());
+
+            if (isset($default) && $value == $template) {
+                $value = $default;
+            }
         }
 
         if ($dateFormat = $this->getOption('dateFormat')) {
@@ -550,14 +548,10 @@ abstract class WidgetComponent
 
         $valueKey = $this->getValueKey();
 
-        if ($this->get($valueKey) === null) {
-            $value = $valueKey == $this->getComponentName()
-                ? (array_key_exists($valueKey, $values) ? $values[$valueKey] : null)
-                : (array_key_exists($valueKey, $values) ? $values[$valueKey] : $valueKey);
-
-            $this->set($valueKey, $value);
+        if ($this->get($valueKey) === null && array_key_exists($valueKey, $values) ) {
+            $this->set($valueKey, $values[$valueKey]);
         }
-
+      
         if ($this->get($valueKey) === null) {
             $this->set($valueKey, $this->getFromProviders($valueKey, $values));
         }
