@@ -2,16 +2,12 @@
 
 namespace Ice\WidgetComponent;
 
-use Ice\Core\Debuger;
 use Ice\Core\Model;
 use Ice\Core\QueryBuilder;
-use Ice\Core\Request;
 use Ice\Core\Security;
 use Ice\Core\Widget as Core_Widget;
-use Ice\DataProvider\Router;
-use Ice\Helper\Input;
 
-class FormElement extends ValueElement
+class FormElement extends HtmlTag
 {
     private $validators = null;
     private $name = null;
@@ -69,7 +65,6 @@ class FormElement extends ValueElement
 
         return '';
     }
-
 
     protected function buildParams($values)
     {

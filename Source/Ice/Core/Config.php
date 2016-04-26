@@ -189,7 +189,7 @@ class Config
      * Return default config for class
      *
      * @param  $key
-     * @return array
+     * @return Config
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *

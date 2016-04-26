@@ -13,7 +13,7 @@ use Ice\Core\Widget as Core_Widget;
 use Ice\Helper\Date;
 use Ice\Render\Replace;
 
-abstract class TableCell extends ValueElement
+abstract class TableCell extends HtmlTag
 {
   
 }

@@ -20,7 +20,7 @@
             <?php foreach ($component->getItems() as $item) : ?>
                 <option value="<?= htmlentities($item[$component->getItemKey()]) ?>"
                     <?php if ((is_array($component->getValue()) && in_array($item[$component->getItemKey()], $component->getValue())) || $item[$component->getItemKey()] == $component->getValue()) : ?>selected="selected"<?php endif; ?>
-                ><?= $item[$component->getItemTitle()] ?></option>
+                ><?php if ($truncate = $component->getOption('truncate', 0)) : ?><?= \Ice\Helper\String::truncate($item[$component->getItemTitle()], $truncate) ?><?php else :?><?= $item[$component->getItemTitle()] ?><?php endif; ?></option>
             <?php endforeach; ?>
         </select>
         <?php if ($component->getHorizontal()) : ?></div><?php endif; ?>

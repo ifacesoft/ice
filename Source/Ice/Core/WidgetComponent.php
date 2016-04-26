@@ -283,10 +283,12 @@ abstract class WidgetComponent
             $this->setLabel($this->getComponentName());
         }
 
-        $params = $this->getParams();
+        if (!$this->getLabel()) {
+            Debuger::dump($this->getComponentName());die();
+        }
 
         if ($resource = $this->getResource()) {
-            $this->setLabel($resource->get($this->label, $params));
+            $this->setLabel($resource->get($this->label, $this->getParams()));
         }
 
         return $this->label;
@@ -537,6 +539,7 @@ abstract class WidgetComponent
 
             if (!is_string($param)) {
                 $this->set($key, $param);
+                continue;
             }
 
             $param = $key == $param

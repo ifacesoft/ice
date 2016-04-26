@@ -12,6 +12,8 @@ use Ice\WidgetComponent\Form_File;
 use Ice\WidgetComponent\Form_ListBox;
 use Ice\WidgetComponent\Form_Model_ManyToMany;
 use Ice\WidgetComponent\Form_Model_OneToMany;
+use Ice\WidgetComponent\Form_Model_OneToManyToMany;
+use Ice\WidgetComponent\Form_Period;
 use Ice\WidgetComponent\FormElement;
 use Ice\WidgetComponent\FormElement_Button;
 use Ice\WidgetComponent\FormElement_Chosen;
@@ -337,9 +339,9 @@ class Form extends Widget
      * @version 1.1
      * @since   1.1
      */
-    public function chosen($fieldName, array $options = [], $template = 'Ice\Widget\Form\Chosen')
+    public function chosen($fieldName, array $options = [], $template = null)
     {
-        return $this->addPart(new FormElement_TextInput($fieldName, $options, $template, $this));
+        return $this->addPart(new FormElement_Chosen($fieldName, $options, $template, $this));
     }
 
     /**
@@ -402,9 +404,9 @@ class Form extends Widget
      * @version 1.1
      * @since   1.1
      */
-    public function period($fieldName, array $options = [], $template = 'Ice\Widget\Form\Period')
+    public function period($fieldName, array $options = [], $template = null)
     {
-        return $this->addPart(new FormElement_Period($fieldName, $options, $template, $this));
+        return $this->addPart(new Form_Period($fieldName, $options, $template, $this));
     }
 
     /**
@@ -461,7 +463,7 @@ class Form extends Widget
      */
     public function oneToManyToMany($fieldName, array $options = [])
     {
-        return $this->addPart(new FormElement_Typehead($fieldName, $options, null, $this));
+        return $this->addPart(new Form_Model_OneToManyToMany($fieldName, $options, null, $this));
     }
 
     /**

@@ -74,7 +74,7 @@ return [
         'date' => [
             'timezone' => 'UTC', // generate when install
             'storage_timezone' => 'UTC',
-            'format' => 'd.m.y'
+            'format' => 'd.m.y',
         ]
     ],
     'Ice\MessageTransport\PHPMailer' => [
