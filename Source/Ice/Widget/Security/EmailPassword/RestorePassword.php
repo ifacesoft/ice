@@ -26,7 +26,7 @@ class Security_EmailPassword_RestorePassword extends Widget_Security
     protected function build(array $input)
     {
         $this
-            ->widget('header', ['widget' => $this->getWidget(Header::class)->h1('Restore password')])
+            ->widget('header', ['widget' => $this->getWidget(Header::class)->h1('Restore password', ['valueResource' => true])])
             ->text(
                 'email',
                 [

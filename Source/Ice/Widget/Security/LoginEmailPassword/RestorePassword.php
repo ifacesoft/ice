@@ -34,7 +34,7 @@ class Security_LoginEmailPassword_RestorePassword extends Widget_Security
 //            ->setAccountEmailPasswordModelClass(Account_Email_Password::class)
 //            ->setAccountLoginPasswordActionClass(Security_LoginPassword_RestorePassword_Submit::class)
 //            ->setAccountEmailPasswordActionClass(Security_EmailPassword_RestorePassword_Submit::class)
-            ->widget('header', ['widget' => $this->getWidget(Header::class)->h1('Restore password')])
+            ->widget('header', ['widget' => $this->getWidget(Header::class)->h1('Restore password', ['valueResource' => true])])
             ->text(
                 'username',
                 [

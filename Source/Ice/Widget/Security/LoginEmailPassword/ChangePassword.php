@@ -86,7 +86,7 @@ class Security_LoginEmailPassword_ChangePassword extends Widget_Security
     protected function build(array $input)
     {
         $this
-            ->widget('header', ['widget' => $this->getWidget(Header::class)->h1('Change password')])
+            ->widget('header', ['widget' => $this->getWidget(Header::class)->h1('Change password', ['valueResource' => true])])
             ->password(
                 'password',
                 [
