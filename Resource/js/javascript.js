@@ -105,7 +105,7 @@ var Ice = {
     },
 
     jsonToObject: function (json) {
-        return JSON.parse(json);
+        return $.parseJSON(json.replace(/\s+/g, ""));
         //return Ice.arrayToObject(JSON.parse(json));
     },
 
@@ -127,6 +127,22 @@ var Ice = {
     //
     //    return {"name": this.name, "value": 'off' }
     //}
+
+    addSlashes: function (str) {
+        return (str + '').replace(/[\\"']/g, '\\$&').replace(/\u0000/g, '\\0');
+    },
+
+    replaceRender: function (template, data) {
+        if (template.indexOf('{$') > -1) {
+            for (var name in data) {
+                template = template.replace('{$' + name + '}', data[name]);
+            }
+
+            return template;
+        } else {
+            return data[template];
+        }
+    }
 };
 
 Date.prototype.yyyymmdd = function () {

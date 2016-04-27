@@ -2,6 +2,7 @@
 
 namespace Ice\WidgetComponent;
 
+use Ice\Core\Debuger;
 use Ice\Core\Model;
 use Ice\Core\QueryBuilder;
 
@@ -37,7 +38,7 @@ class Form_Model_OneToMany extends FormElement_Chosen
         return $modelClass::getPkFieldName();
     }
 
-    public function getItems()
+    public function getItems($fieldNames = [])
     {
         /** @var Model $modelClass */
         $modelClass = $this->getItemModel();
@@ -45,7 +46,7 @@ class Form_Model_OneToMany extends FormElement_Chosen
         $queryBuilder = $modelClass::createQueryBuilder();
 
         if ($sort = $this->getOption('sort')) {
-            foreach ((array) $sort as $fieldName => $order) {
+            foreach ((array)$sort as $fieldName => $order) {
                 if (is_int($fieldName)) {
                     $fieldName = $order;
                     $order = QueryBuilder::SQL_ORDERING_ASC;
@@ -59,7 +60,9 @@ class Form_Model_OneToMany extends FormElement_Chosen
             }
         }
 
-        $rows = $queryBuilder->getSelectQuery([$this->getItemKey(), $this->getItemTitle()])->getRows();
+        $fieldNames = array_diff(array_merge(array_keys($this->getParams()), (array)$fieldNames), [$this->getValueKey()]);
+
+        $rows = $queryBuilder->getSelectQuery($fieldNames)->getRows();
 
         if ($this->getOption('required', false) === false) {
             $rows = [[$this->getItemKey() => null, $this->getItemTitle() => '']] + $rows;

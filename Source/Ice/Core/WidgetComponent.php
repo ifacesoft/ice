@@ -283,10 +283,6 @@ abstract class WidgetComponent
             $this->setLabel($this->getComponentName());
         }
 
-        if (!$this->getLabel()) {
-            Debuger::dump($this->getComponentName());die();
-        }
-
         if ($resource = $this->getResource()) {
             $this->setLabel($resource->get($this->label, $this->getParams()));
         }

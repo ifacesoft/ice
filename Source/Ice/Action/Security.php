@@ -197,7 +197,7 @@ abstract class Security extends Widget_Form_Event
             'form_class' => get_class($this)
         ]);
 
-        $account = $accountClass::getSelectQuery('user__fk', ['token' => $token])->getModel();
+        $account = $accountClass::getSelectQuery(['/pk', 'user__fk'], ['token' => $token])->getModel();
 
         if (!$account) {
             $error = 'Account not found';

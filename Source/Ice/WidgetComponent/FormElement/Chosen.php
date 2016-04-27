@@ -23,12 +23,22 @@ class FormElement_Chosen extends FormElement_TextInput
         return $itemKey;
     }
 
-    public function getItemTitle()
+    public function getItemTitle($item = null)
     {
-        $itemTitle = $this->getOption('itemTitle', 'name');
+        $itemTitle = $this->getOption('itemTitle');
 
         if (!$itemTitle) {
             throw new Error(['Option itemTitle for component {$0} not found', $this->getComponentName()]);
+        }
+
+        if ($item === null) {
+            return $itemTitle;
+        }
+        
+        if ($resource = $this->getResource()) {
+            $itemTitle = $resource->get($itemTitle, $item);
+        } else {
+            $itemTitle = $item[$itemTitle];
         }
         
         return htmlentities($itemTitle);

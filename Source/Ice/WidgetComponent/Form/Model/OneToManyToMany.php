@@ -5,6 +5,7 @@ namespace Ice\WidgetComponent;
 use Ice\Core\Debuger;
 use Ice\Core\Model;
 use Ice\Core\QueryBuilder;
+use Ice\Helper\Json;
 
 class Form_Model_OneToManyToMany extends Form_Model_OneToMany
 {
@@ -53,11 +54,23 @@ class Form_Model_OneToManyToMany extends Form_Model_OneToMany
         parent::filter($queryBuilder);
     }
 
-    public function getManyLabel() {
-        return $this->getLabel() . '_many';
+    public function getManyLabel()
+    {
+        $manyLabel = $this->getOption('manyLabel', true);
+
+        if ($manyLabel === true) {
+            $manyLabel = $this->getManyValueKey();
+        }
+
+        if ($resource = $this->getResource()) {
+            $manyLabel = ($resource->get($manyLabel, $this->getParams()));
+        }
+
+        return $manyLabel;
     }
 
-    public function getPlaceholderManyAttribute() {
+    public function getPlaceholderManyAttribute()
+    {
         return $this->getPlaceholderAttribute() . '_many';
     }
 
@@ -86,20 +99,47 @@ class Form_Model_OneToManyToMany extends Form_Model_OneToMany
         $rows = $queryBuilder->getSelectQuery([$this->getManyItemKey(), $this->getManyItemTitle()])->getRows();
 
         if ($this->getOption('required', false) === false) {
-            $rows = [[$this->getManyItemKey() => null, $this->getManyItemTitle() => 'sds']] + $rows;
+            $rows = [[$this->getManyItemKey() => null, $this->getManyItemTitle() => '']] + $rows;
         }
 
         return $rows;
     }
 
-    public function getManyValueKey() {
+    public function getItemsGroupJson()
+    {
+        $itemsGroup = [];
+
+        foreach ($this->getItems($this->getManyValueKey()) as $item) {
+            if (!isset($item[$this->getManyValueKey()])) {
+                continue;
+            }
+
+            $itemsGroup[$item[$this->getManyValueKey()]][] = $item;
+        }
+
+        if ($this->getOption('required', false) === false) {
+            foreach ($itemsGroup as &$rows) {
+                $rows = [[$this->getItemKey() => null, $this->getItemTitle() => '']] + $rows;
+            }
+        }
+
+        return Json::encode($itemsGroup);
+    }
+
+    public function getManyValueKey()
+    {
         return $this->getOption('manyValueKey');
     }
 
     public function getManyValue($encode = null)
     {
-        $value = $this->get($this->getManyValueKey());
+        if ($value = $this->getValue()) {
+            /** @var Model $itemModelClass */
+            $itemModelClass = $this->getItemModel();
 
-        return $value && $encode ? htmlentities($value) : '';
+            return $itemModelClass::getModel($value, $this->getManyValueKey())->get($this->getManyValueKey());
+        }
+
+        return '';
     }
 }

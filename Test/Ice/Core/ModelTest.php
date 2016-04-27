@@ -98,7 +98,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
 //
 //            $this->assertEquals($user1, $user2);
 //
-//            $user4 = Test::getSelectQuery(['/name', 'name2'], ['/name' => 'test name'], null, $dataSourceKey);
+//            $user4 = Test::getSelectQuery(['/pk', '/name', 'name2'], ['/name' => 'test name'], null, $dataSourceKey);
 //
 //            $this->assertEquals($user2->test_name, $user4->test_name);
 //
