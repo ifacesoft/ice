@@ -75,11 +75,7 @@ class HtmlTag extends WidgetComponent
     {
         $this->row = $row;
 
-        /** @var HtmlTag $component */
-        $component = parent::build($row);
-
-        return $component
-            ->buildEvent();
+        return parent::build($row);
     }
 
     /**
@@ -216,19 +212,22 @@ class HtmlTag extends WidgetComponent
         return parent::isActive();
     }
 
-    private function buildEvent()
+    /**
+     * @return null
+     */
+    public function getEvent()
     {
         $event = array_intersect_key($this->getOption(), array_flip(['onclick', 'onchange', 'submit']));
 
         if (!$event) {
-            return $this;
+            return null;
         }
 
         $eventType = key($event);
         $event = reset($event);
 
         if ($event === null) {
-            return $this;
+            return null;
         }
 
         if (is_string($event)) {
@@ -263,14 +262,6 @@ class HtmlTag extends WidgetComponent
             $this->event['class'] = Action::getClass($this->event['class']);
         }
 
-        return $this;
-    }
-
-    /**
-     * @return null
-     */
-    public function getEvent()
-    {
         return $this->event;
     }
 
