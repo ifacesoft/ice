@@ -2,7 +2,6 @@
 
 namespace Ice\WidgetComponent;
 
-
 class HtmlTag_A extends HtmlTag
 {
     public function getHtmlTagAttributes()
@@ -14,9 +13,9 @@ class HtmlTag_A extends HtmlTag
                 $htmlTagAttributes .= ' ';
             }
 
-            $htmlTagAttributes .= 'target"=' . $target . '"';
+            $htmlTagAttributes .= 'target="' . $target . '"';
         }
-        
+
         return $htmlTagAttributes;
     }
 }

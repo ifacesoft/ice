@@ -467,6 +467,10 @@ abstract class WidgetComponent
             }
         }
 
+        if ($value === null || $value === '') {
+            return $value;
+        }
+
         if ($dateFormat = $this->getOption('dateFormat')) {
             if ($dateFormat === true) {
                 $dateDefaults = Module::getInstance()->getDefault('date');
@@ -561,7 +565,7 @@ abstract class WidgetComponent
             $this->set($valueKey, $this->getFromProviders($valueKey, $values));
         }
 
-        if ($this->get($valueKey) === null) {
+        if ($this->get($valueKey) === null || $this->get($valueKey) === '') {
             return;
         }
 

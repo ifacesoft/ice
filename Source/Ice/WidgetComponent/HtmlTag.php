@@ -305,7 +305,9 @@ class HtmlTag extends WidgetComponent
         }
 
         if (isset($event['confirm_message'])) {
-            $code .= ', \'' . $event['confirm_message'] . '\'';
+            $code .= isset($event['callback'])
+            ? ', \'' . $event['confirm_message'] . '\''
+            : ', null, \'' . $event['confirm_message'] . '\'';
         }
 
         return $code . '); return false;';
