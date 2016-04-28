@@ -661,6 +661,7 @@ abstract class Widget extends Container
      * Compiled widget parts
      *
      * @param null $filterParts
+     * @param null $row
      * @return WidgetComponent[]
      * @author dp <denis.a.shestakov@gmail.com>
      *
@@ -693,7 +694,7 @@ abstract class Widget extends Container
 //                }
 //            }
 //
-            $parts[$partName] = $row ? $part->build($row, $this) : $part;
+            $parts[$partName] = /*$row ? $part->build($row, $this) : */$part;
         }
 
         return $parts;

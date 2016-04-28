@@ -239,6 +239,7 @@ abstract class WidgetComponent
             return null;
         }
 
+        /** @var Render $renderClass */
         $renderClass = Render::getClass($this->renderClass);
 
         return $renderClass::getInstance();
@@ -283,6 +284,7 @@ abstract class WidgetComponent
             $this->setLabel($this->getComponentName());
         }
 
+        /** @var Resource $resource */
         if ($resource = $this->getResource()) {
             $this->setLabel($resource->get($this->label, $this->getParams()));
         }
@@ -428,7 +430,7 @@ abstract class WidgetComponent
         if ($value === null) {
             $value = $this->getValueKey();
         }
-       
+
         if ($value === '') {
             $default = '';
             $value = $this->getValueKey();
@@ -457,6 +459,10 @@ abstract class WidgetComponent
             $value = $resource->get($template, $this->getParams());
 
             if (isset($default) && $value == $template) {
+                $value = $default;
+            }
+        } else {
+            if (isset($default)) {
                 $value = $default;
             }
         }
@@ -550,7 +556,7 @@ abstract class WidgetComponent
         if ($this->get($valueKey) === null && array_key_exists($valueKey, $values) ) {
             $this->set($valueKey, $values[$valueKey]);
         }
-      
+
         if ($this->get($valueKey) === null) {
             $this->set($valueKey, $this->getFromProviders($valueKey, $values));
         }
@@ -567,7 +573,7 @@ abstract class WidgetComponent
         }
 
         if ($dateFormat) {
-            $this->set($valueKey, Date::get(strtotime($this->getValueKey()), $dateFormat));
+            $this->set($valueKey, Date::get(strtotime($this->get($valueKey)), $dateFormat));
             $this->setOption('dateFormat', null);
         }
     }
