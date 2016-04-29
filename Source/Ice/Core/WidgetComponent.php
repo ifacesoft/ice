@@ -366,6 +366,8 @@ abstract class WidgetComponent
 
         $class = (array)$this->getOption('classes', []);
 
+
+
         if ($class) {
             $classes .= ' ' . implode(' ', $class);
         }
