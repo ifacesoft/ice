@@ -62,13 +62,7 @@ class Form_Model_OneToMany extends FormElement_Chosen
 
         $fieldNames = array_diff(array_merge(array_keys($this->getParams()), (array)$fieldNames), [$this->getValueKey()]);
 
-        $rows = $queryBuilder->getSelectQuery($fieldNames)->getRows();
-
-        if ($this->getOption('required', false) === false) {
-            $rows = [[$this->getItemKey() => null, $this->getItemTitle() => '']] + $rows;
-        }
-
-        $this->setOption('rows', $rows);
+        $this->setOption('rows', $queryBuilder->getSelectQuery($fieldNames)->getRows());
 
         return parent::getItems();
     }

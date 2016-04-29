@@ -49,6 +49,8 @@ class FormElement_Chosen extends FormElement_TextInput
      */
     public function getItems()
     {
-        return $this->getOption('rows', []);
+        return $this->getOption('required', false) === false
+            ? [[$this->getItemKey() => null, $this->getItemTitle() => '']] + $this->getOption('rows', [])
+            : $this->getOption('rows', []);
     }
 }

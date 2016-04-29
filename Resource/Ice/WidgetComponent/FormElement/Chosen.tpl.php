@@ -1,8 +1,8 @@
-<div<?php if (!$component->getOption('resetFormClass')) : ?> class="form-group"<?php endif; ?>>
-    <label
-        for="<?= $component->getId() ?>"
-        class="control-label<?php if ($component->getOption('srOnly')) : ?> sr-only<?php endif; ?><?php if ($component->getHorizontal()) : ?> col-md-<?= $component->getHorizontal() ?><?php endif; ?>"
-    ><?= $component->getLabel() ?></label>
+<div <?php if (!$component->getOption('resetFormClass')) : ?> class="form-group"<?php endif; ?>>
+    <label for="<?= $component->getId() ?>"
+           class="control-label<?php if ($component->getOption('srOnly')) : ?> sr-only<?php endif; ?><?php if ($component->getHorizontal()) : ?> col-md-<?= $component->getHorizontal() ?><?php endif; ?>"
+    ><?= $component->getLabel() ?><?php if ($component->getOption('required', false)) : ?> <sup
+            style="color: red;">*</sup><?php endif; ?></label>
     <?php if ($component->getHorizontal()) : ?>
     <div class="col-md-<?= 12 - $component->getHorizontal() ?>"><?php endif; ?>
         <select <?= $component->getIdAttribute() ?>
@@ -19,8 +19,8 @@
         >
             <?php foreach ($component->getItems() as $item) : ?>
                 <option value="<?= htmlentities($item[$component->getItemKey()]) ?>"
-                    <?php if ((is_array($component->getValue()) && in_array($item[$component->getItemKey()], $component->getValue())) || $item[$component->getItemKey()] == $component->getValue()) : ?>selected="selected"<?php endif; ?>
-                ><?php if ($truncate = $component->getOption('truncate', 0)) : ?><?= \Ice\Helper\String::truncate($item[$component->getItemTitle()], $truncate) ?><?php else :?><?= $item[$component->getItemTitle()] ?><?php endif; ?></option>
+                        <?php if ((is_array($component->getValue()) && in_array($item[$component->getItemKey()], $component->getValue())) || $item[$component->getItemKey()] == $component->getValue()) : ?>selected="selected"<?php endif; ?>
+                ><?= $component->getItemTitle($item) ?></option>
             <?php endforeach; ?>
         </select>
         <?php if ($component->getHorizontal()) : ?></div><?php endif; ?>
