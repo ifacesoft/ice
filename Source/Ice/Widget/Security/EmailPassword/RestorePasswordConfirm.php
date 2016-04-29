@@ -35,7 +35,7 @@ class Security_EmailPassword_RestorePasswordConfirm extends Widget_Security
     protected function build(array $input)
     {
         $this
-            ->widget('header', ['widget' => $this->getWidget(Header::class)->h1('Restore password confirmation')])
+            ->widget('header', ['widget' => $this->getWidget(Header::class)->h1('Restore password confirmation', ['valueResource' => true])])
             ->text(
                 'token',
                 [

@@ -27,5 +27,7 @@
             <?= $widget->renderPart($part) ?>
         <?php endforeach; ?>
     </table>
-    <?= $widget->renderPart($pagination) ?>
+    <?php if (isset($pagination)) : ?>
+        <?= $widget->renderPart($pagination) ?>
+    <?php endif; ?>
 </div>
