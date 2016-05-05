@@ -50,9 +50,9 @@
     $(function () {
         $("#<?= $component->getId('many') ?>").chosen({
             <?php if ($component->getOption('required', false) === false) : ?>allow_single_deselect: true,<?php endif; ?>
-            max_selected_options: 5
-
-
+            max_selected_options: 5,
+            no_results_text: 'Oops, nothing found!',
+            placeholder_text_single: 'Select an Option'
         }).change(function () {
             if ($("#<?= $component->getId('many') ?>").val()) {
                 $("#<?= $component->getId() ?> option").remove()
@@ -69,8 +69,10 @@
         });
 
         $("#<?= $component->getId() ?>").chosen({
-            max_selected_options: 5<?php if ($component->getOption('required', false) === false) : ?>,
-            allow_single_deselect: true<?php endif; ?>
+            <?php if ($component->getOption('required', false) === false) : ?>allow_single_deselect: true,<?php endif; ?>
+            max_selected_options: 5,
+            no_results_text: 'Oops, nothing found!',
+            placeholder_text_single: 'Select an Option'
         });
 
         var <?= $component->getId() ?>_items = Ice.jsonToObject('<?= $component->getItemsGroupJson() ?>');

@@ -8,6 +8,7 @@
 
 namespace Ice\WidgetComponent;
 
+use Ice\Core\Debuger;
 use Ice\Exception\Error;
 
 class FormElement_Chosen extends FormElement_TextInput
@@ -35,11 +36,11 @@ class FormElement_Chosen extends FormElement_TextInput
             return $itemTitle;
         }
         
-        if ($resource = $this->getResource()) {
-            $itemTitle = $resource->get($itemTitle, $item);
-        } else {
+//        if ($resource = $this->getResource()) {
+//            $itemTitle = $resource->get($itemTitle, $item);
+//        } else {
             $itemTitle = $item[$itemTitle];
-        }
+//        }
         
         return htmlentities($itemTitle);
     }

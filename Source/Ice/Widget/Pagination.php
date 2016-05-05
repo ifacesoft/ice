@@ -166,6 +166,7 @@ class Pagination extends Widget
                 __FUNCTION__,
                 [
                     'value' => $this->isShort ? '{$page}' : '&gt;&gt;&gt; {$page}',
+                    'encode' => false,
                     'params' => ['page' => $pageCount],
                     'prev' => $isHellip ? ' &hellip; ' : '',
                     'valueResource' => true,
@@ -196,6 +197,7 @@ class Pagination extends Widget
                 __FUNCTION__,
                 [
                     'value' => $this->isShort ? '{$page}' : '&gt;&gt; {$page}',
+                    'encode' => false,
                     'params' => ['page' => $page],
                     'prev' => $isHellip ? ' &hellip; ' : '',
                     'valueResource' => true,
@@ -223,6 +225,7 @@ class Pagination extends Widget
                 __FUNCTION__,
                 [
                     'value' => $this->isShort ? '{$page}' : '&gt; {$page}',
+                    'encode' => false,
                     'params' => ['page' => $page],
                     'prev' => $isHellip ? ' &hellip; ' : '',
                     'valueResource' => true,
@@ -332,6 +335,7 @@ class Pagination extends Widget
                 __FUNCTION__,
                 [
                     'value' => $this->isShort ? '{$page}' : '{$page} &lt;',
+                    'encode' => false,
                     'params' => ['page' => $page],
                     'next' => $isHellip ? ' &hellip; ' : '',
                     'valueResource' => true,
@@ -362,6 +366,7 @@ class Pagination extends Widget
                 __FUNCTION__,
                 [
                     'value' => $this->isShort ? '{$page}' : '{$page} &lt;&lt;',
+                    'encode' => false,
                     'params' => ['page' => $page],
                     'next' => $isHellip ? ' &hellip; ' : '',
                     'valueResource' => true,
@@ -393,6 +398,7 @@ class Pagination extends Widget
                 __FUNCTION__,
                 [
                     'value' => $this->isShort ? '{$page}' : '{$page} &lt;&lt;&lt;',
+                    'encode' => false,
                     'params' => ['page' => $page],
                     'next' => $isHellip ? ' &hellip; ' : '',
                     'valueResource' => true,
