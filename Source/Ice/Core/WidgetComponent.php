@@ -7,6 +7,7 @@ use Ice\Helper\Access;
 use Ice\Helper\Date;
 use Ice\Helper\Input;
 use Ice\Helper\String;
+use Ice\Render\Replace;
 
 abstract class WidgetComponent
 {
@@ -444,21 +445,23 @@ abstract class WidgetComponent
             $resourceClass = $this->getOption('valueHardResource', null);
         }
 
-        /** @var Resource $resource */
-        $resource = $resourceClass === true
-            ? $this->getResource()
-            : ($resourceClass === null ? $resourceClass : Resource::create($resourceClass));
-
         $template = null;
 
-        if ($resource) {
+        if ($resourceClass) {
             $template = $this->getOption('valueHardResource', null)
                 ? $this->getComponentName() . '_' . $value
                 : $this->getValueKey();
         }
 
+        /** @var Resource $resource */
+        $resource = $resourceClass === true
+            ? $this->getResource()
+            : ($resourceClass === null ? $resourceClass : Resource::create($resourceClass));
+
         if ($template) {
-            $value = $resource->get($template, $this->getParams());
+            $value = $resource
+                ? $resource->get($template, $this->getParams())
+                : Replace::getInstance()->fetch($template, $this->getParams(), null, Render::TEMPLATE_TYPE_STRING);
 
             if (isset($default) && $value == $template) {
                 $value = $default;
