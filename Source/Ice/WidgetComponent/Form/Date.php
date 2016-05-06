@@ -22,7 +22,7 @@ class Form_Date extends FormElement_TextInput
     }
     
     public function getDateMomentFormat() {
-        return Date::convertPHPToMomentFormat($this->getDateFormat());
+        return Date::convertPHPToFakeMomentFormat($this->getDateFormat());//Date::convertPHPToMomentFormat($this->getDateFormat());
     }
 
     public function getLocale()

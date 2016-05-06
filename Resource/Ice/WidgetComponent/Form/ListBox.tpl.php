@@ -2,7 +2,8 @@
     <label
         for="<?= $component->getId() ?>"
         class="control-label<?php if ($component->getOption('srOnly')) : ?> sr-only<?php endif; ?><?php if ($component->getHorizontal()) : ?> col-md-<?= $component->getHorizontal() ?><?php endif; ?>"
-    ><?= $component->getLabel() ?></label>
+    ><?= $component->getLabel() ?><?php if ($component->getOption('required', false)) : ?> <sup
+            style="color: red;">*</sup><?php endif; ?></label>
     <?php if ($component->getHorizontal()) : ?>
     <div class="col-md-<?= 12 - $component->getHorizontal() ?>"><?php endif; ?>
         <select <?= $component->getIdAttribute() ?>
@@ -18,7 +19,7 @@
         >
             <?php foreach ($component->getItems() as $item) : ?>
                 <option value="<?= htmlentities($item[$component->getItemKey()]) ?>"
-                    <?php if (htmlentities($item[$component->getItemKey()]) == $component->getValue()) : ?> selected="selected"<?php endif; ?>
+                    <?php if ($item[$component->getItemKey()] == $component->getValue()) : ?> selected="selected"<?php endif; ?>
                 ><?= $component->getItemTitle($item) ?></option>
             <?php endforeach; ?>
         </select>

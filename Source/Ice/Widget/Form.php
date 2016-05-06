@@ -8,6 +8,7 @@ use Ice\Core\Module;
 use Ice\Core\Validator;
 use Ice\Core\Widget;
 use Ice\Helper\Directory;
+use Ice\WidgetComponent\Form_Date;
 use Ice\WidgetComponent\Form_File;
 use Ice\WidgetComponent\Form_ListBox;
 use Ice\WidgetComponent\Form_Model_ManyToMany;
@@ -219,7 +220,6 @@ class Form extends Widget
      *
      * @param  $fieldName
      * @param  array $options
-     * @param  string $template
      * @return Form
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -227,9 +227,9 @@ class Form extends Widget
      * @version 1.1
      * @since   0.0
      */
-    public function date($fieldName, array $options = [], $template = 'Ice\Widget\Form\Date')
+    public function date($fieldName, array $options = [])
     {
-        return $this->addPart(new FormElement_TextInput($fieldName, $options, $template, $this));
+        return $this->addPart(new Form_Date($fieldName, $options, null, $this));
     }
 
     /**

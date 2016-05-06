@@ -2,8 +2,8 @@
     <label
         for="<?= $component->getId() ?>"
         class="control-label<?php if ($component->getOption('srOnly')) : ?> sr-only<?php endif; ?><?php if ($component->getHorizontal()) : ?> col-md-<?= $component->getHorizontal() ?><?php endif; ?>"
-    ><?= $component->getLabel() ?></label>
-
+    ><?= $component->getLabel() ?><?php if ($component->getOption('required', false)) : ?> <sup
+            style="color: red;">*</sup><?php endif; ?></label>
     <?php if ($component->getHorizontal()) : ?>
     <div class="col-md-<?= 12 - $component->getHorizontal() ?>"><?php endif; ?>
         <input <?= $component->getIdAttribute() ?>
@@ -20,7 +20,10 @@
         ><?php if ($component->getHorizontal()) : ?></div><?php endif; ?>
     <script>
         $(function () {
-            $("#<?= $component->getId() ?>").datepicker({dateFormat: 'yy-mm-dd'});
+            $("#<?= $component->getId() ?>").datepicker({
+                format: '<?= $component->getDateMomentFormat() ?>', 
+                locale: '<?= $component->getLocale() ?>'
+            });
         });
     </script>
 </div>
