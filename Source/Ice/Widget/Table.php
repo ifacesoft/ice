@@ -4,6 +4,7 @@ namespace Ice\Widget;
 
 use Ice\Action\Render;
 use Ice\Core\Widget;
+use Ice\WidgetComponent\HtmlTag;
 
 class Table extends Widget
 {
@@ -46,5 +47,10 @@ class Table extends Widget
                 ],
 //                'method' => 'GET'
             ]);
+    }
+
+    public function row($fieldName, array $options = [], $template = 'Ice\Widget\Table_Row')
+    {
+        return $this->addPart(new HtmlTag($fieldName, $options, $template, $this));
     }
 }

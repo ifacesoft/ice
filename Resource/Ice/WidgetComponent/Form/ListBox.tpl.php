@@ -8,9 +8,9 @@
     <div class="col-md-<?= 12 - $component->getHorizontal() ?>"><?php endif; ?>
         <select <?= $component->getIdAttribute() ?>
             <?= $component->getClassAttribute($component->getOption('resetFormClass', false) ? '' : 'form-control') ?>
-            name="<?= $component->getName() ?><?php if (!empty($options['multiple'])) : ?>[]<?php endif; ?>"
-            <?php if (!empty($options['multiple'])) : ?>multiple="multiple"<?php endif; ?>
-            <?php if (!empty($options['size'])) : ?>size="<?= $options['size'] ?>"<?php endif; ?>
+            name="<?= $component->getName() ?><?php if ($component->getOption('multiple', false)) : ?>[]<?php endif; ?>"
+            size="<?= $component->getOption('size', 1) ?>"
+            <?php if ($component->getOption('multiple', false)) : ?>multiple="multiple"<?php endif; ?>
             <?= $component->getEventAttributesCode() ?>
             <?php if ($component->getOption('disabled', false)) : ?>disabled="disabled"<?php endif; ?>
             <?php if ($component->getOption('readonly', false)) : ?>readonly="readonly"<?php endif; ?>
