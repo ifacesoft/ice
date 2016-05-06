@@ -853,21 +853,6 @@ abstract class Widget extends Container
     }
 
     /**
-     * @param $columnName
-     * @param array $options
-     * @param string $template
-     * @return $this
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 1.1
-     * @since   1.0
-     */
-    public function button($columnName, array $options = [], $template = 'Ice\Widget\Button')
-    {
-        return $this->addPart(new HtmlTag($columnName, $options, $template, $this));
-    }
-
-    /**
      * @param $scope
      * @param array $data
      * @param Widget $widgetClass
