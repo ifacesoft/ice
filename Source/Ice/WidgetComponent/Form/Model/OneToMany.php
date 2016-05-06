@@ -8,21 +8,7 @@ use Ice\Core\QueryBuilder;
 
 class Form_Model_OneToMany extends FormElement_Chosen
 {
-    /**
-     * WidgetComponent config
-     *
-     * @return array
-     */
-    protected static function config()
-    {
-        return [
-            'render' => ['template' => FormElement_Chosen::class, 'class' => 'Ice:Php', 'layout' => null, 'resource' => null],
-            'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'WidgetComponent: Access denied!'],
-            'cache' => ['ttl' => -1, 'count' => 1000],
-        ];
-    }
-
-    /**
+       /**
      * @return null
      */
     public function getItemModel()
@@ -45,7 +31,7 @@ class Form_Model_OneToMany extends FormElement_Chosen
 
         $queryBuilder = $modelClass::createQueryBuilder();
 
-        if ($sort = $this->getOption('sort')) {
+        if ($sort = $this->getOption('itemSort')) {
             foreach ((array)$sort as $fieldName => $order) {
                 if (is_int($fieldName)) {
                     $fieldName = $order;
@@ -60,7 +46,9 @@ class Form_Model_OneToMany extends FormElement_Chosen
             }
         }
 
-        $fieldNames = array_diff(array_merge(array_keys($this->getParams()), (array)$fieldNames), [$this->getValueKey()]);
+//        $fieldNames = array_diff(array_merge(array_keys($this->getParams()), (array)$fieldNames), [$this->getValueKey()]);
+
+        $fieldNames = (array)$fieldNames + [$this->getItemKey(), $this->getItemTitle()];
 
         $this->setOption('rows', $queryBuilder->getSelectQuery($fieldNames)->getRows());
 
