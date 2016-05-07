@@ -9,7 +9,10 @@
 namespace Ice\WidgetComponent;
 
 use Ice\Core\Debuger;
+use Ice\Core\Render;
+use Ice\Core\Resource;
 use Ice\Exception\Error;
+use Ice\Render\Replace;
 
 class Form_ListBox extends FormElement_TextInput
 {
@@ -36,13 +39,37 @@ class Form_ListBox extends FormElement_TextInput
             return $itemTitle;
         }
 
-//        if ($resource = $this->getResource()) {
-//            $itemTitle = $resource->get($itemTitle, $item);
-//        } else {
-            $itemTitle = $item[$itemTitle];
-//        }
+        $resourceClass = $this->getOption('itemTitleResource', null);
 
-        return htmlentities($itemTitle);
+        if ($resourceClass === null) {
+            $resourceClass = $this->getOption('itemTitleHardResource', null);
+        }
+
+        $template = null;
+
+        if ($resourceClass) {
+            $template = $itemTitle;
+
+            if ($this->getOption('itemTitleHardResource', null)) {
+                $template .= '_' . $item[$itemTitle];
+            }
+        }
+
+        /** @var Resource $resource */
+        $resource = $resourceClass === true
+            ? $this->getResource()
+            : ($resourceClass === null ? $resourceClass : Resource::create($resourceClass));
+
+        if ($template) {
+            $title = $resource
+                ? $resource->get($template, $item)
+                : Replace::getInstance()->fetch($template, $item, null, Render::TEMPLATE_TYPE_STRING);
+
+        } else {
+            $title = $item[$itemTitle];
+        }
+
+        return htmlentities($title);
     }
 
     /**

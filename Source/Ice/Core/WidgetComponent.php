@@ -448,9 +448,11 @@ abstract class WidgetComponent
         $template = null;
 
         if ($resourceClass) {
-            $template = $this->getOption('valueHardResource', null)
-                ? $this->getComponentName() . '_' . $value
-                : $this->getValueKey();
+            $template = $this->getValueKey();
+
+            if ($this->getOption('valueHardResource', null)) {
+                $template .=  '_' . $value;
+            }
         }
 
         /** @var Resource $resource */
