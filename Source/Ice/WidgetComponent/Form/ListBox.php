@@ -18,27 +18,21 @@ class Form_ListBox extends FormElement_TextInput
 {
     public function getItemKey()
     {
-        $itemKey = $this->getOption('itemKey');
-
-        if (!$itemKey) {
-            throw new Error(['Option itemKey for component {$0} not found', $this->getComponentName()]);
-        }
-
-        return $itemKey;
+        return $this->getOption('itemKey', 'itemKey');
     }
 
-    public function getItemTitle($item = null)
+    public function getItemTitle() {
+        return $this->getOption('itemTitle', 'itemTitle');
+    }
+    
+    public function getTitle($item = null)
     {
-        $itemTitle = $this->getOption('itemTitle');
-
-        if (!$itemTitle) {
-            throw new Error(['Option itemTitle for component {$0} not found', $this->getComponentName()]);
-        }
-
+        $itemTitle = $this->getItemTitle();
+        
         if ($item === null) {
             return $itemTitle;
         }
-
+        
         $resourceClass = $this->getOption('itemTitleResource', null);
 
         if ($resourceClass === null) {

@@ -2,6 +2,7 @@
 
 namespace Ice\WidgetComponent;
 
+use Ice\Core\Debuger;
 use Ice\Core\Model;
 use Ice\Core\QueryBuilder;
 use Ice\Core\Security;

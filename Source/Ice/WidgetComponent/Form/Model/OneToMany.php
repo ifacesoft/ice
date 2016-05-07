@@ -100,7 +100,7 @@ class Form_Model_OneToMany extends FormElement_Chosen
 
     public function filter(QueryBuilder $queryBuilder)
     {
-//        parent::filter($queryBuilder);
+        parent::filter($queryBuilder);
 //
 //        $typeahead = $this->getName() . '_typeahead';
 //

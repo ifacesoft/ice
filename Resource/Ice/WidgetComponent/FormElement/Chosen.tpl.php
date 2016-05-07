@@ -20,7 +20,7 @@
             <?php foreach ($component->getItems() as $item) : ?>
                 <option value="<?= htmlentities($item[$component->getItemKey()]) ?>"
                         <?php if ((is_array($component->getValue()) && in_array($item[$component->getItemKey()], $component->getValue())) || $item[$component->getItemKey()] == $component->getValue()) : ?>selected="selected"<?php endif; ?>
-                ><?= $component->getItemTitle($item) ?></option>
+                ><?= $component->getTitle($item) ?></option>
             <?php endforeach; ?>
         </select>
         <?php if ($component->getHorizontal()) : ?></div><?php endif; ?>

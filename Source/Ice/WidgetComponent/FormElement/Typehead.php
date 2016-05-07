@@ -10,32 +10,22 @@ namespace Ice\WidgetComponent;
 
 use Ice\Helper\Json;
 
-class FormElement_Typehead extends FormElement_TextInput
+class FormElement_Typehead extends Form_ListBox
 {
     /**
-     * @return null
+     * WidgetComponent config
+     *
+     * @return array
      */
-    public function getItemKey()
+    protected static function config()
     {
-        return $this->getOption('itemKey', 'id');
+        return [
+            'render' => ['template' => __CLASS__, 'class' => 'Ice:Php', 'layout' => null, 'resource' => null],
+            'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'WidgetComponent: Access denied!'],
+            'cache' => ['ttl' => -1, 'count' => 1000],
+        ];
     }
-
-    /**
-     * @return null
-     */
-    public function getItemTitle()
-    {
-        return htmlentities($this->getOption('itemTitle', 'name'));
-    }
-
-    /**
-     * @return null
-     */
-    public function getItems()
-    {
-        return $this->getOption('rows', []);
-    }
-
+    
     public function getItemsJson()
     {
         return Json::encode(array_values($this->getItems()));
