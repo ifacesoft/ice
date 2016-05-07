@@ -445,6 +445,8 @@ abstract class WidgetComponent
             $resourceClass = $this->getOption('valueHardResource', null);
         }
 
+
+
         $template = null;
 
         if ($resourceClass) {
