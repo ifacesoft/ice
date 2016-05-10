@@ -1122,16 +1122,15 @@ abstract class Model
         $modelClass = get_class($this);
 
         $pk = $this->getPk();
-        $affected = $this->getAffected();
 
         $isSetPk = !empty($pk);
         // && $pk != array_intersect_key($affected, array_flip($modelClass::getScheme()->getPkFieldNames()));
 
         if (!$isSmart) {
             if ($isSetPk) {
-                $this->update($modelClass, $affected, $dataSourceKey);
+                $this->update($modelClass, $dataSourceKey);
             } else {
-                $this->insert($modelClass, $affected, false, $dataSourceKey);
+                $this->insert($modelClass, false, $dataSourceKey);
             }
 
             return $this->clearAffected();
@@ -1140,16 +1139,13 @@ abstract class Model
         /** @var ModelScheme $modelScheme */
         $modelScheme = $modelClass::getScheme();
 
-        $this->insert(
-            $modelClass,
-            array_merge(
-                (array)$this->getPk(),
-                array_intersect_key($this->get(), array_flip($modelScheme->getUniqueFieldNames())),
-                $affected
-            ),
-            true,
-            $dataSourceKey
+        $this->affected = array_merge(
+            (array)$this->getPk(),
+            array_intersect_key($this->get(), array_flip($modelScheme->getUniqueFieldNames())),
+            $this->affected
         );
+
+        $this->insert($modelClass, true, $dataSourceKey);
 
         return $this->clearAffected();
     }
@@ -1171,16 +1167,15 @@ abstract class Model
 
     /**
      * @param Model $modelClass
-     * @param $affected
      * @param $dataSourceKey
      */
-    private function update($modelClass, $affected, $dataSourceKey)
+    private function update($modelClass, $dataSourceKey)
     {
         $this->beforeUpdate();
 
         Query::getBuilder($modelClass)
             ->pk($this->getPk())
-            ->getUpdateQuery($affected, $dataSourceKey)
+            ->getUpdateQuery($this->getAffected(), $dataSourceKey)
             ->getQueryResult();
 
         $this->afterUpdate();
@@ -1212,16 +1207,15 @@ abstract class Model
 
     /**
      * @param Model $modelClass
-     * @param $affected
      * @param $isSmart
      * @param $dataSourceKey
      */
-    private function insert($modelClass, $affected, $isSmart, $dataSourceKey)
+    private function insert($modelClass, $isSmart, $dataSourceKey)
     {
         $this->beforeInsert();
 
         $insertId = Query::getBuilder($modelClass)
-            ->getInsertQuery($affected, $isSmart, $dataSourceKey)
+            ->getInsertQuery($this->getAffected(), $isSmart, $dataSourceKey)
             ->getQueryResult()
             ->getInsertId();
 

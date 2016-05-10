@@ -46,11 +46,11 @@ class Form_Model_OneToMany extends FormElement_Chosen
             }
         }
 
-//        $fieldNames = array_diff(array_merge(array_keys($this->getParams()), (array)$fieldNames), [$this->getValueKey()]);
+        $fieldNames = strpos($this->getItemTitle(), '{$') === false
+            ? array_merge([$this->getItemTitle()], (array)$fieldNames)
+            : array_diff(array_merge(array_keys($this->getParams()), (array)$fieldNames), [$this->getValueKey()]);
 
-        $fieldNames = (array)$fieldNames + [$this->getItemKey(), $this->getItemTitle()];
-
-        $this->setOption('rows', $queryBuilder->getSelectQuery($fieldNames)->getRows());
+        $this->setOption('rows', $queryBuilder->getSelectQuery(array_merge((array) $this->getItemKey(), $fieldNames))->getRows());
 
         return parent::getItems();
     }
@@ -100,6 +100,8 @@ class Form_Model_OneToMany extends FormElement_Chosen
 
     public function filter(QueryBuilder $queryBuilder)
     {
+        $this->setOption('comparison', '=');
+
         parent::filter($queryBuilder);
 //
 //        $typeahead = $this->getName() . '_typeahead';
@@ -111,5 +113,16 @@ class Form_Model_OneToMany extends FormElement_Chosen
 //        }
 //
 //        $queryBuilder->like($this->getItemTitle(), '%' . $typeaheadValue . '%', $this->getItemModel());
+    }
+
+    public function save(Model $model)
+    {
+        $save = parent::save($model);
+
+        if (empty($save[$this->getName()])) {
+            return [];
+        }
+
+        return $save;
     }
 }

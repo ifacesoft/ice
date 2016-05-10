@@ -58,7 +58,6 @@ class Form_ListBox extends FormElement_TextInput
             $title = $resource
                 ? $resource->get($template, $item)
                 : Replace::getInstance()->fetch($template, $item, null, Render::TEMPLATE_TYPE_STRING);
-
         } else {
             $title = $item[$itemTitle];
         }

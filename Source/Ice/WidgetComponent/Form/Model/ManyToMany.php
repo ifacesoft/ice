@@ -97,22 +97,20 @@ class Form_Model_ManyToMany extends FormElement_Chosen
 
     protected function buildParams($values)
     {
-
-
-        $rows = $this->get($this->getName());
-
-        if ($rows === null && isset($values['pk'])) {
-            /** @var Model $itemModelClass */
-            $itemModelClass = $this->getItemModelClass();
-
-            $rows = $itemModelClass::createQueryBuilder()
-                ->inner($this->getLinkModelClass())
-                ->eq([$this->getLinkKey() => $values['pk']], $this->getLinkModelClass())
-                ->getSelectQuery($this->getItemKey())
-                ->getColumn();
-        }
-
-        $this->set($this->getName(), empty($rows) ? [] : $rows);
+//        $rows = $this->get($this->getName());
+//
+//        if ($rows === null && isset($values['pk'])) {
+//            /** @var Model $itemModelClass */
+//            $itemModelClass = $this->getItemModelClass();
+//
+//            $rows = $itemModelClass::createQueryBuilder()
+//                ->inner($this->getLinkModelClass())
+//                ->eq([$this->getLinkKey() => $values['pk']], $this->getLinkModelClass())
+//                ->getSelectQuery($this->getItemKey())
+//                ->getColumn();
+//        }
+//
+//        $this->set($this->getName(), empty($rows) ? [] : $rows);
 
         parent::buildParams($values);
         
@@ -160,7 +158,9 @@ class Form_Model_ManyToMany extends FormElement_Chosen
         $modelClass = $this->getItemModelClass();
 
         foreach ($this->get($this->getName()) as $value) {
-            $queryBuilder->pk($value, $modelClass);
+            if ($value) {
+                $queryBuilder->pk($value, $modelClass);
+            }
         }
         
 //        parent::filter($queryBuilder);
