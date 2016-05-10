@@ -1105,7 +1105,7 @@ abstract class Widget extends Container
         $start = microtime(true);
         $data['time'] = microtime(true) - $start;
         $data['widget'] = $this;
-        return $renderClass::getInstance()->fetch($this->getTemplate(), $data);
+        return $renderClass::getInstance()->fetch($this->getTemplateClass(), $data);
     }
 
     public function renderPart(WidgetComponent $component)

@@ -250,7 +250,7 @@ abstract class WidgetComponent
      * @param $renderClass
      * @return $this
      */
-    private function setRenderClass($renderClass)
+    public function setRenderClass($renderClass)
     {
         /** @var Widget $widgetComponentClass */
         $widgetComponentClass = get_class($this);

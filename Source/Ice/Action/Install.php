@@ -438,37 +438,37 @@ class Install extends Action
         $composer = Json::decode(file_get_contents(MODULE_DIR . 'composer.json'));
 
         $composer['require'] += [
-            'php' => '>=5.4.0',
+            'php' => '>=5.5.0',
             'ifacesoft/ice' => '1.0.*',
-            'twbs/bootstrap' => '3.3.*',
-            'jquery/jquery-ui' => '1.11.4',
-            'mailru/fileapi' => '2.0.10',
+//            'twbs/bootstrap' => '3.3.*',
+//            'jquery/jquery-ui' => '1.11.4',
+//            'mailru/fileapi' => '2.0.10',
             'firephp/firephp-core' => 'dev-master'
         ];
 
         $composer['repositories'] = [
-            [
-                'type' => 'package',
-                'package' => [
-                    'name' => 'jquery/jquery-ui',
-                    'version' => '1.11.4',
-                    'dist' => [
-                        'url' => 'http://jqueryui.com/resources/download/jquery-ui-1.11.4.zip',
-                        'type' => 'zip'
-                    ]
-                ]
-            ],
-            [
-                'type' => 'package',
-                'package' => [
-                    'name' => 'mailru/fileapi',
-                    'version' => '2.0.10',
-                    'dist' => [
-                        'url' => 'https://github.com/mailru/FileAPI/archive/master.zip',
-                        'type' => 'zip'
-                    ]
-                ]
-            ]
+//            [
+//                'type' => 'package',
+//                'package' => [
+//                    'name' => 'jquery/jquery-ui',
+//                    'version' => '1.11.4',
+//                    'dist' => [
+//                        'url' => 'http://jqueryui.com/resources/download/jquery-ui-1.11.4.zip',
+//                        'type' => 'zip'
+//                    ]
+//                ]
+//            ],
+//            [
+//                'type' => 'package',
+//                'package' => [
+//                    'name' => 'mailru/fileapi',
+//                    'version' => '2.0.10',
+//                    'dist' => [
+//                        'url' => 'https://github.com/mailru/FileAPI/archive/master.zip',
+//                        'type' => 'zip'
+//                    ]
+//                ]
+//            ]
         ];
 
         File::createData(MODULE_DIR . 'composer.json', Json::encode($composer, JSON_PRETTY_PRINT), false);
