@@ -31,14 +31,16 @@ class Module extends Config
 {
     const CONFIG_DIR = 'configDir';
     const SOURCE_DIR = 'sourceDir';
-    const RESOURCE_DIR = 'resourceDir';
     const LOG_DIR = 'logDir';
     const CACHE_DIR = 'cacheDir';
-    const UPLOAD_DIR = 'uploadDir';
     const DATA_DIR = 'dataDir';
     const TEMP_DIR = 'tempDir';
-    const DOWNLOAD_DIR = 'downloadDir';
+    const RESOURCE_DIR = 'resourceDir';
     const COMPILED_RESOURCE_DIR = 'compiledResourceDir';
+    const UPLOAD_DIR = 'uploadDir';
+    const DOWNLOAD_DIR = 'downloadDir';
+    const PRIVATE_DOWNLOAD_DIR = 'privateDownloadDir';
+
 
     public static $defaultConfig = [
         'alias' => 'Draft',
@@ -49,10 +51,11 @@ class Module extends Config
             Module::LOG_DIR => 'Var/log/',
             Module::CACHE_DIR => 'Var/cache/',
             Module::UPLOAD_DIR => 'Var/upload/',
-            Module::DATA_DIR => 'Var/temp/',
+            Module::DATA_DIR => 'Var/data/',
             Module::TEMP_DIR => 'Var/temp/',
             Module::COMPILED_RESOURCE_DIR => 'Web/resource/',
             Module::DOWNLOAD_DIR => 'Web/download/',
+            Module::PRIVATE_DOWNLOAD_DIR => 'Var/download/',
             'ignorePatterns' => [],
             'bootstrapClass' => 'Ice\Bootstrap\Ice',
 
@@ -259,22 +262,23 @@ class Module extends Config
         $module['path'] = $modulePath;
 
         $moduleDirs = [
-            MODULE::CONFIG_DIR,
-            MODULE::SOURCE_DIR,
-            MODULE::RESOURCE_DIR,
+            Module::CONFIG_DIR,
+            Module::SOURCE_DIR,
+            Module::RESOURCE_DIR,
         ];
 
         if ($modulePath == MODULE_DIR) {
             $moduleDirs = array_merge(
                 $moduleDirs,
                 [
-                    MODULE::LOG_DIR,
-                    MODULE::CACHE_DIR,
-                    MODULE::UPLOAD_DIR,
-                    MODULE::DATA_DIR,
-                    MODULE::TEMP_DIR,
-                    MODULE::DOWNLOAD_DIR,
-                    MODULE::COMPILED_RESOURCE_DIR
+                    Module::LOG_DIR,
+                    Module::CACHE_DIR,
+                    Module::UPLOAD_DIR,
+                    Module::DATA_DIR,
+                    Module::TEMP_DIR,
+                    Module::DOWNLOAD_DIR,
+                    Module::PRIVATE_DOWNLOAD_DIR,
+                    Module::COMPILED_RESOURCE_DIR
                 ]
             );
         }

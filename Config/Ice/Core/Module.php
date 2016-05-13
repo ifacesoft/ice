@@ -34,6 +34,7 @@ return [
         'tempDir' => 'Var/temp/',
         'compiledResourceDir' => 'Web/resource/',
         'downloadDir' => 'Web/download/',
+        'privateDownloadDir' => 'Var/download/',
         'ignorePatterns' => [],
         'bootstrapClass' => 'Ice\Bootstrap\Ice',
         'routerClass' => 'Ice\Router\Ice'
