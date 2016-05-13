@@ -40,7 +40,7 @@ class Security_LoginPassword_RegisterConfirm extends Widget_Security
     protected function build(array $input)
     {
         $this
-            ->widget('header', ['widget' => $this->getWidget(Header::class)->h1('Register confirmation')])
+            ->widget('header', ['widget' => $this->getWidget(Header::class)->h1('Register confirmation', ['valueResource' => true])])
             ->text(
                 'token',
                 [
