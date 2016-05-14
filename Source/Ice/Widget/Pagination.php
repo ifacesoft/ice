@@ -92,6 +92,7 @@ class Pagination extends Widget
         }
 
         $this->event = $event;
+
         return $this;
     }
 

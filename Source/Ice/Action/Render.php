@@ -82,4 +82,8 @@ class Render extends Action
 
         return ['widgets' => $widgets];
     }
+    
+    protected function getInputWidget($input) {
+        
+    }
 }

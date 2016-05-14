@@ -575,6 +575,11 @@ abstract class Widget extends Container
         return $this;
     }
 
+    /**
+     * @param $key
+     * @deprecated Use Widget::get
+     * @return mixed|null
+     */
     public function getValue($key)
     {
         return isset($this->getValues()[$key]) ? $this->getValues()[$key] : null;
@@ -694,7 +699,8 @@ abstract class Widget extends Container
 //                }
 //            }
 //
-            $parts[$partName] = /*$row ? $part->build($row, $this) : */$part;
+            $parts[$partName] = /*$row ? $part->build($row, $this) : */
+                $part;
         }
 
         return $parts;
@@ -1131,5 +1137,25 @@ abstract class Widget extends Container
             'callback' => null,
             'confirm_massage' => null
         ];
+    }
+
+    /**
+     * @param $param string|null
+     * @param array $options
+     * @return mixed
+     */
+    public function get($param = null, $options = [])
+    {
+        if ($param === null) {
+            return $this->values;
+        }
+
+        $value = array_key_exists($param, $this->values) ? $this->values[$param] : null;
+
+        if ($value === null && array_key_exists('default', $options)) {
+            $value = $options['default'];
+        }
+
+        return $value;
     }
 }

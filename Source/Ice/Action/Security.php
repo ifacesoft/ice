@@ -221,7 +221,7 @@ abstract class Security extends Widget_Form_Event
         $userModelClass = Config::getInstance(Core_Security::getClass())->get('userModelClass');
 
         /** @var Security_User|Model $user */
-        $user = $account->fetchOne($userModelClass, '/pk', true);
+        $user = $account->fetchOne($userModelClass, '*', true);
 
         $user->set(['/active' => 1])->save();
 

@@ -302,7 +302,7 @@ class Form extends Widget
     {
         return $this->addPart(new Form_ListBox($fieldName, $options, null, $this));
     }
-    
+
     /**
      * Add choseh type field
      *
@@ -502,16 +502,20 @@ class Form extends Widget
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 1.0
+     * @version 1.1
      * @since   0.0
      */
     public function getValidateScheme()
     {
-        $filterParts = $this->getFilterParts();
+        foreach ($this->getParts($this->getFilterParts()) as $partName => $component) {
+            if ($validators = $component->getOption('validators', [])) {
+                $this->validateScheme[$partName] = isset($this->validateScheme[$partName])
+                    ? array_merge($this->validateScheme[$partName], $validators)
+                    : $validators;
+            }
+        }
 
-        return empty($filterParts)
-            ? $this->validateScheme
-            : array_intersect_key($this->validateScheme, array_flip($filterParts));
+        return $this->validateScheme;
     }
 
 //    protected function addPart($partName, array $options, $template, $element)
