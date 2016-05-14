@@ -12,6 +12,7 @@ use Ice\Core\Debuger;
 use Ice\Core\Render;
 use Ice\Core\Resource;
 use Ice\Exception\Error;
+use Ice\Helper\String;
 use Ice\Render\Replace;
 
 class Form_ListBox extends FormElement_TextInput
@@ -60,6 +61,10 @@ class Form_ListBox extends FormElement_TextInput
                 : Replace::getInstance()->fetch($template, $item, null, Render::TEMPLATE_TYPE_STRING);
         } else {
             $title = $item[$itemTitle];
+        }
+
+        if ($truncate = $this->getOption('itemTitleTruncate')) {
+            $title = String::truncate($title, $truncate);
         }
 
         return htmlentities($title);

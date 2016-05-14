@@ -163,7 +163,7 @@ class String
         return ($text);
     }
 
-    public static function truncate($string, $length = 100, $append = "&hellip;")
+    public static function truncate($string, $length = 100, $append = "...")
     {
         if (!is_numeric($length)) {
             $length = 100;
