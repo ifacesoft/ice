@@ -13,6 +13,7 @@ use Ice\Core;
 use Ice\Exception\Error;
 use Ice\Exception\QueryBuilder_Join;
 use Ice\Helper\Object;
+use Ice\QueryTranslator\Defined;
 use Ice\Widget\Form;
 
 /**
@@ -1867,7 +1868,9 @@ class QueryBuilder
             $limit = 0;
         }
 
-        return $this->setCalcFoundRows()->limit($limit, ($page - 1) * $limit);
+        return $this
+            ->setCalcFoundRows()
+            ->limit($limit, ($page - 1) * $limit);
     }
 
     /**
