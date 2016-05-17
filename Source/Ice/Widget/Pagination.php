@@ -6,10 +6,12 @@ use Ice\Action\Render;
 use Ice\Core\Debuger;
 use Ice\Core\QueryBuilder;
 use Ice\Core\QueryResult;
+use Ice\Core\Request;
 use Ice\Core\Router;
 use Ice\Core\Widget;
 use Ice\DataProvider\Request as DataProvider_Request;
 use Ice\DataProvider\Router as DataProvider_Router;
+use Ice\Exception\Error;
 use Ice\WidgetComponent\HtmlTag;
 
 class Pagination extends Widget
@@ -17,6 +19,7 @@ class Pagination extends Widget
     protected $foundRows = 0;
     protected $isShort = false;
 
+    protected $route = null;
     protected $event = null;
 
     /**
@@ -40,29 +43,65 @@ class Pagination extends Widget
     }
 
     /**
+     * @return array
+     */
+    public function getRoute()
+    {
+        if ($this->route !== null) {
+            return $this->route;
+        }
+
+        $this->setRoute($this->getRenderRoute());
+
+        return $this->route;
+    }
+
+    /**
+     * @param null $route
+     * @return array
+     * @throws Error
+     */
+    public function setRoute($route)
+    {
+        if (is_string($route)) {
+            $route = ['name' => $route];
+        }
+
+        if (!isset($route['name'])) {
+            throw new Error('Route name not defined');
+        }
+
+        if (isset($route['params'])) {
+            $route['params'] = array_merge($_GET, $route['params']); //todo: костыль,
+        } else {                                                     // пока
+            $route['params'] = $_GET;                                // так
+        }
+
+        if (!array_key_exists('withGet', $route)) {
+            $route['withGet'] = true;
+        }
+
+        if (!array_key_exists('method', $route)) {
+            $route['method'] = 'GET';
+        }
+
+        $this->route = $route;
+
+        return $this;
+    }
+
+    /**
      * @return null
      */
     public function getEvent()
     {
         if ($this->event !== null) {
-
-            $routeParams = [];
-
-            foreach ($this->event['url'][1] as $routeKey => $routeParam) {
-                if (is_int($routeKey)) {
-                    $routeParams[$routeParam] = $this->getValue($routeParam);
-                    continue;
-                }
-
-                $routeParams[$routeKey] = $routeParam;
-            }
-
-            $this->event['url'][1] = $routeParams;
-
             return $this->event;
         }
 
-        return $this->getRenderEvent();
+        $this->setEvent($this->getRenderEvent());
+
+        return $this->event;
     }
 
     /**
@@ -71,26 +110,6 @@ class Pagination extends Widget
      */
     public function setEvent($event)
     {
-        if (!isset($event['url'])) {
-            $event['url'] = [Router::getInstance()->getName(), ['page', 'limit'], true];
-        }
-
-        $event['url'] = (array)$event['url'];
-
-        if (!isset($event['url'][1])) {
-            $event['url'][1] = ['page', 'limit'];
-        } else {
-            $event['url'][1] = (array)$event['url'][1];
-
-            if (!isset($event['url'][1]['page']) && !in_array('page', $event['url'][1])) {
-                $event['url'][1][] = 'page';
-            }
-
-            if (!isset($event['url'][1]['limit']) && !in_array('limit', $event['url'][1])) {
-                $event['url'][1][] = 'limit';
-            }
-        }
-
         $this->event = $event;
 
         return $this;
@@ -145,7 +164,19 @@ class Pagination extends Widget
 
     public function li($name, array $options = [], $template = 'Ice\Widget\Pagination\Li')
     {
-        return $this->addPart(new HtmlTag($name, array_merge($options, ['onclick' => $this->getEvent()]), $template, $this));
+        $route = $this->getRoute();
+
+        $route['params']['page'] = $options['params']['page'];
+        $route['params']['limit'] = $this->get('limit');
+
+        $options['params'] = array_merge($options['params'], $route['params']);
+
+        return $this->addPart(new HtmlTag(
+            $name,
+            array_merge($options, ['route' => $route, 'onclick' => $this->getEvent()]),
+            $template,
+            $this
+        ));
     }
 
     /**

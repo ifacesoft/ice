@@ -60,10 +60,6 @@ abstract class Exception extends ErrorException
     {
         $this->errcontext = $errcontext;
 
-        /** @var Exception $exceptionClass */
-        $exceptionClass = get_class($this);
-        $exceptionClassName = $exceptionClass::getClassName();
-
         /** @var Resource $resource */
         $resource = Resource::create(__CLASS__);
 
@@ -83,9 +79,7 @@ abstract class Exception extends ErrorException
                 break;
         }
 
-        $message = $errno <= 0
-            ? $resource->get(/*$exceptionClassName . ' - ' . */$message, $params, $class)
-            : /*$exceptionClassName . ' - ' . */$message;
+        $message = $resource->get($message, $params, $class);
 
         if (!$errfile) {
             $debug = debug_backtrace();

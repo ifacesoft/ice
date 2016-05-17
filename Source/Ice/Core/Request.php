@@ -256,6 +256,7 @@ class Request
 
         if (isset($_SERVER['HTTP_ORIGIN']) && isset($cors[$_SERVER['HTTP_ORIGIN']])) {
             Http::setHeader('Access-Control-Allow-Origin: ' . $_SERVER['HTTP_ORIGIN']);
+            
             if (!empty($cors[$_SERVER['HTTP_ORIGIN']]['cookie'])) {
                 Http::setHeader('Access-Control-Allow-Credentials: true');
             }

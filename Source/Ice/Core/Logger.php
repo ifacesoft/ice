@@ -414,11 +414,11 @@ class Logger
         $exceptionClass = 'Ice:Error'
     )
     {
-        $message = (array)$message;
-        if (!isset($message[1])) {
-            $message[1] = [];
-        }
-        $message[2] = $this->class;
+//        $message = (array)$message;
+//        if (!isset($message[1])) {
+//            $message[1] = [];
+//        }
+//        $message[2] = $this->class;
 
         /**
          * @var Exception $exceptionClass

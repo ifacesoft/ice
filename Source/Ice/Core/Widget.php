@@ -1139,6 +1139,13 @@ abstract class Widget extends Container
         ];
     }
 
+    public function getRenderRoute()
+    {
+        $router = Router::getInstance();
+
+        return ['name' => $router->getName(), 'params' => $router->getParams()];
+    }
+
     /**
      * @param $param string|null
      * @param array $options
