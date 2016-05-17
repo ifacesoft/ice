@@ -218,18 +218,18 @@ class Form extends Widget
     /**
      * Add date type field
      *
-     * @param  $fieldName
+     * @param $fieldName
      * @param  array $options
+     * @param null $template
      * @return Form
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 1.1
      * @since   0.0
      */
-    public function date($fieldName, array $options = [])
+    public function date($fieldName, array $options = [], $template = null)
     {
-        return $this->addPart(new Form_Date($fieldName, $options, null, $this));
+        return $this->addPart(new Form_Date($fieldName, $options, $template, $this));
     }
 
     /**
