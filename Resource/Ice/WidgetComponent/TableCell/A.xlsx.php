@@ -9,3 +9,5 @@ $cell = $render->getColumn() . $render->getIndex();
 
 $sheet->setCellValue($cell, $component->getValue());
 $sheet->getCell($cell)->getHyperlink()->setUrl($component->getHref());
+
+$render->columnInc();

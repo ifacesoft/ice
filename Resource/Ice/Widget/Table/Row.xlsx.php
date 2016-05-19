@@ -1,4 +1,21 @@
 <?php
+$styleArray = array(
+    'borders' => array(
+        'allborders' => array(
+            'style' => PHPExcel_Style_Border::BORDER_THIN,
+            'color' => array('rgb' => '000000')
+        )
+    ),
+//    'font' => array(
+//        'size' => 8,
+//        'bold'  => true,
+//    ),
+//    'fill' => array(
+//        'type' => PHPExcel_Style_Fill::FILL_SOLID,
+//        'color' => array('rgb' => '808080')
+//    )
+);
+
 $cellStyle = [
     'font' => [
         'bold' => true,
@@ -14,9 +31,13 @@ $cellStyle = [
  * */
 $sheet = $render->getSheet();
 
-$cell = $render->getColumn() . $render->getIndex();
+$startCell = $render->getColumn() . $render->getIndex();
+
+
 
 foreach ($component->getOption('row', []) as $key => $col) {
+    $cell = $render->getColumn() . $render->getIndex();
+
     if (is_string($key)) {
         $value = $key;
 
@@ -31,3 +52,11 @@ foreach ($component->getOption('row', []) as $key => $col) {
     $sheet->getStyle($cell)->applyFromArray($cellStyle);
     $sheet->getRowDimension($render->getIndex())->setRowHeight(16);
 }
+
+$maxColumn = $render->getColumn();
+
+$finishCell = $render->decrementLetter($maxColumn) . ($render->getIndex() - 1);
+
+$sheet->getStyle($startCell . ':' . $finishCell)->applyFromArray($styleArray);
+
+$render->indexInc();

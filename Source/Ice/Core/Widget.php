@@ -83,8 +83,6 @@ abstract class Widget extends Container
 
     private $layout = null;
 
-    private $indexOffset = 0;
-
     /**
      * @param $name
      * @param null $default

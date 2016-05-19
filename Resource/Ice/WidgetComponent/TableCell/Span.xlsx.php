@@ -1,1 +1,12 @@
-<?php $sheet->setCellValue($column . $index, html_entity_decode(isset($params[$title]) ? $params[$title] : $title));
+<?php
+/**
+ * @var $render \Ice\Render\External_PHPExcel
+ * @var PHPExcel_Worksheet $sheet
+ * */
+$sheet = $render->getSheet();
+
+$cell = $render->getColumn() . $render->getIndex();
+
+$sheet->setCellValue($cell, $component->getValue());
+
+$render->columnInc();

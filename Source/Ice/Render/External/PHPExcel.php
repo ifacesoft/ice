@@ -85,9 +85,9 @@ class External_PHPExcel extends Render
 
         $widget->render($this);
 
-        foreach (range('A', 'K') as $columnID) {
-            $this->getPHPExcel()->getActiveSheet()->getColumnDimension($columnID)->setAutoSize(true);
-        }
+//        foreach (range('A', 'K') as $columnID) {
+//            $this->getPHPExcel()->getActiveSheet()->getColumnDimension($columnID)->setAutoSize(true);
+//        }
 
 //        foreach(range(1, 100) as $rowID) {
 //            $xls->getActiveSheet()->getRowDimension($rowID)->setRowHeight(-1);
@@ -175,24 +175,54 @@ class External_PHPExcel extends Render
     public function indexInc($step = 1, $activeSheetIndex = null)
     {
         $index = $this->getIndex() + $step;
-        
+
         $this->setIndex($index, $activeSheetIndex);
         $this->setColumn('A', $activeSheetIndex);
-        
+
         return $index;
     }
 
     public function columnInc($step = 1, $activeSheetIndex = null)
     {
-        for ($i = 0, $column = $this->getColumn(); $i < $step; $i++, $column++);
-        
+        for ($i = 0, $column = $this->getColumn(); $i < $step; $i++, $column++) ;
+
         $this->setColumn($column, $activeSheetIndex);
-        
+
         return $column;
     }
 
-    public function getSheet()
-    {
-        return $this->getPHPExcel()->getActiveSheet();
+    public function decrementLetter($char) {
+        if ($char == 'A') {
+            return $char;
+        }
+
+        $len = strlen($char);
+        // last character is A or a
+        if(ord($char[$len - 1]) === 65 || ord($char[$len - 1]) === 97){
+            if($len === 1){ // one character left
+                return null;
+            }
+            else{ // 'ABA'--;  => 'AAZ'; recursive call
+                $char = $this->decrementLetter(substr($char, 0, -1)).'Z';
+            }
+        }
+        else{
+            $char[$len - 1] = chr(ord($char[$len - 1]) - 1);
+        }
+        return $char;
     }
+    
+    public function columDec($activeSheetIndex = null)
+    {
+        $column = $this->decrementLetter($this->getColumn());
+        
+        $this->setColumn($column, $activeSheetIndex);
+
+        return $column;
+    }
+
+public function getSheet()
+{
+    return $this->getPHPExcel()->getActiveSheet();
+}
 }
