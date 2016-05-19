@@ -78,14 +78,16 @@ class Form_Model_ManyToMany extends FormElement_Chosen
         /** @var Model $itemModelClass */
         $itemModelClass = $this->getItemModelClass();
 
-        $values = $itemModelClass::createQueryBuilder()
+        $oldValues = $itemModelClass::createQueryBuilder()
             ->inner($this->getLinkModelClass())
             ->eq([$this->getLinkKey() => $model->getPkValue()], $this->getLinkModelClass())
             ->getSelectQuery($this->getItemKey())
             ->getColumn();
 
-        $add = array_diff($values, $this->getValue());
-        $remove = array_diff($this->getValue(), $values);
+        $values = array_filter($this->getValue(), function($item) { return !empty($item); });
+
+        $add = array_diff($oldValues, $values);
+        $remove = array_diff($values, $oldValues);
 
         $model
             ->removeLinks($this->getLinkModelClass(), $this->getLinkKey(), $this->getLinkForeignKey(), $add)

@@ -137,7 +137,7 @@ class Form_Model_OneToManyToMany extends Form_Model_OneToMany
             /** @var Model $itemModelClass */
             $itemModelClass = $this->getItemModel();
 
-            return $itemModelClass::getModel($value, $this->getManyValueKey())->get($this->getManyValueKey());
+            return $itemModelClass::getModel($value, $this->getManyValueKey())->get($this->getManyValueKey(), null);
         }
 
         return '';

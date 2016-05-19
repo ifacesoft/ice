@@ -105,8 +105,7 @@ var Ice = {
     },
 
     jsonToObject: function (json) {
-        return $.parseJSON(json.replace(/\s+/g, ""));
-        //return Ice.arrayToObject(JSON.parse(json));
+        return $.parseJSON(json.replace(/[\n\t\r]/g, ""));
     },
 
     objectMerge: function (obj1, obj2) {
