@@ -8,26 +8,26 @@ $cellStyle = [
     ]
 ];
 
-$options['index'] = isset($options['indexOffset']) ? $options['indexOffset'] : 1;
-$options['column'] = isset($options['column']) ? $options['column'] : 'A';
+/**
+ * @var $render \Ice\Render\External_PHPExcel
+ * @var PHPExcel_Worksheet $sheet
+ * */
+$sheet = $render->getSheet();
 
-foreach ((array)$options['row'] as $key => $column) {
+$cell = $render->getColumn() . $render->getIndex();
+
+foreach ($component->getOption('row', []) as $key => $col) {
     if (is_string($key)) {
-        $label = $key;
+        $value = $key;
 
-        $col = chr(ord($options['column']) + $column - 1);
-
-        $sheet->mergeCells($options['column'] . $options['index'] . ':' . $col . $options['index']);
-
-        $options['column'] = $col;
+        $sheet->mergeCells($cell . ':' . $render->columnInc($col) . $render->getIndex());
     } else {
-        $label = $column;
+        $value = $col;
+        $render->columnInc();
     }
 
     /** @var PHPExcel_Worksheet $sheet */
-    $sheet->setCellValue($options['column'] . $options['index'], $label);
-    $sheet->getStyle($options['column'] . $options['index'])->applyFromArray($cellStyle);
-    $sheet->getRowDimension($options['index'])->setRowHeight(16);
-
-    $options['column']++;
+    $sheet->setCellValue($cell, $value);
+    $sheet->getStyle($cell)->applyFromArray($cellStyle);
+    $sheet->getRowDimension($render->getIndex())->setRowHeight(16);
 }

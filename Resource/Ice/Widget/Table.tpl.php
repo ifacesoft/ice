@@ -6,7 +6,7 @@
     <?php foreach ($parts as $partName => $part) : ?>
         <?php if ($part instanceof \Ice\WidgetComponent\Widget) : ?>
             <?php if ($part->getWidget() instanceof \Ice\Widget\Header) : ?>
-                <?= $widget->renderPart($part) ?>
+                <?= $part->render() ?>
                 <?php unset($parts[$partName]); ?>
                 <?php continue; ?>
             <?php endif; ?>
@@ -24,10 +24,10 @@
     <?php endforeach; ?>
     <table class="<?= $widgetClass ?> table<?php if (!empty($classes)) : ?> <?= $classes ?><?php endif; ?>">
         <?php foreach ($parts as $part) : ?>
-            <?= $widget->renderPart($part) ?>
+            <?= $part->render() ?>
         <?php endforeach; ?>
     </table>
     <?php if (isset($pagination)) : ?>
-        <?= $widget->renderPart($pagination) ?>
+        <?= $pagination->render() ?>
     <?php endif; ?>
 </div>

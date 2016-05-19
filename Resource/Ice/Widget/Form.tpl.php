@@ -10,11 +10,11 @@
     <?php $parts = reset($result) ?>
 
     <?php if (isset($parts['header'])) : ?>
-        <?= $widget->renderPart($parts['header']) ?>
+        <?= $parts['header']->render() ?>
         <?php unset($parts['header']); ?>
     <?php endif; ?>
 
     <?php foreach ($parts as $partName => $part) : ?>
-        <?= $widget->renderPart($part) ?>
+        <?= $part->render() ?>
     <?php endforeach; ?>
 </form>

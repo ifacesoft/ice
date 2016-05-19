@@ -42,7 +42,7 @@ class Smarty extends Render
      *
      * @var /Smarty
      */
-    private $_smarty = null;
+    private $smarty = null;
 
     public function __construct(array $data)
     {
@@ -52,7 +52,7 @@ class Smarty extends Render
 
 //        include_once VENDOR_DIR . $config->get('vendor') . '/libs/Smarty.class.php';
 
-        $this->_smarty = new \Smarty();
+        $this->smarty = new \Smarty();
 
 //        Loader::register('\smartyAutoload');
 
@@ -62,12 +62,12 @@ class Smarty extends Render
             $templateDirs[] = $module->get(Module::RESOURCE_DIR);
         }
 
-        $this->_smarty->setTemplateDir($templateDirs);
-        $this->_smarty->setCompileDir(Module::getInstance()->get('cacheDir') . $config->get('templates_c'));
-        $this->_smarty->addPluginsDir($config->gets('plugins', []));
+        $this->smarty->setTemplateDir($templateDirs);
+        $this->smarty->setCompileDir(Module::getInstance()->get('cacheDir') . $config->get('templates_c'));
+        $this->smarty->addPluginsDir($config->gets('plugins', []));
         //        $this->_smarty->setCacheDir('/web/www.example.com/smarty/cache');
         //        $this->_smarty->setConfigDir('/web/www.example.com/smarty/configs');
-        $this->_smarty->debugging = false;
+        $this->smarty->debugging = false;
     }
 
     /**
@@ -110,8 +110,8 @@ class Smarty extends Render
          * @var \Smarty_Internal_Template $smartyTemplate
          */
         $smartyTemplate = $templateType == Render::TEMPLATE_TYPE_STRING
-            ? $this->_smarty->createTemplate('string:' . $template)
-            : $this->_smarty->createTemplate(str_replace(['_', '\\'], '/', $template) . Smarty::TEMPLATE_EXTENTION);
+            ? $this->smarty->createTemplate('string:' . $template)
+            : $this->smarty->createTemplate(str_replace(['_', '\\'], '/', $template) . Smarty::TEMPLATE_EXTENTION);
 
         foreach ($data as $key => $value) {
             $smartyTemplate->assign($key, $value);
@@ -131,7 +131,7 @@ class Smarty extends Render
                 /**
                  * @var \Smarty_Internal_Template $smartyTemplate
                  */
-                $smartyTemplate = $this->_smarty->createTemplate(
+                $smartyTemplate = $this->smarty->createTemplate(
                     'string:' . Smarty::getCodeGenerator($template)->generate()
                 );
 

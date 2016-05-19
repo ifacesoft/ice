@@ -1,7 +1,7 @@
 <?php $parts = reset($result) ?>
 <?php foreach ($parts as $partName => $part) : ?>
     <?php if ($part instanceof \Ice\WidgetComponent\Widget && $part->getWidget() instanceof \Ice\Widget\Header) : ?>
-        <?= $widget->renderPart($part) ?>
+        <?= $part->render() ?>
         <?php unset($parts[$partName]); ?>
     <?php endif; ?>
 <?php endforeach; ?>
@@ -13,7 +13,7 @@
     data-for="<?= $parentWidgetId ?>"
 >
     <?php foreach ($parts as $part) : ?>
-        <?= $widget->renderPart($part) ?>
+        <?= $part->render() ?>
     <?php endforeach; ?>
 </ul>
 <?php endif; ?>

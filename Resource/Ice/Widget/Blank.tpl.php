@@ -1,4 +1,3 @@
-<?php $parts = reset($result) ?>
-<?php foreach ($parts as $part) : ?>
-    <?= $widget->renderPart($part) ?>
+<?php foreach (reset($result) as $part) : ?>
+    <?= $part->render() ?>
 <?php endforeach; ?>

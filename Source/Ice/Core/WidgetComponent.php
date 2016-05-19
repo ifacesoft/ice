@@ -588,4 +588,23 @@ abstract class WidgetComponent
             $this->setOption('dateFormat', null);
         }
     }
+
+
+
+    public function render(Render $render = null) {
+        if ($render === null) {
+            $render = $this->getRender();
+        }
+        
+        return $render->fetch(
+            $this->getTemplateClass(), 
+            ['component' => $this, 'render' => $render], 
+            $this->getLayout()
+        );
+    }
+
+    public function getLayout()
+    {
+        return null; // todo: dummy - need implement
+    }
 }

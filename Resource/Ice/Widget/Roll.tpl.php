@@ -9,7 +9,7 @@
                 <?= $offset ?>
             <?php endif; ?>
             <?php foreach ($parts as $part) : ?>
-                <?= $widget->renderPart($part) ?>
+                <?= $part->render() ?>
             <?php endforeach; ?>
         </li>
     <?php endforeach; ?>

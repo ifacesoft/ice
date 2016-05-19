@@ -5,6 +5,6 @@
     data-for="<?= $parentWidgetId ?>"
 >
     <?php foreach (reset($result) as $part) : ?>
-        <?= $widget->renderPart($part) ?>
+        <?= $part->render() ?>
     <?php endforeach; ?>
 </ol>

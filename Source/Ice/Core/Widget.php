@@ -433,11 +433,10 @@ abstract class Widget extends Container
     }
 
     /**
-     * @param array $data
      * @return array|null
      * @throws \Exception
      */
-    public function getResult(array $data = [])
+    public function getResult()
     {
         if ($this->result !== null) {
             return $this->result;
@@ -481,7 +480,6 @@ abstract class Widget extends Container
 
         return $this->compiledResult = array_merge(
             [
-                'widget' => $this,
                 'result' => $this->getResult(),
                 'widgetId' => $this->getWidgetId(),
                 'widgetClass' => $this->getWidgetClassName(),
@@ -515,15 +513,19 @@ abstract class Widget extends Container
         ];
     }
 
-    public function render()
+    public function render(Render $render = null)
     {
+        if ($render === null) {
+            $render = $this->getRender();
+        }
+
         $startTime = Profiler::getMicrotime();
         $startMemory = Profiler::getMemoryGetUsage();
 
-        $result = $this->getRender()
+        $result = $render
             ->fetch(
                 $this->getTemplateClass(),
-                $this->getCompiledResult(),
+                array_merge($this->getCompiledResult(), ['widget' => $this, 'render' => $render]),
                 $this->getLayout()
             );
 
@@ -969,7 +971,7 @@ abstract class Widget extends Container
      * @param string $template
      * @return $this
      */
-    public function widget($columnName, array $options = [], $template = 'Ice\Widget\Widget')
+    public function widget($columnName, array $options = [], $template = null)
     {
         try {
             Access::check($options['widget']::getConfig()->gets('access'));
@@ -1099,24 +1101,6 @@ abstract class Widget extends Container
     public function checkToken($token)
     {
 //        throw new Error('token expired');
-    }
-
-    /**
-     * @param Render $renderClass
-     * @param array $data
-     * @return string
-     */
-    public function renderExternal($renderClass, array $data)
-    {
-        $start = microtime(true);
-        $data['time'] = microtime(true) - $start;
-        $data['widget'] = $this;
-        return $renderClass::getInstance()->fetch($this->getTemplateClass(), $data);
-    }
-
-    public function renderPart(WidgetComponent $component)
-    {
-        return $component->getRender()->fetch($component->getTemplateClass(), ['component' => $component]);
     }
 
     /**
