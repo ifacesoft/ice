@@ -8,10 +8,16 @@ $cellStyle = [
     ]
 ];
 
-$options['index'] = isset($options['indexOffset']) ? $options['indexOffset'] : 1;
-$options['column'] = isset($options['column']) ? $options['column'] : 'A';
+/**
+ * @var $render \Ice\Render\External_PHPExcel
+ * @var PHPExcel_Worksheet $sheet
+ * */
+$sheet = $render->getSheet();
 
-/** @var PHPExcel_Worksheet $sheet */
-$sheet->setCellValue($column . $index, $label);
-$sheet->getStyle($column . $index)->applyFromArray($cellStyle);
-$sheet->getRowDimension($index)->setRowHeight(13);
+$cell = $render->getColumn() . $render->getIndex();
+
+$sheet->setCellValue($cell, $component->getValue());
+$sheet->getStyle($cell)->applyFromArray($cellStyle);
+$sheet->getRowDimension($render->getIndex())->setRowHeight(13);
+
+$render->indexInc();
