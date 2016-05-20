@@ -10,6 +10,7 @@ use Ice\Helper\Input;
 use Ice\Helper\Json;
 use Ice\Helper\Object;
 use Ice\Helper\String;
+use Ice\Helper\Transliterator;
 use Ice\Widget\Resource_Dynamic;
 use Ice\WidgetComponent\HtmlTag;
 use Ice\WidgetComponent\HtmlTag_A;
@@ -114,6 +115,10 @@ abstract class Widget extends Container
         return $this->rows;
     }
 
+    public function getCanonicalName($part = 'header') {
+        return Transliterator::transliterate(strip_tags($this->getPart($part)->render()));
+    }
+    
     /**
      * @param string $attributes
      * @param bool|false $force

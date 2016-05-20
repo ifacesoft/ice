@@ -1,27 +1,62 @@
 <?php
-$cellStyle = [
-    'font' => [
-        'bold' => true,
-        'color' => ['rgb' => '000000'],
+$styleArray = array(
+    'borders' => array(
+        'allborders' => array(
+            'style' => PHPExcel_Style_Border::BORDER_THIN,
+            'color' => array('rgb' => '000000')
+        )
+    ),
+    'font' => array(
         'size' => 14,
-        'name' => 'Verdana'
-    ]
-];
+        'bold'  => true,
+    ),
+//    'fill' => array(
+//        'type' => PHPExcel_Style_Fill::FILL_SOLID,
+//        'color' => array('rgb' => '808080')
+//    )
+);
 
-$options['index'] = isset($options['indexOffset']) ? $options['indexOffset'] : 1;
-$options['column'] = isset($options['column']) ? $options['column'] : 'A';
+$startCell = $render->getColumn() . $render->getIndex();
 
-foreach ($options['widget']->getParts() as $name => $part) {
-    $label = isset($part['options']['label']) ? $part['options']['label'] : $name;
+$maxColumn = $render->getColumn();
 
-    if ($label && isset($resource) && $resource instanceof Ice\Core\Resource) {
-        $label = $resource->get($label);
+/**
+ * @var $render \Ice\Render\External_PHPExcel
+ * @var PHPExcel_Worksheet $sheet
+ * */
+$sheet = $render->getSheet();
+
+$count = 0;
+
+foreach ($component->getWidget()->getParts() as $part) {
+    $optionExcel = $part->getOption('excel', []);
+
+    $colspan = $part->getOption('colspan', 1);
+    $count += $colspan;
+
+    if ($count <= $component->getWidget()->getColumnCount()) {
+
+    } else {
+        break;
+//        $count = 1;
+//        $render->indexInc();
     }
 
-    /** @var PHPExcel_Worksheet $sheet */
-    $sheet->setCellValue($options['column'] . $options['index'], html_entity_decode($label));
-    $sheet->getStyle($options['column'] . $options['index'])->applyFromArray($cellStyle);
-    $sheet->getRowDimension($options['index'])->setRowHeight(16);
+    if (isset($optionExcel['width'])) {
+        $sheet->getColumnDimension($render->getColumn())->setWidth($optionExcel['width']);
+    }
 
-    $options['column']++;
+    $cell = $render->getColumn() . $render->getIndex();
+
+    $sheet->setCellValue($cell, $part->getLabel());
+
+    $render->columnInc();
 }
+
+$maxColumn = $render->getColumn();
+
+$render->indexInc();
+
+$finishCell = $render->decrementLetter($maxColumn) . ($render->getIndex() - 1);
+
+$sheet->getStyle($startCell . ':' . $finishCell)->applyFromArray($styleArray);

@@ -1,4 +1,4 @@
-<?php if ($parts) : ?>
+<?php if (reset($result)) : ?>
     <ul id="<?= $widgetId ?>"
         class="<?= $widgetClass ?> pagination<?php if (!empty($classes)) : ?> <?= $classes ?><?php endif; ?>"
         data-widget='<?= $dataWidget ?>'

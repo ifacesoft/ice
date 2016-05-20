@@ -149,6 +149,8 @@ class HtmlTag extends WidgetComponent
 
         $this->route['params'] = $routeParams;
 
+
+
         return $this->route;
     }
 

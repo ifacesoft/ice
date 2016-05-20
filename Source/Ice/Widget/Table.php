@@ -4,6 +4,7 @@ namespace Ice\Widget;
 
 use Ice\Action\Render;
 use Ice\Core\Widget;
+use Ice\Helper\Transliterator;
 use Ice\WidgetComponent\HtmlTag;
 
 class Table extends Widget

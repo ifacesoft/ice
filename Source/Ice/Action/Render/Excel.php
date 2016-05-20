@@ -32,7 +32,7 @@ class Render_Excel extends Action
             'input' => [
                 'class' => ['providers' => ['default', Router::class, Request::class]],
                 'params' => ['providers' => ['default', Router::class, Request::class], 'default' => []],
-                'widget' => ['default' => null, 'providers' => ['default', 'request']]
+                'widget' => ['default' => null, 'providers' => ['default', Request::class]]
             ],
             'output' => []
         ];
