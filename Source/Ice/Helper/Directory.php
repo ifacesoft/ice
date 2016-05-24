@@ -105,9 +105,11 @@ class Directory
                 __LINE__
             );
         }
-        
+
         $old = umask(0);
-        mkdir($path, $chmod);
+        if (!file_exists($path)) {
+            mkdir($path, $chmod);
+        }
         umask($old);
 
         if (function_exists('posix_getuid') && posix_getuid() == fileowner($path)) {

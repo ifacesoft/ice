@@ -171,6 +171,8 @@ class Pagination extends Widget
 
         $options['params'] = array_merge($options['params'], $route['params']);
 
+        $options['excel'] = ['rowVisible' => false];
+
         return $this->addPart(new HtmlTag(
             $name,
             array_merge($options, ['route' => $route, 'onclick' => $this->getEvent()]),

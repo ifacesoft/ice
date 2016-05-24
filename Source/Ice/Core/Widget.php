@@ -116,7 +116,7 @@ abstract class Widget extends Container
     }
 
     public function getCanonicalName($part = 'header') {
-        return Transliterator::transliterate(strip_tags($this->getPart($part)->render()));
+        return String::truncate(Transliterator::transliterate(strip_tags($this->getPart($part)->render())), 255);
     }
     
     /**

@@ -17,7 +17,6 @@ use Ice\Render\External_PHPExcel;
 
 class Render_Excel extends Action
 {
-
     /**
      * Action config
      *
@@ -45,11 +44,15 @@ class Render_Excel extends Action
      */
     public function run(array $input)
     {
+        /** @var Widget $widgetClass */
         $widgetClass = Widget::getClass($input['class']);
+
+        /** @var Widget $widget */
+        $widget = $widgetClass::getInstance(null, null, $input['params']);
 
         $headers = [
             'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            'Content-Disposition' => 'attachment; filename="report.xlsx"',
+            'Content-Disposition' => 'attachment; filename="' . $widget->getCanonicalName() .  '.xlsx"',
             'Cache-Control' => 'max-age=0',
         ];
 
@@ -58,8 +61,7 @@ class Render_Excel extends Action
         }
 
         return [
-            'content' => External_PHPExcel::getInstance()
-                ->renderWidget($widgetClass::getInstance(null, null, $input['params']))
+            'content' => External_PHPExcel::getInstance()->renderWidget($widget)
         ];
     }
 }

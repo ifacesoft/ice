@@ -38,11 +38,11 @@ class Transliterator
     public static function transliterate($string)
     {
         $string = \transliterator_transliterate(
-            "Any-Latin; NFD; [:Nonspacing Mark:] Remove; NFC; [:Punctuation:] Remove; Lower();",
+            "Any-Latin; NFD; [:Nonspacing Mark:] Remove; NFC; Lower();",
             $string
         );
 
-        $string = str_replace('ʹ', '', preg_replace('/[-\s]+/', '_', $string));
+        $string = str_replace('ʹ', '', preg_replace('/[_\s]+/', '_', $string));
         return trim($string, '_');
     }
 }

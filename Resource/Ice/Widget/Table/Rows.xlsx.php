@@ -94,7 +94,7 @@ foreach ($result as $offset => $row) {
         if (!empty($optionExcel['width'])) {
             $sheet->getColumnDimension($render->getColumn())->setWidth($optionExcel['width']);
         } else {
-            $sheet->getColumnDimension($render->getColumn())->setWidth(20);
+            $sheet->getColumnDimension($render->getColumn())->setWidth(25);
         }
 
         $part->render($render);

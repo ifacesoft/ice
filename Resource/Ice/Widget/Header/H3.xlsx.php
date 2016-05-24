@@ -16,8 +16,10 @@ $sheet = $render->getSheet();
 
 $cell = $render->getColumn() . $render->getIndex();
 
-$sheet->setCellValue($cell, $component->getValue());
+$sheet->setCellValue($cell, strip_tags($component->getValue()));
+
 $sheet->getStyle($cell)->applyFromArray($cellStyle);
+
 $sheet->getRowDimension($render->getIndex())->setRowHeight(16);
 
 $render->indexInc();

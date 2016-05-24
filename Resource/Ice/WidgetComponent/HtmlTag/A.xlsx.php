@@ -7,7 +7,8 @@ $sheet = $render->getSheet();
 
 $cell = $render->getColumn() . $render->getIndex();
 
-$sheet->setCellValue($cell, $component->getValue());
+$sheet->setCellValue($cell, strip_tags($component->getValue()));
+
 $sheet->getCell($cell)->getHyperlink()->setUrl($component->getHref());
 
 $render->columnInc();

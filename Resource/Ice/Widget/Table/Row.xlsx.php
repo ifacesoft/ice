@@ -33,15 +33,13 @@ $sheet = $render->getSheet();
 
 $startCell = $render->getColumn() . $render->getIndex();
 
-
-
 foreach ($component->getOption('row', []) as $key => $col) {
     $cell = $render->getColumn() . $render->getIndex();
 
     if (is_string($key)) {
         $value = $key;
 
-        $sheet->mergeCells($cell . ':' . $render->columnInc($col) . $render->getIndex());
+        $sheet->mergeCells($cell . ':' . $render->decrementLetter($render->columnInc($col) ) . $render->getIndex());
     } else {
         $value = $col;
         $render->columnInc();

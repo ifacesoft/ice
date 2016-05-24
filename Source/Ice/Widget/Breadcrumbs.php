@@ -34,11 +34,15 @@ class Breadcrumbs extends Widget
      */
     public function item($columnName, array $options = [], $template = 'Ice\Widget\Breadcrumbs\Item')
     {
+        $options['excel'] = ['rowVisible' => false];
+
         return $this->addPart(new HtmlTag($columnName, $options, $template, $this));
     }
 
     public function li($columnName, array $options = [], $template = 'Ice\Widget\Breadcrumbs\Li')
     {
+        $options['excel'] = ['rowVisible' => false];
+
         return $this->addPart(new HtmlTag($columnName, $options, $template, $this));
     }
 
