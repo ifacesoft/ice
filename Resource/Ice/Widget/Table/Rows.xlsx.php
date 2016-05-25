@@ -91,11 +91,11 @@ foreach ($result as $offset => $row) {
             $sheet->getRowDimension($render->getIndex())->setCollapsed($optionExcel['rowCollapsed']);
         }
 
-        if (!empty($optionExcel['width'])) {
-            $sheet->getColumnDimension($render->getColumn())->setWidth($optionExcel['width']);
-        } else {
-            $sheet->getColumnDimension($render->getColumn())->setWidth(25);
-        }
+//        if (!empty($optionExcel['width'])) {
+//            $sheet->getColumnDimension($render->getColumn())->setWidth($optionExcel['width']);
+//        } else {
+//            $sheet->getColumnDimension($render->getColumn())->setWidth(25);
+//        }
 
         $part->render($render);
     }
