@@ -128,11 +128,7 @@ class Mysqli extends DataSource
 
         $rows = $result->fetch_all(MYSQLI_ASSOC);
 
-        $data[QueryResult::NUM_ROWS] = count($rows);
-
-//        if ($result->num_rows != $data[QueryResult::NUM_ROWS]) {
-//            throw new DataSource_Select_Error('Real selected rows not equal result num rows: duplicate primary key');
-//        }
+        $numRows = $result->num_rows;
 
         $result->free_result();
         $statement->free_result();
@@ -147,7 +143,7 @@ class Mysqli extends DataSource
             $result->close();
             $data[QueryResult::FOUND_ROWS] = reset($foundRows);
         } else {
-            $data[QueryResult::FOUND_ROWS] = $data[QueryResult::NUM_ROWS];
+            $data[QueryResult::FOUND_ROWS] = $numRows;
         }
 
         $data[QueryResult::ROWS] = [];
@@ -171,12 +167,20 @@ class Mysqli extends DataSource
             $id = implode('_', array_intersect_key($row, array_flip($pkFieldNames)));
 
             if ($id) {
-                $data[QueryResult::ROWS][$id] = $row;
+                if (!isset($data[QueryResult::ROWS][$id])) {
+                    $data[QueryResult::ROWS][$id] = $row;
+                }
             } else {
                 $data[QueryResult::ROWS][] = $row;
             }
 //        }
         }
+
+        $data[QueryResult::NUM_ROWS] = count($data[QueryResult::ROWS]);
+
+//        if ($numRows != $data[QueryResult::NUM_ROWS]) {
+//            throw new DataSource_Select_Error('Real selected rows not equal result num rows: duplicate primary key');
+//        }
 
         foreach ($query->getQueryBuilder()->getTransforms() as list($transform, $params, $transformModelClass)) {
             $data = $transformModelClass::$transform($data, $params);

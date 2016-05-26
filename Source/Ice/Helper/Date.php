@@ -9,6 +9,11 @@
 
 namespace Ice\Helper;
 
+use DateTime;
+use DateTimeZone;
+use Ice\Core\Debuger;
+use Ice\Core\Module;
+use Ice\Core\Security;
 use Locale;
 
 /**
@@ -35,12 +40,6 @@ class Date
     const FUTURE = '2099-12-31 00:00:00';
     const FORMAT_MYSQL_DATE = 'Y-m-d';
 
-//$UTC = new DateTimeZone("UTC");
-//$newTZ = new DateTimeZone("America/New_York");
-//$date = new DateTime( "2011-01-01 15:00:00", $UTC );
-//$date->setTimezone( $newTZ );
-//echo $date->format('Y-m-d H:i:s');
-
     /**
      * Return revision by current time
      *
@@ -60,15 +59,36 @@ class Date
      *
      * @param  null $time
      * @param  string $format
+     * @param bool $dateTimezone
      * @return string
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 1.1
      * @since   0.0
      */
-    public static function get($time = null, $format = Date::FORMAT_MYSQL)
+    public static function get($time = null, $format = Date::FORMAT_MYSQL, $dateTimezone = true)
     {
-        return $time ? date($format, $time) : date($format);
+        if ($time) {
+            return date($format, $time);
+        }
+
+        if ($dateTimezone === true) {
+            $dateTimezone = new DateTimeZone(Security::getInstance()->getUser()->getTimezone());
+        }
+
+        $dateDefaults = Module::getInstance()->getDefault('date');
+
+        if (!$dateTimezone) {
+            $dateTimezone = new DateTimeZone($dateDefaults->get('timezone'));
+        }
+
+        $timezone = new DateTimeZone(date_default_timezone_get());
+
+        $date = new DateTime('now', $timezone);
+
+        $date->setTimezone($dateTimezone);
+
+        return $date->format($format);
     }
 
     public static function getMonth($time)

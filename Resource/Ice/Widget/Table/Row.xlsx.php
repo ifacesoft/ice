@@ -2,7 +2,7 @@
 $styleArray = array(
     'borders' => array(
         'allborders' => array(
-            'style' => PHPExcel_Style_Border::BORDER_THIN,
+            'style' => PHPExcel_Style_Border::BORDER_MEDIUM,
             'color' => array('rgb' => '000000')
         )
     ),
@@ -18,7 +18,7 @@ $styleArray = array(
 
 $cellStyle = [
     'font' => [
-        'bold' => true,
+        'bold' => false,
         'color' => ['rgb' => '000000'],
         'size' => 14,
         'name' => 'Verdana'
@@ -36,24 +36,45 @@ $startCell = $render->getColumn() . $render->getIndex();
 foreach ($component->getOption('row', []) as $key => $col) {
     $cell = $render->getColumn() . $render->getIndex();
 
+    $option = [];
+    $optionExcel = [];
+
+    if (is_array($col)) {
+        $option = $col;
+        $col = isset($option['colspan']) ? $option['colspan'] : 1;
+    }
+
+    if (isset($option['excel'])) {
+        $optionExcel = $option['excel'];
+    }
+
+    if (!empty($optionExcel['width'])) {
+        $sheet->getColumnDimension($render->getColumn())->setWidth($optionExcel['width']);
+    }
+
+    if (array_key_exists('columnVisible', $optionExcel)) {
+        $sheet->getColumnDimension($render->getColumn())->setVisible($optionExcel['columnVisible']);
+    }
+
     if (is_string($key)) {
         $value = $key;
-
         $sheet->mergeCells($cell . ':' . $render->decrementLetter($render->columnInc($col) ) . $render->getIndex());
     } else {
         $value = $col;
-        $render->columnInc();
+        $col = 1;
+        $render->columnInc($col);
     }
 
     /** @var PHPExcel_Worksheet $sheet */
     $sheet->setCellValue($cell, $value);
     $sheet->getStyle($cell)->applyFromArray($cellStyle);
-    $sheet->getRowDimension($render->getIndex())->setRowHeight(16);
 }
 
 $maxColumn = $render->getColumn();
 
-$finishCell = $render->decrementLetter($maxColumn) . ($render->getIndex() - 1);
+$finishCell = $render->decrementLetter($maxColumn) . ($render->getIndex());
+
+$sheet->getRowDimension($render->getIndex())->setRowHeight(-1);
 
 $sheet->getStyle($startCell . ':' . $finishCell)->applyFromArray($styleArray);
 

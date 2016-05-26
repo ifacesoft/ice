@@ -2,13 +2,13 @@
 $styleArray = array(
     'borders' => array(
         'allborders' => array(
-            'style' => PHPExcel_Style_Border::BORDER_THIN,
+            'style' => PHPExcel_Style_Border::BORDER_MEDIUM,
             'color' => array('rgb' => '000000')
         )
     ),
     'font' => array(
         'size' => 14,
-        'bold'  => true,
+        'bold' => true,
     ),
 //    'fill' => array(
 //        'type' => PHPExcel_Style_Fill::FILL_SOLID,
@@ -44,6 +44,10 @@ foreach ($component->getWidget()->getParts() as $part) {
 
     if (isset($optionExcel['width'])) {
         $sheet->getColumnDimension($render->getColumn())->setWidth($optionExcel['width']);
+    }
+
+    if (array_key_exists('columnVisible', $optionExcel)) {
+        $sheet->getColumnDimension($render->getColumn())->setVisible($optionExcel['columnVisible']);
     }
 
     $cell = $render->getColumn() . $render->getIndex();

@@ -2,7 +2,7 @@
 $styleArray = array(
     'borders' => array(
         'allborders' => array(
-            'style' => PHPExcel_Style_Border::BORDER_THIN,
+            'style' => PHPExcel_Style_Border::BORDER_MEDIUM,
             'color' => array('rgb' => '000000')
         )
     ),
@@ -83,9 +83,9 @@ foreach ($result as $offset => $row) {
             $sheet->getRowDimension($render->getIndex())->setVisible($optionExcel['rowVisible']);
         }
 
-        if (array_key_exists('columnVisible', $optionExcel)) {
-            $sheet->getColumnDimension($render->getColumn())->setVisible($optionExcel['columnVisible']);
-        }
+//        if (array_key_exists('columnVisible', $optionExcel)) {
+//            $sheet->getColumnDimension($render->getColumn())->setVisible($optionExcel['columnVisible']);
+//        }
 
         if (array_key_exists('rowCollapsed', $optionExcel)) {
             $sheet->getRowDimension($render->getIndex())->setCollapsed($optionExcel['rowCollapsed']);

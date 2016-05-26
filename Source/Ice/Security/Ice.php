@@ -126,7 +126,7 @@ class Ice extends Security
         }
         
         $this->setUser($user);
-        
+
         return true;
     }
 

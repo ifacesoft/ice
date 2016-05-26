@@ -10,6 +10,7 @@
 namespace Ice\Core;
 
 use Assetic\Test\Filter\PackerFilterTest;
+use Ebs\Model\Packet_Dynamic;
 use Ice\Core;
 use Ice\Helper\Arrays;
 use Ice\Helper\Json;
@@ -531,17 +532,16 @@ abstract class Model
      * Get value of model field
      *
      * @param  null $fieldName
-     * @param  bool $isNotNull
-     * @param null $defaultCallback return default value via callback method or function
+     * @param null $default
      * @return mixed
      * @throws Exception
      * @throws \Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 1.1
      * @since   0.0
      */
-    public function get($fieldName = null, $isNotNull = true, $defaultCallback = null)
+    public function get($fieldName = null, $default = null)
     {
         if ($fieldName === null) {
             return array_merge((array)$this->pk, array_filter($this->row, function ($value) {
@@ -553,7 +553,7 @@ abstract class Model
             $fields = [];
 
             foreach ($fieldName as $name) {
-                $fields[$name] = $this->get($name, $isNotNull);
+                $fields[$name] = $this->get($name, $default);
             }
 
             return $fields;
@@ -573,13 +573,18 @@ abstract class Model
 
         foreach (array($this->row, $this->json, $this->fk) as $fields) {
             if (array_key_exists($fieldName, $fields)) {
-                if ($isNotNull && $fields[$fieldName] === null) {
-                    Logger::getInstance(__CLASS__)->exception(
-                        ['field "{$0}" of model "{$1}" is null', [$fieldName, $modelName]],
-                        __FILE__,
-                        __LINE__
-                    );
+                if ($fields[$fieldName] === null) {
+                    if ($default === null) {
+                        Logger::getInstance(__CLASS__)->exception(
+                            ['field "{$0}" of model "{$1}" is null', [$fieldName, $modelName]],
+                            __FILE__,
+                            __LINE__
+                        );
+                    } else {
+                        return $default;
+                    }
                 }
+
                 return $fields[$fieldName];
             }
         }

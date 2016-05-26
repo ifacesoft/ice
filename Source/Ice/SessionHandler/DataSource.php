@@ -62,9 +62,11 @@ class DataSource extends SessionHandler
      */
     public function destroy($session_id)
     {
+        $user = Security::getInstance()->getUser();
+
         Session::createQueryBuilder()
             ->eq(['/pk' => $session_id])
-            ->getUpdateQuery(['/deleted_at' => Date::get()])
+            ->getUpdateQuery(['/deleted_at' => Date::get(time(), Date::FORMAT_MYSQL, $user->getTimezone())])
             ->getQueryResult();
 
     }
@@ -175,8 +177,10 @@ class DataSource extends SessionHandler
      */
     public function write($session_id, $session_data)
     {
+        $user = Security::getInstance()->getUser();
+
         $this->session['session_data'] = $session_data;
-        $this->session['session_updated_at'] = Date::get();
+        $this->session['session_updated_at'] = Date::get(time(), Date::FORMAT_MYSQL, $user->getTimezone());
 
         if (isset($this->session['session_pk']) && $this->session['session_pk'] == $session_id) {
             $this->session['views']++;

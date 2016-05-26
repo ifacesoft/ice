@@ -560,7 +560,7 @@ class Logger
             $logFile = $logFilename . '_' . crc32(substr($logFile, 255 - 11));
         }
 
-        File::createData($logFile, '[' . Date::get() . '] ' . $label . ': ' . $value . "\n", false, FILE_APPEND);
+        File::createData($logFile, '[' . date(Date::FORMAT_MYSQL) . '] ' . $label . ': ' . $value . "\n", false, FILE_APPEND);
 
         if (Environment::getInstance()->isProduction()) {
             return;

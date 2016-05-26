@@ -1200,7 +1200,7 @@ class QueryBuilder
     {
         $this->queryType = QueryBuilder::TYPE_SELECT;
 
-        $this->select(array_merge(['/pk'], (array)$fieldNames), null, $modelTableData);
+        $this->select((array)$fieldNames, null, $modelTableData);
 
         return $this->getQuery($dataSourceKey);
     }

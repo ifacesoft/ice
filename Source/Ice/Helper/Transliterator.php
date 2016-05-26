@@ -8,6 +8,7 @@
  */
 
 namespace Ice\Helper;
+use Ice\Core\Debuger;
 
 /**
  * Class Transliterator
@@ -37,12 +38,16 @@ class Transliterator
      */
     public static function transliterate($string)
     {
+        $string = str_replace('-', ' p r o b e l ', $string);
+
         $string = \transliterator_transliterate(
-            "Any-Latin; NFD; [:Nonspacing Mark:] Remove; NFC; Lower();",
+            "Any-Latin; NFD; [:Nonspacing Mark:] Remove; NFC; [:Punctuation:] Remove; Lower();",
             $string
         );
 
-        $string = str_replace('ʹ', '', preg_replace('/[_\s]+/', '_', $string));
+        $string = str_replace(' p r o b e l ', '-', $string);
+
+        $string = str_replace('ʹ', '', preg_replace('/[\s]+/', '_', $string));
         return trim($string, '_');
     }
 }

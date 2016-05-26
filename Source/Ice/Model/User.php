@@ -1,6 +1,8 @@
 <?php namespace Ice\Model;
 
 use Ice\Core\Model;
+use Ice\Core\Model\Security_User;
+use Ice\Core\Module;
 
 /**
  * Class User
@@ -18,7 +20,7 @@ use Ice\Core\Model;
  *
  * @package Ice\Model
  */
-class User extends Model
+class User extends Model implements Security_User
 {
     protected static function config()
     {
@@ -194,5 +196,20 @@ class User extends Model
             ],
             'revision' => '05201942_5yc',
         ];
+    }
+
+    public function getTimezone()
+    {
+        return $this->get('timezone', Module::getInstance()->getDefault('date')->get('timezone'));
+    }
+
+    /**
+     * Check is active user
+     *
+     * @return bool
+     */
+    public function isActive()
+    {
+        return (bool)$this->get('/active', 0);
     }
 }

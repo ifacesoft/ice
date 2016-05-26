@@ -20,6 +20,6 @@ $sheet->setCellValue($cell, strip_tags($component->getValue()));
 
 $sheet->getStyle($cell)->applyFromArray($cellStyle);
 
-$sheet->getRowDimension($render->getIndex())->setRowHeight(15);
+$sheet->getRowDimension($render->getIndex())->setRowHeight(-1);
 
 $render->indexInc();
