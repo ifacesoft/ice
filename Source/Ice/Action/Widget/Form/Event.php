@@ -15,6 +15,7 @@ use Ice\Core\Widget;
 use Ice\DataProvider\Request;
 use Ice\Helper\Access;
 use Ice\WidgetComponent\FormElement;
+use Ice\WidgetComponent\FormElement_Button;
 
 abstract class Widget_Form_Event extends Render
 {
@@ -34,11 +35,9 @@ abstract class Widget_Form_Event extends Render
 
             $widget->checkToken($input['widget']['token']);
 
-            $request = Request::getInstance();
-
             foreach ($widget->getParts() as $part) {
                 if ($part instanceof FormElement) {
-                    $widget->bind([$part->getName() => $request->get($part->getName())]);
+                    $part->build($input);
                 }
             }
 

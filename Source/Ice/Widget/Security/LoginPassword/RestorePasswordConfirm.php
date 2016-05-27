@@ -22,7 +22,7 @@ class Security_LoginPassword_RestorePasswordConfirm extends Widget_Security
             'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'Widget: Access denied!'],
             'resource' => ['js' => null, 'css' => null, 'less' => null, 'img' => null],
             'cache' => ['ttl' => -1, 'count' => 1000],
-            'input' => ['token' => ['providers' => [Request::class, 'default', Router::class]]],
+            'input' => [],
             'output' => [],
         ];
     }
@@ -41,6 +41,7 @@ class Security_LoginPassword_RestorePasswordConfirm extends Widget_Security
                 [
                     'placeholder' => 'token_placeholder',
                     'required' => true,
+                    'providers' => Request::class
                 ]
             )
             ->password(
@@ -48,6 +49,7 @@ class Security_LoginPassword_RestorePasswordConfirm extends Widget_Security
                 [
                     'placeholder' => 'new_password_placeholder',
                     'required' => true,
+                    'providers' => Request::class
                 ]
             )
             ->password(
@@ -55,6 +57,7 @@ class Security_LoginPassword_RestorePasswordConfirm extends Widget_Security
                 [
                     'placeholder' => 'confirm_password_placeholder',
                     'required' => true,
+                    'providers' => Request::class
                 ]
             )
             ->div('ice-message', ['value' => '&nbsp;', 'encode' => false, 'resource' => false])

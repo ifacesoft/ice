@@ -16,9 +16,7 @@ class Security_EmailPassword_RestorePassword extends Widget_Security
             'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'Widget: Access denied!'],
             'resource' => ['js' => null, 'css' => null, 'less' => null, 'img' => null],
             'cache' => ['ttl' => -1, 'count' => 1000],
-            'input' => [
-                'email' => ['providers' => Request::class],
-            ],
+            'input' => [],
             'output' => [],
         ];
     }
@@ -32,7 +30,8 @@ class Security_EmailPassword_RestorePassword extends Widget_Security
                 [
                     'required' => true,
                     'placeholder' => 'email_placeholder',
-                    'validators' => 'Ice:Email'
+                    'validators' => 'Ice:Email',
+                    'providers' => Request::class
                 ]
             )
             ->div('ice-message', ['value' => '&nbsp;', 'encode' => false, 'resource' => false])

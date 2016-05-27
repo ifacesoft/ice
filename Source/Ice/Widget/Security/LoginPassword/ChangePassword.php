@@ -15,11 +15,7 @@ class Security_LoginPassword_ChangePassword extends Widget_Security
             'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'Widget: Access denied!'],
             'resource' => ['js' => null, 'css' => null, 'less' => null, 'img' => null],
             'cache' => ['ttl' => -1, 'count' => 1000],
-            'input' => [
-                'password' => ['providers' => Request::class],
-                'new_password' => ['providers' => Request::class],
-                'confirm_password' => ['providers' => Request::class]
-            ],
+            'input' => [],
             'output' => [],
         ];
     }
@@ -55,7 +51,8 @@ class Security_LoginPassword_ChangePassword extends Widget_Security
                 [
                     'required' => true,
                     'placeholder' => 'password_placeholder',
-                    'validators' => ['Ice:Length_Min' => 5]
+                    'validators' => ['Ice:Length_Min' => 5],
+                    'providers' => Request::class
                 ]
             )
             ->password(
@@ -63,13 +60,15 @@ class Security_LoginPassword_ChangePassword extends Widget_Security
                 [
                     'required' => true,
                     'placeholder' => 'new_password_placeholder',
-                    'validators' => ['Ice:Length_Min' => 5]
+                    'validators' => ['Ice:Length_Min' => 5],
+                    'providers' => Request::class
                 ]
             )
             ->password(
                 'confirm_password',
                 [
-                    'placeholder' => 'confirm_password_placeholder'
+                    'placeholder' => 'confirm_password_placeholder',
+                    'providers' => Request::class
                 ]
             )
             ->div('ice-message', ['value' => '&nbsp;', 'encode' => false, 'resource' => false])

@@ -38,17 +38,7 @@ class Table extends Widget
 
     public function getPagination($widgetClass = 'Ice\Widget\Pagination')
     {
-        return $this->getWidget($widgetClass)
-//            ->setEvent([
-//                'action' => Render::class,
-//                'params' => [
-//                    'widgets' => [
-//                        $this->getInstanceKey() => get_class($this)
-//                    ]
-//                ],
-////                'method' => 'GET'
-//            ])
-;
+        return $this->getWidget($widgetClass);
     }
 
     public function row($fieldName, array $options = [], $template = 'Ice\Widget\Table_Row')

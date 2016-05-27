@@ -492,7 +492,19 @@ class Form extends Widget
      */
     public function validate()
     {
-        return Validator::validateByScheme($this->getValues(), $this->getValidateScheme());
+        $values = [];
+
+        foreach ($this->getParts() as $component) {
+            if ($component instanceof FormElement) {
+                if ($component instanceof FormElement_Button) { // todo: Это костыль, пока так
+                    continue;
+                }
+
+                $values[$component->getName()] = $component->getValue();
+            }
+        }
+
+        return Validator::validateByScheme(array_merge($this->getValues(), $values), $this->getValidateScheme());
     }
 
     /**

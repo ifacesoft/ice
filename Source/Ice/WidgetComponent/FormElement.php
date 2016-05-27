@@ -73,8 +73,8 @@ class FormElement extends HtmlTag
 
         $name = $this->getName();
 
-        if (!isset($this->params[$name])) {
-            $this->params[$name] = $this->getFromProviders($this->getName(), $values);
+        if ($this->get($name, null) === null) {
+            $this->set($name, $this->getFromProviders($this->getName(), $values));
         }
 
 //        if (!isset($this->params[$name])) {
@@ -142,6 +142,7 @@ class FormElement extends HtmlTag
         if (!isset($option['comparison'])) {
             $option['comparison'] = 'like';
         }
+        
         foreach ((array)$value as $val) {
             $val = html_entity_decode($val);
 

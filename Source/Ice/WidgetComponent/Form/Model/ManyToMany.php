@@ -56,10 +56,11 @@ class Form_Model_ManyToMany extends FormElement_Chosen
         return $this->getOption('linkKey');
     }
 
-    public function getLinkForeignKey() {
+    public function getLinkForeignKey()
+    {
         return $this->getOption('linkForeignKey');
     }
-    
+
     public function getItems()
     {
         /** @var Model $modelClass */
@@ -84,7 +85,9 @@ class Form_Model_ManyToMany extends FormElement_Chosen
             ->getSelectQuery($this->getItemKey())
             ->getColumn();
 
-        $values = array_filter($this->getValue(), function($item) { return !empty($item); });
+        $values = array_filter($this->getValue(), function ($item) {
+            return !empty($item);
+        });
 
         $add = array_diff($oldValues, $values);
         $remove = array_diff($values, $oldValues);
@@ -99,23 +102,23 @@ class Form_Model_ManyToMany extends FormElement_Chosen
 
     protected function buildParams($values)
     {
-//        $rows = $this->get($this->getName());
-//
-//        if ($rows === null && isset($values['pk'])) {
-//            /** @var Model $itemModelClass */
-//            $itemModelClass = $this->getItemModelClass();
-//
-//            $rows = $itemModelClass::createQueryBuilder()
-//                ->inner($this->getLinkModelClass())
-//                ->eq([$this->getLinkKey() => $values['pk']], $this->getLinkModelClass())
-//                ->getSelectQuery($this->getItemKey())
-//                ->getColumn();
-//        }
-//
-//        $this->set($this->getName(), empty($rows) ? [] : $rows);
-
         parent::buildParams($values);
-        
+
+        $name = $this->getName();
+
+        if ($this->get($name, null) === null && isset($values['pk'])) {
+            /** @var Model $itemModelClass */
+            $itemModelClass = $this->getItemModelClass();
+
+            $rows = $itemModelClass::createQueryBuilder()
+                ->inner($this->getLinkModelClass())
+                ->eq([$this->getLinkKey() => $values['pk']], $this->getLinkModelClass())
+                ->getSelectQuery($this->getItemKey())
+                ->getColumn();
+
+            $this->set($this->getName(), empty($rows) ? [] : $rows);
+        }
+
 //        $name = $this->getName();
 //        $typeahead = $this->getName() . '_typeahead';
 //
@@ -164,7 +167,7 @@ class Form_Model_ManyToMany extends FormElement_Chosen
                 $queryBuilder->pk($value, $modelClass);
             }
         }
-        
+
 //        parent::filter($queryBuilder);
 //
 //        $typeahead = $this->getName() . '_typeahead';

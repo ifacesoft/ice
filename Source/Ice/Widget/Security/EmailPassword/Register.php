@@ -13,11 +13,7 @@ class Security_EmailPassword_Register extends Widget_Security
         return [
             'render' => ['template' => Form::getClass(), 'class' => 'Ice:Php', 'layout' => null, 'resource' => true],
             'resource' => ['js' => null, 'css' => null, 'less' => null, 'img' => null],
-            'input' => [
-                'email' => ['providers' => Request::class],
-                'password' => ['providers' => Request::class],
-                'confirm_password' => ['providers' => Request::class]
-            ],
+            'input' => [],
             'access' => ['roles' => [], 'request' => null, 'env' => null]
         ];
     }
@@ -53,7 +49,8 @@ class Security_EmailPassword_Register extends Widget_Security
                 [
                     'required' => true,
                     'placeholder' => 'email_placeholder',
-                    'validators' => 'Ice:Email'
+                    'validators' => 'Ice:Email',
+                    'providers' => Request::class
                 ]
             )
             ->password(
@@ -61,7 +58,8 @@ class Security_EmailPassword_Register extends Widget_Security
                 [
                     'required' => true,
                     'placeholder' => 'password_placeholder',
-                    'validators' => ['Ice:Length_Min' => 5]
+                    'validators' => ['Ice:Length_Min' => 5],
+                    'providers' => Request::class
                 ]
             )
             ->password(
@@ -69,6 +67,7 @@ class Security_EmailPassword_Register extends Widget_Security
                 [
                     'placeholder' => 'confirm_password_placeholder',
                     'required' => true,
+                    'providers' => Request::class
                 ]
             )
             ->div('ice-message', ['value' => '&nbsp;', 'encode' => false, 'resource' => false])

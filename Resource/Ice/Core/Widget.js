@@ -33,22 +33,18 @@ var Ice_Core_Widget = {
 
         if ($form) {
             data = Ice.objectMerge(data, Ice.querystringToObject($form.serialize()));
-
-            //$form.find("input:checkbox:not(:checked)").each(function() {
-            //    data[$(this).attr('name')] = '0';
-            //});
         }
 
         if (!url) {
             url = location.href;
         }
 
-        // if (method == 'GET') {
-        //     var a = document.createElement('a');
-        //     a.href = url;
-        //     url = a.pathname + '?' + $.param(data) + a.hash;
-        //     data = {};
-        // }
+        if (method == 'GET') {
+            var a = document.createElement('a');
+            a.href = url;
+            url = a.pathname + '?' + $.param(data) + a.hash;
+            data = {};
+        }
 
         var dataAction = Ice.jsonToObject($element.attr('data-action'));
 

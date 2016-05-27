@@ -17,7 +17,6 @@ use Ice\Helper\String;
 
 class HtmlTag extends WidgetComponent
 {
-    private $route = null;
     private $href = null;
     private $event = null;
     private $widgetClass = null;
@@ -92,14 +91,10 @@ class HtmlTag extends WidgetComponent
      */
     public function getRoute()
     {
-//        if ($this->route !== null) { // todo: Где вызывается перый раз, надо искать
-//            return $this->route;
-//        }
-
-        $route = $this->getOption('route');
+        $route = $this->getOption('route', null);
 
         if (!$route) {
-            return $this->route;
+            return null;
         }
 
         if (is_string($route)) {
@@ -110,7 +105,7 @@ class HtmlTag extends WidgetComponent
             $route = ['name' => true];
         }
 
-        $this->route = array_merge(
+        $route = array_merge(
             [
                 'name' => true,
                 'params' => [],
@@ -121,11 +116,11 @@ class HtmlTag extends WidgetComponent
             (array)$route
         );
 
-        if ($this->route['name'] === true) {
-            $this->route['name'] = $this->getComponentName();
+        if ($route['name'] === true) {
+            $route['name'] = $this->getComponentName();
         }
 
-        if (isset($this->route[0])) {
+        if (isset($route[0])) {
             throw new Error('Use deprecated init route. Define named options', $this);
         }
 
@@ -133,7 +128,7 @@ class HtmlTag extends WidgetComponent
 
         $row = $this->getRow();
 
-        foreach ((array)$this->route['params'] as $routeParamKey => $routeParamValue) {
+        foreach ((array)$route['params'] as $routeParamKey => $routeParamValue) {
             if (is_int($routeParamKey)) {
                 $routeParams[$routeParamValue] = !is_array($routeParamValue) && array_key_exists($routeParamValue, $row)
                     ? $row[$routeParamValue]
@@ -147,20 +142,9 @@ class HtmlTag extends WidgetComponent
                 : $routeParamValue;
         }
 
-        $this->route['params'] = $routeParams;
+        $route['params'] = $routeParams;
 
-
-
-        return $this->route;
-    }
-
-    /**
-     * @param null $route
-     * @return null
-     */
-    public function setRoute($route)
-    {
-        return $this->route = $route;
+        return $route;
     }
 
     /**
@@ -186,7 +170,8 @@ class HtmlTag extends WidgetComponent
                         'Url generation was failed for route {$0} in widget {$1}  (part: {$2})',
                         [$route['name'], $this->getWidgetId(), $this->getComponentName()]
                     ],
-                    $this
+                    $this,
+                    $e
                 );
             }
         }

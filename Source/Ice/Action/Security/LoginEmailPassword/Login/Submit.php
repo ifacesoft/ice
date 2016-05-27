@@ -18,8 +18,8 @@ class Security_LoginEmailPassword_Login_Submit extends Security
         /** @var Security_LoginEmailPassword_Login $form */
         $form = $input['widget'];
 
-        $form->bind(['login' => $form->getValue('username')]);
-        
+        $form->bind(['login' => $form->getPart('username')->get('username')]);
+
         $output = Security_LoginPassword_Login_Submit::call([
             'widgets' => $input['widgets'],
             'widget' => $form
@@ -29,7 +29,7 @@ class Security_LoginEmailPassword_Login_Submit extends Security
             return $output;
         }
 
-        $form->bind(['email' => $form->getValue('username')]);
+        $form->bind(['email' => $form->getPart('username')->get('username')]);
         
         return Security_EmailPassword_Login_Submit::call([
             'widgets' => $input['widgets'],
