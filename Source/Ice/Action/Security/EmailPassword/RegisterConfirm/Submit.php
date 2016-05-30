@@ -20,7 +20,7 @@ class Security_EmailPassword_RegisterConfirm_Submit extends Security
         try {
             /** @var Token $token */
             $token = Token::createQueryBuilder()
-                ->eq(['/' => $securityForm->getValue('token')])
+                ->eq(['/' => $securityForm->getPart('token')->get('token')])
                 ->gt('/expired', Date::get())
                 ->getSelectQuery('*')
                 ->getModel();

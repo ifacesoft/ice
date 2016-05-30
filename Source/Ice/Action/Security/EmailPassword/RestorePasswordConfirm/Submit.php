@@ -24,7 +24,7 @@ class Security_EmailPassword_RestorePasswordConfirm_Submit extends Security
             
             /** @var Token $token */
             $token = Token::createQueryBuilder()
-                ->eq(['/' => $securityForm->getValue('token')])
+                ->eq(['/' => $securityForm->getPart('token')->get('token')])
                 ->gt('/expired', Date::get())
                 ->getSelectQuery('*')
                 ->getModel();

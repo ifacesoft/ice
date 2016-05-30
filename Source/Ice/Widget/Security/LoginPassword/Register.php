@@ -28,7 +28,7 @@ class Security_LoginPassword_Register extends Widget_Security
             if ($key == 'confirm_password') {
                 [
                     $this->validateScheme['confirm_password']['Ice:Equal'] = [
-                        'value' => $this->getValue('password'),
+                        'value' => $this->getPart('password')->get('password'),
                         'message' => 'Passwords must be equals'
                     ]
                 ];

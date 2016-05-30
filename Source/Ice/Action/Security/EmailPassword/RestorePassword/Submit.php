@@ -28,7 +28,7 @@ class Security_EmailPassword_RestorePassword_Submit extends Security
                     );
             }
 
-            $account = $accountModelClass::getSelectQuery(['/pk', '/expired'], ['email' => $securityForm->getValue('email')])->getModel();
+            $account = $accountModelClass::getSelectQuery(['/pk', '/expired'], ['email' => $securityForm->getPart('email')->get('email')])->getModel();
 
             if (!$account) {
                 return [

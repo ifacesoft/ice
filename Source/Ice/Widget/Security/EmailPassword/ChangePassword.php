@@ -30,7 +30,7 @@ class Security_EmailPassword_ChangePassword extends Widget_Security
             if ($key == 'confirm_password') {
                 [
                     $this->validateScheme['confirm_password']['Ice:Equal'] = [
-                        'value' => $this->getValue('new_password'),
+                        'value' => $this->getPart('new_password')->get('new_password'),
                         'message' => 'Passwords must be equals'
                     ]
                 ];
