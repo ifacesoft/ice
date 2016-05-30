@@ -4,12 +4,13 @@ namespace Ice\WidgetComponent;
 
 use Ice\Core\Debuger;
 use Ice\Core\Model;
+use Ice\Core\Module;
 use Ice\Core\QueryBuilder;
 
 class Form_Model_OneToMany extends FormElement_Chosen
 {
-       /**
-     * @return null
+    /**
+     * @return Model
      */
     public function getItemModel()
     {
@@ -50,7 +51,7 @@ class Form_Model_OneToMany extends FormElement_Chosen
             ? array_merge([$this->getItemTitle()], (array)$fieldNames)
             : array_diff(array_merge(array_keys($this->getParams()), (array)$fieldNames), [$this->getValueKey()]);
 
-        $this->setOption('rows', $queryBuilder->getSelectQuery(array_merge((array) $this->getItemKey(), $fieldNames))->getRows());
+        $this->setOption('rows', $queryBuilder->getSelectQuery(array_merge((array)$this->getItemKey(), $fieldNames))->getRows());
 
         return parent::getItems();
     }
@@ -98,11 +99,18 @@ class Form_Model_OneToMany extends FormElement_Chosen
 //        }
     }
 
-    public function filter(QueryBuilder $queryBuilder)
+    /**
+     * @param QueryBuilder $queryBuilder
+     * @param Model $modelClass
+     */
+    public function filter(QueryBuilder $queryBuilder, $modelClass = null)
     {
-        $this->setOption('comparison', '=');
+        $modelClass = $this->getItemModel();
 
-        parent::filter($queryBuilder);
+        $this->setOption('name', $modelClass::getPkFieldName());
+        $this->setOption('comparison', '=');
+        
+        parent::filter($queryBuilder, $modelClass);
 //
 //        $typeahead = $this->getName() . '_typeahead';
 //

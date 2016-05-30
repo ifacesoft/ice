@@ -49,9 +49,9 @@ class Form_Model_OneToManyToMany extends Form_Model_OneToMany
         parent::buildParams($values);
     }
 
-    public function filter(QueryBuilder $queryBuilder)
+    public function filter(QueryBuilder $queryBuilder, $modelClass = null)
     {
-        parent::filter($queryBuilder);
+        parent::filter($queryBuilder, $modelClass);
     }
 
     public function getManyLabel()

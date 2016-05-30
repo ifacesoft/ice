@@ -604,6 +604,10 @@ abstract class Widget extends Container
      */
     protected function addPart(WidgetComponent $part)
     {
+        if (!$part->getOption('isShow', true)) {
+            return $this;
+        }
+        
         try {
             $roles = $part->getOption('roles');
             $access = $part->getOption('access');

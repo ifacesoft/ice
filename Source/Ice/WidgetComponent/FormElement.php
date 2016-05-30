@@ -40,10 +40,6 @@ class FormElement extends HtmlTag
      */
     public function getName()
     {
-        if ($this->name !== null) {
-            return $this->name;
-        }
-
         return $this->name = $this->getOption('name') ? $this->getOption('name') : $this->getComponentName();
     }
 
@@ -125,7 +121,7 @@ class FormElement extends HtmlTag
         return [$this->getName() => is_array($value) ? $value : html_entity_decode($value)];
     }
 
-    public function filter(QueryBuilder $queryBuilder)
+    public function filter(QueryBuilder $queryBuilder, $modelClass = null)
     {
         $option = array_merge($this->getOption(), $this->getOption('filter', []));
 
@@ -142,17 +138,21 @@ class FormElement extends HtmlTag
         if (!isset($option['comparison'])) {
             $option['comparison'] = 'like';
         }
+
+        if ($modelClass === null) {
+            $modelClass = $queryBuilder->getModelClass();
+        }
         
         foreach ((array)$value as $val) {
             $val = html_entity_decode($val);
 
             switch ($option['comparison']) {
                 case '=':
-                    $queryBuilder->eq([$this->getName() => $val]);
+                    $queryBuilder->eq([$this->getName() => $val], $modelClass);
                     break;
                 case 'like':
                 default:
-                    $queryBuilder->like($this->getName(), '%' . $val . '%');
+                    $queryBuilder->like($this->getName(), '%' . $val . '%', $modelClass);
             }
         }
     }

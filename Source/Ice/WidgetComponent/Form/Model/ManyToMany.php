@@ -158,11 +158,11 @@ class Form_Model_ManyToMany extends FormElement_Chosen
 //        }
     }
 
-    public function filter(QueryBuilder $queryBuilder)
+    public function filter(QueryBuilder $queryBuilder, $modelClass = null)
     {
         $modelClass = $this->getItemModelClass();
 
-        foreach ($this->get($this->getName()) as $value) {
+        foreach ($this->get($this->getName()) as $value) { // todo: Возможно это переписать на parent::filter - тут ничего сложного
             if ($value) {
                 $queryBuilder->pk($value, $modelClass);
             }
