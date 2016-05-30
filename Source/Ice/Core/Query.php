@@ -386,13 +386,15 @@ class Query
      * @version 1.1
      * @since   0.0
      */
-    public function getValue($fieldName = '/pk', $ttl = null)
+    public function getValue($fieldName = null, $ttl = null)
     {
         $row = $this->getRow(null, $ttl);
 
-        $modelClass = $this->getQueryBuilder()->getModelClass();
+        if ($fieldName) {
+            $modelClass = $this->getQueryBuilder()->getModelClass();
 
-        $fieldName = $modelClass::getFieldName($fieldName);
+            $fieldName = $modelClass::getFieldName($fieldName);
+        }
 
         return $row ? ($fieldName ? $row[$fieldName] : reset($row)) : null;
     }

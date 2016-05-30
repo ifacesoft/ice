@@ -19,6 +19,18 @@ use Ice\WidgetComponent\FormElement_Button;
 
 abstract class Widget_Form_Event extends Render
 {
+    protected static function config()
+    {
+        $config = parent::config();
+
+        $config['input'] = array_merge(
+            $config['input'],
+            ['widget' => ['default' => null, 'providers' => ['default', Request::class]]]
+        );
+
+        return $config;
+    }
+
     protected function initInput(array $configInput, array $data = [])
     {
         parent::initInput($configInput, $data);

@@ -676,7 +676,7 @@ abstract class Model
      * Create model instance
      *
      * @param  array $row
-     * @return Model
+     * @return $this
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *

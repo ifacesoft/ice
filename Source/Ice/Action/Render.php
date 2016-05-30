@@ -27,7 +27,6 @@ class Render extends Action
             'input' => [
                 'widgetClass' => ['providers' => ['default', Router::class, Request::class]],
                 'widgetParams' => ['providers' => ['default', Router::class, Request::class], 'default' => []],
-                'widget' => ['default' => null, 'providers' => ['default', Request::class]],
                 'widgets' => ['default' => [], 'providers' => ['default', Request::class]]
             ],
             'output' => []
@@ -79,11 +78,6 @@ class Render extends Action
             }
         }
 
-
         return ['widgets' => $widgets];
-    }
-    
-    protected function getInputWidget($input) {
-        
     }
 }
