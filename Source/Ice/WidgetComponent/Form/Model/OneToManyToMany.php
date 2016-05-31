@@ -109,17 +109,17 @@ class Form_Model_OneToManyToMany extends Form_Model_OneToMany
     {
         $itemsGroup = [];
 
-        foreach ($this->getItems($this->getManyValueKey()) as $item) {
+        foreach ($this->getItems($this->getManyValueKey()) as $key => $item) {
             if (!isset($item[$this->getManyValueKey()])) {
                 continue;
             }
 
-            $itemsGroup[$item[$this->getManyValueKey()]][] = $item;
+            $itemsGroup[$item[$this->getManyValueKey()]][$key] = $item;
         }
 
         if ($this->getOption('required', false) === false) {
             foreach ($itemsGroup as &$rows) {
-                $rows = [[$this->getItemKey() => null, $this->getItemTitle() => '']] + $rows;
+                $rows = array_values([[$this->getItemKey() => null, $this->getItemTitle() => '']] + $rows);
             }
         }
 

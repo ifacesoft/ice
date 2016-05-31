@@ -52,7 +52,7 @@
         var <?= $component->getId() ?>_items = Ice.jsonToObject('<?= $component->getItemsGroupJson() ?>');
 
         if ($("#<?= $component->getId('many') ?>").val()) {
-            $("#<?= $component->getId() ?> option").remove()
+            $("#<?= $component->getId() ?> option").remove();
             <?= $component->getId() ?>_items[$("#<?= $component->getId('many') ?>").val()].forEach(function (item, key) {
                 $("#<?= $component->getId() ?>").append('<option value="' + item['<?= $component->getItemKey() ?>'] + '">' + Ice.replaceRender('<?= $component->getItemTitle() ?>', item) + '</option>');
             });

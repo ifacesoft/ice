@@ -1,6 +1,7 @@
 <?php
 namespace Ice\Router;
 
+use Ice\Core\Debuger;
 use Ice\Core\Request;
 use Ice\Exception\RouteNotFound;
 
@@ -55,25 +56,15 @@ class Symfony extends Ice
 
     public function getName($url = null, $method = null)
     {
-        $routeName = null;
-
         try {
-            $routeName = parent::getName($url, $method);
+            return parent::getName($url, $method);
         } catch (\Exception $e) {
-           //
+            //
         }
 
-        if (!$routeName) {
-            global $kernel;
+        global $kernel;
 
-            try {
-                $routeName = $kernel->getContainer()->get('request')->get('_route');
-            } catch (\Exception $e) {
-                //
-            }
-        }
-
-        return $routeName;
+        return $kernel->getContainer()->get('request')->get('_route');
     }
 
     /**
@@ -81,6 +72,12 @@ class Symfony extends Ice
      */
     public function getParams()
     {
+        try {
+            return parent::getParams();
+        } catch (\Exception $e) {
+            //
+        }
+
         global $kernel;
 
         return $kernel->getContainer()->get('request')->attributes->get('_route_params');

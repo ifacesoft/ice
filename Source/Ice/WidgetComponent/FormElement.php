@@ -4,9 +4,11 @@ namespace Ice\WidgetComponent;
 
 use Ice\Core\Debuger;
 use Ice\Core\Model;
+use Ice\Core\Module;
 use Ice\Core\QueryBuilder;
 use Ice\Core\Security;
 use Ice\Core\Widget as Core_Widget;
+use Ice\Helper\Date;
 
 class FormElement extends HtmlTag
 {
@@ -117,6 +119,10 @@ class FormElement extends HtmlTag
         }
 
         $value = $this->getValue();
+
+        if ($dateFormat = $this->getOption('dateFormat')) {
+            $value = Date::get(strtotime($value), Date::FORMAT_MYSQL);
+        }
 
         return [$this->getName() => is_array($value) ? $value : html_entity_decode($value)];
     }

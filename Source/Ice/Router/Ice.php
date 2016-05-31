@@ -75,6 +75,8 @@ class Ice extends Router
      */
     public function getParams()
     {
-        return DataProvider_Router::getInstance()->get();
+        $params = DataProvider_Router::getInstance()->get();
+
+        return array_intersect_key($params['routeParams'], $params['params']);
     }
 }

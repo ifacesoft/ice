@@ -64,7 +64,7 @@ class Router extends DataProvider
      * Get data from data provider by key
      *
      * @param  string $key
-     * @return Route|Route[]
+     * @return array
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
