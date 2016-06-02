@@ -302,9 +302,7 @@ class Session extends Model
 		        ],
 		        'manyToMany' => [],
 		    ],
-		    'revision' => '04140910_ton',
+		    'revision' => '06020820_zum',
 		];
     }
-
-	
 }
