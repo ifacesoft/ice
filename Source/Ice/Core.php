@@ -48,18 +48,32 @@ trait Core
      * Return class by base class
      *
      * @param  string|null $className
+     * @param null $baseClass
      * @return Core
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 1.1
      * @since   0.0
      */
-    public static function getClass($className = null)
+    public static function getClass($className = null, $baseClass = null)
     {
-        return empty($className)
-            ? get_called_class()
-            : Object::getClass(get_called_class(), $className);
+        if (empty($className)) {
+            return get_called_class();
+        }
+
+        if ($className[0] == '_' && $baseClass) {
+            if (is_object($baseClass)) {
+                $baseClass = get_class($baseClass);
+            }
+
+            if (strlen($className) > 1 &&  $className[1] == '_') {
+                return substr($baseClass, 0, strrpos($baseClass, '_')) . substr($className, 1);
+            } else {
+                return $baseClass . $className;
+            }
+        } else {
+            return Object::getClass(get_called_class(), $className);
+        }
     }
 
     /**

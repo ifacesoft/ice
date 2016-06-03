@@ -25,8 +25,7 @@ class Render extends Action
             'cache' => ['ttl' => -1, 'count' => 1000],
             'actions' => [],
             'input' => [
-                'widgetClass' => ['providers' => ['default', Router::class, Request::class]],
-                'widgetParams' => ['providers' => ['default', Router::class, Request::class], 'default' => []],
+                'content' => ['providers' => 'default'],
                 'widgets' => ['default' => [], 'providers' => ['default', Request::class]]
             ],
             'output' => []
@@ -41,16 +40,24 @@ class Render extends Action
      */
     public function run(array $input)
     {
-        $widgets = [];
+        if ($content = (array)$input['content']) {
+            if (count($content) > 1) {
+                list ($widgetClass, $params) = $content;
+            } else {
+                $widgetClass = reset($content);
+                $params = [];
+            }
 
-        if (isset($input['widgetClass'])) {
             try {
-                $widgetClass = Widget::getClass($input['widgetClass']);
-                return ['content' => $widgetClass::getInstance(null, null, $input['widgetParams'])];
+                /** @var Widget $widgetClass */
+                $widgetClass = Widget::getClass($widgetClass);
+                return ['content' => $widgetClass::getInstance(null, null, $params)];
             } catch (Access_Denied $e) {
                 throw new Http_Forbidden('В доступе отказано', [], $e);
             }
         }
+
+        $widgets = [];
 
         foreach ($input['widgets'] as $key => $widgetClass) {
             if (is_array($widgetClass)) {
@@ -65,13 +72,13 @@ class Render extends Action
             if ($key == 'content') {
                 $widgets['content'] = $widgetClass::getInstance($key, null, $params)->render();
             } else {
-                $widget = $widgetClass::getInstance($key, null, $params);
+                $content = $widgetClass::getInstance($key, null, $params);
 
 
-                $output = $widget->getOutput();
+                $output = $content->getOutput();
 
-                $widgets[$widget->getWidgetId()] = [
-                    'content' => $widget->render(),
+                $widgets[$content->getWidgetId()] = [
+                    'content' => $content->render(),
                     'params' => isset($output['callbackParams']) ? $output['callbackParams'] : [],
                     'callback' => isset($output['callback']) ? $output['callback'] : null
                 ];

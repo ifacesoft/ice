@@ -37,22 +37,36 @@ class App
         $startTime = Profiler::getMicrotime();
         $startMemory = Profiler::getMemoryGetUsage();
 
+        $dataProvider = null;
         $actionClass = null;
+        $params = [];
 
         /** @var Action $actionClass */
         try {
             if (Request::isCli()) {
-                $actionClass = DataProvider_Cli::getInstance()->get('actionClass');
+                $dataProvider = DataProvider_Cli::getInstance();
+
+                $actionClass = $dataProvider->get('actionClass');
+                $params = (array)$dataProvider->get('params');
             } else {
                 Request::init();
                 Session::init();
 
-                $actionClass = Request::isAjax()
-                    ? DataProvider_Request::getInstance()->get('actionClass')
-                    : DataProvider_Router::getInstance()->get('actionClass');
+                $dataProvider = Request::isAjax()
+                    ? DataProvider_Request::getInstance()
+                    : DataProvider_Router::getInstance();
 
-                if (!Request::isAjax()) {
-                    if ($response = DataProvider_Router::getInstance()->get('response')) {
+                $actionClass = $dataProvider->get('actionClass');
+
+
+                if ($dataProvider instanceof DataProvider_Router) {
+                    $routeParams = (array)$dataProvider->get('routeParams');
+
+                    if (isset($routeParams['params'])) {
+                        $params = $routeParams['params'];
+                    }
+
+                    if ($response = $dataProvider->get('response')) {
                         if (isset($response['contentType'])) {
                             App::getResponse()->setContentType($response['contentType']);
                         }
@@ -61,6 +75,8 @@ class App
                             App::getResponse()->setStatusCode($response['statusCode']);
                         }
                     }
+                } else {
+                    $params = (array)$dataProvider->get('params');
                 }
             }
 
@@ -70,7 +86,7 @@ class App
 
             $actionClass = Action::getClass($actionClass);
 
-            $result = $actionClass::call();
+            $result = $actionClass::call($params);
         } catch (\Exception $e) {
             if (Request::isCli()) {
                 Logger::getInstance(__CLASS__)->error('Application (Cli): run action failure', __FILE__, __LINE__, $e);

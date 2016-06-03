@@ -51,8 +51,9 @@ class Security_EmailPassword_Login_Submit extends Security
             $this->signIn($account, $input);
 
             return array_merge(
-                ['success' => $form->getLogger()->info('Login successfully', Logger::SUCCESS, true)],
-                parent::run($input)
+                parent::run($input),
+                ['success' => $form->getLogger()->info('Login successfully', Logger::SUCCESS, true)]
+                
             );
         } catch (\Exception $e) {
             return ['error' => $form->getLogger()->info($e->getMessage(), Logger::DANGER, true)];

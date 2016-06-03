@@ -242,11 +242,11 @@ class HtmlTag extends WidgetComponent
                 'code' => empty($event['code']) ? '' : $event['code'],
             ];
 
-            if ($this->event['class'][0] == '_') {
-                $this->event['class'] = $this->getWidgetClass() . $this->event['class'];
-            }
+//            if ($this->event['class'][0] == '_') {
+//                $this->event['class'] = $this->getWidgetClass() . $this->event['class'];
+//            }
 
-            $this->event['class'] = Action::getClass($this->event['class']);
+            $this->event['class'] = Action::getClass($this->event['class'], $this->getWidgetClass());
         }
 
         return $this->event;

@@ -271,6 +271,10 @@ class QueryBuilder
                 $fieldName .= '__fk';
             }
 
+            if ($value === null) {
+                $sqlComparison = QueryBuilder::SQL_COMPARISON_KEYWORD_IS_NULL;
+            }
+
             $where = [$sqlLogical, $fieldName, $sqlComparison, $value === null ? 1 : count((array)$value)];
 
 //            if (isset($this->sqlParts[QueryBuilder::PART_WHERE][$tableAlias])) {

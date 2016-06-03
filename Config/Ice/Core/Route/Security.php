@@ -6,10 +6,14 @@ return [
         'request' => [
             'GET' => [
                 'actionClass' => 'Ice:Render',
-                'widgetClass' => 'Ice:Layout_Main',
-                'widgetParams' => [
-                    'main' => 'Ice:Security_Login',
-                    'title' => ['Ice:Title', ['title' => 'Login']]
+                'params' => [
+                    'content' => [
+                        'Ice:Layout_Main',
+                        [
+                            'main' => 'Ice:Security_Login',
+                            'title' => ['Ice:Title', ['title' => 'Login']]
+                        ]
+                    ]
                 ]
             ]
         ],
@@ -135,10 +139,14 @@ return [
         'request' => [
             'GET' => [
                 'actionClass' => 'Ice:Render',
-                'widgetClass' => 'Ice:Layout_Main',
-                'widgetParams' => [
-                    'main' => 'Ice:Security_ChangePassword',
-                    'title' => ['Ice:Title', ['title' => 'Change password']]
+                'params' => [
+                    'content' => [
+                        'Ice:Layout_Main',
+                        [
+                            'main' => 'Ice:Security_ChangePassword',
+                            'title' => ['Ice:Title', ['title' => 'Change password']]
+                        ]
+                    ]
                 ]
             ]
         ],

@@ -373,11 +373,7 @@ abstract class Action implements Cacheable
             }
         }
 
-        $class = $class[0] == '_'
-            ? get_class($this) . $class
-            : Action::getClass($class);
-
-        return [$key, $class, $params];
+        return [$key, Action::getClass($class, $this), $params];
     }
 
     /**

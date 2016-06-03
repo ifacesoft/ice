@@ -1,14 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: dp
- * Date: 11.12.15
- * Time: 14:45
- */
 
 namespace Ice\Widget;
-
-use Ice\Core\Debuger;
 
 class Block_Render extends Block
 {
