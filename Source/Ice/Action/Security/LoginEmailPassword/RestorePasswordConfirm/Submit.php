@@ -18,8 +18,6 @@ class Security_LoginEmailPassword_RestorePasswordConfirm_Submit extends Security
         /** @var Security_LoginEmailPassword_RestorePasswordConfirm $form */
         $form = $input['widget'];
 
-        $form->bind(['login' => $form->getPart('username')->get('username')]);
-
         $accountLoginPasswordSubmitClass = $form->getAccountLoginPasswordSubmitClass();
 
         $output = $accountLoginPasswordSubmitClass::call([
@@ -30,8 +28,6 @@ class Security_LoginEmailPassword_RestorePasswordConfirm_Submit extends Security
         if (!isset($output['error'])) {
             return $output;
         }
-
-        $form->bind(['email' => $form->getPart('username')->get('username')]);
 
         $accountEmailPasswordSubmitClass = $form->getAccountEmailPasswordSubmitClass();
 

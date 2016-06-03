@@ -78,6 +78,7 @@ class Token extends Model
 		            'options' => [
 		                'name' => 'token_expired',
 		                'type' => 'date',
+						'dateTimezone' => true
 		            ],
 		        ],
 		        'token_data__json' => [

@@ -232,6 +232,8 @@ class Sql extends QueryTranslator
 
         $sql = '';
 
+        $modelSchemes = [];
+        
         /**
          * @var Model $modelClass
          * @var array $where
@@ -240,22 +242,33 @@ class Sql extends QueryTranslator
             $modelClass = $where['class'];
             $tableAlias = $where['alias'];
 
-            $fields = $modelClass::getScheme()->getFieldColumnMap();
+            $fieldColumnMap = $modelClass::getScheme()->getFieldColumnMap();
 
+            if (!isset($modelSchemes[$modelClass])) {
+                $modelSchemes[$modelClass] = $modelClass::getScheme();
+            }
+            
             foreach ($where['data'] as $fieldNameArr) {
                 list($logicalOperator, $fieldName, $comparisonOperator, $count) = $fieldNameArr;
 
-                if (isset($fields[$fieldName])) {
-                    $fieldName = '`' . $tableAlias . '`.`' . $fields[$fieldName] . '`';
+                if (isset($fieldColumnMap[$fieldName])) {
+                    $columnName = $fieldColumnMap[$fieldName];
+                    
+                    $column = '`' . $tableAlias . '`.`' . $columnName . '`';
+                    
+                    $dateTimezone = $modelSchemes[$modelClass]->get('columns/' . $columnName . '/options/dateTimezone', null);
+                } else {
+                    $column = $fieldName;
+                    $dateTimezone = null;
                 }
 
                 $sql .= $sql
                     ? ' ' . $logicalOperator . "\n\t"
                     : "\n" . self::SQL_CLAUSE_WHERE . "\n\t";
 
-                $sql .= $fieldName . ' ' . $this->buildWhere($comparisonOperator, ltrim($fieldName, '('), $count);
+                $sql .= $column . ' ' . $this->buildWhere($comparisonOperator, ltrim($column, '('), $count, $this->dateTimezoneWhere($dateTimezone, $column));
 
-                if ($fieldName[0] == '(') {
+                if ($column[0] == '(') {
                     $sql .= ')';
                 }
             }
@@ -302,14 +315,15 @@ class Sql extends QueryTranslator
      * @param $comparisonOperator
      * @param $fieldName
      * @param $count
+     * @param string $sign
      * @return string
      * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.3
+     * @version 1.1
      * @since   0.3
      */
-    private function buildWhere($comparisonOperator, $fieldName, $count)
+    private function buildWhere($comparisonOperator, $fieldName, $count, $sign = '?')
     {
         switch ($comparisonOperator) {
             case QueryBuilder::SQL_COMPARISON_OPERATOR_EQUAL:
@@ -321,17 +335,17 @@ class Sql extends QueryTranslator
             case QueryBuilder::SQL_COMPARISON_OPERATOR_NOT_EQUAL:
             case QueryBuilder::SQL_COMPARISON_KEYWORD_LIKE:
             case QueryBuilder::SQL_COMPARISON_KEYWORD_RLIKE:
-                return $comparisonOperator . ' ?';
+                return $comparisonOperator . ' ' . $sign;
             case QueryBuilder::SQL_COMPARISON_KEYWORD_BETWEEN:
-                return $comparisonOperator . ' ? AND ?';
+                return $comparisonOperator . ' ' . $sign . ' AND ' . $sign;
             case QueryBuilder::SQL_COMPARISON_KEYWORD_IN:
             case QueryBuilder::SQL_COMPARISON_KEYWORD_NOT_IN:
-                return $comparisonOperator . ' (?' . ($count > 1 ? str_repeat(',?', $count - 1) : '') . ')';
+                return $comparisonOperator . ' (' . $sign . ($count > 1 ? str_repeat(',' . $sign, $count - 1) : '') . ')';
             case QueryBuilder::SQL_COMPARISON_KEYWORD_IS_NULL:
             case QueryBuilder::SQL_COMPARISON_KEYWORD_IS_NOT_NULL:
                 return $comparisonOperator;
             case QueryBuilder::SQL_COMPARISON_KEYWORD_RLIKE_REVERSE:
-                return '? ' . QueryBuilder::SQL_COMPARISON_KEYWORD_RLIKE . ' ' . $fieldName;
+                return $sign . ' ' . QueryBuilder::SQL_COMPARISON_KEYWORD_RLIKE . ' ' . $fieldName;
             default:
                 $this->getLogger()->exception(['Unknown comparison operator "{$0}"', $comparisonOperator], __FILE__, __LINE__);
         }
@@ -648,16 +662,43 @@ class Sql extends QueryTranslator
         return $sql;
     }
 
-    private function dateTimezoneSelect($dateTimezone, $column, $alias = null)
+    private function dateTimezoneWhere($dateTimezone, $column, $sign = '?')
     {
-        if ($dateTimezone === null) {
-            return $column;
-        }
-
         if ($dateTimezone === true) {
             $dateTimezone = $column == '`User`.`created_at`'
                 ? null
                 : Security::getInstance()->getUser()->getTimezone();
+        }
+
+        if ($dateTimezone === null) {
+            return $sign;
+        }
+
+        $dateDefaults = Module::getInstance()->getDefault('date');
+
+        if (!$dateTimezone) {
+            $dateTimezone = $dateDefaults->get('timezone');
+        }
+
+        $timezone = $dateDefaults->get('storage_timezone');
+
+        if ($dateTimezone != $timezone) {
+            $sign = 'CONVERT_TZ(' . $sign . ',"' . $dateTimezone . '","' . $timezone . '")';
+        }
+
+        return $sign;
+    }
+    
+    private function dateTimezoneSelect($dateTimezone, $column, $alias = null)
+    {
+        if ($dateTimezone === true) {
+            $dateTimezone = $column == '`User`.`created_at`'
+                ? null
+                : Security::getInstance()->getUser()->getTimezone();
+        }
+
+        if ($dateTimezone === null) {
+            return $column;
         }
 
         $dateDefaults = Module::getInstance()->getDefault('date');
