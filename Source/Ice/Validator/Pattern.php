@@ -9,6 +9,7 @@
 
 namespace Ice\Validator;
 
+use Ice\Core\Debuger;
 use Ice\Core\Validator;
 
 /**
@@ -59,10 +60,15 @@ class Pattern extends Validator
      * @version 0.0
      * @since   0.0
      */
-    public function validate($data, array $scheme = [])
+    public function validate($data, $scheme = null)
     {
         $params = is_array($scheme) ? $scheme['params'] : $scheme;
 
         return preg_match($params, $data);
+    }
+
+    public function getMessage()
+    {
+        return 'Param \'{$0}\' with value \'{$1}\' not match pattern \'{$2}\'';
     }
 }

@@ -480,66 +480,54 @@ class Form extends Widget
         return $this->addPart(new FormElement_Chosen($fieldName, $options, null, $this));
     }
 
-    /**
-     * Validate form by validate scheme
-     *
-     * @return array
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 1.0
-     * @since   0.0
-     */
-    public function validate()
-    {
-        $values = [];
-
-        foreach ($this->getParts() as $component) {
-            if ($component instanceof FormElement) {
-                if ($component instanceof FormElement_Button) { // todo: Это костыль, пока так
-                    continue;
-                }
-
-                $values[$component->getName()] = $component->getValue();
-            }
-        }
-
-        return Validator::validateByScheme(array_merge($this->getValues(), $values), $this->getValidateScheme());
-    }
-
-    /**
-     * Return validate scheme
-     *
-     * @return array
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 1.1
-     * @since   0.0
-     */
-    public function getValidateScheme()
-    {
-        foreach ($this->getParts($this->getFilterParts()) as $partName => $component) {
-            if ($validators = $component->getOption('validators', [])) {
-                $this->validateScheme[$partName] = isset($this->validateScheme[$partName])
-                    ? array_merge($this->validateScheme[$partName], $validators)
-                    : $validators;
-            }
-        }
-
-        return $this->validateScheme;
-    }
-
-//    protected function addPart($partName, array $options, $template, $element)
+//    /**
+//     * Validate form by validate scheme
+//     *
+//     * @return array
+//     *
+//     * @author dp <denis.a.shestakov@gmail.com>
+//     *
+//     * @version 1.0
+//     * @since   0.0
+//     */
+//    public function validate()
 //    {
-//        parent::addPart($partName, $options, $template, $element);
+//        $values = [];
 //
-//        if (!empty($this->parts[$partName]['options']['validators'])) {
-//            $this->validateScheme[$partName] = $this->parts[$partName]['options']['validators'];
-//            unset($this->parts[$partName]['options']['validators']);
+//        foreach ($this->getParts() as $component) {
+//            if ($component instanceof FormElement) {
+//                if ($component instanceof FormElement_Button) { // todo: Это костыль, пока так
+//                    continue;
+//                }
+//
+//                $values[$component->getName()] = $component->getValue();
+//            }
 //        }
 //
-//        return $this;
+//        return Validator::validateByScheme(array_merge($this->getValues(), $values), $this->getValidateScheme());
+//    }
+//
+//    /**
+//     * Return validate scheme
+//     *
+//     * @return array
+//     *
+//     * @author dp <denis.a.shestakov@gmail.com>
+//     *
+//     * @version 1.1
+//     * @since   0.0
+//     */
+//    public function getValidateScheme()
+//    {
+//        foreach ($this->getParts($this->getFilterParts()) as $partName => $component) {
+//            if ($validators = $component->getOption('validators', [])) {
+//                $this->validateScheme[$partName] = isset($this->validateScheme[$partName])
+//                    ? array_merge($this->validateScheme[$partName], $validators)
+//                    : $validators;
+//            }
+//        }
+//
+//        return $this->validateScheme;
 //    }
 
     /**

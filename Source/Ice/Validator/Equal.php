@@ -45,7 +45,7 @@ class Equal extends Validator
      * @version 0.0
      * @since   0.0
      */
-    public function validate($data, array $scheme = [])
+    public function validate($data, $scheme = null)
     {
         return in_array($data, $scheme);
     }

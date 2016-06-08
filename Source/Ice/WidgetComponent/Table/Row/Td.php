@@ -2,7 +2,7 @@
 
 namespace Ice\WidgetComponent;
 
-class TableCell_A extends HtmlTag_A
+class Table_Row_Td extends HtmlTag
 {
     /**
      * WidgetComponent config

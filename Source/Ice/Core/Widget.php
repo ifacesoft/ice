@@ -1,7 +1,6 @@
 <?php
 namespace Ice\Core;
 
-use Ebs\Widget\Order_Basket_Form;
 use Ice\Exception\Access_Denied;
 use Ice\Exception\Http;
 use Ice\Exception\RouteNotFound;
@@ -11,7 +10,9 @@ use Ice\Helper\Json;
 use Ice\Helper\Object;
 use Ice\Helper\String;
 use Ice\Helper\Transliterator;
+use Ice\Widget\Bootstrap3_Table_Row;
 use Ice\Widget\Resource_Dynamic;
+use Ice\WidgetComponent\FormElement;
 use Ice\WidgetComponent\HtmlTag;
 use Ice\WidgetComponent\HtmlTag_A;
 use Ice\WidgetComponent\Widget as WidgetComponent_Widget;
@@ -115,10 +116,11 @@ abstract class Widget extends Container
         return $this->rows;
     }
 
-    public function getCanonicalName($part = 'header') {
+    public function getCanonicalName($part = 'header')
+    {
         return String::truncate(Transliterator::transliterate(strip_tags($this->getPart($part)->render())), 250);
     }
-    
+
     /**
      * @param string $attributes
      * @param bool|false $force
@@ -403,7 +405,17 @@ abstract class Widget extends Container
      */
     public function bind(array $params)
     {
-        $this->values = array_merge($this->values, $params);
+        $values = array_merge($this->values, $params);
+        
+        foreach ($this->getParts() as $partName => $part) {
+            if (array_key_exists($partName, $values)) {
+                $part->set($partName, $values[$partName]);
+                unset($values[$partName]);
+            }
+        }
+        
+        $this->values = $values;
+        
         return $this;
     }
 
@@ -441,10 +453,6 @@ abstract class Widget extends Container
      */
     public function getResult()
     {
-        if ($this->result !== null) {
-            return $this->result;
-        }
-
         $this->result = [];
 
         $offset = $this->getOffset();
@@ -453,13 +461,15 @@ abstract class Widget extends Container
         foreach ($this->getRows() as $row) {
             $offset++;
 
-            $row = array_merge($values, $row);
-
             $rowTable = [];
 
-            foreach ($this->getParts($this->getFilterParts(), $row) as $partName => $part) {
+            foreach ($this->getParts($this->getFilterParts()) as $partName => $part) {
                 $rowTable[$partName] = $part->cloneComponent();// todo: избавиться от клонирования (дублирования билдинга)
-                $rowTable[$partName]->build($row);
+
+                if (!($this instanceof Bootstrap3_Table_Row)) {
+                    $rowTable[$partName]->build(array_merge($values, $row));
+                }
+
                 $rowTable[$partName]->setOffset($offset);
             }
 
@@ -607,7 +617,7 @@ abstract class Widget extends Container
         if (!$part->getOption('isShow', true)) {
             return $this;
         }
-        
+
         try {
             $roles = $part->getOption('roles');
             $access = $part->getOption('access');
@@ -675,7 +685,6 @@ abstract class Widget extends Container
      * Compiled widget parts
      *
      * @param null $filterParts
-     * @param null $row
      * @return WidgetComponent[]
      * @author dp <denis.a.shestakov@gmail.com>
      *
@@ -683,7 +692,7 @@ abstract class Widget extends Container
      * @version 1.0
      * @since   1.0
      */
-    public function getParts($filterParts = null, $row = null)
+    public function getParts($filterParts = null)
     {
         $ascPattern = '/(?:[^\/]+\/)?' . QueryBuilder::SQL_ORDERING_ASC . '$/';
         $descPattern = '/(?:[^\/]+\/)?' . QueryBuilder::SQL_ORDERING_DESC . '$/';
@@ -691,9 +700,9 @@ abstract class Widget extends Container
         $parts = [];
 
         foreach ($this->parts as $partName => $part) {
-            if (!empty($filterParts) && !in_array($partName, $filterParts)) {
-                continue;
-            }
+//            if (!empty($filterParts) && !in_array($partName, $filterParts)) {
+//                continue;
+//            }
 
             // Todo: этот код перенести в компонент -> Очень важно!!!
 //            $value = $this->getValue($partName);
@@ -1007,6 +1016,9 @@ abstract class Widget extends Container
     public function getWidget($widgetClass, $postfixKey = '')
     {
         if ($widgetClass instanceof Widget) {
+            $widgetClass->setParentWidgetId($this->getInstanceKey());
+            $widgetClass->setParentWidgetClass(get_class($this));
+
             return $widgetClass;
         }
 
@@ -1155,5 +1167,17 @@ abstract class Widget extends Container
         }
 
         return $value;
+    }
+
+    public function validate()
+    {
+        $values = [];
+
+        foreach ($this->getParts($this->getFilterParts()) as $component) {
+            $name = $component instanceof FormElement ? $component->getName() : $component->getComponentName();
+            $values[$name] = $component->validate();
+        }
+
+        return $values;
     }
 }

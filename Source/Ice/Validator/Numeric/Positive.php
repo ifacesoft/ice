@@ -44,7 +44,7 @@ class Numeric_Positive extends Numeric
      * @version 0.0
      * @since   0.0
      */
-    public function validate($data, array $scheme = [])
+    public function validate($data, $scheme = null)
     {
         return parent::validate($data, $scheme) && $data > 0;
     }

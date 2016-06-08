@@ -12,6 +12,7 @@ class Validator
      * @param $validatorParams
      * @param $param
      * @param $value
+     * @return mixed
      * @throws Exception
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -19,7 +20,7 @@ class Validator
      * @version 1.1
      * @since   0.0
      */
-    public static function validate($validatorClass, $validatorParams, $param, $value)
+    public static function validate($validatorClass, $validatorParams, $value, $param = null)
     {
         /**
          * @var Core_Validator $validatorClass
@@ -43,12 +44,12 @@ class Validator
             $exceptionClass = Exception::getClass('Ice:Not_Valid');
         }
 
-        if ($validator->validate($value, (array)$validatorParams)) {
-            return;
+        if ($validator->validate($value, $validatorParams)) {
+            return $value;
         }
 
         $exceptionMessage = [$message, array_merge([$param, print_r($value, true)], (array)$validatorParams)];
 
-        Core_Logger::getInstance(__CLASS__)->exception($exceptionMessage, __FILE__, __LINE__, null, null, -1, $exceptionClass);
+        return Core_Logger::getInstance(__CLASS__)->exception($exceptionMessage, __FILE__, __LINE__, null, null, -1, $exceptionClass);
     }
 }

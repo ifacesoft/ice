@@ -1,12 +1,11 @@
 <?php
 namespace Ice\Widget;
 
-use Ice\Core\Debuger;
 use Ice\Core\QueryBuilder;
 use Ice\Core\QueryResult;
 use Ice\Core\Widget;
-use Ice\WidgetComponent\TableCell_A;
-use Ice\WidgetComponent\TableCell_Span;
+use Ice\WidgetComponent\Table_Row_A;
+use Ice\WidgetComponent\Table_Row_Td;
 
 class Table_Rows extends Widget
 {
@@ -123,20 +122,7 @@ class Table_Rows extends Widget
      */
     public function a($columnName, array $options = [], $template = null)
     {
-        return $this->addPart(new TableCell_A($columnName, $options, $template, $this));
-    }
-
-    /**
-     * Build a tag part
-     *
-     * @param $columnName
-     * @param  array $options
-     * @param string $template
-     * @return $this
-     */
-    public function text($columnName, array $options = [], $template = null)
-    {
-        return $this->span($columnName, $options);
+        return $this->addPart(new Table_Row_A($columnName, $options, $template, $this));
     }
 
     /**
@@ -147,54 +133,91 @@ class Table_Rows extends Widget
      * @param  string $template
      * @return $this
      */
-    public function span($columnName, array $options = [], $template = null)
+    public function td($columnName, array $options = [], $template = null)
     {
         if (isset($options['route']) || isset($options['href'])) {
-            return $this->a($columnName, $options);
+            return $this->a($columnName, $options, $template);
         }
 
-        return $this->addPart(new TableCell_Span($columnName, $options, $template, $this));
+        return $this->addPart(new Table_Row_Td($columnName, $options, $template, $this));
     }
 
     /**
      * Build checkbox tag part
      *
-     * @param  $columnName
+     * @param $columnName
      * @param  array $options
+     * @param null $template
      * @return $this
      */
-    public function checkbox($columnName, array $options = [])
+    public function checkbox($columnName, array $options = [], $template = null)
     {
-        return $this->span($columnName, $options);
+        return $this->td($columnName, $options, $template);
     }
 
-    public function number($columnName, array $options = [])
+    /**
+     * @param $columnName
+     * @param array $options
+     * @param null $template
+     * @return $this
+     */
+    public function number($columnName, array $options = [], $template = null)
     {
-        return $this->span($columnName, $options);
+        return $this->td($columnName, $options, $template);
     }
 
-    public function date($columnName, array $options = [])
+    /**
+     * @param $columnName
+     * @param array $options
+     * @param null $template
+     * @return $this
+     */
+    public function date($columnName, array $options = [], $template = null)
     {
-        return $this->span($columnName, $options);
+        return $this->td($columnName, $options, $template);
     }
 
-    public function oneToMany($columnName, array $options = [])
+    /**
+     * @param $columnName
+     * @param array $options
+     * @param null $template
+     * @return $this
+     */
+    public function oneToMany($columnName, array $options = [], $template = null)
     {
-        return $this->span($columnName, $options);
+        return $this->td($columnName, $options, $template);
     }
 
-    public function manyToMOne($columnName, array $options = [])
+    /**
+     * @param $columnName
+     * @param array $options
+     * @param null $template
+     * @return $this
+     */
+    public function manyToMOne($columnName, array $options = [], $template = null)
     {
-        return $this->span($columnName, $options);
+        return $this->td($columnName, $options, $template);
     }
 
-    public function manyToMany($columnName, array $options = [])
+    /**
+     * @param $columnName
+     * @param array $options
+     * @param null $template
+     * @return $this
+     */
+    public function manyToMany($columnName, array $options = [], $template = null)
     {
-        return $this->span($columnName, $options);
+        return $this->td($columnName, $options, $template);
     }
 
-    public function oneToManyToMany($columnName, array $options = [])
+    /**
+     * @param $columnName
+     * @param array $options
+     * @param null $template
+     * @return $this
+     */
+    public function oneToManyToMany($columnName, array $options = [], $template = null)
     {
-        return $this->span($columnName, $options);
+        return $this->td($columnName, $options, $template);
     }
 }

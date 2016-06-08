@@ -76,27 +76,43 @@ abstract class Validator extends Container
      *
      * @todo Заменить на Helper_Array::validate()
      *
-     * @version 0.0
+     * @version 1.1
      * @since   0.0
      */
     public static function validateByScheme(array $data, array $validateScheme)
     {
         foreach ($validateScheme as $param => $validators) {
-            foreach ((array)$validators as $validatorName => $validatorParams) {
-                if (is_int($validatorName)) {
-                    $validatorName = $validatorParams;
-                    $validatorParams = null;
-                }
-
-                $value = isset($data[$param]) ? $data[$param] : null;
-
-                Helper_Validator::validate($validatorName, $validatorParams, $param, $value);
-            }
+            Validator:: validateByValidators(isset($data[$param]) ? $data[$param] : null, $validators, $param);
         }
 
         return $data;
     }
 
+    /**
+     * @param $value
+     * @param $validators
+     * @param null $param
+     * @return mixed 
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @todo Заменить на Helper_Array::validate()
+     *
+     * @version 1.1
+     * @since   1.1
+     */
+    public static function validateByValidators($value, $validators, $param = null) {
+        foreach ((array)$validators as $validatorName => $validatorParams) {
+            if (is_int($validatorName)) {
+                $validatorName = $validatorParams;
+                $validatorParams = null;
+            }
+
+            $value = Helper_Validator::validate($validatorName, $validatorParams, $value, $param);
+        }
+        
+        return $value;
+    } 
+    
     /**
      * Return validator instance
      *
@@ -197,7 +213,7 @@ abstract class Validator extends Container
      * @version 0
      * @since   0
      */
-    abstract public function validate($value, array $params = []);
+    abstract public function validate($value, $params = []);
     
     public function  getMessage() {
         return 'param \'{$0}\' with value \'{$1}\' is not valid';

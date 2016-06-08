@@ -3,6 +3,7 @@
 namespace Ice\Helper;
 
 use PHPExcel_IOFactory;
+use PHPExcel_RichText;
 
 class Vendor_PHPExcel
 {
@@ -33,7 +34,13 @@ class Vendor_PHPExcel
             $cellIterator = $row->getCellIterator();
             $cells = array();
             foreach($cellIterator as $cell){
-                array_push($cells, $cell->getValue());
+                $value = $cell->getValue();
+
+                if ($value instanceof PHPExcel_RichText) {
+                    $value = $value->getRichTextElements()[0]->getText();
+                }
+
+                array_push($cells, $value);
             }
             array_push($rows, $cells);
         }

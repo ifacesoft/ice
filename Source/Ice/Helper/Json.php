@@ -27,6 +27,7 @@ class Json
      * Decode json string to data
      *
      * @param  $json
+     * @param bool $assoc
      * @return array
      * @throws \Exception
      *
@@ -35,9 +36,9 @@ class Json
      * @version 0.0
      * @since   0.0
      */
-    public static function decode($json)
+    public static function decode($json, $assoc = true)
     {
-        $data = json_decode($json, true);
+        $data = json_decode($json, $assoc);
 
         $error = json_last_error();
 

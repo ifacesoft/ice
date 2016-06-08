@@ -8,7 +8,9 @@ use Ice\Core\Module;
 use Ice\Core\QueryBuilder;
 use Ice\Core\Security;
 use Ice\Core\Widget as Core_Widget;
+use Ice\Exception\Not_Valid;
 use Ice\Helper\Date;
+use Ice\Render\Php;
 
 class FormElement extends HtmlTag
 {
@@ -54,9 +56,9 @@ class FormElement extends HtmlTag
             ->buildValidators();
     }
 
-    public function getValue($encode = null)
+    public function getValue($encode = null, $validate = true)
     {
-        $value =  parent::getValue($encode);
+        $value = parent::getValue($encode, false);
 
         if ($value != $this->getValueKey()) {
             return $value;
@@ -148,7 +150,7 @@ class FormElement extends HtmlTag
         if ($modelClass === null) {
             $modelClass = $queryBuilder->getModelClass();
         }
-        
+
         foreach ((array)$value as $val) {
             $val = html_entity_decode($val);
 

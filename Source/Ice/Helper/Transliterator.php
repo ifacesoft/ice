@@ -47,7 +47,7 @@ class Transliterator
 
         $string = str_replace(' p r o b e l ', '-', $string);
 
-        $string = str_replace('ʹ', '', preg_replace('/[\s]+/', '_', $string));
+        $string = str_replace(['ʹ', 'ʺ', '+'], '', preg_replace('/[\s]+/', '_', $string));
         return trim($string, '_');
     }
 }

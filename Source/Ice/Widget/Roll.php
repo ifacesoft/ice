@@ -1,13 +1,10 @@
 <?php
-namespace Ice\Widget;
 
+namespace Ice\Widget;
 
 use Ice\Core\QueryBuilder;
 use Ice\Core\QueryResult;
 use Ice\Core\Widget;
-use Ice\WidgetComponent\HtmlTag;
-use Ice\WidgetComponent\TableCell_A;
-use Ice\WidgetComponent\TableCell_Span;
 
 class Roll extends Widget
 {
@@ -124,20 +121,7 @@ class Roll extends Widget
      */
     public function a($columnName, array $options = [], $template = null)
     {
-        return $this->addPart(new TableCell_A($columnName, $options, $template, $this));
-    }
-
-    /**
-     * Build span tag part
-     *
-     * @param  $columnName
-     * @param  array $options
-     * @param  string $template
-     * @return $this
-     */
-    public function span($columnName, array $options = [], $template = null)
-    {
-        return $this->addPart(new TableCell_Span($columnName, $options, $template, $this));
+        return $this->addPart(new Roll_A($columnName, $options, $template, $this));
     }
 
     /**
@@ -148,8 +132,8 @@ class Roll extends Widget
      * @param string $template
      * @return $this
      */
-    public function text($columnName, array $options = [], $template = null)
+    public function li($columnName, array $options = [], $template = null)
     {
-        return $this->span($columnName, $options);
+        return $this->addPart(new Roll_Li($columnName, $options, $template, $this));
     }
 }

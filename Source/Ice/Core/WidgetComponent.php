@@ -2,11 +2,12 @@
 
 namespace Ice\Core;
 
-use Ebs\Widget\Order_Basket_Form;
+use Ice\Exception\Not_Valid;
 use Ice\Helper\Access;
 use Ice\Helper\Date;
 use Ice\Helper\Input;
 use Ice\Helper\String;
+use Ice\Render\Php;
 use Ice\Render\Replace;
 
 abstract class WidgetComponent
@@ -409,6 +410,8 @@ abstract class WidgetComponent
 
     public function get($param, $default = null)
     {
+        
+        
         return isset($this->params[$param]) ? $this->params[$param] : $default;
     }
 
@@ -495,7 +498,9 @@ abstract class WidgetComponent
             $encode = $this->getOption('encode', true);
         }
 
-        return $encode && !is_array($value) ? htmlentities($value) : $value;
+        $value = $encode && !is_array($value) ? htmlentities($value) : $value;
+
+        return $value;
     }
 
     public function getValueKey()
@@ -589,22 +594,39 @@ abstract class WidgetComponent
         }
     }
 
-
-
     public function render(Render $render = null) {
         if ($render === null) {
             $render = $this->getRender();
         }
-        
-        return $render->fetch(
-            $this->getTemplateClass(), 
-            ['component' => $this, 'render' => $render], 
-            $this->getLayout()
-        );
+
+        try {
+            $result = $render->fetch(
+                $this->getTemplateClass(),
+                ['component' => $this, 'render' => $render],
+                $this->getLayout()
+            );
+        } catch (Not_Valid $e) {
+            $result = $this->getNotValidResult($e);
+        }
+
+        return $result;
+    }
+
+    protected function getNotValidResult(Not_Valid $e, $template = 'Ice\WidgetComponent\Bootstrap_Alert_Danger', $render = Php::class) {
+        return $render::getInstance()->fetch($template, ['message' => $e->getMessage()]);
     }
 
     public function getLayout()
     {
         return null; // todo: dummy - need implement
+    }
+
+    public function validate()
+    {
+        return Validator::validateByValidators(
+            $this->getValue(),
+            $this->getOption('validators', []),
+            $this->getComponentName()
+        );
     }
 }
