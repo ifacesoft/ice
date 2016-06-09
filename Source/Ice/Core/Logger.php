@@ -8,9 +8,6 @@
  */
 
 namespace Ice\Core;
-
-use Ebs\Model\Log_Error;
-use Ebs\Model\Log_User_Session;
 use FirePHP;
 use Ice\Core;
 use Ice\Exception\Error;
@@ -23,6 +20,8 @@ use Ice\Helper\Logger as Helper_Logger;
 use Ice\Helper\Object;
 use Ice\Helper\Profiler as Helper_Profiler;
 use Ice\Core\Console as Core_Console;
+use Ice\Model\Log_Error;
+use Ice\Model\Session;
 
 /**
  * Class Logger
@@ -207,12 +206,7 @@ class Logger
 
     public static function getLogUserSession()
     {
-        return Log_User_Session::create([
-            'ip' => Request::ip(),
-            'agent' => Request::agent(),
-            'session' => Session::id(),
-            'user' => Security::getInstance()->getUser()
-        ])->save(true);
+        return Session::getModel(session_id(), '*');
     }
 
     private function getFbType($type)
@@ -589,15 +583,15 @@ class Logger
     {
         $logUserSession = Logger::getLogUserSession();
 
-        $logUserSession__fk = $log->get('log_user_session__fk', false);
+        $logUserSession__fk = $log->get('session__fk', false);
 
         if ($logUserSession__fk && $logUserSession__fk != $logUserSession->getPkValue()) {
-            $logUserSession->set(['log_user_session__fk' => $logUserSession__fk])->save();
-            $log->set(['log_user_session' => $logUserSession])->save();
+            $logUserSession->set(['session__fk' => $logUserSession__fk])->save();
+            $log->set(['session' => $logUserSession])->save();
         } else {
             $log->set([
                 'logger_class' => $this->class,
-                'log_user_session' => $logUserSession
+                'session' => $logUserSession
             ])->save();
         }
     }

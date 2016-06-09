@@ -2,7 +2,6 @@
 
 namespace Ice\Action;
 
-use Ebs\Model\Log_Security;
 use Ice\Core;
 use Ice\Core\Config;
 use Ice\Core\DataSource;
@@ -14,6 +13,7 @@ use Ice\Core\Model\Security_User;
 use Ice\Core\Widget_Security;
 use Ice\Helper\Logger;
 use Ice\Helper\String;
+use Ice\Model\Log_Security;
 use Ice\Model\Token;
 use Ice\Core\Logger as Core_Logger;
 

@@ -171,4 +171,14 @@ class String
 
         return mb_strimwidth($string, 0, $length, $append);
     }
+
+    public static function strpos($haystack, $needle, $offset = 0, $numOffset = 0)
+    {
+        $pos = $offset;
+        for ($i = 0; $i <= $numOffset; $i++) {
+            $pos = mb_strpos($haystack, $needle, $pos);
+        }
+
+        return $pos === false ? mb_strlen($haystack) : $pos;
+    }
 }

@@ -106,6 +106,7 @@ class Sql extends QueryTranslator
 
         $sql = "\n" . self::SQL_STATEMENT_UPDATE .
             "\n\t`" . $modelClass::getSchemeName() . '`.`' . $modelClass::getTableName() . '` `' . $tableAlias . '`';
+        
         $sql .= "\n" . self::SQL_CLAUSE_SET;
         $sql .= implode(
             ',',
@@ -436,7 +437,7 @@ class Sql extends QueryTranslator
         if (isset($select['table']) && $select['table'] instanceof QueryBuilder) {
             $select['table']->setCalcFoundRows(false);
 
-            $select['table'] = $select['table']->getSelectQuery('/pk'); // todo Не доджно быть никаких Query, только QueryBuilder
+            $select['table'] = $select['table']->getSelectQuery('/pk'); // todo Не должно быть никаких Query, только QueryBuilder
         }
 
         $table = isset($select['table']) && $select['table'] instanceof Query

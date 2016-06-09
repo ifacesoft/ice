@@ -3,35 +3,34 @@
 use Ice\Core\Model;
 
 /**
- * Class Log_Error
+ * Class Log_Security
  *
- * @property mixed log_error_pk
- * @property mixed ip
- * @property mixed agent
- * @property mixed referer
- * @property mixed host
- * @property mixed uri
- * @property mixed post__json
- * @property mixed exception__json
+ * @property mixed log_security_pk
+ * @property mixed create_time
+ * @property mixed account_class
+ * @property mixed account_key
+ * @property mixed form_class
+ * @property mixed error
+ * @property mixed session__fk
  *
  * @see Ice\Core\Model
  *
- * @package Ice\Model
+ * @package Ebs\Model
  */
-class Log_Error extends Model
+class Log_Security extends Model
 {
     protected static function config()
     {
         return [
 		    'dataSourceKey' => 'Ice\DataSource\Mysqli/default.ebs',
 		    'scheme' => [
-		        'tableName' => 'ice_log_error',
+		        'tableName' => 'ice_log_security',
 		        'engine' => 'InnoDB',
 		        'charset' => 'utf8_general_ci',
-		        'comment' => 'Журнал ошибок',
+		        'comment' => 'Журнал безопасности',
 		    ],
 		    'columns' => [
-		        'log_error_pk' => [
+		        'id' => [
 		            'scheme' => [
 		                'extra' => 'auto_increment',
 		                'type' => 'bigint(20)',
@@ -42,12 +41,13 @@ class Log_Error extends Model
 		                'default' => null,
 		                'comment' => '',
 		            ],
-		            'fieldName' => 'log_error_pk',
-		            'Ice\Widget\Model_Form' => 'Field_Number',
-		            'Ice\Core\Validator' => [],
-		            'Ice\Widget\Model_Table' => 'text',
+		            'fieldName' => 'log_security_pk',
+		            'options' => [
+		                'name' => 'log_security_pk',
+		                'type' => 'number',
+		            ],
 		        ],
-		        'error_created_at' => [
+		        'create_time' => [
 		            'scheme' => [
 		                'extra' => '',
 		                'type' => 'timestamp',
@@ -58,16 +58,78 @@ class Log_Error extends Model
 		                'default' => 'CURRENT_TIMESTAMP',
 		                'comment' => '',
 		            ],
+		            'fieldName' => 'create_time',
 		            'options' => [
-		                'name' => 'error_created_at',
+		                'name' => 'create_time',
 		                'type' => 'date',
 		                'validators' => [
 		                    0 => 'Ice:Not_Null',
 		                ],
 		            ],
-		            'fieldName' => 'error_created_at',
 		        ],
-		        'exception' => [
+		        'account_class' => [
+		            'scheme' => [
+		                'extra' => '',
+		                'type' => 'varchar(255)',
+		                'dataType' => 'varchar',
+		                'length' => '255',
+		                'characterSet' => 'utf8',
+		                'nullable' => false,
+		                'default' => null,
+		                'comment' => '',
+		            ],
+		            'fieldName' => 'account_class',
+		            'options' => [
+		                'name' => 'account_class',
+		                'type' => 'text',
+		                'validators' => [
+		                    'Ice:Length_Max' => 255,
+		                    0 => 'Ice:Not_Null',
+		                ],
+		            ],
+		        ],
+		        'account_key' => [
+		            'scheme' => [
+		                'extra' => '',
+		                'type' => 'bigint(20)',
+		                'dataType' => 'bigint',
+		                'length' => '19,0',
+		                'characterSet' => null,
+		                'nullable' => false,
+		                'default' => null,
+		                'comment' => '',
+		            ],
+		            'fieldName' => 'account_key',
+		            'options' => [
+		                'name' => 'account_key',
+		                'type' => 'number',
+		                'validators' => [
+		                    0 => 'Ice:Not_Null',
+		                ],
+		            ],
+		        ],
+		        'form_class' => [
+		            'scheme' => [
+		                'extra' => '',
+		                'type' => 'varchar(255)',
+		                'dataType' => 'varchar',
+		                'length' => '255',
+		                'characterSet' => 'utf8',
+		                'nullable' => false,
+		                'default' => null,
+		                'comment' => '',
+		            ],
+		            'fieldName' => 'form_class',
+		            'options' => [
+		                'name' => 'form_class',
+		                'type' => 'text',
+		                'validators' => [
+		                    'Ice:Length_Max' => 255,
+		                    0 => 'Ice:Not_Null',
+		                ],
+		            ],
+		        ],
+		        'error' => [
 		            'scheme' => [
 		                'extra' => '',
 		                'type' => 'text',
@@ -78,14 +140,35 @@ class Log_Error extends Model
 		                'default' => null,
 		                'comment' => '',
 		            ],
+		            'fieldName' => 'error',
 		            'options' => [
-		                'name' => 'exception',
+		                'name' => 'error',
 		                'type' => 'textarea',
 		                'validators' => [
 		                    'Ice:Length_Max' => 65535,
 		                ],
 		            ],
-		            'fieldName' => 'exception',
+		        ],
+		        'logger_class' => [
+		            'scheme' => [
+		                'extra' => '',
+		                'type' => 'varchar(255)',
+		                'dataType' => 'varchar',
+		                'length' => '255',
+		                'characterSet' => 'utf8',
+		                'nullable' => false,
+		                'default' => null,
+		                'comment' => '',
+		            ],
+		            'fieldName' => 'logger_class',
+		            'options' => [
+		                'name' => 'logger_class',
+		                'type' => 'text',
+		                'validators' => [
+		                    'Ice:Length_Max' => 255,
+		                    0 => 'Ice:Not_Null',
+		                ],
+		            ],
 		        ],
 		        'session__fk' => [
 		            'scheme' => [
@@ -107,166 +190,23 @@ class Log_Error extends Model
 		            ],
 		            'fieldName' => 'session__fk',
 		        ],
-		        'logger_class' => [
-		            'scheme' => [
-		                'extra' => '',
-		                'type' => 'varchar(255)',
-		                'dataType' => 'varchar',
-		                'length' => '255',
-		                'characterSet' => 'utf8',
-		                'nullable' => false,
-		                'default' => null,
-		                'comment' => '',
-		            ],
-		            'options' => [
-		                'name' => 'logger_class',
-		                'type' => 'text',
-		                'validators' => [
-		                    'Ice:Length_Max' => 255,
-		                    0 => 'Ice:Not_Null',
-		                ],
-		            ],
-		            'fieldName' => 'logger_class',
-		        ],
-		        'environment' => [
-		            'scheme' => [
-		                'extra' => '',
-		                'type' => 'varchar(12)',
-		                'dataType' => 'varchar',
-		                'length' => '12',
-		                'characterSet' => 'utf8',
-		                'nullable' => false,
-		                'default' => null,
-		                'comment' => '',
-		            ],
-		            'options' => [
-		                'name' => 'environment',
-		                'type' => 'text',
-		                'validators' => [
-		                    'Ice:Length_Max' => 12,
-		                    0 => 'Ice:Not_Null',
-		                ],
-		            ],
-		            'fieldName' => 'environment',
-		        ],
-		        'error_type' => [
-		            'scheme' => [
-		                'extra' => '',
-		                'type' => 'varchar(255)',
-		                'dataType' => 'varchar',
-		                'length' => '255',
-		                'characterSet' => 'utf8',
-		                'nullable' => false,
-		                'default' => null,
-		                'comment' => '',
-		            ],
-		            'options' => [
-		                'name' => 'error_type',
-		                'type' => 'text',
-		                'validators' => [
-		                    'Ice:Length_Max' => 255,
-		                    0 => 'Ice:Not_Null',
-		                ],
-		            ],
-		            'fieldName' => 'error_type',
-		        ],
-		        'request_type' => [
-		            'scheme' => [
-		                'extra' => '',
-		                'type' => 'varchar(4)',
-		                'dataType' => 'varchar',
-		                'length' => '4',
-		                'characterSet' => 'utf8',
-		                'nullable' => true,
-		                'default' => null,
-		                'comment' => '',
-		            ],
-		            'options' => [
-		                'name' => 'request_type',
-		                'type' => 'text',
-		                'validators' => [
-		                    'Ice:Length_Max' => 4,
-		                ],
-		            ],
-		            'fieldName' => 'request_type',
-		        ],
-		        'request_data__json' => [
-		            'scheme' => [
-		                'extra' => '',
-		                'type' => 'text',
-		                'dataType' => 'text',
-		                'length' => '65535',
-		                'characterSet' => 'utf8',
-		                'nullable' => true,
-		                'default' => '[]',
-		                'comment' => '',
-		            ],
-		            'options' => [
-		                'name' => 'request_data__json',
-		                'type' => 'textarea',
-		                'validators' => [
-		                    'Ice:Length_Max' => 65535,
-		                ],
-		            ],
-		            'fieldName' => 'request_data__json',
-		        ],
-		        'request_string' => [
-		            'scheme' => [
-		                'extra' => '',
-		                'type' => 'varchar(255)',
-		                'dataType' => 'varchar',
-		                'length' => '255',
-		                'characterSet' => 'utf8',
-		                'nullable' => true,
-		                'default' => null,
-		                'comment' => '',
-		            ],
-		            'options' => [
-		                'name' => 'request_string',
-		                'type' => 'text',
-		                'validators' => [
-		                    'Ice:Length_Max' => 255,
-		                ],
-		            ],
-		            'fieldName' => 'request_string',
-		        ],
-		        'error_context__json' => [
-		            'scheme' => [
-		                'extra' => '',
-		                'type' => 'longtext',
-		                'dataType' => 'longtext',
-		                'length' => '4294967295',
-		                'characterSet' => 'utf8',
-		                'nullable' => true,
-		                'default' => '[]',
-		                'comment' => '',
-		            ],
-		            'options' => [
-		                'name' => 'error_context__json',
-		                'type' => 'textarea',
-		                'validators' => [
-		                    'Ice:Length_Max' => 4294967295,
-		                ],
-		            ],
-		            'fieldName' => 'error_context__json',
-		        ],
 		    ],
 		    'indexes' => [
 		        'PRIMARY KEY' => [
 		            'PRIMARY' => [
-		                1 => 'log_error_pk',
+		                1 => 'id',
 		            ],
 		        ],
 		        'FOREIGN KEY' => [
-		            'fk_ice_log_error_ice_session' => [
-		                'fk_ice_log_error_ice_session' => 'session__fk',
+		            'fk_ice_log_security_ice_session' => [
+		                'fk_ice_log_security_ice_session' => 'session__fk',
 		            ],
 		        ],
 		        'UNIQUE' => [],
 		    ],
 		    'references' => [
 		        'ice_session' => [
-		            'constraintName' => 'fk_ice_log_error_ice_session',
+		            'constraintName' => 'fk_ice_log_security_ice_session',
 		            'onUpdate' => 'NO ACTION',
 		            'onDelete' => 'NO ACTION',
 		        ],
@@ -278,9 +218,9 @@ class Log_Error extends Model
 		        'manyToOne' => [],
 		        'manyToMany' => [],
 		    ],
-		    'revision' => '05061618_mqw',
-		    'modelClass' => 'Ice\Model\Log_Error',
-		    'modelPath' => 'Ice/Model/Log/Error.php',
+		    'revision' => '08191058_lnn',
+		    'modelClass' => 'Ice\Model\Log_Security',
+		    'modelPath' => 'Ice/Model/Log/Security.php',
 		];
     }
 }

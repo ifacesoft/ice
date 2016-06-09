@@ -23,7 +23,7 @@ return [
         'source' => 'https://github.com/ifacesoft/Ice.git',
         'Ice\Core\DataSource' => [
             'Ice\DataSource\Mysqli/default.test' => 'ice_',
-            'Ice\DataSource\Mysqli/default.ebs'=> 'ice_',
+            'Ice\DataSource\Mysqli/default.ebs'=> ['ice_', 'wkr_'],
             'Ice\DataSource\Mongodb/default.test' => ''
         ],
         'configDir' => 'Config/',
@@ -33,6 +33,7 @@ return [
         'cacheDir' => 'Var/cache/',
         'uploadDir' => 'Var/upload/',
         'tempDir' => 'Var/temp/',
+        'runDir' => 'Var/run/',
         'compiledResourceDir' => 'Web/resource/',
         'downloadDir' => 'Web/download/',
         'privateDownloadDir' => 'Var/download/',

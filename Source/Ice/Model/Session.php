@@ -19,7 +19,7 @@ class Session extends Model
     protected static function config()
     {
         return [
-		    'dataSourceKey' => 'Ice\DataSource\Mysqli/default.ebs_stat',
+		    'dataSourceKey' => 'Ice\DataSource\Mysqli/default.ebs',
 		    'scheme' => [
 		        'tableName' => 'ice_session',
 		        'engine' => 'InnoDB',
@@ -298,11 +298,16 @@ class Session extends Model
 		            'Ice\Model\Session' => 'session__fk',
 		        ],
 		        'manyToOne' => [
+		            'Ice\Model\Log_Error' => 'session__fk',
+		            'Ice\Model\Log_Message' => 'session__fk',
+		            'Ice\Model\Log_Security' => 'session__fk',
 		            'Ice\Model\Session' => 'session__fk',
 		        ],
 		        'manyToMany' => [],
 		    ],
 		    'revision' => '06020843_n05',
+		    'modelClass' => 'Ice\Model\Session',
+		    'modelPath' => 'Ice/Model/Session.php',
 		];
     }
 }

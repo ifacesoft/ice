@@ -12,6 +12,11 @@ function getLogDir()
     return Directory::get(Module::getInstance()->get(Module::LOG_DIR));
 }
 
+function getRunDir()
+{
+    return Directory::get(Module::getInstance()->get(Module::RUN_DIR));
+}
+
 function getUploadDir()
 {
     return Directory::get(Module::getInstance()->get(Module::UPLOAD_DIR));
