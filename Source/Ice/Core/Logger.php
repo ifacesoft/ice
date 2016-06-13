@@ -269,7 +269,10 @@ class Logger
 
         if (Request::isCli()) {
             $message = Console::getText(' ' . $message . ' ', Console::C_BLACK, self::$consoleColors[$type]) . "\n";
-            fwrite(STDOUT, $message);
+
+//            fwrite(STDOUT, $message); // ob_cache|ob_get_clean not catch stdout
+            echo $message;
+
             return $logging ? $message : '';
         } else {
             Logger::fb($message, 'info', $this->getFbType($type));

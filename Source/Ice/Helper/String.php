@@ -9,6 +9,7 @@
 
 namespace Ice\Helper;
 
+use Ice\Core\Debuger;
 use Ice\Core\Exception;
 
 /**
@@ -175,10 +176,16 @@ class String
     public static function strpos($haystack, $needle, $offset = 0, $numOffset = 0)
     {
         $pos = $offset;
-        for ($i = 0; $i <= $numOffset; $i++) {
-            $pos = mb_strpos($haystack, $needle, $pos);
+
+        for ($i = 0; $i < $numOffset; $i++) {
+            $pos = mb_strpos($haystack, $needle, $pos + 1);
         }
 
         return $pos === false ? mb_strlen($haystack) : $pos;
+    }
+
+    public static function substrpos($haystack, $needle, $offset = 0, $numOffset = 0)
+    {
+        return substr($haystack, $offset, String::strpos($haystack, $needle, $offset, $numOffset));
     }
 }
