@@ -9,6 +9,8 @@ use Ice\Helper\Input;
 use Ice\Helper\String;
 use Ice\Render\Php;
 use Ice\Render\Replace;
+use Ice\Widget\Block;
+use Ice\WidgetComponent\HtmlTag;
 
 abstract class WidgetComponent
 {
@@ -612,8 +614,10 @@ abstract class WidgetComponent
         return $result;
     }
 
-    protected function getNotValidResult(Not_Valid $e, $template = 'Ice\WidgetComponent\Bootstrap_Alert_Danger', $render = Php::class) {
-        return $render::getInstance()->fetch($template, ['message' => $e->getMessage()]);
+    protected function getNotValidResult(Not_Valid $e, $template = 'Ice\WidgetComponent\Bootstrap_Alert_Danger') {
+        $error = new HtmlTag('error', ['value' => $e->getMessage()], 'Ice\WidgetComponent\Bootstrap_Alert_Danger', Block::getInstance(null));
+
+        return $error->render();
     }
 
     public function getLayout()

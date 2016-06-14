@@ -1,3 +1,3 @@
 <div class="alert alert-danger" role="alert">
-    <?= $message ?>
+    <?= $component->getValue() ?>
 </div>

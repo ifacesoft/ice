@@ -838,6 +838,19 @@ abstract class Widget extends Container
     }
 
     /**
+     * Build div part
+     *
+     * @param  $columnName
+     * @param  array $options
+     * @param  string $template
+     * @return $this
+     */
+    public function error($columnName, array $options = [], $template = 'Ice\WidgetComponent\Bootstrap\Alert\Danger')
+    {
+        return $this->addPart(new HtmlTag($columnName, $options, $template, $this));
+    }
+
+    /**
      * Build p part
      *
      * @param  $columnName
