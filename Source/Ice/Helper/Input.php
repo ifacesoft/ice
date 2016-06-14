@@ -94,7 +94,7 @@ class Input
             return $value;
         }
 
-        if ($value === null && isset($param['default'])) {
+        if ($value === null && array_key_exists('default', $param)) {
             $value = $param['default'];
         }
 

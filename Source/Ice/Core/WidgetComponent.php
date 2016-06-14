@@ -2,18 +2,19 @@
 
 namespace Ice\Core;
 
+use Ice\Core;
 use Ice\Exception\Not_Valid;
 use Ice\Helper\Access;
 use Ice\Helper\Date;
 use Ice\Helper\Input;
 use Ice\Helper\String;
-use Ice\Render\Php;
 use Ice\Render\Replace;
 use Ice\Widget\Block;
 use Ice\WidgetComponent\HtmlTag;
 
 abstract class WidgetComponent
 {
+    use Core;
     use Configured;
 
     private $options = [];
@@ -435,11 +436,13 @@ abstract class WidgetComponent
     {
         $value = $this->get($this->getValueKey());
 
-        if ($value === null) {
+        $defaultExists = array_key_exists('default', $this->getOption());
+
+        if ($value === null && !$defaultExists) {
             $value = $this->getValueKey();
         }
 
-        if ($value === '') {
+        if ($value === '' && !$defaultExists) {
             $default = '';
             $value = $this->getValueKey();
         }
@@ -533,10 +536,8 @@ abstract class WidgetComponent
 
         $config = ['providers' => $providers];
 
-        $default = $this->getOption('default');
-
-        if ($default !== null) {
-            $config['default'] = $default;
+        if (array_key_exists('default', $this->getOption())) {
+            $config['default'] = $this->options['default'];
         }
 
         return Input::get([$name => $config], $data)[$name];
