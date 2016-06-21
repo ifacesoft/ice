@@ -4,6 +4,8 @@ use Ice\Core\Debuger;
 use Ice\Core\Exception;
 use Ice\Core\Logger as Core_Logger;
 use Ice\Core\Validator as Core_Validator;
+use Ice\Exception\Not_Show;
+use Ice\Exception\Not_Valid;
 
 class Validator
 {
@@ -22,6 +24,8 @@ class Validator
      */
     public static function validate($validatorClass, $validatorParams, $value, $param = null)
     {
+        $validatorParams = (array) $validatorParams;
+
         /**
          * @var Core_Validator $validatorClass
          */
@@ -30,22 +34,33 @@ class Validator
         /** @var Core_Validator $validator */
         $validator = $validatorClass::getInstance();
 
-        if ($validatorParams && isset($validatorParams['message'])) {
+        if (!empty($validatorParams['message'])) {
             $message = $validatorParams['message'];
             unset($validatorParams['message']);
         } else {
             $message = $validator->getMessage();
         }
 
-        if ($validatorParams && isset($validatorParams['exception'])) {
-            $exceptionClass = Exception::getClass($validatorParams['exception']);
+        if ($validatorParams && array_key_exists('exception', $validatorParams)) {
+            if ($validatorParams['exception'] === true) {
+                $exceptionClass = Not_Valid::class;
+            } else if ($validatorParams['exception'] === false) {
+                $exceptionClass = Not_Show::class;
+            } else {
+                $exceptionClass = Exception::getClass($validatorParams['exception']);
+            }
+
             unset($validatorParams['exception']);
         } else {
-            $exceptionClass = Exception::getClass('Ice:Not_Valid');
+            $exceptionClass = Not_Valid::class;
         }
 
         if ($validator->validate($value, $validatorParams)) {
             return $value;
+        }
+
+        if ($exceptionClass == Not_Show::class) {
+            throw new Not_Show('Content not showing...');
         }
 
         $exceptionMessage = [$message, array_merge([$param, print_r($value, true)], (array)$validatorParams)];

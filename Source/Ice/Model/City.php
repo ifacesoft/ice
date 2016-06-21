@@ -77,7 +77,7 @@ class City extends Model
 							'Ice:Length_Max' => 255,
 						],
 						'show' => [
-							'value' => true,
+							'valueKey' => true,
 							'route' => [
 								'name' => 'ice_admin_database_row',
 								'params' => [
@@ -140,7 +140,7 @@ class City extends Model
 						'type' => 'oneToMany',
 						'roles' => 'ROLE_LAN_STAFF',
 						'show' => [
-							'value' => 'country_name'
+							'valueKey' => 'country_name'
 						],
 						'filter' => [
 							'comparison' => '=',

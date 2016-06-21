@@ -79,7 +79,9 @@ abstract class Exception extends ErrorException
                 break;
         }
 
-        $message = $resource->get($message, $params, $class);
+        if ($message) {
+            $message =$resource->get($message, $params, $class);
+        }
 
         if (!$errfile) {
             $debug = debug_backtrace();

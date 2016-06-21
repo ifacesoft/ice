@@ -56,17 +56,6 @@ class FormElement extends HtmlTag
             ->buildValidators();
     }
 
-    public function getValue($encode = null, $validate = true)
-    {
-        $value = parent::getValue($encode, false);
-
-        if ($value != $this->getValueKey()) {
-            return $value;
-        }
-
-        return '';
-    }
-
     protected function buildParams($values)
     {
         parent::buildParams($values);

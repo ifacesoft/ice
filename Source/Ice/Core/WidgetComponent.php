@@ -2,7 +2,9 @@
 
 namespace Ice\Core;
 
+use Ice\Action\PhpUnit;
 use Ice\Core;
+use Ice\Exception\Not_Show;
 use Ice\Exception\Not_Valid;
 use Ice\Helper\Access;
 use Ice\Helper\Date;
@@ -372,7 +374,6 @@ abstract class WidgetComponent
         $class = (array)$this->getOption('classes', []);
 
 
-
         if ($class) {
             $classes .= ' ' . implode(' ', $class);
         }
@@ -413,8 +414,6 @@ abstract class WidgetComponent
 
     public function get($param, $default = null)
     {
-        
-        
         return isset($this->params[$param]) ? $this->params[$param] : $default;
     }
 
@@ -436,15 +435,8 @@ abstract class WidgetComponent
     {
         $value = $this->get($this->getValueKey());
 
-        $defaultExists = array_key_exists('default', $this->getOption());
-
-        if ($value === null && !$defaultExists) {
-            $value = $this->getValueKey();
-        }
-
-        if ($value === '' && !$defaultExists) {
-            $default = '';
-            $value = $this->getValueKey();
+        if (empty($value)) {
+            return $value;
         }
 
         $resourceClass = $this->getOption('valueResource', null);
@@ -453,37 +445,18 @@ abstract class WidgetComponent
             $resourceClass = $this->getOption('valueHardResource', null);
         }
 
-        $template = null;
-
         if ($resourceClass) {
-            $template = $this->getValueKey();
+            $resource = $resourceClass === true
+                ? $this->getResource()
+                : Resource::create($resourceClass);
 
-            if ($this->getOption('valueHardResource', null)) {
-                $template .=  '_' . $value;
-            }
-        }
+            $value = $resource->get($value, $this->getParams());
 
-        /** @var Resource $resource */
-        $resource = $resourceClass === true
-            ? $this->getResource()
-            : ($resourceClass === null ? $resourceClass : Resource::create($resourceClass));
-
-        if ($template) {
-            $value = $resource
-                ? $resource->get($template, $this->getParams())
-                : Replace::getInstance()->fetch($template, $this->getParams(), null, Render::TEMPLATE_TYPE_STRING);
-
-            if (isset($default) && $value == $template) {
-                $value = $default;
+            if ($this->getOption('valueHardResource')) {
+                $value = $resource->get($this->getValueKey() . '_' . $value, $this->getParams());
             }
         } else {
-            if (isset($default)) {
-                $value = $default;
-            }
-        }
-
-        if ($value === null || $value === '') {
-            return $value;
+            $value = Replace::getInstance()->fetch($value, $this->getParams(), null, Render::TEMPLATE_TYPE_STRING);
         }
 
         if ($dateFormat = $this->getOption('dateFormat')) {
@@ -503,29 +476,18 @@ abstract class WidgetComponent
             $encode = $this->getOption('encode', true);
         }
 
-        $value = $encode && !is_array($value) ? htmlentities($value) : $value;
-
-        return $value;
+        return $encode && !is_array($value) ? htmlentities($value) : $value;
     }
 
     public function getValueKey()
     {
-        if ($this->value !== null) {
-            return $this->value;
+        $valueKey = $this->getOption('valueKey', true);
+
+        if ($valueKey === true) {
+            $valueKey = $this->getComponentName();
         }
 
-        $value = $this->getOption('value', true);
-
-        if ($value === true) {
-            $value = $this->getComponentName();
-        }
-
-        return $this->setValue($value);
-    }
-
-    private function setValue($value)
-    {
-        return $this->value = $value;
+        return $valueKey;
     }
 
     protected function getFromProviders($name, array $data)
@@ -570,9 +532,15 @@ abstract class WidgetComponent
             $this->set($key, $param);
         }
 
+        $value = $this->getOption('value');
+
         $valueKey = $this->getValueKey();
 
-        if ($this->get($valueKey) === null && array_key_exists($valueKey, $values) ) {
+        if ($value !== null) {
+            $this->set($valueKey, $value);
+        }
+
+        if ($this->get($valueKey) === null && array_key_exists($valueKey, $values)) {
             $this->set($valueKey, $values[$valueKey]);
         }
 
@@ -597,7 +565,8 @@ abstract class WidgetComponent
         }
     }
 
-    public function render(Render $render = null) {
+    public function render(Render $render = null)
+    {
         if ($render === null) {
             $render = $this->getRender();
         }
@@ -608,6 +577,8 @@ abstract class WidgetComponent
                 ['component' => $this, 'render' => $render],
                 $this->getLayout()
             );
+        } catch (Not_Show $e) {
+            $result = '';
         } catch (Not_Valid $e) {
             $result = $this->getNotValidResult($e);
         }
@@ -615,7 +586,8 @@ abstract class WidgetComponent
         return $result;
     }
 
-    protected function getNotValidResult(Not_Valid $e, $template = 'Ice\WidgetComponent\Bootstrap_Alert_Danger') {
+    protected function getNotValidResult(Not_Valid $e)
+    {
         $error = new HtmlTag('error', ['value' => $e->getMessage()], 'Ice\WidgetComponent\Bootstrap_Alert_Danger', Block::getInstance(null));
 
         return $error->render();

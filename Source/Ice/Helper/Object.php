@@ -26,6 +26,8 @@ use Ice\Core\Module;
  */
 class Object
 {
+    private static $selfCache = [];
+
     /**
      * Return namespace by base class
      *
@@ -58,6 +60,10 @@ class Object
      */
     public static function getClass($baseClass, $class)
     {
+        if (isset(Object::$selfCache['class'][$baseClass][$class])) {
+            return Object::$selfCache['class'][$baseClass][$class];
+        }
+
         if ($baseClass == $class) {
 //            return $class;
             Core_Logger::getInstance(__CLASS__)->exception(['Base class and class {$0} are equal', $class], __FILE__, __LINE__);
@@ -70,7 +76,7 @@ class Object
             $className = Object::getClassName($class);
         }
 
-        return $moduleAlias . '\\' . str_replace('_', '\\', Object::getClassName($baseClass)) . '\\' . $className;
+        return Object::$selfCache['class'][$baseClass][$class] = $moduleAlias . '\\' . str_replace('_', '\\', Object::getClassName($baseClass)) . '\\' . $className;
     }
 
     /**

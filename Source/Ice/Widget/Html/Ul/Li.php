@@ -2,10 +2,7 @@
 
 namespace Ice\Widget;
 
-use Ice\Core\Debuger;
-use Ice\Core\Widget;
-
-class Block extends Widget
+class Html_Ul_Li extends Html_Div
 {
     /**
      * Widget config
@@ -19,15 +16,5 @@ class Block extends Widget
         $config['render']['template'] = __CLASS__;
 
         return $config;
-    }
-
-    /** Build widget
-     *
-     * @param array $input
-     * @return array
-     */
-    protected function build(array $input)
-    {
-        return [];
     }
 }

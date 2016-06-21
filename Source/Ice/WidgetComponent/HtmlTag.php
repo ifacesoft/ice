@@ -23,19 +23,6 @@ class HtmlTag extends WidgetComponent
     private $parentWidgetClass = null;
     private $parentWidgetId = null;
     private $row = [];
-    /**
-     * WidgetComponent config
-     *
-     * @return array
-     */
-    protected static function config()
-    {
-        return [
-            'render' => ['template' => true, 'class' => 'Ice:Php', 'layout' => null, 'resource' => null],
-            'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'WidgetComponent: Access denied!'],
-            'cache' => ['ttl' => -1, 'count' => 1000],
-        ];
-    }
 
     public function __construct($componentName, array $options, $template, Core_Widget $widget)
     {
@@ -365,7 +352,7 @@ class HtmlTag extends WidgetComponent
     protected function buildParams($values)
     {
         if ($route = $this->getRoute()) {
-            if ($this->getOption('value') === null) {
+            if ($this->getOption('value') === null && $this->getOption('valueKey') === null) {
                 $valueKey = $this->getValueKey();
 
                 if ($this->get($valueKey) === null) {

@@ -60,6 +60,8 @@ abstract class DataProvider
      */
     private $scheme = null;
 
+    private $keyPrefix = null;
+
     /**
      * Constructor of Data provider
      *
@@ -429,11 +431,14 @@ abstract class DataProvider
      */
     protected function getKeyPrefix()
     {
-        /**
-         * @var DataProvider $class
-         */
+        if ($this->keyPrefix !== null) {
+            return $this->keyPrefix;
+        }
+
+        /** @var DataProvider $class */
         $class = get_class($this);
-        return str_replace(
+
+        return $this->keyPrefix = str_replace(
             '\\',
             '/',
             DataProvider::getModuleAlias() . '/' .

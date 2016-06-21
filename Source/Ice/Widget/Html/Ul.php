@@ -2,10 +2,10 @@
 
 namespace Ice\Widget;
 
-use Ice\Core\Debuger;
 use Ice\Core\Widget;
+use Ice\WidgetComponent\Html_Ul_Li;
 
-class Block extends Widget
+class Html_Ul extends Widget
 {
     /**
      * Widget config
@@ -29,5 +29,10 @@ class Block extends Widget
     protected function build(array $input)
     {
         return [];
+    }
+
+    public function li($componentName, array $options = [])
+    {
+        return $this->addPart(new Html_Ul_Li($componentName, $options, null, $this));
     }
 }

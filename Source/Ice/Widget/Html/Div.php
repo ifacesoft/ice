@@ -2,10 +2,9 @@
 
 namespace Ice\Widget;
 
-use Ice\Core\Debuger;
 use Ice\Core\Widget;
 
-class Block extends Widget
+class Html_Div extends Widget
 {
     /**
      * Widget config

@@ -114,10 +114,15 @@ class Php extends Render
         ob_start();
         ob_implicit_flush(false);
 
-        extract($data);
-        unset($data);
+        try {
+            extract($data);
+            unset($data);
 
-        include $templateFilePath;
+            include $templateFilePath;
+        } catch (\Exception $e) {
+            ob_clean();
+            throw $e;
+        }
 
         return $layout
             ? Emmet::translate($layout . '{{$content}}', ['content' => ob_get_clean()])

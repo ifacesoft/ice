@@ -29,6 +29,8 @@ use Ice\Helper\Object;
  */
 trait Core
 {
+    private static $selfCache = [];
+
     /**
      * Return short name of class (Ice:Class_Name)
      *

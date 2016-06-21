@@ -5,6 +5,9 @@ namespace Ice\Widget;
 use Ice\Core\QueryBuilder;
 use Ice\Core\QueryResult;
 use Ice\Core\Widget;
+use Ice\WidgetComponent\Html_Ul_Li as WidgetComponent_Html_Ul_Li;
+use Ice\WidgetComponent\HtmlTag_A;
+use Ice\WidgetComponent\Roll_A;
 
 class Roll extends Widget
 {
@@ -121,7 +124,7 @@ class Roll extends Widget
      */
     public function a($columnName, array $options = [], $template = null)
     {
-        return $this->addPart(new Roll_A($columnName, $options, $template, $this));
+        return $this->addPart(new HtmlTag_A($columnName, $options, $template, $this));
     }
 
     /**
@@ -134,6 +137,6 @@ class Roll extends Widget
      */
     public function li($columnName, array $options = [], $template = null)
     {
-        return $this->addPart(new Roll_Li($columnName, $options, $template, $this));
+        return $this->addPart(new WidgetComponent_Html_Ul_Li($columnName, $options, $template, $this));
     }
 }

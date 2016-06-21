@@ -1238,7 +1238,7 @@ class QueryBuilder
      * @version 0.6
      * @since   0.0
      */
-    public function left($modelTableData, $fieldNames = '/pk', $condition = null)
+    public function left($modelTableData, $fieldNames = null, $condition = null)
     {
         return $this->select($fieldNames, null, $modelTableData)
             ->join(QueryBuilder::SQL_CLAUSE_LEFT_JOIN, $modelTableData, $condition);
@@ -1289,7 +1289,7 @@ class QueryBuilder
     /**
      * Affect query
      *
-     * @param  array $data Key-value array
+     * @param  array $rows Key-value array
      * @param  $part
      * @param  $dataSourceKey
      * @return Query
@@ -1299,11 +1299,11 @@ class QueryBuilder
      * @version 0.6
      * @since   0.1
      */
-    private function affect(array $data, $part, $dataSourceKey)
+    private function affect(array $rows, $part, $dataSourceKey)
     {
         $modelClass = $this->getModelClass();
 
-        if (empty($data)) {
+        if (empty($rows)) {
             $this->sqlParts[$part] = array_merge(
                 $this->sqlParts[$part],
                 [
@@ -1318,13 +1318,16 @@ class QueryBuilder
             return $this->getQuery($dataSourceKey);
         }
 
-        if (!is_array(reset($data))) {
-            return $this->affect([$data], $part, $dataSourceKey);
+        $firstRow = reset($rows);
+
+        if (!is_array($firstRow)) {
+            $firstRow = $rows;
+            $rows = [$rows];
         }
 
         $fieldNames = [];
 
-        foreach (array_keys(reset($data)) as $fieldName) {
+        foreach (array_keys($firstRow) as $fieldName) {
             $fieldNames[] = $modelClass::getFieldName($fieldName);
         }
 
@@ -1333,14 +1336,14 @@ class QueryBuilder
             [
                 'modelClass' => $modelClass,
                 'fieldNames' => $fieldNames,
-                'rowCount' => count($data)
+                'rowCount' => count($rows)
             ]
         );
 
 
         $this->appendCacheTag($modelClass, $fieldNames, false, true);
 
-        $this->bindParts[$part] = array_merge($this->bindParts[$part], $data);
+        $this->bindParts[$part] = array_merge($this->bindParts[$part], $rows);
 
         return $this->getQuery($dataSourceKey);
     }
