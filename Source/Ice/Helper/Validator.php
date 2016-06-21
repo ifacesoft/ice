@@ -24,24 +24,20 @@ class Validator
      */
     public static function validate($validatorClass, $validatorParams, $value, $param = null)
     {
-        $validatorParams = (array) $validatorParams;
-
-        /**
-         * @var Core_Validator $validatorClass
-         */
+        /** @var Core_Validator $validatorClass */
         $validatorClass = Core_Validator::getClass($validatorClass);
 
         /** @var Core_Validator $validator */
         $validator = $validatorClass::getInstance();
 
-        if (!empty($validatorParams['message'])) {
+        if (is_array($validatorParams) && !empty($validatorParams['message'])) {
             $message = $validatorParams['message'];
             unset($validatorParams['message']);
         } else {
             $message = $validator->getMessage();
         }
 
-        if ($validatorParams && array_key_exists('exception', $validatorParams)) {
+        if (is_array($validatorParams) && array_key_exists('exception', $validatorParams)) {
             if ($validatorParams['exception'] === true) {
                 $exceptionClass = Not_Valid::class;
             } else if ($validatorParams['exception'] === false) {

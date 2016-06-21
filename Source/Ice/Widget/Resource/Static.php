@@ -7,6 +7,8 @@ use Ice\Core\Debuger;
 use Ice\Core\Environment;
 use Ice\Core\Module;
 use Ice\Helper\File;
+use Ice\Helper\Hash;
+use Ice\Helper\Serializer;
 
 class Resource_Static extends Resource
 {
@@ -56,7 +58,7 @@ class Resource_Static extends Resource
         }
 
         foreach ($styles as $css => $sources) {
-            $this->link($css, ['resource' => false]);
+            $this->link(Hash::get($sources, Hash::HASH_CRC32), ['value' => $css]);
         }
 
         $javascriptCacheFile = Module::getInstance()->get(Module::COMPILED_RESOURCE_DIR) . 'javascript.cache.php';
@@ -69,7 +71,7 @@ class Resource_Static extends Resource
             if (!Environment::getInstance()->isProduction()) {
                 $cacheFiletime = filemtime($javascriptCacheFile);
 
-                foreach ($javascripts as $css => $sources) {
+                foreach ($javascripts as $js => $sources) {
                     foreach ($sources as $source) {
                         if (!file_exists($source) || filemtime($source) > $cacheFiletime) {
                             $javascripts = Resource_Js::call()['javascripts'];
@@ -81,7 +83,7 @@ class Resource_Static extends Resource
         }
 
         foreach ($javascripts as $js => $sources) {
-            $this->script($js, ['resource' => false]);
+            $this->script(Hash::get($sources, Hash::HASH_CRC32), ['value' => $js]);
         }
     }
 }

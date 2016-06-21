@@ -8,6 +8,7 @@ use Ice\Core\Module;
 use Ice\Core\Render;
 use Ice\DataProvider\Router;
 use Ice\Helper\File;
+use Ice\Helper\Hash;
 
 class Resource_Dynamic extends Resource
 {
@@ -62,7 +63,7 @@ class Resource_Dynamic extends Resource
             if (!Environment::getInstance()->isProduction()) {
                 $cacheFiletime = filemtime($javascriptCacheFile);
 
-                foreach ($javascripts as $css => $sources) {
+                foreach ($javascripts as $js => $sources) {
                     foreach ($sources as $source) {
                         if (!file_exists($source) || filemtime($source) > $cacheFiletime) {
                             return;
@@ -73,7 +74,7 @@ class Resource_Dynamic extends Resource
         }
 
         foreach ($javascripts as $js => $sources) {
-            $this->script($js, ['resource' => false]);
+            $this->script(Hash::get($sources, Hash::HASH_CRC32), ['value' => $js]);
         }
 
         $styleCacheFile = Module::getInstance()->get(Module::COMPILED_RESOURCE_DIR) . 'style.' . $input['routeName'] . '.cache.php';
@@ -97,7 +98,7 @@ class Resource_Dynamic extends Resource
         }
 
         foreach ($styles as $css => $sources) {
-            $this->link($css, ['resource' => false]);
+            $this->link(Hash::get($sources, Hash::HASH_CRC32), ['value' => $css]);
         }
 
         $this->loaded = true;

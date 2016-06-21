@@ -120,9 +120,15 @@ class Date
         return Date::strftime('%A', $time, 'ru_RU.UTF-8');
     }
 
-    public static function expired($time, $ttl)
+    /**
+     * @param $checkTime - Checked time in seconds
+     * @param $ttl - Time to live in seconds
+     * @param $onTime - Check on timestamp in seconds
+     * @return bool
+     */
+    public static function expired($checkTime, $ttl, $onTime = null)
     {
-        return time() - $time > $ttl;
+        return ($onTime === null ? time() : $onTime) - $checkTime > $ttl;
     }
 
     public static function convertPHPToMomentFormat($format)
