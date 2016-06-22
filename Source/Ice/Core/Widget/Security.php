@@ -51,6 +51,27 @@ abstract class Widget_Security extends Form
 
     private $accountModelClass = null;
 
+    private $prolongate = false;
+
+    /**
+     * @return boolean
+     */
+    public function isProlongate()
+    {
+        return $this->prolongate;
+    }
+
+    /**
+     * @param boolean $prolongate
+     * @return $this
+     */
+    public function setProlongate($prolongate)
+    {
+        $this->prolongate = $prolongate;
+
+        return $this;
+    }
+
     /**
      * @return boolean
      */
@@ -134,6 +155,7 @@ abstract class Widget_Security extends Form
     public function setExpired($expired)
     {
         $this->expired = $expired;
+
         return $this;
     }
 
@@ -152,6 +174,7 @@ abstract class Widget_Security extends Form
     public function setAutologin($autologin)
     {
         $this->autologin = $autologin;
+
         return $this;
     }
 }

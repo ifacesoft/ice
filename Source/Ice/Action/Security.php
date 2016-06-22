@@ -2,6 +2,7 @@
 
 namespace Ice\Action;
 
+use Ebs\Model\Packet_Dynamic;
 use Ice\Core;
 use Ice\Core\Config;
 use Ice\Core\DataSource;
@@ -11,6 +12,7 @@ use Ice\Core\Security as Core_Security;
 use Ice\Core\Model\Security_Account;
 use Ice\Core\Model\Security_User;
 use Ice\Core\Widget_Security;
+use Ice\Helper\Date;
 use Ice\Helper\Logger;
 use Ice\Helper\String;
 use Ice\Model\Log_Security;
@@ -33,10 +35,20 @@ abstract class Security extends Widget_Form_Event
         /** @var Widget_Security $securityForm */
         $securityForm = $input['widget'];
 
-        if ($account->isExpired()) {
-            return $securityForm
-                ->getLogger()
-                ->exception(['Account is expired', [], $securityForm->getResource()], __FILE__, __LINE__);
+        if ($expired = $account->isExpired()) {
+            if ($prolongate = $securityForm->isProlongate()) {
+                if ($prolongate === true) {
+                    $expired = $this->prolongate($account, $securityForm->getExpired());
+                } else {
+                    $expired = call_user_func($prolongate, $account, $securityForm->getExpired());
+                }
+            }
+
+            if ($expired) {
+                return $securityForm
+                    ->getLogger()
+                    ->exception(['Account is expired', [], $securityForm->getResource()], __FILE__, __LINE__);
+            }
         }
 
         $userModelClass = Config::getInstance(Core_Security::getClass())->get('userModelClass');
@@ -103,7 +115,7 @@ abstract class Security extends Widget_Form_Event
                 ];
 
                 if ($securityForm->isConfirmRequired()) {
-                    $accountData['/expired'] = '0000-00-00';
+                    $accountData['/expired'] = Date::ZERO;
                     $input['/active'] = 0;
                 } else {
                     $accountData['/expired'] = $securityForm->getConfirmationExpired();
@@ -127,7 +139,7 @@ abstract class Security extends Widget_Form_Event
             }
 
             $dataSource->commitTransaction();
-            
+
             $log->set('account_key', $account->getPkValue());
 
             $logger->save($log);
@@ -313,5 +325,11 @@ abstract class Security extends Widget_Form_Event
         $logger->save($log);
 
         return $account;
+    }
+
+    public function prolongate($account, $expired)
+    {
+        Core_Logger::getInstance(__CLASS__)
+            ->exception(['Implement {$0} for {$1}', [__FUNCTION__, get_class($this)]], __FILE__, __LINE__);
     }
 }
