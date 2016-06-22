@@ -22,28 +22,21 @@ abstract class Security extends Widget_Form_Event
     /**
      * @param Security_Account|Model $account
      * @param array $input
-     * @return Security_Account|Model
+     * @param Log_Security $log
+     * @return Model|Security_Account
      * @throws Exception
      */
-    final protected function signIn(Security_Account $account, array $input)
+    final protected function signIn(Security_Account $account, array $input, Log_Security $log)
     {
+        $logger = $this->getLogger();
+
         /** @var Widget_Security $securityForm */
         $securityForm = $input['widget'];
 
-        $log = Log_Security::create([
-            'account_class' => get_class($account),
-            'account_key' => $account->getPkValue(),
-            'form_class' => get_class($this)
-        ]);
-
         if ($account->isExpired()) {
-            $error = 'Account is expired';
-
-            $log->set('error', $error);
-
-            $securityForm->getLogger()->save($log);
-
-            return $securityForm->getLogger()->exception([$error, [], $securityForm->getResource()], __FILE__, __LINE__);
+            return $securityForm
+                ->getLogger()
+                ->exception(['Account is expired', [], $securityForm->getResource()], __FILE__, __LINE__);
         }
 
         $userModelClass = Config::getInstance(Core_Security::getClass())->get('userModelClass');
@@ -52,20 +45,14 @@ abstract class Security extends Widget_Form_Event
         $user = $account->fetchOne($userModelClass, '/active', true);
 
         if (!$user || !$user->isActive()) {
-            $error = 'User is blocked or not found';
-
-            $log->set('error', $error);
-
-            $securityForm->getLogger()->save($log);
-
-            return $securityForm->getLogger()->exception([$error, [], $securityForm->getResource()], __FILE__, __LINE__);
+            return $securityForm
+                ->getLogger()
+                ->exception(['User is blocked or not found', [], $securityForm->getResource()], __FILE__, __LINE__);
         }
 
         Core_Security::getInstance()->login($account);
 
-        $securityForm->getLogger()->save($log);
-
-        $this->getLogger()->save($log);
+        $logger->save($log);
 
         return $account;
     }
@@ -81,6 +68,8 @@ abstract class Security extends Widget_Form_Event
      */
     final protected function signUp(array $accountData, array $input, $dataSource = null)
     {
+        $logger = $this->getLogger();
+
         /** @var Widget_Security $securityForm */
         $securityForm = $input['widget'];
 
@@ -89,7 +78,7 @@ abstract class Security extends Widget_Form_Event
 
         $log = Log_Security::create([
             'account_class' => $accountModelClass,
-            'form_class' => get_class($this)
+            'form_class' => get_class($securityForm)
         ]);
 
         /** @var DataSource $dataSource */
@@ -140,18 +129,20 @@ abstract class Security extends Widget_Form_Event
             $dataSource->commitTransaction();
             
             $log->set('account_key', $account->getPkValue());
-            $securityForm->getLogger()->save($log);
+
+            $logger->save($log);
         } catch (\Exception $e) {
             $dataSource->rollbackTransaction();
 
             $log->set('error', Logger::getMessage($e));
-            $securityForm->getLogger()->save($log);
+
+            $logger->save($log);
 
             throw $e;
         }
 
         return (!$securityForm->isConfirm() || ($securityForm->isConfirm() && !$securityForm->isConfirmRequired())) && $securityForm->isAutologin()
-            ? $this->signIn($account, $input)
+            ? $this->signIn($account, $input, $log)
             : $account;
     }
 
@@ -186,6 +177,8 @@ abstract class Security extends Widget_Form_Event
      */
     final protected function registerConfirm(Token $token, array $input)
     {
+        $logger = $this->getLogger();
+
         /** @var Widget_Security $securityForm */
         $securityForm = $input['widget'];
 
@@ -194,7 +187,7 @@ abstract class Security extends Widget_Form_Event
 
         $log = Log_Security::create([
             'account_class' => $accountClass,
-            'form_class' => get_class($this)
+            'form_class' => get_class($securityForm)
         ]);
 
         $account = $accountClass::getSelectQuery(['/pk', 'user__fk'], ['token' => $token])->getModel();
@@ -202,16 +195,16 @@ abstract class Security extends Widget_Form_Event
         if (!$account) {
             $error = 'Account not found';
 
-            $log->set('error', $error);
+            $log->set('error', $logger->info($error, Core_Logger::DANGER, true));
 
-            $securityForm->getLogger()->save($log);
+            $logger->save($log);
 
             return $securityForm->getLogger()->exception([$error, [], $securityForm->getResource()], __FILE__, __LINE__);
         }
 
         $log->set('account_key', $account->getPkValue());
 
-        $securityForm->getLogger()->save($log);
+        $logger->save($log);
 
         $tokenData = $token->get('/data');
 
@@ -225,7 +218,7 @@ abstract class Security extends Widget_Form_Event
 
         $user->set(['/active' => 1])->save();
 
-        $this->getLogger()->save($log);
+        $logger->save($log);
 
         return $account;
     }
@@ -238,6 +231,8 @@ abstract class Security extends Widget_Form_Event
      */
     final protected function restorePassword($account, $input)
     {
+        $logger = $this->getLogger();
+
         /** @var Widget_Security $securityForm */
         $securityForm = $input['widget'];
 
@@ -246,15 +241,15 @@ abstract class Security extends Widget_Form_Event
         $log = Log_Security::create([
             'account_class' => $accountModelClass,
             'account_key' => $account->getPkValue(),
-            'form_class' => get_class($this)
+            'form_class' => get_class($securityForm)
         ]);
 
         if ($account->isExpired()) {
             $error = 'Account is expired';
 
-            $log->set('error', $error);
+            $log->set('error', $logger->info($error, Core_Logger::DANGER, true));
 
-            $securityForm->getLogger()->save($log);
+            $logger->save($log);
 
             return $securityForm->getLogger()->exception([$error, [], $securityForm->getResource()], __FILE__, __LINE__);
         }
@@ -269,30 +264,30 @@ abstract class Security extends Widget_Form_Event
 
         $this->sendRestorePasswordConfirm($token, $input);
 
-        $securityForm->getLogger()->save($log);
-
-        $this->getLogger()->save($log);
+        $logger->save($log);
 
         return $account;
     }
 
     final protected function changePassword($account, $accountData, $input)
     {
+        $logger = $this->getLogger();
+
         /** @var Widget_Security $securityForm */
         $securityForm = $input['widget'];
 
         $log = Log_Security::create([
             'account_class' => get_class($account),
             'account_key' => $account->getPkValue(),
-            'form_class' => get_class($this)
+            'form_class' => get_class($securityForm)
         ]);
 
         if ($account->isExpired()) {
             $error = 'Account is expired';
 
-            $log->set('error', $error);
+            $log->set('error', $logger->info($error, Core_Logger::DANGER, true));
 
-            $securityForm->getLogger()->save($log);
+            $logger->save($log);
 
             return $securityForm->getLogger()->exception([$error, [], $securityForm->getResource()], __FILE__, __LINE__);
         }
@@ -305,19 +300,17 @@ abstract class Security extends Widget_Form_Event
         if (!$user || !$user->isActive()) {
             $error = 'User is blocked or not found';
 
-            $log->set('error', $error);
+            $log->set('error', $logger->info($error, Core_Logger::DANGER, true));
 
-            $securityForm->getLogger()->save($log);
+            $logger->save($log);
 
             return $securityForm->getLogger()->exception([$error, [], $securityForm->getResource()], __FILE__, __LINE__);
         }
 
         /** @var Security_Account|Model $account */
         $account = $account->set($accountData)->save();
-        
-        $securityForm->getLogger()->save($log);
 
-        $this->getLogger()->save($log);
+        $logger->save($log);
 
         return $account;
     }

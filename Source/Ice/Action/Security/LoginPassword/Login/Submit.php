@@ -2,11 +2,12 @@
 
 namespace Ice\Action;
 
-use Ice\Core\Debuger;
 use Ice\Core\Logger;
 use Ice\Core\Model;
 use Ice\Core\Model\Security_Account;
+use Ice\Model\Log_Security;
 use Ice\Widget\Security_LoginPassword_Login;
+use Ice\Helper\Logger as Helper_Logger;
 
 class Security_LoginPassword_Login_Submit extends Security
 {
@@ -17,22 +18,29 @@ class Security_LoginPassword_Login_Submit extends Security
      */
     public function run(array $input)
     {
-        /** @var Security_LoginPassword_Login $form */
-        $form = $input['widget'];
+        $logger = $this->getLogger();
 
-        $accountModelClass = $form->getAccountLoginPasswordModelClass();
+        /** @var Security_LoginPassword_Login $securityForm */
+        $securityForm = $input['widget'];
+
+        $accountModelClass = $securityForm->getAccountLoginPasswordModelClass();
 
         if (!$accountModelClass) {
-            return $form->getLogger()
+            return $securityForm->getLogger()
                 ->exception(
-                    ['Unknown accountModelClass', [], $form->getResource()],
+                    ['Unknown accountModelClass', [], $securityForm->getResource()],
                     __FILE__,
                     __LINE__
                 );
         }
 
+        $log = Log_Security::create([
+            'account_class' => $accountModelClass,
+            'form_class' => get_class($securityForm)
+        ]);
+
         try {
-            $values = $form->validate();
+            $values = $securityForm->validate();
 
             /** @var Security_Account|Model $account */
             $account = $accountModelClass::createQueryBuilder()
@@ -42,22 +50,28 @@ class Security_LoginPassword_Login_Submit extends Security
                 ->getModel();
 
             if (!$account) {
-                $form->getLogger()->exception(['Account with login {$0} not found', $values['login']], __FILE__, __LINE__);
+                $securityForm->getLogger()->exception(['Account with login {$0} not found', $values['login']], __FILE__, __LINE__);
             }
 
             if (!$account->securityVerify($values)) {
-                $form->getLogger()->exception('Authentication data is not valid. Please, check input.', __FILE__, __LINE__);
+                $securityForm->getLogger()->exception('Authentication data is not valid. Please, check input.', __FILE__, __LINE__);
             }
 
-            $this->signIn($account, $input);
+            $log->set('account_key', $account->getPkValue());
+
+            $this->signIn($account, $input, $log);
 
             return array_merge(
                 parent::run($input),
-                ['success' => $form->getLogger()->info('Login successfully', Logger::SUCCESS, true)]
+                ['success' => $securityForm->getLogger()->info('Login successfully', Logger::SUCCESS, true)]
                 
             );
         } catch (\Exception $e) {
-            return ['error' => $form->getLogger()->info($e->getMessage(), Logger::DANGER, true)];
+            $log->set('error', Helper_Logger::getMessage($e));
+
+            $logger->save($log);
+
+            return ['error' => $securityForm->getLogger()->info($e->getMessage(), Logger::DANGER, true)];
         }
     }
 }

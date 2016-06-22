@@ -1208,6 +1208,6 @@ abstract class Widget extends Container
             $values[$name] = $component->validate();
         }
 
-        return $values;
+        return array_merge($values, $this->getValues()); // todo: $this->values mast be validate too
     }
 }
