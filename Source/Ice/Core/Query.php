@@ -528,4 +528,10 @@ class Query
     {
         return Logger::getInstance($this->getModelClass());
     }
+
+    public function getGroup($fieldName, $ttl = null)
+    {
+        $modelClass = $this->getQueryBuilder()->getModelClass();
+        return Arrays::group($this->getRows($ttl), $modelClass::getFieldName($fieldName));
+    }
 }

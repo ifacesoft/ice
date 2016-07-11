@@ -398,11 +398,17 @@ abstract class Widget extends Container
     /**
      * @param string $classes
      *
+     * @param bool $replace
      * @return $this
      */
-    public function addClasses($classes)
+    public function addClasses($classes, $replace = false)
     {
-        $this->classes .= ' ' . $classes;
+        if ($replace) {
+            $this->classes = $classes;
+        } else {
+            $this->classes .= ' ' . $classes;
+        }
+
         return $this;
     }
 
@@ -426,7 +432,7 @@ abstract class Widget extends Container
         
         foreach ($this->getParts() as $partName => $part) {
             if (array_key_exists($partName, $values)) {
-                $part->set($partName, $values[$partName]);
+                $part->set([$partName, $values[$partName]]);
                 unset($values[$partName]);
             }
         }
@@ -786,6 +792,10 @@ abstract class Widget extends Container
         return $this->filterParts;
     }
 
+    /**
+     * @param $partName
+     * @return WidgetComponent
+     */
     public function getPart($partName)
     {
         return isset($this->parts[$partName]) ? $this->parts[$partName] : null;

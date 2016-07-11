@@ -43,8 +43,6 @@ class Security_EmailPassword_Login_Submit extends Security
         try {
             $values = $securityForm->validate();
 
-            Debuger::dump($values);
-
             /** @var Security_Account|Model $account */
             $account = $accountModelClass::createQueryBuilder()
                 ->eq(['email' => $values['email']])

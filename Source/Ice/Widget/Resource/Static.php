@@ -58,7 +58,7 @@ class Resource_Static extends Resource
         }
 
         foreach ($styles as $css => $sources) {
-            $this->link(Hash::get($sources, Hash::HASH_CRC32), ['value' => $css]);
+            $this->link(Hash::get($sources, Hash::HASH_CRC32) . '_css', ['value' => $css]);
         }
 
         $javascriptCacheFile = Module::getInstance()->get(Module::COMPILED_RESOURCE_DIR) . 'javascript.cache.php';
@@ -83,7 +83,7 @@ class Resource_Static extends Resource
         }
 
         foreach ($javascripts as $js => $sources) {
-            $this->script(Hash::get($sources, Hash::HASH_CRC32), ['value' => $js]);
+            $this->script(Hash::get($sources, Hash::HASH_CRC32) . '_js', ['value' => $js]);
         }
     }
 }

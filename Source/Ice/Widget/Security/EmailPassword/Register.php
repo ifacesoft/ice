@@ -48,26 +48,34 @@ class Security_EmailPassword_Register extends Widget_Security
                 'email',
                 [
                     'required' => true,
-                    'placeholder' => 'email_placeholder',
-                    'validators' => 'Ice:Email',
-                    'providers' => Request::class
+                    'placeholder' => true,
+                    'params' => [
+                        'email' => [
+                            'providers' => Request::class,
+                            'validators' => 'Ice:Email'
+                        ]
+                    ]
                 ]
             )
             ->password(
                 'password',
                 [
                     'required' => true,
-                    'placeholder' => 'password_placeholder',
-                    'validators' => ['Ice:Length_Min' => 5],
-                    'providers' => Request::class
+                    'placeholder' => true,
+                    'params' => [
+                        'password' => [
+                            'providers' => Request::class,
+                            'validators' => ['Ice:Length_Min' => 5]
+                        ]
+                    ]
                 ]
             )
             ->password(
                 'confirm_password',
                 [
-                    'placeholder' => 'confirm_password_placeholder',
+                    'placeholder' => true,
                     'required' => true,
-                    'providers' => Request::class
+                    'params' => ['confirm_password' => ['providers' => Request::class]]
                 ]
             )
             ->div('ice-message', ['value' => '&nbsp;', 'encode' => false, 'resource' => false])

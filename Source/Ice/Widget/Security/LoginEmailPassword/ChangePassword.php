@@ -87,26 +87,34 @@ class Security_LoginEmailPassword_ChangePassword extends Widget_Security
                 'password',
                 [
                     'required' => true,
-                    'placeholder' => 'password_placeholder',
-                    'validators' => ['Ice:Length_Min' => 5],
-                    'providers' => Request::class
+                    'placeholder' => true,
+                    'params' => [
+                        'password' => [
+                            'providers' => Request::class,
+                            'validators' => ['Ice:Length_Min' => 5]
+                        ]
+                    ]
                 ]
             )
             ->password(
                 'new_password',
                 [
                     'required' => true,
-                    'placeholder' => 'new_password_placeholder',
-                    'validators' => ['Ice:Length_Min' => 5],
-                    'providers' => Request::class
+                    'placeholder' => true,
+                    'params' => [
+                        'new_password' => [
+                            'providers' => Request::class,
+                            'validators' => ['Ice:Length_Min' => 5]
+                        ]
+                    ]
                 ]
             )
             ->password(
                 'confirm_password',
                 [
-                    'placeholder' => 'confirm_password_placeholder',
+                    'placeholder' => true,
                     'required' => true,
-                    'providers' => Request::class
+                    'params' => ['confirm_password' => ['providers' => Request::class]]
                 ]
             )
             ->div('ice-message', ['value' => '&nbsp;', 'encode' => false, 'resource' => false])

@@ -44,14 +44,9 @@ class Form_Model_OneToManyToMany extends Form_Model_OneToMany
         return htmlentities($this->getOption('manyItemTitle', 'name'));
     }
 
-    protected function buildParams($values)
+    protected function buildParams(array $values)
     {
         parent::buildParams($values);
-    }
-
-    public function filter(QueryBuilder $queryBuilder, $modelClass = null)
-    {
-        parent::filter($queryBuilder, $modelClass);
     }
 
     public function getManyLabel()

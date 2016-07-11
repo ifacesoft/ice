@@ -100,7 +100,7 @@ class Form_Model_ManyToMany extends FormElement_Chosen
     }
 
 
-    protected function buildParams($values)
+    protected function buildParams(array $values)
     {
         parent::buildParams($values);
 

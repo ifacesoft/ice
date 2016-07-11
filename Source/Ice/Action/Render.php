@@ -25,7 +25,7 @@ class Render extends Action
             'cache' => ['ttl' => -1, 'count' => 1000],
             'actions' => [],
             'input' => [
-                'content' => ['providers' => 'default'],
+                'content',
                 'widgets' => ['default' => [], 'providers' => ['default', Request::class]]
             ],
             'output' => []

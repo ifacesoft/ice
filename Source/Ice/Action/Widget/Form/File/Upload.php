@@ -29,11 +29,7 @@ class Widget_Form_File_Upload extends Action
             ],
             'output' => [],
             'ttl' => -1,
-            'access' => [
-                'roles' => [],
-                'request' => null,
-                'env' => null
-            ]
+            'access' => ['roles' => [], 'request' => null, 'env' => null]
         ];
     }
 

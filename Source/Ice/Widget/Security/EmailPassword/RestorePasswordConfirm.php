@@ -39,25 +39,25 @@ class Security_EmailPassword_RestorePasswordConfirm extends Widget_Security
             ->text(
                 'token',
                 [
-                    'placeholder' => 'token_placeholder',
+                    'placeholder' => true,
                     'required' => true,
-                    'providers' => Request::class
+                    'params' => ['token' => ['providers' => Request::class]]
                 ]
             )
             ->password(
                 'new_password',
                 [
-                    'placeholder' => 'new_password_placeholder',
+                    'placeholder' => true,
                     'required' => true,
-                    'providers' => Request::class
+                    'params' => ['new_password' => ['providers' => Request::class]]
                 ]
             )
             ->password(
                 'confirm_password',
                 [
-                    'placeholder' => 'confirm_password_placeholder',
+                    'placeholder' => true,
                     'required' => true,
-                    'providers' => Request::class
+                    'params' => ['confirm_password' => ['providers' => Request::class]]
                 ]
             )
             ->div('ice-message', ['value' => '&nbsp;', 'encode' => false, 'resource' => false])

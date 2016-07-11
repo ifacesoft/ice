@@ -2,9 +2,11 @@
 
 namespace Ice\WidgetComponent;
 
+use Ebs\Model\Packet_Dynamic;
 use Ice\Action\Render;
 use Ice\Core\Action;
 use Ice\Core\Debuger;
+use Ice\Core\QueryBuilder;
 use Ice\Core\Request;
 use Ice\Core\Resource;
 use Ice\Core\Route;
@@ -349,14 +351,14 @@ class HtmlTag extends WidgetComponent
         return $htmlTagAttributes;
     }
 
-    protected function buildParams($values)
+    protected function buildParams(array $values)
     {
         if ($route = $this->getRoute()) {
             if ($this->getOption('value') === null && $this->getOption('valueKey') === null) {
                 $valueKey = $this->getValueKey();
 
-                if ($this->get($valueKey) === null) {
-                    $this->set($valueKey, Resource::create(Route::getClass())->get($route['name'], $route['params']));
+                if (!array_key_exists($valueKey, $values)) {
+                    $values[$valueKey] = Resource::create(Route::getClass())->get($route['name'], $route['params']);
                 }
             }
         }

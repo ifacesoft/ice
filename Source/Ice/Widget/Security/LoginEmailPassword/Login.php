@@ -67,23 +67,31 @@ class Security_LoginEmailPassword_Login extends Widget_Security
                 'username',
                 [
                     'required' => true,
-                    'placeholder' => 'username_placeholder',
-                    'validators' => ['Ice:Length_Min' => 3],
-                    'providers' => Request::class
+                    'placeholder' => true,
+                    'params' => [
+                        'username' => [
+                            'providers' => Request::class,
+                            'validators' => ['Ice:Length_Min' => 3]
+                        ]
+                    ]
                 ]
             )
             ->password(
                 'password',
                 [
                     'required' => true,
-                    'placeholder' => 'password_placeholder',
-                    'validators' => ['Ice:Length_Min' => 5],
-                    'providers' => Request::class
+                    'placeholder' => true,
+                    'params' => [
+                        'password' => [
+                            'providers' => Request::class,
+                            'validators' => ['Ice:Length_Min' => 5]
+                        ]
+                    ]
                 ]
             )
             ->div('ice-message', ['value' => '&nbsp;', 'encode' => false, 'resource' => false])
             ->button(
-                'login',
+                'submit',
                 [
                     'route' => 'ice_security_login_request',
                     'submit' => Security_LoginEmailPassword_Login_Submit::class

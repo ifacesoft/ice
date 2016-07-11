@@ -117,6 +117,7 @@ class Resource_Css extends Action
      *
      * @version 0.0
      * @since   0.0
+     * @return array
      */
     private function pack($resources)
     {

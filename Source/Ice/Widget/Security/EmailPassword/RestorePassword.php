@@ -29,9 +29,13 @@ class Security_EmailPassword_RestorePassword extends Widget_Security
                 'email',
                 [
                     'required' => true,
-                    'placeholder' => 'email_placeholder',
-                    'validators' => 'Ice:Email',
-                    'providers' => Request::class
+                    'placeholder' => true,
+                    'params' => [
+                        'email' => [
+                            'providers' => Request::class,
+                            'validators' => 'Ice:Email'
+                        ]
+                    ]
                 ]
             )
             ->div('ice-message', ['value' => '&nbsp;', 'encode' => false, 'resource' => false])

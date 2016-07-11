@@ -412,14 +412,22 @@ abstract class WidgetComponent
         return 'id="' . $this->getId($postfix) . '" data-for="' . $this->getWidgetId() . '"';
     }
 
-    public function get($param, $default = null)
+    public function get($param = null, $default = null)
     {
+        if ($param === null) {
+            return $this->params;
+        }
+
         return isset($this->params[$param]) ? $this->params[$param] : $default;
     }
 
-    public function set($param, $value)
+    public function set(array $params)
     {
-        return $this->params[$param] = $value;
+        foreach ($params as $param => $value) {
+            $this->params[$param] = $value;
+        }
+
+        return $this;
     }
 
     public function ifOption($name, $value, $default = null)
@@ -490,65 +498,75 @@ abstract class WidgetComponent
         return $valueKey;
     }
 
-    protected function getFromProviders($name, array $data)
+//    protected function getFromProviders($name, array $data)
+//    {
+//        $providers = (array)$this->getOption('providers');
+//
+//        $providers[] = 'default';
+//
+//        $config = ['providers' => $providers];
+//
+//        if (array_key_exists('default', $this->getOption())) {
+//            $config['default'] = $this->options['default'];
+//        }
+//
+//        return Input::get([$name => $config], $data)[$name];
+//    }
+
+    protected function getParamsConfig()
     {
-        $providers = (array)$this->getOption('providers');
+        $valueKey = $this->getValueKey();
+        $value = $this->getOption('value');
 
-        $providers[] = 'default';
-
-        $config = ['providers' => $providers];
-
-        if (array_key_exists('default', $this->getOption())) {
-            $config['default'] = $this->options['default'];
+        if ($value === null) {
+            $value = $this->get($valueKey);
         }
 
-        return Input::get([$name => $config], $data)[$name];
+        $paramsConfig = (array)$this->getOption('params', []);
+
+        if (!isset($paramsConfig[$valueKey])) {
+            $paramsConfig[$valueKey] = [];
+        }
+
+        if ($value !== null) {
+            $paramsConfig[$valueKey]['default'] = $value;
+        }
+
+        return $paramsConfig;
     }
 
-    protected function buildParams($values)
+    protected function buildParams(array $values)
     {
 //        $this->params[$this->getComponentName()] = array_key_exists($this->getComponentName(), $values)
 //            ? $values[$this->getComponentName()]
 //            : null;
 
-        foreach ((array)$this->getOption('params') as $key => $param) {
-            if (is_int($key)) {
-                $key = $param;
-            }
+//        foreach ((array)$this->getOption('params') as $key => $param) {
+//            if (is_int($key)) {
+//                $key = $param;
+//            }
+//
+//            if ($this->get($key)) {
+//                continue;
+//            }
+//
+//            if (!is_string($param)) {
+//                $this->set($key, $param);
+//                continue;
+//            }
+//
+//            $param = $key == $param
+//                ? (array_key_exists($param, $values) ? $values[$param] : null)
+//                : (array_key_exists($param, $values) ? $values[$param] : $param);
+//
+//            $this->set($key, $param);
+//        }
 
-            if ($this->get($key)) {
-                continue;
-            }
-
-            if (!is_string($param)) {
-                $this->set($key, $param);
-                continue;
-            }
-
-            $param = $key == $param
-                ? (array_key_exists($param, $values) ? $values[$param] : null)
-                : (array_key_exists($param, $values) ? $values[$param] : $param);
-
-            $this->set($key, $param);
-        }
-
-        $value = $this->getOption('value');
+        $this->set(Input::get($this->getParamsConfig(), $values));
 
         $valueKey = $this->getValueKey();
 
-        if ($value !== null) {
-            $this->set($valueKey, $value);
-        }
-
-        if ($this->get($valueKey) === null && array_key_exists($valueKey, $values)) {
-            $this->set($valueKey, $values[$valueKey]);
-        }
-
-        if ($this->get($valueKey) === null) {
-            $this->set($valueKey, $this->getFromProviders($valueKey, $values));
-        }
-
-        if ($this->get($valueKey) === null || $this->get($valueKey) === '') {
+        if (empty($this->get($valueKey))) {
             return;
         }
 

@@ -56,22 +56,22 @@ class FormElement extends HtmlTag
             ->buildValidators();
     }
 
-    protected function buildParams($values)
-    {
-        parent::buildParams($values);
-
-        $name = $this->getName();
-
-        if ($this->get($name, null) === null) {
-            $this->set($name, $this->getFromProviders($this->getName(), $values));
-        }
-
-//        if (!isset($this->params[$name])) {
-//            $this->params[$name] = $this->value == $this->getComponentName()
-//                ? (array_key_exists($this->value, $values) ? $values[$this->value] : null)
-//                : (array_key_exists($this->value, $values) ? $values[$this->value] : $this->value);
+//    protected function buildParams(array $values)
+//    {
+//        parent::buildParams($values);
+//
+//        $name = $this->getName();
+//
+//        if ($this->get($name, null) === null) {
+//            $this->set($name, $this->getFromProviders($this->getName(), $values));
 //        }
-    }
+//
+////        if (!isset($this->params[$name])) {
+////            $this->params[$name] = $this->value == $this->getComponentName()
+////                ? (array_key_exists($this->value, $values) ? $values[$this->value] : null)
+////                : (array_key_exists($this->value, $values) ? $values[$this->value] : $this->value);
+////        }
+//    }
 
     /**
      * @return null
@@ -121,10 +121,6 @@ class FormElement extends HtmlTag
     public function filter(QueryBuilder $queryBuilder, $modelClass = null)
     {
         $option = array_merge($this->getOption(), $this->getOption('filter', []));
-
-        if (!isset($option['access']['roles']) || !Security::getInstance()->check((array)$option['access']['roles'])) {
-            return;
-        }
 
         $value = $this->getValue();
 

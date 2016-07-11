@@ -56,7 +56,7 @@ class Form_Model_OneToMany extends FormElement_Chosen
         return parent::getItems();
     }
 
-    protected function buildParams($values)
+    protected function buildParams(array $values)
     {
         parent::buildParams($values);
 

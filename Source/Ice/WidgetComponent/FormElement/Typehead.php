@@ -39,10 +39,10 @@ class FormElement_Typehead extends Form_ListBox
         return $this->get($this->getName() . '_typeahead') ? htmlentities($this->get($this->getName() . '_typeahead')) : '';
     }
 
-    protected function buildParams($values)
-    {
-        parent::buildParams($values);
-
-        $this->params[$this->getName() . '_typeahead'] = $this->getFromProviders($this->getName() . '_typeahead', $values);
-    }
+//    protected function buildParams(array $values)
+//    {
+//        parent::buildParams($values);
+//
+//        $this->params[$this->getName() . '_typeahead'] = $this->getFromProviders($this->getName() . '_typeahead', $values);
+//    }
 }

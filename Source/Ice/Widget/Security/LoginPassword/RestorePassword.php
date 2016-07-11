@@ -29,9 +29,13 @@ class Security_LoginPassword_RestorePassword extends Widget_Security
                 'login',
                 [
                     'required' => true,
-                    'placeholder' => 'login_placeholder',
-                    'validators' => ['Ice:Length_Min' => 2],
-                    'providers' => Request::class
+                    'placeholder' => true,
+                    'params' => [
+                        'login' => [
+                            'providers' => Request::class,
+                            'validators' => ['Ice:Length_Min' => 2]
+                        ]
+                    ]
                 ]
             )
             ->div('ice-message', ['value' => '&nbsp;', 'encode' => false, 'resource' => false])

@@ -2,14 +2,12 @@
 namespace Ice\Action;
 
 use Ice\Core\Action;
+use Ice\DataProvider\Request;
 use Ice\Helper\Directory;
 
 
 class Vendor_CKEditor_Delete extends Action
 {
-
-
-
      protected static function config()
      {
          return [
@@ -23,7 +21,6 @@ class Vendor_CKEditor_Delete extends Action
 
     public function run(array $input)
     {
-
         $directory = Directory::get(MODULE_DIR . '/web/ckeditor/');
         if(strpos($input['file'], '/') || strpos($input['file'], '\\')){
             echo 'Файл не найден. <a href="/ice/ckeditor/browse">Вернуться</a>';
@@ -37,6 +34,5 @@ class Vendor_CKEditor_Delete extends Action
             echo 'Файл не найден. <a href="/ice/ckeditor/browse">Вернуться</a>';
         }
         exit;
-
     }
 }

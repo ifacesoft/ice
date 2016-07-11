@@ -48,25 +48,33 @@ class Security_LoginPassword_Register extends Widget_Security
                 'login',
                 [
                     'required' => true,
-                    'placeholder' => 'login_placeholder',
-                    'validators' => ['Ice:Length_Min' => 3],
-                    'providers' => Request::class
+                    'placeholder' => true,
+                    'params' => [
+                        'login' => [
+                            'providers' => Request::class,
+                            'validators' => ['Ice:Length_Min' => 3]
+                        ]
+                    ]
                 ]
             )
             ->password(
                 'password',
                 [
                     'required' => true,
-                    'placeholder' => 'password_placeholder',
-                    'validators' => ['Ice:Length_Min' => 5],
-                    'providers' => Request::class
+                    'placeholder' => true,
+                    'params' => [
+                        'password' => [
+                            'providers' => Request::class,
+                            'validators' => ['Ice:Length_Min' => 5]
+                        ]
+                    ]
                 ]
             )
             ->password(
                 'confirm_password',
                 [
-                    'placeholder' => 'confirm_password_placeholder',
-                    'providers' => Request::class
+                    'placeholder' => true,
+                    'params' => ['confirm_password' => ['providers' => Request::class]]
                 ]
             )
             ->div('ice-message', ['value' => '&nbsp;', 'encode' => false, 'resource' => false])

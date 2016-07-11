@@ -44,9 +44,9 @@ class Security_EmailPassword_RegisterConfirm extends Widget_Security
             ->text(
                 'token',
                 [
-                    'placeholder' => 'token_placeholder',
+                    'placeholder' => true,
                     'required' => true,
-                    'providers' => Request::class
+                    'params' => ['token' => ['providers' => Request::class]]
                 ]
             )
             ->div('ice-message', ['value' => '&nbsp;', 'encode' => false, 'resource' => false])

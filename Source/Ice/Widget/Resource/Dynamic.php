@@ -3,6 +3,7 @@
 namespace Ice\Widget;
 
 use Ice\Action\Resource_Dynamic as Action_Resource_Dynamic;
+use Ice\Core\Debuger;
 use Ice\Core\Environment;
 use Ice\Core\Module;
 use Ice\Core\Render;
@@ -31,7 +32,7 @@ class Resource_Dynamic extends Resource
             'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'Widget: Access denied!'],
             'resource' => ['js' => null, 'css' => null, 'less' => null, 'img' => null],
             'cache' => ['ttl' => -1, 'count' => 1000],
-            'input' => ['routeName' => ['providers' => Router::class, 'default' => '/'],],
+            'input' => ['routeName' => ['providers' => Router::class, 'default' => '/']],
             'output' => [],
         ];
     }
@@ -74,7 +75,7 @@ class Resource_Dynamic extends Resource
         }
 
         foreach ($javascripts as $js => $sources) {
-            $this->script(Hash::get($sources, Hash::HASH_CRC32), ['value' => $js]);
+            $this->script(Hash::get($sources, Hash::HASH_CRC32) . '_js', ['value' => $js]);
         }
 
         $styleCacheFile = Module::getInstance()->get(Module::COMPILED_RESOURCE_DIR) . 'style.' . $input['routeName'] . '.cache.php';
@@ -98,7 +99,7 @@ class Resource_Dynamic extends Resource
         }
 
         foreach ($styles as $css => $sources) {
-            $this->link(Hash::get($sources, Hash::HASH_CRC32), ['value' => $css]);
+            $this->link(Hash::get($sources, Hash::HASH_CRC32) . '_css', ['value' => $css]);
         }
 
         $this->loaded = true;
