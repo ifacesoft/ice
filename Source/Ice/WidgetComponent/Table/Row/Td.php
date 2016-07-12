@@ -2,6 +2,8 @@
 
 namespace Ice\WidgetComponent;
 
+use Ice\Exception\Not_Valid;
+
 class Table_Row_Td extends HtmlTag
 {
     /**
@@ -16,5 +18,10 @@ class Table_Row_Td extends HtmlTag
             'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'WidgetComponent: Access denied!'],
             'cache' => ['ttl' => -1, 'count' => 1000],
         ];
+    }
+
+    protected function getNotValidResult(Not_Valid $e)
+    {
+        return '<td>' . parent::getNotValidResult($e) . '</td>';
     }
 }

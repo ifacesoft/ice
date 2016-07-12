@@ -1,4 +1,5 @@
 <?php $parts = reset($result) ?>
+
 <tr id="<?= $widgetId ?>"
        data-widget='<?= $dataWidget ?>'
        data-params='<?= $dataParams ?>'

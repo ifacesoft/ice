@@ -149,4 +149,9 @@ class FormElement extends HtmlTag
             }
         }
     }
+
+    protected function getValidValue()
+    {
+        return $this->get($this->getValueKey());
+    }
 }

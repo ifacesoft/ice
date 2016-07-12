@@ -100,6 +100,8 @@ class File
      *
      * @version 0.0
      * @since   0.0
+     *
+     * @return mixed
      */
     public static function move($from, $to)
     {
@@ -118,11 +120,13 @@ class File
      *
      * @version 0.2
      * @since   0.2
+     * @return mixed
      */
     public static function copy($from, $to)
     {
         Directory::get(dirname($to));
         copy($from, $to);
+
         return $to;
     }
 

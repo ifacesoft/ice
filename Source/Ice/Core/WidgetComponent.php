@@ -4,6 +4,7 @@ namespace Ice\Core;
 
 use Ice\Action\PhpUnit;
 use Ice\Core;
+use Ice\Exception\Error;
 use Ice\Exception\Not_Show;
 use Ice\Exception\Not_Valid;
 use Ice\Helper\Access;
@@ -435,13 +436,19 @@ abstract class WidgetComponent
         return $this->getOption($name, $default) === $value;
     }
 
+    protected function getValidValue()
+    {
+        $this->validate();
+        return $this->get($this->getValueKey());
+    }
+
     /**
      * @param bool $encode
      * @return null
      */
     public function getValue($encode = null)
     {
-        $value = $this->get($this->getValueKey());
+        $value = $this->getValidValue();
 
         if (empty($value)) {
             return $value;
@@ -498,21 +505,6 @@ abstract class WidgetComponent
         return $valueKey;
     }
 
-//    protected function getFromProviders($name, array $data)
-//    {
-//        $providers = (array)$this->getOption('providers');
-//
-//        $providers[] = 'default';
-//
-//        $config = ['providers' => $providers];
-//
-//        if (array_key_exists('default', $this->getOption())) {
-//            $config['default'] = $this->options['default'];
-//        }
-//
-//        return Input::get([$name => $config], $data)[$name];
-//    }
-
     protected function getParamsConfig()
     {
         $valueKey = $this->getValueKey();
@@ -537,31 +529,6 @@ abstract class WidgetComponent
 
     protected function buildParams(array $values)
     {
-//        $this->params[$this->getComponentName()] = array_key_exists($this->getComponentName(), $values)
-//            ? $values[$this->getComponentName()]
-//            : null;
-
-//        foreach ((array)$this->getOption('params') as $key => $param) {
-//            if (is_int($key)) {
-//                $key = $param;
-//            }
-//
-//            if ($this->get($key)) {
-//                continue;
-//            }
-//
-//            if (!is_string($param)) {
-//                $this->set($key, $param);
-//                continue;
-//            }
-//
-//            $param = $key == $param
-//                ? (array_key_exists($param, $values) ? $values[$param] : null)
-//                : (array_key_exists($param, $values) ? $values[$param] : $param);
-//
-//            $this->set($key, $param);
-//        }
-
         $this->set(Input::get($this->getParamsConfig(), $values));
 
         $valueKey = $this->getValueKey();
@@ -608,7 +575,7 @@ abstract class WidgetComponent
     {
         $error = new HtmlTag('error', ['value' => $e->getMessage()], 'Ice\WidgetComponent\Bootstrap_Alert_Danger', Block::getInstance(null));
 
-        return $error->render();
+        return $error->build([])->render();
     }
 
     public function getLayout()
@@ -618,10 +585,6 @@ abstract class WidgetComponent
 
     public function validate()
     {
-        return Validator::validateByValidators(
-            $this->getValue(),
-            $this->getOption('validators', []),
-            $this->getComponentName()
-        );
+        return Validator::validateParams($this->getParams(), (array)$this->getOption('params', []));
     }
 }

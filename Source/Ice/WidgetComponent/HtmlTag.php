@@ -364,5 +364,9 @@ class HtmlTag extends WidgetComponent
         }
 
         parent::buildParams($values);
+
+        if ($this->getComponentName() == 'tema_vkr') {
+            Debuger::dump($this->params);die();
+        }
     }
 }

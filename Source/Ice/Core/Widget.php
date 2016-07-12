@@ -432,7 +432,7 @@ abstract class Widget extends Container
         
         foreach ($this->getParts() as $partName => $part) {
             if (array_key_exists($partName, $values)) {
-                $part->set([$partName, $values[$partName]]);
+                $part->set([$partName => $values[$partName]]);
                 unset($values[$partName]);
             }
         }
@@ -1214,8 +1214,7 @@ abstract class Widget extends Container
         $values = [];
 
         foreach ($this->getParts($this->getFilterParts()) as $component) {
-            $name = $component instanceof FormElement ? $component->getName() : $component->getComponentName();
-            $values[$name] = $component->validate();
+            $values = array_merge($values, $component->validate());
         }
 
         return array_merge($values, $this->getValues()); // todo: $this->values mast be validate too

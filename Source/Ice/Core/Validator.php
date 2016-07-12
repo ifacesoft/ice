@@ -36,84 +36,6 @@ abstract class Validator extends Container
     const DEFAULT_KEY = 'instance';
 
     /**
-     * Validate data by validate scheme
-     *
-     * example usage:
-     * ```php
-     *      $validateScheme = [
-     *          'FIELD_NAME' => 'VALIDATOR_NAME'
-     *      ];
-     * ```
-     * or
-     * ```php
-     *      $validateScheme = [
-     *          FIELD_NAME' => [
-     *              'VALIDATOR_NAME' => 'VALIDATOR_PARAM'
-     *          ]
-     *      ];
-     * ```
-     * or
-     * ```php
-     *      $validateScheme = [
-     *          'FIELD_NAME' => [
-     *              'VALIDATOR_NAME' => [
-     *                  'params' => [
-     *                      'VALIDATOR_PARAM_NAME1' => 'VALIDATOR_PARAM_VALUE1',
-     *                      'VALIDATOR_PARAM_NAME2 => 'VALIDATOR_PARAM_VALUE2'
-     *                  ],
-     *                  'message' => 'validate failed for {$0}',
-     *                  'exception' => 'Ice:Http_Not_Found'
-     *              ]
-     *          ]
-     *      ];
-     * ```
-     *
-     * @param  $data
-     * @param  array $validateScheme
-     * @return array
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @todo Заменить на Helper_Array::validate()
-     *
-     * @version 1.1
-     * @since   0.0
-     */
-    public static function validateByScheme(array $data, array $validateScheme)
-    {
-        foreach ($validateScheme as $param => $validators) {
-            Validator:: validateByValidators(isset($data[$param]) ? $data[$param] : null, $validators, $param);
-        }
-
-        return $data;
-    }
-
-    /**
-     * @param $value
-     * @param $validators
-     * @param null $param
-     * @return mixed 
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @todo Заменить на Helper_Array::validate()
-     *
-     * @version 1.1
-     * @since   1.1
-     */
-    public static function validateByValidators($value, $validators, $param = null) {
-        foreach ((array)$validators as $validatorName => $validatorParams) {
-            if (is_int($validatorName)) {
-                $validatorName = $validatorParams;
-                $validatorParams = null;
-            }
-
-            $value = Helper_Validator::validate($validatorName, $validatorParams, $value, $param);
-        }
-        
-        return $value;
-    } 
-    
-    /**
      * Return validator instance
      *
      * @param  null $key
@@ -150,6 +72,36 @@ abstract class Validator extends Container
         }
 
         return $validators ? ['validators' => $validators] : [];
+    }
+
+    /**
+     * @param $params
+     * @param $paramsOptions
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     * @todo Заменить на Helper_Array::validate()
+     * @version 1.1
+     * @since   1.1
+     * @return array
+     */
+    public static function validateParams(array $params, array $paramsOptions)
+    {
+        foreach ($paramsOptions as $paramName => $options) {
+            if (empty($options['validators'])) {
+                continue;
+            }
+
+            foreach ((array)$options['validators'] as $validatorName => $validatorParams) {
+                if (is_int($validatorName)) {
+                    $validatorName = $validatorParams;
+                    $validatorParams = null;
+                }
+
+                $params[$paramName] = Helper_Validator::validate($validatorName, $validatorParams, $params[$paramName], $paramName);
+            }
+        }
+
+        return $params;
     }
 
     /**

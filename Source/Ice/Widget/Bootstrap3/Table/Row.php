@@ -72,6 +72,10 @@ class Bootstrap3_Table_Row extends Widget
      */
     public function th($columnName, array $options = [], $template = null)
     {
+//        if (!array_key_exists('params', $options)) {
+//            $options['params'] = [$columnName => $columnName];
+//        }
+
         return $this->addPart(new Table_Row_Th($columnName, $options, $template, $this));
     }
 }
