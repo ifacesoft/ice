@@ -529,9 +529,16 @@ class Query
         return Logger::getInstance($this->getModelClass());
     }
 
-    public function getGroup($fieldName, $ttl = null)
+    public function getGroup($fieldNames, $ttl = null)
     {
         $modelClass = $this->getQueryBuilder()->getModelClass();
-        return Arrays::group($this->getRows($ttl), $modelClass::getFieldName($fieldName));
+
+        $columns = [];
+
+        foreach ((array) $fieldNames as $fieldName) {
+            $columns[] = $modelClass::getFieldName($fieldName);
+        }
+
+        return Arrays::group($this->getRows($ttl), $columns);
     }
 }

@@ -110,23 +110,36 @@ class Arrays
      * Group array by known column
      *
      * @param  $array
-     * @param  $column
+     * @param  $columns
      * @return array
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 1.1
      * @since   0.0
      */
-    public static function group($array, $column)
+    public static function group($array, $columns)
     {
         $group = [];
 
-        foreach ($array as $key => $item) {
-            $index = $item[$column];
-            unset($item[$column]);
+        $keys = array_flip((array)$columns);
 
-            $group[$index][$key] = $item;
+        $indexes = [];
+
+        $i = 0;
+
+        foreach ($array as $key => $item) {
+            $values = array_intersect_key($item, $keys);
+
+            $index = implode('__', $values);
+
+            if (!isset($indexes[$index])) {
+                $indexes[$index] = $i++;
+                $group[$indexes[$index]] = $values;
+                $group[$indexes[$index]]['items'] = [];
+            }
+
+            $group[$indexes[$index]]['items'][$key] = array_diff_key($item, $keys);
         }
 
         return $group;

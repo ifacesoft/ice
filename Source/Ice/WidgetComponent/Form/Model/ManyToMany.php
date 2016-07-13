@@ -66,10 +66,7 @@ class Form_Model_ManyToMany extends FormElement_Chosen
         /** @var Model $modelClass */
         $modelClass = $this->getItemModelClass();
 
-        $this->setOption(
-            'rows',
-            $modelClass::getSelectQuery([$this->getItemKey(), $this->getItemTitle()])->getRows()
-        );
+        $this->setOption('items', $modelClass::getItems($this->getItemKey(), $this->getItemTitle()));
 
         return parent::getItems();
     }
@@ -158,7 +155,7 @@ class Form_Model_ManyToMany extends FormElement_Chosen
 //        }
     }
 
-    public function filter(QueryBuilder $queryBuilder, $modelClass = null)
+    public function filter(QueryBuilder $queryBuilder)
     {
         $modelClass = $this->getItemModelClass();
 

@@ -1923,31 +1923,39 @@ class QueryBuilder
         return $this;
     }
 
-    public function filterWidget(
-        $widgetName,
-        $key,
-        $value,
-        $fieldName = null,
-        $comparison = QueryBuilder::SQL_COMPARISON_OPERATOR_EQUAL,
-        $modelTableData = [],
-        $isUse = true
-    )
-    {
-        /** @var Form $widget */
-        $widget = $this->widgets[$widgetName]->bind([$key => $value]);
-
-        $value = $widget->getValue($key);
-
-        if (!empty($value)) {
-            if (!$fieldName) {
-                $fieldName = $key;
-            }
-
-            $this->where(QueryBuilder::SQL_LOGICAL_AND, [$fieldName => $value], $comparison, $modelTableData, $isUse);
+    public function filter(Form $form) {
+        foreach ($form->getParts() as $widgetComponent) {
+            $widgetComponent->filter($this);
         }
 
         return $this;
     }
+
+//    public function filterWidget(
+//        $widgetName,
+//        $key,
+//        $value,
+//        $fieldName = null,
+//        $comparison = QueryBuilder::SQL_COMPARISON_OPERATOR_EQUAL,
+//        $modelTableData = [],
+//        $isUse = true
+//    )
+//    {
+//        /** @var Form $widget */
+//        $widget = $this->widgets[$widgetName]->bind([$key => $value]);
+//
+//        $value = $widget->getValue($key);
+//
+//        if (!empty($value)) {
+//            if (!$fieldName) {
+//                $fieldName = $key;
+//            }
+//
+//            $this->where(QueryBuilder::SQL_LOGICAL_AND, [$fieldName => $value], $comparison, $modelTableData, $isUse);
+//        }
+//
+//        return $this;
+//    }
 
     public function addTransform($transform, array $data = [], $modelClass = null, $isUse = true)
     {

@@ -419,7 +419,13 @@ abstract class WidgetComponent
             return $this->params;
         }
 
-        return isset($this->params[$param]) ? $this->params[$param] : $default;
+        if (isset($this->params[$param])) {
+            return $this->params[$param];
+        }
+
+        $params = Input::get($this->getParamsConfig());
+
+        return isset($params[$param]) ? $params[$param] : $default;
     }
 
     public function set(array $params)
@@ -510,8 +516,8 @@ abstract class WidgetComponent
         $valueKey = $this->getValueKey();
         $value = $this->getOption('value');
 
-        if ($value === null) {
-            $value = $this->get($valueKey);
+        if ($value === null && isset($this->params[$valueKey])) {
+            $value = $this->params[$valueKey];
         }
 
         $paramsConfig = (array)$this->getOption('params', []);

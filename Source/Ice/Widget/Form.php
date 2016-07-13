@@ -549,4 +549,13 @@ class Form extends Widget
     {
         $this->submitComponentName = $submitComponentName;
     }
+
+    /**
+     * @param null $filterParts
+     * @return FormElement[]
+     */
+    public function getParts($filterParts = null)
+    {
+        return parent::getParts($filterParts);
+    }
 }

@@ -1632,4 +1632,23 @@ abstract class Model
 
         return $this;
     }
+
+    /**
+     * Rows for ListBox like widget components
+     *
+     * @param string $itemKey
+     * @param string $itemTitle
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 1.1
+     * @since   1.1
+     *
+     * @return array
+     */
+    public static function getItems($itemKey = '/pk', $itemTitle = '/name') {
+        $modelClass = self::getClass();
+
+        return $modelClass::getSelectQuery([$itemKey => 'itemKey', $itemTitle => 'itemTitle'])->getRows();
+    }
 }

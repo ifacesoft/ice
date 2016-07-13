@@ -12,7 +12,6 @@ use Ice\Helper\String;
 use Ice\Helper\Transliterator;
 use Ice\Widget\Bootstrap3_Table_Row;
 use Ice\Widget\Resource_Dynamic;
-use Ice\WidgetComponent\FormElement;
 use Ice\WidgetComponent\HtmlTag;
 use Ice\WidgetComponent\HtmlTag_A;
 use Ice\WidgetComponent\Widget as WidgetComponent_Widget;
@@ -317,7 +316,7 @@ abstract class Widget extends Container
 
     /**
      * @param $renderClass
-     * @return Render
+     * @return Widget
      */
     public function setRenderClass($renderClass = null)
     {
@@ -451,6 +450,11 @@ abstract class Widget extends Container
         }
     }
 
+    /**
+     * @param QueryBuilder $queryBuilder
+     * @param array $input
+     * @deprecated 1.1 Use $queryBuilder->filter($formWidget). Filter by all components of widget
+     */
     public function queryBuilderPart(QueryBuilder $queryBuilder, array $input)
     {
         foreach ($this->getParts() as $part) {
@@ -708,7 +712,9 @@ abstract class Widget extends Container
      * Compiled widget parts
      *
      * @param null $filterParts
+     *
      * @return WidgetComponent[]
+     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @todo: Зачечем весь этот код?

@@ -51,7 +51,7 @@ class Form_Model_OneToMany extends FormElement_Chosen
             ? array_merge([$this->getItemTitle()], (array)$fieldNames)
             : array_diff(array_merge(array_keys($this->getParams()), (array)$fieldNames), [$this->getValueKey()]);
 
-        $this->setOption('rows', $queryBuilder->getSelectQuery(array_merge((array)$this->getItemKey(), $fieldNames))->getRows());
+        $this->setOption('items', $queryBuilder->getSelectQuery(array_merge((array)$this->getItemKey(), $fieldNames))->getRows());
 
         return parent::getItems();
     }
@@ -101,9 +101,8 @@ class Form_Model_OneToMany extends FormElement_Chosen
 
     /**
      * @param QueryBuilder $queryBuilder
-     * @param Model $modelClass
      */
-    public function filter(QueryBuilder $queryBuilder, $modelClass = null)
+    public function filter(QueryBuilder $queryBuilder)
     {
         $modelClass = $this->getItemModel();
 
