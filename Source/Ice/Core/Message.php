@@ -2,9 +2,9 @@
 
 namespace Ice\Core;
 
-use Ebs\Model\Log_Message;
 use Ice\Core;
 use Ice\Helper\Date;
+use Ice\Model\Log_Message;
 
 abstract class Message
 {
