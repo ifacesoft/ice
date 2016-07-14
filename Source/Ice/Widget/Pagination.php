@@ -279,7 +279,15 @@ class Pagination extends Widget
     private function nextNext($page, $pageCount)
     {
         if ($page < $pageCount) {
-            $this->li(__FUNCTION__, ['value' => '{$page}', 'params' => ['page' => $page], 'valueResource' => true, 'active' => false]);
+            $this->li(
+                __FUNCTION__,
+                [
+                    'value' => '{$page}',
+                    'params' => ['page' => $page],
+                    'valueResource' => true,
+                    'active' => false
+                ]
+            );
         }
 
         return $this;
@@ -293,7 +301,15 @@ class Pagination extends Widget
     private function next($page, $pageCount)
     {
         if ($page < $pageCount) {
-            $this->li(__FUNCTION__, ['value' => '{$page}', 'params' => ['page' => $page], 'valueResource' => true, 'active' => false]);
+            $this->li(
+                __FUNCTION__,
+                [
+                    'value' => '{$page}',
+                    'params' => ['page' => $page],
+                    'valueResource' => true,
+                    'active' => false
+                ]
+            );
         }
 
         return $this;
@@ -331,7 +347,15 @@ class Pagination extends Widget
     private function prev($page)
     {
         if ($page > 1) {
-            $this->li(__FUNCTION__, ['value' => '{$page}', 'params' => ['page' => $page], 'valueResource' => true, 'active' => false]);
+            $this->li(
+                __FUNCTION__,
+                [
+                    'value' => '{$page}',
+                    'params' => ['page' => $page],
+                    'valueResource' => true,
+                    'active' => false
+                ]
+            );
         }
 
         return $this;
@@ -344,7 +368,14 @@ class Pagination extends Widget
     private function prevPrev($page)
     {
         if ($page > 1) {
-            $this->li(__FUNCTION__, ['value' => '{$page}', 'params' => ['page' => $page], 'valueResource' => true, 'active' => false]);
+            $this->li(
+                __FUNCTION__,
+                [
+                    'value' => '{$page}',
+                    'params' => ['page' => $page],
+                    'valueResource' => true,
+                    'active' => false
+                ]);
         }
 
         return $this;
