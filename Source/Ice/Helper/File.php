@@ -11,6 +11,7 @@ namespace Ice\Helper;
 
 use Ice\Core\Exception;
 use Ice\Core\Logger as Core_Logger;
+use Ice\Exception\Error;
 
 /**
  * Class File
@@ -34,6 +35,7 @@ class File
      * @param  $data
      * @param  bool $phpData
      * @param  int $file_put_contents_flag
+     * @param bool $isPretty
      * @return mixed
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -95,19 +97,31 @@ class File
      *
      * @param $from
      * @param $to
-     *
+     * @param bool $isRequire
+     * @return mixed
+     * @throws Error
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 1.2
      * @since   0.0
-     *
-     * @return mixed
      */
-    public static function move($from, $to)
+    public static function move($from, $to, $isRequire = true)
     {
-        Directory::get(dirname($to));
-        rename($from, $to);
-        return $to;
+        if (File::copy($from, $to, $isRequire)) {
+            if (unlink($from)) {
+                if ($isRequire) {
+                    throw  new Error(['Remove file {$0} failed', $from]);
+                } else {
+                    return false;
+                }
+            }
+        }
+
+        if ($isRequire) {
+            throw  new Error(['Move from {$0} to {$1} failed', [$from, $to]]);
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -116,18 +130,35 @@ class File
      * @param $from
      * @param $to
      *
+     * @param bool $isRequire
+     * @return mixed
+     * @throws Error
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.2
+     * @version 1.2
      * @since   0.2
-     * @return mixed
      */
-    public static function copy($from, $to)
+    public static function copy($from, $to, $isRequire = true)
     {
-        Directory::get(dirname($to));
-        copy($from, $to);
+        if (!file_exists($from)) {
+            if ($isRequire) {
+                throw  new Error(['Source file {$0} not found', $from]);
+            } else {
+                return false;
+            }
+        }
 
-        return $to;
+        Directory::get(dirname($to));
+
+        if (copy($from, $to) === true) {
+            return $to;
+        }
+
+        if ($isRequire) {
+            throw  new Error(['Copy from {$0} to {$1} failed', [$from, $to]]);
+        } else {
+            return false;
+        }
     }
 
     /**

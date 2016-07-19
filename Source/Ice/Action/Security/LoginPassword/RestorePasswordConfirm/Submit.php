@@ -35,7 +35,7 @@ class Security_LoginPassword_RestorePasswordConfirm_Submit extends Security
                 ];
             }
 
-            $accountModelClass = $securityForm->getAccountEmailPasswordModelClass();
+            $accountModelClass = $securityForm->getAccountLoginPasswordModelClass();
             $accountModelClassName = $accountModelClass::getClassName();
 
             /** @var Security_Account|Model $account */

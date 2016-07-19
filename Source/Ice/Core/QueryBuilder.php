@@ -1491,6 +1491,45 @@ class QueryBuilder
     }
 
     /**
+     * Set flag of get count rows
+     *
+     * @param  array $fieldNameAlias
+     * @param  array $modelTableData
+     * @return QueryBuilder
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.6
+     * @since   0.0
+     */
+    public function groupConcat($fieldNameAlias = [], $modelTableData = [])
+    {
+        /**
+         * @var Model $modelClass
+         */
+        list($modelClass, $tableAlias) = $this->getModelClassTableAlias($modelTableData);
+        list($fieldName, $fieldAlias) = $this->getFieldNameAlias($fieldNameAlias, $modelClass);
+        $fieldNames = [];
+
+        $fieldColumnMap = $modelClass::getScheme()->getFieldColumnMap();
+
+        foreach ((array)$fieldName as $name) {
+            $name = $fieldColumnMap[$name];
+
+            $fieldNames[] = '`' . $tableAlias . '`.`' . $modelClass::getFieldName($name) . '`';
+            $this->appendCacheTag($modelClass, $name, true, false);
+        }
+
+        if (!$fieldAlias) {
+            $fieldAlias = strtolower($modelClass::getClassName()) . '__count';
+        }
+
+        $this->select('GROUP_CONCAT(' . implode(',', $fieldNames) . ')', $fieldAlias, [$modelClass => '']);
+
+        return $this;
+    }
+
+    /**
      * Return couple fieldName and fieldAlias
      *
      * @param  string|array $fieldNameAlias
@@ -2111,6 +2150,16 @@ class QueryBuilder
             $sqlLogical,
             [$fieldName => $fieldValue],
             QueryBuilder::SQL_COMPARISON_OPERATOR_GREATER,
+            $modelTableData
+        );
+    }
+
+    public function havingIs($fieldName, $modelTableData = [], $sqlLogical = QueryBuilder::SQL_LOGICAL_AND)
+    {
+        return $this->havingPart(
+            $sqlLogical,
+            [$fieldName => 1],
+            QueryBuilder::SQL_COMPARISON_OPERATOR_EQUAL,
             $modelTableData
         );
     }
