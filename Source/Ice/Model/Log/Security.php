@@ -95,7 +95,7 @@ class Log_Security extends Model
 		                'dataType' => 'bigint',
 		                'length' => '19,0',
 		                'characterSet' => null,
-		                'nullable' => false,
+		                'nullable' => true,
 		                'default' => null,
 		                'comment' => '',
 		            ],
