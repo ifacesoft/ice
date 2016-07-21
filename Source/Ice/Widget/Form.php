@@ -58,7 +58,7 @@ class Form extends Widget
         /** @var Form $formClass */
         $formClass = get_class($this);
 
-        $tempDir = Module::getInstance()->get(Module::TEMP_DIR) . '/' . $formClass::getClassName();
+        $tempDir = getTempDir() . '/' . $formClass::getClassName();
 
         foreach (array_keys($this->getParts($this->getFilterParts())) as $key) {
             if (isset($params[$key])) {

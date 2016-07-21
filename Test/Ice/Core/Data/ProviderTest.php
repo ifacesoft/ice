@@ -8,7 +8,7 @@ class DataProviderTest extends PHPUnit_Framework_TestCase
 {
     public function testProviders()
     {
-        foreach (scandir(Module::getInstance('Ice')->get(Module::SOURCE_DIR) . 'Ice/Data/Provider', 1) as $dataProviderFile) {
+        foreach (scandir(getSourceDir('Ice') . 'Ice/Data/Provider', 1) as $dataProviderFile) {
             if (
                 $dataProviderFile == '..' ||
                 $dataProviderFile == '.' ||

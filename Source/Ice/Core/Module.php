@@ -41,26 +41,28 @@ class Module extends Config
     const UPLOAD_DIR = 'uploadDir';
     const DOWNLOAD_DIR = 'downloadDir';
     const PRIVATE_DOWNLOAD_DIR = 'privateDownloadDir';
-
+    const DIR = 'path'; // где-то еще используется не как константа
 
     public static $defaultConfig = [
         'alias' => 'Draft',
         'module' => [
-            Module::CONFIG_DIR => 'Config/',
-            Module::SOURCE_DIR => 'Source/',
-            Module::RESOURCE_DIR => 'Resource/',
-            Module::LOG_DIR => 'Var/log/',
-            Module::CACHE_DIR => 'Var/cache/',
-            Module::UPLOAD_DIR => 'Var/upload/',
-            Module::DATA_DIR => 'Var/data/',
-            Module::TEMP_DIR => 'Var/temp/',
-            Module::RUN_DIR => 'Var/run/',
-            Module::COMPILED_RESOURCE_DIR => 'Web/resource/',
-            Module::DOWNLOAD_DIR => 'Web/download/',
-            Module::PRIVATE_DOWNLOAD_DIR => 'Var/download/',
+            'pathes' => [
+                Module::CONFIG_DIR => 'Config/',
+                Module::SOURCE_DIR => 'Source/',
+                Module::RESOURCE_DIR => 'Resource/',
+                Module::LOG_DIR => 'Var/log/',
+                Module::CACHE_DIR => 'Var/cache/',
+                Module::UPLOAD_DIR => 'Var/upload/',
+                Module::DATA_DIR => 'Var/data/',
+                Module::TEMP_DIR => 'Var/temp/',
+                Module::RUN_DIR => 'Var/run/',
+                Module::COMPILED_RESOURCE_DIR => 'Web/resource/',
+                Module::DOWNLOAD_DIR => 'Web/download/',
+                Module::PRIVATE_DOWNLOAD_DIR => 'Var/download/',
+            ],
             'ignorePatterns' => [],
             'bootstrapClass' => 'Ice\Bootstrap\Ice',
-
+            'routerClass' => 'Ice\Router\Ice'
         ],
         'modules' => [
             'ifacesoft/ice' => '/ice'
@@ -261,7 +263,7 @@ class Module extends Config
 
         $module = $moduleConfig['module'];
 
-        $module['path'] = $modulePath;
+        $module[Module::DIR] = $modulePath;
 
         $moduleDirs = [
             Module::CONFIG_DIR,
@@ -287,7 +289,7 @@ class Module extends Config
         }
 
         foreach ($moduleDirs as $dir) {
-            $module[$dir] = Directory::get($modulePath . $module[$dir]);
+            $module['pathes'][$dir] = Directory::get($modulePath . $module['pathes'][$dir]);
         }
 
         $module['context'] = $context;
@@ -343,5 +345,11 @@ class Module extends Config
     public static function modulesClear()
     {
         Module::$modules = null;
+    }
+
+    public function getPath($pathParam = null, $isRequired_default = true) {
+        return $pathParam
+            ? $this->get('pathes/' . $pathParam, $isRequired_default)
+            : $this->get(Module::DIR);
     }
 }

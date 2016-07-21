@@ -58,6 +58,8 @@ try {
     require_once ICE_DIR . 'Source/Ice/DataProvider/Repository.php';
     require_once ICE_DIR . 'Source/Ice/Core/Render.php';
     require_once ICE_DIR . 'Source/Ice/Helper/Api/Client/Yandex/Translate.php';
+//    require_once ICE_DIR . 'Source/Ice/Exception/Config/Param.php';
+//    require_once ICE_DIR . 'Source/Ice/Exception/Config/Param/NotFound.php';
 
     \Ice\Core\Bootstrap::getInstance($config['module']['bootstrapClass'], null, ['loader' => $loader]);
 

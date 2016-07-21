@@ -132,7 +132,7 @@ class Resource_Dynamic extends Action
             'css' => []
         ];
 
-        $compiledResourceDir = Module::getInstance()->get(Module::COMPILED_RESOURCE_DIR);
+        $compiledResourceDir = getCompiledResourceDir();
 
         $moduleAlias = Module::getInstance()->getAlias();
 
@@ -298,7 +298,7 @@ class Resource_Dynamic extends Action
             }
         }
 
-        $resourceDir = Module::getInstance()->get(Module::COMPILED_RESOURCE_DIR);
+        $resourceDir = getCompiledResourceDir();
 
         return [
             'javascripts' => File::createData($resourceDir . 'javascript.' . $routeName . '.cache.php', $cache['js']),

@@ -40,11 +40,7 @@ class Class_Generator
 
     public function generate($data)
     {
-        $module = Module::getInstance(Object::getModuleAlias($this->class));
-
-        $path = $module->get(Module::SOURCE_DIR);
-
-        $filePath = $path . str_replace(['\\', '_'], '/', $this->class) . '.php';
+        $filePath = getSourceDir(Object::getModuleAlias($this->class)) . str_replace(['\\', '_'], '/', $this->class) . '.php';
 
         $code = file_get_contents($filePath);
 

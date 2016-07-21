@@ -248,7 +248,7 @@ class File extends DataProvider
         $options = $this->getOptions();
 
         if (!isset($options['path'])) {
-            $options['path'] = Module::getInstance()->get('cacheDir');
+            $options['path'] = getCacheDir();
         }
 
         $connection = $options['path'];

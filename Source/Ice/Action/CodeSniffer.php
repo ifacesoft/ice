@@ -52,11 +52,11 @@ class CodeSniffer extends Action
         $phpcs = VENDOR_DIR . $input['vendor'] . $input['command']['phpcs'];
 
         Console::run(
-            'php ' . $phpcbf . ' ' . Module::getInstance()->get(Module::SOURCE_DIR) . ' --standard=PSR2'
+            'php ' . $phpcbf . ' ' . getSourceDir() . ' --standard=PSR2'
         );
 
         Console::run(
-            'php ' . $phpcs . ' ' . Module::getInstance()->get(Module::SOURCE_DIR) . ' --report-full --standard=PSR2'
+            'php ' . $phpcs . ' ' . getSourceDir() . ' --report-full --standard=PSR2'
         );
     }
 }

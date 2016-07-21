@@ -50,7 +50,7 @@ class Resource extends Action
      */
     public function run(array $input)
     {
-        $compiledResourceDir = Module::getInstance()->get('compiledResourceDir');
+        $compiledResourceDir = getCompiledResourceDir();
 
         foreach (array_keys(Module::getAll()) as $name) {
             $modulePath = Module::getInstance($name)->get('path');

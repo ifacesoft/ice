@@ -153,7 +153,7 @@ class Logger
         ini_set('xdebug.var_display_max_depth', -1);
         ini_set('xdebug.profiler_enable', 1);
         ini_set('xdebug.max_nesting_level', 200);
-        ini_set('xdebug.profiler_output_dir', Module::getInstance()->get('logDir') . 'xdebug');
+        ini_set('xdebug.profiler_output_dir', Module::getInstance()->getPath(Module::LOG_DIR) . 'xdebug');
 
         ob_start();
     }
@@ -256,7 +256,7 @@ class Logger
         }
 
         $name = Request::isCli() ? Core_Console::getCommand(null) : Request::uri();
-        $logFile = Directory::get(Module::getInstance()->get('logDir')) . date('Y-m-d') . '/INFO/' . urlencode($name) . '.log';
+        $logFile = getLogDir() . date('Y-m-d') . '/INFO/' . urlencode($name) . '.log';
 
         if (strlen($logFile) > 255) {
             $logFilename = substr($logFile, 0, 255 - 11);
@@ -550,7 +550,7 @@ class Logger
         $value = str_replace(["\n", "\t"], ' ', $value);
 
         $name = Request::isCli() ? Core_Console::getCommand(null) : Request::uri();
-        $logFile = Directory::get(Module::getInstance()->get('logDir')) . date('Y-m-d') . '/LOG/' . urlencode($name) . '.log';
+        $logFile = getLogDir() . date('Y-m-d') . '/LOG/' . urlencode($name) . '.log';
 
         if (strlen($logFile) > 255) {
             $logFilename = substr($logFile, 0, 255 - 11);

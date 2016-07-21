@@ -260,7 +260,7 @@ class Orm_Sync_DataSource extends Action
 //            foreach ($sourceTables as $tableName => $table) {
 //                if (array_key_exists($tableName, $schemes)) {
 //                    $this->deleteModel(
-//                        $module->get(Module::Scheme_DIR) . $table['modelPath'],
+//                        $module->getPart(Module::Scheme_DIR) . $table['modelPath'],
 //                        $tableName,
 //                        $sourceTables);
 //                }

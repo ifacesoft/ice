@@ -35,7 +35,7 @@ class Sphinx extends Action
      */
     public function run(array $input)
     {
-        $config = Module::getInstance()->get(Module::CONFIG_DIR) . $input['config'];
+        $config = getConfigDir() . $input['config'];
 
         $commands = [
 //            $input['searchd'] . ' --stop',

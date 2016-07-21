@@ -51,7 +51,7 @@ abstract class Action_Service extends Action
 
         $args = urlencode(Serializer::serialize($input));
 
-        return Module::getInstance()->get(Module::RUN_DIR) . $actionClass::getClassName() . '__' . $args . '.lock';
+        return getRunDir() . $actionClass::getClassName() . '__' . $args . '.lock';
     }
 
     protected function lock(Logger $logger, array $input)

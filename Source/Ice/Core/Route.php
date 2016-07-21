@@ -82,7 +82,7 @@ class Route extends Config
         $routeFilePathes = [];
 
         foreach (Module::getAll() as $module) {
-            $routeFilePathes[$module->get('context')] = $module->get(Module::CONFIG_DIR) . 'Ice/Core/Route.php';
+            $routeFilePathes[$module->get('context')] = $module->getPath(Module::CONFIG_DIR) . 'Ice/Core/Route.php';
         }
 
         return $dataProvider->set('routes', self::getRouteFileData($routeFilePathes));

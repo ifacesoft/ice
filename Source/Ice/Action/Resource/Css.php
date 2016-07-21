@@ -56,15 +56,14 @@ class Resource_Css extends Action
     public function run(array $input)
     {
         $resources = [];
-        $cache = [];
-        $compiledResourceDir = Module::getInstance()->get(Module::COMPILED_RESOURCE_DIR);
+        $compiledResourceDir = getCompiledResourceDir();
 
-        foreach (array_keys(Module::getAll()) as $name) {
-            if (file_exists($cssSource = Module::getInstance($name)->get(Module::RESOURCE_DIR) . 'css/style.css')) {
+        foreach (array_keys(Module::getAll()) as $moduleName) {
+            if (file_exists($cssSource = getResourceDir($moduleName) . 'css/style.css')) {
                 $resources[] = [
                     'source' => $cssSource,
-                    'resource' => $compiledResourceDir . $name . '/style.pack.css',
-                    'url' => $input['context'] . $name . '/style.pack.css',
+                    'resource' => $compiledResourceDir . $moduleName . '/style.pack.css',
+                    'url' => $input['context'] . $moduleName . '/style.pack.css',
                     'pack' => true,
                     'css_replace' => []
                 ];
@@ -72,14 +71,14 @@ class Resource_Css extends Action
         }
 
         foreach ($input['resources'] as $from => $config) {
-            foreach ($config as $name => $configResources) {
+            foreach ($config as $moduleName => $configResources) {
                 foreach ($configResources as $resourceKey => $resourceItem) {
                     $source = $from == 'modules' // else from vendors
-                        ? Module::getInstance($name)->get(Module::RESOURCE_DIR)
-                        : VENDOR_DIR . $name . '/';
+                        ? getResourceDir($moduleName)
+                        : VENDOR_DIR . $moduleName . '/';
 
                     $res = $from == 'modules' // else from vendors
-                        ? $name . '/' . $resourceKey . '/'
+                        ? $moduleName . '/' . $resourceKey . '/'
                         : 'vendor/' . $resourceKey . '/';
 
                     $resourceItemPath = is_array($resourceItem['path'])
@@ -167,7 +166,7 @@ class Resource_Css extends Action
 
         return [
             'styles' =>
-                File::createData(Module::getInstance()->get(Module::COMPILED_RESOURCE_DIR) . 'style.cache.php', $cache)
+                File::createData(getCompiledResourceDir() . 'style.cache.php', $cache)
         ];
     }
 }

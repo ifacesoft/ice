@@ -60,28 +60,28 @@ class Resource_Js extends Action
     {
         $resources = [];
 
-        $compiledResourceDir = Module::getInstance()->get(Module::COMPILED_RESOURCE_DIR);
+        $compiledResourceDir = getCompiledResourceDir();
 
-        foreach (array_keys(Module::getAll()) as $name) {
-            if (file_exists($jsSource = Module::getInstance($name)->get(Module::RESOURCE_DIR) . 'js/javascript.js')) {
+        foreach (array_keys(Module::getAll()) as $moduleName) {
+            if (file_exists($jsSource = getResourceDir($moduleName) . 'js/javascript.js')) {
                 $resources[] = [
                     'source' => $jsSource,
-                    'resource' => $compiledResourceDir . $name . '/javascript.pack.js',
-                    'url' => $input['context'] . $name . '/javascript.pack.js',
+                    'resource' => $compiledResourceDir . $moduleName . '/javascript.pack.js',
+                    'url' => $input['context'] . $moduleName . '/javascript.pack.js',
                     'pack' => true
                 ];
             }
         }
 
         foreach ($input['resources'] as $from => $config) {
-            foreach ($config as $name => $configResources) {
+            foreach ($config as $moduleName => $configResources) {
                 foreach ($configResources as $resourceKey => $resourceItem) {
                     $source = $from == 'modules' // else from vendors
-                        ? Module::getInstance($name)->get(Module::RESOURCE_DIR)
-                        : VENDOR_DIR . $name . '/';
+                        ? getResourceDir($moduleName)
+                        : VENDOR_DIR . $moduleName . '/';
 
                     $res = $from == 'modules' // else from vendors
-                        ? $name . '/' . $resourceKey . '/'
+                        ? $moduleName . '/' . $resourceKey . '/'
                         : 'vendor/' . $resourceKey . '/';
 
                     $resourceItemPath = is_array($resourceItem['path'])
@@ -174,7 +174,7 @@ class Resource_Js extends Action
 
         return [
             'javascripts' =>
-                File::createData(Module::getInstance()->get(Module::COMPILED_RESOURCE_DIR) . 'javascript.cache.php', $cache)
+                File::createData(getCompiledResourceDir() . 'javascript.cache.php', $cache)
         ];
     }
 }

@@ -59,11 +59,11 @@ class Smarty extends Render
         $templateDirs = [];
 
         foreach (Module::getAll() as $module) {
-            $templateDirs[] = $module->get(Module::RESOURCE_DIR);
+            $templateDirs[] = $module->getPath(Module::RESOURCE_DIR);
         }
 
         $this->smarty->setTemplateDir($templateDirs);
-        $this->smarty->setCompileDir(Module::getInstance()->get('cacheDir') . $config->get('templates_c'));
+        $this->smarty->setCompileDir(getCacheDir() . $config->get('templates_c'));
         $this->smarty->addPluginsDir($config->gets('plugins', []));
         //        $this->_smarty->setCacheDir('/web/www.example.com/smarty/cache');
         //        $this->_smarty->setConfigDir('/web/www.example.com/smarty/configs');

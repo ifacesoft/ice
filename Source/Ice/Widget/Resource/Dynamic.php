@@ -54,7 +54,7 @@ class Resource_Dynamic extends Resource
      */
     protected function build(array $input)
     {
-        $javascriptCacheFile = Module::getInstance()->get(Module::COMPILED_RESOURCE_DIR) . 'javascript.' . $input['routeName'] . '.cache.php';
+        $javascriptCacheFile = getCompiledResourceDir() . 'javascript.' . $input['routeName'] . '.cache.php';
 
         $javascripts = File::loadData($javascriptCacheFile, false);
 
@@ -78,7 +78,7 @@ class Resource_Dynamic extends Resource
             $this->script(Hash::get($sources, Hash::HASH_CRC32) . '_js', ['value' => $js]);
         }
 
-        $styleCacheFile = Module::getInstance()->get(Module::COMPILED_RESOURCE_DIR) . 'style.' . $input['routeName'] . '.cache.php';
+        $styleCacheFile = getCompiledResourceDir() . 'style.' . $input['routeName'] . '.cache.php';
 
         $styles = File::loadData($styleCacheFile, false);
 

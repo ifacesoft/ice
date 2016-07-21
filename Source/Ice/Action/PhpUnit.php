@@ -93,7 +93,7 @@ class PhpUnit extends Action
      */
     public function run(array $input)
     {
-        $modulePath = Module::getInstance()->get('path');
+        $modulePath = getModuleDir();
 
         foreach (Module::getAll() as $module) {
             $path = $module->get('path');

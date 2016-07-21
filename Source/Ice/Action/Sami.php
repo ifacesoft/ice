@@ -46,7 +46,7 @@ class Sami extends Action
     public function run(array $input)
     {
         $command = VENDOR_DIR . $input['vendor'] . $input['command'];
-        $config = Module::getInstance()->get(Module::CONFIG_DIR) . $input['config'];
+        $config = getConfigDir() . $input['config'];
 
         Console::run(
             [

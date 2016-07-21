@@ -58,7 +58,7 @@ class Debuger
             }
 
             $name = Request::isCli() ? Console::getCommand(null) : Request::uri();
-            $logFile = Directory::get(Module::getInstance()->get(Module::LOG_DIR)) . date('Y-m-d') . '/DEBUG/' . urlencode($name) . '.log';
+            $logFile = Module::getInstance()->getPath(Module::LOG_DIR) . date('Y-m-d') . '/DEBUG/' . urlencode($name) . '.log';
 
             if (strlen($logFile) > 255) {
                 $logFilename = substr($logFile, 0, 255 - 11);

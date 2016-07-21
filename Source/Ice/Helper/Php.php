@@ -24,6 +24,7 @@ use Ice\Core\Debuger;
 class Php
 {
     const INTEGER = 'integer';
+    const BOOLEAN = 'boolean';
 
     /**
      * Pretty formatting php data (array)

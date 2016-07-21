@@ -92,7 +92,7 @@ class Data_Scheme
         $moduleDefaultDataSourceKeys = Module::getInstance()->getDefaultDataSourceKeys();
 
         foreach (Module::getAll() as $module) {
-            $sourceDir = $module->get(Module::SOURCE_DIR);
+            $sourceDir = $module->getPath(Module::SOURCE_DIR);
 
             $Directory = new RecursiveDirectoryIterator(Directory::get($sourceDir . $module->getAlias() . '/Model'));
             $Iterator = new RecursiveIteratorIterator($Directory);

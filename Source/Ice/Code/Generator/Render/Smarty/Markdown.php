@@ -45,15 +45,7 @@ class Render_Smarty_Markdown extends Render_Smarty
     {
         $class = $this->getInstanceKey();
 
-        $module = Module::getInstance(Object::getModuleAlias($class));
-
-        $path = $module->get(Module::RESOURCE_DIR);
-
-        //        if ($namespace) {
-        //            $path .= 'Class/';
-        //        }
-
-        $filePath = $path . str_replace(['\\', '_'], '/', $class) . Smarty_Markdown::TEMPLATE_EXTENTION;
+        $filePath = getResourceDir(Object::getModuleAlias($class)) . str_replace(['\\', '_'], '/', $class) . Smarty_Markdown::TEMPLATE_EXTENTION;
 
         $isFileExists = file_exists($filePath);
 

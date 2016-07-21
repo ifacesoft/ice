@@ -50,7 +50,7 @@ class Twig extends Render
 //        Loader::register('Twig_Autoloader::autoload');
 
         foreach (Module::getAll() as $module) {
-            $this->templateDirs[] = $module->get(Module::RESOURCE_DIR);
+            $this->templateDirs[] = $module->getPath(Module::RESOURCE_DIR);
         }
     }
 
@@ -98,7 +98,7 @@ class Twig extends Render
                 $loader = new \Twig_Loader_Filesystem($this->templateDirs);
                 $twig = new \Twig_Environment(
                     $loader,
-                    ['cache' => Module::getInstance()->get('cacheDir') . Config::getInstance(__CLASS__)->get('cache')]
+                    ['cache' => getCacheDir() . Config::getInstance(__CLASS__)->get('cache')]
                 );
                 return $twig->render(str_replace(['_', '\\'], '/', $template) . Twig::TEMPLATE_EXTENTION, $data);
             }

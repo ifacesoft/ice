@@ -12,7 +12,7 @@ class Config
      *
      * @param  array $config
      * @param  $key
-     * @param  bool $isRequired_default
+     * @param  bool $isRequired_default todo: Подутать, как сделать понятнее
      * @return array
      * @author dp <denis.a.shestakov@gmail.com>
      *

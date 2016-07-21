@@ -482,8 +482,8 @@ class Install extends Action
 
         return [
             'moduleName' => $projectName,
-            'logDir' => Module::getInstance()->get(Module::LOG_DIR),
-            'resourceDir' => Module::getInstance()->get(Module::COMPILED_RESOURCE_DIR)
+            'logDir' => getLogDir(),
+            'resourceDir' => getCompiledResourceDir()
         ];
     }
 }

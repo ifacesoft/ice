@@ -255,7 +255,7 @@ class Orm_Sync_DataScheme extends Action
             foreach ($schemeTables as $tableName => $table) {
                 if (array_key_exists($tableName, $schemes)) {
                     $this->deleteModel(
-                        $module->get(Module::SOURCE_DIR) . $table['modelPath'],
+                        $module->getPath(Module::SOURCE_DIR) . $table['modelPath'],
                         $tableName,
                         $schemeTables,
                         $dataSourceKey

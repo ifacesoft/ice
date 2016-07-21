@@ -146,7 +146,8 @@ class Loader
         }
 
         foreach ($modules as $module) {
-            $typePathes = $module->gets($path, []);
+            $typePathes = $module->gets('pathes/' . $path, []);
+
 
             if (empty($typePathes)) {
                 $typePathes = [$path];

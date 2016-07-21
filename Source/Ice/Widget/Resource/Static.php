@@ -36,7 +36,7 @@ class Resource_Static extends Resource
      */
     protected function build(array $input)
     {
-        $styleCacheFile = Module::getInstance()->get(Module::COMPILED_RESOURCE_DIR) . 'style.cache.php';
+        $styleCacheFile = getCompiledResourceDir() . 'style.cache.php';
 
         $styles = File::loadData($styleCacheFile, false);
 
@@ -61,7 +61,7 @@ class Resource_Static extends Resource
             $this->link(Hash::get($sources, Hash::HASH_CRC32) . '_css', ['value' => $css]);
         }
 
-        $javascriptCacheFile = Module::getInstance()->get(Module::COMPILED_RESOURCE_DIR) . 'javascript.cache.php';
+        $javascriptCacheFile = getCompiledResourceDir() . 'javascript.cache.php';
 
         $javascripts = File::loadData($javascriptCacheFile, false);
 

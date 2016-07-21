@@ -306,7 +306,7 @@ abstract class Action implements Cacheable
     /**
      * Action config
      *
-     * @return array
+     * @return array|void
      *
      *  protected static function config()
      *  {

@@ -217,8 +217,7 @@ class Resource implements Cacheable
             $data[$message][Request::locale()] = $message;
         }
 
-        $moduleResourceFile =
-            Module::getInstance()->get(Module::RESOURCE_DIR) . str_replace(['\\', '_'], '/', $this->class) . '.res.php';
+        $moduleResourceFile = getResourceDir() . str_replace(['\\', '_'], '/', $this->class) . '.res.php';
 
         $moduleResourceData = file_exists($moduleResourceFile)
             ? File::loadData($moduleResourceFile)

@@ -1,28 +1,67 @@
 <?php
 use Ice\Core\Module;
-use Ice\Helper\Directory;
 
-function getTempDir()
+function getSourceDir($moduleName = null)
 {
-    return Directory::get(Module::getInstance()->get(Module::TEMP_DIR));
+    return Module::getInstance($moduleName)->getPath(Module::SOURCE_DIR);
 }
 
-function getLogDir()
+function getConfigDir($moduleName = null)
 {
-    return Directory::get(Module::getInstance()->get(Module::LOG_DIR));
+    return Module::getInstance($moduleName)->getPath(Module::CONFIG_DIR);
 }
 
-function getRunDir()
+function getDataDir($moduleName = null)
 {
-    return Directory::get(Module::getInstance()->get(Module::RUN_DIR));
+    return Module::getInstance($moduleName)->getPath(Module::DATA_DIR);
 }
 
-function getUploadDir()
+function getTempDir($moduleName = null)
 {
-    return Directory::get(Module::getInstance()->get(Module::UPLOAD_DIR));
+    return Module::getInstance($moduleName)->getPath(Module::TEMP_DIR);
 }
 
-function getDownloadDir()
+function getCacheDir($moduleName = null)
 {
-    return Directory::get(Module::getInstance()->get(Module::DOWNLOAD_DIR));
+    return Module::getInstance($moduleName)->getPath(Module::CACHE_DIR);
+}
+
+function getLogDir($moduleName = null)
+{
+    return Module::getInstance($moduleName)->getPath(Module::LOG_DIR);
+}
+
+function getRunDir($moduleName = null)
+{
+    return Module::getInstance($moduleName)->getPath(Module::RUN_DIR);
+}
+
+function getUploadDir($moduleName = null)
+{
+    return Module::getInstance($moduleName)->getPath(Module::UPLOAD_DIR);
+}
+
+function getDownloadDir($moduleName = null)
+{
+    return Module::getInstance($moduleName)->getPath(Module::DOWNLOAD_DIR);
+}
+
+function getPrivateDownloadDir($moduleName = null)
+{
+    return Module::getInstance($moduleName)->getPath(Module::PRIVATE_DOWNLOAD_DIR);
+}
+
+function getResourceDir($moduleName = null)
+{
+    return Module::getInstance($moduleName)->getPath(Module::RESOURCE_DIR);
+}
+
+function getCompiledResourceDir($moduleName = null)
+{
+    return Module::getInstance($moduleName)->getPath(Module::COMPILED_RESOURCE_DIR);
+}
+
+function getModuleDir($moduleName = null)
+{
+    return Module::getInstance($moduleName)->getPath();
 }

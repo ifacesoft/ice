@@ -91,7 +91,7 @@ class Widget_Form_File_Upload extends Action
                 ['temp', $input['formName'], $input['fieldName'], $input['token'], basename($files['name'])]
             );
 
-            $filename = File::copy($files['tmp_name'], Module::getInstance()->get(Module::UPLOAD_DIR) . $to);
+            $filename = File::copy($files['tmp_name'], getUploadDir() . $to);
             list($mime) = explode(';', mime_content_type($filename));
 
             $data[$name] = [
