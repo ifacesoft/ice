@@ -12,6 +12,7 @@ namespace Ice\Core;
 use Assetic\Test\Filter\PackerFilterTest;
 use Ebs\Model\Packet_Dynamic;
 use Ice\Core;
+use Ice\Exception\Error;
 use Ice\Helper\Arrays;
 use Ice\Helper\Json;
 use Ice\Helper\Model as Helper_Model;
@@ -249,7 +250,7 @@ abstract class Model
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 1.1
+     * @version 1.2
      * @since   0.0
      */
     public function set($fieldName, $fieldValue = null, $isAffected = true)
@@ -272,12 +273,19 @@ abstract class Model
 
         $fieldName = $this->getFieldName($fieldName);
 
-        if (!$this->setPkValue($fieldName, $fieldValue, $isAffected) &&
-            !$this->setValue($fieldName, $fieldValue, $isAffected) &&
-            !$this->setJsonValue($fieldName, $fieldValue, $isAffected) &&
-            !$this->setSpatialValue($fieldName, $fieldValue, $isAffected) &&
-            !$this->setFkValue($fieldName, $fieldValue, $isAffected)
-        ) {
+        $affected = array_merge(
+            $this->setValue($fieldName, $fieldValue),
+            $this->setJsonValue($fieldName, $fieldValue),
+            $this->setSpatialValue($fieldName, $fieldValue),
+            $this->setFkValue($fieldName, $fieldValue)
+
+        );
+
+        if ($affected) {
+            if ($isAffected) {
+                $this->addAffected($affected);
+            }
+        } else {
             $this->raw[$fieldName] = $fieldValue;
         }
 
@@ -319,6 +327,20 @@ abstract class Model
     }
 
     /**
+     * @param array $pk
+     *
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 1.2
+     * @since   1.2
+     */
+    public function setPk(array $pk)
+    {
+        $this->pk = $pk;
+    }
+
+    /**
      * @return Query_Scope
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -334,6 +356,16 @@ abstract class Model
     public function getPkValue()
     {
         return $this->getPk() ? implode('__', $this->getPk()) : null;
+    }
+
+    public function setPkValue($pkValue)
+    {
+        /** @var Model $modelClass */
+        $modelClass = get_class($this);
+
+        $this->setPk(array_combine($modelClass::getScheme()->getPkFieldNames(), explode('__', $pkValue)));
+
+        return $this;
     }
 
     /**
@@ -360,29 +392,6 @@ abstract class Model
         }
 
         return $fieldName;
-    }
-
-    private function setPkValue($fieldName, $fieldValue, $isAffected)
-    {
-        if (!$this->isPkName($fieldName)) {
-            return false;
-        }
-
-        if ($fieldValue === null) {
-            return true;
-        }
-
-        if ($isAffected) {
-            $this->addAffected($fieldName, $fieldValue);
-        }
-
-        $this->pk[$fieldName] = $fieldValue;
-
-        if ($this->isFieldName($fieldName)) {
-            unset($this->row[$fieldName]);
-        }
-
-        return true;
     }
 
     /**
@@ -417,30 +426,38 @@ abstract class Model
     /**
      * Add affected field value
      *
-     * @param $fieldName
-     * @param $fieldValue
+     * @param array $fields
      *
+     * @throws Error
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.4
+     * @version 1.2
      * @since   0.4
      */
-    private function addAffected($fieldName, $fieldValue)
+    private function addAffected(array $fields)
     {
-        if ($fieldValue === null) {
-            /**
-             * @var Model $modelClass
-             */
-            $modelClass = get_class($this);
+        foreach ($fields as $fieldName => $fieldValue) {
 
-            $columnName = $modelClass::getScheme()->getFieldColumnMap()[$fieldName];
+            if ($fieldValue === null) {
+                /**
+                 * @var Model $modelClass
+                 */
+                $modelClass = get_class($this);
 
-            if ($modelClass::getConfig()->get('columns/' . $columnName . '/scheme/default') !== null) {
-                return;
+                $columnName = $modelClass::getScheme()->getFieldColumnMap()[$fieldName];
+                $columnScheme = $modelClass::getConfig()->gets('columns/' . $columnName . '/scheme');
+
+                if (!$columnScheme['nullable']) {
+                    if ($columnScheme['default'] === null) {
+                        throw new Error(['Null value not allowed for field {$0} of model {$1}', [$fieldName, $modelClass]]);
+                    }
+
+                    $fieldValue = $columnScheme['default'];
+                }
             }
-        }
 
-        $this->affected[$fieldName] = $fieldValue;
+            $this->affected[$fieldName] = $fieldValue;
+        }
     }
 
     /**
@@ -466,7 +483,7 @@ abstract class Model
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.4
+     * @version 1.2
      * @since   0.4
      */
     public function isFieldName($fieldName)
@@ -474,41 +491,59 @@ abstract class Model
         return array_key_exists($fieldName, $this->row);
     }
 
-    private function setValue($fieldName, $fieldValue, $isAffected)
+    /**
+     * @param $fieldName
+     * @param $fieldValue
+     * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 1.2
+     * @since   1.0
+     */
+    private function setValue($fieldName, $fieldValue)
     {
-        if (!$this->isFieldName($fieldName)) {
-            return null;
-        }
-        if ($isAffected) {
-            $this->addAffected($fieldName, $fieldValue);
-        }
+        if ($this->isPkName($fieldName)) {
+            if ($this->isFieldName($fieldName)) {
+                unset($this->row[$fieldName]);
+            }
 
-        $this->row[$fieldName] = $fieldValue;
+            if ($fieldValue === null) {
+                $this->pk = null;
+
+                return [];
+            } else {
+                $this->pk[$fieldName] = $fieldValue;
+            }
+        } elseif ($this->isFieldName($fieldName)) {
+            $this->row[$fieldName] = $fieldValue;
+        } else {
+            return [];
+        }
 
         return [$fieldName => $fieldValue];
     }
 
-    private function setJsonValue($fieldName, $fieldValue, $isAffected)
+    /**
+     * @param $fieldName
+     * @param $fieldValue
+     * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 1.2
+     * @since   1.0
+     */
+    private function setJsonValue($fieldName, $fieldValue)
     {
         $jsonFieldName = $fieldName . '__json';
 
         if (!$this->isFieldName($jsonFieldName)) {
-            return null;
-        }
-
-        if ($fieldValue === null) {
-            $this->json[$fieldName] = [];
-
-            $fieldValue = Json::encode($this->json[$fieldName]);
-
-            $this->set($jsonFieldName, $fieldValue, $isAffected);
-
-            return [$jsonFieldName => $fieldValue];
+            return [];
         }
 
         if (!is_array($fieldValue)) {
-            Logger::getInstance(__CLASS__)
-                ->exception(['Supported only arrays in json field in model {0}', get_class($this)], __FILE__, __LINE__);
+            $fieldValue = ((array)$fieldValue);
         }
 
         $this->json[$fieldName] = [];
@@ -521,11 +556,48 @@ abstract class Model
             }
         }
 
-        $fieldValue = Json::encode($this->json[$fieldName]);
+        return $this->setValue($jsonFieldName, Json::encode($this->json[$fieldName]));
+    }
 
-        $this->set($jsonFieldName, $fieldValue, $isAffected);
+    private function setSpatialValue($fieldName, $fieldValue)
+    {
+        $geoFieldName = $fieldName . '__geo';
 
-        return [$jsonFieldName => $fieldValue];
+        if (!$this->isFieldName($geoFieldName)) {
+            return [];
+        }
+
+        if (!$fieldValue) {
+            $fieldValue = null;
+        }
+
+        $this->geo[$fieldName] = $fieldValue;
+
+        if ($fieldValue) {
+            $fieldValue = Spatial::encode($this->geo[$fieldName]);
+        }
+
+        return $this->setValue($geoFieldName, $fieldValue);
+    }
+
+    private function setFkValue($fieldName, $fieldValue)
+    {
+        $fkFieldName = $fieldName . '__fk';
+
+        if (!$this->isFieldName($fkFieldName)) {
+            return [];
+        }
+
+        if (!($fieldValue instanceof Model)) {
+            $fieldValue = null;
+        }
+
+        if ($fieldValue) {
+            $pk = $fieldValue->getPk();
+            $fieldValue = reset($pk);
+        }
+
+        return $this->setValue($fkFieldName, $fieldValue);
     }
 
     /**
@@ -695,60 +767,6 @@ abstract class Model
 //        }
 
         return new $modelClass($row);
-    }
-
-    private function setSpatialValue($fieldName, $fieldValue, $isAffected)
-    {
-        $geoFieldName = $fieldName . '__geo';
-
-        if (!$this->isFieldName($geoFieldName)) {
-            return null;
-        }
-
-        if ($fieldValue == null) {
-            $this->geo[$fieldName] = null;
-
-            $this->set($geoFieldName, null, $isAffected);
-
-            return [$geoFieldName => null];
-        }
-
-        $this->geo[$fieldName] = $fieldValue;
-
-        $fieldValue = Spatial::encode($this->geo[$fieldName]);
-
-        $this->set($geoFieldName, $fieldValue, $isAffected);
-
-        return [$geoFieldName => $fieldValue];
-    }
-
-    private function setFkValue($fieldName, $fieldValue, $isAffected)
-    {
-        $fkFieldName = $fieldName . '__fk';
-
-        if (!$this->isFieldName($fkFieldName)) {
-            return null;
-        }
-
-        if ($fieldValue == null) {
-            $this->fk[$fieldName] = null;
-
-            $this->set($fkFieldName, null, $isAffected);
-
-            return [$fkFieldName => null];
-        }
-
-        $this->fk[$fieldName] = $fieldValue;
-        /**
-         * @var Model $fieldValue
-         */
-        $pk = $fieldValue->getPk();
-
-        $fieldValue = reset($pk);
-
-        $this->set($fkFieldName, $fieldValue, $isAffected);
-
-        return [$fkFieldName => $fieldValue];
     }
 
     /**
@@ -1176,14 +1194,16 @@ abstract class Model
      */
     private function update($modelClass, $dataSourceKey)
     {
-        $this->beforeUpdate();
+        if ($affected = $this->getAffected()) {
+            $this->beforeUpdate();
 
-        Query::getBuilder($modelClass)
-            ->pk($this->getPk())
-            ->getUpdateQuery($this->getAffected(), $dataSourceKey)
-            ->getQueryResult();
+            Query::getBuilder($modelClass)
+                ->pk($this->getPk())
+                ->getUpdateQuery($affected, $dataSourceKey)
+                ->getQueryResult();
 
-        $this->afterUpdate();
+            $this->afterUpdate();
+        }
     }
 
     /**
@@ -1217,26 +1237,28 @@ abstract class Model
      */
     private function insert($modelClass, $isSmart, $dataSourceKey)
     {
-        $this->beforeInsert();
+        if ($affected = $this->getAffected()) {
+            $this->beforeInsert();
 
-        $insertId = Query::getBuilder($modelClass)
-            ->getInsertQuery($this->getAffected(), $isSmart, $dataSourceKey)
-            ->getQueryResult()
-            ->getInsertId();
+            $insertId = Query::getBuilder($modelClass)
+                ->getInsertQuery($affected, $isSmart, $dataSourceKey)
+                ->getQueryResult()
+                ->getInsertId();
 
-        if ($isSmart && $model = $modelClass::create(array_filter($this->row, function ($value) {
-                return $value !== null;
-            }))->find('/pk')
-        ) {
+            if ($isSmart && $model = $modelClass::create(array_filter($this->row, function ($value) {
+                    return $value !== null;
+                }))->find('/pk')
+            ) {
 
-            $this->set($model->getPk());
+                $this->set($model->getPk());
+            }
+
+            if ($this->pk === null) {
+                $this->set(reset($insertId));
+            }
+
+            $this->afterInsert();
         }
-
-        if ($this->pk === null) {
-            $this->set(reset($insertId));
-        }
-
-        $this->afterInsert();
     }
 
     /**
@@ -1646,7 +1668,8 @@ abstract class Model
      *
      * @return array
      */
-    public static function getItems($itemKey = '/pk', $itemTitle = '/name') {
+    public static function getItems($itemKey = '/pk', $itemTitle = '/name')
+    {
         $modelClass = self::getClass();
 
         return $modelClass::getSelectQuery([$itemKey => 'itemKey', $itemTitle => 'itemTitle'])->getRows();

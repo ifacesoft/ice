@@ -238,12 +238,12 @@ class Console
             $commandString .= ' &';
         }
 
-        return Console::run('ssh -p ' . $port . ' -i ' . $keyPath . ' ' . $user . '@' . $host . ' ' . escapeshellarg($commandString));
+        return Console::run(Console::getCommand('ssh') . ' -p ' . $port . ' -i ' . $keyPath . ' ' . $user . '@' . $host . ' ' . escapeshellarg($commandString));
     }
 
     public static function getCommand($string)
     {
-        return file_exists('/usr/bin/' . $string) ? '/usr/bin/' . $string : '/usr/local/bin/' . $string;
-        return trim(Console::run('which ' . $string));
+//        return file_exists('/usr/bin/' . $string) ? '/usr/bin/' . $string : '/usr/local/bin/' . $string;
+        return trim(exec('/usr/bin/which ' . $string));
     }
 }
