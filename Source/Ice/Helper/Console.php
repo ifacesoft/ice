@@ -243,7 +243,7 @@ class Console
 
     public static function getCommand($string)
     {
-//        return file_exists('/usr/bin/' . $string) ? '/usr/bin/' . $string : '/usr/local/bin/' . $string;
-        return trim(exec('/usr/bin/which ' . $string));
+        return file_exists('/usr/bin/' . $string) ? '/usr/bin/' . $string : '/usr/local/bin/' . $string;
+        return trim(exec((file_exists('/bin/which') ? '/bin/which ' : '/usr/bin/which') . ' ' . $string));
     }
 }

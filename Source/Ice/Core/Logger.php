@@ -20,6 +20,7 @@ use Ice\Helper\Logger as Helper_Logger;
 use Ice\Helper\Object;
 use Ice\Helper\Profiler as Helper_Profiler;
 use Ice\Core\Console as Core_Console;
+use Ice\Helper\String;
 use Ice\Model\Log_Error;
 use Ice\Model\Session;
 
@@ -300,7 +301,9 @@ class Logger
             Request::isCli() ||
             Environment::getInstance()->isProduction() ||
             headers_sent() ||
-            !Loader::load('FirePHP', false)
+            !Loader::load('FirePHP', false) ||
+            String::endsWith(Request::host(), '.com') ||
+            String::endsWith(Request::host(), '.ru')
         ) {
             return;
         }

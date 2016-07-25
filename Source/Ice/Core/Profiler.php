@@ -3,11 +3,14 @@
 namespace Ice\Core;
 
 use Ice\Helper\Profiler as Helper_Profiler;
+use XHProfRuns_Default;
 
 class Profiler
 {
     const TIME = 'timing';
     const MEMORY = 'memoryUsage';
+
+    private static $isXhprofEnabled = false;
 
     /**
      * Profile data
@@ -149,5 +152,23 @@ class Profiler
         }
 
         return $message . '(peak: ' . Helper_Profiler::getPrettyMemory(memory_get_peak_usage(true)) . ')]';
+    }
+
+    public static function xhprofEnable() {
+        if (Profiler::$isXhprofEnabled) {
+            Profiler::xphrofDisable();
+        }
+
+        xhprof_enable(XHPROF_FLAGS_CPU + XHPROF_FLAGS_MEMORY);
+        Profiler::$isXhprofEnabled = true;
+    }
+
+    public static function xphrofDisable() {
+        if (Profiler::$isXhprofEnabled) {
+            $xhprof_data = xhprof_disable();
+            $xhprof_runs = new XHProfRuns_Default();
+            $xhprof_runs->save_run($xhprof_data, "xhprof_testing");
+            Profiler::$isXhprofEnabled = false;
+        }
     }
 }
