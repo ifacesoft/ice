@@ -489,13 +489,23 @@ abstract class Widget extends Container
 
             $rowTable = [];
 
-            foreach ($this->getParts($this->getFilterParts()) as $partName => $part) {
-                $rowTable[$partName] = $part->cloneComponent();// todo: избавиться от клонирования (дублирования билдинга)
-                $rowTable[$partName]->setOffset($offset);
+            unset($part);
+
+            $parts = $this->getParts($this->getFilterParts());
+
+            /**
+             * @var string $partName
+             * @var WidgetComponent $part
+             */
+            foreach ($parts as $partName => $part) {
+                $part = $part->cloneComponent();
+                $part->setOffset($offset);
 
                 if (!($this instanceof Bootstrap3_Table_Row)) {
-                    $rowTable[$partName]->set(array_merge($params, $row));
+                    $part->set(array_merge($params, $row));
                 }
+
+                $rowTable[$partName] = $part;
             }
 
             $this->result[$offset] = $rowTable;

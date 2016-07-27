@@ -10,7 +10,6 @@ use Ice\Helper\Access;
 use Ice\Helper\Date;
 use Ice\Helper\Input;
 use Ice\Helper\String;
-use Ice\QueryTranslator\Defined;
 use Ice\Render\Replace;
 use Ice\Widget\Block;
 use Ice\WidgetComponent\HtmlTag;
@@ -26,7 +25,7 @@ abstract class WidgetComponent
     private $templateClass = null;
     private $resourceClass = null;
     private $renderClass = null;
-    private $offset = null;
+    private $offset = 0;
 
     private $widgetClass = null;
     private $widgetId = null;
@@ -38,7 +37,6 @@ abstract class WidgetComponent
 
     private $active = null;
     private $classes = null;
-    private $id = [];
 
     /**
      * WidgetComponent config
@@ -133,7 +131,7 @@ abstract class WidgetComponent
      */
     public function getWidgetComponentId()
     {
-        return $this->getWidgetId() . '_' . $this->getComponentName();
+        return $this->getWidgetId() . '_' . $this->getComponentName() . '_' . $this->getOffset();
     }
 
     protected function init()
@@ -405,15 +403,11 @@ abstract class WidgetComponent
 
     public function getId($postfix = '')
     {
-        if (isset($this->id[$postfix])) {
-            return $this->id[$postfix];
-        }
-
         if ($postfix) {
             $postfix = '_' . $postfix;
         }
 
-        return $this->id[$postfix] = $this->getWidgetComponentId() . $postfix;
+        return $this->getWidgetComponentId() . $postfix;
     }
 
     public function getIdAttribute($postfix = '')
@@ -592,7 +586,7 @@ abstract class WidgetComponent
 
             $paramsConfig[$param] = $config;
 
-            if (!is_string($paramsConfig[$param])) {
+            if (is_array($paramsConfig[$param])) {
                 $paramsConfig[$param]['providers'] = isset($paramsConfig[$param]['providers'])
                     ? array_merge(['default'], (array)$paramsConfig[$param]['providers'])
                     : ['default'];
