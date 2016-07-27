@@ -2,9 +2,12 @@
 namespace Ice\Action;
 
 use Ice\Core\Debuger;
+use Ice\Core\Logger;
+use Ice\Model\Log_Security;
 use Ice\Widget\Security_EmailPassword_Login;
 use Ice\Widget\Security_LoginEmailPassword_Login;
 use Ice\Widget\Security_LoginPassword_Login;
+use Ice\Helper\Logger as Helper_Logger;
 
 class Security_LoginEmailPassword_Login_Submit extends Security
 {
@@ -15,25 +18,47 @@ class Security_LoginEmailPassword_Login_Submit extends Security
      */
     public function run(array $input)
     {
-        /** @var Security_LoginEmailPassword_Login $form */
-        $form = $input['widget'];
+        $logger = $this->getLogger();
 
-        $form->bind(['login' => $form->getPart('username')->get('username')]);
+        /** @var Security_LoginEmailPassword_Login $widget */
+        $widget = $input['widget'];
 
-        $output = Security_LoginPassword_Login_Submit::call([
-            'widgets' => $input['widgets'],
-            'widget' => $form
+        $log = Log_Security::create([
+            'form_class' => get_class($widget)
         ]);
 
-        if (!isset($output['error'])) {
-            return $output;
-        }
+        try {
+            $values = $widget->validate();
 
-        $form->bind(['email' => $form->getPart('username')->get('username')]);
-        
-        return Security_EmailPassword_Login_Submit::call([
-            'widgets' => $input['widgets'],
-            'widget' => $form
-        ]);
+            $output = Security_LoginPassword_Login_Submit::call([
+                'widgets' => $input['widgets'],
+                'widget' => Security_LoginPassword_Login::getInstance($widget->getInstanceKey())
+                    ->setAccountModelClass($widget->getAccountLoginPasswordModelClass())
+                    ->set([
+                        'login' => $values['username'],
+                        'password' => $values['password']
+                    ])
+            ]);
+
+            if (!isset($output['error'])) {
+                return $output;
+            }
+
+            return Security_EmailPassword_Login_Submit::call([
+                'widgets' => $input['widgets'],
+                'widget' => Security_EmailPassword_Login::getInstance($widget->getInstanceKey())
+                    ->setAccountModelClass($widget->getAccountEmailPasswordModelClass())
+                    ->set([
+                        'email' => $values['username'],
+                        'password' => $values['password']
+                    ])
+            ]);
+        } catch (\Exception $e) {
+                $log->set('error', Helper_Logger::getMessage($e));
+
+                $logger->save($log);
+
+                return ['error' => $widget->getLogger()->info($e->getMessage(), Logger::DANGER, true)];
+            }
     }
 }

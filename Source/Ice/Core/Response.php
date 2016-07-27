@@ -124,7 +124,7 @@ class Response
                 : str_replace(dirname(MODULE_DIR), '', isset($result['content']) ? $result['content'] : '');
         }
 
-        Http::setHeader(Http::getContentLength(strlen($this->content)));
+        // Http::setHeader(Http::getContentLength(mb_strlen($this->content))); //todo: иногда отдает не правильно, хз почему
 
         if ($this->contentType) {
             Http::setHeader(Http::getContentTypeHeader($this->contentType));

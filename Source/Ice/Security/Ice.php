@@ -81,10 +81,10 @@ class Ice extends Security
 //                );
 //            }
 
-            $this->getDataProviderSession('auth')->set(Ice::SESSION_USER_CLASS, get_class($user));
-            $this->getDataProviderSession('auth')->set(Ice::SESSION_USER_KEY, $user->getPkValue());
-            $this->getDataProviderSession('auth')->set(Ice::SESSION_ACCOUNT_CLASS, get_class($account));
-            $this->getDataProviderSession('auth')->set(Ice::SESSION_ACCOUNT_KEY, $account->getPkValue());
+            $this->getDataProviderSession('auth')->set([Ice::SESSION_USER_CLASS => get_class($user)]);
+            $this->getDataProviderSession('auth')->set([Ice::SESSION_USER_KEY => $user->getPkValue()]);
+            $this->getDataProviderSession('auth')->set([Ice::SESSION_ACCOUNT_CLASS => get_class($account)]);
+            $this->getDataProviderSession('auth')->set([Ice::SESSION_ACCOUNT_KEY => $account->getPkValue()]);
 
             $this->setUser($user);
         } catch (\Exception $e) {

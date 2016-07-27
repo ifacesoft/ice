@@ -9,6 +9,7 @@
 namespace Ice\Validator;
 
 
+use Ice\Core\Debuger;
 use Ice\Core\Validator;
 use Ice\Helper\Directory;
 
@@ -37,24 +38,28 @@ class File_Exists extends Validator
      *      ];
      * ```
      *
-     * @param  $value
+     * @param array $data
+     * @param $name
      * @param  mixed $params
-     * @return boolean
-     *
+     * @return bool
      * @author anonymous <email>
      *
-     * @version 0
-     * @since   0
+     * @version 1.2
+     * @since   1.2
      */
-    public function validate($value, $params = [])
+    public function validate(array $data, $name, array $params)
     {
-        $path = is_array($params) && isset($params['path']) ? $params['path'] : '';
+        $path = '';
+
+        if (array_key_exists('path', $params)) {
+            $path = $params['path'];
+        }
 
         if ($path) {
             $path = Directory::get($path);
         }
 
-        return file_exists($path . $value);
+        return file_exists($path . $data[$name]) && is_file($path . $data[$name]);
     }
 
     public function getMessage()

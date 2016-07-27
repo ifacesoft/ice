@@ -224,7 +224,7 @@ abstract class Model
             array_merge_recursive($modelClass::config(), Config::getInstance($modelClass, null, false, -1)->gets())
         );
 
-        return $repository->set($key, $scheme);
+        return $repository->set([$key => $scheme])[$key];
     }
 
     protected static function config()
@@ -1194,16 +1194,16 @@ abstract class Model
      */
     private function update($modelClass, $dataSourceKey)
     {
-        if ($affected = $this->getAffected()) {
-            $this->beforeUpdate();
+        $this->beforeUpdate();
 
+        if ($affected = $this->getAffected()) {
             Query::getBuilder($modelClass)
                 ->pk($this->getPk())
                 ->getUpdateQuery($affected, $dataSourceKey)
                 ->getQueryResult();
-
-            $this->afterUpdate();
         }
+
+        $this->afterUpdate();
     }
 
     /**
@@ -1237,9 +1237,9 @@ abstract class Model
      */
     private function insert($modelClass, $isSmart, $dataSourceKey)
     {
-        if ($affected = $this->getAffected()) {
-            $this->beforeInsert();
+        $this->beforeInsert();
 
+        if ($affected = $this->getAffected()) {
             $insertId = Query::getBuilder($modelClass)
                 ->getInsertQuery($affected, $isSmart, $dataSourceKey)
                 ->getQueryResult()
@@ -1256,9 +1256,9 @@ abstract class Model
             if ($this->pk === null) {
                 $this->set(reset($insertId));
             }
-
-            $this->afterInsert();
         }
+
+        $this->afterInsert();
     }
 
     /**

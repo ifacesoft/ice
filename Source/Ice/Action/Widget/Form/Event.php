@@ -46,12 +46,12 @@ abstract class Widget_Form_Event extends Render
             $widget->setResourceClass($input['widget']['resourceClass']);
 
             $widget->checkToken($input['widget']['token']);
-
-            foreach ($widget->getParts() as $part) {
-                if ($part instanceof FormElement) {
-                    $part->build($input);
-                }
-            }
+//
+//            foreach ($widget->getParts() as $part) {
+//                if ($part instanceof FormElement) {
+//                    $part->build($input);
+//                }
+//            }
 
             $input['widget'] = $widget;
         }

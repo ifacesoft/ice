@@ -68,7 +68,7 @@ class Form extends Widget
             $path = implode('/', [$tempDir, $key, $this->getToken()]);
 
             if (file_exists($path)) {
-                $this->bind([$key => Directory::getFileNames($path)]);
+                $this->set([$key => Directory::getFileNames($path)]);
             }
         }
     }
@@ -112,10 +112,6 @@ class Form extends Widget
                 $compiledResult,
                 ['onSubmit' => '', 'url' => '/', 'method' => 'POST']
             );
-        }
-
-        if (!empty($submitOptions['params'])) {
-            $this->setDataParams(array_merge($this->getDataParams(), $component->getParams()));
         }
 
         return array_merge(
@@ -504,7 +500,7 @@ class Form extends Widget
 //            }
 //        }
 //
-//        return Validator::validateByScheme(array_merge($this->getValues(), $values), $this->getValidateScheme());
+//        return Validator::validateByScheme(array_merge($this->get(), $values), $this->getValidateScheme());
 //    }
 //
 //    /**

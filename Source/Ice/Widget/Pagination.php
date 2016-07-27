@@ -131,7 +131,7 @@ class Pagination extends Widget
     {
         $this->foundRows = $foundRows;
 
-        $limit = $this->getValue('limit');
+        $limit = $this->get('limit');
 
         if (!$limit) {
             $limit = $this->foundRows;
@@ -141,7 +141,7 @@ class Pagination extends Widget
             return;
         }
 
-        $page = $this->getValue('page');
+        $page = $this->get('page');
 
         $pageCount = (int)ceil($this->foundRows / $limit);
 
@@ -323,8 +323,8 @@ class Pagination extends Widget
     private function curr($page, $pageCount)
     {
         $limit = $page == $pageCount
-            ? $this->foundRows - ($pageCount - 1) * $this->getValue('limit')
-            : $this->getValue('limit');
+            ? $this->foundRows - ($pageCount - 1) * $this->get('limit')
+            : $this->get('limit');
 
         $this->li(
             __FUNCTION__,
@@ -450,7 +450,7 @@ class Pagination extends Widget
      */
     private function first($page, $currentPage)
     {
-        if ($this->getValue('page') > $page) {
+        if ($this->get('page') > $page) {
             $isHellip =
                 $currentPage - 0 - $page != 1 &&
                 $currentPage - 1 - $page != 1 &&
@@ -496,7 +496,7 @@ class Pagination extends Widget
     {
         parent::queryBuilderPart($queryBuilder, $input);
 
-        $queryBuilder->setPagination($this->getValue('page'), $this->getValue('limit'));
+        $queryBuilder->setPagination($this->get('page'), $this->get('limit'));
     }
 
     /** Build widget
@@ -511,11 +511,11 @@ class Pagination extends Widget
 
     public function getLimit()
     {
-        return $this->getValue('limit');
+        return $this->get('limit');
     }
 
     public function getPage()
     {
-        return $this->getValue('page');
+        return $this->get('page');
     }
 }

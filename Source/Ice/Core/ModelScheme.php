@@ -30,7 +30,7 @@ class ModelScheme extends Config
         $repository = $modelClass::getRepository('mapping');
         $key = 'fieldColumnMap';
 
-        return $repository->set($key, array_flip($this->getColumnFieldMap()));
+        return $repository->set([$key => array_flip($this->getColumnFieldMap())])[$key];
     }
 
     public function getColumnFieldMap()
@@ -53,7 +53,7 @@ class ModelScheme extends Config
             $columns[$columnName] = $column['fieldName'];
         }
 
-        return $repository->set($key, $columns);
+        return $repository->set([$key => $columns])[$key];
     }
 
     /**
@@ -139,15 +139,14 @@ class ModelScheme extends Config
 
         $columnFieldMappings = $this->getColumnFieldMap();
 
-        return $repository->set(
-            $key,
-            array_map(
+        return $repository->set([
+            $key => array_map(
                 function ($columnName) use ($columnFieldMappings) {
                     return $columnFieldMappings[$columnName];
                 },
                 $this->getPkColumnNames()
             )
-        );
+        ])[$key];
     }
 
     /**

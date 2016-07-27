@@ -111,7 +111,7 @@ class Resource_Dynamic extends Resource
             $this->loaded = true;
 
             Action_Resource_Dynamic::call(['widgetClasses' => $this->widgetClasses]);
-            $this->build($this->getValues());
+            $this->build($this->get());
         }
 
         return parent::render();

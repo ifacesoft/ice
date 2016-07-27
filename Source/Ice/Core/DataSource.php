@@ -329,7 +329,7 @@ abstract class DataSource extends Container
                     Profiler::setPoint($queryResult->__toString(), $startTime, $startMemory);
                     Logger::log(Profiler::getReport($queryResult->__toString()), 'data source (new - ' . $dataProviderClassName .  ')', 'INFO');
 
-                    $cacher->set($queryHash, $queryResult, $ttl);
+                    $cacher->set([$queryHash => $queryResult], $ttl);
                     return $queryResult;
 
                 case QueryBuilder::TYPE_INSERT:

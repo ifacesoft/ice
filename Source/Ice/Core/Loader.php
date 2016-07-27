@@ -82,7 +82,7 @@ class Loader
             include_once $fileName;
 
             if (class_exists($class, false) || interface_exists($class, false) || trait_exists($class, false)) {
-                self::$repository->set($class, $fileName);
+                self::$repository->set([$class => $fileName]);
                 return true;
             }
 

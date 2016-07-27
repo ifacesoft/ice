@@ -49,7 +49,7 @@ class Form_Model_OneToMany extends FormElement_Chosen
 
         $fieldNames = strpos($this->getItemTitle(), '{$') === false
             ? array_merge([$this->getItemTitle()], (array)$fieldNames)
-            : array_diff(array_merge(array_keys($this->getParams()), (array)$fieldNames), [$this->getValueKey()]);
+            : array_diff(array_merge(array_keys($this->get()), (array)$fieldNames), [$this->getValueKey()]);
 
         $this->setOption('items', $queryBuilder->getSelectQuery(array_merge((array)$this->getItemKey(), $fieldNames))->getRows());
 

@@ -29,7 +29,7 @@ class Security_LoginPassword_RestorePassword_Submit extends Security
                     );
             }
 
-            $account = $accountModelClass::getSelectQuery(['/pk', '/expired'], ['login' => $securityForm->getValue('login')])->getModel();
+            $account = $accountModelClass::getSelectQuery(['/pk', '/expired'], ['login' => $securityForm->get('login')])->getModel();
 
             if (!$account) {
                 return [

@@ -12,6 +12,7 @@ namespace Ice\DataProvider;
 use Ice\Core\DataProvider;
 use Ice\Core\Exception;
 use Ice\Core\Module;
+use Ice\Exception\Error;
 use Ice\Helper\Date;
 use Ice\Helper\Directory;
 use Ice\Helper\File as Helper_File;
@@ -100,25 +101,31 @@ class File extends DataProvider
      * Get data from data provider by key
      *
      * @param  string $key
+     * @param null $default
+     * @param bool $require
      * @return mixed
-     *
+     * @throws Error
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 1.2
      * @since   0.0
      */
-    public function get($key = null)
+    public function get($key = null, $default = null, $require = false)
     {
         $fileName = $this->getFileName($key);
 
         if (!file_exists($fileName)) {
-            return null;
+            $value = $default;
+        } else {
+            list($ttl, $hash, $value) = Helper_File::loadData($fileName);
+
+            if (Date::expired(filemtime($fileName), $ttl)) {
+                $value = $default;
+            }
         }
 
-        list($ttl, $hash, $value) = Helper_File::loadData($fileName);
-
-        if (Date::expired(filemtime($fileName), $ttl)) {
-            return null;
+        if ($value === null && $require) {
+            throw new Error(['Param {$0} from data provider {$1} is require', ['key', __CLASS__]]);
         }
 
         return $value;
@@ -145,28 +152,19 @@ class File extends DataProvider
     /**
      * Set data to data provider
      *
-     * @param  string $key
-     * @param  $value
+     * @param array $values
      * @param  null|int $ttl
-     * @return mixed setted value
+     * @return array
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 1.2
      * @since   0.0
      */
-    public function set($key, $value = null, $ttl = null)
+    public function set(array $values = null, $ttl = null)
     {
-        if (is_array($key) && $value === null) {
-            foreach ($key as $index => $value) {
-                $this->set($index, $value, $ttl);
-            }
-
-            return $key;
-        }
-
         if ($ttl == -1) {
-            return $value;
+            return $values;
         }
 
         if ($ttl === null) {
@@ -174,15 +172,17 @@ class File extends DataProvider
             $ttl = isset($options['ttl']) ? $options['ttl'] : 3600;
         }
 
-        Helper_File::createData(
-            $this->getFileName($key),
-            [$ttl, Hash::get($value, Hash::HASH_CRC32), $value],
-            true,
-            0,
-            false
-        );
+        foreach ($values as $key => $value) {
+            Helper_File::createData(
+                $this->getFileName($key),
+                [$ttl, Hash::get($value, Hash::HASH_CRC32), $value],
+                true,
+                0,
+                false
+            );
+        }
 
-        return $value;
+        return $values;
     }
 
     /**

@@ -51,20 +51,29 @@ class Pattern extends Validator
      *      ];
      * ```
      *
-     * @param  $data
-     * @param  array $scheme
-     * @return boolean
+     * @param array $data
+     * @param $name
+     * @param  array $params
+     * @return bool
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 1.2
      * @since   0.0
      */
-    public function validate($data, $scheme = null)
+    public function validate(array $data, $name, array $params)
     {
-        $params = is_array($scheme) ? $scheme['params'] : $scheme;
+        $pattern = null;
 
-        return preg_match($params, $data);
+        if (array_key_exists('pattern', $params)) {
+            $pattern = $params['pattern'];
+        }
+
+        if ($pattern === null && $params) {
+            $pattern = reset($params);
+        }
+
+        return preg_match($pattern, $data[$name]);
     }
 
     public function getMessage()

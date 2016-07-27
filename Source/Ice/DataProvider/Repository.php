@@ -48,16 +48,17 @@ class Repository extends DataProvider
      * Get data from data provider by key
      *
      * @param  string $key
+     * @param null $default
+     * @param bool $require
      * @return mixed
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 1.2
      * @since   0.0
      */
-    public function get($key = null)
+    public function get($key = null, $default = null, $require = false)
     {
-        return $this->getConnection()->get($key);
+        return $this->getConnection()->get($key, $default, $require);
     }
 
     /**
@@ -78,19 +79,18 @@ class Repository extends DataProvider
     /**
      * Set data to data provider
      *
-     * @param  string $key
-     * @param  $value
+     * @param array $values
      * @param  integer $ttl
-     * @return mixed setted value
+     * @return array
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 1.2
      * @since   0.0
      */
-    public function set($key, $value = null, $ttl = null)
+    public function set(array $values = null, $ttl = null)
     {
-        return $this->getConnection()->set($key, $value, $ttl);
+        return $this->getConnection()->set($values, $ttl);
     }
 
     /**

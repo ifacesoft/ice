@@ -5,7 +5,9 @@ namespace Ice\Helper;
 use Ice\Core\Action;
 use Ice\Core\DataProvider;
 use Ice\Core\Debuger;
+use Ice\Core\Exception;
 use Ice\DataProvider\Cli;
+use Ice\DataProvider\Registry;
 use Ice\DataProvider\Request;
 use Ice\DataProvider\Router;
 use Ice\DataProvider\Session;
@@ -42,34 +44,38 @@ class Input
                 ? ($param['providers'] == '*' ? ['default', Request::class, Router::class, Cli::class, Session::class] : (array)$param['providers'])
                 : ['default'];
 
-            foreach ($dataProviderKeys as $dataProviderKey) {
-                if (isset($input[$name])) {
+            foreach ($dataProviderKeys as $key => $dataProviderKey) {
+                if (array_key_exists($name, $input)) {
                     break;
                 }
 
+                $index = DataProvider::DEFAULT_INDEX;
+
+                if (is_string($key)) {
+                    $index = $dataProviderKey;
+                    $dataProviderKey = $key;
+                }
+
                 if ($dataProviderKey == 'default') {
-                    $input[$name] = array_key_exists($name, $data) ? $data[$name] : null;
+                    if (array_key_exists($name, $data)) {
+                        $input[$name] = $data[$name];
+                    }
+
                     continue;
                 }
 
                 try { // пока провайдер роутер понимает только нативные роуты (не понмает, например, от Symfony)
-                    $input[$name] = DataProvider::getInstance($dataProviderKey)->get($name);
-                } catch (Http_Not_Found $e) {
+                    $input[$name] = DataProvider::getInstance($dataProviderKey, $index)->get($name, null, true);
+                } catch (Exception $e) {
                     //
                 }
             }
 
-//            if (!isset($input[$name]) && (!isset($param['required']) || $param['required'] === true)) {
-//                throw new Error('Param {$0} is required in input');
-//            } else {
-//                $input[$name] = null;
-//            }
-
-            if (!isset($input[$name])) {
+            if (!array_key_exists($name, $input)) {
                 $input[$name] = null;
             }
 
-            $input[$name] =  Input::getParam($name, $input[$name], $param);
+            $input[$name] = Input::getParam($name, $input[$name], $param);
         }
 
         return $input;

@@ -43,7 +43,7 @@ abstract class Container
      * @param  string $key
      * @param  null $ttl
      * @param array $params
-     * @return null|object|string
+     * @return Container|Core
      * @throws Exception
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -118,7 +118,7 @@ abstract class Container
 //                    Logger::log(Profiler::getReport($message), 'container (not cache)', 'WARN');
                 } else {
 //                    Logger::log(Profiler::getReport($message), 'container (new - ' . $dataProviderClassName .  ')', 'INFO');
-                    $dataProvider->set($key, $object, $ttl);
+                    $dataProvider->set([$key => $object], $ttl);
                 }
             }
 

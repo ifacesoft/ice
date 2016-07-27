@@ -25,15 +25,20 @@ class Vendor_PHPExcel
         unlink($file);
         return $objPHPExcel;
     }
-    
-    public static function getData($objPHPExcel) {
-        $objPHPExcel->setActiveSheetIndex(0);
-        $sheet = $objPHPExcel->getActiveSheet();
-        $rows = array();
-        foreach($sheet->getRowIterator() as $row){
+
+    public static function getData(\PHPExcel $objPHPExcel, $activeSheetIndex = 0)
+    {
+        $objPHPExcel->setActiveSheetIndex($activeSheetIndex);
+
+        $rows = [];
+
+        foreach ($objPHPExcel->getActiveSheet()->getRowIterator() as $row) {
             $cellIterator = $row->getCellIterator();
-            $cells = array();
-            foreach($cellIterator as $cell){
+
+            $cells = [];
+
+            /** @var \PHPExcel_Cell $cell */
+            foreach ($cellIterator as $cell) {
                 $value = $cell->getValue();
 
                 if ($value instanceof PHPExcel_RichText) {
@@ -42,8 +47,12 @@ class Vendor_PHPExcel
 
                 array_push($cells, $value);
             }
-            array_push($rows, $cells);
+
+            if (array_filter($cells)) {
+                array_push($rows, $cells);
+            }
         }
+
         return $rows;
     }
 }

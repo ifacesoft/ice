@@ -136,7 +136,7 @@ class Config
             );
         }
 
-        return $repository->set($class, Config::create($class, $config), $ttl);
+        return $repository->set([$class => Config::create($class, $config)], $ttl)[$class];
     }
 
     /**

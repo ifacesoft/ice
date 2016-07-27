@@ -14,7 +14,7 @@ use Ice\Render\Php;
 
 class FormElement extends HtmlTag
 {
-    private $validators = null;
+//    private $validators = null;
     private $name = null;
     private $horizontal = null;
 
@@ -47,14 +47,13 @@ class FormElement extends HtmlTag
         return $this->name = $this->getOption('name') ? $this->getOption('name') : $this->getComponentName();
     }
 
-    public function build(array $row)
-    {
-        /** @var FormElement $component */
-        $component = parent::build($row);
-
-        return $component
-            ->buildValidators();
-    }
+//    public function build(array $row)
+//    {
+//        /** @var FormElement $component */
+//        $component = parent::build($row);
+//
+//        return $component->buildValidators();
+//    }
 
 //    protected function buildParams(array $values)
 //    {
@@ -80,28 +79,28 @@ class FormElement extends HtmlTag
     {
         return $this->horizontal;
     }
+//
+//    /**
+//     * @return null
+//     */
+//    public function getValidators()
+//    {
+//        return $this->validators;
+//    }
+//
+//    /**
+//     * @param null $validators
+//     */
+//    protected function setValidators($validators)
+//    {
+//        $this->validators = $validators;
+//    }
 
-    /**
-     * @return null
-     */
-    public function getValidators()
-    {
-        return $this->validators;
-    }
-
-    /**
-     * @param null $validators
-     */
-    protected function setValidators($validators)
-    {
-        $this->validators = $validators;
-    }
-
-    private function buildValidators()
-    {
-        $this->setValidators($this->getOption('validators'));
-        return $this;
-    }
+//    private function buildValidators()
+//    {
+//        $this->setValidators($this->getOption('validators'));
+//        return $this;
+//    }
 
     public function save(Model $model)
     {

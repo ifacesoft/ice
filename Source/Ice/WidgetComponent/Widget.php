@@ -39,13 +39,6 @@ class Widget extends WidgetComponent
         if ($this->widget->getResource() === null) {
             $this->widget->setResourceClass($this->getResource());
         }
-
-//        if (isset($options['indexOffset'])) {
-//            $options['widget']->indexOffset += $options['indexOffset'];
-//            unset($options['indexOffset']);
-//        }
-
-//        $this->setDataParams($options['widget']->getDataParams());
     }
 
     /**
@@ -54,10 +47,5 @@ class Widget extends WidgetComponent
     public function getWidget()
     {
         return $this->widget;
-    }
-
-    public function getParams()
-    {
-        return array_merge($this->getWidget()->getDataParams(), parent::getParams());
     }
 }

@@ -24,7 +24,7 @@ use Ice\Core\Validator;
  * @package    Ice
  * @subpackage Validator
  */
-class Length_Max extends Validator
+class Length_Max extends Not_Null
 {
     /**
      * Validate data by scheme
@@ -38,20 +38,29 @@ class Length_Max extends Validator
      *  ],
      *  'name' => 'Ice:Not_Null'
      *
-     * @param  $data
-     * @param  array $scheme
-     * @return boolean
+     * @param array $data
+     * @param $name
+     * @param array $params
+     * @return bool
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 1.2
      * @since   0.0
      */
-    public function validate($data, $scheme = null)
+    public function validate(array $data, $name, array $params)
     {
-        $scheme = (array) $scheme;
-        
-        return strlen($data) <= (int)reset($scheme);
+        $length = null;
+
+        if (array_key_exists('length', $params)) {
+            $length = $params['length'];
+        }
+
+        if ($length === null && $params) {
+            $length = reset($params);
+        }
+
+        return parent::validate($data, $name, $params) && $length !== null && mb_strlen($data[$name]) <= (int)$length;
     }
 
     public function getMessage()

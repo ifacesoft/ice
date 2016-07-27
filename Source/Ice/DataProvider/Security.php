@@ -81,14 +81,15 @@ class Security extends DataProvider
      * Get data from data provider by key
      *
      * @param  string $key
+     * @param null $default
+     * @param bool $require
      * @return mixed
-     *
      * @author anonymous <email>
      *
      * @version 0
      * @since   0
      */
-    public function get($key = null)
+    public function get($key = null, $default = null, $require = false)
     {
         $method = Php::camelCaseMethodName($key, __FUNCTION__);
         return $this->getConnection()->$method();
@@ -97,20 +98,24 @@ class Security extends DataProvider
     /**
      * Set data to data provider
      *
-     * @param  string $key
-     * @param  $value
+     * @param array $values
      * @param  null $ttl
-     * @return mixed setted value
+     * @return array
      *
      * @throws Security_MethodNotSafe
+     *
      * @author anonymous <email>
      *
-     * @version 0
-     * @since   0
+     * @version 1.2
+     * @since   1.0
      */
-    public function set($key, $value = null, $ttl = null)
+    public function set(array $values = null, $ttl = null)
     {
-        throw new Security_MethodNotSafe(['Method {$0} not granted in {$1}', [Php::camelCaseMethodName($key, __FUNCTION__), __CLASS__]]);
+        if ($ttl == -1) {
+            return $values;
+        }
+
+        throw new Security_MethodNotSafe(['Method not granted in {$0}', __CLASS__]);
     }
 
     /**

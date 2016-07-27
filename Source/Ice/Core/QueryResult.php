@@ -11,6 +11,7 @@ namespace Ice\Core;
 
 use Ice\Core;
 use Ice\DataProvider\Cacher;
+use Ice\Exception\Error;
 use Ice\Helper\Arrays;
 use Ice\Helper\Serializer;
 

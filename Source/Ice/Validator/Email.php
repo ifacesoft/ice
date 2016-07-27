@@ -37,18 +37,19 @@ class Email extends Validator
      *  ],
      *  'name' => 'Ice:Not_Null'
      *
-     * @param  $data
-     * @param  array $scheme
-     * @return boolean
+     * @param array $data
+     * @param $name
+     * @param array $params
+     * @return bool
      *
-     * @author dp <denis.a.shestakov@gmail.com>
+* \     * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 1.2
      * @since   0.0
      */
-    public function validate($data, $scheme = null)
+    public function validate(array $data, $name, array $params)
     {
-        return (bool)filter_var($data, FILTER_VALIDATE_EMAIL);
+        return (bool)filter_var($data[$name], FILTER_VALIDATE_EMAIL);
     }
 
     public function getMessage()

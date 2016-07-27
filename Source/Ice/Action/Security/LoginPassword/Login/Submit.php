@@ -24,7 +24,7 @@ class Security_LoginPassword_Login_Submit extends Security
         /** @var Security_LoginPassword_Login $securityForm */
         $securityForm = $input['widget'];
 
-        $accountModelClass = $securityForm->getAccountLoginPasswordModelClass();
+        $accountModelClass = $securityForm->getAccountModelClass();
 
         if (!$accountModelClass) {
             return $securityForm->getLogger()

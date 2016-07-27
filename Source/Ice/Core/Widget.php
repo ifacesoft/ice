@@ -1,6 +1,7 @@
 <?php
 namespace Ice\Core;
 
+use Ice\Action\Deploy;
 use Ice\Exception\Access_Denied;
 use Ice\Exception\Http;
 use Ice\Exception\RouteNotFound;
@@ -26,7 +27,7 @@ abstract class Widget extends Container
      * @var array rows of values
      */
     private $rows = [[]];
-    private $values = [];
+//    private $values = [];
 
     /**
      * @var int
@@ -41,7 +42,7 @@ abstract class Widget extends Container
     protected $parts = [];
     private $classes = '';
 
-    private $dataParams = null;
+//    private $dataParams = null;
 
     private $output = null;
 
@@ -99,6 +100,80 @@ abstract class Widget extends Container
             'input' => [],
             'output' => [],
         ];
+    }
+
+    protected function __construct(array $data)
+    {
+        parent::__construct($data);
+
+        unset($data['instanceKey']);
+
+        $startTime = Profiler::getMicrotime();
+        $startMemory = Profiler::getMemoryGetUsage();
+
+        $key = 'build - ' . get_class($this) . '/' . $this->getInstanceKey();
+
+        /** @var Widget $widgetClass */
+        $widgetClass = get_class($this);
+
+        try {
+            $this->token = crc32(String::getRandomString());
+
+            $this->setResourceClass();
+            $this->setTemplateClass();
+            $this->setRenderClass();
+
+            if (isset($data['parentWidgetId'])) {
+                $this->parentWidgetId = $data['parentWidgetId'];
+                unset($data['parentWidgetId']);
+            }
+
+            if (isset($data['parentWidgetClass'])) {
+                $this->parentWidgetClass = $data['parentWidgetClass'];
+                unset($data['parentWidgetClass']);
+            }
+
+            $this->setData($data);
+
+            $this->set(Input::get($widgetClass::getConfig()->gets('input', []), $data));
+
+            $this->loadResource();
+
+            $this->output = array_merge(
+                Input::get($widgetClass::getConfig()->gets('output', []), $data),
+                (array)$this->build($this->get())
+            );
+        } catch (Http $e) {
+            throw $e;
+//        } catch (Access_Denied $e) {
+//            throw $e;
+        } catch (\Exception $e) {
+            Logger::getInstance(__CLASS__)->error(['Widget {$0} init failed', $widgetClass], __FILE__, __LINE__, $e);
+        } finally {
+            Profiler::setPoint($key, $startTime, $startMemory);
+
+            Logger::fb(Profiler::getReport($key), 'widget', 'INFO');
+        }
+    }
+
+    /**
+     * @param string $key
+     * @param null $ttl
+     * @param array $params
+     * @return Widget|Container|$this
+     */
+    public static function getInstance($key, $ttl = null, array $params = [])
+    {
+//        /** @var Widget $widgetClass */
+//        $widgetClass = self::getClass();
+//        try {
+//            Access::check($widgetClass::getConfig()->gets('access'));
+//        } catch (Access_Denied $e) {
+//            //
+//            return null;
+//        }
+
+        return parent::getInstance($key, $ttl, $params);
     }
 
     /**
@@ -166,60 +241,6 @@ abstract class Widget extends Container
         }
 
         return $layout;
-    }
-
-    protected function __construct(array $data)
-    {
-        parent::__construct($data);
-
-        unset($data['instanceKey']);
-
-        $startTime = Profiler::getMicrotime();
-        $startMemory = Profiler::getMemoryGetUsage();
-
-        $key = 'build - ' . get_class($this) . '/' . $this->getInstanceKey();
-
-        /** @var Widget $widgetClass */
-        $widgetClass = get_class($this);
-
-        try {
-            $this->token = crc32(String::getRandomString());
-
-            $this->setResourceClass();
-            $this->setTemplateClass();
-            $this->setRenderClass();
-
-            if (isset($data['parentWidgetId'])) {
-                $this->parentWidgetId = $data['parentWidgetId'];
-                unset($data['parentWidgetId']);
-            }
-
-            if (isset($data['parentWidgetClass'])) {
-                $this->parentWidgetClass = $data['parentWidgetClass'];
-                unset($data['parentWidgetClass']);
-            }
-
-            $configInput = $widgetClass::getConfig()->gets('input', []);
-            $configOutput = $widgetClass::getConfig()->gets('output', []);
-
-            $this->setData($data);
-
-            $this->bind(Input::get($configInput, $data));
-
-            $this->loadResource();
-
-            $this->output = array_merge(Input::get($configOutput, $data), (array)$this->build($this->getValues()));
-        } catch (Http $e) {
-            throw $e;
-//        } catch (Access_Denied $e) {
-//            throw $e;
-        } catch (\Exception $e) {
-            Logger::getInstance(__CLASS__)->error(['Widget {$0} init failed', $widgetClass], __FILE__, __LINE__, $e);
-        } finally {
-            Profiler::setPoint($key, $startTime, $startMemory);
-
-            Logger::fb(Profiler::getReport($key), 'widget', 'INFO');
-        }
     }
 
     /**
@@ -359,26 +380,6 @@ abstract class Widget extends Container
     protected abstract function build(array $input);
 
     /**
-     * @param string $key
-     * @param null $ttl
-     * @param array $params
-     * @return $this
-     */
-    public static function getInstance($key, $ttl = null, array $params = [])
-    {
-//        /** @var Widget $widgetClass */
-//        $widgetClass = self::getClass();
-//        try {
-//            Access::check($widgetClass::getConfig()->gets('access'));
-//        } catch (Access_Denied $e) {
-//            //
-//            return null;
-//        }
-
-        return parent::getInstance($key, $ttl, $params);
-    }
-
-    /**
      * @return int
      */
     public function getOffset()
@@ -425,20 +426,18 @@ abstract class Widget extends Container
      * @param array $params
      * @return $this
      */
-    public function bind(array $params)
+    public function set(array $params)
     {
-        $values = array_merge($this->values, $params);
-        
-        foreach ($this->getParts() as $partName => $part) {
-            if (array_key_exists($partName, $values)) {
-                $part->set([$partName => $values[$partName]]);
-                unset($values[$partName]);
-            }
-        }
-        
-        $this->values = $values;
-        
+        $this->getWidgetRegistry()->set($params);
+
         return $this;
+    }
+
+    public function getWidgetRegistry() {
+        /** @var Widget $widgetClass */
+        $widgetClass = get_class($this);
+
+        return $widgetClass::getRegistry($this->getWidgetId());
     }
 
     public function setQueryResult(QueryResult $queryResult)
@@ -483,7 +482,7 @@ abstract class Widget extends Container
         $this->result = [];
 
         $offset = $this->getOffset();
-        $values = $this->getValues();
+        $params = $this->get();
 
         foreach ($this->getRows() as $row) {
             $offset++;
@@ -492,12 +491,11 @@ abstract class Widget extends Container
 
             foreach ($this->getParts($this->getFilterParts()) as $partName => $part) {
                 $rowTable[$partName] = $part->cloneComponent();// todo: избавиться от клонирования (дублирования билдинга)
+                $rowTable[$partName]->setOffset($offset);
 
                 if (!($this instanceof Bootstrap3_Table_Row)) {
-                    $rowTable[$partName]->build(array_merge($values, $row));
+                    $rowTable[$partName]->set(array_merge($params, $row));
                 }
-
-                $rowTable[$partName]->setOffset($offset);
             }
 
             $this->result[$offset] = $rowTable;
@@ -528,7 +526,7 @@ abstract class Widget extends Container
                 'widgetData' => $this->getData(),
                 'widgetResource' => $this->getResource(),
                 'classes' => trim($this->classes),
-                'dataParams' => Json::encode($this->getDataParams()),
+                'dataParams' => Json::encode($this->get()),
                 'dataWidget' => Json::encode($this->getDataWidget())
             ],
             (array)$this->output
@@ -578,35 +576,6 @@ abstract class Widget extends Container
         return $result;
     }
 
-    public function getDataParams()
-    {
-        if ($this->dataParams !== null) {
-            return $this->dataParams;
-        }
-
-        $dataParams = $this->getValues();
-
-        foreach ($this->getParts() as $part) {
-            $dataParams = array_merge($part->getParams(), $dataParams);
-        }
-
-        return $dataParams;
-    }
-
-    /**
-     * @param array $dataParams
-     */
-    public function setDataParams(array $dataParams)
-    {
-        $this->dataParams = array_merge($this->getDataParams(), $dataParams);
-
-        foreach ($this->getParts() as $part) {
-            if ($part instanceof WidgetComponent_Widget) {
-                $part->getWidget()->setDataParams($this->dataParams);
-            }
-        }
-    }
-
     /**
      * @param string $layout
      * @return $this
@@ -615,16 +584,6 @@ abstract class Widget extends Container
     {
         $this->layout = $layout;
         return $this;
-    }
-
-    /**
-     * @param $key
-     * @deprecated Use Widget::get
-     * @return mixed|null
-     */
-    public function getValue($key)
-    {
-        return isset($this->getValues()[$key]) ? $this->getValues()[$key] : null;
     }
 
     /**
@@ -734,7 +693,7 @@ abstract class Widget extends Container
 //            }
 
             // Todo: этот код перенести в компонент -> Очень важно!!!
-//            $value = $this->getValue($partName);
+//            $value = $this->get($partName);
 //
 //            if (is_string($value) && !empty($value) && isset($part['options']['sort'])) {
 //                if (preg_match($ascPattern, $value)) {
@@ -753,42 +712,42 @@ abstract class Widget extends Container
         return $parts;
     }
 
-    /**
-     * Compiled values of widget
-     *
-     * @return array
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 1.1
-     * @since   1.0
-     */
-    public function getValues()
-    {
-        $values = [];
-
-        $filterParts = $this->getFilterParts();
-
-        foreach ($this->values as $partName => $value) {
-            if (!empty($filterParts) && !isset($filterParts[$partName])) {
-                continue;
-            }
-
-            if (is_string($value)) {
-                if ($param = strstr($value, '/' . QueryBuilder::SQL_ORDERING_ASC, false) !== false) {
-                    $value = $param;
-                } elseif ($param = strstr($value, '/' . QueryBuilder::SQL_ORDERING_DESC, false) !== false) {
-                    $value = $param;
-                }
-
-//                $value = htmlentities($value, ENT_QUOTES);
-            }
-
-            $values[$partName] = $value;
-        }
-
-        return $values;
-    }
+//    /**
+//     * Compiled values of widget
+//     *
+//     * @return array
+//     *
+//     * @author dp <denis.a.shestakov@gmail.com>
+//     *
+//     * @version 1.1
+//     * @since   1.0
+//     */
+//    public function getValues()
+//    {
+//        $values = [];
+//
+//        $filterParts = $this->getFilterParts();
+//
+//        foreach ($this->values as $partName => $value) {
+//            if (!empty($filterParts) && !isset($filterParts[$partName])) {
+//                continue;
+//            }
+//
+//            if (is_string($value)) {
+//                if ($param = strstr($value, '/' . QueryBuilder::SQL_ORDERING_ASC, false) !== false) {
+//                    $value = $param;
+//                } elseif ($param = strstr($value, '/' . QueryBuilder::SQL_ORDERING_DESC, false) !== false) {
+//                    $value = $param;
+//                }
+//
+////                $value = htmlentities($value, ENT_QUOTES);
+//            }
+//
+//            $values[$partName] = $value;
+//        }
+//
+//        return $values;
+//    }
 
     /**
      * @return array
@@ -1196,33 +1155,60 @@ abstract class Widget extends Container
     }
 
     /**
-     * @param $param string|null
-     * @param array $options
+     * @param $paramName string|null
+     * @param null $default
      * @return mixed
      */
-    public function get($param = null, $options = [])
+    public function getAll($paramName = null, $default = null)
     {
-        if ($param === null) {
-            return $this->values;
+        $params = $this->getWidgetRegistry()->get();
+
+        foreach ($this->getParts() as $part) {
+            $params = array_merge($part->getAll(), $params);
         }
 
-        $value = array_key_exists($param, $this->values) ? $this->values[$param] : null;
-
-        if ($value === null && array_key_exists('default', $options)) {
-            $value = $options['default'];
+        if ($paramName === null) {
+            return empty($params) ? [] : $params;
         }
 
-        return $value;
+        return array_key_exists($paramName, $params) ? $params[$paramName] : $default;
+    }
+
+    /**
+     * @param $paramName string|null
+     * @param null $default
+     * @return mixed
+     */
+    public function get($paramName = null, $default = null)
+    {
+        $params = $this->getWidgetRegistry()->get();
+
+        foreach ($this->getParts() as $part) {
+            $params = array_merge($part->get(), $params);
+        }
+
+        if ($paramName === null) {
+            return empty($params) ? [] : $params;
+        }
+
+        return array_key_exists($paramName, $params) ? $params[$paramName] : $default;
+    }
+
+    public function getInputConfig() {
+        /** @var Widget $widgetClass */
+        $widgetClass = get_class($this);
+
+        return $widgetClass::getConfig()->gets('input', []);
     }
 
     public function validate()
     {
-        $values = [];
+        $params = Validator::validateParams($this->getWidgetRegistry()->get(), $this->getInputConfig());
 
         foreach ($this->getParts($this->getFilterParts()) as $component) {
-            $values = array_merge($values, $component->validate());
+            $params = array_merge($params, $component->validate());
         }
 
-        return array_merge($values, $this->getValues()); // todo: $this->values mast be validate too
+        return $params;
     }
 }

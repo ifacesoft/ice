@@ -270,7 +270,7 @@ class Query
         $queryTranslatorClass = $this->getDataSource()->getQueryTranslatorClass();
         $body = $queryTranslatorClass::getInstance()->translate($this->getBodyParts());
 
-        return $repository->set($key, $body);
+        return $repository->set([$key => $body])[$key];
     }
 
     /**

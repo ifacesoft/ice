@@ -58,7 +58,7 @@ class Form_Model_OneToManyToMany extends Form_Model_OneToMany
         }
 
         if ($resource = $this->getResource()) {
-            $manyLabel = ($resource->get($manyLabel, $this->getParams()));
+            $manyLabel = ($resource->get($manyLabel, $this->get()));
         }
 
         return $manyLabel;

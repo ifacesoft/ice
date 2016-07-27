@@ -11,6 +11,7 @@ namespace Ice\DataProvider;
 
 use Ice\Core\DataProvider;
 use Ice\Core\Exception;
+use Ice\Exception\Error;
 
 /**
  * Class Apc
@@ -46,28 +47,20 @@ class Apc extends DataProvider
     /**
      * Set data to data provider
      *
-     * @param  string $key
-     * @param  $value
+     * @param array $values
      * @param  null $ttl
-     * @return mixed setted value
+     * @return array
      *
+     * @throws Error
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 1.2
      * @since   0.0
      */
-    public function set($key, $value = null, $ttl = null)
+    public function set(array $values = null, $ttl = null)
     {
-        if (is_array($key) && $value === null) {
-            foreach ($key as $index => $value) {
-                $this->set($index, $value, $ttl);
-            }
-
-            return $key;
-        }
-
         if ($ttl == -1) {
-            return $value;
+            return $values;
         }
 
         if ($ttl === null) {
@@ -75,7 +68,13 @@ class Apc extends DataProvider
             $ttl = isset($options['ttl']) ? $options['ttl'] : 3600;
         }
 
-        return apc_store($this->getFullKey($key), $value, $ttl) ? $value : null;
+        foreach ($values as $key => $value) {
+            if (!apc_store($this->getFullKey($key), $value, $ttl)) {
+                throw new Error(['{$0} set  param {$1} fail', [__CLASS__, $key]]);
+            }
+        }
+
+        return $values;
     }
 
     /**
@@ -110,18 +109,30 @@ class Apc extends DataProvider
      * Get data from data provider by key
      *
      * @param  string $key
-     * @throws Exception
+     * @param null $default
+     * @param bool $require
      * @return mixed
-     *
+     * @throws Error
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.4
+     * @version 1.2
      * @since   0.0
      */
-    public function get($key = null)
+    public function get($key = null, $default = null, $require = false)
     {
-        $value = apc_fetch($this->getFullKey($key));
-        return $value === false ? null : $value;
+        $success = false;
+
+        $value = apc_fetch($this->getFullKey($key), $success);
+
+        if ($success === false) {
+            $value = $default;
+        }
+
+        if ($value === null && $require) {
+            throw new Error(['Param {$0} from data provider {$1} is require', ['key', __CLASS__]]);
+        }
+
+        return $value;
     }
 
     /**

@@ -97,12 +97,16 @@ class Roll extends Widget
 
         $limitQueryPart = $queryBuilder->getSqlParts()[QueryBuilder::PART_LIMIT];
 
-        $limit = isset($this->getDataParams()['limit'])
-            ? $this->getDataParams()['limit']
-            : $limitQueryPart['limit'];
+        $limit = $this->getAll('limit');
 
-        $offset = isset($this->getDataParams()['page'])
-            ? $limit * ($this->getDataParams()['page'] - 1)
+        if (!$limit) {
+            $limit = $limitQueryPart['limit'];
+        }
+
+        $offset = $this->getAll('offset');
+
+        $offset = $offset
+            ? $limit * ($offset - 1)
             : $limitQueryPart['offset'];
 
         if ($limit && $limit < $queryResult->getNumRows()) {

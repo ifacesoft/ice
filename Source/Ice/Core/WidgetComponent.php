@@ -2,7 +2,6 @@
 
 namespace Ice\Core;
 
-use Ice\Action\PhpUnit;
 use Ice\Core;
 use Ice\Exception\Error;
 use Ice\Exception\Not_Show;
@@ -11,9 +10,11 @@ use Ice\Helper\Access;
 use Ice\Helper\Date;
 use Ice\Helper\Input;
 use Ice\Helper\String;
+use Ice\QueryTranslator\Defined;
 use Ice\Render\Replace;
 use Ice\Widget\Block;
 use Ice\WidgetComponent\HtmlTag;
+use Ice\WidgetComponent\Widget as Component_Widget;
 
 abstract class WidgetComponent
 {
@@ -27,12 +28,13 @@ abstract class WidgetComponent
     private $renderClass = null;
     private $offset = null;
 
+    private $widgetClass = null;
     private $widgetId = null;
 
     private $value = null;
     protected $label = null;
 
-    protected $params = [];
+//    protected $params = [];
 
     private $active = null;
     private $classes = null;
@@ -88,7 +90,10 @@ abstract class WidgetComponent
             ->setResourceClass($this->getOption('resource'), $widget)
             ->setRenderClass($this->getOption('render'));
 
+        $this->widgetClass = get_class($widget);
         $this->widgetId = $widget->getWidgetId();
+
+        $this->init();
     }
 
     /**
@@ -126,33 +131,36 @@ abstract class WidgetComponent
     /**
      * @return null|string
      */
-    public function getPartId()
+    public function getWidgetComponentId()
     {
         return $this->getWidgetId() . '_' . $this->getComponentName();
     }
 
-    /**
-     * @param $param
-     * @param array $options
-     * @param null $default
-     */
-    protected function init($param, array $options, $default = null)
+    protected function init()
     {
-        $this->setOption($param, array_key_exists($param, $options) ? $options[$param] : $default);
+        $defaultValues = [];
+
+        $value = $this->getOption('value');
+
+        if ($value !== null) {
+            $defaultValues[$this->getValueKey()] = $value;
+        }
+
+        $this->set(Input::get($this->getParamConfig(), $defaultValues));
     }
 
-    /**
-     * @param array $row
-     * @return $this
-     */
-    public function build(array $row)
-    {
-        $this->params = [];
-
-        $this->buildParams($row);
-
-        return $this;
-    }
+//    /**
+//     * @param array $row
+//     * @return $this
+//     */
+//    public function build(array $row)
+//    {
+////        $this->params = [];
+//
+//        $this->buildParams($row);
+//
+//        return $this;
+//    }
 
     public function cloneComponent()
     {
@@ -294,7 +302,7 @@ abstract class WidgetComponent
 
         /** @var Resource $resource */
         if ($resource = $this->getResource()) {
-            $this->setLabel($resource->get($this->label, $this->getParams()));
+            $this->setLabel($resource->get($this->label, $this->get()));
         }
 
         return $this->label;
@@ -357,14 +365,14 @@ abstract class WidgetComponent
     {
         $this->options[$name] = $value;
     }
-
-    /**
-     * @return array
-     */
-    public function getParams()
-    {
-        return $this->params;
-    }
+//
+//    /**
+//     * @return array
+//     */
+//    public function getParams()
+//    {
+//        return $this->params;
+//    }
 
     protected function getClasses($classes = '')
     {
@@ -405,7 +413,7 @@ abstract class WidgetComponent
             $postfix = '_' . $postfix;
         }
 
-        return $this->id[$postfix] = $this->getPartId() . '_' . $this->getOffset() . $postfix;
+        return $this->id[$postfix] = $this->getWidgetComponentId() . $postfix;
     }
 
     public function getIdAttribute($postfix = '')
@@ -413,26 +421,82 @@ abstract class WidgetComponent
         return 'id="' . $this->getId($postfix) . '" data-for="' . $this->getWidgetId() . '"';
     }
 
-    public function get($param = null, $default = null)
+    public function getAll($paramName = null, $default = null)
     {
-        if ($param === null) {
-            return $this->params;
+        /** @var WidgetComponent $widgetComponentClass */
+        $widgetComponentClass = get_class($this);
+
+        $registry = $widgetComponentClass::getRegistry($this->getId());
+
+        /** @var Widget $widgetClass */
+        $widgetClass = $this->getWidgetClass();
+
+        $params = array_merge($widgetClass::getRegistry($this->getWidgetId())->get(), $registry->get());
+
+        if ($this instanceof Component_Widget) {
+            $params = array_merge($this->getWidget()->getAll(), $params);
         }
 
-        if (isset($this->params[$param])) {
-            return $this->params[$param];
+        if ($paramName === null) {
+            return empty($params) ? [] : $params;
         }
 
-        $params = Input::get($this->getParamsConfig());
+        return array_key_exists($paramName, $params) ? $params[$paramName] : $default;
+    }
 
-        return isset($params[$param]) ? $params[$param] : $default;
+    public function get($paramName = null, $default = null)
+    {
+        /** @var WidgetComponent $widgetComponentClass */
+        $widgetComponentClass = get_class($this);
+
+        $registry = $widgetComponentClass::getRegistry($this->getId());
+
+        /** @var Widget $widgetClass */
+        $widgetClass = $this->getWidgetClass();
+
+        $params = array_merge(
+            $widgetClass::getRegistry($this->getWidgetId())->get(),
+            $registry->get()
+        );
+
+        if ($paramName === null) {
+            return empty($params) ? [] : $params;
+        }
+
+        return array_key_exists($paramName, $params) ? $params[$paramName] : $default;
+
+//        $valueKey = $this->getValueKey();
+//
+//        if (empty($this->get($valueKey))) {
+//            return;
+//        }
+//
+//        $dateFormat = $this->getOption('dateFormat');
+//
+//        if ($dateFormat === true) {
+//            $dateDefaults = Module::getInstance()->getDefault('date');
+//            $dateFormat = $dateDefaults->get('format');
+//        }
+//
+//        if ($dateFormat) {
+//            $this->set($valueKey, Date::get(strtotime($this->get($valueKey)), $dateFormat));
+//            $this->setOption('dateFormat', null);
+//        }
+
+
+//        return isset($params[$param]) ? $params[$param] : $default;
     }
 
     public function set(array $params)
     {
-        foreach ($params as $param => $value) {
-            $this->params[$param] = $value;
-        }
+
+        /** @var WidgetComponent $widgetComponentClass */
+        $widgetComponentClass = get_class($this);
+
+        $widgetComponentClass::getRegistry($this->getId())->set($params);
+//        foreach ($params as $param => $value) {
+//            $this->params[$param] = $value;
+//        }
 
         return $this;
     }
@@ -445,6 +509,7 @@ abstract class WidgetComponent
     protected function getValidValue()
     {
         $this->validate();
+
         return $this->get($this->getValueKey());
     }
 
@@ -471,13 +536,13 @@ abstract class WidgetComponent
                 ? $this->getResource()
                 : Resource::create($resourceClass);
 
-            $value = $resource->get($value, $this->getParams());
+            $value = $resource->get($value, $this->get());
 
             if ($this->getOption('valueHardResource')) {
-                $value = $resource->get($this->getValueKey() . '_' . $value, $this->getParams());
+                $value = $resource->get($this->getValueKey() . '_' . $value, $this->get());
             }
         } else {
-            $value = Replace::getInstance()->fetch($value, $this->getParams(), null, Render::TEMPLATE_TYPE_STRING);
+            $value = Replace::getInstance()->fetch($value, $this->get(), null, Render::TEMPLATE_TYPE_STRING);
         }
 
         if ($dateFormat = $this->getOption('dateFormat')) {
@@ -511,50 +576,51 @@ abstract class WidgetComponent
         return $valueKey;
     }
 
-    protected function getParamsConfig()
+    protected function getParamConfig($paramName = null)
     {
-        $valueKey = $this->getValueKey();
-        $value = $this->getOption('value');
+        $paramsConfig = [];
 
-        if ($value === null && isset($this->params[$valueKey])) {
-            $value = $this->params[$valueKey];
-        }
+        foreach ((array)$this->getOption('params', []) as $param => $config) {
+            if (is_int($param)) {
+                $param = $config;
+                $config = [];
+            }
 
-        $paramsConfig = (array)$this->getOption('params', []);
+            if ($paramName !== null && $paramName != $param) {
+                continue;
+            }
 
-        if (!isset($paramsConfig[$valueKey])) {
-            $paramsConfig[$valueKey] = [];
-        }
+            $paramsConfig[$param] = $config;
 
-        if ($value !== null) {
-            $paramsConfig[$valueKey]['default'] = $value;
+            if (!is_string($paramsConfig[$param])) {
+                $paramsConfig[$param]['providers'] = isset($paramsConfig[$param]['providers'])
+                    ? array_merge(['default'], (array)$paramsConfig[$param]['providers'])
+                    : ['default'];
+            }
+
         }
 
         return $paramsConfig;
     }
 
-    protected function buildParams(array $values)
+    /**
+     * @return null|string
+     */
+    public function getWidgetClass()
     {
-        $this->set(Input::get($this->getParamsConfig(), $values));
-
-        $valueKey = $this->getValueKey();
-
-        if (empty($this->get($valueKey))) {
-            return;
-        }
-
-        $dateFormat = $this->getOption('dateFormat');
-
-        if ($dateFormat === true) {
-            $dateDefaults = Module::getInstance()->getDefault('date');
-            $dateFormat = $dateDefaults->get('format');
-        }
-
-        if ($dateFormat) {
-            $this->set($valueKey, Date::get(strtotime($this->get($valueKey)), $dateFormat));
-            $this->setOption('dateFormat', null);
-        }
+        return $this->widgetClass;
     }
+//
+//    protected function buildParams(array $values)
+//    {
+//        /** @var WidgetComponent $widgetComponentClass */
+//        $widgetComponentClass = get_class($this);
+//
+//        $widgetComponentClass::getRegistry($this->getId())->set($values);
+//
+//        Debuger::dump($values);
+//
+//    }
 
     public function render(Render $render = null)
     {
@@ -579,9 +645,14 @@ abstract class WidgetComponent
 
     protected function getNotValidResult(Not_Valid $e)
     {
-        $error = new HtmlTag('error', ['value' => $e->getMessage()], 'Ice\WidgetComponent\Bootstrap_Alert_Danger', Block::getInstance(null));
+        $error = new HtmlTag(
+            'error',
+            ['value' => $e->getMessage()],
+            'Ice\WidgetComponent\Bootstrap_Alert_Danger',
+            Block::getInstance(null)
+        );
 
-        return $error->build([])->render();
+        return $error->render();
     }
 
     public function getLayout()
@@ -591,6 +662,6 @@ abstract class WidgetComponent
 
     public function validate()
     {
-        return Validator::validateParams($this->getParams(), (array)$this->getOption('params', []));
+        return Validator::validateParams($this->get(), (array)$this->getOption('params', []));
     }
 }

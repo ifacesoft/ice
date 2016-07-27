@@ -12,6 +12,7 @@ namespace Ice\DataProvider;
 use ArrayObject;
 use Ice\Core\DataProvider;
 use Ice\Core\Exception;
+use Ice\Exception\Error;
 
 /**
  * Class Registry
@@ -113,77 +114,70 @@ class Registry extends DataProvider
     /**
      * Set data to data provider
      *
-     * @param  string $key
-     * @param  $value
+     * @param array $values
      * @param  integer $ttl
-     * @return mixed setted value
+     * @return array
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 1.2
      * @since   0.0
      */
-    public function set($key, $value = null, $ttl = 0)
+    public function set(array $values = null, $ttl = null)
     {
-        if (is_array($key) && $value === null) {
-            foreach ($key as $index => $value) {
-                $this->set($index, $value, $ttl);
-            }
-
-            return $key;
-        }
-
         if ($ttl == -1) {
-            return $value;
+            return $values;
         }
 
-        $keyPrefix = $this->getKeyPrefix();
+        foreach ($values as $key => $value) {
+            $keyPrefix = $this->getKeyPrefix();
 
-//        if (!isset(Registry::$count[$keyPrefix])) {
-//            Registry::$count[$keyPrefix] = 0;
-//        }
-
-        if (!isset($this->getConnection()->$keyPrefix)) {
-            $this->getConnection()->$keyPrefix = [$key => $value];
-//            Registry::$count[$keyPrefix]++;
-//            Debuger::dump($keyPrefix . ': ' . Registry::$count[$keyPrefix]);
-            return $value;
+            if (isset($this->getConnection()->$keyPrefix)) {
+                $data = $this->getConnection()->$keyPrefix;
+                $data[$key] = $value;
+                $this->getConnection()->$keyPrefix = $data;
+            } else {
+                $this->getConnection()->$keyPrefix = [$key => $value];
+            }
         }
 
-        $data = $this->getConnection()->$keyPrefix;
-        $data[$key] = $value;
-        $this->getConnection()->$keyPrefix = $data;
-//        Registry::$count[$keyPrefix]++;
-//        Debuger::dump($keyPrefix . ': ' . Registry::$count[$keyPrefix]);
-        return $value;
+        return $values;
     }
 
     /**
      * Get data from data provider by key
      *
      * @param  string $key
+     * @param null $default
+     * @param bool $require
      * @return mixed
-     *
+     * @throws Error
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 1.2
      * @since   0.0
      */
-    public function get($key = null)
+    public function get($key = null, $default = null, $require = false)
     {
         $keyPrefix = $this->getKeyPrefix();
 
         if (!isset($this->getConnection()->$keyPrefix)) {
-            return null;
+            return $key === null ? [] : $default;
         }
 
         $data = $this->getConnection()->$keyPrefix;
 
-        if (empty($key)) {
-            return $data;
+        if ($key === null) {
+            return empty($data) ? [] : $data;
         }
 
-        return isset($data[$key]) ? $data[$key] : null;
+        $value = array_key_exists($key, $data) ? $data[$key] : $default;
+
+        if ($value === null && $require) {
+            throw new Error(['Param {$0} from data provider {$1} is require', ['key', __CLASS__]]);
+        }
+
+        return $value;
     }
 
     /**

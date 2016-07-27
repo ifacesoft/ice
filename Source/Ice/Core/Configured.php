@@ -35,6 +35,6 @@ trait Configured
             array_merge_recursive($class::config(), Config::getInstance($class, null, false, -1)->gets())
         );
 
-        return $repository->set('config', $config);
+        return $repository->set(['config' => $config])['config'];
     }
 }

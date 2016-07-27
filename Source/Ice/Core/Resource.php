@@ -111,15 +111,14 @@ class Resource implements Cacheable
             $renderClass = Replace::getClass();
         }
 
-        return $repository->set(
-            $key,
-            $renderClass::getInstance()->fetch(
+        return $repository->set([
+            $key => $renderClass::getInstance()->fetch(
                 $resourceMessage,
                 (array)$params,
                 null,
                 Render::TEMPLATE_TYPE_STRING
             )
-        );
+        ])[$key];
     }
 
     /**
@@ -147,7 +146,7 @@ class Resource implements Cacheable
         $resource->resource = Resource::getResources($class);
         $resource->class = $class;
 
-        return $repository->set('resource', $resource);
+        return $repository->set(['resource' => $resource])['resource'];
     }
 
     private static function getResources($class)

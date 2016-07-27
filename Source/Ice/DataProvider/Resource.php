@@ -30,14 +30,15 @@ class Resource extends DataProvider
      * Get data from data provider by key
      *
      * @param  string $key
+     * @param null $default
+     * @param bool $require
      * @return mixed
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.5
+     * @version 1.2
      * @since   0.5
      */
-    public function get($key = null)
+    public function get($key = null, $default = null, $require = false)
     {
         return $key ? $this->getConnection()[$key] : $this->getConnection();
     }
@@ -60,28 +61,28 @@ class Resource extends DataProvider
     /**
      * Set data to data provider
      *
-     * @param  string $key
-     * @param  $value
+     * @param array $values
      * @param  null $ttl
-     * @return mixed setted value
+     * @return array
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.5
+     * @version 1.2
      * @since   0.5
      */
-    public function set($key, $value = null, $ttl = null)
+    public function set(array $values = null, $ttl = null)
     {
-        //        if (is_array($key) && $value === null) {
-        //            foreach ($key as $index => $value) {
-        //                $this->set($index, $value, $ttl);
-        //            }
-        //
-        //            return $key;
-        //        }
-        //
-        //        return $this->getConnection()['resource'][$this->getResourceKey()]->set($key, $value);
-        // TODO: Implement set() method.
+        if ($ttl == -1) {
+            return $values;
+        }
+
+        // TODO: Implement getKeys() method.
+
+//        foreach ($values as $key => $value) {
+//            $this->getConnection()['resource'][$this->getResourceKey()]->set($key, $value);
+//        }
+//
+//        return $values;
     }
 
     /**

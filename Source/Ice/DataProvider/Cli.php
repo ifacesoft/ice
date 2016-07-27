@@ -11,6 +11,7 @@ namespace Ice\DataProvider;
 
 use Ice\Core\Action;
 use Ice\Core\DataProvider;
+use Ice\Exception\Error;
 
 /**
  * Class Cli
@@ -47,51 +48,59 @@ class Cli extends DataProvider
      * Get data from data provider by key
      *
      * @param  string $key
+     * @param null $default
+     * @param bool $require
      * @return mixed
-     *
+     * @throws Error
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.5
+     * @version 1.2
      * @since   0.0
      */
-    public function get($key = null)
+    public function get($key = null, $default = null, $require = false)
     {
         $this->getConnection();
 
-        if (!$key) {
-            return $_SERVER['argv'];
+        if ($key === null) {
+            return empty($_SERVER['argv']) ? [] : $_SERVER['argv'];
         }
 
-        return isset($_SERVER['argv'][$key]) ? $_SERVER['argv'][$key] : null;
+        $value = isset($_SERVER['argv']) && array_key_exists($key, $_SERVER['argv'])
+            ? $_SERVER['argv'][$key]
+            :$default;
+
+        if ($value === null && $require) {
+            throw new Error(['Param {$0} from data provider {$1} is require', ['key', __CLASS__]]);
+        }
+
+        return $value;
     }
 
     /**
      * Set data to data provider
      *
-     * @param  string $key
-     * @param  $value
+     * @param array $values
      * @param  null $ttl
-     * @throws \Exception
-     * @return mixed setted value
+     * @return array
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.5
+     * @version 1.2
      * @since   0.0
      */
-    public function set($key, $value = null, $ttl = null)
+    public function set(array $values = null, $ttl = null)
     {
-        if (is_array($key) && $value === null) {
-            foreach ($key as $index => $value) {
-                $this->set($index, $value, $ttl);
-            }
-
-            return $key;
+        if ($ttl == -1) {
+            return $values;
         }
 
         $this->getConnection();
 
-        return $_SERVER['argv'][$key] = $value;
+        foreach ($values as $key => $value) {
+            $_SERVER['argv'][$key] = $value;
+        }
+
+        return $values;
     }
 
     /**

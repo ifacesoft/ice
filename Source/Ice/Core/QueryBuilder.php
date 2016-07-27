@@ -9,10 +9,12 @@
 
 namespace Ice\Core;
 
+use Ice\Action\PhpUnit;
 use Ice\Core;
 use Ice\Exception\Error;
 use Ice\Exception\QueryBuilder_Join;
 use Ice\Helper\Object;
+use Ice\Helper\String;
 use Ice\QueryTranslator\Defined;
 use Ice\Widget\Form;
 
@@ -273,23 +275,28 @@ class QueryBuilder
 
             if ($value === null) {
                 $sqlComparison = QueryBuilder::SQL_COMPARISON_KEYWORD_IS_NULL;
+                $valueCount = 1;
+            } else {
+                $valueCount = is_string($value) && trim($value, '`') !== $value
+                    ? $value
+                    : count((array)$value);
             }
 
-            $where = [$sqlLogical, $fieldName, $sqlComparison, $value === null ? 1 : count((array)$value)];
+            $where = [$sqlLogical, $fieldName, $sqlComparison, $valueCount];
 
 //            if (isset($this->sqlParts[QueryBuilder::PART_WHERE][$tableAlias])) {
 //                $this->sqlParts[QueryBuilder::PART_WHERE][$tableAlias]['data'][] = $where;
 //            } else {
-                $this->sqlParts[QueryBuilder::PART_WHERE][] = [
-                    'class' => $modelClass,
-                    'alias' => $tableAlias,
-                    'data' => [$where]
-                ];
+            $this->sqlParts[QueryBuilder::PART_WHERE][] = [
+                'class' => $modelClass,
+                'alias' => $tableAlias,
+                'data' => [$where]
+            ];
 //            }
 
             $this->appendCacheTag($modelClass, $fieldName, true, false);
 
-            if ($sqlComparison != QueryBuilder::SQL_COMPARISON_KEYWORD_IS_NULL && $sqlComparison != QueryBuilder::SQL_COMPARISON_KEYWORD_IS_NOT_NULL) {
+            if (!is_string($valueCount) && $sqlComparison != QueryBuilder::SQL_COMPARISON_KEYWORD_IS_NULL && $sqlComparison != QueryBuilder::SQL_COMPARISON_KEYWORD_IS_NOT_NULL) {
                 $this->bindParts[QueryBuilder::PART_WHERE][] = $value === null
                     ? [null]
                     : (array)$value;
@@ -1116,7 +1123,7 @@ class QueryBuilder
 
         if ($fieldName == '*') {
             $fieldName = array_merge(
-                $modelClass::getScheme()->getFieldNames(), 
+                $modelClass::getScheme()->getFieldNames(),
                 $modelClass::getScheme()->getPkFieldNames()
             );
         }
@@ -1420,9 +1427,9 @@ class QueryBuilder
         $pkFieldNames = $modelClass::getScheme()->getPkFieldNames();
 
         if (count($pkFieldNames) > 1) {
-           throw  new Error('not implemented');
+            throw  new Error('not implemented');
         }
-        
+
         return $this->in(reset($pkFieldNames), $value, $modelTableData, $sqlLogical);
     }
 
@@ -1809,13 +1816,13 @@ class QueryBuilder
         if (!$isUse) {
             return $this;
         }
-        
+
         $modelClass = $modelClass
             ? Model::getClass($modelClass)
             : $this->getModelClass();
-        
+
         $this->triggers[$type][] = [$trigger . 'Trigger', $params, $modelClass];
-        
+
         return $this;
     }
 
@@ -1867,19 +1874,19 @@ class QueryBuilder
 
         foreach ($widgets as $widget) {
             if ($applyWidgetQueryBuilderParts) {
-                $widget->queryBuilderPart($this, $widget->getValues());
+                $widget->queryBuilderPart($this, $widget->get());
             }
 
             $this->widgets[] = $widget;
         }
-        
+
         return $this;
     }
 
     public function orderWidget($widgetName, $key, $value, $fieldName = null, $modelTableData = [])
     {
-        $widget = $this->widgets[$widgetName]->bind([$key => $value]);
-        $value = $widget->getValue($key);
+        $widget = $this->widgets[$widgetName]->set([$key => $value]);
+        $value = $widget->get($key);
 
         if (!empty($value)) {
             if (!$fieldName) {
@@ -1942,7 +1949,8 @@ class QueryBuilder
     }
 
 
-    public function isCalcFoundRows() {
+    public function isCalcFoundRows()
+    {
         return $this->sqlParts[self::PART_SELECT]['_calcFoundRows'];
     }
 
@@ -1962,7 +1970,8 @@ class QueryBuilder
         return $this;
     }
 
-    public function filter(Form $form) {
+    public function filter(Form $form)
+    {
         foreach ($form->getParts() as $widgetComponent) {
             $widgetComponent->filter($this);
         }
@@ -1983,7 +1992,7 @@ class QueryBuilder
 //        /** @var Form $widget */
 //        $widget = $this->widgets[$widgetName]->bind([$key => $value]);
 //
-//        $value = $widget->getValue($key);
+//        $value = $widget->get($key);
 //
 //        if (!empty($value)) {
 //            if (!$fieldName) {
@@ -2001,7 +2010,7 @@ class QueryBuilder
         if (!$isUse) {
             return $this;
         }
-        
+
         $modelClass = $modelClass
             ? Model::getClass($modelClass)
             : $this->getModelClass();

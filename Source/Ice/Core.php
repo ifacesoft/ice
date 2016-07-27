@@ -182,7 +182,7 @@ trait Core
      * Return registry storage for class
      *
      * @param  string $index
-     * @return Registry
+     * @return Registry|DataProvider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *

@@ -27,6 +27,7 @@ abstract class DataProvider
     use Core;
 
     const PREFIX_KEY_DELIMETER = '/_';
+    const DEFAULT_INDEX = 'default';
 
     /**
      * Stored data providers
@@ -101,7 +102,7 @@ abstract class DataProvider
      * @version 0.0
      * @since   0.0
      */
-    public static function getInstance($key = null, $index = 'default')
+    public static function getInstance($key = null, $index = DataProvider::DEFAULT_INDEX)
     {
         /**
          * @var DataProvider $class
@@ -313,29 +314,30 @@ abstract class DataProvider
      * Get data from data provider by key
      *
      * @param  string $key
+     * @param null $default
+     * @param bool $require
      * @return mixed
-     *
      * @author anonymous <email>
      *
-     * @version 0
-     * @since   0
+     * @version 1.2
+     * @since   0.0
      */
-    abstract public function get($key = null);
+    abstract public function get($key = null, $default = null, $require = false);
 
     /**
      * Set data to data provider
      *
-     * @param  string $key
-     * @param  $value
+     * @param array $values
      * @param  null $ttl
      * @return mixed setted value
      *
+
      * @author anonymous <email>
      *
      * @version 0
      * @since   0
      */
-    abstract public function set($key, $value = null, $ttl = null);
+    abstract public function set(array $values = null, $ttl = null);
 
     /**
      * Delete from data provider by key

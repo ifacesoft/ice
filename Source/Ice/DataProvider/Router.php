@@ -38,7 +38,7 @@ class Router extends DataProvider
     /**
      * @param string $key
      * @param string $index
-     * @return Router
+     * @return Router|DataProvider
      */
     public static function getInstance($key = null, $index = 'default')
     {
@@ -64,20 +64,21 @@ class Router extends DataProvider
      * Get data from data provider by key
      *
      * @param  string $key
+     * @param null $default
+     * @param bool $require
      * @return array
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 1.2
      * @since   0.0
      */
-    public function get($key = null)
+    public function get($key = null, $default = null, $require = false)
     {
-        if (!$key) {
+        if ($key === null) {
             return $this->getConnection();
         }
 
-        return isset($this->getConnection()[$key]) ? $this->getConnection()[$key] : null;
+        return isset($this->getConnection()[$key]) ? $this->getConnection()[$key] : $default;
     }
 
     /**
@@ -99,20 +100,22 @@ class Router extends DataProvider
     /**
      * Set data to data provider
      *
-     * @param  string $key
-     * @param  $value
+     * @param array $values
      * @param  null $ttl
-     * @throws \Exception
-     * @return mixed setted value
+     * @return array
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 1.2
      * @since   0.0
      */
-    public function set($key, $value = null, $ttl = null)
+    public function set(array $values = null, $ttl = null)
     {
-        throw new \Exception('Not implemented!');
+        if ($ttl == -1) {
+            return $values;
+        }
+
+        // TODO: Implement getKeys() method.
     }
 
     /**
@@ -239,7 +242,7 @@ class Router extends DataProvider
 
         $route += $route['routeParams'];
 
-        return (bool)$connection = $dataProvider->set($key, $route);
+        return (bool)$connection = $dataProvider->set([$key => $route])[$key];
     }
 
     public function getRoute($url, $method)

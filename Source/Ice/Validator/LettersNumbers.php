@@ -34,17 +34,18 @@ class LettersNumbers extends Validator
      *      ];
      * ```
      *
-     * @param  $data
-     * @param  array $scheme
-     * @return boolean
-     *
+     * @param array $data
+     * @param $name
+     * @param  array $params
+     * @return bool
+     * @internal param $data
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 1.2
      * @since   0.0
      */
-    public function validate($data, $scheme = null)
+    public function validate(array $data, $name, array $params)
     {
-        return ctype_alnum($data);
+        return ctype_alnum($data[$name]);
     }
 }

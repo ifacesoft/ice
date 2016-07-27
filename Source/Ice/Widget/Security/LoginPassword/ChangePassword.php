@@ -24,7 +24,7 @@ class Security_LoginPassword_ChangePassword extends Widget_Security
      * @param array $params
      * @return $this
      */
-    public function bind(array $params)
+    public function set(array $params)
     {
         foreach ($params as $key => $value) {
             if ($key == 'confirm_password') {
@@ -36,7 +36,7 @@ class Security_LoginPassword_ChangePassword extends Widget_Security
                 ];
             }
 
-            parent::bind([$key => $value]);
+            parent::set([$key => $value]);
         }
 
         return $this;

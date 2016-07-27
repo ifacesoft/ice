@@ -97,7 +97,7 @@ abstract class Validator extends Container
                     $validatorParams = null;
                 }
 
-                $params[$paramName] = Helper_Validator::validate($validatorName, $validatorParams, $params[$paramName], $paramName);
+                $params[$paramName] = Helper_Validator::validate($validatorName, $validatorParams, $params, $paramName);
             }
         }
 
@@ -156,16 +156,16 @@ abstract class Validator extends Container
      *      ];
      * ```
      *
-     * @param  $value
+     * @param array $data
+     * @param $name
      * @param  mixed $params
-     * @return boolean
-     *
+     * @return bool
      * @author anonymous <email>
      *
-     * @version 0
-     * @since   0
+     * @version 1.2
+     * @since   0.0
      */
-    abstract public function validate($value, $params = []);
+    abstract public function validate(array $data, $name, array $params);
     
     public function  getMessage() {
         return 'param \'{$0}\' with value \'{$1}\' is not valid';

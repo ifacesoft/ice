@@ -9,6 +9,7 @@
 
 namespace Ice\QueryTranslator;
 
+use Ice\Core\Debuger;
 use Ice\Core\Exception;
 use Ice\Core\Model;
 use Ice\Core\Module;
@@ -326,6 +327,10 @@ class Sql extends QueryTranslator
      */
     private function buildWhere($comparisonOperator, $fieldName, $count, $sign = '?')
     {
+        if (is_string($count)) {
+            $sign = $count;
+        }
+
         switch ($comparisonOperator) {
             case QueryBuilder::SQL_COMPARISON_OPERATOR_EQUAL:
             case QueryBuilder::SQL_COMPARISON_OPERATOR_GREATER:

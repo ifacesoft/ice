@@ -21,7 +21,6 @@ class HtmlTag extends WidgetComponent
 {
     private $href = null;
     private $event = null;
-    private $widgetClass = null;
     private $parentWidgetClass = null;
     private $parentWidgetId = null;
     private $row = [];
@@ -30,9 +29,21 @@ class HtmlTag extends WidgetComponent
     {
         parent::__construct($componentName, $options, $template, $widget);
 
-        $this->widgetClass = get_class($widget);
         $this->parentWidgetClass = $widget->getParentWidgetClass();
         $this->parentWidgetId = $widget->getParentWidgetId();
+    }
+
+    protected function init()
+    {
+        parent::init();
+
+        if ($route = $this->getRoute()) {
+            $valueKey = $this->getValueKey();
+
+            if ($this->get($valueKey) === null) {
+                $this->set([$valueKey => Resource::create(Route::getClass())->get($route['name'], $route['params'])]);
+            }
+        }
     }
 
     /**
@@ -44,27 +55,19 @@ class HtmlTag extends WidgetComponent
     }
 
     /**
-     * @return null|string
-     */
-    public function getWidgetClass()
-    {
-        return $this->widgetClass;
-    }
-
-    /**
      * @return null
      */
     public function getParentWidgetId()
     {
         return $this->parentWidgetId;
     }
-
-    public function build(array $row)
-    {
-        $this->row = $row;
-
-        return parent::build($row);
-    }
+//
+//    public function build(array $row)
+//    {
+//        $this->row = $row;
+//
+//        return parent::build($row);
+//    }
 
     /**
      * @return null
@@ -115,7 +118,7 @@ class HtmlTag extends WidgetComponent
 
         $routeParams = [];
 
-        $row = $this->getRow();
+        $row = $this->get();
 
         foreach ((array)$route['params'] as $routeParamKey => $routeParamValue) {
             if (is_int($routeParamKey)) {
@@ -254,7 +257,7 @@ class HtmlTag extends WidgetComponent
      */
     public function getDataParams()
     {
-        return Json::encode($this->getParams());
+        return Json::encode($this->get());
     }
 
     public function getDataAction()
@@ -282,8 +285,8 @@ class HtmlTag extends WidgetComponent
 
         if (isset($event['confirm_message'])) {
             $code .= isset($event['callback'])
-            ? ', \'' . $event['confirm_message'] . '\''
-            : ', null, \'' . $event['confirm_message'] . '\'';
+                ? ', \'' . $event['confirm_message'] . '\''
+                : ', null, \'' . $event['confirm_message'] . '\'';
         }
 
         return $code . '); return false;';
@@ -350,23 +353,19 @@ class HtmlTag extends WidgetComponent
 
         return $htmlTagAttributes;
     }
-
-    protected function buildParams(array $values)
-    {
-        if ($route = $this->getRoute()) {
-            if ($this->getOption('value') === null && $this->getOption('valueKey') === null) {
-                $valueKey = $this->getValueKey();
-
-                if (!array_key_exists($valueKey, $values)) {
-                    $values[$valueKey] = Resource::create(Route::getClass())->get($route['name'], $route['params']);
-                }
-            }
-        }
-
-        parent::buildParams($values);
-
-        if ($this->getComponentName() == 'tema_vkr') {
-            Debuger::dump($this->params);die();
-        }
-    }
+//
+//    protected function buildParams(array $values)
+//    {
+//        if ($route = $this->getRoute()) {
+//            if ($this->getOption('value') === null && $this->getOption('valueKey') === null) {
+//                $valueKey = $this->getValueKey();
+//
+//                if (!array_key_exists($valueKey, $values)) {
+//                    $values[$valueKey] = Resource::create(Route::getClass())->get($route['name'], $route['params']);
+//                }
+//            }
+//        }
+//
+//        parent::buildParams($values);
+//    }
 }
