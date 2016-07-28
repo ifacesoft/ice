@@ -151,6 +151,17 @@ class FormElement extends HtmlTag
 
     protected function getValidValue()
     {
-        return $this->get($this->getValueKey());
+        $valueKey = $this->getValueKey();
+
+        $paramsOption = $this->getOption('params', []);
+
+        $defaultValueKey =
+            isset($paramsOption[$valueKey]) &&
+            is_array($paramsOption[$valueKey]) &&
+            array_key_exists('default', $paramsOption[$valueKey])
+                ? $paramsOption[$valueKey]['default']
+                : '';
+
+        return $this->get($valueKey, $defaultValueKey);
     }
 }

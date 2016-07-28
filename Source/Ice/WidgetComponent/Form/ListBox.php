@@ -17,23 +17,29 @@ use Ice\Render\Replace;
 
 class Form_ListBox extends FormElement_TextInput
 {
+    public function getItemEmpty()
+    {
+        return $this->getOption('itemEmpty', '');
+    }
+
     public function getItemKey()
     {
         return $this->getOption('itemKey', 'itemKey');
     }
 
-    public function getItemTitle() {
+    public function getItemTitle()
+    {
         return $this->getOption('itemTitle', 'itemTitle');
     }
-    
+
     public function getTitle($item = null)
     {
         $itemTitle = $this->getItemTitle();
-        
+
         if ($item === null) {
             return $itemTitle;
         }
-        
+
         $resourceClass = $this->getOption('itemTitleResource', null);
 
         if ($resourceClass === null) {
@@ -75,8 +81,12 @@ class Form_ListBox extends FormElement_TextInput
      */
     public function getItems()
     {
-        return $this->getOption('required', false) === false
-            ? array_merge([[$this->getItemKey() => null, $this->getItemTitle() => '']], $this->getOption('items', []))
-            : $this->getOption('items', []);
+        $items = $this->getOption('items', []);
+
+        if ($this->getOption('required', false) === false) {
+            return array_merge([[$this->getItemKey() => null, $this->getItemTitle() => $this->getItemEmpty()]], $items);
+        }
+
+        return $items;
     }
 }

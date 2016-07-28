@@ -226,14 +226,13 @@ class ModelScheme extends Config
 
         $columnFieldMappings = $this->getColumnFieldMap();
 
-        return $repository->set(
-            $key,
-            array_map(
+        return $repository->set([
+            $key => array_map(
                 function ($columnName) use ($columnFieldMappings) {
                     return $columnFieldMappings[$columnName];
                 },
                 $this->getUniqueColumnNames()
             )
-        );
+        ])[$key];
     }
 }

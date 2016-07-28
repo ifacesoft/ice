@@ -177,7 +177,7 @@ abstract class Action implements Cacheable
         Profiler::setPoint('Action ' . $actionClass . ' (childs)', $startTimeAfter, $startMemoryAfter);
 
         if (isset($actionCacher)) {
-            $actionCacher->set($actionHash, $action, $action->getTtl());
+            $actionCacher->set([$actionHash => $action], $action->getTtl());
         }
 
         if (Request::isCli()) {

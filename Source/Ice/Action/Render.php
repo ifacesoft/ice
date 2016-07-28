@@ -25,7 +25,7 @@ class Render extends Action
             'cache' => ['ttl' => -1, 'count' => 1000],
             'actions' => [],
             'input' => [
-                'content',
+                'content' => ['default' => null],
                 'widgets' => ['default' => [], 'providers' => ['default', Request::class]]
             ],
             'output' => []
@@ -73,7 +73,6 @@ class Render extends Action
                 $widgets['content'] = $widgetClass::getInstance($key, null, $params)->render();
             } else {
                 $content = $widgetClass::getInstance($key, null, $params);
-
 
                 $output = $content->getOutput();
 

@@ -2,6 +2,7 @@
 
 namespace Ice\Core;
 
+use Ice\Action\Deploy;
 use Ice\Core;
 use Ice\Exception\Error;
 use Ice\Exception\Not_Show;
@@ -33,11 +34,10 @@ abstract class WidgetComponent
     private $value = null;
     protected $label = null;
 
-//    protected $params = [];
-
     private $active = null;
     private $classes = null;
 
+    private static $ids = [];
     /**
      * WidgetComponent config
      *
@@ -407,7 +407,9 @@ abstract class WidgetComponent
             $postfix = '_' . $postfix;
         }
 
-        return $this->getWidgetComponentId() . $postfix;
+        $id = $this->getWidgetComponentId() . $postfix;
+
+        return isset(self::$ids[$id]) ? self::$ids[$id] : self::$ids[$id] = 'id_wc_' . crc32($id);
     }
 
     public function getIdAttribute($postfix = '')
@@ -483,7 +485,6 @@ abstract class WidgetComponent
 
     public function set(array $params)
     {
-
         /** @var WidgetComponent $widgetComponentClass */
         $widgetComponentClass = get_class($this);
 
@@ -504,7 +505,18 @@ abstract class WidgetComponent
     {
         $this->validate();
 
-        return $this->get($this->getValueKey());
+        $valueKey = $this->getValueKey();
+
+        $paramsOption = $this->getOption('params', []);
+
+        $defaultValueKey =
+            isset($paramsOption[$valueKey]) &&
+            is_array($paramsOption[$valueKey]) &&
+            array_key_exists('default', $paramsOption[$valueKey])
+                ? $paramsOption[$valueKey]['default']
+                : $valueKey;
+
+        return $this->get($valueKey, $defaultValueKey);
     }
 
     /**
