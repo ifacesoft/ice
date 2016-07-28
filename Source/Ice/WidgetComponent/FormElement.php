@@ -153,14 +153,19 @@ class FormElement extends HtmlTag
     {
         $valueKey = $this->getValueKey();
 
-        $paramsOption = $this->getOption('params', []);
+        $valueOption = $this->getOption('value', []);
 
-        $defaultValueKey =
-            isset($paramsOption[$valueKey]) &&
-            is_array($paramsOption[$valueKey]) &&
-            array_key_exists('default', $paramsOption[$valueKey])
-                ? $paramsOption[$valueKey]['default']
-                : '';
+        if (!is_array($valueOption)) {
+            return $valueOption;
+        }
+
+        if (array_key_exists('title', $valueOption)) {
+            return $valueOption['title'];
+        }
+
+        $defaultValueKey = array_key_exists('default', $valueOption)
+            ? $valueOption['default']
+            : $valueKey;
 
         return $this->get($valueKey, $defaultValueKey);
     }

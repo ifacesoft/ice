@@ -94,6 +94,11 @@ abstract class WidgetComponent
         $this->init();
     }
 
+    protected function init()
+    {
+        $this->set(Input::get($this->getParamConfig()));
+    }
+
     /**
      * @return int
      */
@@ -134,35 +139,13 @@ abstract class WidgetComponent
         return $this->getWidgetId() . '_' . $this->getComponentName() . '_' . $this->getOffset();
     }
 
-    protected function init()
+    public function cloneComponent($offset)
     {
-        $defaultValues = [];
+        $widgetComponent = clone $this;
+        $widgetComponent->setOffset($offset);
+        $widgetComponent->init();
 
-        $value = $this->getOption('value');
-
-        if ($value !== null) {
-            $defaultValues[$this->getValueKey()] = $value;
-        }
-
-        $this->set(Input::get($this->getParamConfig(), $defaultValues));
-    }
-
-//    /**
-//     * @param array $row
-//     * @return $this
-//     */
-//    public function build(array $row)
-//    {
-////        $this->params = [];
-//
-//        $this->buildParams($row);
-//
-//        return $this;
-//    }
-
-    public function cloneComponent()
-    {
-        return clone $this;
+        return $widgetComponent;
     }
 
     /**
@@ -489,9 +472,6 @@ abstract class WidgetComponent
         $widgetComponentClass = get_class($this);
 
         $widgetComponentClass::getRegistry($this->getId())->set($params);
-//        foreach ($params as $param => $value) {
-//            $this->params[$param] = $value;
-//        }
 
         return $this;
     }
@@ -507,14 +487,19 @@ abstract class WidgetComponent
 
         $valueKey = $this->getValueKey();
 
-        $paramsOption = $this->getOption('params', []);
+        $valueOption = $this->getOption('value', []);
 
-        $defaultValueKey =
-            isset($paramsOption[$valueKey]) &&
-            is_array($paramsOption[$valueKey]) &&
-            array_key_exists('default', $paramsOption[$valueKey])
-                ? $paramsOption[$valueKey]['default']
-                : $valueKey;
+        if (!is_array($valueOption)) {
+            return $valueOption;
+        }
+
+        if (array_key_exists('title', $valueOption)) {
+            return $valueOption['title'];
+        }
+
+        $defaultValueKey = array_key_exists('default', $valueOption)
+            ? $valueOption['default']
+            : $valueKey;
 
         return $this->get($valueKey, $defaultValueKey);
     }

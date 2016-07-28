@@ -58,7 +58,7 @@ class Pagination extends Widget
 
     /**
      * @param null $route
-     * @return array
+     * @return Pagination
      * @throws Error
      */
     public function setRoute($route)
@@ -149,7 +149,8 @@ class Pagination extends Widget
             $page = $pageCount;
         }
 
-        $this->first(1, $page)
+        $this
+            ->first(1, $page)
             ->fastFastPrev($page - 100, $page)
             ->fastPrev($page - 10, $page)
             ->prevPrev($page - 2)
@@ -304,9 +305,11 @@ class Pagination extends Widget
             $this->li(
                 __FUNCTION__,
                 [
-                    'value' => '{$page}',
+                    'value' => [
+                        'title' => '{$page}',
+                        'resource' => true,
+                    ],
                     'params' => ['page' => $page],
-                    'valueResource' => true,
                     'active' => false
                 ]
             );
@@ -462,8 +465,10 @@ class Pagination extends Widget
             $this->li(
                 __FUNCTION__,
                 [
-                    'value' => $this->isShort ? '{$page}' : '{$page} &lt;&lt;&lt;',
-                    'encode' => false,
+                    'value' => [
+                        'title' => $this->isShort ? '{$page}' : '{$page} &lt;&lt;&lt;',
+                        'encode' => false,
+                    ],
                     'params' => ['page' => $page],
                     'next' => $isHellip ? ' &hellip; ' : '',
                     'valueResource' => true,

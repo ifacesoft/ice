@@ -482,7 +482,6 @@ abstract class Widget extends Container
         $this->result = [];
 
         $offset = $this->getOffset();
-        $params = $this->get();
 
         foreach ($this->getRows() as $row) {
             $offset++;
@@ -498,11 +497,10 @@ abstract class Widget extends Container
              * @var WidgetComponent $part
              */
             foreach ($parts as $partName => $part) {
-                $part = $part->cloneComponent();
-                $part->setOffset($offset);
+                $part = $part->cloneComponent($offset);
 
                 if (!($this instanceof Bootstrap3_Table_Row)) {
-                    $part->set(array_merge($params, $row));
+                    $part->set($row);
                 }
 
                 $rowTable[$partName] = $part;
