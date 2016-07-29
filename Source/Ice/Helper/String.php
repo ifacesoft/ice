@@ -9,7 +9,6 @@
 
 namespace Ice\Helper;
 
-use Ice\Core\Debuger;
 use Ice\Core\Exception;
 
 /**
@@ -173,6 +172,11 @@ class String
         return mb_strimwidth($string, 0, $length, $append);
     }
 
+    public static function substrpos($haystack, $needle, $offset = 0, $numOffset = 0)
+    {
+        return substr($haystack, $offset, String::strpos($haystack, $needle, $offset, $numOffset));
+    }
+
     public static function strpos($haystack, $needle, $offset = 0, $numOffset = 0)
     {
         $pos = $offset;
@@ -182,10 +186,5 @@ class String
         }
 
         return $pos === false ? mb_strlen($haystack) : $pos;
-    }
-
-    public static function substrpos($haystack, $needle, $offset = 0, $numOffset = 0)
-    {
-        return substr($haystack, $offset, String::strpos($haystack, $needle, $offset, $numOffset));
     }
 }

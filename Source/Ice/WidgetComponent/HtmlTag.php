@@ -2,17 +2,14 @@
 
 namespace Ice\WidgetComponent;
 
-use Ebs\Model\Packet_Dynamic;
 use Ice\Action\Render;
 use Ice\Core\Action;
-use Ice\Core\Debuger;
-use Ice\Core\QueryBuilder;
 use Ice\Core\Request;
 use Ice\Core\Resource;
 use Ice\Core\Route;
 use Ice\Core\Router;
-use Ice\Core\WidgetComponent;
 use Ice\Core\Widget as Core_Widget;
+use Ice\Core\WidgetComponent;
 use Ice\Exception\Error;
 use Ice\Helper\Json;
 use Ice\Helper\String;
@@ -33,42 +30,6 @@ class HtmlTag extends WidgetComponent
         $this->parentWidgetId = $widget->getParentWidgetId();
     }
 
-    protected function init()
-    {
-        parent::init();
-
-        if ($route = $this->getRoute()) {
-            $valueKey = $this->getValueKey();
-
-            if ($this->get($valueKey) === null) {
-                $this->set([$valueKey => Resource::create(Route::getClass())->get($route['name'], $route['params'])]);
-            }
-        }
-    }
-
-    /**
-     * @return null
-     */
-    public function getParentWidgetClass()
-    {
-        return $this->parentWidgetClass;
-    }
-
-    /**
-     * @return null
-     */
-    public function getParentWidgetId()
-    {
-        return $this->parentWidgetId;
-    }
-//
-//    public function build(array $row)
-//    {
-//        $this->row = $row;
-//
-//        return parent::build($row);
-//    }
-
     /**
      * @return null
      */
@@ -77,66 +38,15 @@ class HtmlTag extends WidgetComponent
         return $this->row;
     }
 
-    /**
-     * @return null
-     * @throws Error
-     */
-    public function getRoute()
+    public function isActive()
     {
-        $route = $this->getOption('route', null);
-
-        if (!$route) {
-            return null;
-        }
-
-        if (is_string($route)) {
-            $route = ['name' => $route];
-        }
-
-        if ($route === true) {
-            $route = ['name' => true];
-        }
-
-        $route = array_merge(
-            [
-                'name' => true,
-                'params' => [],
-                'withGet' => false,
-                'withDomain' => false,
-                'method' => 'POST'
-            ],
-            (array)$route
-        );
-
-        if ($route['name'] === true) {
-            $route['name'] = $this->getComponentName();
-        }
-
-        if (isset($route[0])) {
-            throw new Error('Use deprecated init route. Define named options', $this);
-        }
-
-        $routeParams = [];
-
-        $row = $this->get();
-
-        foreach ((array)$route['params'] as $routeParamKey => $routeParamValue) {
-            if (is_int($routeParamKey)) {
-                $routeParams[$routeParamValue] = !is_array($routeParamValue) && array_key_exists($routeParamValue, $row)
-                    ? $row[$routeParamValue]
-                    : $routeParamValue;
-
-                continue;
+        if ($this->getOption('active') === null) {
+            if ($href = $this->getHref()) {
+                return $this->setActive(String::startsWith(Request::uri(), $href));
             }
-
-            $routeParams[$routeParamKey] = !is_array($routeParamValue) && array_key_exists($routeParamValue, $row)
-                ? $row[$routeParamValue]
-                : $routeParamValue;
         }
 
-        $route['params'] = $routeParams;
-
-        return $route;
+        return parent::isActive();
     }
 
     /**
@@ -170,6 +80,13 @@ class HtmlTag extends WidgetComponent
 
         return $this->href ? $this->href : Request::uri();
     }
+//
+//    public function build(array $row)
+//    {
+//        $this->row = $row;
+//
+//        return parent::build($row);
+//    }
 
     /**
      * @param null $href
@@ -180,15 +97,28 @@ class HtmlTag extends WidgetComponent
         return $this->href = $href;
     }
 
-    public function isActive()
+    public function getEventAttributesCode()
     {
-        if ($this->getOption('active') === null) {
-            if ($href = $this->getHref()) {
-                return $this->setActive(String::startsWith(Request::uri(), $href));
-            }
+        $event = $this->getEvent();
+
+        if (!$event) {
+            return '';
         }
 
-        return parent::isActive();
+        $code = ' ';
+
+        switch ($event['type']) {
+            case 'submit':
+                $code .= 'onsubmit="';
+                break;
+            case 'onchange':
+                $code .= 'onchange="';
+                break;
+            default:
+                $code .= 'onclick="';
+        }
+
+        return $code . $this->getEventCode() . '" data-action=\'' . $this->getDataAction() . '\' data-params=\'' . $this->getDataParams() . '\'';
     }
 
     /**
@@ -253,16 +183,19 @@ class HtmlTag extends WidgetComponent
     }
 
     /**
-     * @return string
+     * @return null
      */
-    public function getDataParams()
+    public function getParentWidgetId()
     {
-        return Json::encode($this->get());
+        return $this->parentWidgetId;
     }
 
-    public function getDataAction()
+    /**
+     * @return null
+     */
+    public function getParentWidgetClass()
     {
-        return Json::encode($this->getEvent());
+        return $this->parentWidgetClass;
     }
 
     public function getEventCode()
@@ -292,35 +225,24 @@ class HtmlTag extends WidgetComponent
         return $code . '); return false;';
     }
 
-    public function getEventAttributesCode()
-    {
-        $event = $this->getEvent();
-
-        if (!$event) {
-            return '';
-        }
-
-        $code = ' ';
-
-        switch ($event['type']) {
-            case 'submit':
-                $code .= 'onsubmit="';
-                break;
-            case 'onchange':
-                $code .= 'onchange="';
-                break;
-            default:
-                $code .= 'onclick="';
-        }
-
-        return $code . $this->getEventCode() . '" data-action=\'' . $this->getDataAction() . '\' data-params=\'' . $this->getDataParams() . '\'';
-    }
-
     public function getMethod()
     {
         $route = $this->getRoute();
 
         return isset($route['method']) ? $route['method'] : 'POST';
+    }
+
+    public function getDataAction()
+    {
+        return Json::encode($this->getEvent());
+    }
+
+    /**
+     * @return string
+     */
+    public function getDataParams()
+    {
+        return Json::encode($this->get());
     }
 
     public function getHtmlTagAttributes()
@@ -352,6 +274,81 @@ class HtmlTag extends WidgetComponent
         }
 
         return $htmlTagAttributes;
+    }
+
+    protected function init()
+    {
+        parent::init();
+
+        if ($route = $this->getRoute()) {
+            $valueKey = $this->getValueKey();
+
+            if ($this->get($valueKey) === null) {
+                $this->set([$valueKey => Resource::create(Route::getClass())->get($route['name'], $route['params'])]);
+            }
+        }
+    }
+
+    /**
+     * @return null
+     * @throws Error
+     */
+    public function getRoute()
+    {
+        $route = $this->getOption('route', null);
+
+        if (!$route) {
+            return null;
+        }
+
+        if (is_string($route)) {
+            $route = ['name' => $route];
+        }
+
+        if ($route === true) {
+            $route = ['name' => true];
+        }
+
+        $route = array_merge(
+            [
+                'name' => true,
+                'params' => [],
+                'withGet' => false,
+                'withDomain' => false,
+                'method' => 'POST'
+            ],
+            (array)$route
+        );
+
+        if ($route['name'] === true) {
+            $route['name'] = $this->getComponentName();
+        }
+
+        if (isset($route[0])) {
+            throw new Error('Use deprecated init route. Define named options', $this);
+        }
+
+        $routeParams = [];
+
+        $row = $this->get();
+
+        foreach ((array)$route['params'] as $routeParamKey => $routeParamValue) {
+            if (is_int($routeParamKey)) {
+                $routeParams[$routeParamValue] = !is_array($routeParamValue) && array_key_exists($routeParamValue, $row)
+                    ? $row[$routeParamValue]
+                    : $routeParamValue;
+
+                continue;
+            }
+
+            $routeParams[$routeParamKey] = !is_array($routeParamValue) && array_key_exists($routeParamValue, $row)
+                ? $row[$routeParamValue]
+                : $routeParamValue;
+        }
+
+        $route['params'] = $routeParams;
+
+        return $route;
     }
 //
 //    protected function buildParams(array $values)

@@ -67,7 +67,7 @@ class Cli extends DataProvider
 
         $value = isset($_SERVER['argv']) && array_key_exists($key, $_SERVER['argv'])
             ? $_SERVER['argv'][$key]
-            :$default;
+            : $default;
 
         if ($value === null && $require) {
             throw new Error(['Param {$0} from data provider {$1} is require', ['key', __CLASS__]]);

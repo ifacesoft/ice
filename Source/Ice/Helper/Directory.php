@@ -10,9 +10,7 @@
 namespace Ice\Helper;
 
 use FilesystemIterator;
-use Ice\Core\Debuger;
 use Ice\Core\Logger as Core_Logger;
-use Ice\Core\Module;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 

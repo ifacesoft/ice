@@ -2,7 +2,6 @@
 
 namespace Ice\Widget;
 
-use Ice\Core\Debuger;
 use Ice\Core\Route;
 use Ice\DataProvider\Router;
 

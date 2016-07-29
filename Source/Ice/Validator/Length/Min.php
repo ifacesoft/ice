@@ -9,9 +9,7 @@
 
 namespace Ice\Validator;
 
-use Ice\Core\Debuger;
 use Ice\Core\Validator;
-use Symfony\Component\Debug\Debug;
 
 /**
  * Class Length_Min

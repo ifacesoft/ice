@@ -8,6 +8,11 @@ use Ice\Helper\Date;
 
 class Form_Date extends FormElement_TextInput
 {
+    public function getDateMomentFormat()
+    {
+        return Date::convertPHPToFakeMomentFormat($this->getDateFormat());//Date::convertPHPToMomentFormat($this->getDateFormat());
+    }
+
     public function getDateFormat()
     {
         $dateFormat = $this->getOption('dateFormat', null);
@@ -19,10 +24,6 @@ class Form_Date extends FormElement_TextInput
         }
 
         return $dateFormat;
-    }
-    
-    public function getDateMomentFormat() {
-        return Date::convertPHPToFakeMomentFormat($this->getDateFormat());//Date::convertPHPToMomentFormat($this->getDateFormat());
     }
 
     public function getLocale()

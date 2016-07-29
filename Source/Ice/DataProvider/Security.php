@@ -29,55 +29,6 @@ class Security extends DataProvider
     }
 
     /**
-     * Get instance connection of data provider
-     *
-     * @throws Exception
-     * @return Core_Security
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 1.1
-     * @since   1.1
-     */
-    public function getConnection()
-    {
-        return parent::getConnection();
-    }
-
-    /**
-     * Connect to data provider
-     *
-     * @param  $connection
-     * @return boolean
-     *
-     * @author anonymous <email>
-     *
-     * @version 0
-     * @since   0
-     */
-    protected function connect(&$connection)
-    {
-        return $connection = Core_Security::getInstance();
-    }
-
-    /**
-     * Close connection with data provider
-     *
-     * @param $connection
-     *
-     * @author anonymous <email>
-     *
-     * @version 0
-     * @since   0
-     */
-    protected function close(&$connection)
-    {
-        /** @var Core_Security $connection */
-        $connection->logout();
-        $connection = null;
-    }
-
-    /**
      * Get data from data provider by key
      *
      * @param  string $key
@@ -93,6 +44,22 @@ class Security extends DataProvider
     {
         $method = Php::camelCaseMethodName($key, __FUNCTION__);
         return $this->getConnection()->$method();
+    }
+
+    /**
+     * Get instance connection of data provider
+     *
+     * @throws Exception
+     * @return Core_Security
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 1.1
+     * @since   1.1
+     */
+    public function getConnection()
+    {
+        return parent::getConnection();
     }
 
     /**
@@ -199,6 +166,39 @@ class Security extends DataProvider
     public function getKeys($pattern = null)
     {
         throw new Core_MethodNotImplemented(['Method {$0} not implemented in {$1}', [__FUNCTION__, __CLASS__]]);
+    }
+
+    /**
+     * Connect to data provider
+     *
+     * @param  $connection
+     * @return boolean
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since   0
+     */
+    protected function connect(&$connection)
+    {
+        return $connection = Core_Security::getInstance();
+    }
+
+    /**
+     * Close connection with data provider
+     *
+     * @param $connection
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since   0
+     */
+    protected function close(&$connection)
+    {
+        /** @var Core_Security $connection */
+        $connection->logout();
+        $connection = null;
     }
 
 

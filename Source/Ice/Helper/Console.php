@@ -9,12 +9,8 @@
 
 namespace Ice\Helper;
 
-use Ice\Core;
-use Ice\Core\Environment;
-use Ice\Core\Logger as Core_Logger;
 use Ice\Core\Logger;
-use Ice\Core\Request as Core_Request;
-use Ice\Core\Request;
+use Ice\Core\Logger as Core_Logger;
 use Ice\Core\Resource as Core_Resource;
 use Ice\Core\Validator as Core_Validator;
 
@@ -187,6 +183,11 @@ class Console
         return $data['default'];
     }
 
+    public static function scp($source, $dest, $keyPath, $user, $host, $port = '22')
+    {
+        return Console::run('scp -r -P ' . $port . ' -i ' . $keyPath . ' ' . $user . '@' . $host . ':' . $source . ' ' . $dest);
+    }
+
     public static function run($commands, $toDevNull = false, $toBackground = false)
     {
         $commandString = 'cd ' . MODULE_DIR;
@@ -215,11 +216,6 @@ class Console
         Logger::getInstance(__CLASS__)->info($commandString . ' [code:  ' . $returnCode . ']', Logger::INFO, false);
 
         return $var;
-    }
-
-    public static function scp($source, $dest, $keyPath, $user, $host, $port = '22')
-    {
-        return Console::run('scp -r -P ' . $port . ' -i ' . $keyPath . ' ' . $user . '@' . $host . ':' . $source . ' ' . $dest);
     }
 
     public static function sshRun($commands, $keyPath, $user, $host, $port = '22', $toDevNull = false, $toBackground = false)

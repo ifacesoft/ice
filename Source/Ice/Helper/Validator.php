@@ -1,10 +1,8 @@
 <?php namespace Ice\Helper;
 
-use Ice\Core\Debuger;
 use Ice\Core\Exception;
 use Ice\Core\Logger as Core_Logger;
 use Ice\Core\Validator as Core_Validator;
-use Ice\Exception\Error;
 use Ice\Exception\Not_Show;
 use Ice\Exception\Not_Valid;
 

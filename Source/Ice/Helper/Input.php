@@ -2,17 +2,12 @@
 
 namespace Ice\Helper;
 
-use Ice\Core\Action;
 use Ice\Core\DataProvider;
-use Ice\Core\Debuger;
 use Ice\Core\Exception;
 use Ice\DataProvider\Cli;
-use Ice\DataProvider\Registry;
 use Ice\DataProvider\Request;
 use Ice\DataProvider\Router;
 use Ice\DataProvider\Session;
-use Ice\Exception\Error;
-use Ice\Exception\Http_Not_Found;
 
 class Input
 {

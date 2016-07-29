@@ -16,16 +16,12 @@ class Excel extends View
         $this->setRaw(new \PHPExcel());
     }
 
-    public function getSheet($sheetIndex = null) {
-        return $this->getRaw()->getSheet($sheetIndex === null ? $this->getActiveSheetIndex() : $sheetIndex);
-    }
-
     public function getContent()
     {
         $sheet = $this->getSheet();
 
 
-        foreach(range('A', 'K') as $columnID) {
+        foreach (range('A', 'K') as $columnID) {
             $sheet->getColumnDimension($columnID)->setAutoSize(true);
         }
 
@@ -43,20 +39,17 @@ class Excel extends View
         return ob_get_clean();
     }
 
-    /**
-     * @return string
-     */
-    public function getColumn()
+    public function getSheet($sheetIndex = null)
     {
-        return $this->column;
+        return $this->getRaw()->getSheet($sheetIndex === null ? $this->getActiveSheetIndex() : $sheetIndex);
     }
 
     /**
-     * @return int
+     * @return \PHPExcel
      */
-    public function getRow()
+    public function getRaw()
     {
-        return $this->row;
+        return parent::getRaw();
     }
 
     /**
@@ -75,23 +68,33 @@ class Excel extends View
         $this->activeSheetIndex = $activeSheetIndex;
     }
 
-    public function incColumn($step = 1) {
+    /**
+     * @return string
+     */
+    public function getColumn()
+    {
+        return $this->column;
+    }
+
+    /**
+     * @return int
+     */
+    public function getRow()
+    {
+        return $this->row;
+    }
+
+    public function incColumn($step = 1)
+    {
         for ($i = 0; $i < $step; $i++) {
             $this->column++;
         }
     }
 
-    public function incRow($step = 1) {
+    public function incRow($step = 1)
+    {
         for ($i = 0; $i < $step; $i++) {
             $this->row++;
         }
-    }
-
-    /**
-     * @return \PHPExcel
-     */
-    public function getRaw()
-    {
-        return parent::getRaw();
     }
 }

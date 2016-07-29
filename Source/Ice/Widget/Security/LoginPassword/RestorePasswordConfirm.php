@@ -6,7 +6,6 @@ use Ice\Action\Security_EmailPassword_RestoreConfirm_Submit;
 use Ice\Action\Security_LoginPassword_RestorePasswordConfirm_Submit;
 use Ice\Core\Widget_Security;
 use Ice\DataProvider\Request;
-use Ice\DataProvider\Router;
 
 class Security_LoginPassword_RestorePasswordConfirm extends Widget_Security
 {

@@ -9,8 +9,6 @@
 
 namespace Ice\Render;
 
-use Ice\Core\Action;
-use Ice\Core\Debuger;
 use Ice\Core\Environment;
 use Ice\Core\Loader;
 use Ice\Core\Logger;

@@ -2,6 +2,7 @@
 
 namespace Ice\Exception;
 
-class Security_AccessDenied extends Security {
+class Security_AccessDenied extends Security
+{
 
 }

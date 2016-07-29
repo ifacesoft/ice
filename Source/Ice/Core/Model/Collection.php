@@ -228,19 +228,9 @@ class Model_Collection implements IteratorAggregate, Countable
         return $this;
     }
 
-    /**
-     * Return collection as array
-     *
-     * @return array
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since   0.4
-     */
-    public function getRows()
+    public function getLogger()
     {
-        return $this->rows;
+        return Logger::getInstance($this->getModelClass());
     }
 
     /**
@@ -312,21 +302,18 @@ class Model_Collection implements IteratorAggregate, Countable
     }
 
     /**
-     * (PHP 5 &gt;= 5.0.0)<br/>
-     * Retrieve an external iterator
+     * Return collection as array
      *
-     * @link   http://php.net/manual/en/iteratoraggregate.getiterator.php
-     * @return Model_Collection_Iterator An instance of an object implementing <b>Iterator</b> or
-     * <b>Traversable</b>
+     * @return array
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
-     * @since   0.0
+     * @since   0.4
      */
-    public function getIterator()
+    public function getRows()
     {
-        return Model_Collection_Iterator::create($this->getModelClass(), $this->getRows());
+        return $this->rows;
     }
 
     //    /**
@@ -376,6 +363,24 @@ class Model_Collection implements IteratorAggregate, Countable
     //        $collection->setData($this->_rows->filter($fieldScheme));
     //        return $collection;
     //    }
+
+    /**
+     * (PHP 5 &gt;= 5.0.0)<br/>
+     * Retrieve an external iterator
+     *
+     * @link   http://php.net/manual/en/iteratoraggregate.getiterator.php
+     * @return Model_Collection_Iterator An instance of an object implementing <b>Iterator</b> or
+     * <b>Traversable</b>
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since   0.0
+     */
+    public function getIterator()
+    {
+        return Model_Collection_Iterator::create($this->getModelClass(), $this->getRows());
+    }
 
     /**
      * Insert or update collection
@@ -457,10 +462,5 @@ class Model_Collection implements IteratorAggregate, Countable
         $modelClass = $this->getModelClass();
 
         return Arrays::column($this->getRows(), $modelClass::getScheme()->getPkFieldNames(), '');
-    }
-
-    public function getLogger()
-    {
-        return Logger::getInstance($this->getModelClass());
     }
 }

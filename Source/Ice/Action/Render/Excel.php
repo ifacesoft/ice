@@ -9,7 +9,6 @@
 namespace Ice\Action;
 
 use Ice\Core\Action;
-use Ice\Core\Debuger;
 use Ice\Core\Widget;
 use Ice\DataProvider\Request;
 use Ice\DataProvider\Router;
@@ -52,7 +51,7 @@ class Render_Excel extends Action
 
         $headers = [
             'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            'Content-Disposition' => 'attachment; filename="' . $widget->getCanonicalName() .  '.xlsx"',
+            'Content-Disposition' => 'attachment; filename="' . $widget->getCanonicalName() . '.xlsx"',
             'Cache-Control' => 'max-age=0',
         ];
 

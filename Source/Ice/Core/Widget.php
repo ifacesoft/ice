@@ -1,7 +1,6 @@
 <?php
 namespace Ice\Core;
 
-use Ice\Action\Deploy;
 use Ice\Exception\Access_Denied;
 use Ice\Exception\Http;
 use Ice\Exception\RouteNotFound;
@@ -24,22 +23,20 @@ abstract class Widget extends Container
     use Configured;
 
     /**
-     * @var array rows of values
-     */
-    private $rows = [[]];
-//    private $values = [];
-
-    /**
-     * @var int
-     */
-    private $offset = 0;
-
-    /**
      * Widget parts (fields for Form, columns for Data, items for Menu)
      *
      * @var array
      */
     protected $parts = [];
+//    private $values = [];
+    /**
+     * @var array rows of values
+     */
+    private $rows = [[]];
+    /**
+     * @var int
+     */
+    private $offset = 0;
     private $classes = '';
 
 //    private $dataParams = null;
@@ -84,23 +81,6 @@ abstract class Widget extends Container
     private $renderClass = null;
 
     private $layout = null;
-
-    /**
-     * Widget config
-     *
-     * @return array
-     */
-    protected static function config()
-    {
-        return [
-            'render' => ['template' => 'Ice\Widget\Blank', 'class' => 'Ice:Php', 'layout' => null, 'resource' => null],
-            'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'Widget: Access denied!'],
-            'resource' => ['js' => null, 'css' => null, 'less' => null, 'img' => null],
-            'cache' => ['ttl' => -1, 'count' => 1000],
-            'input' => [],
-            'output' => [],
-        ];
-    }
 
     protected function __construct(array $data)
     {
@@ -157,105 +137,6 @@ abstract class Widget extends Container
     }
 
     /**
-     * @param string $key
-     * @param null $ttl
-     * @param array $params
-     * @return Widget|Container|$this
-     */
-    public static function getInstance($key, $ttl = null, array $params = [])
-    {
-//        /** @var Widget $widgetClass */
-//        $widgetClass = self::getClass();
-//        try {
-//            Access::check($widgetClass::getConfig()->gets('access'));
-//        } catch (Access_Denied $e) {
-//            //
-//            return null;
-//        }
-
-        return parent::getInstance($key, $ttl, $params);
-    }
-
-    /**
-     * @param $name
-     * @param null $default
-     * @return mixed
-     */
-    public function getOption($name = null, $default = null)
-    {
-        if ($name === null) {
-            return $this->options;
-        }
-
-        return array_key_exists($name, $this->options) ? $this->options[$name] : $default;
-    }
-
-    /**
-     * @param $name
-     * @param $value
-     */
-    public function setOption($name, $value)
-    {
-        $this->options[$name] = $value;
-    }
-
-    /**
-     * @return array
-     */
-    protected function getRows()
-    {
-        return $this->rows;
-    }
-
-    public function getCanonicalName($part = 'header')
-    {
-        return String::truncate(Transliterator::transliterate(strip_tags($this->getPart($part)->render())), 250);
-    }
-
-    /**
-     * @param string $attributes
-     * @param bool|false $force
-     * @return string|null
-     */
-    public function getLayout($attributes = '', $force = false)
-    {
-        $layout = null;
-
-        /** @var Configured $class */
-        $class = get_called_class();
-
-        if (!$force) {
-            $layout = $class::getConfig()->get('render/layout');
-        }
-
-        if (!$layout) {
-            return null;
-        }
-
-        if ($layout === true) {
-            return 'div.' . Object::getClassName($class) . $attributes;
-        }
-
-        if ($layout[0] == '_') {
-            return 'div.' . Object::getClassName($class) . $layout . $attributes;
-        }
-
-        return $layout;
-    }
-
-    /**
-     * @return Resource
-     */
-    public function getResource()
-    {
-        if (!$this->resourceClass) {
-            return null;
-        }
-
-        return Resource::create($this->resourceClass);
-    }
-
-    /**
      * Init resource class
      *
      * @param Resource|string|null $resourceClass
@@ -286,56 +167,6 @@ abstract class Widget extends Container
     }
 
     /**
-     * @return string|null
-     */
-    public function getTemplateClass()
-    {
-        return $this->templateClass;
-    }
-
-    /**
-     * @param string $templateClass
-     * @return null|string
-     */
-    public function setTemplateClass($templateClass = null)
-    {
-        /** @var Widget $widgetClass */
-        $widgetClass = get_class($this);
-
-        $this->templateClass = $templateClass
-            ? $templateClass
-            : $widgetClass::getConfig()->get('render/template', null);
-
-        if (empty($this->templateClass)) {
-            $this->templateClass = $this->templateClass === '' ? 'Ice\Widget\Blank' : 'Ice\Widget\Default';
-        }
-
-        /** @var Widget $widgetClass */
-        $widgetClass = get_class($this);
-
-        if ($this->templateClass === true) {
-            $this->templateClass = $widgetClass;
-        }
-
-        if ($this->templateClass[0] == '_') {
-            $this->templateClass = $widgetClass . $this->templateClass;
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Render
-     */
-    public function getRender()
-    {
-        /** @var Render $renderClass */
-        $renderClass = Render::getClass($this->renderClass);
-
-        return $renderClass::getInstance();
-    }
-
-    /**
      * @param $renderClass
      * @return Widget
      */
@@ -353,6 +184,80 @@ abstract class Widget extends Container
         }
 
         return $this;
+    }
+
+    /**
+     * @param array $params
+     * @return $this
+     */
+    public function set(array $params)
+    {
+        $this->getWidgetRegistry()->set($params);
+
+        return $this;
+    }
+
+    public function getWidgetRegistry()
+    {
+        /** @var Widget $widgetClass */
+        $widgetClass = get_class($this);
+
+        return $widgetClass::getRegistry($this->getWidgetId());
+    }
+
+    public function getWidgetId()
+    {
+        return Object::getClassName(get_class($this)) . '_' . strtolower(str_replace('\\', '_', $this->getInstanceKey()));
+    }
+
+    private function loadResource()
+    {
+        /** @var Widget $widgetClass */
+        $widgetClass = get_class($this);
+
+        if ($widgetClass == Resource_Dynamic::getClass()) {
+            return;
+        }
+
+        if ($widgetClass::getConfig()->get('resource/js') === true) {
+            $this->getResourceDynamic()->addResource($widgetClass, 'js');
+        }
+
+        if ($widgetClass::getConfig()->get('resource/css') === true) {
+            $this->getResourceDynamic()->addResource($widgetClass, 'css');
+        }
+
+        if ($widgetClass::getConfig()->get('resource/less') === true) {
+            $this->getResourceDynamic()->addResource($widgetClass, 'less');
+        }
+    }
+
+    /**
+     * @return Resource_Dynamic
+     */
+    private function getResourceDynamic()
+    {
+        return Resource_Dynamic::getInstance(null);
+    }
+
+    /**
+     * @param string $key
+     * @param null $ttl
+     * @param array $params
+     * @return Widget|Container|$this
+     */
+    public static function getInstance($key, $ttl = null, array $params = [])
+    {
+//        /** @var Widget $widgetClass */
+//        $widgetClass = self::getClass();
+//        try {
+//            Access::check($widgetClass::getConfig()->gets('access'));
+//        } catch (Access_Denied $e) {
+//            //
+//            return null;
+//        }
+
+        return parent::getInstance($key, $ttl, $params);
     }
 
     /**
@@ -380,300 +285,24 @@ abstract class Widget extends Container
     protected abstract function build(array $input);
 
     /**
-     * @return int
+     * @param $paramName string|null
+     * @param null $default
+     * @return mixed
      */
-    public function getOffset()
+    public function get($paramName = null, $default = null)
     {
-        return $this->offset;
-    }
+        $params = $this->getWidgetRegistry()->get();
 
-    /**
-     * @param int $offset
-     */
-    public function setOffset($offset)
-    {
-        $this->offset = $offset;
-    }
-
-    /**
-     * @param string $classes
-     *
-     * @param bool $replace
-     * @return $this
-     */
-    public function addClasses($classes, $replace = false)
-    {
-        if ($replace) {
-            $this->classes = $classes;
-        } else {
-            $this->classes .= ' ' . $classes;
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param array $rows
-     * @return $this
-     */
-    public function setRows(array $rows)
-    {
-        $this->rows = $rows;
-        return $this;
-    }
-
-    /**
-     * @param array $params
-     * @return $this
-     */
-    public function set(array $params)
-    {
-        $this->getWidgetRegistry()->set($params);
-
-        return $this;
-    }
-
-    public function getWidgetRegistry() {
-        /** @var Widget $widgetClass */
-        $widgetClass = get_class($this);
-
-        return $widgetClass::getRegistry($this->getWidgetId());
-    }
-
-    public function setQueryResult(QueryResult $queryResult)
-    {
         foreach ($this->getParts() as $part) {
-            if ($part instanceof WidgetComponent_Widget) {
-                $part->getWidget()->setQueryResult($queryResult);
-            }
-        }
-    }
-
-    /**
-     * @param QueryBuilder $queryBuilder
-     * @param array $input
-     * @deprecated 1.1 Use $queryBuilder->filter($formWidget). Filter by all components of widget
-     */
-    public function queryBuilderPart(QueryBuilder $queryBuilder, array $input)
-    {
-        foreach ($this->getParts() as $part) {
-            if ($part instanceof WidgetComponent_Widget) {
-                $part->getWidget()->queryBuilderPart($queryBuilder, $input);
-            }
-        }
-    }
-
-    public function __toString()
-    {
-        try {
-            return $this->render();
-        } catch (\Exception $e) {
-            return Logger::getInstance(__CLASS__)
-                ->error(['Render widget {$0} was failed', [get_class($this)]], __FILE__, __LINE__, $e);
-        }
-    }
-
-    /**
-     * @return array|null
-     * @throws \Exception
-     */
-    public function getResult()
-    {
-        $this->result = [];
-
-        $offset = $this->getOffset();
-
-        foreach ($this->getRows() as $row) {
-            $offset++;
-
-            $rowTable = [];
-
-            unset($part);
-
-            $parts = $this->getParts($this->getFilterParts());
-
-            /**
-             * @var string $partName
-             * @var WidgetComponent $part
-             */
-            foreach ($parts as $partName => $part) {
-                $part = $part->cloneComponent($offset);
-
-                if (!($this instanceof Bootstrap3_Table_Row)) {
-                    $part->set($row);
-                }
-
-                $rowTable[$partName] = $part;
-            }
-
-            $this->result[$offset] = $rowTable;
+            $params = array_merge($part->get(), $params);
         }
 
-        return $this->result;
-    }
-
-    public function walkOptions($function, $option)
-    {
-        array_walk($this->parts, $function, $option);
-        return $this;
-    }
-
-    protected function getCompiledResult()
-    {
-        if ($this->compiledResult !== null) {
-            return $this->compiledResult;
+        if ($paramName === null) {
+            return empty($params) ? [] : $params;
         }
 
-        return $this->compiledResult = array_merge(
-            [
-                'result' => $this->getResult(),
-                'widgetId' => $this->getWidgetId(),
-                'widgetClass' => $this->getWidgetClassName(),
-                'parentWidgetId' => $this->getParentWidgetId(), // Widget_Admin_Access_Book_Packet_Table_admin_block
-//                'parentWidgetClass' => $this->getParentWidgetClass(), // "Ebs\\Widget\\Admin_Access_Book_Packet_Table
-                'widgetData' => $this->getData(),
-                'widgetResource' => $this->getResource(),
-                'classes' => trim($this->classes),
-                'dataParams' => Json::encode($this->get()),
-                'dataWidget' => Json::encode($this->getDataWidget())
-            ],
-            (array)$this->output
-        );
+        return array_key_exists($paramName, $params) ? $params[$paramName] : $default;
     }
-
-    private function getWidgetClassName()
-    {
-        /** @var Widget $widgetClass */
-        $widgetClass = get_class($this);
-
-        return $widgetClass::getClassName();
-    }
-
-    private function getDataWidget()
-    {
-        return [
-            'class' => get_class($this),
-            'name' => $this->getInstanceKey(),
-            'token' => $this->getToken(),
-            'resourceClass' => $this->getResource() ? $this->getResource()->getResourceClass() : null
-        ];
-    }
-
-    public function render(Render $render = null)
-    {
-        if ($render === null) {
-            $render = $this->getRender();
-        }
-
-        $startTime = Profiler::getMicrotime();
-        $startMemory = Profiler::getMemoryGetUsage();
-
-        $result = $render
-            ->fetch(
-                $this->getTemplateClass(),
-                array_merge($this->getCompiledResult(), ['widget' => $this, 'render' => $render]),
-                $this->getLayout()
-            );
-
-        $key = 'render - ' . get_class($this) . '/' . $this->getInstanceKey();
-
-        Profiler::setPoint($key, $startTime, $startMemory);
-
-        Logger::fb(Profiler::getReport($key), 'widget', 'INFO');
-
-        return $result;
-    }
-
-    /**
-     * @param string $layout
-     * @return $this
-     */
-    public function setLayout($layout)
-    {
-        $this->layout = $layout;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getToken()
-    {
-        return $this->token;
-    }
-
-    /**
-     * @param WidgetComponent $part
-     * @return $this
-     */
-    protected function addPart(WidgetComponent $part)
-    {
-        if (!$part->getOption('isShow', true)) {
-            return $this;
-        }
-
-        try {
-            $roles = $part->getOption('roles');
-            $access = $part->getOption('access');
-
-            if (!$access) {
-                $access = [];
-            }
-
-            if ($roles) {
-                $access['roles'] = $roles;
-            }
-
-            Access::check($access);
-        } catch (Access_Denied $e) {
-            return $this;
-        }
-
-        $componentName = $part->getComponentName();
-
-        if (!empty($options['rewrite']) && isset($this->parts[$componentName])) {
-            unset($this->parts[$componentName]);
-        }
-
-        if (!empty($options['unshift'])) {
-            $this->parts = [$componentName => $part] + $this->parts;
-        } else {
-            $this->parts[$componentName] = $part;
-        }
-
-        return $this;
-    }
-
-    //    /**
-//     * @param array $params
-//     * @return Widget_Data
-//     */
-//    public function bind(array $params)
-//    {
-//        foreach ($params as $key => $value) {
-//
-//            $ascPattern = '/(?:[^\/]+\/)?' . QueryBuilder::SQL_ORDERING_ASC . '$/';
-//            $descPattern = '/(?:[^\/]+\/)?' . QueryBuilder::SQL_ORDERING_DESC . '$/';
-//
-//            if (preg_match($ascPattern, $value)) {
-//                $value = QueryBuilder::SQL_ORDERING_ASC;
-//            } elseif (preg_match($descPattern, $value)) {
-//                $value = QueryBuilder::SQL_ORDERING_DESC;
-//            } else {
-//                $value = '';
-//            }
-//
-//            if (isset($this->columns[$key])) {
-//                if (empty($value) && isset($this->columns[$key]['options']['default'])) {
-//                    $value = $this->columns[$key]['options']['default'];
-//                }
-//
-//                $this->bind([$key => $value]);
-//            }
-//        }
-//
-//        return $this;
-//    }
 
     /**
      * Compiled widget parts
@@ -720,6 +349,333 @@ abstract class Widget extends Container
         return $parts;
     }
 
+    /**
+     * Widget config
+     *
+     * @return array
+     */
+    protected static function config()
+    {
+        return [
+            'render' => ['template' => 'Ice\Widget\Blank', 'class' => 'Ice:Php', 'layout' => null, 'resource' => null],
+            'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'Widget: Access denied!'],
+            'resource' => ['js' => null, 'css' => null, 'less' => null, 'img' => null],
+            'cache' => ['ttl' => -1, 'count' => 1000],
+            'input' => [],
+            'output' => [],
+        ];
+    }
+
+    protected static function getDefaultKey()
+    {
+        return Router::getInstance()->getName();
+    }
+
+    /**
+     * @param $name
+     * @param null $default
+     * @return mixed
+     */
+    public function getOption($name = null, $default = null)
+    {
+        if ($name === null) {
+            return $this->options;
+        }
+
+        return array_key_exists($name, $this->options) ? $this->options[$name] : $default;
+    }
+
+    /**
+     * @param $name
+     * @param $value
+     */
+    public function setOption($name, $value)
+    {
+        $this->options[$name] = $value;
+    }
+
+    public function getCanonicalName($part = 'header')
+    {
+        return String::truncate(Transliterator::transliterate(strip_tags($this->getPart($part)->render())), 250);
+    }
+
+    /**
+     * @param $partName
+     * @return WidgetComponent
+     */
+    public function getPart($partName)
+    {
+        return isset($this->parts[$partName]) ? $this->parts[$partName] : null;
+    }
+
+    /**
+     * @param string $classes
+     *
+     * @param bool $replace
+     * @return $this
+     */
+    public function addClasses($classes, $replace = false)
+    {
+        if ($replace) {
+            $this->classes = $classes;
+        } else {
+            $this->classes .= ' ' . $classes;
+        }
+
+        return $this;
+    }
+
+    public function setQueryResult(QueryResult $queryResult)
+    {
+        foreach ($this->getParts() as $part) {
+            if ($part instanceof WidgetComponent_Widget) {
+                $part->getWidget()->setQueryResult($queryResult);
+            }
+        }
+    }
+
+    /**
+     * @param QueryBuilder $queryBuilder
+     * @param array $input
+     * @deprecated 1.1 Use $queryBuilder->filter($formWidget). Filter by all components of widget
+     */
+    public function queryBuilderPart(QueryBuilder $queryBuilder, array $input)
+    {
+        foreach ($this->getParts() as $part) {
+            if ($part instanceof WidgetComponent_Widget) {
+                $part->getWidget()->queryBuilderPart($queryBuilder, $input);
+            }
+        }
+    }
+
+    public function __toString()
+    {
+        try {
+            return $this->render();
+        } catch (\Exception $e) {
+            return Logger::getInstance(__CLASS__)
+                ->error(['Render widget {$0} was failed', [get_class($this)]], __FILE__, __LINE__, $e);
+        }
+    }
+
+    public function render(Render $render = null)
+    {
+        if ($render === null) {
+            $render = $this->getRender();
+        }
+
+        $startTime = Profiler::getMicrotime();
+        $startMemory = Profiler::getMemoryGetUsage();
+
+        $result = $render
+            ->fetch(
+                $this->getTemplateClass(),
+                array_merge($this->getCompiledResult(), ['widget' => $this, 'render' => $render]),
+                $this->getLayout()
+            );
+
+        $key = 'render - ' . get_class($this) . '/' . $this->getInstanceKey();
+
+        Profiler::setPoint($key, $startTime, $startMemory);
+
+        Logger::fb(Profiler::getReport($key), 'widget', 'INFO');
+
+        return $result;
+    }
+
+    /**
+     * @return Render
+     */
+    public function getRender()
+    {
+        /** @var Render $renderClass */
+        $renderClass = Render::getClass($this->renderClass);
+
+        return $renderClass::getInstance();
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getTemplateClass()
+    {
+        return $this->templateClass;
+    }
+
+    /**
+     * @param string $templateClass
+     * @return null|string
+     */
+    public function setTemplateClass($templateClass = null)
+    {
+        /** @var Widget $widgetClass */
+        $widgetClass = get_class($this);
+
+        $this->templateClass = $templateClass
+            ? $templateClass
+            : $widgetClass::getConfig()->get('render/template', null);
+
+        if (empty($this->templateClass)) {
+            $this->templateClass = $this->templateClass === '' ? 'Ice\Widget\Blank' : 'Ice\Widget\Default';
+        }
+
+        /** @var Widget $widgetClass */
+        $widgetClass = get_class($this);
+
+        if ($this->templateClass === true) {
+            $this->templateClass = $widgetClass;
+        }
+
+        if ($this->templateClass[0] == '_') {
+            $this->templateClass = $widgetClass . $this->templateClass;
+        }
+
+        return $this;
+    }
+
+    protected function getCompiledResult()
+    {
+        if ($this->compiledResult !== null) {
+            return $this->compiledResult;
+        }
+
+        return $this->compiledResult = array_merge(
+            [
+                'result' => $this->getResult(),
+                'widgetId' => $this->getWidgetId(),
+                'widgetClass' => $this->getWidgetClassName(),
+                'parentWidgetId' => $this->getParentWidgetId(), // Widget_Admin_Access_Book_Packet_Table_admin_block
+//                'parentWidgetClass' => $this->getParentWidgetClass(), // "Ebs\\Widget\\Admin_Access_Book_Packet_Table
+                'widgetData' => $this->getData(),
+                'widgetResource' => $this->getResource(),
+                'classes' => trim($this->classes),
+                'dataParams' => Json::encode($this->get()),
+                'dataWidget' => Json::encode($this->getDataWidget())
+            ],
+            (array)$this->output
+        );
+    }
+
+    /**
+     * @return array|null
+     * @throws \Exception
+     */
+    public function getResult()
+    {
+        $this->result = [];
+
+        $offset = $this->getOffset();
+
+        foreach ($this->getRows() as $row) {
+            $offset++;
+
+            $rowTable = [];
+
+            unset($part);
+
+            $parts = $this->getParts($this->getFilterParts());
+
+            /**
+             * @var string $partName
+             * @var WidgetComponent $part
+             */
+            foreach ($parts as $partName => $part) {
+                $part = $part->cloneComponent($offset);
+
+                if (!($this instanceof Bootstrap3_Table_Row)) {
+                    $part->set($row);
+                }
+
+                $rowTable[$partName] = $part;
+            }
+
+            $this->result[$offset] = $rowTable;
+        }
+
+        return $this->result;
+    }
+
+    /**
+     * @return int
+     */
+    public function getOffset()
+    {
+        return $this->offset;
+    }
+
+    /**
+     * @param int $offset
+     */
+    public function setOffset($offset)
+    {
+        $this->offset = $offset;
+    }
+
+    /**
+     * @return array
+     */
+    protected function getRows()
+    {
+        return $this->rows;
+    }
+
+    /**
+     * @param array $rows
+     * @return $this
+     */
+    public function setRows(array $rows)
+    {
+        $this->rows = $rows;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getFilterParts()
+    {
+        return $this->filterParts;
+    }
+
+    //    /**
+//     * @param array $params
+//     * @return Widget_Data
+//     */
+//    public function bind(array $params)
+//    {
+//        foreach ($params as $key => $value) {
+//
+//            $ascPattern = '/(?:[^\/]+\/)?' . QueryBuilder::SQL_ORDERING_ASC . '$/';
+//            $descPattern = '/(?:[^\/]+\/)?' . QueryBuilder::SQL_ORDERING_DESC . '$/';
+//
+//            if (preg_match($ascPattern, $value)) {
+//                $value = QueryBuilder::SQL_ORDERING_ASC;
+//            } elseif (preg_match($descPattern, $value)) {
+//                $value = QueryBuilder::SQL_ORDERING_DESC;
+//            } else {
+//                $value = '';
+//            }
+//
+//            if (isset($this->columns[$key])) {
+//                if (empty($value) && isset($this->columns[$key]['options']['default'])) {
+//                    $value = $this->columns[$key]['options']['default'];
+//                }
+//
+//                $this->bind([$key => $value]);
+//            }
+//        }
+//
+//        return $this;
+//    }
+
+    private function getWidgetClassName()
+    {
+        /** @var Widget $widgetClass */
+        $widgetClass = get_class($this);
+
+        return $widgetClass::getClassName();
+    }
+
 //    /**
 //     * Compiled values of widget
 //     *
@@ -758,25 +714,19 @@ abstract class Widget extends Container
 //    }
 
     /**
-     * @return array
+     * @return null
      */
-    public function getFilterParts()
+    public function getParentWidgetId()
     {
-        return $this->filterParts;
+        return $this->parentWidgetId;
     }
 
     /**
-     * @param $partName
-     * @return WidgetComponent
+     * @param null $parentWidgetId
      */
-    public function getPart($partName)
+    public function setParentWidgetId($parentWidgetId)
     {
-        return isset($this->parts[$partName]) ? $this->parts[$partName] : null;
-    }
-
-    public function setPart($partName, $part)
-    {
-        $this->parts[$partName] = $part;
+        $this->parentWidgetId = $parentWidgetId;
     }
 
     /**
@@ -792,10 +742,91 @@ abstract class Widget extends Container
         return isset($this->data[$key]) ? $this->data[$key] : null;
     }
 
-
     public function setData(array $data)
     {
         $this->data = $data;
+    }
+
+    /**
+     * @return Resource
+     */
+    public function getResource()
+    {
+        if (!$this->resourceClass) {
+            return null;
+        }
+
+        return Resource::create($this->resourceClass);
+    }
+
+    private function getDataWidget()
+    {
+        return [
+            'class' => get_class($this),
+            'name' => $this->getInstanceKey(),
+            'token' => $this->getToken(),
+            'resourceClass' => $this->getResource() ? $this->getResource()->getResourceClass() : null
+        ];
+    }
+
+    /**
+     * @return string
+     */
+    public function getToken()
+    {
+        return $this->token;
+    }
+
+    /**
+     * @param string $attributes
+     * @param bool|false $force
+     * @return string|null
+     */
+    public function getLayout($attributes = '', $force = false)
+    {
+        $layout = null;
+
+        /** @var Configured $class */
+        $class = get_called_class();
+
+        if (!$force) {
+            $layout = $class::getConfig()->get('render/layout');
+        }
+
+        if (!$layout) {
+            return null;
+        }
+
+        if ($layout === true) {
+            return 'div.' . Object::getClassName($class) . $attributes;
+        }
+
+        if ($layout[0] == '_') {
+            return 'div.' . Object::getClassName($class) . $layout . $attributes;
+        }
+
+        return $layout;
+    }
+
+    /**
+     * @param string $layout
+     * @return $this
+     */
+    public function setLayout($layout)
+    {
+        $this->layout = $layout;
+        return $this;
+    }
+
+    public function walkOptions($function, $option)
+    {
+        array_walk($this->parts, $function, $option);
+        return $this;
+    }
+
+    public function setPart($partName, $part)
+    {
+        $this->parts[$partName] = $part;
     }
 
     /**
@@ -809,6 +840,48 @@ abstract class Widget extends Container
     public function a($columnName, array $options = [], $template = null)
     {
         return $this->addPart(new HtmlTag_A($columnName, $options, $template, $this));
+    }
+
+    /**
+     * @param WidgetComponent $part
+     * @return $this
+     */
+    protected function addPart(WidgetComponent $part)
+    {
+        if (!$part->getOption('isShow', true)) {
+            return $this;
+        }
+
+        try {
+            $roles = $part->getOption('roles');
+            $access = $part->getOption('access');
+
+            if (!$access) {
+                $access = [];
+            }
+
+            if ($roles) {
+                $access['roles'] = $roles;
+            }
+
+            Access::check($access);
+        } catch (Access_Denied $e) {
+            return $this;
+        }
+
+        $componentName = $part->getComponentName();
+
+        if (!empty($options['rewrite']) && isset($this->parts[$componentName])) {
+            unset($this->parts[$componentName]);
+        }
+
+        if (!empty($options['unshift'])) {
+            $this->parts = [$componentName => $part] + $this->parts;
+        } else {
+            $this->parts[$componentName] = $part;
+        }
+
+        return $this;
     }
 
     /**
@@ -906,6 +979,14 @@ abstract class Widget extends Container
     }
 
     /**
+     * @return null|string
+     */
+    public function getRedirect()
+    {
+        return $this->redirect;
+    }
+
+    /**
      * @param string $route
      * @param int $timeout
      * @return $this
@@ -932,24 +1013,6 @@ abstract class Widget extends Container
     }
 
     /**
-     * @param int $timeout
-     * @return $this
-     */
-    public function setTimeout($timeout)
-    {
-        $this->timeout = $timeout;
-        return $this;
-    }
-
-    /**
-     * @return null|string
-     */
-    public function getRedirect()
-    {
-        return $this->redirect;
-    }
-
-    /**
      * @return int
      */
     public function getTimeout()
@@ -958,35 +1021,13 @@ abstract class Widget extends Container
     }
 
     /**
-     * @return null
+     * @param int $timeout
+     * @return $this
      */
-    public function getParentWidgetId()
+    public function setTimeout($timeout)
     {
-        return $this->parentWidgetId;
-    }
-
-    /**
-     * @param null $parentWidgetId
-     */
-    public function setParentWidgetId($parentWidgetId)
-    {
-        $this->parentWidgetId = $parentWidgetId;
-    }
-
-    /**
-     * @return null
-     */
-    public function getParentWidgetClass()
-    {
-        return $this->parentWidgetClass;
-    }
-
-    /**
-     * @param null $parentWidgetClass
-     */
-    public function setParentWidgetClass($parentWidgetClass)
-    {
-        $this->parentWidgetClass = $parentWidgetClass;
+        $this->timeout = $timeout;
+        return $this;
     }
 
     public function cloneWidget()
@@ -1009,16 +1050,6 @@ abstract class Widget extends Container
         }
 
         return $this->addPart(new WidgetComponent_Widget($columnName, $options, $template, $this));
-    }
-
-    public function getWidgetId()
-    {
-        return Object::getClassName(get_class($this)) . '_' . strtolower(str_replace('\\', '_', $this->getInstanceKey()));
-    }
-
-    protected static function getDefaultKey()
-    {
-        return Router::getInstance()->getName();
     }
 
     /**
@@ -1084,36 +1115,6 @@ abstract class Widget extends Container
         return $widget;
     }
 
-    private function loadResource()
-    {
-        /** @var Widget $widgetClass */
-        $widgetClass = get_class($this);
-
-        if ($widgetClass == Resource_Dynamic::getClass()) {
-            return;
-        }
-
-        if ($widgetClass::getConfig()->get('resource/js') === true) {
-            $this->getResourceDynamic()->addResource($widgetClass, 'js');
-        }
-
-        if ($widgetClass::getConfig()->get('resource/css') === true) {
-            $this->getResourceDynamic()->addResource($widgetClass, 'css');
-        }
-
-        if ($widgetClass::getConfig()->get('resource/less') === true) {
-            $this->getResourceDynamic()->addResource($widgetClass, 'less');
-        }
-    }
-
-    /**
-     * @return Resource_Dynamic
-     */
-    private function getResourceDynamic()
-    {
-        return Resource_Dynamic::getInstance(null);
-    }
-
     /**
      * @param $name
      * @return $this
@@ -1155,6 +1156,22 @@ abstract class Widget extends Container
         ];
     }
 
+    /**
+     * @return null
+     */
+    public function getParentWidgetClass()
+    {
+        return $this->parentWidgetClass;
+    }
+
+    /**
+     * @param null $parentWidgetClass
+     */
+    public function setParentWidgetClass($parentWidgetClass)
+    {
+        $this->parentWidgetClass = $parentWidgetClass;
+    }
+
     public function getRenderRoute()
     {
         $router = Router::getInstance();
@@ -1182,33 +1199,6 @@ abstract class Widget extends Container
         return array_key_exists($paramName, $params) ? $params[$paramName] : $default;
     }
 
-    /**
-     * @param $paramName string|null
-     * @param null $default
-     * @return mixed
-     */
-    public function get($paramName = null, $default = null)
-    {
-        $params = $this->getWidgetRegistry()->get();
-
-        foreach ($this->getParts() as $part) {
-            $params = array_merge($part->get(), $params);
-        }
-
-        if ($paramName === null) {
-            return empty($params) ? [] : $params;
-        }
-
-        return array_key_exists($paramName, $params) ? $params[$paramName] : $default;
-    }
-
-    public function getInputConfig() {
-        /** @var Widget $widgetClass */
-        $widgetClass = get_class($this);
-
-        return $widgetClass::getConfig()->gets('input', []);
-    }
-
     public function validate()
     {
         $params = Validator::validateParams($this->getWidgetRegistry()->get(), $this->getInputConfig());
@@ -1218,5 +1208,13 @@ abstract class Widget extends Container
         }
 
         return $params;
+    }
+
+    public function getInputConfig()
+    {
+        /** @var Widget $widgetClass */
+        $widgetClass = get_class($this);
+
+        return $widgetClass::getConfig()->gets('input', []);
     }
 }

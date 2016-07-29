@@ -38,64 +38,18 @@ abstract class Message
      * @var array|string|null
      */
     private $bcc = null;
-
-    /**
-     * @return array
-     */
-    public function getCc()
-    {
-        return (array)$this->cc;
-    }
-
-    /**
-     * @param array|string $cc
-     * @return Message
-     */
-    public function setCc($cc)
-    {
-        $this->cc = $cc;
-        return $this;
-    }
-
-    /**
-     * @return array
-     */
-    public function getBcc()
-    {
-        return (array)$this->bcc;
-    }
-
-    /**
-     * @param array|string $bcc
-     * @return Message
-     */
-    public function setBcc($bcc)
-    {
-        $this->bcc = $bcc;
-        return $this;
-    }
-
     /**
      * Message subject
      *
      * @var string
      */
     private $subject = null;
-
     /**
      * Message body
      *
      * @var string
      */
     private $body = null;
-
-    protected static function config()
-    {
-        return [
-            'view' => ['viewRenderClass' => null, 'layout' => null],
-            'access' => ['roles' => [], 'request' => null, 'env' => null]
-        ];
-    }
 
     public static function create()
     {
@@ -105,6 +59,14 @@ abstract class Message
         $message = new $class();
 
         return $message;
+    }
+
+    protected static function config()
+    {
+        return [
+            'view' => ['viewRenderClass' => null, 'layout' => null],
+            'access' => ['roles' => [], 'request' => null, 'env' => null]
+        ];
     }
 
     /**
@@ -149,6 +111,24 @@ abstract class Message
     }
 
     /**
+     * @return array
+     */
+    public function getRecipients()
+    {
+        return (array)$this->recipients;
+    }
+
+    /**
+     * @param array|string $recipients
+     * @return Message
+     */
+    public function setRecipients($recipients)
+    {
+        $this->recipients = $recipients;
+        return $this;
+    }
+
+    /**
      * @return string
      */
     public function getSubject()
@@ -187,18 +167,36 @@ abstract class Message
     /**
      * @return array
      */
-    public function getRecipients()
+    public function getCc()
     {
-        return (array)$this->recipients;
+        return (array)$this->cc;
     }
 
     /**
-     * @param array|string $recipients
+     * @param array|string $cc
      * @return Message
      */
-    public function setRecipients($recipients)
+    public function setCc($cc)
     {
-        $this->recipients = $recipients;
+        $this->cc = $cc;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getBcc()
+    {
+        return (array)$this->bcc;
+    }
+
+    /**
+     * @param array|string $bcc
+     * @return Message
+     */
+    public function setBcc($bcc)
+    {
+        $this->bcc = $bcc;
         return $this;
     }
 }

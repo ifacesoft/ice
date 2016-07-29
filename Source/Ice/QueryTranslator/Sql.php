@@ -9,7 +9,6 @@
 
 namespace Ice\QueryTranslator;
 
-use Ice\Core\Debuger;
 use Ice\Core\Exception;
 use Ice\Core\Model;
 use Ice\Core\Module;
@@ -107,7 +106,7 @@ class Sql extends QueryTranslator
 
         $sql = "\n" . self::SQL_STATEMENT_UPDATE .
             "\n\t`" . $modelClass::getSchemeName() . '`.`' . $modelClass::getTableName() . '` `' . $tableAlias . '`';
-        
+
         $sql .= "\n" . self::SQL_CLAUSE_SET;
         $sql .= implode(
             ',',
@@ -235,7 +234,7 @@ class Sql extends QueryTranslator
         $sql = '';
 
         $modelSchemes = [];
-        
+
         /**
          * @var Model $modelClass
          * @var array $where
@@ -249,15 +248,15 @@ class Sql extends QueryTranslator
             if (!isset($modelSchemes[$modelClass])) {
                 $modelSchemes[$modelClass] = $modelClass::getScheme();
             }
-            
+
             foreach ($where['data'] as $fieldNameArr) {
                 list($logicalOperator, $fieldName, $comparisonOperator, $count) = $fieldNameArr;
 
                 if (isset($fieldColumnMap[$fieldName])) {
                     $columnName = $fieldColumnMap[$fieldName];
-                    
+
                     $column = '`' . $tableAlias . '`.`' . $columnName . '`';
-                    
+
                     $dateTimezone = $modelSchemes[$modelClass]->get('columns/' . $columnName . '/options/dateTimezone', null);
                 } else {
                     $column = $fieldName;
@@ -277,38 +276,6 @@ class Sql extends QueryTranslator
         }
 
         return empty($delete) ? $sql : $delete . $sql;
-    }
-
-    protected function translateHaving(array $part)
-    {
-        $sql = '';
-
-        /**
-         * @var Model $modelClass
-         * @var array $having
-         */
-        foreach ($part as $tableAlias => $having) {
-            $modelClass = $having['class'];
-
-            $fields = $modelClass::getScheme()->getFieldColumnMap();
-
-            foreach ($having['data'] as $fieldNameArr) {
-                list($logicalOperator, $fieldName, $comparisonOperator, $count) = $fieldNameArr;
-
-                if (isset($fields[$fieldName])) {
-                    $fieldName = $fields[$fieldName];
-                }
-
-                $sql .= $sql
-                    ? ' ' . $logicalOperator . "\n\t"
-                    : "\n" . self::SQL_CLAUSE_HAVING . "\n\t";
-
-                $sql .= '`' . $fieldName . '` ' .
-                    $this->buildWhere($comparisonOperator, $fieldName, $count);
-            }
-        }
-
-        return $sql;
     }
 
     /**
@@ -357,6 +324,65 @@ class Sql extends QueryTranslator
         }
 
         return '';
+    }
+
+    private function dateTimezoneWhere($dateTimezone, $column, $sign = '?')
+    {
+        if ($dateTimezone === true) {
+            $dateTimezone = $column == '`User`.`created_at`'
+                ? null
+                : Security::getInstance()->getUser()->getTimezone();
+        }
+
+        if ($dateTimezone === null) {
+            return $sign;
+        }
+
+        $dateDefaults = Module::getInstance()->getDefault('date');
+
+        if (!$dateTimezone) {
+            $dateTimezone = $dateDefaults->get('timezone');
+        }
+
+        $timezone = $dateDefaults->get('storage_timezone');
+
+        if ($dateTimezone != $timezone) {
+            $sign = 'CONVERT_TZ(' . $sign . ',"' . $dateTimezone . '","' . $timezone . '")';
+        }
+
+        return $sign;
+    }
+
+    protected function translateHaving(array $part)
+    {
+        $sql = '';
+
+        /**
+         * @var Model $modelClass
+         * @var array $having
+         */
+        foreach ($part as $tableAlias => $having) {
+            $modelClass = $having['class'];
+
+            $fields = $modelClass::getScheme()->getFieldColumnMap();
+
+            foreach ($having['data'] as $fieldNameArr) {
+                list($logicalOperator, $fieldName, $comparisonOperator, $count) = $fieldNameArr;
+
+                if (isset($fields[$fieldName])) {
+                    $fieldName = $fields[$fieldName];
+                }
+
+                $sql .= $sql
+                    ? ' ' . $logicalOperator . "\n\t"
+                    : "\n" . self::SQL_CLAUSE_HAVING . "\n\t";
+
+                $sql .= '`' . $fieldName . '` ' .
+                    $this->buildWhere($comparisonOperator, $fieldName, $count);
+            }
+        }
+
+        return $sql;
     }
 
     /**
@@ -455,6 +481,33 @@ class Sql extends QueryTranslator
             "\n\t" . $table . ' `' . $tableAlias . '`';
 
         return $sql;
+    }
+
+    private function dateTimezoneSelect($dateTimezone, $column, $alias = null)
+    {
+        if ($dateTimezone === true) {
+            $dateTimezone = $column == '`User`.`created_at`'
+                ? null
+                : Security::getInstance()->getUser()->getTimezone();
+        }
+
+        if ($dateTimezone === null) {
+            return $column;
+        }
+
+        $dateDefaults = Module::getInstance()->getDefault('date');
+
+        if (!$dateTimezone) {
+            $dateTimezone = $dateDefaults->get('timezone');
+        }
+
+        $timezone = $dateDefaults->get('storage_timezone');
+
+        if ($dateTimezone != $timezone) {
+            $column = 'CONVERT_TZ(' . $column . ',"' . $timezone . '","' . $dateTimezone . '")';
+        }
+
+        return $alias ? $column . ' AS `' . $alias . '`' : $column;
     }
 
     /**
@@ -666,59 +719,5 @@ class Sql extends QueryTranslator
             "\n" . ') ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;';
 
         return $sql;
-    }
-
-    private function dateTimezoneWhere($dateTimezone, $column, $sign = '?')
-    {
-        if ($dateTimezone === true) {
-            $dateTimezone = $column == '`User`.`created_at`'
-                ? null
-                : Security::getInstance()->getUser()->getTimezone();
-        }
-
-        if ($dateTimezone === null) {
-            return $sign;
-        }
-
-        $dateDefaults = Module::getInstance()->getDefault('date');
-
-        if (!$dateTimezone) {
-            $dateTimezone = $dateDefaults->get('timezone');
-        }
-
-        $timezone = $dateDefaults->get('storage_timezone');
-
-        if ($dateTimezone != $timezone) {
-            $sign = 'CONVERT_TZ(' . $sign . ',"' . $dateTimezone . '","' . $timezone . '")';
-        }
-
-        return $sign;
-    }
-    
-    private function dateTimezoneSelect($dateTimezone, $column, $alias = null)
-    {
-        if ($dateTimezone === true) {
-            $dateTimezone = $column == '`User`.`created_at`'
-                ? null
-                : Security::getInstance()->getUser()->getTimezone();
-        }
-
-        if ($dateTimezone === null) {
-            return $column;
-        }
-
-        $dateDefaults = Module::getInstance()->getDefault('date');
-
-        if (!$dateTimezone) {
-            $dateTimezone = $dateDefaults->get('timezone');
-        }
-
-        $timezone = $dateDefaults->get('storage_timezone');
-
-        if ($dateTimezone != $timezone) {
-            $column = 'CONVERT_TZ(' . $column . ',"' . $timezone . '","' . $dateTimezone . '")';
-        }
-
-        return $alias ? $column . ' AS `' . $alias . '`' : $column;
     }
 }

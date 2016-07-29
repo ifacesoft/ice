@@ -13,7 +13,8 @@ class FormElement_TextInput extends FormElement
         return $attributeName . '="' . $this->getPlaceholder() . '"';
     }
 
-    public function getPlaceholder() {
+    public function getPlaceholder()
+    {
         $placeholder = $this->getOption('placeholder', '');
 
         if (!$placeholder) {

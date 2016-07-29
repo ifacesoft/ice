@@ -9,13 +9,9 @@
 
 namespace Ice\Core;
 
-use Ice\Action\PhpUnit;
-use Ice\Core;
 use Ice\Exception\Error;
 use Ice\Exception\QueryBuilder_Join;
 use Ice\Helper\Object;
-use Ice\Helper\String;
-use Ice\QueryTranslator\Defined;
 use Ice\Widget\Form;
 
 /**
@@ -1182,6 +1178,11 @@ class QueryBuilder
         return $this;
     }
 
+    private function getBindParts()
+    {
+        return $this->bindParts;
+    }
+
     /**
      * Return query result for select query
      *
@@ -1498,45 +1499,6 @@ class QueryBuilder
     }
 
     /**
-     * Set flag of get count rows
-     *
-     * @param  array $fieldNameAlias
-     * @param  array $modelTableData
-     * @return QueryBuilder
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.6
-     * @since   0.0
-     */
-    public function groupConcat($fieldNameAlias = [], $modelTableData = [])
-    {
-        /**
-         * @var Model $modelClass
-         */
-        list($modelClass, $tableAlias) = $this->getModelClassTableAlias($modelTableData);
-        list($fieldName, $fieldAlias) = $this->getFieldNameAlias($fieldNameAlias, $modelClass);
-        $fieldNames = [];
-
-        $fieldColumnMap = $modelClass::getScheme()->getFieldColumnMap();
-
-        foreach ((array)$fieldName as $name) {
-            $name = $fieldColumnMap[$name];
-
-            $fieldNames[] = '`' . $tableAlias . '`.`' . $modelClass::getFieldName($name) . '`';
-            $this->appendCacheTag($modelClass, $name, true, false);
-        }
-
-        if (!$fieldAlias) {
-            $fieldAlias = strtolower($modelClass::getClassName()) . '__count';
-        }
-
-        $this->select('GROUP_CONCAT(' . implode(',', $fieldNames) . ')', $fieldAlias, [$modelClass => '']);
-
-        return $this;
-    }
-
-    /**
      * Return couple fieldName and fieldAlias
      *
      * @param  string|array $fieldNameAlias
@@ -1573,6 +1535,45 @@ class QueryBuilder
         }
 
         return [$fieldName, $fieldAlias];
+    }
+
+    /**
+     * Set flag of get count rows
+     *
+     * @param  array $fieldNameAlias
+     * @param  array $modelTableData
+     * @return QueryBuilder
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.6
+     * @since   0.0
+     */
+    public function groupConcat($fieldNameAlias = [], $modelTableData = [])
+    {
+        /**
+         * @var Model $modelClass
+         */
+        list($modelClass, $tableAlias) = $this->getModelClassTableAlias($modelTableData);
+        list($fieldName, $fieldAlias) = $this->getFieldNameAlias($fieldNameAlias, $modelClass);
+        $fieldNames = [];
+
+        $fieldColumnMap = $modelClass::getScheme()->getFieldColumnMap();
+
+        foreach ((array)$fieldName as $name) {
+            $name = $fieldColumnMap[$name];
+
+            $fieldNames[] = '`' . $tableAlias . '`.`' . $modelClass::getFieldName($name) . '`';
+            $this->appendCacheTag($modelClass, $name, true, false);
+        }
+
+        if (!$fieldAlias) {
+            $fieldAlias = strtolower($modelClass::getClassName()) . '__count';
+        }
+
+        $this->select('GROUP_CONCAT(' . implode(',', $fieldNames) . ')', $fieldAlias, [$modelClass => '']);
+
+        return $this;
     }
 
     /**
@@ -1948,12 +1949,6 @@ class QueryBuilder
         return $this;
     }
 
-
-    public function isCalcFoundRows()
-    {
-        return $this->sqlParts[self::PART_SELECT]['_calcFoundRows'];
-    }
-
     /**
      * Set flag for total found rows query
      *
@@ -1970,13 +1965,9 @@ class QueryBuilder
         return $this;
     }
 
-    public function filter(Form $form)
+    public function isCalcFoundRows()
     {
-        foreach ($form->getParts() as $widgetComponent) {
-            $widgetComponent->filter($this);
-        }
-
-        return $this;
+        return $this->sqlParts[self::PART_SELECT]['_calcFoundRows'];
     }
 
 //    public function filterWidget(
@@ -2004,6 +1995,15 @@ class QueryBuilder
 //
 //        return $this;
 //    }
+
+    public function filter(Form $form)
+    {
+        foreach ($form->getParts() as $widgetComponent) {
+            $widgetComponent->filter($this);
+        }
+
+        return $this;
+    }
 
     public function addTransform($transform, array $data = [], $modelClass = null, $isUse = true)
     {
@@ -2138,37 +2138,12 @@ class QueryBuilder
         return $this;
     }
 
-    private function getBindParts()
-    {
-        return $this->bindParts;
-    }
-
     public function havingLike($fieldName, $fieldValue, $modelTableData = [], $sqlLogical = QueryBuilder::SQL_LOGICAL_AND)
     {
         return $this->havingPart(
             $sqlLogical,
             [$fieldName => $fieldValue],
             QueryBuilder::SQL_COMPARISON_KEYWORD_LIKE,
-            $modelTableData
-        );
-    }
-
-    public function havingGt($fieldName, $fieldValue, $modelTableData = [], $sqlLogical = QueryBuilder::SQL_LOGICAL_AND)
-    {
-        return $this->havingPart(
-            $sqlLogical,
-            [$fieldName => $fieldValue],
-            QueryBuilder::SQL_COMPARISON_OPERATOR_GREATER,
-            $modelTableData
-        );
-    }
-
-    public function havingIs($fieldName, $modelTableData = [], $sqlLogical = QueryBuilder::SQL_LOGICAL_AND)
-    {
-        return $this->havingPart(
-            $sqlLogical,
-            [$fieldName => 1],
-            QueryBuilder::SQL_COMPARISON_OPERATOR_EQUAL,
             $modelTableData
         );
     }
@@ -2205,6 +2180,26 @@ class QueryBuilder
         }
 
         return $this;
+    }
+
+    public function havingGt($fieldName, $fieldValue, $modelTableData = [], $sqlLogical = QueryBuilder::SQL_LOGICAL_AND)
+    {
+        return $this->havingPart(
+            $sqlLogical,
+            [$fieldName => $fieldValue],
+            QueryBuilder::SQL_COMPARISON_OPERATOR_GREATER,
+            $modelTableData
+        );
+    }
+
+    public function havingIs($fieldName, $modelTableData = [], $sqlLogical = QueryBuilder::SQL_LOGICAL_AND)
+    {
+        return $this->havingPart(
+            $sqlLogical,
+            [$fieldName => 1],
+            QueryBuilder::SQL_COMPARISON_OPERATOR_EQUAL,
+            $modelTableData
+        );
     }
 
     /**

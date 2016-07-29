@@ -42,7 +42,7 @@ class Email extends Validator
      * @param array $params
      * @return bool
      *
-* \     * @author dp <denis.a.shestakov@gmail.com>
+     * \     * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 1.2
      * @since   0.0

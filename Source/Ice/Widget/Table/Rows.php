@@ -29,24 +29,6 @@ class Table_Rows extends Widget
         ];
     }
 
-    /** Build widget
-     *
-     * @param array $input
-     * @return array
-     */
-    protected function build(array $input)
-    {
-        return [];
-    }
-
-    /**
-     * @return boolean
-     */
-    public function isShowCount()
-    {
-        return $this->isShowCount;
-    }
-
     /**
      * @param boolean $isShowCount
      * @return Table_Rows
@@ -55,35 +37,6 @@ class Table_Rows extends Widget
     {
         $this->isShowCount = $isShowCount;
 
-        return $this;
-    }
-
-    protected function getCompiledResult()
-    {
-        return array_merge(
-            parent::getCompiledResult(),
-            [
-                'isShowCount' => $this->isShowCount(),
-                'columnCount' => $this->getColumnCount()
-            ]
-        );
-    }
-
-    /**
-     * @return int
-     */
-    public function getColumnCount()
-    {
-        return $this->columnCount ? $this->columnCount : count($this->getParts());
-    }
-
-    /**
-     * @param int $columnCount
-     * @return Table_Rows
-     */
-    public function setColumnCount($columnCount)
-    {
-        $this->columnCount = $columnCount;
         return $this;
     }
 
@@ -117,16 +70,16 @@ class Table_Rows extends Widget
     }
 
     /**
-     * Build a tag part
+     * Build checkbox tag part
      *
-     * @param  $columnName
+     * @param $columnName
      * @param  array $options
-     * @param  string $template
+     * @param null $template
      * @return $this
      */
-    public function a($columnName, array $options = [], $template = null)
+    public function checkbox($columnName, array $options = [], $template = null)
     {
-        return $this->addPart(new Table_Row_A($columnName, $options, $template, $this));
+        return $this->td($columnName, $options, $template);
     }
 
     /**
@@ -147,16 +100,16 @@ class Table_Rows extends Widget
     }
 
     /**
-     * Build checkbox tag part
+     * Build a tag part
      *
-     * @param $columnName
+     * @param  $columnName
      * @param  array $options
-     * @param null $template
+     * @param  string $template
      * @return $this
      */
-    public function checkbox($columnName, array $options = [], $template = null)
+    public function a($columnName, array $options = [], $template = null)
     {
-        return $this->td($columnName, $options, $template);
+        return $this->addPart(new Table_Row_A($columnName, $options, $template, $this));
     }
 
     /**
@@ -223,5 +176,52 @@ class Table_Rows extends Widget
     public function oneToManyToMany($columnName, array $options = [], $template = null)
     {
         return $this->td($columnName, $options, $template);
+    }
+
+    /** Build widget
+     *
+     * @param array $input
+     * @return array
+     */
+    protected function build(array $input)
+    {
+        return [];
+    }
+
+    protected function getCompiledResult()
+    {
+        return array_merge(
+            parent::getCompiledResult(),
+            [
+                'isShowCount' => $this->isShowCount(),
+                'columnCount' => $this->getColumnCount()
+            ]
+        );
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isShowCount()
+    {
+        return $this->isShowCount;
+    }
+
+    /**
+     * @return int
+     */
+    public function getColumnCount()
+    {
+        return $this->columnCount ? $this->columnCount : count($this->getParts());
+    }
+
+    /**
+     * @param int $columnCount
+     * @return Table_Rows
+     */
+    public function setColumnCount($columnCount)
+    {
+        $this->columnCount = $columnCount;
+        return $this;
     }
 }

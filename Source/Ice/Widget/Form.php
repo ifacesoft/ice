@@ -2,10 +2,6 @@
 
 namespace Ice\Widget;
 
-use Ice\Core\Action;
-use Ice\Core\Debuger;
-use Ice\Core\Module;
-use Ice\Core\Validator;
 use Ice\Core\Widget;
 use Ice\Helper\Directory;
 use Ice\WidgetComponent\Form_Date;
@@ -18,9 +14,7 @@ use Ice\WidgetComponent\Form_Period;
 use Ice\WidgetComponent\FormElement;
 use Ice\WidgetComponent\FormElement_Button;
 use Ice\WidgetComponent\FormElement_Chosen;
-use Ice\WidgetComponent\FormElement_Period;
 use Ice\WidgetComponent\FormElement_TextInput;
-use Ice\WidgetComponent\FormElement_Typehead;
 
 class Form extends Widget
 {
@@ -74,6 +68,24 @@ class Form extends Widget
     }
 
     /**
+     * @param null $filterParts
+     * @return FormElement[]
+     */
+    public function getParts($filterParts = null)
+    {
+        return parent::getParts($filterParts);
+    }
+
+    public static function schemeColumnPlugin($columnName, $table)
+    {
+        return [
+            'type' => isset(Form::$typeMap[$table['columns'][$columnName]['scheme']['dataType']])
+                ? Form::$typeMap[$table['columns'][$columnName]['scheme']['dataType']]
+                : 'text'
+        ];
+    }
+
+    /**
      * Widget config
      *
      * @return array
@@ -87,50 +99,6 @@ class Form extends Widget
             'cache' => ['ttl' => -1, 'count' => 1000],
             'input' => [],
             'output' => [],
-        ];
-    }
-
-    /** Build widget
-     *
-     * @param array $input
-     * @return array
-     */
-    protected function build(array $input)
-    {
-        return [];
-    }
-
-    protected function getCompiledResult()
-    {
-        $compiledResult = parent::getCompiledResult();
-
-        /** @var FormElement $component */
-        $component = $this->getPart($this->submitComponentName);
-
-        if (!$component) {
-            return array_merge(
-                $compiledResult,
-                ['onSubmit' => '', 'url' => '/', 'method' => 'POST']
-            );
-        }
-
-        return array_merge(
-            $compiledResult,
-            [
-                'dataAction' => $component->getDataAction(),
-                'onSubmit' => $component->getEvent()['ajax'] ? $component->getEventCode() : '',
-                'url' => $component->getHref(),
-                'method' => $component->getRoute() ? $component->getRoute()['method'] : 'POST'
-            ]
-        );
-    }
-
-    public static function schemeColumnPlugin($columnName, $table)
-    {
-        return [
-            'type' => isset(Form::$typeMap[$table['columns'][$columnName]['scheme']['dataType']])
-                ? Form::$typeMap[$table['columns'][$columnName]['scheme']['dataType']]
-                : 'text'
         ];
     }
 
@@ -476,6 +444,18 @@ class Form extends Widget
         return $this->addPart(new FormElement_Chosen($fieldName, $options, null, $this));
     }
 
+    /**
+     * @param int $offset input offset
+     * @return $this
+     */
+    public function setHorizontal($offset = 2)
+    {
+        $this->addClasses('form-horizontal');
+        $this->setOption('horizontal', $offset);
+
+        return $this;
+    }
+
 //    /**
 //     * Validate form by validate scheme
 //     *
@@ -527,18 +507,6 @@ class Form extends Widget
 //    }
 
     /**
-     * @param int $offset input offset
-     * @return $this
-     */
-    public function setHorizontal($offset = 2)
-    {
-        $this->addClasses('form-horizontal');
-        $this->setOption('horizontal', $offset);
-
-        return $this;
-    }
-
-    /**
      * @param null $submitComponentName
      */
     public function setSubmitComponentName($submitComponentName)
@@ -546,12 +514,38 @@ class Form extends Widget
         $this->submitComponentName = $submitComponentName;
     }
 
-    /**
-     * @param null $filterParts
-     * @return FormElement[]
+    /** Build widget
+     *
+     * @param array $input
+     * @return array
      */
-    public function getParts($filterParts = null)
+    protected function build(array $input)
     {
-        return parent::getParts($filterParts);
+        return [];
+    }
+
+    protected function getCompiledResult()
+    {
+        $compiledResult = parent::getCompiledResult();
+
+        /** @var FormElement $component */
+        $component = $this->getPart($this->submitComponentName);
+
+        if (!$component) {
+            return array_merge(
+                $compiledResult,
+                ['onSubmit' => '', 'url' => '/', 'method' => 'POST']
+            );
+        }
+
+        return array_merge(
+            $compiledResult,
+            [
+                'dataAction' => $component->getDataAction(),
+                'onSubmit' => $component->getEvent()['ajax'] ? $component->getEventCode() : '',
+                'url' => $component->getHref(),
+                'method' => $component->getRoute() ? $component->getRoute()['method'] : 'POST'
+            ]
+        );
     }
 }

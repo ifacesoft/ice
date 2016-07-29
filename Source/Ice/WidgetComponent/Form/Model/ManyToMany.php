@@ -2,13 +2,19 @@
 
 namespace Ice\WidgetComponent;
 
-use Ice\Core\Debuger;
 use Ice\Core\Model;
 use Ice\Core\QueryBuilder;
 use Ice\Core\Widget as Core_Widget;
 
 class Form_Model_ManyToMany extends FormElement_Chosen
 {
+    public function __construct($componentName, array $options, $template, Core_Widget $widget)
+    {
+        $options['multiple'] = true;
+
+        parent::__construct($componentName, $options, $template, $widget);
+    }
+
     /**
      * WidgetComponent config
      *
@@ -23,11 +29,14 @@ class Form_Model_ManyToMany extends FormElement_Chosen
         ];
     }
 
-    public function __construct($componentName, array $options, $template, Core_Widget $widget)
+    public function getItems()
     {
-        $options['multiple'] = true;
+        /** @var Model $modelClass */
+        $modelClass = $this->getItemModelClass();
 
-        parent::__construct($componentName, $options, $template, $widget);
+        $this->setOption('items', $modelClass::getItems($this->getItemKey(), $this->getItemTitle()));
+
+        return parent::getItems();
     }
 
     /**
@@ -38,37 +47,12 @@ class Form_Model_ManyToMany extends FormElement_Chosen
         return $this->getOption('itemModelClass');
     }
 
-    public function getLinkModelClass()
-    {
-        return $this->getOption('linkModelClass');
-    }
-
     public function getItemKey()
     {
         /** @var Model $modelClass */
         $modelClass = $this->getItemModelClass();
 
         return $modelClass::getPkFieldName();
-    }
-
-    public function getLinkKey()
-    {
-        return $this->getOption('linkKey');
-    }
-
-    public function getLinkForeignKey()
-    {
-        return $this->getOption('linkForeignKey');
-    }
-
-    public function getItems()
-    {
-        /** @var Model $modelClass */
-        $modelClass = $this->getItemModelClass();
-
-        $this->setOption('items', $modelClass::getItems($this->getItemKey(), $this->getItemTitle()));
-
-        return parent::getItems();
     }
 
     public function save(Model $model)
@@ -96,6 +80,43 @@ class Form_Model_ManyToMany extends FormElement_Chosen
         return parent::save($model);
     }
 
+    public function getLinkModelClass()
+    {
+        return $this->getOption('linkModelClass');
+    }
+
+    public function getLinkKey()
+    {
+        return $this->getOption('linkKey');
+    }
+
+    public function getLinkForeignKey()
+    {
+        return $this->getOption('linkForeignKey');
+    }
+
+    public function filter(QueryBuilder $queryBuilder)
+    {
+        $modelClass = $this->getItemModelClass();
+
+        foreach ($this->get($this->getName()) as $value) { // todo: Возможно это переписать на parent::filter - тут ничего сложного
+            if ($value) {
+                $queryBuilder->pk($value, $modelClass);
+            }
+        }
+
+//        parent::filter($queryBuilder);
+//
+//        $typeahead = $this->getName() . '_typeahead';
+//
+//        $typeaheadValue = $this->get($typeahead);
+//
+//        if ($typeaheadValue === null || $typeaheadValue === '') {
+//            return;
+//        }
+//
+//        $queryBuilder->like($this->getItemTitle(), '%' . $typeaheadValue . '%', $this->getItemModel());
+    }
 
     protected function buildParams(array $values)
     {
@@ -153,28 +174,5 @@ class Form_Model_ManyToMany extends FormElement_Chosen
 ////            $this->set($typeahead, null); // не обнуляем - ищем по вхождению
 //            }
 //        }
-    }
-
-    public function filter(QueryBuilder $queryBuilder)
-    {
-        $modelClass = $this->getItemModelClass();
-
-        foreach ($this->get($this->getName()) as $value) { // todo: Возможно это переписать на parent::filter - тут ничего сложного
-            if ($value) {
-                $queryBuilder->pk($value, $modelClass);
-            }
-        }
-
-//        parent::filter($queryBuilder);
-//
-//        $typeahead = $this->getName() . '_typeahead';
-//
-//        $typeaheadValue = $this->get($typeahead);
-//
-//        if ($typeaheadValue === null || $typeaheadValue === '') {
-//            return;
-//        }
-//
-//        $queryBuilder->like($this->getItemTitle(), '%' . $typeaheadValue . '%', $this->getItemModel());
     }
 }

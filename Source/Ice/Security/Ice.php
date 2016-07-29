@@ -3,13 +3,9 @@
 namespace Ice\Security;
 
 use Ice\Core\Config;
-use Ice\Core\Debuger;
 use Ice\Core\Model;
-use Ice\Core\Security;
 use Ice\Core\Model\Security_Account;
-use Ice\Core\Model\Security_User;
-use Ice\DataProvider\Security as DataProvider_Security;
-use Ice\DataProvider\Session;
+use Ice\Core\Security;
 use Ice\Exception\Security_Auth;
 use Ice\Model\Account_Phone_Password;
 use Ice\Model\User;
@@ -32,6 +28,16 @@ class Ice extends Security
     public function check(array $roles)
     {
         return array_intersect($roles, $this->getRoles()) || in_array('ROLE_ICE_SUPER_ADMIN', $this->getRoles());
+    }
+
+    /**
+     * All user roles
+     *
+     * @return string[]
+     */
+    public function getRoles()
+    {
+        return $this->isAuth() ? ['ROLE_ICE_USER'] : ['ROLE_ICE_GUEST'];
     }
 
     /**
@@ -124,19 +130,9 @@ class Ice extends Security
         if (!$user) {
             throw new Security_Auth(['AutoLogin failed. User {$0} with key {$1} not found', [$userModelClass, $userKey]]);
         }
-        
+
         $this->setUser($user);
 
         return true;
-    }
-
-    /**
-     * All user roles
-     *
-     * @return string[]
-     */
-    public function getRoles()
-    {
-        return $this->isAuth() ? ['ROLE_ICE_USER'] : ['ROLE_ICE_GUEST'];
     }
 }

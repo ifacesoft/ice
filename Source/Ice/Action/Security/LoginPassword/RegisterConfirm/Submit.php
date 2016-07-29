@@ -2,7 +2,6 @@
 
 namespace Ice\Action;
 
-use Ice\Core\Debuger;
 use Ice\Core\Logger;
 use Ice\Core\Widget_Security;
 use Ice\Helper\Date;

@@ -10,7 +10,6 @@
 namespace Ice\DataProvider;
 
 use Ice\Core\DataProvider;
-use Ice\Core\Debuger;
 use Ice\Core\Exception;
 
 /**

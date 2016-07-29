@@ -2,7 +2,6 @@
 
 namespace Ice\Action;
 
-use Ice\Core\Debuger;
 use Ice\Core\Logger;
 use Ice\Core\Model;
 use Ice\Core\Model\Security_Account;
@@ -45,7 +44,7 @@ class Security_LoginPassword_ChangePassword_Submit extends Security
             if (!$account) {
                 $form->getLogger()->exception('Account not found', __FILE__, __LINE__);
             }
-            
+
             if (!$account->securityVerify($values)) {
                 $form->getLogger()->exception('Authentication data is not valid. Please, check input.', __FILE__, __LINE__);
             }

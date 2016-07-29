@@ -9,7 +9,6 @@
 
 namespace Ice\Helper;
 
-use Ice\Core;
 use Ice\Core\Loader;
 use Ice\Core\Logger as Core_Logger;
 use Ice\Core\Module;
@@ -96,6 +95,25 @@ class Object
     }
 
     /**
+     * Get module name of object
+     *
+     * 'Ice/Model/Ice/User' => 'Ice'
+     *
+     * @param  $class
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since   0.0
+     */
+    public static function getModuleAlias($class)
+    {
+        $pos = strpos(ltrim($class, '\\'), '\\');
+        return $pos ? substr($class, 0, $pos) : Module::getInstance()->getAlias();
+    }
+
+    /**
      * Return class name (without namespace)
      *
      * @param  string $class
@@ -134,25 +152,6 @@ class Object
     public static function getPrefixByClassShortName($class, $shortName)
     {
         return self::getModuleAlias(self::getClass($class, $shortName));
-    }
-
-    /**
-     * Get module name of object
-     *
-     * 'Ice/Model/Ice/User' => 'Ice'
-     *
-     * @param  $class
-     * @return string
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since   0.0
-     */
-    public static function getModuleAlias($class)
-    {
-        $pos = strpos(ltrim($class, '\\'), '\\');
-        return $pos ? substr($class, 0, $pos) : Module::getInstance()->getAlias();
     }
 
     /**

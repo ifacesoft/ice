@@ -8,7 +8,6 @@ use Ice\Core\Model\Security_Account;
 use Ice\Core\Widget_Security;
 use Ice\Helper\Date;
 use Ice\Model\Token;
-use Ice\Core\Security as Core_Security;
 
 class Security_EmailPassword_RestorePasswordConfirm_Submit extends Security
 {
@@ -21,7 +20,7 @@ class Security_EmailPassword_RestorePasswordConfirm_Submit extends Security
 
         try {
             $values = $securityForm->validate();
-            
+
             /** @var Token $token */
             $token = Token::createQueryBuilder()
                 ->eq(['/' => $securityForm->getPart('token')->get('token')])
@@ -37,7 +36,7 @@ class Security_EmailPassword_RestorePasswordConfirm_Submit extends Security
 
             $accountModelClass = $securityForm->getAccountEmailPasswordModelClass();
             $accountModelClassName = $accountModelClass::getClassName();
-            
+
             /** @var Security_Account|Model $account */
             $account = $accountModelClass::createQueryBuilder()
                 ->inner(Token::class, '/pk', 'Token.id=' . $accountModelClassName . '.token_id AND Token.token="' . $token->get('token') . '"')
@@ -46,7 +45,7 @@ class Security_EmailPassword_RestorePasswordConfirm_Submit extends Security
             if (!$account) {
                 $securityForm->getLogger()->exception('Account not found', __FILE__, __LINE__);
             }
-            
+
             $accountData = ['password' => $account->securityHash($values)];
 
             $this->changePassword($account, $accountData, $input);

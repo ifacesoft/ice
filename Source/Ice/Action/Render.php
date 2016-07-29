@@ -3,10 +3,8 @@
 namespace Ice\Action;
 
 use Ice\Core\Action;
-use Ice\Core\Debuger;
 use Ice\Core\Widget;
 use Ice\DataProvider\Request;
-use Ice\DataProvider\Router;
 use Ice\Exception\Access_Denied;
 use Ice\Exception\Http_Forbidden;
 

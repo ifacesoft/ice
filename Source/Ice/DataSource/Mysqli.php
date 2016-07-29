@@ -11,7 +11,6 @@ namespace Ice\DataSource;
 
 use Ice\Core\DataProvider;
 use Ice\Core\DataSource;
-use Ice\Core\Debuger;
 use Ice\Core\Exception;
 use Ice\Core\Logger;
 use Ice\Core\Model;
@@ -23,7 +22,6 @@ use Ice\Core\QueryResult;
 use Ice\Core\QueryTranslator;
 use Ice\Exception\DataSource_Insert;
 use Ice\Exception\DataSource_Insert_DuplicateEntry;
-use Ice\Exception\DataSource_Select_Error;
 use Ice\Exception\DataSource_Statement_Error;
 use Ice\Exception\DataSource_Statement_TableNotFound;
 use Ice\Exception\DataSource_Statement_UnknownColumn;
@@ -295,6 +293,45 @@ class Mysqli extends DataSource
             $refs[$key] = &$arr[$key];
         }
         return $refs;
+    }
+
+    /**
+     * @param $sql
+     * @return mixed
+     * @throws Exception
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 1.1
+     * @since   1.1
+     */
+    public function query($sql)
+    {
+        $startTime = Profiler::getMicrotime();
+        $startMemory = Profiler::getMemoryGetUsage();
+
+        $connection = $this->getSourceDataProvider()->getConnection();
+
+        $result = $connection->query($sql);
+
+        if ($result === false) {
+            $errno = $this->getConnection()->errno;
+            $error = $this->getConnection()->error;
+
+            Logger::log(
+                '#' . $errno . ': ' . $error . ' - ' . $sql,
+                'query (error)',
+                'ERROR'
+            );
+
+            Logger::getInstance(__CLASS__)
+                ->exception(['#' . $errno . ': {$0} - {$1}', [$error, $sql]], __FILE__, __LINE__);
+        }
+
+        Profiler::setPoint($sql, $startTime, $startMemory);
+        Logger::log(Profiler::getReport($sql), 'query (native)', 'INFO');
+
+        return $result;
     }
 
     /**
@@ -574,7 +611,7 @@ class Mysqli extends DataSource
                         $data,
                         $tablePrefixes
                     );
-                    
+
                     $columns[$columnName]['options']['name'] = Helper_Model::getFieldNameByColumnName(
                         $columnName,
                         $data,
@@ -881,104 +918,6 @@ class Mysqli extends DataSource
     }
 
     /**
-     * Commit transaction
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 1.1
-     * @since   0.5
-     */
-    public function commitTransaction()
-    {
-        if ($this->savePointLevel === 0) {
-            $this->getConnection()->commit();
-            Logger::log('level_' . $this->savePointLevel, 'mysql commit', 'INFO');
-
-            $this->savePointLevel = null;
-
-            $this->getConnection()->autocommit(true);
-            Logger::log('true', 'mysql autocommit', 'INFO');
-
-            $this->executeNativeQuery('SET TRANSACTION ISOLATION LEVEL ' . Mysqli::TRANSACTION_REPEATABLE_READ);
-        } else {
-            $this->releaseSavePoint('transaction');
-
-            $this->savePointLevel--;
-        }
-    }
-
-    /**
-     * Rollback transaction
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 1.1
-     * @since   0.5
-     */
-    public function rollbackTransaction()
-    {
-        if ($this->savePointLevel === 0) {
-            $this->getConnection()->rollback();
-            Logger::log('level_' . $this->savePointLevel, 'mysql rollback', 'INFO');
-
-            $this->savePointLevel = null;
-
-            $this->getConnection()->autocommit(true);
-            Logger::log('true', 'mysql autocommit', 'INFO');
-
-            $this->executeNativeQuery('SET TRANSACTION ISOLATION LEVEL ' . Mysqli::TRANSACTION_REPEATABLE_READ);
-        } else {
-            $this->rollbackSavePoint('transaction');
-
-            $this->savePointLevel--;
-        }
-    }
-
-    /**
-     * Create save point transactions
-     *
-     * @param $savePoint
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 1.1
-     * @since   1.1
-     */
-    public function savePoint($savePoint)
-    {
-        $this->executeNativeQuery('SAVEPOINT ' . 'level_' . $this->savePointLevel . '_' . $savePoint);
-    }
-
-    /**
-     * Rollback save point transactions
-     *
-     * @param $savePoint
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 1.1
-     * @since   1.1
-     */
-    public function rollbackSavePoint($savePoint)
-    {
-        $this->executeNativeQuery('ROLLBACK TO SAVEPOINT ' . 'level_' . $this->savePointLevel . '_' . $savePoint);
-    }
-
-    /**
-     * Release save point transactions
-     *
-     * @param $savePoint
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 1.1
-     * @since   1.1
-     */
-    public function releaseSavePoint($savePoint)
-    {
-        $this->executeNativeQuery('RELEASE SAVEPOINT ' . 'level_' . $this->savePointLevel . '_' . $savePoint);
-    }
-
-    /**
      * Execute native query
      *
      * @param string $sql
@@ -1010,42 +949,101 @@ class Mysqli extends DataSource
     }
 
     /**
-     * @param $sql
-     * @return mixed
-     * @throws Exception
+     * Create save point transactions
+     *
+     * @param $savePoint
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 1.1
      * @since   1.1
      */
-    public function query($sql)
+    public function savePoint($savePoint)
     {
-        $startTime = Profiler::getMicrotime();
-        $startMemory = Profiler::getMemoryGetUsage();
+        $this->executeNativeQuery('SAVEPOINT ' . 'level_' . $this->savePointLevel . '_' . $savePoint);
+    }
 
-        $connection = $this->getSourceDataProvider()->getConnection();
+    /**
+     * Commit transaction
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 1.1
+     * @since   0.5
+     */
+    public function commitTransaction()
+    {
+        if ($this->savePointLevel === 0) {
+            $this->getConnection()->commit();
+            Logger::log('level_' . $this->savePointLevel, 'mysql commit', 'INFO');
 
-        $result = $connection->query($sql);
+            $this->savePointLevel = null;
 
-        if ($result === false) {
-            $errno = $this->getConnection()->errno;
-            $error = $this->getConnection()->error;
+            $this->getConnection()->autocommit(true);
+            Logger::log('true', 'mysql autocommit', 'INFO');
 
-            Logger::log(
-                '#' . $errno . ': ' . $error . ' - ' . $sql,
-                'query (error)',
-                'ERROR'
-            );
+            $this->executeNativeQuery('SET TRANSACTION ISOLATION LEVEL ' . Mysqli::TRANSACTION_REPEATABLE_READ);
+        } else {
+            $this->releaseSavePoint('transaction');
 
-            Logger::getInstance(__CLASS__)
-                ->exception(['#' . $errno . ': {$0} - {$1}', [$error, $sql]], __FILE__, __LINE__);
+            $this->savePointLevel--;
         }
+    }
 
-        Profiler::setPoint($sql, $startTime, $startMemory);
-        Logger::log(Profiler::getReport($sql), 'query (native)', 'INFO');
+    /**
+     * Release save point transactions
+     *
+     * @param $savePoint
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 1.1
+     * @since   1.1
+     */
+    public function releaseSavePoint($savePoint)
+    {
+        $this->executeNativeQuery('RELEASE SAVEPOINT ' . 'level_' . $this->savePointLevel . '_' . $savePoint);
+    }
 
-        return $result;
+    /**
+     * Rollback transaction
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 1.1
+     * @since   0.5
+     */
+    public function rollbackTransaction()
+    {
+        if ($this->savePointLevel === 0) {
+            $this->getConnection()->rollback();
+            Logger::log('level_' . $this->savePointLevel, 'mysql rollback', 'INFO');
+
+            $this->savePointLevel = null;
+
+            $this->getConnection()->autocommit(true);
+            Logger::log('true', 'mysql autocommit', 'INFO');
+
+            $this->executeNativeQuery('SET TRANSACTION ISOLATION LEVEL ' . Mysqli::TRANSACTION_REPEATABLE_READ);
+        } else {
+            $this->rollbackSavePoint('transaction');
+
+            $this->savePointLevel--;
+        }
+    }
+
+    /**
+     * Rollback save point transactions
+     *
+     * @param $savePoint
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 1.1
+     * @since   1.1
+     */
+    public function rollbackSavePoint($savePoint)
+    {
+        $this->executeNativeQuery('ROLLBACK TO SAVEPOINT ' . 'level_' . $this->savePointLevel . '_' . $savePoint);
     }
 
     /**

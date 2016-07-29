@@ -9,11 +9,8 @@
 
 namespace Ice\Core;
 
-use Assetic\Test\Filter\PackerFilterTest;
-use Ebs\Model\Packet_Dynamic;
 use Ice\Core;
 use Ice\Exception\Error;
-use Ice\Helper\Arrays;
 use Ice\Helper\Json;
 use Ice\Helper\Model as Helper_Model;
 use Ice\Helper\Object;
@@ -36,6 +33,12 @@ abstract class Model
     use Core;
 
     /**
+     *  Model fields
+     *
+     * @var array
+     */
+    protected $row = [];
+    /**
      * Primary key
      *
      * ```php
@@ -49,14 +52,6 @@ abstract class Model
      * @var array
      */
     private $pk = null;
-
-    /**
-     *  Model fields
-     *
-     * @var array
-     */
-    protected $row = [];
-
     /**
      * Extended fields json
      *
@@ -341,34 +336,6 @@ abstract class Model
     }
 
     /**
-     * @return Query_Scope
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 1.1
-     * @since   1.1
-     */
-    public static function getQueryScope()
-    {
-        return Query_Scope::getInstance(self::getClass());
-    }
-
-    public function getPkValue()
-    {
-        return $this->getPk() ? implode('__', $this->getPk()) : null;
-    }
-
-    public function setPkValue($pkValue)
-    {
-        /** @var Model $modelClass */
-        $modelClass = get_class($this);
-
-        $this->setPk(array_combine($modelClass::getScheme()->getPkFieldNames(), explode('__', $pkValue)));
-
-        return $this;
-    }
-
-    /**
      * Gets full model field name if send short name (for example: '/name' for model User -> user_name)
      *
      * @param  $fieldName
@@ -392,103 +359,6 @@ abstract class Model
         }
 
         return $fieldName;
-    }
-
-    /**
-     * Check is primary key value
-     *
-     * @param  $fieldName
-     * @return bool
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since   0.0
-     */
-    private function isPkName($fieldName)
-    {
-        /**
-         * @var Model $modelClass
-         */
-        $modelClass = get_class($this);
-
-        $modelScheme = $modelClass::getScheme();
-
-        $FieldColumnMapping = $modelScheme->getFieldColumnMap();
-
-        if (!isset($FieldColumnMapping[$fieldName])) {
-            return false;
-        }
-
-        return in_array($FieldColumnMapping[$fieldName], $modelScheme->getPkColumnNames());
-    }
-
-    /**
-     * Add affected field value
-     *
-     * @param array $fields
-     *
-     * @throws Error
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 1.2
-     * @since   0.4
-     */
-    private function addAffected(array $fields)
-    {
-        foreach ($fields as $fieldName => $fieldValue) {
-
-            if ($fieldValue === null) {
-                /**
-                 * @var Model $modelClass
-                 */
-                $modelClass = get_class($this);
-
-                $columnName = $modelClass::getScheme()->getFieldColumnMap()[$fieldName];
-                $columnScheme = $modelClass::getConfig()->gets('columns/' . $columnName . '/scheme');
-
-                if (!$columnScheme['nullable']) {
-                    if ($columnScheme['default'] === null) {
-                        throw new Error(['Null value not allowed for field {$0} of model {$1}', [$fieldName, $modelClass]]);
-                    }
-
-                    $fieldValue = $columnScheme['default'];
-                }
-            }
-
-            $this->affected[$fieldName] = $fieldValue;
-        }
-    }
-
-    /**
-     * Get action config
-     *
-     * @return Config
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since   0.5
-     */
-    public static function getConfig()
-    {
-        return self::getScheme();
-    }
-
-    /**
-     * Check for exists field name in model
-     *
-     * @param  $fieldName
-     * @return bool
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 1.2
-     * @since   0.4
-     */
-    public function isFieldName($fieldName)
-    {
-        return array_key_exists($fieldName, $this->row);
     }
 
     /**
@@ -522,6 +392,51 @@ abstract class Model
         }
 
         return [$fieldName => $fieldValue];
+    }
+
+    /**
+     * Check is primary key value
+     *
+     * @param  $fieldName
+     * @return bool
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since   0.0
+     */
+    private function isPkName($fieldName)
+    {
+        /**
+         * @var Model $modelClass
+         */
+        $modelClass = get_class($this);
+
+        $modelScheme = $modelClass::getScheme();
+
+        $FieldColumnMapping = $modelScheme->getFieldColumnMap();
+
+        if (!isset($FieldColumnMapping[$fieldName])) {
+            return false;
+        }
+
+        return in_array($FieldColumnMapping[$fieldName], $modelScheme->getPkColumnNames());
+    }
+
+    /**
+     * Check for exists field name in model
+     *
+     * @param  $fieldName
+     * @return bool
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 1.2
+     * @since   0.4
+     */
+    public function isFieldName($fieldName)
+    {
+        return array_key_exists($fieldName, $this->row);
     }
 
     /**
@@ -598,6 +513,429 @@ abstract class Model
         }
 
         return $this->setValue($fkFieldName, $fieldValue);
+    }
+
+    /**
+     * Add affected field value
+     *
+     * @param array $fields
+     *
+     * @throws Error
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 1.2
+     * @since   0.4
+     */
+    private function addAffected(array $fields)
+    {
+        foreach ($fields as $fieldName => $fieldValue) {
+
+            if ($fieldValue === null) {
+                /**
+                 * @var Model $modelClass
+                 */
+                $modelClass = get_class($this);
+
+                $columnName = $modelClass::getScheme()->getFieldColumnMap()[$fieldName];
+                $columnScheme = $modelClass::getConfig()->gets('columns/' . $columnName . '/scheme');
+
+                if (!$columnScheme['nullable']) {
+                    if ($columnScheme['default'] === null) {
+                        throw new Error(['Null value not allowed for field {$0} of model {$1}', [$fieldName, $modelClass]]);
+                    }
+
+                    $fieldValue = $columnScheme['default'];
+                }
+            }
+
+            $this->affected[$fieldName] = $fieldValue;
+        }
+    }
+
+    /**
+     * Get action config
+     *
+     * @return Config
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since   0.5
+     */
+    public static function getConfig()
+    {
+        return self::getScheme();
+    }
+
+    /**
+     * @return Query_Scope
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 1.1
+     * @since   1.1
+     */
+    public static function getQueryScope()
+    {
+        return Query_Scope::getInstance(self::getClass());
+    }
+
+    /**
+     * Return localized title of table
+     *
+     * @param  null $tableName
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since   0.0
+     */
+    public static function getTitle($tableName = null)
+    {
+        if (empty($tableName)) {
+            $tableName = self::getTableName();
+        }
+
+        return Resource::create(self::getClass())->get($tableName);
+    }
+
+    /**
+     * Return table name of self model class
+     *
+     * @return string
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since   0.0
+     */
+    public static function getTableName()
+    {
+        return self::getConfig()->get('scheme/tableName');
+    }
+
+    /**
+     * Return scheme name of self model class
+     *
+     * @return string
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 1.1
+     * @since   1.1
+     */
+    public static function getSchemeName()
+    {
+        $dataSourceKey = self::getConfig()->get('dataSourceKey');
+        return substr($dataSourceKey, strpos($dataSourceKey, '.') + 1);
+    }
+
+    public static function getTablePrefix()
+    {
+        return Helper_Model::getTablePrefix(self::getTableName());
+    }
+
+    /**
+     * Return localized title of placeholder field
+     *
+     * @param  $fieldName
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since   0.0
+     */
+    public static function getFieldPlaceholder($fieldName)
+    {
+        return Resource::create(self::getClass())->get($fieldName . '_placeholder');
+    }
+
+    /**
+     * Return model validate scheme
+     *
+     * @param  $pluginClass
+     * @return array
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since   0.0
+     */
+    public static function getPlugin($pluginClass)
+    {
+        $repository = self::getRepository('plugins');
+
+        if ($data = $repository->get($pluginClass)) {
+            return $data;
+        }
+
+        $data = [];
+
+        foreach (self::getConfig()->gets('columns') as $column) {
+            $data[$column['fieldName']] = $column[$pluginClass];
+        }
+
+        return $repository->set($pluginClass, $data);
+    }
+
+    /**
+     * Return localized title of field
+     *
+     * @param  $fieldName
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since   0.0
+     */
+    public static function getFieldTitle($fieldName)
+    {
+        return Resource::create(self::getClass())->get($fieldName);
+    }
+
+    /**
+     * Return all rows for self model class
+     *
+     * @param  $pk
+     * @param  string $fieldNames
+     * @param  string|null $dataSourceKey
+     * @param  int $ttl
+     * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 1.1
+     * @since   0.2
+     */
+    public static function getRow($pk, $fieldNames, $dataSourceKey = null, $ttl = null)
+    {
+        if (!$pk) {
+            return null;
+        }
+
+        $modelClass = self::getClass();
+
+        return $modelClass::getSelectQuery($fieldNames, ['/pk' => $pk], ['page' => 1, 'limit' => 1], $dataSourceKey)
+            ->getRow(null, $ttl);
+    }
+
+    /**
+     * @param string $selectFields
+     * @param array $filterFields
+     * @param array $pagination
+     * @param null $dataSourceKey
+     *
+     * @todo add order param
+     *
+     * @return Query
+     */
+    public static function getSelectQuery($selectFields, array $filterFields = [], array $pagination = null, $dataSourceKey = null)
+    {
+        if (!$pagination) {
+            $pagination = ['page' => 1, 'limit' => 0];
+        }
+
+        return Query::getBuilder(self::getClass())
+            ->eq($filterFields)
+            ->setPagination($pagination['page'], $pagination['limit'])
+            ->getSelectQuery($selectFields, [], $dataSourceKey);
+    }
+
+    /**
+     * Return primary key field value
+     *
+     * If have a some primary keys - return key1__key2__key3__etc
+     *
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.3
+     * @since   0.3
+     */
+    public static function getPkFieldName()
+    {
+        $modelClass = self::getClass();
+
+        return implode('__', $modelClass::getScheme()->getPkFieldNames());
+    }
+
+    public static function getFkFieldName()
+    {
+        $modelClass = self::getClass();
+
+        return strtolower($modelClass::getClassName()) . '__fk';
+    }
+
+    /**
+     * Return primary key field value
+     *
+     * If have a some primary keys - return key1__key2__key3__etc
+     *
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.6
+     * @since   0.6
+     */
+    public static function getPkColumnName()
+    {
+        $modelClass = self::getClass();
+
+        return implode('__', $modelClass::getScheme()->getPkColumnNames());
+    }
+
+    /**
+     * Create table by model
+     *
+     * @param  string|null $dataSourceKey
+     * @return QueryResult
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.6
+     * @since   0.2
+     */
+    public static function createTable($dataSourceKey = null)
+    {
+        return Query::getBuilder(self::getClass())
+            ->createTableQuery($dataSourceKey)
+            ->getQueryResult();
+    }
+
+    /**
+     * Drop table by model
+     *
+     * @param  string|null $dataSourceKey
+     * @return QueryResult
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.6
+     * @since   0.2
+     */
+    public static function dropTable($dataSourceKey = null)
+    {
+        return Query::getBuilder(self::getClass())->dropTableQuery($dataSourceKey)->getQueryResult();
+    }
+
+    /**
+     * Get dataSource for current model class
+     *
+     * @return DataSource
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 1.1
+     * @since   0.0
+     */
+    public static function getDataSource()
+    {
+        /** @var Model $modelClass */
+        $modelClass = self::getClass();
+        $parentModelName = get_parent_class($modelClass);
+
+        if ($parentModelName == Model_Defined::getClass() || $parentModelName == Model_Factory::getClass()) {
+            return DataSource::getInstance(Object::getClassName($parentModelName) . ':model/' . $modelClass);
+        }
+
+        return DataSource::getInstance($modelClass::getDataSourceKey());
+    }
+
+    /**
+     * Return data source key
+     *
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since   0.5
+     */
+    public static function getDataSourceKey()
+    {
+        if ($dataSourceKey = self::getConfig()->get('dataSourceKey', false)) {
+            return $dataSourceKey;
+        }
+
+        return $dataSourceKey = Module::getInstance()->getDataSourceKeys()[0];
+    }
+
+    public static function getResource()
+    {
+        return Resource::create(self::getClass());
+    }
+
+    /**
+     * Rows for ListBox like widget components
+     *
+     * @param string $itemKey
+     * @param string $itemTitle
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 1.1
+     * @since   1.1
+     *
+     * @return array
+     */
+    public static function getItems($itemKey = '/pk', $itemTitle = '/name')
+    {
+        $modelClass = self::getClass();
+
+        return $modelClass::getSelectQuery([$itemKey => 'itemKey', $itemTitle => 'itemTitle'])->getRows();
+    }
+
+    public function setPkValue($pkValue)
+    {
+        /** @var Model $modelClass */
+        $modelClass = get_class($this);
+
+        $this->setPk(array_combine($modelClass::getScheme()->getPkFieldNames(), explode('__', $pkValue)));
+
+        return $this;
+    }
+
+    /**
+     * Magic get
+     *
+     * @deprecated use ->get($fieldName)
+     *
+     * @see Model::get()
+     *
+     * @param  $fieldName
+     * @return mixed
+     * @throws Exception
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since   0.0
+     */
+    public function __get($fieldName)
+    {
+        return $this->get($fieldName);
+    }
+
+    /**
+     * Magic set
+     *
+     * @deprecated use ->set($fieldName, $value)
+     *
+     * @see Model::set()
+     *
+     * @param  $fieldName
+     * @param  $value
+     * @return Model
+     * @throws Exception
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since   0.0
+     */
+    public function __set($fieldName, $value)
+    {
+        return $this->set($fieldName, $value);
     }
 
     /**
@@ -744,6 +1082,11 @@ abstract class Model
         return null;
     }
 
+    public function getPkValue()
+    {
+        return $this->getPk() ? implode('__', $this->getPk()) : null;
+    }
+
     /**
      * Create model instance
      *
@@ -767,363 +1110,6 @@ abstract class Model
 //        }
 
         return new $modelClass($row);
-    }
-
-    /**
-     * @param string $selectFields
-     * @param array $filterFields
-     * @param array $pagination
-     * @param null $dataSourceKey
-     *
-     * @todo add order param
-     *
-     * @return Query
-     */
-    public static function getSelectQuery($selectFields, array $filterFields = [], array $pagination = null, $dataSourceKey = null)
-    {
-        if (!$pagination) {
-            $pagination = ['page' => 1, 'limit' => 0];
-        }
-
-        return Query::getBuilder(self::getClass())
-            ->eq($filterFields)
-            ->setPagination($pagination['page'], $pagination['limit'])
-            ->getSelectQuery($selectFields, [], $dataSourceKey);
-    }
-
-    /**
-     * Return localized title of table
-     *
-     * @param  null $tableName
-     * @return string
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since   0.0
-     */
-    public static function getTitle($tableName = null)
-    {
-        if (empty($tableName)) {
-            $tableName = self::getTableName();
-        }
-
-        return Resource::create(self::getClass())->get($tableName);
-    }
-
-    /**
-     * Return table name of self model class
-     *
-     * @return string
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since   0.0
-     */
-    public static function getTableName()
-    {
-        return self::getConfig()->get('scheme/tableName');
-    }
-
-    /**
-     * Return scheme name of self model class
-     *
-     * @return string
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 1.1
-     * @since   1.1
-     */
-    public static function getSchemeName()
-    {
-        $dataSourceKey = self::getConfig()->get('dataSourceKey');
-        return substr($dataSourceKey, strpos($dataSourceKey, '.') + 1);
-    }
-
-    public static function getTablePrefix()
-    {
-        return Helper_Model::getTablePrefix(self::getTableName());
-    }
-
-    /**
-     * Return localized title of placeholder field
-     *
-     * @param  $fieldName
-     * @return string
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since   0.0
-     */
-    public static function getFieldPlaceholder($fieldName)
-    {
-        return Resource::create(self::getClass())->get($fieldName . '_placeholder');
-    }
-
-    /**
-     * Return model validate scheme
-     *
-     * @param  $pluginClass
-     * @return array
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since   0.0
-     */
-    public static function getPlugin($pluginClass)
-    {
-        $repository = self::getRepository('plugins');
-
-        if ($data = $repository->get($pluginClass)) {
-            return $data;
-        }
-
-        $data = [];
-
-        foreach (self::getConfig()->gets('columns') as $column) {
-            $data[$column['fieldName']] = $column[$pluginClass];
-        }
-
-        return $repository->set($pluginClass, $data);
-    }
-
-    /**
-     * Return localized title of field
-     *
-     * @param  $fieldName
-     * @return string
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since   0.0
-     */
-    public static function getFieldTitle($fieldName)
-    {
-        return Resource::create(self::getClass())->get($fieldName);
-    }
-
-    /**
-     * Return model by primary key
-     *
-     * @param  $pk
-     * @param  array|string $fieldNames
-     * @param  string|null $dataSourceKey
-     * @param  int $ttl
-     * @return Model|null
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 1.1
-     * @since   0.0
-     */
-    public static function getModel($pk, $fieldNames, $dataSourceKey = null, $ttl = null)
-    {
-        if (!$pk) {
-            return null;
-        }
-
-        $modelClass = self::getClass();
-
-        return $modelClass::getSelectQuery($fieldNames, ['/pk' => $pk], ['page' => 1, 'limit' => 1], $dataSourceKey)
-            ->getModel(null, $ttl);
-    }
-
-    /**
-     * Return all rows for self model class
-     *
-     * @param  $pk
-     * @param  string $fieldNames
-     * @param  string|null $dataSourceKey
-     * @param  int $ttl
-     * @return array
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 1.1
-     * @since   0.2
-     */
-    public static function getRow($pk, $fieldNames, $dataSourceKey = null, $ttl = null)
-    {
-        if (!$pk) {
-            return null;
-        }
-
-        $modelClass = self::getClass();
-
-        return $modelClass::getSelectQuery($fieldNames, ['/pk' => $pk], ['page' => 1, 'limit' => 1], $dataSourceKey)
-            ->getRow(null, $ttl);
-    }
-
-    /**
-     * Return primary key field value
-     *
-     * If have a some primary keys - return key1__key2__key3__etc
-     *
-     * @return string
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.3
-     * @since   0.3
-     */
-    public static function getPkFieldName()
-    {
-        $modelClass = self::getClass();
-
-        return implode('__', $modelClass::getScheme()->getPkFieldNames());
-    }
-
-    public static function getFkFieldName()
-    {
-        $modelClass = self::getClass();
-
-        return strtolower($modelClass::getClassName()) . '__fk';
-    }
-
-    /**
-     * Return primary key field value
-     *
-     * If have a some primary keys - return key1__key2__key3__etc
-     *
-     * @return string
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.6
-     * @since   0.6
-     */
-    public static function getPkColumnName()
-    {
-        $modelClass = self::getClass();
-
-        return implode('__', $modelClass::getScheme()->getPkColumnNames());
-    }
-
-    /**
-     * Create table by model
-     *
-     * @param  string|null $dataSourceKey
-     * @return QueryResult
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.6
-     * @since   0.2
-     */
-    public static function createTable($dataSourceKey = null)
-    {
-        return Query::getBuilder(self::getClass())
-            ->createTableQuery($dataSourceKey)
-            ->getQueryResult();
-    }
-
-    /**
-     * Drop table by model
-     *
-     * @param  string|null $dataSourceKey
-     * @return QueryResult
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.6
-     * @since   0.2
-     */
-    public static function dropTable($dataSourceKey = null)
-    {
-        return Query::getBuilder(self::getClass())->dropTableQuery($dataSourceKey)->getQueryResult();
-    }
-
-    /**
-     * @param null $tableAlias
-     * @return QueryBuilder
-     */
-    public static function createQueryBuilder($tableAlias = null)
-    {
-        return Query::getBuilder(self::getClass(), $tableAlias);
-    }
-
-    /**
-     * Get dataSource for current model class
-     *
-     * @return DataSource
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 1.1
-     * @since   0.0
-     */
-    public static function getDataSource()
-    {
-        /** @var Model $modelClass */
-        $modelClass = self::getClass();
-        $parentModelName = get_parent_class($modelClass);
-
-        if ($parentModelName == Model_Defined::getClass() || $parentModelName == Model_Factory::getClass()) {
-            return DataSource::getInstance(Object::getClassName($parentModelName) . ':model/' . $modelClass);
-        }
-
-        return DataSource::getInstance($modelClass::getDataSourceKey());
-    }
-
-    /**
-     * Return data source key
-     *
-     * @return string
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since   0.5
-     */
-    public static function getDataSourceKey()
-    {
-        if ($dataSourceKey = self::getConfig()->get('dataSourceKey', false)) {
-            return $dataSourceKey;
-        }
-
-        return $dataSourceKey = Module::getInstance()->getDataSourceKeys()[0];
-    }
-
-    /**
-     * Magic get
-     *
-     * @deprecated use ->get($fieldName)
-     *
-     * @see Model::get()
-     *
-     * @param  $fieldName
-     * @return mixed
-     * @throws Exception
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since   0.0
-     */
-    public function __get($fieldName)
-    {
-        return $this->get($fieldName);
-    }
-
-    /**
-     * Magic set
-     *
-     * @deprecated use ->set($fieldName, $value)
-     *
-     * @see Model::set()
-     *
-     * @param  $fieldName
-     * @param  $value
-     * @return Model
-     * @throws Exception
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since   0.0
-     */
-    public function __set($fieldName, $value)
-    {
-        return $this->set($fieldName, $value);
     }
 
     /**
@@ -1174,21 +1160,6 @@ abstract class Model
     }
 
     /**
-     * Return affected fields
-     *
-     * @return array
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since   0.4
-     */
-    private function getAffected()
-    {
-        return $this->affected;
-    }
-
-    /**
      * @param Model $modelClass
      * @param $dataSourceKey
      */
@@ -1216,6 +1187,21 @@ abstract class Model
      */
     protected function beforeUpdate()
     {
+    }
+
+    /**
+     * Return affected fields
+     *
+     * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since   0.4
+     */
+    private function getAffected()
+    {
+        return $this->affected;
     }
 
     /**
@@ -1274,34 +1260,6 @@ abstract class Model
     }
 
     /**
-     * Run method after model insert
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.1
-     * @since   0.1
-     */
-    protected function afterInsert()
-    {
-    }
-
-    /**
-     * Clear all affected values and return current model
-     *
-     * @return Model
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since   0.4
-     */
-    public function clearAffected()
-    {
-        $this->affected = [];
-        return $this;
-    }
-
-    /**
      * Execute select from data source
      *
      * @param  $fieldNames
@@ -1339,6 +1297,34 @@ abstract class Model
         $this->set($row);
 
         return $this->clearAffected();
+    }
+
+    /**
+     * Clear all affected values and return current model
+     *
+     * @return Model
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since   0.4
+     */
+    public function clearAffected()
+    {
+        $this->affected = [];
+        return $this;
+    }
+
+    /**
+     * Run method after model insert
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.1
+     * @since   0.1
+     */
+    protected function afterInsert()
+    {
     }
 
     /**
@@ -1511,6 +1497,31 @@ abstract class Model
     }
 
     /**
+     * Return model by primary key
+     *
+     * @param  $pk
+     * @param  array|string $fieldNames
+     * @param  string|null $dataSourceKey
+     * @param  int $ttl
+     * @return Model|null
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 1.1
+     * @since   0.0
+     */
+    public static function getModel($pk, $fieldNames, $dataSourceKey = null, $ttl = null)
+    {
+        if (!$pk) {
+            return null;
+        }
+
+        $modelClass = self::getClass();
+
+        return $modelClass::getSelectQuery($fieldNames, ['/pk' => $pk], ['page' => 1, 'limit' => 1], $dataSourceKey)
+            ->getModel(null, $ttl);
+    }
+
+    /**
      * @param Model $modelClass
      * @param $fieldNames
      * @param bool|false $lazy
@@ -1566,14 +1577,18 @@ abstract class Model
         return null;
     }
 
+    /**
+     * @param null $tableAlias
+     * @return QueryBuilder
+     */
+    public static function createQueryBuilder($tableAlias = null)
+    {
+        return Query::getBuilder(self::getClass(), $tableAlias);
+    }
+
     public function getModelCollection($fieldNames, $filter)
     {
 
-    }
-
-    public static function getResource()
-    {
-        return Resource::create(self::getClass());
     }
 
     /**
@@ -1653,25 +1668,5 @@ abstract class Model
         $linkModelClass::createQueryBuilder()->getInsertQuery($links)->getQueryResult();
 
         return $this;
-    }
-
-    /**
-     * Rows for ListBox like widget components
-     *
-     * @param string $itemKey
-     * @param string $itemTitle
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 1.1
-     * @since   1.1
-     *
-     * @return array
-     */
-    public static function getItems($itemKey = '/pk', $itemTitle = '/name')
-    {
-        $modelClass = self::getClass();
-
-        return $modelClass::getSelectQuery([$itemKey => 'itemKey', $itemTitle => 'itemTitle'])->getRows();
     }
 }

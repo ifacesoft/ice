@@ -11,7 +11,6 @@ namespace Ice\Core;
 
 use Ice\Core;
 use Ice\Helper\Validator as Helper_Validator;
-use Ice\Widget\Form;
 use Ice\Widget\Model_Form;
 
 /**
@@ -166,8 +165,9 @@ abstract class Validator extends Container
      * @since   0.0
      */
     abstract public function validate(array $data, $name, array $params);
-    
-    public function  getMessage() {
+
+    public function getMessage()
+    {
         return 'param \'{$0}\' with value \'{$1}\' is not valid';
     }
 }

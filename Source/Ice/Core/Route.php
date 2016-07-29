@@ -9,7 +9,6 @@
 
 namespace Ice\Core;
 
-use Ice\Core;
 use Ice\Exception\RouteNotFound;
 use Ice\Helper\File;
 use Ice\Render\Replace;
@@ -28,6 +27,71 @@ use Ice\Render\Replace;
  */
 class Route extends Config
 {
+    public function getLayoutActionClassName($method)
+    {
+        return $this->get('request/' . $method . '/layout');
+    }
+
+    public function getResponseRedirect($method)
+    {
+        return Route::getUrl($this->gets('request/' . $method . '/response/redirect', []));
+    }
+
+    /**
+     * Generate url by route with query string
+     *
+     * @param  array $params
+     * @return string
+     * @throws \Exception
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @todo из квери стринг убирать параметры, которые присутствуют в роуте
+     *
+     * @version 1.1
+     * @since   0.0
+     */
+    public function getUrl(array $params = [])
+    {
+//        $params = array_filter($params, function ($param) {
+//            return !is_array($param);
+//        });
+
+        $params = array_filter($params, function ($param) {
+            return $param !== null && $param !== '' && !is_array($param);
+        });
+
+        $url = Replace::getInstance()->fetch($this->getRoute(), array_intersect_key($params, $this->gets('params')), null, Render::TEMPLATE_TYPE_STRING);
+
+        return $params ? $url . '?' . http_build_query(array_diff_key($params, $this->gets('params'))) : $url;
+    }
+
+    /**
+     * Return route string
+     *
+     * @return mixed
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since   0.0
+     */
+    public function getRoute()
+    {
+        return $this->get('route');
+    }
+
+    /**
+     * @return Route|null
+     */
+    public function getParentRoute()
+    {
+        if ($parentRouteName = $this->get('parent', false)) {
+            return Route::getInstance($parentRouteName);
+        }
+
+        return null;
+    }
+
     /**
      * @param null $routeName
      * @param null $postfix
@@ -49,16 +113,6 @@ class Route extends Config
         }
 
         return $routes[$routeName];
-    }
-
-    /**
-     * @param $configRouteName
-     * @param array $configData
-     * @return Route
-     */
-    public static function create($configRouteName, array $configData = [])
-    {
-        return parent::create($configRouteName, $configData);
     }
 
     /**
@@ -87,6 +141,27 @@ class Route extends Config
 
         return $dataProvider->set(['routes' => self::getRouteFileData($routeFilePathes)])['routes'];
     }
+    //
+    //    /**
+    //     * Return instance of Route
+    //     *
+    //     * @param null $key
+    //     * @param null $ttl
+    //     * @return Route
+    //     *
+    //     * @author dp <denis.a.shestakov@gmail.com>
+    //     *
+    //     * @version 0.4
+    //     * @since 0.4
+    //     */
+    //    public static function getInstance($key = null, $ttl = null, array $params = [])
+    //    {
+    //        if (!$key) {
+    //            $key = Route::getDefaultKey();
+    //        }
+    //
+    //        return parent::getInstance($key, $ttl);
+    //    }
 
     /**
      * Return route data from file
@@ -177,89 +252,13 @@ class Route extends Config
         return $routes;
     }
 
-    public function getLayoutActionClassName($method)
-    {
-        return $this->get('request/' . $method . '/layout');
-    }
-
-    public function getResponseRedirect($method)
-    {
-        return Route::getUrl($this->gets('request/' . $method . '/response/redirect', []));
-    }
-
     /**
-     * Generate url by route with query string
-     *
-     * @param  array $params
-     * @return string
-     * @throws \Exception
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @todo из квери стринг убирать параметры, которые присутствуют в роуте
-     * 
-     * @version 1.1
-     * @since   0.0
+     * @param $configRouteName
+     * @param array $configData
+     * @return Route
      */
-    public function getUrl(array $params = [])
+    public static function create($configRouteName, array $configData = [])
     {
-//        $params = array_filter($params, function ($param) {
-//            return !is_array($param);
-//        });
-
-        $params = array_filter($params, function ($param) {
-            return $param !== null && $param !== '' && !is_array($param) ;
-        });
-
-        $url = Replace::getInstance()->fetch($this->getRoute(), array_intersect_key($params, $this->gets('params')), null, Render::TEMPLATE_TYPE_STRING);
-
-        return $params ? $url . '?' . http_build_query(array_diff_key($params, $this->gets('params'))) : $url;
-    }
-    //
-    //    /**
-    //     * Return instance of Route
-    //     *
-    //     * @param null $key
-    //     * @param null $ttl
-    //     * @return Route
-    //     *
-    //     * @author dp <denis.a.shestakov@gmail.com>
-    //     *
-    //     * @version 0.4
-    //     * @since 0.4
-    //     */
-    //    public static function getInstance($key = null, $ttl = null, array $params = [])
-    //    {
-    //        if (!$key) {
-    //            $key = Route::getDefaultKey();
-    //        }
-    //
-    //        return parent::getInstance($key, $ttl);
-    //    }
-
-    /**
-     * Return route string
-     *
-     * @return mixed
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since   0.0
-     */
-    public function getRoute()
-    {
-        return $this->get('route');
-    }
-
-    /**
-     * @return Route|null
-     */
-    public function getParentRoute()
-    {
-        if ($parentRouteName = $this->get('parent', false)) {
-            return Route::getInstance($parentRouteName);
-        }
-
-        return null;
+        return parent::create($configRouteName, $configData);
     }
 }

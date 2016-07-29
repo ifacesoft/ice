@@ -57,7 +57,7 @@ abstract class Action_Service extends Action
     protected function lock(Logger $logger, array $input)
     {
         File::createData($this->getLockFilePath($input), ['iterations' => ++$this->iterations]);
-        $logger->info('Service runned.. (Iteration: #' . $this->iterations .  ')', Logger::INFO);
+        $logger->info('Service runned.. (Iteration: #' . $this->iterations . ')', Logger::INFO);
 
         return true;
     }

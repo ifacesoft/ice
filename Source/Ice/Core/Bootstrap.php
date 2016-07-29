@@ -9,7 +9,6 @@
 
 namespace Ice\Core;
 
-use Composer\Autoload\ClassLoader;
 use Ice\Core;
 
 /**

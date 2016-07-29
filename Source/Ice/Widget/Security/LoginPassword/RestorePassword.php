@@ -49,5 +49,5 @@ class Security_LoginPassword_RestorePassword extends Widget_Security
 
         return [];
     }
-    
+
 }

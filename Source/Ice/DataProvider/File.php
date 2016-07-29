@@ -11,7 +11,6 @@ namespace Ice\DataProvider;
 
 use Ice\Core\DataProvider;
 use Ice\Core\Exception;
-use Ice\Core\Module;
 use Ice\Exception\Error;
 use Ice\Helper\Date;
 use Ice\Helper\Directory;

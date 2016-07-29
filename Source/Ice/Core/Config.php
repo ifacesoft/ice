@@ -12,7 +12,6 @@ namespace Ice\Core;
 use Ice\Core;
 use Ice\DataProvider\Repository;
 use Ice\Exception\Config_Error;
-use Ice\Exception\Config_Param;
 use Ice\Exception\Config_Param_NotFound;
 use Ice\Exception\FileNotFound;
 use Ice\Helper\Config as Helper_Config;
@@ -59,6 +58,92 @@ class Config
      */
     private function __construct()
     {
+    }
+
+    /**
+     * Return default config for class
+     *
+     * @param  $key
+     * @return Config
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since   0.5
+     */
+    public static function getDefault($key)
+    {
+        return Config::getInstance(__CLASS__)->getConfig('defaults/' . $key);
+    }
+
+    /**
+     * @param $key
+     * @return Config
+     */
+    public function getConfig($key)
+    {
+        return Config::create($this->getName() . '/' . $key, $this->gets($key));
+    }
+
+    /**
+     * Return new Config
+     *
+     * @param  $configRouteName
+     * @param  array $configData
+     * @return Config
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since   0.5
+     */
+    public static function create($configRouteName, array $configData = [])
+    {
+        $configClass = self::getClass();
+
+        /** @var Config $config */
+        $config = new $configClass();
+
+        $config->name = $configRouteName;
+        $config->config = $configData;
+
+        return $config;
+    }
+
+    /**
+     * Return config name
+     *
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since   0.0
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * Get config param values
+     *
+     * @param  string|null $key
+     * @param  bool $isRequired_default
+     * @return array
+     * @throws Config_Error
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 1.1
+     * @since   0.0
+     */
+    public function gets($key = null, $isRequired_default = true)
+    {
+        try {
+            return Helper_Config::gets($this->config, $key, $isRequired_default);
+        } catch (Config_Param_NotFound $e) {
+            throw new Config_Error(['Param not found for {$0}', $this->getName()], [], $e);
+        }
     }
 
     /**
@@ -137,68 +222,6 @@ class Config
         }
 
         return $repository->set([$class => Config::create($class, $config)], $ttl)[$class];
-    }
-
-    /**
-     * Get config param values
-     *
-     * @param  string|null $key
-     * @param  bool $isRequired_default
-     * @return array
-     * @throws Config_Error
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 1.1
-     * @since   0.0
-     */
-    public function gets($key = null, $isRequired_default = true)
-    {
-        try {
-            return Helper_Config::gets($this->config, $key, $isRequired_default);
-        } catch (Config_Param_NotFound $e) {
-            throw new Config_Error(['Param not found for {$0}', $this->getName()], [], $e);
-        }
-    }
-
-    /**
-     * Return new Config
-     *
-     * @param  $configRouteName
-     * @param  array $configData
-     * @return Config
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since   0.5
-     */
-    public static function create($configRouteName, array $configData = [])
-    {
-        $configClass = self::getClass();
-
-        /** @var Config $config */
-        $config = new $configClass();
-
-        $config->name = $configRouteName;
-        $config->config = $configData;
-
-        return $config;
-    }
-
-    /**
-     * Return default config for class
-     *
-     * @param  $key
-     * @return Config
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since   0.5
-     */
-    public static function getDefault($key)
-    {
-        return Config::getInstance(__CLASS__)->getConfig('defaults/' . $key);
     }
 
     /**
@@ -296,21 +319,6 @@ class Config
     }
 
     /**
-     * Return config name
-     *
-     * @return string
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since   0.0
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    /**
      * Save config
      *
      * @param null $path
@@ -329,14 +337,5 @@ class Config
         File::createData($filePath, $this->config);
 
         return $this;
-    }
-
-    /**
-     * @param $key
-     * @return Config
-     */
-    public function getConfig($key)
-    {
-        return Config::create($this->getName() . '/' . $key, $this->gets($key));
     }
 }

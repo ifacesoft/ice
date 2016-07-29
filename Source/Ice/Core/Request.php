@@ -206,36 +206,6 @@ class Request
     }
 
     /**
-     * Check request type (is running via console)
-     *
-     * @return bool
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since   0.0
-     */
-    public static function isCli()
-    {
-        return php_sapi_name() == 'cli';
-    }
-
-    /**
-     * Check request type (is ajax request)
-     *
-     * @return bool
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.2
-     * @since   0.0
-     */
-    public static function isAjax()
-    {
-        return isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest';
-    }
-
-    /**
      * Return request method
      *
      * @return string
@@ -256,7 +226,7 @@ class Request
 
         if (isset($_SERVER['HTTP_ORIGIN']) && isset($cors[$_SERVER['HTTP_ORIGIN']])) {
             Http::setHeader('Access-Control-Allow-Origin: ' . $_SERVER['HTTP_ORIGIN']);
-            
+
             if (!empty($cors[$_SERVER['HTTP_ORIGIN']]['cookie'])) {
                 Http::setHeader('Access-Control-Allow-Credentials: true');
             }
@@ -292,9 +262,39 @@ class Request
         throw new Access_Denied_Request($message);
     }
 
+    /**
+     * Check request type (is running via console)
+     *
+     * @return bool
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since   0.0
+     */
+    public static function isCli()
+    {
+        return php_sapi_name() == 'cli';
+    }
+
+    /**
+     * Check request type (is ajax request)
+     *
+     * @return bool
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.2
+     * @since   0.0
+     */
+    public static function isAjax()
+    {
+        return isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest';
+    }
+
     public static function protocol()
     {
-        return isset($_SERVER['SERVER_PROTOCOL']) && stripos($_SERVER['SERVER_PROTOCOL'],'https')
+        return isset($_SERVER['SERVER_PROTOCOL']) && stripos($_SERVER['SERVER_PROTOCOL'], 'https')
             ? 'https://'
             : 'http://';
     }

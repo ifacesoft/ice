@@ -2,7 +2,6 @@
 namespace Ice\Action;
 
 use Ice\Core\Action;
-use Ice\Core\View;
 use Ice\Exception\Redirect;
 
 /**

@@ -2,13 +2,12 @@
 
 namespace Ice\Action;
 
-use Ice\Core\Debuger;
 use Ice\Core\Logger;
 use Ice\Core\Model;
 use Ice\Core\Model\Security_Account;
+use Ice\Helper\Logger as Helper_Logger;
 use Ice\Model\Log_Security;
 use Ice\Widget\Security_EmailPassword_Login;
-use Ice\Helper\Logger as Helper_Logger;
 
 class Security_EmailPassword_Login_Submit extends Security
 {
@@ -65,7 +64,7 @@ class Security_EmailPassword_Login_Submit extends Security
             return array_merge(
                 parent::run($input),
                 ['success' => $securityForm->getLogger()->info('Login successfully', Logger::SUCCESS, true)]
-                
+
             );
         } catch (\Exception $e) {
             $log->set('error', Helper_Logger::getMessage($e));

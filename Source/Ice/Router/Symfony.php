@@ -1,7 +1,6 @@
 <?php
 namespace Ice\Router;
 
-use Ice\Core\Debuger;
 use Ice\Core\Request;
 use Ice\Exception\RouteNotFound;
 

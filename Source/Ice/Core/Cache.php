@@ -9,8 +9,6 @@
 
 namespace Ice\Core;
 
-use Ice\Action\Deploy;
-use Ice\Core;
 use Ice\DataProvider\Repository;
 use Ice\Exception\Error;
 

@@ -18,6 +18,8 @@ abstract class Security extends Container
         $this->autologin();
     }
 
+    abstract protected function autologin();
+
     public static function checkAccess($roles, $message)
     {
         if (!$roles || Security::getInstance()->check((array)$roles)) {
@@ -82,6 +84,4 @@ abstract class Security extends Container
      * @return bool
      */
     abstract public function isAuth();
-
-    abstract protected function autologin();
 }

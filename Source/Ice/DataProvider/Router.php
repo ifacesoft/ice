@@ -9,7 +9,6 @@
 
 namespace Ice\DataProvider;
 
-use Ice\Core\Action;
 use Ice\Core\Config;
 use Ice\Core\DataProvider;
 use Ice\Core\Debuger;

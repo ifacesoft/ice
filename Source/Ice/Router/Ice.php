@@ -19,8 +19,8 @@ class Ice extends Router
         if (!$routeName) {
             $routeName = $this->getName();
         }
-        
-        $routeName = (array) $routeName;
+
+        $routeName = (array)$routeName;
 
         $routeParams = [];
         $urlWithGet = false;
@@ -35,7 +35,7 @@ class Ice extends Router
         } else {
             $routeName = reset($routeName);
         }
-        
+
         $url = Route::getInstance($routeName)->getUrl(array_merge($this->getParams(), $routeParams));
 
         if (!$url) {
@@ -43,7 +43,7 @@ class Ice extends Router
         }
 
         if (!$urlWithGet) {
-            $url = strtok($url,'?');
+            $url = strtok($url, '?');
         }
 
         if ($urlWithDomain) {
@@ -64,7 +64,7 @@ class Ice extends Router
         if (!$method) {
             $method = $provider->get('method');
         }
-        
+
         $route = $provider->getRoute($url, $method);
 
         return $route ? $route['routeName'] : null;

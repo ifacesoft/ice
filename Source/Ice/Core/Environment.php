@@ -9,7 +9,6 @@
 
 namespace Ice\Core;
 
-use Ice\Core;
 use Ice\Exception\Access_Denied_Environment;
 
 /**

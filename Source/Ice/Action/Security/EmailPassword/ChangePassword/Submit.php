@@ -5,8 +5,8 @@ namespace Ice\Action;
 use Ice\Core\Logger;
 use Ice\Core\Model;
 use Ice\Core\Model\Security_Account;
-use Ice\Widget\Security_EmailPassword_ChangePassword;
 use Ice\Core\Security as Core_Security;
+use Ice\Widget\Security_EmailPassword_ChangePassword;
 
 class Security_EmailPassword_ChangePassword_Submit extends Security
 {

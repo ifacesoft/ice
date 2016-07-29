@@ -9,7 +9,6 @@
 
 namespace Ice\Helper;
 
-use Ice\Core\Debuger;
 use Ice\Core\Logger as Core_Logger;
 use Ice\Exception\Error;
 
@@ -243,8 +242,8 @@ class Arrays
                 $value = reset($row);
             } else {
                 if (is_array($columnKey)) {
-                        $valueSet = true;
-                        $value = implode('__', array_intersect_key($row, array_flip($columnKey)));
+                    $valueSet = true;
+                    $value = implode('__', array_intersect_key($row, array_flip($columnKey)));
                 } else {
                     if (array_key_exists($columnKey, $row)) {
                         $valueSet = true;

@@ -10,7 +10,6 @@
 namespace Ice\Code\Generator;
 
 use Ice\Core\Logger;
-use Ice\Core\Module;
 use Ice\Helper\File;
 use Ice\Helper\Object;
 use Ice\Render\Php;

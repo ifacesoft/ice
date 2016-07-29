@@ -8,30 +8,13 @@
 
 namespace Ice\WidgetComponent;
 
-use Ice\Core\Debuger;
 use Ice\Core\Render;
 use Ice\Core\Resource;
-use Ice\Exception\Error;
 use Ice\Helper\String;
 use Ice\Render\Replace;
 
 class Form_ListBox extends FormElement_TextInput
 {
-    public function getItemEmpty()
-    {
-        return $this->getOption('itemEmpty', '');
-    }
-
-    public function getItemKey()
-    {
-        return $this->getOption('itemKey', 'itemKey');
-    }
-
-    public function getItemTitle()
-    {
-        return $this->getOption('itemTitle', 'itemTitle');
-    }
-
     public function getTitle($item = null)
     {
         $itemTitle = $this->getItemTitle();
@@ -76,6 +59,11 @@ class Form_ListBox extends FormElement_TextInput
         return htmlentities($title);
     }
 
+    public function getItemTitle()
+    {
+        return $this->getOption('itemTitle', 'itemTitle');
+    }
+
     /**
      * @return null
      */
@@ -88,5 +76,15 @@ class Form_ListBox extends FormElement_TextInput
         }
 
         return $items;
+    }
+
+    public function getItemKey()
+    {
+        return $this->getOption('itemKey', 'itemKey');
+    }
+
+    public function getItemEmpty()
+    {
+        return $this->getOption('itemEmpty', '');
     }
 }

@@ -9,14 +9,13 @@
 
 namespace Ice\Helper;
 
+use Ice\Core\Console as Core_Console;
 use Ice\Core\Exception;
 use Ice\Core\Logger as Core_Logger;
-use Ice\Core\Module;
 use Ice\Core\Render;
-use Ice\Core\Request as Core_Request;
 use Ice\Core\Request;
+use Ice\Core\Request as Core_Request;
 use Ice\Render\Php as Render_Php;
-use Ice\Core\Console as Core_Console;
 
 /**
  * Class Logger
@@ -63,59 +62,6 @@ class Logger
         }
 
         Core_Logger::fb($exception, 'error', 'EXCEPTION');
-    }
-
-    /**
-     * Return message data from exception
-     *
-     * @param  \Exception $exception
-     * @param  null $previousMessage
-     * @param  int $level
-     * @return mixed
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since   0.0
-     */
-    public static function getMessage(\Exception $exception, $previousMessage = null, $level = 1)
-    {
-        $errcontext = $exception instanceof Exception
-            ? $exception->getErrContext()
-            : [];
-
-        $type = Core_Logger::DANGER;
-        foreach (Core_Logger::$errorTypes as $errorType => $errorCodes) {
-            if (in_array($exception->getCode(), $errorCodes)) {
-                $type = $errorType;
-                break;
-            }
-        }
-
-        $output = [
-            'time' => date('H:i:s'),
-            'host' => Core_Request::host(),
-            'uri' => Core_Request::uri(),
-            'referer' => Core_Request::referer(),
-            'lastTemplate' => Render::getLastTemplate(),
-            'message' => Core_Logger::$errorCodes[$exception->getCode()] . ': ' . $exception->getMessage(),
-            'errPoint' => $exception->getFile() . ':' . $exception->getLine(),
-            'errcontext' => empty($errcontext) ? '' : Php::varToPhpString($errcontext),
-            'stackTrace' => str_replace('): ', '): ' . "\n" . str_repeat("\t", $level), $exception->getTraceAsString()),
-            'type' => $type,
-            'previous' => $previousMessage,
-            'level' => $level
-        ];
-
-        $message = Core_Request::isCli()
-            ? Render_Php::getInstance()->fetch(Core_Logger::getClass() . '/Cli', $output)
-            : Render_Php::getInstance()->fetch(Core_Logger::getClass() . '/Http', $output);
-
-        if ($e = $exception->getPrevious()) {
-            return self::getMessage($e, $message, $level++);
-        }
-
-        return $message;
     }
 
     /**
@@ -196,5 +142,58 @@ class Logger
 //        try {
 //            Log_Error::create($params)->save();
 //        } catch (\Exception $e) {}
+    }
+
+    /**
+     * Return message data from exception
+     *
+     * @param  \Exception $exception
+     * @param  null $previousMessage
+     * @param  int $level
+     * @return mixed
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since   0.0
+     */
+    public static function getMessage(\Exception $exception, $previousMessage = null, $level = 1)
+    {
+        $errcontext = $exception instanceof Exception
+            ? $exception->getErrContext()
+            : [];
+
+        $type = Core_Logger::DANGER;
+        foreach (Core_Logger::$errorTypes as $errorType => $errorCodes) {
+            if (in_array($exception->getCode(), $errorCodes)) {
+                $type = $errorType;
+                break;
+            }
+        }
+
+        $output = [
+            'time' => date('H:i:s'),
+            'host' => Core_Request::host(),
+            'uri' => Core_Request::uri(),
+            'referer' => Core_Request::referer(),
+            'lastTemplate' => Render::getLastTemplate(),
+            'message' => Core_Logger::$errorCodes[$exception->getCode()] . ': ' . $exception->getMessage(),
+            'errPoint' => $exception->getFile() . ':' . $exception->getLine(),
+            'errcontext' => empty($errcontext) ? '' : Php::varToPhpString($errcontext),
+            'stackTrace' => str_replace('): ', '): ' . "\n" . str_repeat("\t", $level), $exception->getTraceAsString()),
+            'type' => $type,
+            'previous' => $previousMessage,
+            'level' => $level
+        ];
+
+        $message = Core_Request::isCli()
+            ? Render_Php::getInstance()->fetch(Core_Logger::getClass() . '/Cli', $output)
+            : Render_Php::getInstance()->fetch(Core_Logger::getClass() . '/Http', $output);
+
+        if ($e = $exception->getPrevious()) {
+            return self::getMessage($e, $message, $level++);
+        }
+
+        return $message;
     }
 }

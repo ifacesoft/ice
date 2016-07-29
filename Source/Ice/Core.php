@@ -68,7 +68,7 @@ trait Core
                 $baseClass = get_class($baseClass);
             }
 
-            if (strlen($className) > 1 &&  $className[1] == '_') {
+            if (strlen($className) > 1 && $className[1] == '_') {
                 return substr($baseClass, 0, strrpos($baseClass, '_')) . substr($className, 1);
             } else {
                 return $baseClass . $className;
@@ -95,36 +95,6 @@ trait Core
     }
 
     /**
-     * Return class name (without namespace)
-     *
-     * @return string
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since   0.0
-     */
-    public static function getClassName()
-    {
-        return Object::getClassName(self::getClass());
-    }
-
-    /**
-     * Return base class for self class (class extends Container)
-     *
-     * @return Core
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since   0.0
-     */
-    public static function getBaseClass()
-    {
-        return Object::getBaseClass(self::getClass());
-    }
-
-    /**
      * Return code generator for self class type
      *
      * @param $class
@@ -144,6 +114,36 @@ trait Core
             : $baseClass . '_' . self::getClassName();
 
         return Code_Generator::getInstance($codeGeneratorClass . '/' . $class);
+    }
+
+    /**
+     * Return base class for self class (class extends Container)
+     *
+     * @return Core
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since   0.0
+     */
+    public static function getBaseClass()
+    {
+        return Object::getBaseClass(self::getClass());
+    }
+
+    /**
+     * Return class name (without namespace)
+     *
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since   0.0
+     */
+    public static function getClassName()
+    {
+        return Object::getClassName(self::getClass());
     }
 
     /**

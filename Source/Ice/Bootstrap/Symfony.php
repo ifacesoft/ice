@@ -2,7 +2,6 @@
 
 namespace Ice\Bootstrap;
 
-use Composer\Autoload\ClassLoader;
 use Ice\Core\Bootstrap;
 
 class Symfony extends Bootstrap

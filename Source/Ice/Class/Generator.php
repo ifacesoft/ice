@@ -1,7 +1,6 @@
 <?php
 namespace Ice;
 
-use Ice\Core\Module;
 use Ice\Helper\Object;
 use Ice\Helper\Php;
 

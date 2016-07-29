@@ -25,7 +25,7 @@ class FormElement_Typehead extends Form_ListBox
             'cache' => ['ttl' => -1, 'count' => 1000],
         ];
     }
-    
+
     public function getItemsJson()
     {
         return Json::encode(array_values($this->getItems()));

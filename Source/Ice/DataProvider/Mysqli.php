@@ -10,12 +10,9 @@
 namespace Ice\DataProvider;
 
 use Ice\Core\DataProvider;
-use Ice\Core\Debuger;
 use Ice\Core\Exception;
 use Ice\Core\Logger;
-use Ice\Core\Profiler;
 use Ice\Exception\Error;
-use Ice\Helper\String;
 
 /**
  * Class Mysqli
@@ -69,21 +66,6 @@ class Mysqli extends DataProvider
     public function get($key = null, $default = null, $require = false)
     {
         // TODO: Implement getKeys() method.
-    }
-
-    /**
-     * Get instance connection of data provider
-     *
-     * @return \Mysqli
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since   0.0
-     */
-    public function getConnection()
-    {
-        return parent::getConnection();
     }
 
     /**
@@ -198,6 +180,21 @@ class Mysqli extends DataProvider
         }
 
         parent::setScheme($scheme);
+    }
+
+    /**
+     * Get instance connection of data provider
+     *
+     * @return \Mysqli
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since   0.0
+     */
+    public function getConnection()
+    {
+        return parent::getConnection();
     }
 
     /**

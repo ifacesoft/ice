@@ -3,12 +3,9 @@ namespace Ice\Widget;
 
 use Ice\Action\Resource_Css;
 use Ice\Action\Resource_Js;
-use Ice\Core\Debuger;
 use Ice\Core\Environment;
-use Ice\Core\Module;
 use Ice\Helper\File;
 use Ice\Helper\Hash;
-use Ice\Helper\Serializer;
 
 class Resource_Static extends Resource
 {

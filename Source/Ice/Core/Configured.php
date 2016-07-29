@@ -2,7 +2,6 @@
 
 namespace Ice\Core;
 
-use Ice\Core;
 use Ice\DataProvider\Repository;
 use Ice\Helper\Object;
 

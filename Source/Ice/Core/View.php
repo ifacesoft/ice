@@ -5,7 +5,7 @@ namespace Ice\Core;
 abstract class View
 {
     private $raw = null;
-    
+
     private $content = null;
 
     abstract public function __construct();

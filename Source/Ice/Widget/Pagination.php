@@ -2,12 +2,8 @@
 
 namespace Ice\Widget;
 
-use Ice\Action\Render;
-use Ice\Core\Debuger;
 use Ice\Core\QueryBuilder;
 use Ice\Core\QueryResult;
-use Ice\Core\Request;
-use Ice\Core\Router;
 use Ice\Core\Widget;
 use Ice\DataProvider\Request as DataProvider_Request;
 use Ice\DataProvider\Router as DataProvider_Router;
@@ -40,6 +36,73 @@ class Pagination extends Widget
             ],
             'output' => [],
         ];
+    }
+
+    /**
+     * @return int
+     */
+    public function getFoundRows()
+    {
+        return $this->foundRows;
+    }
+
+    /**
+     * @param int $foundRows
+     * @return Pagination
+     */
+    public function setFoundRows($foundRows)
+    {
+        $this->foundRows = $foundRows;
+
+        $limit = $this->get('limit');
+
+        if (!$limit) {
+            $limit = $this->foundRows;
+        }
+
+        if (ceil($this->foundRows / $limit) < 2) {
+            return;
+        }
+
+        $page = $this->get('page');
+
+        $pageCount = (int)ceil($this->foundRows / $limit);
+
+        if ($page > $pageCount) {
+            $page = $pageCount;
+        }
+
+        $this
+            ->first(1, $page)
+            ->fastFastPrev($page - 100, $page)
+            ->fastPrev($page - 10, $page)
+            ->prevPrev($page - 2)
+            ->prev($page - 1)
+            ->curr($page, $pageCount)
+            ->next($page + 1, $pageCount)
+            ->nextNext($page + 2, $pageCount)
+            ->fastNext($page + 10, $pageCount)
+            ->fastFastNext($page + 100, $pageCount)
+            ->last($page, $pageCount);
+    }
+
+    public function li($name, array $options = [], $template = 'Ice\Widget\Pagination\Li')
+    {
+        $route = $this->getRoute();
+
+        $route['params']['page'] = $options['params']['page'];
+        $route['params']['limit'] = $this->get('limit');
+
+        $options['params'] = array_merge($options['params'], $route['params']);
+
+        $options['excel'] = ['rowVisible' => false];
+
+        return $this->addPart(new HtmlTag(
+            $name,
+            array_merge($options, ['route' => $route, 'onclick' => $this->getEvent()]),
+            $template,
+            $this
+        ));
     }
 
     /**
@@ -115,71 +178,48 @@ class Pagination extends Widget
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getFoundRows()
+    public function setQueryResult(QueryResult $queryResult)
     {
-        return $this->foundRows;
+        parent::setQueryResult($queryResult);
+
+        $this->setFoundRows($queryResult->getFoundRows());
     }
 
     /**
-     * @param int $foundRows
-     * @return Pagination
+     * @param boolean $isShort
+     * @return $this
      */
-    public function setFoundRows($foundRows)
+    public function setIsShort($isShort)
     {
-        $this->foundRows = $foundRows;
-
-        $limit = $this->get('limit');
-
-        if (!$limit) {
-            $limit = $this->foundRows;
-        }
-
-        if (ceil($this->foundRows / $limit) < 2) {
-            return;
-        }
-
-        $page = $this->get('page');
-
-        $pageCount = (int)ceil($this->foundRows / $limit);
-
-        if ($page > $pageCount) {
-            $page = $pageCount;
-        }
-
-        $this
-            ->first(1, $page)
-            ->fastFastPrev($page - 100, $page)
-            ->fastPrev($page - 10, $page)
-            ->prevPrev($page - 2)
-            ->prev($page - 1)
-            ->curr($page, $pageCount)
-            ->next($page + 1, $pageCount)
-            ->nextNext($page + 2, $pageCount)
-            ->fastNext($page + 10, $pageCount)
-            ->fastFastNext($page + 100, $pageCount)
-            ->last($page, $pageCount);
+        $this->isShort = $isShort;
+        return $this;
     }
 
-    public function li($name, array $options = [], $template = 'Ice\Widget\Pagination\Li')
+    public function queryBuilderPart(QueryBuilder $queryBuilder, array $input)
     {
-        $route = $this->getRoute();
+        parent::queryBuilderPart($queryBuilder, $input);
 
-        $route['params']['page'] = $options['params']['page'];
-        $route['params']['limit'] = $this->get('limit');
+        $queryBuilder->setPagination($this->get('page'), $this->get('limit'));
+    }
 
-        $options['params'] = array_merge($options['params'], $route['params']);
+    public function getLimit()
+    {
+        return $this->get('limit');
+    }
 
-        $options['excel'] = ['rowVisible' => false];
+    public function getPage()
+    {
+        return $this->get('page');
+    }
 
-        return $this->addPart(new HtmlTag(
-            $name,
-            array_merge($options, ['route' => $route, 'onclick' => $this->getEvent()]),
-            $template,
-            $this
-        ));
+    /** Build widget
+     *
+     * @param array $input
+     * @return array
+     */
+    protected function build(array $input)
+    {
+        return [];
     }
 
     /**
@@ -478,49 +518,5 @@ class Pagination extends Widget
         }
 
         return $this;
-    }
-
-    public function setQueryResult(QueryResult $queryResult)
-    {
-        parent::setQueryResult($queryResult);
-
-        $this->setFoundRows($queryResult->getFoundRows());
-    }
-
-    /**
-     * @param boolean $isShort
-     * @return $this
-     */
-    public function setIsShort($isShort)
-    {
-        $this->isShort = $isShort;
-        return $this;
-    }
-
-    public function queryBuilderPart(QueryBuilder $queryBuilder, array $input)
-    {
-        parent::queryBuilderPart($queryBuilder, $input);
-
-        $queryBuilder->setPagination($this->get('page'), $this->get('limit'));
-    }
-
-    /** Build widget
-     *
-     * @param array $input
-     * @return array
-     */
-    protected function build(array $input)
-    {
-        return [];
-    }
-
-    public function getLimit()
-    {
-        return $this->get('limit');
-    }
-
-    public function getPage()
-    {
-        return $this->get('page');
     }
 }

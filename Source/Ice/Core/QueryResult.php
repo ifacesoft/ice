@@ -9,9 +9,7 @@
 
 namespace Ice\Core;
 
-use Ice\Core;
 use Ice\DataProvider\Cacher;
-use Ice\Exception\Error;
 use Ice\Helper\Arrays;
 use Ice\Helper\Serializer;
 
@@ -194,21 +192,6 @@ class QueryResult implements Cacheable
 
         $this->transformations = null;
         return $rows;
-    }
-
-    /**
-     * Return count of rows returned by query
-     *
-     * @return mixed
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since   0.0
-     */
-    public function getNumRows()
-    {
-        return $this->result[QueryResult::NUM_ROWS];
     }
 
     /**
@@ -423,21 +406,6 @@ class QueryResult implements Cacheable
     }
 
     /**
-     * Return inserted id
-     *
-     * @return array
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since   0.0
-     */
-    public function getInsertId()
-    {
-        return $this->result[QueryResult::INSERT_ID];
-    }
-
-    /**
      * Return random key
      *
      * @return mixed
@@ -450,21 +418,6 @@ class QueryResult implements Cacheable
     public function getRandKey()
     {
         return array_rand($this->getResult()[QueryResult::ROWS]);
-    }
-
-    /**
-     * Return count of affectd rows
-     *
-     * @return int
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.2
-     * @since   0.2
-     */
-    public function getAffectedRows()
-    {
-        return $this->result[QueryResult::AFFECTED_ROWS];
     }
 
     /**
@@ -547,9 +500,54 @@ class QueryResult implements Cacheable
         return $string;
     }
 
+    /**
+     * Return count of rows returned by query
+     *
+     * @return mixed
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since   0.0
+     */
+    public function getNumRows()
+    {
+        return $this->result[QueryResult::NUM_ROWS];
+    }
+
+    /**
+     * Return count of affectd rows
+     *
+     * @return int
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.2
+     * @since   0.2
+     */
+    public function getAffectedRows()
+    {
+        return $this->result[QueryResult::AFFECTED_ROWS];
+    }
+
     public function getFoundRows()
     {
         return $this->result[QueryResult::FOUND_ROWS];
+    }
+
+    /**
+     * Return inserted id
+     *
+     * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since   0.0
+     */
+    public function getInsertId()
+    {
+        return $this->result[QueryResult::INSERT_ID];
     }
     //
     //    public function getPagination()

@@ -26,16 +26,6 @@ class Bootstrap3_Table_Row extends Widget
         ];
     }
 
-    /** Build widget
-     *
-     * @param array $input
-     * @return array
-     */
-    protected function build(array $input)
-    {
-        // TODO: Implement build() method.
-    }
-
     /**
      * Build a tag part
      *
@@ -73,5 +63,15 @@ class Bootstrap3_Table_Row extends Widget
     public function th($columnName, array $options = [], $template = null)
     {
         return $this->addPart(new Table_Row_Th($columnName, $options, $template, $this));
+    }
+
+    /** Build widget
+     *
+     * @param array $input
+     * @return array
+     */
+    protected function build(array $input)
+    {
+        // TODO: Implement build() method.
     }
 }

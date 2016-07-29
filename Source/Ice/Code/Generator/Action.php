@@ -13,7 +13,6 @@ use Ice\Core\Code_Generator;
 use Ice\Core\Config;
 use Ice\Core\Loader;
 use Ice\Core\Logger;
-use Ice\Core\Module;
 use Ice\Core\ViiewOld;
 use Ice\Helper\File;
 use Ice\Helper\Object;

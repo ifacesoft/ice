@@ -2,9 +2,7 @@
 
 namespace Ice\WidgetComponent;
 
-use Ice\Core\Debuger;
 use Ice\Core\Model;
-use Ice\Core\QueryBuilder;
 use Ice\Helper\Json;
 
 class Form_Model_OneToManyToMany extends Form_Model_OneToMany
@@ -23,32 +21,6 @@ class Form_Model_OneToManyToMany extends Form_Model_OneToMany
         ];
     }
 
-    /**
-     * @return null
-     */
-    public function getManyItemModel()
-    {
-        return $this->getOption('manyItemModel');
-    }
-
-    public function getManyItemKey()
-    {
-        /** @var Model $modelClass */
-        $modelClass = $this->getManyItemModel();
-
-        return $modelClass::getPkFieldName();
-    }
-
-    public function getManyItemTitle()
-    {
-        return htmlentities($this->getOption('manyItemTitle', 'name'));
-    }
-
-    protected function buildParams(array $values)
-    {
-        parent::buildParams($values);
-    }
-
     public function getManyLabel()
     {
         $manyLabel = $this->getOption('manyLabel', true);
@@ -62,6 +34,11 @@ class Form_Model_OneToManyToMany extends Form_Model_OneToMany
         }
 
         return $manyLabel;
+    }
+
+    public function getManyValueKey()
+    {
+        return $this->getOption('manyValueKey');
     }
 
     public function getPlaceholderManyAttribute()
@@ -100,6 +77,27 @@ class Form_Model_OneToManyToMany extends Form_Model_OneToMany
         return $rows;
     }
 
+    /**
+     * @return null
+     */
+    public function getManyItemModel()
+    {
+        return $this->getOption('manyItemModel');
+    }
+
+    public function getManyItemKey()
+    {
+        /** @var Model $modelClass */
+        $modelClass = $this->getManyItemModel();
+
+        return $modelClass::getPkFieldName();
+    }
+
+    public function getManyItemTitle()
+    {
+        return htmlentities($this->getOption('manyItemTitle', 'name'));
+    }
+
     public function getItemsGroupJson()
     {
         $itemsGroup = [];
@@ -121,11 +119,6 @@ class Form_Model_OneToManyToMany extends Form_Model_OneToMany
         return Json::encode($itemsGroup);
     }
 
-    public function getManyValueKey()
-    {
-        return $this->getOption('manyValueKey');
-    }
-
     public function getManyValue($encode = null)
     {
         if ($value = $this->getValue()) {
@@ -136,5 +129,10 @@ class Form_Model_OneToManyToMany extends Form_Model_OneToMany
         }
 
         return '';
+    }
+
+    protected function buildParams(array $values)
+    {
+        parent::buildParams($values);
     }
 }

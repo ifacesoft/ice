@@ -3,9 +3,7 @@
 namespace Ice\Widget;
 
 use Ice\Action\Resource_Dynamic as Action_Resource_Dynamic;
-use Ice\Core\Debuger;
 use Ice\Core\Environment;
-use Ice\Core\Module;
 use Ice\Core\Render;
 use Ice\DataProvider\Router;
 use Ice\Helper\File;
@@ -45,6 +43,18 @@ class Resource_Dynamic extends Resource
     public function addResource($widgetClass, $type)
     {
         $this->widgetClasses[$type][] = $widgetClass;
+    }
+
+    public function render(Render $render = null)
+    {
+        if (!$this->loaded) {
+            $this->loaded = true;
+
+            Action_Resource_Dynamic::call(['widgetClasses' => $this->widgetClasses]);
+            $this->build($this->get());
+        }
+
+        return parent::render();
     }
 
     /** Build widget
@@ -103,17 +113,5 @@ class Resource_Dynamic extends Resource
         }
 
         $this->loaded = true;
-    }
-
-    public function render(Render $render = null)
-    {
-        if (!$this->loaded) {
-            $this->loaded = true;
-
-            Action_Resource_Dynamic::call(['widgetClasses' => $this->widgetClasses]);
-            $this->build($this->get());
-        }
-
-        return parent::render();
     }
 }

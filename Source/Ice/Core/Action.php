@@ -10,7 +10,6 @@
 namespace Ice\Core;
 
 use Ice\App;
-use Ice\Core;
 use Ice\DataProvider\Registry;
 use Ice\DataProvider\Repository;
 use Ice\Exception\Http;
@@ -192,58 +191,6 @@ abstract class Action implements Cacheable
     }
 
     /**
-     * @return array
-     */
-    public function getInput()
-    {
-        return $this->input;
-    }
-
-    /**
-     * @param array $input
-     */
-    public function setInput($input)
-    {
-        $this->input = $input;
-    }
-
-    /**
-     * Return action repository
-     *
-     * @return Repository
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since   0.5
-     */
-    public static function getRepository()
-    {
-        return Repository::getInstance(__CLASS__, self::getClass());
-    }
-
-    /**
-     * Action config
-     * @return array
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since   0.5
-     */
-    protected static function config()
-    {
-        return [
-            'view' => ['template' => '', 'viewRenderClass' => null, 'layout' => null],
-            'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'Action: Access denied!'],
-            'cache' => ['ttl' => -1, 'count' => 1000],
-            'actions' => [],
-            'input' => [],
-            'output' => []
-        ];
-    }
-
-    /**
      * Get action object by name
      * @param array $params
      * @return Action
@@ -264,6 +211,54 @@ abstract class Action implements Cacheable
         return $action;
     }
 
+    protected function init(array $data = [])
+    {
+        /** @var Action|Configured $actionClass */
+        $actionClass = get_class($this);
+
+        $this->initInput($actionClass::getConfig()->gets('input', []), $data);
+
+        $env = isset($this->input['env'])
+            ? $this->input['env']
+            : $actionClass::getConfig()->get('access/env', false);
+
+        $request = isset($this->input['request'])
+            ? $this->input['request']
+            : $actionClass::getConfig()->get('access/request', false);
+
+        $roles = isset($this->input['roles'])
+            ? $this->input['roles']
+            : $actionClass::getConfig()->get('access/roles', false);
+
+        Access::check(['env' => $env, 'roles' => $roles, 'request' => $request]);
+
+        $this->initActions();
+        $this->initTtl();
+    }
+
+    protected function initInput(array $configInput, array $data = [])
+    {
+        /** @var Action|Configured $actionClass */
+        $actionClass = get_class($this);
+
+        $extendFields = ['actions', 'template', 'layout', 'viewRenderClass', 'env'];
+
+        $configInput = array_merge(
+            $actionClass::getConfig()->gets('input', []),
+            $configInput, ['actions', 'template', 'layout', 'viewRenderClass', 'env']
+        );
+
+        $input = Input::get($configInput, $data);
+
+        foreach ($extendFields as $extendField) {
+            if ($input[$extendField] === null) {
+                unset($input[$extendField]);
+            }
+        }
+
+        $this->setInput($input);
+    }
+
     private function initActions()
     {
         $input = $this->getInput();
@@ -281,6 +276,22 @@ abstract class Action implements Cacheable
 
             $this->setInput($input);
         }
+    }
+
+    /**
+     * @return array
+     */
+    public function getInput()
+    {
+        return $this->input;
+    }
+
+    /**
+     * @param array $input
+     */
+    public function setInput($input)
+    {
+        $this->input = $input;
     }
 
     protected function addAction(array $action)
@@ -377,20 +388,6 @@ abstract class Action implements Cacheable
     }
 
     /**
-     * @param array $output
-     */
-    public function setOutput($output)
-    {
-        foreach (self::getConfig()->gets('output', []) as $name => $dataProviderKey) {
-            if (!isset($output[$name])) {
-                $output[$name] = DataProvider::getInstance($dataProviderKey)->get($name);
-            }
-        }
-
-        $this->getView()->setData($output);
-    }
-
-    /**
      * @return null
      */
     public function getTtl()
@@ -419,6 +416,56 @@ abstract class Action implements Cacheable
         }
 
         $this->ttl = $ttl;
+    }
+
+    /**
+     * Return action repository
+     *
+     * @return Repository
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since   0.5
+     */
+    public static function getRepository()
+    {
+        return Repository::getInstance(__CLASS__, self::getClass());
+    }
+
+    /**
+     * Action config
+     * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since   0.5
+     */
+    protected static function config()
+    {
+        return [
+            'view' => ['template' => '', 'viewRenderClass' => null, 'layout' => null],
+            'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'Action: Access denied!'],
+            'cache' => ['ttl' => -1, 'count' => 1000],
+            'actions' => [],
+            'input' => [],
+            'output' => []
+        ];
+    }
+
+    /**
+     * @param array $output
+     */
+    public function setOutput($output)
+    {
+        foreach (self::getConfig()->gets('output', []) as $name => $dataProviderKey) {
+            if (!isset($output[$name])) {
+                $output[$name] = DataProvider::getInstance($dataProviderKey)->get($name);
+            }
+        }
+
+        $this->getView()->setData($output);
     }
 
     /**
@@ -455,53 +502,5 @@ abstract class Action implements Cacheable
     public function getLogger()
     {
         return Logger::getInstance(get_class($this));
-    }
-
-    protected function init(array $data = [])
-    {
-        /** @var Action|Configured $actionClass */
-        $actionClass = get_class($this);
-
-        $this->initInput($actionClass::getConfig()->gets('input', []), $data);
-
-        $env = isset($this->input['env'])
-            ? $this->input['env']
-            : $actionClass::getConfig()->get('access/env', false);
-
-        $request = isset($this->input['request'])
-            ? $this->input['request']
-            : $actionClass::getConfig()->get('access/request', false);
-
-        $roles = isset($this->input['roles'])
-            ? $this->input['roles']
-            : $actionClass::getConfig()->get('access/roles', false);
-
-        Access::check(['env' => $env, 'roles' => $roles, 'request' => $request]);
-
-        $this->initActions();
-        $this->initTtl();
-    }
-
-    protected function initInput(array $configInput, array $data = [])
-    {
-        /** @var Action|Configured $actionClass */
-        $actionClass = get_class($this);
-
-        $extendFields = ['actions', 'template', 'layout', 'viewRenderClass', 'env'];
-
-        $configInput = array_merge(
-            $actionClass::getConfig()->gets('input', []),
-            $configInput, ['actions', 'template', 'layout', 'viewRenderClass', 'env']
-        );
-
-        $input = Input::get($configInput, $data);
-
-        foreach ($extendFields as $extendField) {
-            if ($input[$extendField] === null) {
-                unset($input[$extendField]);
-            }
-        }
-
-        $this->setInput($input);
     }
 }

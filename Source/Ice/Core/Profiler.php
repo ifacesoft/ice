@@ -154,7 +154,8 @@ class Profiler
         return $message . '(peak: ' . Helper_Profiler::getPrettyMemory(memory_get_peak_usage(true)) . ')]';
     }
 
-    public static function xhprofEnable() {
+    public static function xhprofEnable()
+    {
         if (Profiler::$isXhprofEnabled) {
             Profiler::xphrofDisable();
         }
@@ -163,7 +164,8 @@ class Profiler
         Profiler::$isXhprofEnabled = true;
     }
 
-    public static function xphrofDisable() {
+    public static function xphrofDisable()
+    {
         if (Profiler::$isXhprofEnabled) {
             $xhprof_data = xhprof_disable();
             $xhprof_runs = new XHProfRuns_Default();

@@ -1,10 +1,7 @@
 <?php
 namespace Ice\Action;
 
-use Ice\Core\Debuger;
-use Ice\Widget\Security_EmailPassword_ChangePassword;
 use Ice\Widget\Security_LoginEmailPassword_ChangePassword;
-use Ice\Widget\Security_LoginPassword_ChangePassword;
 
 class Security_LoginEmailPassword_ChangePassword_Submit extends Security
 {

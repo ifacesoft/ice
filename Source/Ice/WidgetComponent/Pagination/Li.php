@@ -6,6 +6,13 @@ use Ice\Core\Widget as Core_Widget;
 
 class Pagination_Li extends HtmlTag
 {
+    public function __construct($componentName, array $options, $template, Core_Widget $widget)
+    {
+        $options['onclick'] = $this->getEvent();
+
+        parent::__construct($componentName, $options, $template, $widget);
+    }
+
     /**
      * WidgetComponent config
      *
@@ -18,13 +25,6 @@ class Pagination_Li extends HtmlTag
             'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'WidgetComponent: Access denied!'],
             'cache' => ['ttl' => -1, 'count' => 1000],
         ];
-    }
-    
-    public function __construct($componentName, array $options, $template, Core_Widget $widget)
-    {
-        $options['onclick'] = $this->getEvent();
-        
-        parent::__construct($componentName, $options, $template, $widget);
     }
 
 }

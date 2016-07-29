@@ -2,9 +2,7 @@
 namespace Ice\Action;
 
 use Ice\Core\Action;
-use Ice\Core\Module;
 use Ice\Helper\Console;
-use Symfony\Component\Finder\Finder;
 
 class Sami extends Action
 {

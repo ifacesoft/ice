@@ -8,18 +8,18 @@
  */
 
 namespace Ice\Core;
+
 use FirePHP;
 use Ice\Core;
+use Ice\Core\Console as Core_Console;
 use Ice\Exception\Error;
 use Ice\Helper\Console;
 use Ice\Helper\Date;
-use Ice\Helper\Directory;
 use Ice\Helper\File;
 use Ice\Helper\Http;
 use Ice\Helper\Logger as Helper_Logger;
 use Ice\Helper\Object;
 use Ice\Helper\Profiler as Helper_Profiler;
-use Ice\Core\Console as Core_Console;
 use Ice\Helper\String;
 use Ice\Model\Log_Error;
 use Ice\Model\Session;
@@ -205,135 +205,6 @@ class Logger
         self::getInstance()->error($errstr, $errfile, $errline, null, $errcontext, $errno);
     }
 
-    public static function getLogUserSession()
-    {
-        return Session::getModel(session_id(), '*');
-    }
-
-    private function getFbType($type)
-    {
-        switch ($type) {
-            case Logger::DANGER:
-                return 'ERROR';
-            case Logger::WARNING:
-                return 'WARN';
-            default:
-                return 'INFO';
-        }
-    }
-
-    /**
-     * Info message
-     *
-     * @param  $message
-     * @param  string|null $type
-     * @param  bool $isResource
-     * @param  bool $logging
-     * @return string
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since   0.0
-     */
-    public function info($message, $type = Logger::INFO, $isResource = false, $logging = true)
-    {
-        if (!$type) {
-            $type = self::INFO;
-        }
-
-        if ($isResource) {
-            /**
-             * @var Core $class
-             */
-            $class = $this->class;
-            $params = null;
-
-            if (is_array($message)) {
-                list($message, $params) = $message;
-            }
-
-            $message = Resource::create($class)->get($message, $params);
-        }
-
-        $name = Request::isCli() ? Core_Console::getCommand(null) : Request::uri();
-        $logFile = getLogDir() . date('Y-m-d') . '/INFO/' . urlencode($name) . '.log';
-
-        if (strlen($logFile) > 255) {
-            $logFilename = substr($logFile, 0, 255 - 11);
-            $logFile = $logFilename . '_' . crc32(substr($logFile, 255 - 11));
-        }
-
-        $message = print_r($message, true);
-
-        File::createData($logFile, '[' . Date::get() . '] ' . $message . "\n", false, FILE_APPEND);
-
-        if (Request::isCli()) {
-            $message = Console::getText(' ' . $message . ' ', Console::C_BLACK, self::$consoleColors[$type]) . "\n";
-
-//            fwrite(STDOUT, $message); // ob_cache|ob_get_clean not catch stdout
-            echo $message;
-
-            return $logging ? $message : '';
-        } else {
-            Logger::fb($message, 'info', $this->getFbType($type));
-
-            $message = '<div class="alert alert-' . $type . '">' . $message . '</div>';
-            return $logging ? self::addLog($message) : $message;
-        }
-    }
-
-    /**
-     *
-     * @param $value
-     * @param string $type (LOG|INFO|WARN|ERROR|DUMP|TRACE|EXCEPTION|TABLE|GROUP_START|GROUP_END)
-     * @param string $label
-     * @param array $options
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 1.0
-     * @since   0.0
-     */
-    public static function fb($value, $label = null, $type = 'LOG', $options = [])
-    {
-        if (
-            Request::isCli() ||
-            Environment::getInstance()->isProduction() ||
-            headers_sent() ||
-            !Loader::load('FirePHP', false) ||
-            String::endsWith(Request::host(), '.com') ||
-            String::endsWith(Request::host(), '.ru')
-        ) {
-            return;
-        }
-
-        $varSize = Helper_Profiler::getVarSize($value);
-
-        if ($varSize > pow(2, 18)) {
-            FirePHP::getInstance(true)->fb('Too big data: ' . $varSize . ' bytes (max: ' . pow(2, 17) . ')', $label, 'WARN', $options);
-            return;
-        }
-
-        FirePHP::getInstance(true)->fb($value, $label, $type, $options);
-    }
-
-    /**
-     * Add message into log stack
-     *
-     * @param  $message
-     * @return mixed
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since   0.0
-     */
-    public static function addLog($message)
-    {
-        return self::$log[] = $message;
-    }
-
     /**
      * Error message this exception stacktrace
      *
@@ -433,6 +304,47 @@ class Logger
     }
 
     /**
+     * @param Model $log
+     */
+    public function save($log)
+    {
+        $logUserSession = Logger::getLogUserSession();
+
+        $logUserSession__fk = $log->get('session__fk', false);
+
+        if ($logUserSession__fk && $logUserSession__fk != $logUserSession->getPkValue()) {
+            $logUserSession->set(['session__fk' => $logUserSession__fk])->save();
+            $log->set(['session' => $logUserSession])->save();
+        } else {
+            $log->set([
+                'logger_class' => $this->class,
+                'session' => $logUserSession
+            ])->save();
+        }
+    }
+
+    public static function getLogUserSession()
+    {
+        return Session::getModel(session_id(), '*');
+    }
+
+    /**
+     * Add message into log stack
+     *
+     * @param  $message
+     * @return mixed
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since   0.0
+     */
+    public static function addLog($message)
+    {
+        return self::$log[] = $message;
+    }
+
+    /**
      * Return new instance of logger
      *
      * @param  string $class
@@ -474,6 +386,148 @@ class Logger
     public static function clearLog()
     {
         self::$log = [];
+    }
+
+    public static function log($value, $label = null, $type = 'LOG', $options = [])
+    {
+        $value = str_replace(["\n", "\t"], ' ', $value);
+
+        $name = Request::isCli() ? Core_Console::getCommand(null) : Request::uri();
+        $logFile = getLogDir() . date('Y-m-d') . '/LOG/' . urlencode($name) . '.log';
+
+        if (strlen($logFile) > 255) {
+            $logFilename = substr($logFile, 0, 255 - 11);
+            $logFile = $logFilename . '_' . crc32(substr($logFile, 255 - 11));
+        }
+
+        File::createData($logFile, '[' . date(Date::FORMAT_MYSQL) . '] ' . $label . ': ' . $value . "\n", false, FILE_APPEND);
+
+        if (Environment::getInstance()->isProduction()) {
+            return;
+        }
+
+        if (Request::isCli()) {
+            $colors = [
+                'INFO' => Console::C_GREEN,
+                'DUMP' => Console::C_CYAN,
+                'WARN' => Console::C_YELLOW,
+                'ERROR' => Console::C_RED,
+                'LOG' => Console::C_CYAN,
+            ];
+
+            $message = Console::getText($label . ': ' . $value, Console::C_BLACK, $colors[$type]) . "\n";
+            fwrite(STDOUT, $message);
+        } else {
+            Logger::fb($value, $label, $type, $options);
+        }
+    }
+
+    /**
+     * Info message
+     *
+     * @param  $message
+     * @param  string|null $type
+     * @param  bool $isResource
+     * @param  bool $logging
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since   0.0
+     */
+    public function info($message, $type = Logger::INFO, $isResource = false, $logging = true)
+    {
+        if (!$type) {
+            $type = self::INFO;
+        }
+
+        if ($isResource) {
+            /**
+             * @var Core $class
+             */
+            $class = $this->class;
+            $params = null;
+
+            if (is_array($message)) {
+                list($message, $params) = $message;
+            }
+
+            $message = Resource::create($class)->get($message, $params);
+        }
+
+        $name = Request::isCli() ? Core_Console::getCommand(null) : Request::uri();
+        $logFile = getLogDir() . date('Y-m-d') . '/INFO/' . urlencode($name) . '.log';
+
+        if (strlen($logFile) > 255) {
+            $logFilename = substr($logFile, 0, 255 - 11);
+            $logFile = $logFilename . '_' . crc32(substr($logFile, 255 - 11));
+        }
+
+        $message = print_r($message, true);
+
+        File::createData($logFile, '[' . Date::get() . '] ' . $message . "\n", false, FILE_APPEND);
+
+        if (Request::isCli()) {
+            $message = Console::getText(' ' . $message . ' ', Console::C_BLACK, self::$consoleColors[$type]) . "\n";
+
+//            fwrite(STDOUT, $message); // ob_cache|ob_get_clean not catch stdout
+            echo $message;
+
+            return $logging ? $message : '';
+        } else {
+            Logger::fb($message, 'info', $this->getFbType($type));
+
+            $message = '<div class="alert alert-' . $type . '">' . $message . '</div>';
+            return $logging ? self::addLog($message) : $message;
+        }
+    }
+
+    /**
+     *
+     * @param $value
+     * @param string $type (LOG|INFO|WARN|ERROR|DUMP|TRACE|EXCEPTION|TABLE|GROUP_START|GROUP_END)
+     * @param string $label
+     * @param array $options
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 1.0
+     * @since   0.0
+     */
+    public static function fb($value, $label = null, $type = 'LOG', $options = [])
+    {
+        if (
+            Request::isCli() ||
+            Environment::getInstance()->isProduction() ||
+            headers_sent() ||
+            !Loader::load('FirePHP', false) ||
+            String::endsWith(Request::host(), '.com') ||
+            String::endsWith(Request::host(), '.ru')
+        ) {
+            return;
+        }
+
+        $varSize = Helper_Profiler::getVarSize($value);
+
+        if ($varSize > pow(2, 18)) {
+            FirePHP::getInstance(true)->fb('Too big data: ' . $varSize . ' bytes (max: ' . pow(2, 17) . ')', $label, 'WARN', $options);
+            return;
+        }
+
+        FirePHP::getInstance(true)->fb($value, $label, $type, $options);
+    }
+
+    private function getFbType($type)
+    {
+        switch ($type) {
+            case Logger::DANGER:
+                return 'ERROR';
+            case Logger::WARNING:
+                return 'WARN';
+            default:
+                return 'INFO';
+        }
     }
 
     /**
@@ -546,59 +600,5 @@ class Logger
     )
     {
         throw $this->createException($message, $file, $line, $e, $errcontext, $errno, $exceptionClass);
-    }
-
-    public static function log($value, $label = null, $type = 'LOG', $options = [])
-    {
-        $value = str_replace(["\n", "\t"], ' ', $value);
-
-        $name = Request::isCli() ? Core_Console::getCommand(null) : Request::uri();
-        $logFile = getLogDir() . date('Y-m-d') . '/LOG/' . urlencode($name) . '.log';
-
-        if (strlen($logFile) > 255) {
-            $logFilename = substr($logFile, 0, 255 - 11);
-            $logFile = $logFilename . '_' . crc32(substr($logFile, 255 - 11));
-        }
-
-        File::createData($logFile, '[' . date(Date::FORMAT_MYSQL) . '] ' . $label . ': ' . $value . "\n", false, FILE_APPEND);
-
-        if (Environment::getInstance()->isProduction()) {
-            return;
-        }
-
-        if (Request::isCli()) {
-            $colors = [
-                'INFO' => Console::C_GREEN,
-                'DUMP' => Console::C_CYAN,
-                'WARN' => Console::C_YELLOW,
-                'ERROR' => Console::C_RED,
-                'LOG' => Console::C_CYAN,
-            ];
-
-            $message = Console::getText($label . ': ' . $value, Console::C_BLACK, $colors[$type]) . "\n";
-            fwrite(STDOUT, $message);
-        } else {
-            Logger::fb($value, $label, $type, $options);
-        }
-    }
-
-    /**
-     * @param Model $log
-     */
-    public function save($log)
-    {
-        $logUserSession = Logger::getLogUserSession();
-
-        $logUserSession__fk = $log->get('session__fk', false);
-
-        if ($logUserSession__fk && $logUserSession__fk != $logUserSession->getPkValue()) {
-            $logUserSession->set(['session__fk' => $logUserSession__fk])->save();
-            $log->set(['session' => $logUserSession])->save();
-        } else {
-            $log->set([
-                'logger_class' => $this->class,
-                'session' => $logUserSession
-            ])->save();
-        }
     }
 }

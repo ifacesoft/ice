@@ -2,7 +2,6 @@
 
 namespace Ice\SessionHandler;
 
-use Ice\Core;
 use Ice\Core\Request;
 use Ice\Core\Security;
 use Ice\Core\SessionHandler;
@@ -152,6 +151,16 @@ class DataSource extends SessionHandler
         return $this->session['session_data'];
     }
 
+    function getConstFields()
+    {
+        return [
+            'ip' => Request::ip(),
+            'agent' => Request::agent(),
+            'session_lifetime' => $this->session_lifetime,
+            'cookie_lifetime' => $this->cookie_lifetime
+        ];
+    }
+
     /**
      * PHP >= 5.4.0<br/>
      * Write session data
@@ -205,16 +214,6 @@ class DataSource extends SessionHandler
                 ->getInsertQuery($this->session)
                 ->getQueryResult();
         }
-    }
-
-    function getConstFields()
-    {
-        return [
-            'ip' => Request::ip(),
-            'agent' => Request::agent(),
-            'session_lifetime' => $this->session_lifetime,
-            'cookie_lifetime' => $this->cookie_lifetime
-        ];
     }
 
     function getVarFields()

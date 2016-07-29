@@ -2,9 +2,7 @@
 
 namespace Ice\Core;
 
-use Ice\Action\Deploy;
 use Ice\Core;
-use Ice\Exception\Error;
 use Ice\Exception\Not_Show;
 use Ice\Exception\Not_Valid;
 use Ice\Helper\Access;
@@ -21,36 +19,19 @@ abstract class WidgetComponent
     use Core;
     use Configured;
 
+    private static $ids = [];
+    protected $label = null;
     private $options = [];
     private $componentName = null;
     private $templateClass = null;
     private $resourceClass = null;
     private $renderClass = null;
     private $offset = 0;
-
     private $widgetClass = null;
     private $widgetId = null;
-
     private $value = null;
-    protected $label = null;
-
     private $active = null;
     private $classes = null;
-
-    private static $ids = [];
-    /**
-     * WidgetComponent config
-     *
-     * @return array
-     */
-    protected static function config()
-    {
-        return [
-            'render' => ['template' => true, 'class' => 'Ice:Php', 'layout' => null, 'resource' => null],
-            'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'WidgetComponent: Access denied!'],
-            'cache' => ['ttl' => -1, 'count' => 1000],
-        ];
-    }
 
     /**
      * WidgetComponent constructor.
@@ -94,102 +75,28 @@ abstract class WidgetComponent
         $this->init();
     }
 
-    protected function init()
-    {
-        $this->set(Input::get($this->getParamConfig()));
-    }
-
     /**
-     * @return int
-     */
-    public function getOffset()
-    {
-        return $this->offset;
-    }
-
-    /**
-     * @param int $offset
-     */
-    public function setOffset($offset)
-    {
-        $this->offset = $offset;
-    }
-
-    /**
-     * @return null
-     */
-    public function getComponentName()
-    {
-        return $this->componentName;
-    }
-
-    /**
-     * @return null|string
-     */
-    public function getWidgetId()
-    {
-        return $this->widgetId;
-    }
-
-    /**
-     * @return null|string
-     */
-    public function getWidgetComponentId()
-    {
-        return $this->getWidgetId() . '_' . $this->getComponentName() . '_' . $this->getOffset();
-    }
-
-    public function cloneComponent($offset)
-    {
-        $widgetComponent = clone $this;
-        $widgetComponent->setOffset($offset);
-        $widgetComponent->init();
-
-        return $widgetComponent;
-    }
-
-    /**
-     * @return string
-     */
-    public function getTemplateClass()
-    {
-        return $this->templateClass;
-    }
-
-    /**
-     * @param $templateClass
+     * @param $renderClass
      * @return $this
      */
-    private function setTemplateClass($templateClass)
+    public function setRenderClass($renderClass)
     {
         /** @var Widget $widgetComponentClass */
         $widgetComponentClass = get_class($this);
 
-        $this->templateClass = $templateClass === null
-            ? $widgetComponentClass::getConfig()->get('render/template', true)
-            : $templateClass;
+        $this->renderClass = $renderClass === null
+            ? $widgetComponentClass::getConfig()->get('render/class', null)
+            : $renderClass;
 
-        if ($this->templateClass[0] == '_') {
-            $this->templateClass = $widgetComponentClass . $this->templateClass;
+        if ($this->renderClass instanceof Render) {
+            $this->renderClass = get_class($this->renderClass);
         }
 
-        if (empty($this->templateClass) || $this->templateClass === true) {
-            $this->templateClass = $widgetComponentClass;
+        if ($this->renderClass === true) {
+            $this->renderClass = Config::getInstance(Render::getClass())->get('default');
         }
 
         return $this;
-    }
-
-    /**
-     * @return Resource
-     */
-    public function getResource()
-    {
-        if (!$this->resourceClass) {
-            return null;
-        }
-
-        return Resource::create($this->resourceClass);
     }
 
     /**
@@ -228,42 +135,157 @@ abstract class WidgetComponent
     }
 
     /**
-     * @return Render
-     */
-    public function getRender()
-    {
-        if (!$this->renderClass) {
-            return null;
-        }
-
-        /** @var Render $renderClass */
-        $renderClass = Render::getClass($this->renderClass);
-
-        return $renderClass::getInstance();
-    }
-
-    /**
-     * @param $renderClass
+     * @param $templateClass
      * @return $this
      */
-    public function setRenderClass($renderClass)
+    private function setTemplateClass($templateClass)
     {
         /** @var Widget $widgetComponentClass */
         $widgetComponentClass = get_class($this);
 
-        $this->renderClass = $renderClass === null
-            ? $widgetComponentClass::getConfig()->get('render/class', null)
-            : $renderClass;
+        $this->templateClass = $templateClass === null
+            ? $widgetComponentClass::getConfig()->get('render/template', true)
+            : $templateClass;
 
-        if ($this->renderClass instanceof Render) {
-            $this->renderClass = get_class($this->renderClass);
+        if ($this->templateClass[0] == '_') {
+            $this->templateClass = $widgetComponentClass . $this->templateClass;
         }
 
-        if ($this->renderClass === true) {
-            $this->renderClass = Config::getInstance(Render::getClass())->get('default');
+        if (empty($this->templateClass) || $this->templateClass === true) {
+            $this->templateClass = $widgetComponentClass;
         }
 
         return $this;
+    }
+
+    /**
+     * @param $name
+     * @param null $default
+     * @return mixed
+     */
+    public function getOption($name = null, $default = null)
+    {
+        if ($name === null) {
+            return $this->options;
+        }
+
+        return array_key_exists($name, $this->options) ? $this->options[$name] : $default;
+    }
+
+    protected function init()
+    {
+        $this->set(Input::get($this->getParamConfig()));
+    }
+
+    public function set(array $params)
+    {
+        /** @var WidgetComponent $widgetComponentClass */
+        $widgetComponentClass = get_class($this);
+
+        $widgetComponentClass::getRegistry($this->getId())->set($params);
+
+        return $this;
+    }
+
+    public function getId($postfix = '')
+    {
+        if ($postfix) {
+            $postfix = '_' . $postfix;
+        }
+
+        $id = $this->getWidgetComponentId() . $postfix;
+
+        return isset(self::$ids[$id]) ? self::$ids[$id] : self::$ids[$id] = 'id_wc_' . crc32($id);
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getWidgetComponentId()
+    {
+        return $this->getWidgetId() . '_' . $this->getComponentName() . '_' . $this->getOffset();
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getWidgetId()
+    {
+        return $this->widgetId;
+    }
+
+    /**
+     * @return null
+     */
+    public function getComponentName()
+    {
+        return $this->componentName;
+    }
+
+    /**
+     * @return int
+     */
+    public function getOffset()
+    {
+        return $this->offset;
+    }
+
+    /**
+     * @param int $offset
+     */
+    public function setOffset($offset)
+    {
+        $this->offset = $offset;
+    }
+
+    protected function getParamConfig($paramName = null)
+    {
+        $paramsConfig = [];
+
+        foreach ((array)$this->getOption('params', []) as $param => $config) {
+            if (is_int($param)) {
+                $param = $config;
+                $config = [];
+            }
+
+            if ($paramName !== null && $paramName != $param) {
+                continue;
+            }
+
+            $paramsConfig[$param] = $config;
+
+            if (is_array($paramsConfig[$param])) {
+                $paramsConfig[$param]['providers'] = isset($paramsConfig[$param]['providers'])
+                    ? array_merge(['default'], (array)$paramsConfig[$param]['providers'])
+                    : ['default'];
+            }
+
+        }
+
+        return $paramsConfig;
+    }
+
+    /**
+     * WidgetComponent config
+     *
+     * @return array
+     */
+    protected static function config()
+    {
+        return [
+            'render' => ['template' => true, 'class' => 'Ice:Php', 'layout' => null, 'resource' => null],
+            'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'WidgetComponent: Access denied!'],
+            'cache' => ['ttl' => -1, 'count' => 1000],
+        ];
+    }
+
+    public function cloneComponent($offset)
+    {
+        $widgetComponent = clone $this;
+        $widgetComponent->setOffset($offset);
+        $widgetComponent->init();
+
+        return $widgetComponent;
     }
 
     /**
@@ -299,128 +321,15 @@ abstract class WidgetComponent
     }
 
     /**
-     * @return bool
+     * @return Resource
      */
-    public function isActive()
+    public function getResource()
     {
-        if ($this->active !== null) {
-            return $this->active;
+        if (!$this->resourceClass) {
+            return null;
         }
 
-        return $this->setActive((bool)$this->getOption('active', false));
-    }
-
-    /**
-     * @param bool|null $active
-     * @return bool|null
-     */
-    protected function setActive($active)
-    {
-        return $this->active = $active;
-    }
-
-    public function mergeOptions(array $options)
-    {
-        $this->options = array_merge($this->options, $options);
-    }
-
-    /**
-     * @param $name
-     * @param null $default
-     * @return mixed
-     */
-    public function getOption($name = null, $default = null)
-    {
-        if ($name === null) {
-            return $this->options;
-        }
-
-        return array_key_exists($name, $this->options) ? $this->options[$name] : $default;
-    }
-
-    /**
-     * @param $name
-     * @param $value
-     */
-    public function setOption($name, $value)
-    {
-        $this->options[$name] = $value;
-    }
-//
-//    /**
-//     * @return array
-//     */
-//    public function getParams()
-//    {
-//        return $this->params;
-//    }
-
-    protected function getClasses($classes = '')
-    {
-        if ($this->classes !== null) {
-            return $this->classes;
-        }
-
-        $class = (array)$this->getOption('classes', []);
-
-
-        if ($class) {
-            $classes .= ' ' . implode(' ', $class);
-        }
-
-        if ($this->isActive()) {
-            $classes .= ' active';
-        }
-
-        return $this->classes = $this->getComponentName() . ' ' . $classes;
-    }
-
-    /**
-     * @param string $classes
-     * @return null
-     */
-    public function getClassAttribute($classes = '')
-    {
-        return 'class="' . $this->getClasses($classes) . '"';
-    }
-
-    public function getId($postfix = '')
-    {
-        if ($postfix) {
-            $postfix = '_' . $postfix;
-        }
-
-        $id = $this->getWidgetComponentId() . $postfix;
-
-        return isset(self::$ids[$id]) ? self::$ids[$id] : self::$ids[$id] = 'id_wc_' . crc32($id);
-    }
-
-    public function getIdAttribute($postfix = '')
-    {
-        return 'id="' . $this->getId($postfix) . '" data-for="' . $this->getWidgetId() . '"';
-    }
-
-    public function getAll($paramName = null, $default = null)
-    {
-        /** @var WidgetComponent $widgetComponentClass */
-        $widgetComponentClass = get_class($this);
-
-        $registry = $widgetComponentClass::getRegistry($this->getId());
-
-        /** @var Widget $widgetClass */
-        $widgetClass = $this->getWidgetClass();
-
-        $params = array_merge($widgetClass::getRegistry($this->getWidgetId())->get(), $registry->get());
-
-        if ($this instanceof Component_Widget) {
-            $params = array_merge($this->getWidget()->getAll(), $params);
-        }
-
-        if ($paramName === null) {
-            return empty($params) ? [] : $params;
-        }
-
-        return array_key_exists($paramName, $params) ? $params[$paramName] : $default;
+        return Resource::create($this->resourceClass);
     }
 
     public function get($paramName = null, $default = null)
@@ -466,42 +375,117 @@ abstract class WidgetComponent
 //        return isset($params[$param]) ? $params[$param] : $default;
     }
 
-    public function set(array $params)
+    /**
+     * @return null|string
+     */
+    public function getWidgetClass()
+    {
+        return $this->widgetClass;
+    }
+
+    public function mergeOptions(array $options)
+    {
+        $this->options = array_merge($this->options, $options);
+    }
+//
+//    /**
+//     * @return array
+//     */
+//    public function getParams()
+//    {
+//        return $this->params;
+//    }
+
+    /**
+     * @param $name
+     * @param $value
+     */
+    public function setOption($name, $value)
+    {
+        $this->options[$name] = $value;
+    }
+
+    /**
+     * @param string $classes
+     * @return null
+     */
+    public function getClassAttribute($classes = '')
+    {
+        return 'class="' . $this->getClasses($classes) . '"';
+    }
+
+    protected function getClasses($classes = '')
+    {
+        if ($this->classes !== null) {
+            return $this->classes;
+        }
+
+        $class = (array)$this->getOption('classes', []);
+
+
+        if ($class) {
+            $classes .= ' ' . implode(' ', $class);
+        }
+
+        if ($this->isActive()) {
+            $classes .= ' active';
+        }
+
+        return $this->classes = $this->getComponentName() . ' ' . $classes;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isActive()
+    {
+        if ($this->active !== null) {
+            return $this->active;
+        }
+
+        return $this->setActive((bool)$this->getOption('active', false));
+    }
+
+    /**
+     * @param bool|null $active
+     * @return bool|null
+     */
+    protected function setActive($active)
+    {
+        return $this->active = $active;
+    }
+
+    public function getIdAttribute($postfix = '')
+    {
+        return 'id="' . $this->getId($postfix) . '" data-for="' . $this->getWidgetId() . '"';
+    }
+
+    public function getAll($paramName = null, $default = null)
     {
         /** @var WidgetComponent $widgetComponentClass */
         $widgetComponentClass = get_class($this);
 
-        $widgetComponentClass::getRegistry($this->getId())->set($params);
+        $registry = $widgetComponentClass::getRegistry($this->getId());
 
-        return $this;
+        /** @var Widget $widgetClass */
+        $widgetClass = $this->getWidgetClass();
+
+        $params = array_merge($widgetClass::getRegistry($this->getWidgetId())->get(), $registry->get());
+
+        if ($this instanceof Component_Widget) {
+            $params = array_merge($this->getWidget()->getAll(), $params);
+        }
+
+        if ($paramName === null) {
+            return empty($params) ? [] : $params;
+        }
+
+        return array_key_exists($paramName, $params) ? $params[$paramName] : $default;
     }
 
     public function ifOption($name, $value, $default = null)
     {
         return $this->getOption($name, $default) === $value;
-    }
-
-    protected function getValidValue()
-    {
-        $this->validate();
-
-        $valueKey = $this->getValueKey();
-
-        $valueOption = $this->getOption('value', []);
-
-        if (!is_array($valueOption)) {
-            return $valueOption;
-        }
-
-        if (array_key_exists('title', $valueOption)) {
-            return $valueOption['title'];
-        }
-
-        $defaultValueKey = array_key_exists('default', $valueOption)
-            ? $valueOption['default']
-            : $valueKey;
-
-        return $this->get($valueKey, $defaultValueKey);
     }
 
     /**
@@ -556,6 +540,34 @@ abstract class WidgetComponent
         return $encode && !is_array($value) ? htmlentities($value) : $value;
     }
 
+    protected function getValidValue()
+    {
+        $this->validate();
+
+        $valueKey = $this->getValueKey();
+
+        $valueOption = $this->getOption('value', []);
+
+        if (!is_array($valueOption)) {
+            return $valueOption;
+        }
+
+        if (array_key_exists('title', $valueOption)) {
+            return $valueOption['title'];
+        }
+
+        $defaultValueKey = array_key_exists('default', $valueOption)
+            ? $valueOption['default']
+            : $valueKey;
+
+        return $this->get($valueKey, $defaultValueKey);
+    }
+
+    public function validate()
+    {
+        return Validator::validateParams($this->get(), (array)$this->getOption('params', []));
+    }
+
     public function getValueKey()
     {
         $valueKey = $this->getOption('valueKey', true);
@@ -566,52 +578,6 @@ abstract class WidgetComponent
 
         return $valueKey;
     }
-
-    protected function getParamConfig($paramName = null)
-    {
-        $paramsConfig = [];
-
-        foreach ((array)$this->getOption('params', []) as $param => $config) {
-            if (is_int($param)) {
-                $param = $config;
-                $config = [];
-            }
-
-            if ($paramName !== null && $paramName != $param) {
-                continue;
-            }
-
-            $paramsConfig[$param] = $config;
-
-            if (is_array($paramsConfig[$param])) {
-                $paramsConfig[$param]['providers'] = isset($paramsConfig[$param]['providers'])
-                    ? array_merge(['default'], (array)$paramsConfig[$param]['providers'])
-                    : ['default'];
-            }
-
-        }
-
-        return $paramsConfig;
-    }
-
-    /**
-     * @return null|string
-     */
-    public function getWidgetClass()
-    {
-        return $this->widgetClass;
-    }
-//
-//    protected function buildParams(array $values)
-//    {
-//        /** @var WidgetComponent $widgetComponentClass */
-//        $widgetComponentClass = get_class($this);
-//
-//        $widgetComponentClass::getRegistry($this->getId())->set($values);
-//
-//        Debuger::dump($values);
-//
-//    }
 
     public function render(Render $render = null)
     {
@@ -633,6 +599,45 @@ abstract class WidgetComponent
 
         return $result;
     }
+//
+//    protected function buildParams(array $values)
+//    {
+//        /** @var WidgetComponent $widgetComponentClass */
+//        $widgetComponentClass = get_class($this);
+//
+//        $widgetComponentClass::getRegistry($this->getId())->set($values);
+//
+//        Debuger::dump($values);
+//
+//    }
+
+    /**
+     * @return Render
+     */
+    public function getRender()
+    {
+        if (!$this->renderClass) {
+            return null;
+        }
+
+        /** @var Render $renderClass */
+        $renderClass = Render::getClass($this->renderClass);
+
+        return $renderClass::getInstance();
+    }
+
+    /**
+     * @return string
+     */
+    public function getTemplateClass()
+    {
+        return $this->templateClass;
+    }
+
+    public function getLayout()
+    {
+        return null; // todo: dummy - need implement
+    }
 
     protected function getNotValidResult(Not_Valid $e)
     {
@@ -644,15 +649,5 @@ abstract class WidgetComponent
         );
 
         return $error->render();
-    }
-
-    public function getLayout()
-    {
-        return null; // todo: dummy - need implement
-    }
-
-    public function validate()
-    {
-        return Validator::validateParams($this->get(), (array)$this->getOption('params', []));
     }
 }

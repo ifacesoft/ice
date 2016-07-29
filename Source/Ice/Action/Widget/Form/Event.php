@@ -9,13 +9,8 @@
 
 namespace Ice\Action;
 
-use Ice\Core\Action;
-use Ice\Core\Debuger;
 use Ice\Core\Widget;
 use Ice\DataProvider\Request;
-use Ice\Helper\Access;
-use Ice\WidgetComponent\FormElement;
-use Ice\WidgetComponent\FormElement_Button;
 
 abstract class Widget_Form_Event extends Render
 {
@@ -29,6 +24,17 @@ abstract class Widget_Form_Event extends Render
         );
 
         return $config;
+    }
+
+    public function run(array $input)
+    {
+        return array_merge(
+            parent::run($input),
+            [
+                'redirect' => $input['widget']->getRedirect(),
+                'timeout' => $input['widget']->getTimeout()
+            ]
+        );
     }
 
     protected function initInput(array $configInput, array $data = [])
@@ -57,16 +63,5 @@ abstract class Widget_Form_Event extends Render
         }
 
         $this->setInput($input);
-    }
-
-    public function run(array $input)
-    {
-        return array_merge(
-            parent::run($input),
-            [
-                'redirect' => $input['widget']->getRedirect(),
-                'timeout' => $input['widget']->getTimeout()
-            ]
-        );
     }
 }

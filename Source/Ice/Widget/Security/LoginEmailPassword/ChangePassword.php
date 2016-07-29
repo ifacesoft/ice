@@ -2,7 +2,6 @@
 namespace Ice\Widget;
 
 use Ice\Action\Security_LoginEmailPassword_ChangePassword_Submit;
-use Ice\Core\Model;
 use Ice\Core\Widget_Security;
 use Ice\DataProvider\Request;
 

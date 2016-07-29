@@ -11,7 +11,6 @@ namespace Ice\Widget;
 use Ice\Action\Security_EmailPassword_RegisterConfirm_Submit;
 use Ice\Core\Widget_Security;
 use Ice\DataProvider\Request;
-use Ice\DataProvider\Router;
 
 class Security_EmailPassword_RegisterConfirm extends Widget_Security
 {

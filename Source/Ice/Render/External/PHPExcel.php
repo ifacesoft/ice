@@ -2,7 +2,6 @@
 
 namespace Ice\Render;
 
-use Ice\Core\Debuger;
 use Ice\Core\Environment;
 use Ice\Core\Loader;
 use Ice\Core\Logger;
@@ -108,6 +107,16 @@ class External_PHPExcel extends Render
         return $this->xls;
     }
 
+    public function indexInc($step = 1, $activeSheetIndex = null)
+    {
+        $index = $this->getIndex() + $step;
+
+        $this->setIndex($index, $activeSheetIndex);
+        $this->setColumn('A', $activeSheetIndex);
+
+        return $index;
+    }
+
     /**
      * @param null $activeSheetIndex
      * @return null
@@ -141,6 +150,28 @@ class External_PHPExcel extends Render
     }
 
     /**
+     * @param null $column
+     * @param null $activeSheetIndex
+     */
+    public function setColumn($column, $activeSheetIndex = null)
+    {
+        if ($activeSheetIndex === null) {
+            $activeSheetIndex = $this->getPHPExcel()->getActiveSheetIndex();
+        }
+
+        $this->sheets[$activeSheetIndex]['column'] = $column;
+    }
+
+    public function columnInc($step = 1, $activeSheetIndex = null)
+    {
+        for ($i = 0, $column = $this->getColumn(); $i < $step; $i++, $column++) ;
+
+        $this->setColumn($column, $activeSheetIndex);
+
+        return $column;
+    }
+
+    /**
      * @param null $activeSheetIndex
      * @return null
      */
@@ -159,70 +190,37 @@ class External_PHPExcel extends Render
         return $this->sheets[$activeSheetIndex]['column'];
     }
 
-    /**
-     * @param null $column
-     * @param null $activeSheetIndex
-     */
-    public function setColumn($column, $activeSheetIndex = null)
+    public function columDec($activeSheetIndex = null)
     {
-        if ($activeSheetIndex === null) {
-            $activeSheetIndex = $this->getPHPExcel()->getActiveSheetIndex();
-        }
-
-        $this->sheets[$activeSheetIndex]['column'] = $column;
-    }
-
-    public function indexInc($step = 1, $activeSheetIndex = null)
-    {
-        $index = $this->getIndex() + $step;
-
-        $this->setIndex($index, $activeSheetIndex);
-        $this->setColumn('A', $activeSheetIndex);
-
-        return $index;
-    }
-
-    public function columnInc($step = 1, $activeSheetIndex = null)
-    {
-        for ($i = 0, $column = $this->getColumn(); $i < $step; $i++, $column++) ;
+        $column = $this->decrementLetter($this->getColumn());
 
         $this->setColumn($column, $activeSheetIndex);
 
         return $column;
     }
 
-    public function decrementLetter($char) {
+    public function decrementLetter($char)
+    {
         if ($char == 'A') {
             return $char;
         }
 
         $len = strlen($char);
         // last character is A or a
-        if(ord($char[$len - 1]) === 65 || ord($char[$len - 1]) === 97){
-            if($len === 1){ // one character left
+        if (ord($char[$len - 1]) === 65 || ord($char[$len - 1]) === 97) {
+            if ($len === 1) { // one character left
                 return null;
+            } else { // 'ABA'--;  => 'AAZ'; recursive call
+                $char = $this->decrementLetter(substr($char, 0, -1)) . 'Z';
             }
-            else{ // 'ABA'--;  => 'AAZ'; recursive call
-                $char = $this->decrementLetter(substr($char, 0, -1)).'Z';
-            }
-        }
-        else{
+        } else {
             $char[$len - 1] = chr(ord($char[$len - 1]) - 1);
         }
         return $char;
     }
-    
-    public function columDec($activeSheetIndex = null)
+
+    public function getSheet()
     {
-        $column = $this->decrementLetter($this->getColumn());
-        
-        $this->setColumn($column, $activeSheetIndex);
-
-        return $column;
+        return $this->getPHPExcel()->getActiveSheet();
     }
-
-public function getSheet()
-{
-    return $this->getPHPExcel()->getActiveSheet();
-}
 }

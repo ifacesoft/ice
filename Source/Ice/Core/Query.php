@@ -9,7 +9,6 @@
 
 namespace Ice\Core;
 
-use Ice\Core;
 use Ice\Helper\Arrays;
 use Ice\Helper\Json;
 
@@ -166,50 +165,6 @@ class Query
     }
 
     /**
-     * Get bind params
-     *
-     * @return array
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.1
-     * @since   0.1
-     */
-    public function getBinds()
-    {
-        $binds = [];
-
-        foreach ($this->getBindParts() as $bindPart) {
-            if (!is_array(reset($bindPart))) {
-                $binds = array_merge($binds, array_values($bindPart));
-                continue;
-            }
-
-            foreach ($bindPart as $values) {
-                $binds = array_merge($binds, array_values($values));
-                continue;
-            }
-        }
-
-        return $binds;
-    }
-
-    /**
-     * Return rows
-     *
-     * @return array
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since   0.0
-     */
-    public function getBindParts()
-    {
-        return $this->bindParts;
-    }
-
-    /**
      * Return validate tags
      *
      * @return array
@@ -258,64 +213,22 @@ class Query
         return $this->hash . '/' . $this->bindHash;
     }
 
-    public function getBody()
+    public function getLogger()
     {
-        $repository = Query::getRepository($this->getDataSource()->getDataSourceKey());
-        $key = 'body_' . md5(Json::encode($this->getBodyParts()));
+        return Logger::getInstance($this->getModelClass());
+    }
 
-        if ($body = $repository->get($key)) {
-            return $body;
-        }
-
-        $queryTranslatorClass = $this->getDataSource()->getQueryTranslatorClass();
-        $body = $queryTranslatorClass::getInstance()->translate($this->getBodyParts());
-
-        return $repository->set([$key => $body])[$key];
+    public function getModelClass()
+    {
+        return $this->getQueryBuilder()->getModelClass();
     }
 
     /**
-     * Return data source name
-     *
-     * @return DataSource
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since   0.0
+     * @return QueryBuilder
      */
-    public function getDataSource()
+    public function getQueryBuilder()
     {
-        return DataSource::getInstance($this->getDataSourceKey());
-    }
-
-    /**
-     * Return data source key of query
-     *
-     * @return string
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since   0.4
-     */
-    public function getDataSourceKey()
-    {
-        return $this->dataSourceKey;
-    }
-
-    /**
-     * Return query body parts
-     *
-     * @return array
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since   0.4
-     */
-    public function getBodyParts()
-    {
-        return $this->queryBuilder->getSqlParts();
+        return $this->queryBuilder;
     }
 
     public function getAfterSelectTriggers()
@@ -366,11 +279,33 @@ class Query
     }
 
     /**
-     * @return QueryBuilder
+     * Return data source name
+     *
+     * @return DataSource
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since   0.0
      */
-    public function getQueryBuilder()
+    public function getDataSource()
     {
-        return $this->queryBuilder;
+        return DataSource::getInstance($this->getDataSourceKey());
+    }
+
+    /**
+     * Return data source key of query
+     *
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since   0.4
+     */
+    public function getDataSourceKey()
+    {
+        return $this->dataSourceKey;
     }
 
     /**
@@ -512,11 +447,6 @@ class Query
         return array_keys($this->getRows($ttl));
     }
 
-    public function getModelClass()
-    {
-        return $this->getQueryBuilder()->getModelClass();
-    }
-
     public function dumpQuery()
     {
         Debuger::dump($this->getBody(), $this->getBinds());
@@ -524,9 +454,78 @@ class Query
         return $this;
     }
 
-    public function getLogger()
+    public function getBody()
     {
-        return Logger::getInstance($this->getModelClass());
+        $repository = Query::getRepository($this->getDataSource()->getDataSourceKey());
+        $key = 'body_' . md5(Json::encode($this->getBodyParts()));
+
+        if ($body = $repository->get($key)) {
+            return $body;
+        }
+
+        $queryTranslatorClass = $this->getDataSource()->getQueryTranslatorClass();
+        $body = $queryTranslatorClass::getInstance()->translate($this->getBodyParts());
+
+        return $repository->set([$key => $body])[$key];
+    }
+
+    /**
+     * Return query body parts
+     *
+     * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since   0.4
+     */
+    public function getBodyParts()
+    {
+        return $this->queryBuilder->getSqlParts();
+    }
+
+    /**
+     * Get bind params
+     *
+     * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.1
+     * @since   0.1
+     */
+    public function getBinds()
+    {
+        $binds = [];
+
+        foreach ($this->getBindParts() as $bindPart) {
+            if (!is_array(reset($bindPart))) {
+                $binds = array_merge($binds, array_values($bindPart));
+                continue;
+            }
+
+            foreach ($bindPart as $values) {
+                $binds = array_merge($binds, array_values($values));
+                continue;
+            }
+        }
+
+        return $binds;
+    }
+
+    /**
+     * Return rows
+     *
+     * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since   0.0
+     */
+    public function getBindParts()
+    {
+        return $this->bindParts;
     }
 
     public function getGroup($fieldNames, $ttl = null)
@@ -535,7 +534,7 @@ class Query
 
         $columns = [];
 
-        foreach ((array) $fieldNames as $fieldName) {
+        foreach ((array)$fieldNames as $fieldName) {
             $columns[] = $modelClass::getFieldName($fieldName);
         }
 

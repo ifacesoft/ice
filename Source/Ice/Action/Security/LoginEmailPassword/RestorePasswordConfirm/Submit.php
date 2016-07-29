@@ -2,9 +2,7 @@
 
 namespace Ice\Action;
 
-use Ice\Widget\Security_EmailPassword_RestorePasswordConfirm;
 use Ice\Widget\Security_LoginEmailPassword_RestorePasswordConfirm;
-use Ice\Widget\Security_LoginPassword_RestorePasswordConfirm;
 
 class Security_LoginEmailPassword_RestorePasswordConfirm_Submit extends Security
 {

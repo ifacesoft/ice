@@ -4,11 +4,8 @@ namespace Ice\Security;
 
 use Application\Sonata\UserBundle\Entity\User;
 use Doctrine\ORM\EntityManager;
-use Ice\Core\Debuger;
 use Ice\Core\Model;
 use Ice\Core\Model\Security_Account;
-use Ice\DataProvider\Security as DataProvider_Security;
-use Ice\DataProvider\Session;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
@@ -16,15 +13,6 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
 class Symfony extends Ice
 {
     private $symfonyUser = null;
-
-    /**
-     * @return Kernel
-     */
-    public function getKernel()
-    {
-        global $kernel;
-        return $kernel;
-    }
 
     /**
      * Check access by roles
@@ -55,6 +43,15 @@ class Symfony extends Ice
     }
 
     /**
+     * @return Kernel
+     */
+    public function getKernel()
+    {
+        global $kernel;
+        return $kernel;
+    }
+
+    /**
      * Check logged in
      *
      * @return bool
@@ -65,38 +62,6 @@ class Symfony extends Ice
 
         return parent::isAuth() && ($securityContext->isGranted('IS_AUTHENTICATED_FULLY') ||
             $securityContext->isGranted('IS_AUTHENTICATED_REMEMBERED'));
-    }
-
-    /**
-     * @param User $symfonyUser
-     */
-    protected function setSymfonyUser($symfonyUser)
-    {
-        $this->symfonyUser = $symfonyUser;
-    }
-
-    /**
-     * @return User
-     */
-    public function getSymfonyUser()
-    {
-        /** @var User $symfonyUser */
-        if ($symfonyUser = $this->symfonyUser) {
-            return $symfonyUser;
-        }
-
-        $symfonyUser = $this->getKernel()->getContainer()->get('security.token_storage')->getToken()->getUser();
-
-        if (!is_object($symfonyUser)) {
-            $symfonyUser = $this->getEntityManager()->find(
-                User::class,
-                $this->getDataProviderSession('auth')->get(Ice::SESSION_USER_KEY)
-            );
-        }
-
-        $this->setSymfonyUser($symfonyUser);
-        
-        return $symfonyUser;
     }
 
     /**
@@ -136,11 +101,20 @@ class Symfony extends Ice
         return $account;
     }
 
+    /**
+     * @return EntityManager
+     *
+     */
+    private function getEntityManager()
+    {
+        return $this->getKernel()->getContainer()->get('doctrine')->getManager();
+    }
+
     public function logout()
     {
         $this->setSymfonyUser(null);
         $this->getKernel()->getContainer()->get('security.token_storage')->setToken(null);
-        
+
         parent::logout();
     }
 
@@ -155,11 +129,34 @@ class Symfony extends Ice
     }
 
     /**
-     * @return EntityManager
-     *
+     * @return User
      */
-    private function getEntityManager()
+    public function getSymfonyUser()
     {
-        return $this->getKernel()->getContainer()->get('doctrine')->getManager();
+        /** @var User $symfonyUser */
+        if ($symfonyUser = $this->symfonyUser) {
+            return $symfonyUser;
+        }
+
+        $symfonyUser = $this->getKernel()->getContainer()->get('security.token_storage')->getToken()->getUser();
+
+        if (!is_object($symfonyUser)) {
+            $symfonyUser = $this->getEntityManager()->find(
+                User::class,
+                $this->getDataProviderSession('auth')->get(Ice::SESSION_USER_KEY)
+            );
+        }
+
+        $this->setSymfonyUser($symfonyUser);
+
+        return $symfonyUser;
+    }
+
+    /**
+     * @param User $symfonyUser
+     */
+    protected function setSymfonyUser($symfonyUser)
+    {
+        $this->symfonyUser = $symfonyUser;
     }
 }

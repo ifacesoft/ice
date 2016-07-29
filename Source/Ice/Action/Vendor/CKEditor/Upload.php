@@ -9,7 +9,6 @@ class Vendor_CKEditor_Upload extends Action
 {
 
 
-
     protected static function config()
     {
         return [
@@ -24,17 +23,17 @@ class Vendor_CKEditor_Upload extends Action
     public function run(array $input)
     {
 
-        if(array_key_exists('file', $_FILES) && is_uploaded_file($_FILES['file']['tmp_name'])){
-            if(false === @exif_imagetype($_FILES['file']['tmp_name'])){
+        if (array_key_exists('file', $_FILES) && is_uploaded_file($_FILES['file']['tmp_name'])) {
+            if (false === @exif_imagetype($_FILES['file']['tmp_name'])) {
                 $this->back();
             }
             $directory = Directory::get(MODULE_DIR . '/web/ckeditor/');
             $extension = '.' . pathinfo($_FILES['file']['name'], \PATHINFO_EXTENSION);
-            $filename = md5(time() . $_SERVER['REMOTE_ADDR'] . $_SERVER['HTTP_USER_AGENT'] );
-            while(file_exists($directory . $filename . $extension)){
+            $filename = md5(time() . $_SERVER['REMOTE_ADDR'] . $_SERVER['HTTP_USER_AGENT']);
+            while (file_exists($directory . $filename . $extension)) {
                 $filename = md5($filename);
             }
-            if(move_uploaded_file($_FILES["file"]["tmp_name"], $directory.$filename.$extension)){
+            if (move_uploaded_file($_FILES["file"]["tmp_name"], $directory . $filename . $extension)) {
                 $this->back();
             }
         }
@@ -47,7 +46,7 @@ class Vendor_CKEditor_Upload extends Action
     private function back()
     {
 
-        header( 'Location: /ice/ckeditor/browse' );
+        header('Location: /ice/ckeditor/browse');
         exit;
 
     }

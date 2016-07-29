@@ -2,7 +2,6 @@
 namespace Ice\Action;
 
 use Ice\Core\Action;
-use Ice\Core\Module;
 use Ice\Helper\Console;
 
 class CodeSniffer extends Action

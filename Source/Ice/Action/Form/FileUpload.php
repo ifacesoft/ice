@@ -4,7 +4,6 @@ namespace Ice\Action;
 
 use FileAPI;
 use Ice\Core\Action;
-use Ice\Core\Module;
 use Ice\DataProvider\Request;
 use Ice\Helper\File;
 

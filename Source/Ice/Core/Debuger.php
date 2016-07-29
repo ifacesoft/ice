@@ -3,7 +3,6 @@
 namespace Ice\Core;
 
 use Ice\Helper\Console as Helper_Console;
-use Ice\Helper\Directory;
 use Ice\Helper\File;
 use Ice\Helper\Php;
 

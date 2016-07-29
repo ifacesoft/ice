@@ -1,7 +1,6 @@
 <?php
 namespace Ice\Validator;
 
-use Ice\Core\Debuger;
 use Ice\Core\Validator;
 use Ice\Exception\Error;
 

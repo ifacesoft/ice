@@ -9,7 +9,6 @@
 
 namespace Ice\Core;
 
-use Ice\Core;
 use Ice\Exception\ModuleNotFound;
 use Ice\Helper\Directory;
 use Ice\Helper\File;
@@ -78,6 +77,11 @@ class Module extends Config
 
     private static $defaultDataSourceKeys = null;
 
+    public static function modulesClear()
+    {
+        Module::$modules = null;
+    }
+
     /**
      * Check table belongs to module
      *
@@ -138,77 +142,6 @@ class Module extends Config
 
 
         return $prefixes;
-    }
-
-    public function getDataSources()
-    {
-        return $this->gets(DataSource::getClass());
-    }
-
-    public function getModelClass($tableName, $dataSourceKey)
-    {
-        $alias = null;
-        $tableNamePart = $tableName;
-
-        foreach ($this->getDataSourcePrefixes($dataSourceKey) as $moduleAlias => $prefixes) {
-            foreach ($prefixes as $prefix) {
-                if (String::startsWith($tableName, $prefix)) {
-                    $tableNamePart = substr($tableName, strlen($prefix));
-                    $alias = $moduleAlias;
-                    break 2;
-                }
-            }
-        }
-
-        if (!$alias) {
-            $alias = Module::getInstance()->getAlias();
-        }
-
-        $modelName = $alias . '\Model\\';
-
-        foreach (explode('_', preg_replace('/_{2,}/', '_', $tableNamePart)) as $modelNamePart) {
-            $modelName .= ucfirst($modelNamePart) . '_';
-        }
-
-        return rtrim($modelName, '_');
-    }
-
-    public function getAlias()
-    {
-        return $this->getName();
-    }
-
-    /**
-     * Get module instance by module alias
-     *
-     * @param  string $moduleAlias
-     * @param  null $postfix
-     * @param  bool $isRequired
-     * @param  null $ttl
-     * @return Module
-     * @throws Exception
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.6
-     * @since   0.0
-     */
-    public static function getInstance($moduleAlias = null, $postfix = null, $isRequired = false, $ttl = null)
-    {
-        $modules = Module::getAll();
-
-        if (!$moduleAlias) {
-            return reset($modules);
-        }
-
-        if (!isset($modules[$moduleAlias])) {
-            Logger::getInstance(__CLASS__)->exception(
-                ['Module alias {$0} not found in module config files', $moduleAlias],
-                __FILE__,
-                __LINE__
-            );
-        }
-
-        return $modules[$moduleAlias];
     }
 
     /**
@@ -307,6 +240,77 @@ class Module extends Config
         }
     }
 
+    public function getDataSources()
+    {
+        return $this->gets(DataSource::getClass());
+    }
+
+    public function getAlias()
+    {
+        return $this->getName();
+    }
+
+    public function getModelClass($tableName, $dataSourceKey)
+    {
+        $alias = null;
+        $tableNamePart = $tableName;
+
+        foreach ($this->getDataSourcePrefixes($dataSourceKey) as $moduleAlias => $prefixes) {
+            foreach ($prefixes as $prefix) {
+                if (String::startsWith($tableName, $prefix)) {
+                    $tableNamePart = substr($tableName, strlen($prefix));
+                    $alias = $moduleAlias;
+                    break 2;
+                }
+            }
+        }
+
+        if (!$alias) {
+            $alias = Module::getInstance()->getAlias();
+        }
+
+        $modelName = $alias . '\Model\\';
+
+        foreach (explode('_', preg_replace('/_{2,}/', '_', $tableNamePart)) as $modelNamePart) {
+            $modelName .= ucfirst($modelNamePart) . '_';
+        }
+
+        return rtrim($modelName, '_');
+    }
+
+    /**
+     * Get module instance by module alias
+     *
+     * @param  string $moduleAlias
+     * @param  null $postfix
+     * @param  bool $isRequired
+     * @param  null $ttl
+     * @return Module
+     * @throws Exception
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.6
+     * @since   0.0
+     */
+    public static function getInstance($moduleAlias = null, $postfix = null, $isRequired = false, $ttl = null)
+    {
+        $modules = Module::getAll();
+
+        if (!$moduleAlias) {
+            return reset($modules);
+        }
+
+        if (!isset($modules[$moduleAlias])) {
+            Logger::getInstance(__CLASS__)->exception(
+                ['Module alias {$0} not found in module config files', $moduleAlias],
+                __FILE__,
+                __LINE__
+            );
+        }
+
+        return $modules[$moduleAlias];
+    }
+
     public function getDataSourceTables()
     {
         $tables = [];
@@ -342,12 +346,8 @@ class Module extends Config
         return Module::$defaultDataSourceKeys;
     }
 
-    public static function modulesClear()
+    public function getPath($pathParam = null, $isRequired_default = true)
     {
-        Module::$modules = null;
-    }
-
-    public function getPath($pathParam = null, $isRequired_default = true) {
         return $pathParam
             ? $this->get('pathes/' . $pathParam, $isRequired_default)
             : $this->get(Module::DIR);

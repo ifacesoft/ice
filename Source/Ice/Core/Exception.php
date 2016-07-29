@@ -80,7 +80,7 @@ abstract class Exception extends ErrorException
         }
 
         if ($message) {
-            $message =$resource->get($message, $params, $class);
+            $message = $resource->get($message, $params, $class);
         }
 
         if (!$errfile) {

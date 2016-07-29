@@ -180,29 +180,6 @@ class ModelScheme extends Config
     }
 
     /**
-     * Return unique key column names
-     *
-     * @return array
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 1.1
-     * @since   1.1
-     */
-    public function getUniqueColumnNames()
-    {
-        $uniqueColumnNames = [];
-
-        foreach ($this->getIndexes()['UNIQUE'] as $SeqInIndex => $columnNames) {
-            foreach ($columnNames as $columnName) {
-                $uniqueColumnNames[] = $columnName;
-            }
-        }
-
-        return $this->getIndexes()['PRIMARY KEY']['PRIMARY'];
-    }
-
-    /**
      * Return unique field names
      *
      * @return array
@@ -234,5 +211,28 @@ class ModelScheme extends Config
                 $this->getUniqueColumnNames()
             )
         ])[$key];
+    }
+
+    /**
+     * Return unique key column names
+     *
+     * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 1.1
+     * @since   1.1
+     */
+    public function getUniqueColumnNames()
+    {
+        $uniqueColumnNames = [];
+
+        foreach ($this->getIndexes()['UNIQUE'] as $SeqInIndex => $columnNames) {
+            foreach ($columnNames as $columnName) {
+                $uniqueColumnNames[] = $columnName;
+            }
+        }
+
+        return $this->getIndexes()['PRIMARY KEY']['PRIMARY'];
     }
 }

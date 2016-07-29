@@ -9,9 +9,6 @@
 
 namespace Ice\Core;
 
-use Ice\Core;
-use Ice\Helper\String;
-
 /**
  * Class DataSource
  *
@@ -52,6 +49,43 @@ abstract class DataSource extends Container
         $this->getSourceDataProvider()->setScheme($scheme);
     }
 
+    /**
+     * Return source data provider
+     *
+     * @return DataProvider
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since   0.0
+     */
+    public function getSourceDataProvider()
+    {
+        $sourceDataProviderClass = $this->getDataProviderClass();
+
+        /**
+         * @var DataProvider $sourceDataProvider
+         */
+        $sourceDataProvider = $sourceDataProviderClass::getInstance($this->key);
+
+        if ($sourceDataProvider->getScheme() != $this->scheme) {
+            $sourceDataProvider->setScheme($this->scheme);
+        }
+
+        return $sourceDataProvider;
+    }
+
+    /**
+     * Return data provider class
+     *
+     * @return DataProvider
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since   0
+     */
+    abstract public function getDataProviderClass();
 
     /**
      * Return instance of data source
@@ -198,21 +232,6 @@ abstract class DataSource extends Container
     abstract public function executeDrop(Query $query);
 
     /**
-     * Get connection instance
-     *
-     * @return Object
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since   0.0
-     */
-    public function getConnection()
-    {
-        return $this->getSourceDataProvider()->getConnection();
-    }
-
-    /**
      * Get data Scheme from data source
      *
      * @param  Module $module
@@ -321,13 +340,13 @@ abstract class DataSource extends Container
 
                     if ($queryResult = $cacher->get($queryHash)) {
                         Profiler::setPoint($queryResult->__toString(), $startTime, $startMemory);
-                        Logger::log(Profiler::getReport($queryResult->__toString()), 'data source (cache - ' . $dataProviderClassName .  ')', 'LOG');
+                        Logger::log(Profiler::getReport($queryResult->__toString()), 'data source (cache - ' . $dataProviderClassName . ')', 'LOG');
                         return $queryResult;
                     }
 
                     $queryResult = QueryResult::create($query, $this->$queryCommand($query));
                     Profiler::setPoint($queryResult->__toString(), $startTime, $startMemory);
-                    Logger::log(Profiler::getReport($queryResult->__toString()), 'data source (new - ' . $dataProviderClassName .  ')', 'INFO');
+                    Logger::log(Profiler::getReport($queryResult->__toString()), 'data source (new - ' . $dataProviderClassName . ')', 'INFO');
 
                     $cacher->set([$queryHash => $queryResult], $ttl);
                     return $queryResult;
@@ -351,7 +370,7 @@ abstract class DataSource extends Container
             }
         } catch (\Exception $e) {
             $message = $e->getMessage() . ': ' . preg_replace('/\s\s+/', ' ', print_r($query->getBody(), true) . ' (' . print_r($query->getBinds(), true) . ')');
-            
+
             Profiler::setPoint($message, $startTime, $startMemory);
             Logger::log(Profiler::getReport($message), 'data source (error)', 'ERROR');
 
@@ -500,44 +519,6 @@ abstract class DataSource extends Container
     abstract public function releaseSavePoint($savePoint);
 
     /**
-     * Return source data provider
-     *
-     * @return DataProvider
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since   0.0
-     */
-    public function getSourceDataProvider()
-    {
-        $sourceDataProviderClass = $this->getDataProviderClass();
-
-        /**
-         * @var DataProvider $sourceDataProvider
-         */
-        $sourceDataProvider = $sourceDataProviderClass::getInstance($this->key);
-
-        if ($sourceDataProvider->getScheme() != $this->scheme) {
-            $sourceDataProvider->setScheme($this->scheme);
-        }
-
-        return $sourceDataProvider;
-    }
-
-    /**
-     * Return data provider class
-     *
-     * @return DataProvider
-     *
-     * @author anonymous <email>
-     *
-     * @version 0
-     * @since   0
-     */
-    abstract public function getDataProviderClass();
-
-    /**
      * Get by ice query language
      *
      * ```php
@@ -583,6 +564,19 @@ abstract class DataSource extends Container
     }
 
     /**
+     * Execute native query
+     *
+     * @param $sql
+     * @return mixed
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since   0
+     */
+    abstract public function query($sql);
+
+    /**
      * Translate ice query language for get data
      *
      * @param $iceql
@@ -593,6 +587,21 @@ abstract class DataSource extends Container
      * @since   0
      */
     abstract public function translateGet(array $iceql);
+
+    /**
+     * Get connection instance
+     *
+     * @return Object
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since   0.0
+     */
+    public function getConnection()
+    {
+        return $this->getSourceDataProvider()->getConnection();
+    }
 
     /**
      * Set by ice query language
@@ -693,17 +702,4 @@ abstract class DataSource extends Container
      * @since   0
      */
     abstract public function translateDelete(array $iceql);
-
-    /**
-     * Execute native query
-     *
-     * @param $sql
-     * @return mixed
-     *
-     * @author anonymous <email>
-     *
-     * @version 0
-     * @since   0
-     */
-    abstract public function query($sql);
 }

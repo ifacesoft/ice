@@ -2,73 +2,23 @@
 
 namespace Ice\Action;
 
-use Ebs\Model\Packet_Dynamic;
-use Ice\Core;
 use Ice\Core\Config;
 use Ice\Core\DataSource;
 use Ice\Core\Exception;
+use Ice\Core\Logger as Core_Logger;
 use Ice\Core\Model;
-use Ice\Core\Security as Core_Security;
 use Ice\Core\Model\Security_Account;
 use Ice\Core\Model\Security_User;
+use Ice\Core\Security as Core_Security;
 use Ice\Core\Widget_Security;
 use Ice\Helper\Date;
 use Ice\Helper\Logger;
 use Ice\Helper\String;
 use Ice\Model\Log_Security;
 use Ice\Model\Token;
-use Ice\Core\Logger as Core_Logger;
 
 abstract class Security extends Widget_Form_Event
 {
-    /**
-     * @param Security_Account|Model $account
-     * @param array $input
-     * @param Log_Security $log
-     * @return Model|Security_Account
-     * @throws Exception
-     */
-    final protected function signIn(Security_Account $account, array $input, Log_Security $log)
-    {
-        $logger = $this->getLogger();
-
-        /** @var Widget_Security $securityForm */
-        $securityForm = $input['widget'];
-
-        if ($expired = $account->isExpired()) {
-            if ($prolongate = $securityForm->isProlongate()) {
-                if ($prolongate === true) {
-                    $expired = $this->prolongate($account, $securityForm->getExpired());
-                } else {
-                    $expired = call_user_func($prolongate, $account, $securityForm->getExpired());
-                }
-            }
-
-            if ($expired) {
-                return $securityForm
-                    ->getLogger()
-                    ->exception(['Account is expired', [], $securityForm->getResource()], __FILE__, __LINE__);
-            }
-        }
-
-        $userModelClass = Config::getInstance(Core_Security::getClass())->get('userModelClass');
-
-        /** @var Security_User|Model $user */
-        $user = $account->fetchOne($userModelClass, '/active', true);
-
-        if (!$user || !$user->isActive()) {
-            return $securityForm
-                ->getLogger()
-                ->exception(['User is blocked or not found', [], $securityForm->getResource()], __FILE__, __LINE__);
-        }
-
-        Core_Security::getInstance()->login($account);
-
-        $logger->save($log);
-
-        return $account;
-    }
-
     /**
      * Sing up by account
      *
@@ -171,12 +121,54 @@ abstract class Security extends Widget_Form_Event
     }
 
     /**
-     * Return confirm token and confirm token expired
-     *
-     * @param Token $token
+     * @param Security_Account|Model $account
+     * @param array $input
+     * @param Log_Security $log
+     * @return Model|Security_Account
      * @throws Exception
      */
-    public function sendRestorePasswordConfirm(Token $token, array $input)
+    final protected function signIn(Security_Account $account, array $input, Log_Security $log)
+    {
+        $logger = $this->getLogger();
+
+        /** @var Widget_Security $securityForm */
+        $securityForm = $input['widget'];
+
+        if ($expired = $account->isExpired()) {
+            if ($prolongate = $securityForm->isProlongate()) {
+                if ($prolongate === true) {
+                    $expired = $this->prolongate($account, $securityForm->getExpired());
+                } else {
+                    $expired = call_user_func($prolongate, $account, $securityForm->getExpired());
+                }
+            }
+
+            if ($expired) {
+                return $securityForm
+                    ->getLogger()
+                    ->exception(['Account is expired', [], $securityForm->getResource()], __FILE__, __LINE__);
+            }
+        }
+
+        $userModelClass = Config::getInstance(Core_Security::getClass())->get('userModelClass');
+
+        /** @var Security_User|Model $user */
+        $user = $account->fetchOne($userModelClass, '/active', true);
+
+        if (!$user || !$user->isActive()) {
+            return $securityForm
+                ->getLogger()
+                ->exception(['User is blocked or not found', [], $securityForm->getResource()], __FILE__, __LINE__);
+        }
+
+        Core_Security::getInstance()->login($account);
+
+        $logger->save($log);
+
+        return $account;
+    }
+
+    public function prolongate($account, $expired)
     {
         Core_Logger::getInstance(__CLASS__)
             ->exception(['Implement {$0} for {$1}', [__FUNCTION__, get_class($this)]], __FILE__, __LINE__);
@@ -281,6 +273,18 @@ abstract class Security extends Widget_Form_Event
         return $account;
     }
 
+    /**
+     * Return confirm token and confirm token expired
+     *
+     * @param Token $token
+     * @throws Exception
+     */
+    public function sendRestorePasswordConfirm(Token $token, array $input)
+    {
+        Core_Logger::getInstance(__CLASS__)
+            ->exception(['Implement {$0} for {$1}', [__FUNCTION__, get_class($this)]], __FILE__, __LINE__);
+    }
+
     final protected function changePassword($account, $accountData, $input)
     {
         $logger = $this->getLogger();
@@ -325,11 +329,5 @@ abstract class Security extends Widget_Form_Event
         $logger->save($log);
 
         return $account;
-    }
-
-    public function prolongate($account, $expired)
-    {
-        Core_Logger::getInstance(__CLASS__)
-            ->exception(['Implement {$0} for {$1}', [__FUNCTION__, get_class($this)]], __FILE__, __LINE__);
     }
 }

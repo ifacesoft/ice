@@ -6,7 +6,6 @@ use Ice\Action\Security_EmailPassword_RestoreConfirm_Submit;
 use Ice\Action\Security_LoginEmailPassword_RestorePasswordConfirm_Submit;
 use Ice\Core\Widget_Security;
 use Ice\DataProvider\Request;
-use Ice\DataProvider\Router;
 
 class Security_LoginEmailPassword_RestorePasswordConfirm extends Widget_Security
 {
@@ -52,53 +51,6 @@ class Security_LoginEmailPassword_RestorePasswordConfirm extends Widget_Security
         }
 
         return $this;
-    }
-
-    /** Build widget
-     *
-     * @param array $input
-     * @return array
-     */
-    protected function build(array $input)
-    {
-        $this
-//            ->setAccountLoginPasswordModelClass(Account_Login_Password::class)
-//            ->setAccountEmailPasswordModelClass(Account_Email_Password::class)
-//            ->setAccountLoginPasswordActionClass(Security_LoginPassword_RestorePassword_Submit::class)
-//            ->setAccountEmailPasswordActionClass(Security_EmailPassword_RestorePassword_Submit::class)
-            ->widget('header', ['widget' => $this->getWidget(Header::class)->h1('Restore password confirmation', ['valueResource' => true])])
-            ->text(
-                'token',
-                [
-                    'placeholder' => true,
-                    'required' => true,
-                    'params' => ['token' => ['providers' => Request::class]]
-                ]
-            )
-            ->password(
-                'new_password',
-                [
-                    'placeholder' => true,
-                    'required' => true,
-                    'params' => ['new_password' => ['providers' => Request::class]]
-                ]
-            )
-            ->password(
-                'confirm_password',
-                [
-                    'placeholder' => true,
-                    'required' => true,
-                    'params' => ['confirm_password' => ['providers' => Request::class]]
-                ]
-            )
-            ->div('ice-message', ['value' => '&nbsp;', 'encode' => false, 'resource' => false])
-            ->button(
-                'restore_password_confirm',
-                [
-                    'route' => 'ice_security_restore_password_confirm_request',
-                    'submit' => Security_LoginEmailPassword_RestorePasswordConfirm_Submit::class
-                ]
-            );
     }
 
     /**
@@ -171,5 +123,52 @@ class Security_LoginEmailPassword_RestorePasswordConfirm extends Widget_Security
     {
         $this->accountEmailPasswordSubmitClass = $accountEmailPasswordSubmitClass;
         return $this;
+    }
+
+    /** Build widget
+     *
+     * @param array $input
+     * @return array
+     */
+    protected function build(array $input)
+    {
+        $this
+//            ->setAccountLoginPasswordModelClass(Account_Login_Password::class)
+//            ->setAccountEmailPasswordModelClass(Account_Email_Password::class)
+//            ->setAccountLoginPasswordActionClass(Security_LoginPassword_RestorePassword_Submit::class)
+//            ->setAccountEmailPasswordActionClass(Security_EmailPassword_RestorePassword_Submit::class)
+            ->widget('header', ['widget' => $this->getWidget(Header::class)->h1('Restore password confirmation', ['valueResource' => true])])
+            ->text(
+                'token',
+                [
+                    'placeholder' => true,
+                    'required' => true,
+                    'params' => ['token' => ['providers' => Request::class]]
+                ]
+            )
+            ->password(
+                'new_password',
+                [
+                    'placeholder' => true,
+                    'required' => true,
+                    'params' => ['new_password' => ['providers' => Request::class]]
+                ]
+            )
+            ->password(
+                'confirm_password',
+                [
+                    'placeholder' => true,
+                    'required' => true,
+                    'params' => ['confirm_password' => ['providers' => Request::class]]
+                ]
+            )
+            ->div('ice-message', ['value' => '&nbsp;', 'encode' => false, 'resource' => false])
+            ->button(
+                'restore_password_confirm',
+                [
+                    'route' => 'ice_security_restore_password_confirm_request',
+                    'submit' => Security_LoginEmailPassword_RestorePasswordConfirm_Submit::class
+                ]
+            );
     }
 }

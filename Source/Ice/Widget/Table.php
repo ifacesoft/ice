@@ -2,9 +2,7 @@
 
 namespace Ice\Widget;
 
-use Ice\Action\Render;
 use Ice\Core\Widget;
-use Ice\Helper\Transliterator;
 use Ice\WidgetComponent\HtmlTag;
 
 class Table extends Widget
@@ -26,16 +24,6 @@ class Table extends Widget
         ];
     }
 
-    /** Build widget
-     *
-     * @param array $input
-     * @return array
-     */
-    protected function build(array $input)
-    {
-        return [];
-    }
-
     public function getPagination($widgetClass = 'Ice\Widget\Pagination')
     {
         return $this->getWidget($widgetClass);
@@ -44,5 +32,15 @@ class Table extends Widget
     public function row($fieldName, array $options = [], $template = 'Ice\Widget\Table_Row')
     {
         return $this->addPart(new HtmlTag($fieldName, $options, $template, $this));
+    }
+
+    /** Build widget
+     *
+     * @param array $input
+     * @return array
+     */
+    protected function build(array $input)
+    {
+        return [];
     }
 }

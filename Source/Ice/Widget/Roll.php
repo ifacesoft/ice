@@ -31,24 +31,6 @@ class Roll extends Widget
         ];
     }
 
-    /** Build widget
-     *
-     * @param array $input
-     * @return array
-     */
-    protected function build(array $input)
-    {
-        return [];
-    }
-
-    /**
-     * @return boolean
-     */
-    public function isShowCount()
-    {
-        return $this->isShowCount;
-    }
-
     /**
      * @param boolean $isShowCount
      * @return Table_Rows
@@ -57,35 +39,6 @@ class Roll extends Widget
     {
         $this->isShowCount = $isShowCount;
 
-        return $this;
-    }
-
-    protected function getCompiledResult()
-    {
-        return array_merge(
-            parent::getCompiledResult(),
-            [
-                'isShowCount' => $this->isShowCount(),
-                'columnCount' => $this->getColumnCount()
-            ]
-        );
-    }
-
-    /**
-     * @return int
-     */
-    public function getColumnCount()
-    {
-        return $this->columnCount ? $this->columnCount : count($this->getParts());
-    }
-
-    /**
-     * @param int $columnCount
-     * @return Table_Rows
-     */
-    public function setColumnCount($columnCount)
-    {
-        $this->columnCount = $columnCount;
         return $this;
     }
 
@@ -142,5 +95,52 @@ class Roll extends Widget
     public function li($columnName, array $options = [], $template = null)
     {
         return $this->addPart(new WidgetComponent_Html_Ul_Li($columnName, $options, $template, $this));
+    }
+
+    /** Build widget
+     *
+     * @param array $input
+     * @return array
+     */
+    protected function build(array $input)
+    {
+        return [];
+    }
+
+    protected function getCompiledResult()
+    {
+        return array_merge(
+            parent::getCompiledResult(),
+            [
+                'isShowCount' => $this->isShowCount(),
+                'columnCount' => $this->getColumnCount()
+            ]
+        );
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isShowCount()
+    {
+        return $this->isShowCount;
+    }
+
+    /**
+     * @return int
+     */
+    public function getColumnCount()
+    {
+        return $this->columnCount ? $this->columnCount : count($this->getParts());
+    }
+
+    /**
+     * @param int $columnCount
+     * @return Table_Rows
+     */
+    public function setColumnCount($columnCount)
+    {
+        $this->columnCount = $columnCount;
+        return $this;
     }
 }

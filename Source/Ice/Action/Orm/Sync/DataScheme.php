@@ -4,7 +4,6 @@ namespace Ice\Action;
 
 use Ice\Core\Action;
 use Ice\Core\Data_Scheme;
-use Ice\Core\Debuger;
 use Ice\Core\Logger;
 use Ice\Core\Model;
 use Ice\Core\Module;
@@ -289,21 +288,6 @@ class Orm_Sync_DataScheme extends Action
         );
     }
 
-    private function deleteModel($modelFilePath, $tableName, $schemeTables, $dataSourceKey)
-    {
-        if (file_exists($modelFilePath)) {
-            unlink($modelFilePath);
-        }
-
-        Scheme::createQueryBuilder()->getDeleteQuery($tableName, $dataSourceKey)->getQueryResult();
-
-        $this->getLogger()->info(
-            ['{$0}: Model {$1} successfully deleted', [$dataSourceKey, $schemeTables[$tableName]['modelClass']]],
-            Logger::INFO,
-            true
-        );
-    }
-
     private function updateModelScheme(array $tableScheme, array &$modelScheme, $tableName, $modelClass, $dataSourceKey)
     {
         $tableSchemeJson = Json::encode($tableScheme);
@@ -513,5 +497,20 @@ class Orm_Sync_DataScheme extends Action
         ]);
 
         return true;
+    }
+
+    private function deleteModel($modelFilePath, $tableName, $schemeTables, $dataSourceKey)
+    {
+        if (file_exists($modelFilePath)) {
+            unlink($modelFilePath);
+        }
+
+        Scheme::createQueryBuilder()->getDeleteQuery($tableName, $dataSourceKey)->getQueryResult();
+
+        $this->getLogger()->info(
+            ['{$0}: Model {$1} successfully deleted', [$dataSourceKey, $schemeTables[$tableName]['modelClass']]],
+            Logger::INFO,
+            true
+        );
     }
 }

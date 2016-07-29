@@ -2,21 +2,23 @@
 
 namespace Ice\WidgetComponent;
 
-use Ice\Core\Debuger;
 use Ice\Core\Model;
-use Ice\Core\Module;
 use Ice\Core\QueryBuilder;
-use Ice\Core\Security;
 use Ice\Core\Widget as Core_Widget;
-use Ice\Exception\Not_Valid;
 use Ice\Helper\Date;
-use Ice\Render\Php;
 
 class FormElement extends HtmlTag
 {
 //    private $validators = null;
     private $name = null;
     private $horizontal = null;
+
+    public function __construct($componentName, array $options, $template, Core_Widget $widget)
+    {
+        parent::__construct($componentName, $options, $template, $widget);
+
+        $this->horizontal = $widget->getOption('horizontal', 0);
+    }
 
     /**
      * WidgetComponent config
@@ -32,19 +34,12 @@ class FormElement extends HtmlTag
         ];
     }
 
-    public function __construct($componentName, array $options, $template, Core_Widget $widget)
-    {
-        parent::__construct($componentName, $options, $template, $widget);
-
-        $this->horizontal = $widget->getOption('horizontal', 0);
-    }
-
     /**
-     * @return string
+     * @return null
      */
-    public function getName()
+    public function getHorizontal()
     {
-        return $this->name = $this->getOption('name') ? $this->getOption('name') : $this->getComponentName();
+        return $this->horizontal;
     }
 
 //    public function build(array $row)
@@ -72,12 +67,19 @@ class FormElement extends HtmlTag
 ////        }
 //    }
 
-    /**
-     * @return null
-     */
-    public function getHorizontal()
+    public function save(Model $model)
     {
-        return $this->horizontal;
+        if ($this->getOption('readonly', false) || $this->getOption('disabled', false)) {
+            return [];
+        }
+
+        $value = $this->getValue();
+
+        if ($dateFormat = $this->getOption('dateFormat')) {
+            $value = Date::get(strtotime($value), Date::FORMAT_MYSQL);
+        }
+
+        return [$this->getName() => is_array($value) ? $value : html_entity_decode($value)];
     }
 //
 //    /**
@@ -102,19 +104,12 @@ class FormElement extends HtmlTag
 //        return $this;
 //    }
 
-    public function save(Model $model)
+    /**
+     * @return string
+     */
+    public function getName()
     {
-        if ($this->getOption('readonly', false) || $this->getOption('disabled', false)) {
-            return [];
-        }
-
-        $value = $this->getValue();
-
-        if ($dateFormat = $this->getOption('dateFormat')) {
-            $value = Date::get(strtotime($value), Date::FORMAT_MYSQL);
-        }
-
-        return [$this->getName() => is_array($value) ? $value : html_entity_decode($value)];
+        return $this->name = $this->getOption('name') ? $this->getOption('name') : $this->getComponentName();
     }
 
     public function filter(QueryBuilder $queryBuilder)

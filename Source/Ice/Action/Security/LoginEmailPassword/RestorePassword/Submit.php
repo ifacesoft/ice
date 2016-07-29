@@ -2,10 +2,7 @@
 
 namespace Ice\Action;
 
-use Ice\Core\Model;
-use Ice\Widget\Security_EmailPassword_RestorePassword;
 use Ice\Widget\Security_LoginEmailPassword_RestorePassword;
-use Ice\Widget\Security_LoginPassword_RestorePassword;
 
 class Security_LoginEmailPassword_RestorePassword_Submit extends Security
 {

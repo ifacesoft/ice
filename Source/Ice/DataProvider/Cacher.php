@@ -12,7 +12,6 @@ namespace Ice\DataProvider;
 use Ice\Core\Cache;
 use Ice\Core\Cacheable;
 use Ice\Core\DataProvider;
-use Ice\Core\Debuger;
 use Ice\Core\Environment;
 use Ice\Core\Exception;
 use Ice\Exception\Error;

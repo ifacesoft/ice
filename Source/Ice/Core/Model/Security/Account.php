@@ -19,8 +19,8 @@ interface Security_Account
      * @return User|Model
      */
     public function getUser();
-    
+
     public function securityVerify(array $values);
-    
+
     public function securityHash(array $values);
 }

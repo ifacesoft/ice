@@ -11,10 +11,8 @@ namespace Ice\Helper;
 
 use DateTime;
 use DateTimeZone;
-use Ice\Core\Debuger;
 use Ice\Core\Module;
 use Ice\Core\Security;
-use Locale;
 
 /**
  * Class Date

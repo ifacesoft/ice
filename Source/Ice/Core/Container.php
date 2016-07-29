@@ -196,8 +196,9 @@ abstract class Container
     {
         return Logger::getInstance(get_class($this));
     }
-    
-    protected function getDataProviderSession($index = 'default') {
+
+    protected function getDataProviderSession($index = 'default')
+    {
         return Session::getInstance(get_class($this), $index);
     }
 }

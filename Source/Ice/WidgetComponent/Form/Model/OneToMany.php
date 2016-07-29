@@ -2,29 +2,11 @@
 
 namespace Ice\WidgetComponent;
 
-use Ice\Core\Debuger;
 use Ice\Core\Model;
-use Ice\Core\Module;
 use Ice\Core\QueryBuilder;
 
 class Form_Model_OneToMany extends FormElement_Chosen
 {
-    /**
-     * @return Model
-     */
-    public function getItemModel()
-    {
-        return $this->getOption('itemModel');
-    }
-
-    public function getItemKey()
-    {
-        /** @var Model $modelClass */
-        $modelClass = $this->getItemModel();
-
-        return $modelClass::getPkFieldName();
-    }
-
     public function getItems($fieldNames = [])
     {
         /** @var Model $modelClass */
@@ -54,6 +36,56 @@ class Form_Model_OneToMany extends FormElement_Chosen
         $this->setOption('items', $queryBuilder->getSelectQuery(array_merge((array)$this->getItemKey(), $fieldNames))->getRows());
 
         return parent::getItems();
+    }
+
+    /**
+     * @return Model
+     */
+    public function getItemModel()
+    {
+        return $this->getOption('itemModel');
+    }
+
+    public function getItemKey()
+    {
+        /** @var Model $modelClass */
+        $modelClass = $this->getItemModel();
+
+        return $modelClass::getPkFieldName();
+    }
+
+    /**
+     * @param QueryBuilder $queryBuilder
+     */
+    public function filter(QueryBuilder $queryBuilder)
+    {
+        $modelClass = $this->getItemModel();
+
+        $this->setOption('name', $modelClass::getPkFieldName());
+        $this->setOption('comparison', '=');
+
+        parent::filter($queryBuilder, $modelClass);
+//
+//        $typeahead = $this->getName() . '_typeahead';
+//
+//        $typeaheadValue = $this->get($typeahead);
+//
+//        if ($typeaheadValue === null || $typeaheadValue === '') {
+//            return;
+//        }
+//
+//        $queryBuilder->like($this->getItemTitle(), '%' . $typeaheadValue . '%', $this->getItemModel());
+    }
+
+    public function save(Model $model)
+    {
+        $save = parent::save($model);
+
+        if (empty($save[$this->getName()])) {
+            return [];
+        }
+
+        return $save;
     }
 
     protected function buildParams(array $values)
@@ -97,39 +129,5 @@ class Form_Model_OneToMany extends FormElement_Chosen
 ////            $this->set($typeahead, null); // не обнуляем - ищем по вхождению
 //            }
 //        }
-    }
-
-    /**
-     * @param QueryBuilder $queryBuilder
-     */
-    public function filter(QueryBuilder $queryBuilder)
-    {
-        $modelClass = $this->getItemModel();
-
-        $this->setOption('name', $modelClass::getPkFieldName());
-        $this->setOption('comparison', '=');
-        
-        parent::filter($queryBuilder, $modelClass);
-//
-//        $typeahead = $this->getName() . '_typeahead';
-//
-//        $typeaheadValue = $this->get($typeahead);
-//
-//        if ($typeaheadValue === null || $typeaheadValue === '') {
-//            return;
-//        }
-//
-//        $queryBuilder->like($this->getItemTitle(), '%' . $typeaheadValue . '%', $this->getItemModel());
-    }
-
-    public function save(Model $model)
-    {
-        $save = parent::save($model);
-
-        if (empty($save[$this->getName()])) {
-            return [];
-        }
-
-        return $save;
     }
 }

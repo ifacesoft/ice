@@ -5,10 +5,10 @@ namespace Ice\Core\Action;
 use Ebs\Model\Worker_Task;
 use Ice\Core\Action;
 use Ice\Core\DataSource;
+use Ice\Core\Logger;
 use Ice\DataProvider\Cli;
 use Ice\Exception\Error;
 use Ice\Helper\Date;
-use Ice\Core\Logger;
 use Ice\Helper\Logger as Helper_Logger;
 
 abstract class Job extends Action
@@ -42,14 +42,14 @@ abstract class Job extends Action
         ob_start();
 
         $logger->info('Start job #' . $input['task'], Logger::INFO);
-        
+
         /** @var Worker_Task $task */
         $task = Worker_Task::getModel($input['task'], ['/pk', 'params__json', 'worker_queue__fk']);
 
         if (!$task) {
-           throw new Error(['Task # {$0} not found', $input['task']]);
+            throw new Error(['Task # {$0} not found', $input['task']]);
         }
-        
+
         $this->start($task);
 
         $dataSource = DataSource::getInstance();
@@ -77,6 +77,8 @@ abstract class Job extends Action
         $task->set(['/started_at' => Date::get()])->save();
     }
 
+    abstract protected function job(Worker_Task $task, Logger $logger);
+
     protected function success(Worker_Task $task)
     {
         $task->set([
@@ -93,8 +95,6 @@ abstract class Job extends Action
             'error' => Helper_Logger::getMessage($e)
         ])->save();
     }
-
-    abstract protected function job(Worker_Task $task, Logger $logger);
 
     protected function log(Worker_Task $task, $log)
     {

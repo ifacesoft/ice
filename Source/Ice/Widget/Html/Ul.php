@@ -21,6 +21,11 @@ class Html_Ul extends Widget
         return $config;
     }
 
+    public function li($componentName, array $options = [])
+    {
+        return $this->addPart(new Html_Ul_Li($componentName, $options, null, $this));
+    }
+
     /** Build widget
      *
      * @param array $input
@@ -29,10 +34,5 @@ class Html_Ul extends Widget
     protected function build(array $input)
     {
         return [];
-    }
-
-    public function li($componentName, array $options = [])
-    {
-        return $this->addPart(new Html_Ul_Li($componentName, $options, null, $this));
     }
 }
