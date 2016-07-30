@@ -154,9 +154,9 @@ class FormElement extends HtmlTag
             return $valueOption;
         }
 
-        if (array_key_exists('title', $valueOption)) {
-            return $valueOption['title'];
-        }
+//        if (array_key_exists('title', $valueOption)) {
+//            return $valueOption['title'];
+//        }
 
         $defaultValueKey = array_key_exists('default', $valueOption)
             ? $valueOption['default']

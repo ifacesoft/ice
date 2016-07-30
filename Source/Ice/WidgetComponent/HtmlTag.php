@@ -4,6 +4,7 @@ namespace Ice\WidgetComponent;
 
 use Ice\Action\Render;
 use Ice\Core\Action;
+use Ice\Core\Debuger;
 use Ice\Core\Request;
 use Ice\Core\Resource;
 use Ice\Core\Route;
@@ -276,17 +277,15 @@ class HtmlTag extends WidgetComponent
         return $htmlTagAttributes;
     }
 
-    protected function init()
+    protected function getValidValue()
     {
-        parent::init();
-
-        if ($route = $this->getRoute()) {
-            $valueKey = $this->getValueKey();
-
-            if ($this->get($valueKey) === null) {
-                $this->set([$valueKey => Resource::create(Route::getClass())->get($route['name'], $route['params'])]);
+        if ($this->getOption('value') === null && $this->getOption('valueKey') === null) {
+            if ($route = $this->getRoute()) {
+                return Resource::create(Route::getClass())->get($route['name'], $route['params']);
             }
         }
+
+        return parent::getValidValue();
     }
 
     /**
@@ -350,19 +349,4 @@ class HtmlTag extends WidgetComponent
 
         return $route;
     }
-//
-//    protected function buildParams(array $values)
-//    {
-//        if ($route = $this->getRoute()) {
-//            if ($this->getOption('value') === null && $this->getOption('valueKey') === null) {
-//                $valueKey = $this->getValueKey();
-//
-//                if (!array_key_exists($valueKey, $values)) {
-//                    $values[$valueKey] = Resource::create(Route::getClass())->get($route['name'], $route['params']);
-//                }
-//            }
-//        }
-//
-//        parent::buildParams($values);
-//    }
 }

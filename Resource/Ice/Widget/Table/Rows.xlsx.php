@@ -71,7 +71,7 @@ foreach ($result as $offset => $row) {
         if ($count <= $columnCount) {
 
         } else {
-            $count = 1;
+            $count = $colspan;
             $render->indexInc();
         }
 

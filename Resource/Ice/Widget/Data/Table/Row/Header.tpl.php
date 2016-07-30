@@ -11,7 +11,7 @@
     ?><?php if (isset($column['options']['colspan'])) : ?> colspan="<?= $column['options']['colspan'] ?>"<?php endif;
     ?>>
         <?php else :
-        $count = 1
+        $count = $colspan
         ?>
 </tr>
 <tr>

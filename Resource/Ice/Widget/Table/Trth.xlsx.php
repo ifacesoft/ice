@@ -38,7 +38,7 @@ foreach ($component->getWidget()->getParts() as $part) {
 
     } else {
         break;
-//        $count = 1;
+//        $count = $colspan;
 //        $render->indexInc();
     }
 

@@ -3,6 +3,7 @@
 namespace Ice\Core;
 
 use Ice\Core;
+use Ice\Exception\Error;
 use Ice\Exception\Not_Show;
 use Ice\Exception\Not_Valid;
 use Ice\Helper\Access;
@@ -71,8 +72,6 @@ abstract class WidgetComponent
 
         $this->widgetClass = get_class($widget);
         $this->widgetId = $widget->getWidgetId();
-
-        $this->init();
     }
 
     /**
@@ -172,11 +171,6 @@ abstract class WidgetComponent
         return array_key_exists($name, $this->options) ? $this->options[$name] : $default;
     }
 
-    protected function init()
-    {
-        $this->set(Input::get($this->getParamConfig()));
-    }
-
     public function set(array $params)
     {
         /** @var WidgetComponent $widgetComponentClass */
@@ -195,7 +189,7 @@ abstract class WidgetComponent
 
         $id = $this->getWidgetComponentId() . $postfix;
 
-        return isset(self::$ids[$id]) ? self::$ids[$id] : self::$ids[$id] = 'id_wc_' . crc32($id);
+        return isset(self::$ids[$id]) ? self::$ids[$id] : self::$ids[$id] = 'wc_' . crc32($id);
     }
 
     /**
@@ -283,7 +277,6 @@ abstract class WidgetComponent
     {
         $widgetComponent = clone $this;
         $widgetComponent->setOffset($offset);
-        $widgetComponent->init();
 
         return $widgetComponent;
     }
@@ -342,9 +335,12 @@ abstract class WidgetComponent
         /** @var Widget $widgetClass */
         $widgetClass = $this->getWidgetClass();
 
-        $params = array_merge(
-            $widgetClass::getRegistry($this->getWidgetId())->get(),
-            $registry->get()
+        $params = Input::get(
+            $this->getParamConfig(),
+            array_merge(
+                $widgetClass::getRegistry($this->getWidgetId())->get(),
+                $registry->get()
+            )
         );
 
         if ($paramName === null) {
@@ -549,12 +545,12 @@ abstract class WidgetComponent
         $valueOption = $this->getOption('value', []);
 
         if (!is_array($valueOption)) {
-            return $valueOption;
+            return $valueOption === true ? $valueKey : $valueOption;
         }
-
-        if (array_key_exists('title', $valueOption)) {
-            return $valueOption['title'];
-        }
+//
+//        if (array_key_exists('title', $valueOption)) {
+//            return $valueOption['title'];
+//        }
 
         $defaultValueKey = array_key_exists('default', $valueOption)
             ? $valueOption['default']
