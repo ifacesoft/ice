@@ -24,7 +24,7 @@ class Table extends Widget
         ];
     }
 
-    public function getPagination($widgetClass = 'Ice\Widget\Pagination')
+    public function getPagination($widgetClass = Pagination::class)
     {
         return $this->getWidget($widgetClass);
     }

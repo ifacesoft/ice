@@ -22,7 +22,6 @@
             <td class="<?= $component->getComponentName() ?>"<?php if ($component->getOption('rowspan')) : ?> rowspan="<?= $component->getOption('rowspan') ?>"<?php endif;
             ?><?php if ($component->getOption('colspan')) : ?> colspan="<?= $component->getOption('colspan') ?>"<?php endif;
             ?>><?php endif; ?><?= $component->render() ?></td>
-
     <?php endforeach; ?>
     </tr>
 <?php endforeach; ?>

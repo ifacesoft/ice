@@ -150,7 +150,7 @@ abstract class DataSource extends Container
 
         $defaultDataSourceKeys = Module::getInstance()->getDefaultDataSourceKeys();
 
-        return $repository->set($key, reset($defaultDataSourceKeys), 0);
+        return $repository->set([$key => reset($defaultDataSourceKeys)], 0)[$key];
     }
 
     /**

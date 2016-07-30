@@ -2,6 +2,7 @@
 
 namespace Ice\WidgetComponent;
 
+use Ice\Core\QueryBuilder;
 use Ice\Widget\Form;
 
 class FormElement_Button extends FormElement
@@ -43,5 +44,10 @@ class FormElement_Button extends FormElement
     protected function getClasses($classes = '')
     {
         return 'btn ' . parent::getClasses($classes);
+    }
+
+    public function filter(QueryBuilder $queryBuilder)
+    {
+        return;
     }
 }

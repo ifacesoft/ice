@@ -7,9 +7,8 @@ use Ice\Core\QueryBuilder;
 use Ice\Core\Widget as Core_Widget;
 use Ice\Helper\Date;
 
-class FormElement extends HtmlTag
+class FormElement extends HtmlTag // todo: должен быть абстракт
 {
-//    private $validators = null;
     private $name = null;
     private $horizontal = null;
 

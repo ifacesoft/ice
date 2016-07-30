@@ -1,4 +1,4 @@
-<td <?= $component->getIdAttribute() ?>
+<span <?= $component->getIdAttribute() ?>
     <?= $component->getClassAttribute() ?>
     <?= $component->getEventAttributesCode() ?>
-><?= $component->getValue() ?></td>
+><?= $component->getValue() ?></span>

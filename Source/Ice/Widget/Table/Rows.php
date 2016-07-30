@@ -20,7 +20,7 @@ class Table_Rows extends Widget
     protected static function config()
     {
         return [
-            'render' => ['template' => true, 'class' => 'Ice:Php', 'layout' => null, 'resource' => null],
+            'render' => ['template' => __CLASS__, 'class' => 'Ice:Php', 'layout' => null, 'resource' => null],
             'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'Widget: Access denied!'],
             'resource' => ['js' => null, 'css' => null, 'less' => null, 'img' => null],
             'cache' => ['ttl' => -1, 'count' => 1000],
@@ -95,7 +95,7 @@ class Table_Rows extends Widget
         if (isset($options['route']) || isset($options['href'])) {
             return $this->a($columnName, $options, $template);
         }
-
+        // todo: шаблон должен быть td, пока так
         return $this->addPart(new Table_Row_Td($columnName, $options, $template, $this));
     }
 
@@ -109,6 +109,7 @@ class Table_Rows extends Widget
      */
     public function a($columnName, array $options = [], $template = null)
     {
+        // todo: шаблон должен быть td, пока так
         return $this->addPart(new Table_Row_A($columnName, $options, $template, $this));
     }
 
@@ -119,6 +120,17 @@ class Table_Rows extends Widget
      * @return $this
      */
     public function number($columnName, array $options = [], $template = null)
+    {
+        return $this->td($columnName, $options, $template);
+    }
+
+    /**
+     * @param $columnName
+     * @param array $options
+     * @param null $template
+     * @return $this
+     */
+    public function text($columnName, array $options = [], $template = null)
     {
         return $this->td($columnName, $options, $template);
     }
