@@ -9,6 +9,7 @@
 
 namespace Ice\Core;
 
+use Ice\Action\Deploy;
 use Ice\App;
 use Ice\DataProvider\Registry;
 use Ice\DataProvider\Repository;
