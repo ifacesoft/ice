@@ -56,7 +56,17 @@ class Security_LoginPassword_RestorePasswordConfirm extends Widget_Security
                 [
                     'placeholder' => true,
                     'required' => true,
-                    'params' => ['confirm_password' => ['providers' => Request::class]]
+                    'params' => [
+                        'confirm_password' => [
+                            'providers' => Request::class,
+                            'validators' => [
+                                'Ice:Equal' => [
+                                    'value' => $this->get('new_password'),
+                                    'message' => 'Passwords must be equals'
+                                ]
+                            ]
+                        ]
+                    ]
                 ]
             )
             ->div('ice-message', ['value' => '&nbsp;', 'encode' => false, 'resource' => false])

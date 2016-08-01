@@ -20,32 +20,17 @@ class Security_EmailPassword_ChangePassword extends Widget_Security
         ];
     }
 
-    /**
-     * @param array $params
-     * @return $this
-     */
-    public function set(array $params)
-    {
-        foreach ($params as $key => $value) {
-            if ($key == 'confirm_password') {
-                [
-                    $this->validateScheme['confirm_password']['Ice:Equal'] = [
-                        'value' => $this->getPart('new_password')->get('new_password'),
-                        'message' => 'Passwords must be equals'
-                    ]
-                ];
-            }
-
-            parent::set([$key => $value]);
-        }
-
-        return $this;
-    }
-
     protected function build(array $input)
     {
         $this
-            ->widget('header', ['widget' => $this->getWidget(Header::class)->h1('Change password', ['valueResource' => true])])
+            ->widget(
+                'header',
+                [
+                    'widget' => $this
+                        ->getWidget(Header::class)
+                        ->h1('Change password', ['valueResource' => true])
+                ]
+            )
             ->text(
                 'password',
                 [
@@ -77,7 +62,17 @@ class Security_EmailPassword_ChangePassword extends Widget_Security
                 [
                     'placeholder' => true,
                     'required' => true,
-                    'params' => ['confirm_password' => ['providers' => Request::class]]
+                    'params' => [
+                        'confirm_password' => [
+                            'providers' => Request::class,
+                            'validators' => [
+                                'Ice:Equal' => [
+                                    'value' => $this->get('password'),
+                                    'message' => 'Passwords must be equals'
+                                ]
+                            ]
+                        ]
+                    ]
                 ]
             )
             ->div('ice-message', ['value' => '&nbsp;', 'encode' => false, 'resource' => false])

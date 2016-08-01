@@ -32,28 +32,6 @@ class Security_LoginEmailPassword_RestorePasswordConfirm extends Widget_Security
     }
 
     /**
-     * @param array $params
-     * @return $this
-     */
-    public function set(array $params)
-    {
-        foreach ($params as $key => $value) {
-            if ($key == 'confirm_password') {
-                [
-                    $this->validateScheme['confirm_password']['Ice:Equal'] = [
-                        'value' => $this->getPart('new_password')->get('new_password'),
-                        'message' => 'Passwords must be equals'
-                    ]
-                ];
-            }
-
-            parent::set([$key => $value]);
-        }
-
-        return $this;
-    }
-
-    /**
      * @return null
      */
     public function getAccountLoginPasswordModelClass()
@@ -159,7 +137,17 @@ class Security_LoginEmailPassword_RestorePasswordConfirm extends Widget_Security
                 [
                     'placeholder' => true,
                     'required' => true,
-                    'params' => ['confirm_password' => ['providers' => Request::class]]
+                    'params' => [
+                        'confirm_password' => [
+                            'providers' => Request::class,
+                            'validators' => [
+                                'Ice:Equal' => [
+                                    'value' => $this->get('password'),
+                                    'message' => 'Passwords must be equals'
+                                ]
+                            ]
+                        ]
+                    ]
                 ]
             )
             ->div('ice-message', ['value' => '&nbsp;', 'encode' => false, 'resource' => false])

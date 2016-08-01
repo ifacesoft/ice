@@ -36,13 +36,6 @@ class Form extends Widget
         'longtext' => 'textarea'
     ];
 
-    /**
-     * Validate scheme for validate fields
-     *
-     * @var array
-     */
-    protected $validateScheme = [];
-
     private $submitComponentName = null;
 
     public function __construct(array $data)
@@ -455,56 +448,6 @@ class Form extends Widget
 
         return $this;
     }
-
-//    /**
-//     * Validate form by validate scheme
-//     *
-//     * @return array
-//     *
-//     * @author dp <denis.a.shestakov@gmail.com>
-//     *
-//     * @version 1.0
-//     * @since   0.0
-//     */
-//    public function validate()
-//    {
-//        $values = [];
-//
-//        foreach ($this->getParts() as $component) {
-//            if ($component instanceof FormElement) {
-//                if ($component instanceof FormElement_Button) { // todo: Это костыль, пока так
-//                    continue;
-//                }
-//
-//                $values[$component->getName()] = $component->getValue();
-//            }
-//        }
-//
-//        return Validator::validateByScheme(array_merge($this->get(), $values), $this->getValidateScheme());
-//    }
-//
-//    /**
-//     * Return validate scheme
-//     *
-//     * @return array
-//     *
-//     * @author dp <denis.a.shestakov@gmail.com>
-//     *
-//     * @version 1.1
-//     * @since   0.0
-//     */
-//    public function getValidateScheme()
-//    {
-//        foreach ($this->getParts($this->getFilterParts()) as $partName => $component) {
-//            if ($validators = $component->getOption('validators', [])) {
-//                $this->validateScheme[$partName] = isset($this->validateScheme[$partName])
-//                    ? array_merge($this->validateScheme[$partName], $validators)
-//                    : $validators;
-//            }
-//        }
-//
-//        return $this->validateScheme;
-//    }
 
     /**
      * @param null $submitComponentName

@@ -139,7 +139,7 @@ abstract class Security extends Widget_Form_Event
                 if ($prolongate === true) {
                     $expired = $this->prolongate($account, $securityForm->getExpired());
                 } else {
-                    $expired = call_user_func($prolongate, $account, $securityForm->getExpired());
+                    $expired = call_user_func((string)$prolongate, $account, $securityForm->getExpired());
                 }
             }
 

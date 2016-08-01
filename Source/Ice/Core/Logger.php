@@ -308,24 +308,19 @@ class Logger
      */
     public function save($log)
     {
-        $logUserSession = Logger::getLogUserSession();
-
-        $logUserSession__fk = $log->get('session__fk', false);
-
-        if ($logUserSession__fk && $logUserSession__fk != $logUserSession->getPkValue()) {
-            $logUserSession->set(['session__fk' => $logUserSession__fk])->save();
-            $log->set(['session' => $logUserSession])->save();
-        } else {
+//        $session = Session::getModel(session_id(), '*');
+//
+//        $session__fk = $log->get('session__fk', false);
+//
+//        if ($session__fk && $session__fk != $session->getPkValue()) {
+//            $session->set(['session__fk' => $session__fk])->save();
+//            $log->set(['session' => $session])->save();
+//        } else {
             $log->set([
                 'logger_class' => $this->class,
-                'session' => $logUserSession
+                'session' => session_id()
             ])->save();
-        }
-    }
-
-    public static function getLogUserSession()
-    {
-        return Session::getModel(session_id(), '*');
+//        }
     }
 
     /**
