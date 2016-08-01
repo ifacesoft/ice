@@ -1,1 +1,8 @@
-<?php $sheet->setCellValue($column . $index, html_entity_decode(isset($params[$label]) ? $params[$label] : $label));
+<?php
+/**
+* @var $render \Ice\Render\External_PHPExcel
+* @var PHPExcel_Worksheet $sheet
+* */
+$sheet = $render->getSheet();
+
+$sheet->setCellValue($render->getColumn() . $render->getIndex(), html_entity_decode($component->getValue()));

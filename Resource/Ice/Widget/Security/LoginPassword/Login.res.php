@@ -15,9 +15,6 @@ return [
     'Account with login {$0} not found' => [
         'ru' => 'Account with login {$0} not found',
     ],
-    'Account with login {$0} not found' => [
-        'ru' => 'Account with login {$0} not found',
-    ],
     'Authentication data is not valid. Please, check input.' => [
         'ru' => 'Authentication data is not valid. Please, check input.',
     ],
