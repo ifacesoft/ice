@@ -10,22 +10,9 @@
 namespace Ice\Action;
 
 use Ice\Core\Widget;
-use Ice\DataProvider\Request;
 
 abstract class Widget_Form_Event extends Render
 {
-    protected static function config()
-    {
-        $config = parent::config();
-
-        $config['input'] = array_merge(
-            $config['input'],
-            ['widget' => ['default' => null, 'providers' => ['default', Request::class]]]
-        );
-
-        return $config;
-    }
-
     public function run(array $input)
     {
         return array_merge(
@@ -49,15 +36,9 @@ abstract class Widget_Form_Event extends Render
 
             $widget = $widgetClass::getInstance($input['widget']['name']);
 
-            $widget->setResourceClass($input['widget']['resourceClass']);
+            $widget->setResourceClass($input['widget']['resourceClass']); // todo: @deprecated
 
             $widget->checkToken($input['widget']['token']);
-//
-//            foreach ($widget->getParts() as $part) {
-//                if ($part instanceof FormElement) {
-//                    $part->build($input);
-//                }
-//            }
 
             $input['widget'] = $widget;
         }

@@ -25,6 +25,7 @@ class Render extends Action
             'actions' => [],
             'input' => [
                 'content' => ['default' => null],
+                'widget' => ['default' => null, 'providers' => ['default', Request::class]],
                 'widgets' => ['default' => [], 'providers' => ['default', Request::class]]
             ],
             'output' => []
