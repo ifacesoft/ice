@@ -2,6 +2,7 @@
 
 namespace Ice\Core;
 
+use Ice\Action\Deploy;
 use Ice\Core;
 use Ice\Exception\Error;
 use Ice\Exception\Not_Show;
@@ -43,18 +44,18 @@ abstract class WidgetComponent
      */
     public function __construct($componentComponentName, array $options, $template, Widget $widget)
     {
-        if (isset($options['roles'])) {
-            if (!isset($options['access'])) {
-                $options['access'] = [];
-            }
-
-            $options['access']['roles'] = $options['roles'];
-            unset($options['roles']);
-        }
-
-        if (!empty($options['access'])) {
-            Access::check($options['access']);
-        }
+//        if (isset($options['roles'])) {
+//            if (!isset($options['access'])) {
+//                $options['access'] = [];
+//            }
+//
+//            $options['access']['roles'] = $options['roles'];
+//            unset($options['roles']);
+//        }
+//
+//        if (!empty($options['access'])) {
+//            Access::check($options['access']);
+//        }
 
         $this->componentName = $componentComponentName;
         $this->options = $options;

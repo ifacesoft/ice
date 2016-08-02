@@ -10,7 +10,6 @@ use Ice\Helper\Json;
 use Ice\Helper\Object;
 use Ice\Helper\String;
 use Ice\Helper\Transliterator;
-use Ice\Widget\Bootstrap3_Table_Row;
 use Ice\Widget\Resource_Dynamic;
 use Ice\WidgetComponent\HtmlTag;
 use Ice\WidgetComponent\HtmlTag_A;
@@ -582,9 +581,7 @@ abstract class Widget extends Container
             foreach ($parts as $partName => $part) {
                 $part = $part->cloneComponent($offset);
 
-                if (!($this instanceof Bootstrap3_Table_Row)) {
-                    $part->set($row);
-                }
+                $part->set($row);
 
                 $rowTable[$partName] = $part;
             }
@@ -852,22 +849,22 @@ abstract class Widget extends Container
             return $this;
         }
 
-        try {
-            $roles = $part->getOption('roles');
-            $access = $part->getOption('access');
-
-            if (!$access) {
-                $access = [];
-            }
-
-            if ($roles) {
-                $access['roles'] = $roles;
-            }
-
-            Access::check($access);
-        } catch (Access_Denied $e) {
-            return $this;
-        }
+//        try {
+//            $roles = $part->getOption('roles');
+//            $access = $part->getOption('access');
+//
+//            if (!$access) {
+//                $access = [];
+//            }
+//
+//            if ($roles) {
+//                $access['roles'] = $roles;
+//            }
+//
+//            Access::check($access);
+//        } catch (Access_Denied $e) {
+//            return $this;
+//        }
 
         $componentName = $part->getComponentName();
 

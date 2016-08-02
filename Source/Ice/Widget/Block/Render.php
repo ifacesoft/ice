@@ -2,6 +2,8 @@
 
 namespace Ice\Widget;
 
+use Ice\Core\Debuger;
+
 class Block_Render extends Block
 {
     /** Build widget
