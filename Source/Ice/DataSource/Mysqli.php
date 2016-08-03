@@ -178,9 +178,9 @@ class Mysqli extends DataSource
         $data[QueryResult::NUM_ROWS] = count($data[QueryResult::ROWS]);
 
         // todo: Это надо!!
-        if ($numRows != $data[QueryResult::NUM_ROWS]) {
-            throw new DataSource_Select_Error('Real selected rows not equal result num rows: duplicate primary key');
-        }
+//        if ($numRows != $data[QueryResult::NUM_ROWS]) {
+//            throw new DataSource_Select_Error('Real selected rows not equal result num rows: duplicate primary key');
+//        }
 
         foreach ($query->getQueryBuilder()->getTransforms() as list($transform, $params, $transformModelClass)) {
             $data = $transformModelClass::$transform($data, $params);

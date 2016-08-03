@@ -103,6 +103,7 @@ class Request extends DataProvider
      * @param null $default
      * @param bool $require
      * @return array|mixed|null
+     * @throws Error
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 1.2
@@ -110,7 +111,7 @@ class Request extends DataProvider
      */
     public function get($key = null, $default = null, $require = false)
     {
-        if ($key === null) {
+        if (empty($key)) {
             return $_REQUEST;
         }
 

@@ -33,17 +33,18 @@ class Request
      * Return param from request
      *
      * @param  string $paramName Param name
+     * @param null $default
      * @return mixed
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 1.3
      * @since   0.0
      */
-    public static function getParam($paramName)
+    public static function getParam($paramName, $default = null)
     {
         $params = self::getParams();
-        return isset($params[$paramName]) ? $params[$paramName] : null;
+
+        return array_key_exists($paramName, $params) ? $params[$paramName] : $default;
     }
 
     /**
