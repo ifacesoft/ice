@@ -331,7 +331,9 @@ class Query
             $fieldName = $modelClass::getFieldName($fieldName);
         }
 
-        return $row ? ($fieldName ? $row[$fieldName] : reset($row)) : null;
+        return $row
+            ? ($fieldName ? $row[$fieldName] : reset($row))
+            : null;
     }
 
     /**
@@ -413,7 +415,7 @@ class Query
      * @version 1.0
      * @since   0.0
      */
-    public function getColumn($fieldName = '/pk', $indexKey = null, $ttl = null)
+    public function getColumn($fieldName = null, $indexKey = null, $ttl = null)
     {
         $modelClass = $this->getQueryBuilder()->getModelClass();
 
@@ -427,9 +429,19 @@ class Query
             $key = $modelClass::getFieldName($key);
         }
 
-        return empty($fieldName)
-            ? $this->getKeys()
-            : Arrays::column($this->getRows($ttl), $fieldName, $indexKey);
+        if (!$fieldName) {
+            $row = $this->getRow($ttl);
+
+            if (!$row) {
+                return [];
+            }
+
+            reset($row);
+
+            $fieldName = key($row);
+        }
+
+        return Arrays::column($this->getRows($ttl), $fieldName, $indexKey);
     }
 
     /**

@@ -22,6 +22,7 @@ use Ice\Core\QueryResult;
 use Ice\Core\QueryTranslator;
 use Ice\Exception\DataSource_Insert;
 use Ice\Exception\DataSource_Insert_DuplicateEntry;
+use Ice\Exception\DataSource_Select_Error;
 use Ice\Exception\DataSource_Statement_Error;
 use Ice\Exception\DataSource_Statement_TableNotFound;
 use Ice\Exception\DataSource_Statement_UnknownColumn;
@@ -176,9 +177,10 @@ class Mysqli extends DataSource
 
         $data[QueryResult::NUM_ROWS] = count($data[QueryResult::ROWS]);
 
-//        if ($numRows != $data[QueryResult::NUM_ROWS]) {
-//            throw new DataSource_Select_Error('Real selected rows not equal result num rows: duplicate primary key');
-//        }
+        // todo: Это надо!!
+        if ($numRows != $data[QueryResult::NUM_ROWS]) {
+            throw new DataSource_Select_Error('Real selected rows not equal result num rows: duplicate primary key');
+        }
 
         foreach ($query->getQueryBuilder()->getTransforms() as list($transform, $params, $transformModelClass)) {
             $data = $transformModelClass::$transform($data, $params);

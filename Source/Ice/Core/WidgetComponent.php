@@ -503,11 +503,19 @@ abstract class WidgetComponent
             $resourceClass = $this->getOption('valueHardResource', null);
         }
 
-        if ($resourceClass) {
-            $resource = $resourceClass === true
-                ? $this->getResource()
-                : Resource::create($resourceClass);
+        $resource = null;
 
+        if ($resourceClass) {
+            if ($resourceClass === true) {
+                $resource = $this->getResource();
+            }
+
+            if (!$resource) {
+                $resource = Resource::create($resourceClass);
+            }
+        }
+
+        if ($resource) {
             $value = $resource->get($value, $this->get());
 
             if ($this->getOption('valueHardResource')) {
