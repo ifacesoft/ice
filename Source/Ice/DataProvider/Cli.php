@@ -61,7 +61,7 @@ class Cli extends DataProvider
     {
         $this->getConnection();
 
-        if ($key === null) {
+        if (empty($key)) {
             return empty($_SERVER['argv']) ? [] : $_SERVER['argv'];
         }
 

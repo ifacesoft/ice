@@ -167,7 +167,7 @@ class Registry extends DataProvider
 
         $data = $this->getConnection()->$keyPrefix;
 
-        if ($key === null) {
+        if (empty($key)) {
             return empty($data) ? [] : $data;
         }
 

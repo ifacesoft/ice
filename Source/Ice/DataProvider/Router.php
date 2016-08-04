@@ -73,7 +73,7 @@ class Router extends DataProvider
      */
     public function get($key = null, $default = null, $require = false)
     {
-        if ($key === null) {
+        if (empty($key)) {
             return $this->getConnection();
         }
 
