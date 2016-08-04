@@ -61,7 +61,7 @@ class Pagination extends Widget
         }
 
         if (ceil($this->foundRows / $limit) < 2) {
-            return;
+            return $this;
         }
 
         $page = $this->get('page');
@@ -72,7 +72,7 @@ class Pagination extends Widget
             $page = $pageCount;
         }
 
-        $this
+        return $this
             ->first(1, $page)
             ->fastFastPrev($page - 100, $page)
             ->fastPrev($page - 10, $page)
@@ -345,12 +345,10 @@ class Pagination extends Widget
             $this->li(
                 __FUNCTION__,
                 [
-                    'value' => [
-                        'title' => '{$page}',
-                        'resource' => true,
-                    ],
+                    'value' => '{$page}',
                     'params' => ['page' => $page],
-                    'active' => false
+                    'active' => false,
+                    'valueResource' => true
                 ]
             );
         }
@@ -505,14 +503,12 @@ class Pagination extends Widget
             $this->li(
                 __FUNCTION__,
                 [
-                    'value' => [
-                        'title' => $this->isShort ? '{$page}' : '{$page} &lt;&lt;&lt;',
-                        'encode' => false,
-                    ],
+                    'value' => $this->isShort ? '{$page}' : '{$page} &lt;&lt;&lt;',
                     'params' => ['page' => $page],
                     'next' => $isHellip ? ' &hellip; ' : '',
                     'valueResource' => true,
-                    'active' => false
+                    'active' => false,
+                    'encode' => false,
                 ]
             );
         }

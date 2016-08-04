@@ -12,7 +12,7 @@ abstract class Router extends Container
      * @param string $key
      * @param int $ttl
      * @param array $params
-     * @return Router
+     * @return Router|Container
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *

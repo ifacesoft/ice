@@ -17,7 +17,6 @@ use Ice\Helper\String;
 
 class HtmlTag extends WidgetComponent
 {
-    private $href = null;
     private $event = null;
     private $parentWidgetClass = null;
     private $parentWidgetId = null;
@@ -56,17 +55,17 @@ class HtmlTag extends WidgetComponent
      */
     public function getHref()
     {
-        if ($this->href !== null) {
-            return $this->href;
-        }
+        $href = $this->getOption('href', null);
 
-        $this->setHref($this->getOption('href', null));
+        if ($href) {
+            return $href;
+        }
 
         $route = $this->getRoute();
 
-        if ($route && !$this->href) {
+        if ($route) {
             try {
-                return $this->setHref(Router::getInstance()->getUrl([$route['name'], $route['params'], $route['withGet'], $route['withDomain']]));
+                return Router::getInstance()->getUrl([$route['name'], $route['params'], $route['withGet'], $route['withDomain']]);
             } catch (\Exception $e) {
                 throw new Error(
                     [
@@ -79,23 +78,7 @@ class HtmlTag extends WidgetComponent
             }
         }
 
-        return $this->href ? $this->href : Request::uri();
-    }
-//
-//    public function build(array $row)
-//    {
-//        $this->row = $row;
-//
-//        return parent::build($row);
-//    }
-
-    /**
-     * @param null $href
-     * @return null
-     */
-    public function setHref($href)
-    {
-        return $this->href = $href;
+        return Request::uri();
     }
 
     public function getEventAttributesCode()

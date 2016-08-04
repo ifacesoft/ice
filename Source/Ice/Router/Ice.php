@@ -36,7 +36,7 @@ class Ice extends Router
             $routeName = reset($routeName);
         }
 
-        $url = Route::getInstance($routeName)->getUrl(array_merge($this->getParams(), $routeParams));
+        $url = Route::getInstance($routeName)->getUrl((array)$routeParams);
 
         if (!$url) {
             return '';

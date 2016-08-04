@@ -45,6 +45,17 @@ class QueryBuilder
     const PART_HAVING = 'having';
     const PART_ORDER = 'order';
     const PART_LIMIT = 'limit';
+    const DEFAULT_PART_CREATE = [];
+    const DEFAULT_PART_DROP = ['_drop' => null];
+    const DEFAULT_PART_SELECT = ['_calcFoundRows' => null];
+    const DEFAULT_PART_VALUES = ['_update' => null];
+    const DEFAULT_PART_JOIN = [];
+    const DEFAULT_PART_SET = [];
+    const DEFAULT_PART_WHERE = ['_delete' => null];
+    const DEFAULT_PART_GROUP = [];
+    const DEFAULT_PART_HAVING = [];
+    const DEFAULT_PART_ORDER = [];
+    const DEFAULT_PART_LIMIT = ['offset' => 0, 'limit' => 0];
     const SQL_CLAUSE_INNER_JOIN = 'INNER JOIN';
     const SQL_CLAUSE_LEFT_JOIN = 'LEFT JOIN';
     const SQL_CLAUSE_KEYWORD_JOIN = 'JOIN';
@@ -101,17 +112,17 @@ class QueryBuilder
      * @var    array
      */
     private $sqlParts = [
-        self::PART_CREATE => [],
-        self::PART_DROP => ['_drop' => null],
-        self::PART_SELECT => ['_calcFoundRows' => null],
-        self::PART_VALUES => ['_update' => null],
-        self::PART_JOIN => [],
-        self::PART_SET => [],
-        self::PART_WHERE => ['_delete' => null],
-        self::PART_GROUP => [],
-        self::PART_HAVING => [],
-        self::PART_ORDER => [],
-        self::PART_LIMIT => ['offset' => 0, 'limit' => 0]
+        QueryBuilder::PART_CREATE => QueryBuilder::DEFAULT_PART_CREATE,
+        QueryBuilder::PART_DROP => QueryBuilder::DEFAULT_PART_DROP,
+        QueryBuilder::PART_SELECT => QueryBuilder::DEFAULT_PART_SELECT,
+        QueryBuilder::PART_VALUES => QueryBuilder::DEFAULT_PART_VALUES,
+        QueryBuilder::PART_JOIN => QueryBuilder::DEFAULT_PART_JOIN,
+        QueryBuilder::PART_SET => QueryBuilder::DEFAULT_PART_SET,
+        QueryBuilder::PART_WHERE => QueryBuilder::DEFAULT_PART_WHERE,
+        QueryBuilder::PART_GROUP => QueryBuilder::DEFAULT_PART_GROUP,
+        QueryBuilder::PART_HAVING => QueryBuilder::DEFAULT_PART_HAVING,
+        QueryBuilder::PART_ORDER => QueryBuilder::DEFAULT_PART_ORDER,
+        QueryBuilder::PART_LIMIT => QueryBuilder::DEFAULT_PART_LIMIT
     ];
 
     /**
@@ -256,9 +267,7 @@ class QueryBuilder
             return $this;
         }
 
-        /**
-         * @var Model $modelClass
-         */
+        /** @var Model $modelClass */
         list($modelClass, $tableAlias) = $this->getModelClassTableAlias($modelTableData);
 
         foreach ($fieldNameValues as $fieldName => $value) {
@@ -2126,14 +2135,14 @@ class QueryBuilder
      */
     public function reset($part, $path)
     {
-        $values = &$this->sqlParts;
+        $parts = &$this->sqlParts;
 
         foreach ($path as $key) {
-            $values = &$values[$part];
+            $parts = &$parts[$part];
             $part = $key;
         }
 
-        unset($values[$part]);
+        unset($parts[$part]);
 
         return $this;
     }
