@@ -2127,22 +2127,48 @@ class QueryBuilder
 
     /**
      * @param $part
-     * @param $path
-     *
-     * @todo not tested
-     *
      * @return QueryBuilder
+     * @throws Error
      */
-    public function reset($part, $path)
+    public function resetPart($part)
     {
-        $parts = &$this->sqlParts;
-
-        foreach ($path as $key) {
-            $parts = &$parts[$part];
-            $part = $key;
+        switch ($part) {
+            case QueryBuilder::PART_CREATE:
+                $this->sqlParts[QueryBuilder::PART_CREATE] = QueryBuilder::DEFAULT_PART_CREATE;
+                break;
+            case QueryBuilder::PART_DROP:
+                $this->sqlParts[QueryBuilder::PART_DROP] = QueryBuilder::DEFAULT_PART_DROP;
+                break;
+            case QueryBuilder::PART_GROUP:
+                $this->sqlParts[QueryBuilder::PART_GROUP] = QueryBuilder::DEFAULT_PART_GROUP;
+                break;
+            case QueryBuilder::PART_HAVING:
+                $this->sqlParts[QueryBuilder::PART_HAVING] = QueryBuilder::DEFAULT_PART_HAVING;
+                break;
+            case QueryBuilder::PART_JOIN:
+                $this->sqlParts[QueryBuilder::PART_JOIN] = QueryBuilder::DEFAULT_PART_JOIN;
+                break;
+            case QueryBuilder::PART_LIMIT:
+                $this->sqlParts[QueryBuilder::PART_LIMIT] = QueryBuilder::DEFAULT_PART_ORDER;
+                break;
+            case QueryBuilder::PART_ORDER:
+                $this->sqlParts[QueryBuilder::PART_ORDER] = QueryBuilder::DEFAULT_PART_ORDER;
+                break;
+            case QueryBuilder::PART_SELECT:
+                $this->sqlParts[QueryBuilder::PART_SELECT] = QueryBuilder::DEFAULT_PART_SELECT;
+                break;
+            case QueryBuilder::PART_SET:
+                $this->sqlParts[QueryBuilder::PART_SET] = QueryBuilder::DEFAULT_PART_SET;
+                break;
+            case QueryBuilder::PART_VALUES:
+                $this->sqlParts[QueryBuilder::PART_VALUES] = QueryBuilder::DEFAULT_PART_VALUES;
+                break;
+            case QueryBuilder::PART_WHERE:
+                $this->sqlParts[QueryBuilder::PART_WHERE] = QueryBuilder::DEFAULT_PART_WHERE;
+                break;
+            default:
+                throw new Error(['Unknown query builder part {$0}', $part]);
         }
-
-        unset($parts[$part]);
 
         return $this;
     }

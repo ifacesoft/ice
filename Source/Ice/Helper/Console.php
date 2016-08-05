@@ -185,7 +185,7 @@ class Console
 
     public static function scp($source, $dest, $keyPath, $user, $host, $port = '22')
     {
-        return Console::run('scp -r -P ' . $port . ' -i ' . $keyPath . ' ' . $user . '@' . $host . ':' . $source . ' ' . $dest);
+        return Console::run('scp -r -P ' . $port . ' -i ' . $keyPath . ' \'' . $user . '@' . $host . ':"' . $source . '"\' "' . $dest . '"');
     }
 
     public static function run($commands, $toDevNull = false, $toBackground = false)
