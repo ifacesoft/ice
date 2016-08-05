@@ -35,6 +35,7 @@ class Module extends Config
     const DATA_DIR = 'dataDir';
     const TEMP_DIR = 'tempDir';
     const RUN_DIR = 'runDir';
+    const WEB_DIR = 'webDir';
     const RESOURCE_DIR = 'resourceDir';
     const COMPILED_RESOURCE_DIR = 'compiledResourceDir';
     const UPLOAD_DIR = 'uploadDir';
@@ -55,6 +56,7 @@ class Module extends Config
                 Module::DATA_DIR => 'Var/data/',
                 Module::TEMP_DIR => 'Var/temp/',
                 Module::RUN_DIR => 'Var/run/',
+                Module::WEB_DIR => 'Web/',
                 Module::COMPILED_RESOURCE_DIR => 'Web/resource/',
                 Module::DOWNLOAD_DIR => 'Web/download/',
                 Module::PRIVATE_DOWNLOAD_DIR => 'Var/download/',
@@ -214,6 +216,7 @@ class Module extends Config
                     Module::DATA_DIR,
                     Module::TEMP_DIR,
                     Module::RUN_DIR,
+                    Module::WEB_DIR,
                     Module::DOWNLOAD_DIR,
                     Module::PRIVATE_DOWNLOAD_DIR,
                     Module::COMPILED_RESOURCE_DIR

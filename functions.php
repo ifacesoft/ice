@@ -36,6 +36,11 @@ function getRunDir($moduleName = null)
     return Module::getInstance($moduleName)->getPath(Module::RUN_DIR);
 }
 
+function getWebDir($moduleName = null)
+{
+    return Module::getInstance($moduleName)->getPath(Module::WEB_DIR);
+}
+
 function getUploadDir($moduleName = null)
 {
     return Module::getInstance($moduleName)->getPath(Module::UPLOAD_DIR);

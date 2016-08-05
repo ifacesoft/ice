@@ -35,6 +35,7 @@ return [
             'uploadDir' => 'Var/upload/',
             'tempDir' => 'Var/temp/',
             'runDir' => 'Var/run/',
+            'webDir' => 'Web/',
             'compiledResourceDir' => 'Web/resource/',
             'downloadDir' => 'Web/download/',
             'privateDownloadDir' => 'Var/download/',
