@@ -553,15 +553,11 @@ abstract class WidgetComponent
 
         $valueOption = $this->getOption('value', []);
 
-        if (!is_array($valueOption)) {
-            return $valueOption === true ? $valueKey : $valueOption;
+        if ($valueOption && !is_array($valueOption)) {
+            $valueKey = $valueOption;
         }
-//
-//        if (array_key_exists('title', $valueOption)) {
-//            return $valueOption['title'];
-//        }
 
-        $defaultValueKey = array_key_exists('default', $valueOption)
+        $defaultValueKey = is_array($valueOption) && array_key_exists('default', $valueOption)
             ? $valueOption['default']
             : $valueKey;
 

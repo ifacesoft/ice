@@ -142,7 +142,7 @@ class Security_LoginEmailPassword_RestorePasswordConfirm extends Widget_Security
                             'providers' => Request::class,
                             'validators' => [
                                 'Ice:Equal' => [
-                                    'value' => $this->get('password'),
+                                    'value' => $this->get('new_password'),
                                     'message' => 'Passwords must be equals'
                                 ]
                             ]
