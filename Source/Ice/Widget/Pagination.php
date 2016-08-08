@@ -212,6 +212,16 @@ class Pagination extends Widget
         return $this->get('page');
     }
 
+    public function setLimit($limit)
+    {
+        return $this->set(['limit' => $limit]);
+    }
+
+    public function setPage($page)
+    {
+        return $this->set(['page' => $page]);
+    }
+
     /** Build widget
      *
      * @param array $input

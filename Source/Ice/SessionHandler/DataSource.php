@@ -23,6 +23,12 @@ class DataSource extends SessionHandler
     private $session_lifetime = 2592000;
     private $cookie_lifetime = 7200;
 
+//cookie_lifetime: 7200
+//cookie_domain: %cookie_domain%
+//gc_maxlifetime: 2592000
+//gc_probability: 1
+//gc_divisor: 1000
+
     /**
      * PHP >= 5.4.0<br/>
      * Close the session
