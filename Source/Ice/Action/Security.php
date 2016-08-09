@@ -135,7 +135,7 @@ abstract class Security extends Widget_Form_Event
         $securityForm = $input['widget'];
 
         if ($expired = $account->isExpired()) {
-            if ($prolongate = $securityForm->isProlongate()) {
+            if ($prolongate = $securityForm->getProlongate()) {
                 if ($prolongate === true) {
                     $expired = $this->prolongate($account, $securityForm->getExpired());
                 } else {

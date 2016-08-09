@@ -33,6 +33,7 @@ class Security_LoginEmailPassword_Login_Submit extends Security
                 'widgets' => $input['widgets'],
                 'widget' => Security_LoginPassword_Login::getInstance($widget->getInstanceKey())
                     ->setAccountModelClass($widget->getAccountLoginPasswordModelClass())
+                    ->setProlongate($widget->getProlongate()) // todo: так же надо прокинуть остальные свойства (redirect, timeout etc.)
                     ->set([
                         'login' => $values['username'],
                         'password' => $values['password']
@@ -47,6 +48,7 @@ class Security_LoginEmailPassword_Login_Submit extends Security
                 'widgets' => $input['widgets'],
                 'widget' => Security_EmailPassword_Login::getInstance($widget->getInstanceKey())
                     ->setAccountModelClass($widget->getAccountEmailPasswordModelClass())
+                    ->setProlongate($widget->getProlongate()) // todo: так же надо прокинуть остальные свойства (redirect, timeout etc.)
                     ->set([
                         'email' => $values['username'],
                         'password' => $values['password']

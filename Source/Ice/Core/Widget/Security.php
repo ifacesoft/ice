@@ -51,12 +51,17 @@ abstract class Widget_Security extends Form
 
     private $accountModelClass = null;
 
+    /**
+     * Prolongation callback
+     *
+     * @var string
+     */
     private $prolongate = false;
 
     /**
-     * @return boolean
+     * @return mixed
      */
-    public function isProlongate()
+    public function getProlongate()
     {
         return $this->prolongate;
     }
