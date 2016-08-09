@@ -58,7 +58,7 @@ return [
 //            'host' => [
 //                'methods' => [], // Permitted types of request ('POST', 'OPTIONS')
 //                'headers' => [], // Describe custom headers ('Origin', 'X-Requested-With', 'Content-Range', 'Content-Disposition', 'Content-Type')
-//                'cookie' => 'true' // Allow cookie
+//                'credentials' => true // Allow cookie
 //            ]
         ]
     ],
