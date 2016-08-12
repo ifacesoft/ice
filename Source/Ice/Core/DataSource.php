@@ -90,7 +90,7 @@ abstract class DataSource extends Container
     /**
      * Return instance of data source
      *
-     * @param  DataSource|string|null $key
+     * @param  DataSource|string|null $instanceKey
      * @param  null $ttl
      * @param array $params
      * @return DataSource
@@ -100,9 +100,9 @@ abstract class DataSource extends Container
      * @version 0.2
      * @since   0.2
      */
-    public static function getInstance($key = null, $ttl = null, array $params = [])
+    public static function getInstance($instanceKey = null, $ttl = null, array $params = [])
     {
-        return parent::getInstance($key, $ttl, $params);
+        return parent::getInstance($instanceKey, $ttl, $params);
     }
 
     /**

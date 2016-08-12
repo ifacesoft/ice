@@ -8,14 +8,14 @@ use Ice\DataProvider\Router;
 class Breadcrumbs_Route extends Breadcrumbs
 {
     /**
-     * @param string $key
+     * @param string $instanceKey
      * @param null $ttl
      * @param array $params
      * @return Breadcrumbs_Route
      */
-    public static function getInstance($key, $ttl = null, array $params = [])
+    public static function getInstance($instanceKey, $ttl = null, array $params = [])
     {
-        return parent::getInstance($key, $ttl, $params);
+        return parent::getInstance($instanceKey, $ttl, $params);
     }
 
     /**

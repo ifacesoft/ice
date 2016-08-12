@@ -2,6 +2,7 @@
 
 namespace Ice\WidgetComponent;
 
+use Ice\Core\Debuger;
 use Ice\Core\Model;
 use Ice\Core\QueryBuilder;
 use Ice\Core\Widget as Core_Widget;
@@ -147,15 +148,16 @@ class FormElement extends HtmlTag // todo: должен быть абстрак�
     {
         $valueKey = $this->getValueKey();
 
-        $valueOption = $this->getOption('value', []);
+        $value = $this->getOption('value', []);
 
-        if ($valueOption && !is_array($valueOption)) {
-            $valueKey = $valueOption;
+        if ($value && !is_array($value)) {
+            return $value;
+            $valueKey = $value;
         }
 
-        $defaultValueKey = is_array($valueOption) && array_key_exists('default', $valueOption)
-            ? $valueOption['default']
-            : $valueKey;
+        $defaultValueKey = is_array($value) && array_key_exists('default', $value)
+            ? $value['default']
+            : '';
 
         return $this->get($valueKey, $defaultValueKey);
     }

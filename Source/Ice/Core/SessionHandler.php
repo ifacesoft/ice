@@ -18,7 +18,7 @@ abstract class SessionHandler extends Container implements SessionHandlerInterfa
     protected $session = null;
 
     /**
-     * @param string $key
+     * @param string $instanceKey
      * @param null $ttl
      * @param array $params
      * @return SessionHandler
@@ -28,9 +28,9 @@ abstract class SessionHandler extends Container implements SessionHandlerInterfa
      * @version 1.1
      * @since   1.1
      */
-    public static function getInstance($key = null, $ttl = null, array $params = [])
+    public static function getInstance($instanceKey = null, $ttl = null, array $params = [])
     {
-        return parent::getInstance($key, $ttl, $params);
+        return parent::getInstance($instanceKey, $ttl, $params);
     }
 
     protected static function getDefaultKey()

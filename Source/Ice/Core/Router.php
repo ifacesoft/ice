@@ -9,7 +9,7 @@ abstract class Router extends Container
     use Core;
 
     /**
-     * @param string $key
+     * @param string $instanceKey
      * @param int $ttl
      * @param array $params
      * @return Router|Container
@@ -19,9 +19,9 @@ abstract class Router extends Container
      * @version 1.1
      * @since   0.0
      */
-    public static function getInstance($key = null, $ttl = null, array $params = [])
+    public static function getInstance($instanceKey = null, $ttl = null, array $params = [])
     {
-        return parent::getInstance($key, $ttl, $params);
+        return parent::getInstance($instanceKey, $ttl, $params);
     }
 
     protected static function getDefaultKey()

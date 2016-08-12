@@ -33,7 +33,7 @@ class Replace extends Render
     /**
      * Return instanc of view render Replace
      *
-     * @param  null $key
+     * @param  null $instanceKey
      * @param  null $ttl
      * @param array $params
      * @return Replace
@@ -43,9 +43,9 @@ class Replace extends Render
      * @version 0.1
      * @since   0.1
      */
-    public static function getInstance($key = null, $ttl = null, array $params = [])
+    public static function getInstance($instanceKey = null, $ttl = null, array $params = [])
     {
-        return parent::getInstance($key, $ttl, $params);
+        return parent::getInstance($instanceKey, $ttl, $params);
     }
 
     /**
@@ -77,7 +77,7 @@ class Replace extends Render
         }
 
         $data = array_filter($data, function ($param) {
-            return !is_array($param);
+            return !is_array($param) && !is_object($param);
         });
 
         if (empty($data)) {

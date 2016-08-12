@@ -23,7 +23,7 @@ class Mongodb extends DataSource
     /**
      * Return instance of mongodb
      *
-     * @param  null $key
+     * @param  null $instanceKey
      * @param  null $ttl
      * @param array $params
      * @return Mongodb
@@ -33,9 +33,9 @@ class Mongodb extends DataSource
      * @version 0.4
      * @since   0.4
      */
-    public static function getInstance($key = null, $ttl = null, array $params = [])
+    public static function getInstance($instanceKey = null, $ttl = null, array $params = [])
     {
-        return parent::getInstance($key, $ttl, $params);
+        return parent::getInstance($instanceKey, $ttl, $params);
     }
 
     /**

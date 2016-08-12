@@ -29,7 +29,7 @@ abstract class MessageTransport extends Container
     }
 
     /**
-     * @param string $key
+     * @param string $instanceKey
      * @param int $ttl
      * @param array $params
      * @return MessageTransport
@@ -39,9 +39,9 @@ abstract class MessageTransport extends Container
      * @version 1.1
      * @since   1.0
      */
-    public static function getInstance($key = null, $ttl = null, array $params = [])
+    public static function getInstance($instanceKey = null, $ttl = null, array $params = [])
     {
-        return parent::getInstance($key, $ttl, $params);
+        return parent::getInstance($instanceKey, $ttl, $params);
     }
 
     protected static function getDefaultKey()

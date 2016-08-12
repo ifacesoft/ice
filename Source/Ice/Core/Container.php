@@ -40,7 +40,7 @@ abstract class Container
     /**
      * Get instance from container
      *
-     * @param  string $key
+     * @param  string $instanceKey
      * @param  null $ttl
      * @param array $params
      * @return Container|Core
@@ -51,7 +51,7 @@ abstract class Container
      * @version 1.1
      * @since   0.0
      */
-    public static function getInstance($key, $ttl = null, array $params = [])
+    public static function getInstance($instanceKey, $ttl = null, array $params = [])
     {
         /** @var Container|Core $class */
         $class = get_called_class();
@@ -59,35 +59,35 @@ abstract class Container
         /** @var Container|Core $baseClass */
         $baseClass = $class::getBaseClass();
 
-        if (is_object($key) && $key instanceof $baseClass) {
-            return $key;
+        if (is_object($instanceKey) && $instanceKey instanceof $baseClass) {
+            return $instanceKey;
         }
 
         if ($class == $baseClass) {
-            if (!$key) {
+            if (!$instanceKey) {
                 return $baseClass::getInstance(Config::getInstance($class)->get('defaultClassName'), $ttl, $params);
-            } elseif (is_string($key)) {
-                $parts = explode('/', $key);
+            } elseif (is_string($instanceKey)) {
+                $parts = explode('/', $instanceKey);
 
                 if (count($parts) == 1) {
-                    $class = $key;
-                    $key = 'default';
+                    $class = $instanceKey;
+                    $instanceKey = 'default';
                 } else {
                     $class = $parts[0];
-                    $key = $parts[1];
+                    $instanceKey = $parts[1];
                 }
 
                 $class = Object::getClass($baseClass, $class);
 
-                return $class::getInstance($key, $ttl, $params);
+                return $class::getInstance($instanceKey, $ttl, $params);
             }
         }
 
         $startTime = Profiler::getMicrotime();
         $startMemory = Profiler::getMemoryGetUsage();
 
-        if (!$key || $key == 'default') {
-            $key = $class::getDefaultKey();
+        if (!$instanceKey || $instanceKey == 'default') {
+            $instanceKey = $class::getDefaultKey();
         }
 
         $logger = Logger::getInstance(__CLASS__);
@@ -96,46 +96,42 @@ abstract class Container
         try {
             $dataProvider = $class::getDataProvider('instance');
 
-            /** @var DataProvider $dataProviderClass */
-            $dataProviderClass = get_class($dataProvider);
-            $dataProviderClassName = $dataProviderClass::getClassName();
-
-            if ($ttl != -1 && $object = $dataProvider->get($key)) {
-                $message = $class . ' - ' . print_r($key, true);
+            if ($ttl != -1 && $object = $dataProvider->get($instanceKey)) {
+                $message = $class . ' - ' . print_r($instanceKey, true);
 
                 Profiler::setPoint($message, $startTime, $startMemory);
 //                Logger::log(Profiler::getReport($message), 'container (cache - ' . $dataProviderClassName .  ')', 'LOG');
                 return $object;
             }
 
-            $params['instanceKey'] = $key;
+            $params['instanceKey'] = $instanceKey;
 
             if ($object = $class::create($params)) {
-                $message = $class . ' - ' . print_r($key, true);
+                $message = $class . ' - ' . print_r($instanceKey, true);
 
                 Profiler::setPoint($message, $startTime, $startMemory);
                 if ($ttl == -1) {
 //                    Logger::log(Profiler::getReport($message), 'container (not cache)', 'WARN');
                 } else {
 //                    Logger::log(Profiler::getReport($message), 'container (new - ' . $dataProviderClassName .  ')', 'INFO');
-                    $dataProvider->set([$key => $object], $ttl);
+                    $dataProvider->set([$instanceKey => $object], $ttl);
                 }
             }
 
         } catch (FileNotFound $e) {
-            $message = $class . ' - ' . print_r($key, true);
+            $message = $class . ' - ' . print_r($instanceKey, true);
             Profiler::setPoint($message, $startTime, $startMemory);
 //            Logger::log(Profiler::getReport($message), 'container (error)', 'Error');
 
             if ($baseClass == Code_Generator::getClass()) {
-                $logger->exception(['Code generator for {$0} not found', $key], __FILE__, __LINE__, $e);
+                $logger->exception(['Code generator for {$0} not found', $instanceKey], __FILE__, __LINE__, $e);
             }
 
             if (Environment::getInstance()->isDevelopment()) {
-                $baseClass::getCodeGenerator($key)->generate($params);
-                $object = $class::create($key);
+                $baseClass::getCodeGenerator($instanceKey)->generate($params);
+                $object = $class::create($instanceKey);
             } else {
-                $logger->error(['File {$0} not found', $key], __FILE__, __LINE__, $e);
+                $logger->error(['File {$0} not found', $instanceKey], __FILE__, __LINE__, $e);
             }
 
         }
@@ -200,5 +196,12 @@ abstract class Container
     protected function getDataProviderSession($index = 'default')
     {
         return Session::getInstance(get_class($this), $index);
+    }
+
+    public function removeInstance() {
+        /** @var Container|Core $class */
+        $class = get_class($this);
+
+        $class::getDataProvider('instance')->delete($this->getInstanceKey());
     }
 }

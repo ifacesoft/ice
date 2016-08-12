@@ -37,7 +37,7 @@ abstract class Validator extends Container
     /**
      * Return validator instance
      *
-     * @param  null $key
+     * @param  null $instanceKey
      * @param  null $ttl
      * @param array $params
      * @return Validator
@@ -47,9 +47,9 @@ abstract class Validator extends Container
      * @version 0.1
      * @since   0.1
      */
-    public static function getInstance($key = null, $ttl = null, array $params = [])
+    public static function getInstance($instanceKey = null, $ttl = null, array $params = [])
     {
-        return parent::getInstance($key, $ttl, $params);
+        return parent::getInstance($instanceKey, $ttl, $params);
     }
 
     public static function schemeColumnPlugin($columnName, $table)

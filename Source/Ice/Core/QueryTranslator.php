@@ -28,7 +28,7 @@ abstract class QueryTranslator extends Container
     /**
      * Return instance of query translator
      *
-     * @param  null $key
+     * @param  null $instanceKey
      * @param  null $ttl
      * @param array $params
      * @return QueryTranslator
@@ -38,9 +38,9 @@ abstract class QueryTranslator extends Container
      * @version 0.4
      * @since   0.4
      */
-    public static function getInstance($key = null, $ttl = null, array $params = [])
+    public static function getInstance($instanceKey = null, $ttl = null, array $params = [])
     {
-        return parent::getInstance($key, $ttl, $params);
+        return parent::getInstance($instanceKey, $ttl, $params);
     }
 
     /**

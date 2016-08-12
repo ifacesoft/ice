@@ -38,7 +38,7 @@ class Php extends Render
     /**
      * Return php view render
      *
-     * @param  mixed $key
+     * @param  mixed $instanceKey
      * @param  int $ttl
      * @param array $params
      * @return Php
@@ -48,9 +48,9 @@ class Php extends Render
      * @version 0.4
      * @since   0.4
      */
-    public static function getInstance($key = null, $ttl = null, array $params = [])
+    public static function getInstance($instanceKey = null, $ttl = null, array $params = [])
     {
-        return parent::getInstance($key, $ttl, $params);
+        return parent::getInstance($instanceKey, $ttl, $params);
     }
 
     /**

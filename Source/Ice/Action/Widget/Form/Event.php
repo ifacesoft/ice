@@ -10,18 +10,31 @@
 namespace Ice\Action;
 
 use Ice\Core\Widget;
+use Ice\DataProvider\Request;
 
 abstract class Widget_Form_Event extends Render
 {
+    protected static function config()
+    {
+        $config = parent::config();
+
+        $config['input']['widget'] = ['default' => null, 'providers' => ['default', Request::class]];
+
+        return $config;
+    }
+
     public function run(array $input)
     {
-        return array_merge(
-            parent::run($input),
-            [
-                'redirect' => $input['widget']->getRedirect(),
-                'timeout' => $input['widget']->getTimeout()
-            ]
-        );
+        $output = [
+            'redirect' => $input['widget']->getRedirect(),
+            'timeout' => $input['widget']->getTimeout()
+        ];
+
+        $input['widget']->removeInstance();
+
+        unset($input['widget']);
+
+        return array_merge(parent::run($input), $output);
     }
 
     protected function initInput(array $configInput, array $data = [])
@@ -35,8 +48,6 @@ abstract class Widget_Form_Event extends Render
             $widgetClass = Widget::getClass($input['widget']['class']);
 
             $widget = $widgetClass::getInstance($input['widget']['name']);
-
-            $widget->setResourceClass($input['widget']['resourceClass']); // todo: @deprecated
 
             $widget->checkToken($input['widget']['token']);
 

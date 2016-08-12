@@ -54,7 +54,7 @@ class Twig extends Render
     }
 
     /**
-     * @param null $key
+     * @param null $instanceKey
      * @param null $ttl
      * @param array $params
      * @return Twig
@@ -64,9 +64,9 @@ class Twig extends Render
      * @version 1.1
      * @since   0.0
      */
-    public static function getInstance($key = null, $ttl = null, array $params = [])
+    public static function getInstance($instanceKey = null, $ttl = null, array $params = [])
     {
-        return parent::getInstance($key, $ttl, $params);
+        return parent::getInstance($instanceKey, $ttl, $params);
     }
 
     /**

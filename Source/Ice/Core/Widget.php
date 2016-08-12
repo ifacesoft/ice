@@ -240,12 +240,12 @@ abstract class Widget extends Container
     }
 
     /**
-     * @param string $key
+     * @param string $instanceKey
      * @param null $ttl
      * @param array $params
      * @return Widget|Container|$this
      */
-    public static function getInstance($key, $ttl = null, array $params = [])
+    public static function getInstance($instanceKey, $ttl = null, array $params = [])
     {
 //        /** @var Widget $widgetClass */
 //        $widgetClass = self::getClass();
@@ -256,7 +256,7 @@ abstract class Widget extends Container
 //            return null;
 //        }
 
-        return parent::getInstance($key, $ttl, $params);
+        return parent::getInstance($instanceKey, $ttl, $params);
     }
 
     /**
