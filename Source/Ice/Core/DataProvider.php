@@ -140,11 +140,18 @@ abstract class DataProvider
         /**
          * @var string $class
          */
-        if (isset(self::$_dataProviders[$class][$key][$index])) {
-            return self::$_dataProviders[$class][$key][$index];
+        if (isset(DataProvider::$_dataProviders[$class][$key][$index])) {
+            return DataProvider::$_dataProviders[$class][$key][$index];
         }
 
-        return self::$_dataProviders[$class][$key][$index] = new $class($key, $index);
+        /** @var DataProvider $dataProvider */
+        $dataProvider = new $class($key, $index);
+
+        if (isset(DataProvider::$_dataProviders[$class][$dataProvider->getKey()][$dataProvider->getIndex()])) {
+            return DataProvider::$_dataProviders[$class][$key][$index] = DataProvider::$_dataProviders[$class][$dataProvider->getKey()][$dataProvider->getIndex()];
+        }
+
+        return DataProvider::$_dataProviders[$class][$dataProvider->getKey()][$dataProvider->getIndex()] = $dataProvider;
     }
 
     /**

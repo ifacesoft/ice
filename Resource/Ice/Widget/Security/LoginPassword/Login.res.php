@@ -1,7 +1,7 @@
 <?php
 return [
     'Login successfully' => [
-        'ru' => 'Login successfully',
+        'ru' => 'Вход выполнен',
     ],
     'Account is expired' => [
         'ru' => 'Account is expired',

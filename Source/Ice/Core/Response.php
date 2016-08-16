@@ -114,7 +114,7 @@ class Response
                 return;
             }
 
-            Http::setHeader('Location: ' . $redirectUrl, false, $this->statusCode);
+            Http::setHeader('Location: ' . $redirectUrl, $this->statusCode);
             return;
         }
 
@@ -131,7 +131,7 @@ class Response
         }
 
         if ($this->statusCode) {
-            Http::setHeader(Http::getStatusCodeHeader($this->statusCode), true, $this->statusCode);
+            Http::setHeader(Http::getStatusCodeHeader($this->statusCode), $this->statusCode);
         }
 
         echo $this->content;

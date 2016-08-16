@@ -55,26 +55,39 @@ class Registry extends DataProvider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.4
+     * @version 1.3
      * @since   0.0
      */
     public function delete($key, $force = true)
     {
-        $keyPrefix = $this->getKeyPrefix();
-        $data = $this->getConnection()->$keyPrefix;
-
-        if ($force) {
-            unset($data[$key]);
-            $this->getConnection()->$keyPrefix = $data;
-            return true;
+        if (empty($key)) {
+            return is_array($key) ? [] : null;
         }
 
-        $value = $data[$key];
+        $connection = $this->getConnection();
 
-        unset($data[$key]);
-        $this->getConnection()->$keyPrefix = $data;
+        $keyPrefix = $this->getKeyPrefix();
 
-        return $value;
+        $data = $connection->offsetGet($keyPrefix);
+
+        if (empty($data)) {
+            return is_array($key) ? [] : null;
+        }
+
+        $values = [];
+
+        foreach ((array)$key as $k) {
+            $values[$k] = !$force && array_key_exists($k, $data)
+                ? $data[$k]
+                : null;
+
+            unset($data[$k]);
+        }
+
+        $connection->offsetSet($keyPrefix, $data);
+
+
+        return is_array($key) ? $values : reset($values);
     }
 
     /**
@@ -120,7 +133,7 @@ class Registry extends DataProvider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 1.2
+     * @version 1.3
      * @since   0.0
      */
     public function set(array $values = null, $ttl = null)
@@ -129,17 +142,19 @@ class Registry extends DataProvider
             return $values;
         }
 
-        foreach ($values as $key => $value) {
-            $keyPrefix = $this->getKeyPrefix();
+        $connection = $this->getConnection();
 
-            if (isset($this->getConnection()->$keyPrefix)) {
-                $data = $this->getConnection()->$keyPrefix;
+        $keyPrefix = $this->getKeyPrefix();
+
+        $data = $connection->offsetGet($keyPrefix);
+
+        foreach ($values as $key => $value) {
+            if ($value !== null && $value !== '') {
                 $data[$key] = $value;
-                $this->getConnection()->$keyPrefix = $data;
-            } else {
-                $this->getConnection()->$keyPrefix = [$key => $value];
             }
         }
+
+        $connection->offsetSet($keyPrefix, $data);
 
         return $values;
     }
@@ -154,30 +169,48 @@ class Registry extends DataProvider
      * @throws Error
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 1.2
+     * @version 1.3
      * @since   0.0
      */
     public function get($key = null, $default = null, $require = false)
     {
+        $connection = $this->getConnection();
+
         $keyPrefix = $this->getKeyPrefix();
 
-        if (!isset($this->getConnection()->$keyPrefix)) {
-            return $key === null ? [] : $default;
-        }
-
-        $data = $this->getConnection()->$keyPrefix;
+        $data = $connection->offsetGet($keyPrefix);
 
         if (empty($key)) {
-            return empty($data) ? [] : $data;
+            return $data;
         }
 
-        $value = array_key_exists($key, $data) ? $data[$key] : $default;
-
-        if ($value === null && $require) {
-            throw new Error(['Param {$0} from data provider {$1} is require', ['key', __CLASS__]]);
+        if (empty($data)) {
+            return is_array($key) ? (array)$default : $default;
         }
 
-        return $value;
+        $values = [];
+
+        foreach ((array)$key as $k) {
+            $values[$k] = array_key_exists($k, $data)
+                ? $data[$k]
+                : null;
+
+            if ($values[$k] === null) {
+                if (is_array($default)) {
+                    $values[$k] = array_key_exists($k, $default) ? $default[$k] : null;
+                } else {
+                    $values[$k] = $default;
+                }
+            }
+
+            if ($require && ($values[$k] === null || $values[$k] === '')) {
+                $dataProviderClass = get_class($this);
+
+                throw new Error(['Param {$0} from data provider {$1} is require', [$k, $dataProviderClass]]);
+            }
+        }
+
+        return is_array($key) ? $values : reset($values);
     }
 
     /**
@@ -204,13 +237,12 @@ class Registry extends DataProvider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.4
+     * @version 1.3
      * @since   0.0
      */
     public function flushAll()
     {
-        $keyPrefix = $this->getKeyPrefix();
-        $this->getConnection()->$keyPrefix = [];
+        $this->getConnection()->offsetSet($this->getKeyPrefix(), []);
     }
 
     /**
@@ -237,12 +269,13 @@ class Registry extends DataProvider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 1.3
      * @since   0.0
      */
     protected function connect(&$connection)
     {
-        $connection = new ArrayObject();
+        $connection = new ArrayObject([$this->getKeyPrefix() => []]);
+
         return true;
     }
 
@@ -260,6 +293,7 @@ class Registry extends DataProvider
     protected function close(&$connection)
     {
         $connection = null;
+
         return true;
     }
 }

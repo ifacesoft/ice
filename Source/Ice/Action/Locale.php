@@ -1,9 +1,10 @@
 <?php namespace Ice\Action;
 
 use Ice\Core\Action;
-use Ice\Core\Request;
+use Ice\DataProvider\Request;
 use Ice\DataProvider\Router;
-use Ice\Exception\Redirect;
+use Ice\DataProvider\Session;
+use Ice\Exception\Http_Redirect;
 use Ice\Helper\Api_Client_Yandex_Translate;
 
 class Locale extends Action
@@ -50,10 +51,8 @@ class Locale extends Action
         return [
             'view' => ['template' => ''],
             'input' => [
-                'locale' => [
-                    'providers' => Router::class,
-                    'default' => ''
-                ]
+                'locale' => ['providers' => [Router::class, Request::class, Session::class], 'default' => ''],
+                'referer' => ['providers' => Request::class, 'default' => '/']
             ],
             'cache' => ['ttl' => -1, 'count' => 1000],
         ];
@@ -64,7 +63,7 @@ class Locale extends Action
      *
      * @param  array $input
      * @return array
-     * @throws Redirect
+     * @throws Http_Redirect
      * @author anonymous <email>
      *
      * @version 0
@@ -73,13 +72,9 @@ class Locale extends Action
     public function run(array $input)
     {
         if (in_array($input['locale'], Api_Client_Yandex_Translate::getLocales())) {
-            $_SESSION['locale'] = $input['locale'];
+            Session::getInstance()->set(['locale' => $input['locale']]);
         }
 
-        if (Request::referer()) {
-            throw new Redirect(Request::referer());
-        }
-
-        throw new Redirect('/');
+        throw new Http_Redirect($input['referer']);
     }
 }

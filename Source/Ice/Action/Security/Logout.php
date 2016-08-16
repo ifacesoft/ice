@@ -2,7 +2,7 @@
 namespace Ice\Action;
 
 use Ice\Core\Action;
-use Ice\Exception\Redirect;
+use Ice\Exception\Http_Redirect;
 
 /**
  * Class Security_Logout
@@ -20,7 +20,7 @@ class Security_Logout extends Security
      *
      * @param  array $input
      * @return array
-     * @throws Redirect
+     * @throws Http_Redirect
      */
     public function run(array $input)
     {

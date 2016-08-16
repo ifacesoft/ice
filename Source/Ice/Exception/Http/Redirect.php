@@ -26,7 +26,7 @@ use Ice\Core\Exception;
  * @version 0.1
  * @since   0.1
  */
-class Redirect extends Exception
+class Http_Redirect extends Http
 {
     private $redirectUrl = null;
 

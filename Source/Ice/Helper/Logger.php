@@ -15,6 +15,7 @@ use Ice\Core\Logger as Core_Logger;
 use Ice\Core\Render;
 use Ice\Core\Request;
 use Ice\Core\Request as Core_Request;
+use Ice\DataProvider\Request as DataProvider_Request;
 use Ice\Render\Php as Render_Php;
 
 /**
@@ -95,6 +96,7 @@ class Logger
         $output['stackTrace'] = $exception->getTraceAsString();
 
         $name = Request::isCli() ? Core_Console::getCommand(null) : Request::uri();
+
         $logFile = Directory::get(getLogDir() . date('Y-m-d')) .
             Core_Logger::$errorCodes[$exception->getCode()] . '/' . Object::getClassName($class) . '/' . urlencode($name) . '.log';
 
@@ -111,38 +113,38 @@ class Logger
         );
     }
 
-    public static function outputDb($exception)
-    {
-        $params = [
-            'ip' => Request::ip(),
-            'agent' => Request::agent(),
-            'referer' => Request::referer(),
-            'host' => Request::host(),
-            'uri' => Request::uri(),
-            'post__json' => Json::encode(Request::getParams()),
-            'exception__json' => Logger::getMessage($exception)
-        ];
-
-        if (function_exists('curl_init')) {
-            $ch = curl_init();
-
-            curl_setopt($ch, CURLOPT_URL, Core_Logger::getConfig()->get('apiHost') . "/api/log/error");
-            curl_setopt($ch, CURLOPT_POST, 1);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($params));
-
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-            $server_output = curl_exec($ch);
-
-            unset($server_output);
-
-            curl_close($ch);
-        }
-
-//        try {
-//            Log_Error::create($params)->save();
-//        } catch (\Exception $e) {}
-    }
+//    public static function outputDb($exception)
+//    {
+//        $params = [
+//            'ip' => Request::ip(),
+//            'agent' => Request::agent(),
+//            'referer' => Request::referer(),
+//            'host' => Request::host(),
+//            'uri' => Request::uri(),
+//            'post__json' => Json::encode(Request::getParam()),
+//            'exception__json' => Logger::getMessage($exception)
+//        ];
+//
+//        if (function_exists('curl_init')) {
+//            $ch = curl_init();
+//
+//            curl_setopt($ch, CURLOPT_URL, Core_Logger::getConfig()->get('apiHost') . "/api/log/error");
+//            curl_setopt($ch, CURLOPT_POST, 1);
+//            curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($params));
+//
+//            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+//
+//            $server_output = curl_exec($ch);
+//
+//            unset($server_output);
+//
+//            curl_close($ch);
+//        }
+//
+////        try {
+////            Log_Error::create($params)->save();
+////        } catch (\Exception $e) {}
+//    }
 
     /**
      * Return message data from exception
@@ -164,6 +166,7 @@ class Logger
             : [];
 
         $type = Core_Logger::DANGER;
+
         foreach (Core_Logger::$errorTypes as $errorType => $errorCodes) {
             if (in_array($exception->getCode(), $errorCodes)) {
                 $type = $errorType;
@@ -172,10 +175,7 @@ class Logger
         }
 
         $output = [
-            'time' => date('H:i:s'),
-            'host' => Core_Request::host(),
-            'uri' => Core_Request::uri(),
-            'referer' => Core_Request::referer(),
+            'time' => date('H:i:s'),  // todo: check to right time (timezone) - double Core_Logger
             'lastTemplate' => Render::getLastTemplate(),
             'message' => Core_Logger::$errorCodes[$exception->getCode()] . ': ' . $exception->getMessage(),
             'errPoint' => $exception->getFile() . ':' . $exception->getLine(),
@@ -185,6 +185,10 @@ class Logger
             'previous' => $previousMessage,
             'level' => $level
         ];
+
+        $request = DataProvider_Request::getInstance();
+
+        $output = array_merge($output, $request->get(['host', 'uri', 'referer']));
 
         $message = Core_Request::isCli()
             ? Render_Php::getInstance()->fetch(Core_Logger::getClass() . '/Cli', $output)

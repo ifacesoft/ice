@@ -158,10 +158,10 @@ class Http
         return file_get_contents($url);
     }
 
-    public static function setHeader($header, $force = false, $code = null)
+    public static function setHeader($header, $code = null, $replace = true)
     {
         if (!headers_sent()) {
-            header($header, $force, $code);
+            header($header, $replace, $code);
         }
     }
 }

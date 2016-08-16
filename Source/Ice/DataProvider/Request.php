@@ -9,8 +9,10 @@
 
 namespace Ice\DataProvider;
 
+use ArrayObject;
 use Ice\Core\DataProvider;
 use Ice\Core\Exception;
+use Ice\Core\Request as Core_Request;
 use Ice\Exception\Error;
 
 /**
@@ -25,9 +27,36 @@ use Ice\Exception\Error;
  * @package    Ice
  * @subpackage DataProvider
  */
-class Request extends DataProvider
+class Request extends Registry
 {
     const DEFAULT_KEY = 'default';
+
+    /**
+     * Set data to data provider
+     *
+     * @param array $values
+     * @param  null $ttl
+     * @return array
+     * @throws Error
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 1.3
+     * @since   0.0
+     */
+    public function set(array $values = null, $ttl = null)
+    {
+        throw new Error('Request data provider is not unchangeable');
+    }
+
+    public function getIndex()
+    {
+        return Core_Request::class;
+    }
+
+    public function getKey()
+    {
+        return Request::getDefaultKey();
+    }
 
     /**
      * Return default data provider key
@@ -45,31 +74,6 @@ class Request extends DataProvider
     }
 
     /**
-     * Set data to data provider
-     *
-     * @param array $values
-     * @param  null $ttl
-     * @return array
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 1.2
-     * @since   0.0
-     */
-    public function set(array $values = null, $ttl = null)
-    {
-        if ($ttl == -1) {
-            return $values;
-        }
-
-        foreach ($values as $key => $value) {
-            $_REQUEST[$key] = $value;
-        }
-
-        return $values;
-    }
-
-    /**
      * Delete from data provider by key
      *
      * @param  string $key
@@ -79,151 +83,49 @@ class Request extends DataProvider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.4
+     * @todo 1.3 implement multiply (array keys) delete for other providers
+     *
+     * @version 1.3
      * @since   0.0
      */
     public function delete($key, $force = true)
     {
-        if ($force) {
-            unset($_REQUEST[$key]);
-            return true;
-        }
-
-        $value = $this->get($key);
-
-        unset($_REQUEST[$key]);
-
-        return $value;
-    }
-
-    /**
-     * Get data from data provider by key
-     *
-     * @param  string $key
-     * @param null $default
-     * @param bool $require
-     * @return array|mixed|null
-     * @throws Error
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 1.2
-     * @since   0.0
-     */
-    public function get($key = null, $default = null, $require = false)
-    {
-        if (empty($key)) {
-            return $_REQUEST;
-        }
-
-        if (is_array($key)) {
-            return array_intersect_key($_REQUEST, array_flip($key));
-        }
-
-        $value = array_key_exists($key, $_REQUEST) ? $_REQUEST[$key] : $default;
-
-        if ($value === null && $require) {
-            throw new Error(['Param {$0} from data provider {$1} is require', ['key', __CLASS__]]);
-        }
-
-        return $value;
-    }
-
-    /**
-     * Increment value by key with defined step (default 1)
-     *
-     * @param  $key
-     * @param  int $step
-     * @throws Exception
-     * @return mixed new value
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since   0.0
-     */
-    public function incr($key, $step = 1)
-    {
-        return $_REQUEST[$key] += $step;
-    }
-
-    /**
-     * Decrement value by key with defined step (default 1)
-     *
-     * @param  $key
-     * @param  int $step
-     * @throws Exception
-     * @return mixed new value
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since   0.0
-     */
-    public function decr($key, $step = 1)
-    {
-        return $_REQUEST[$key] -= $step;
-    }
-
-    /**
-     * Flush all stored data
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since   0.0
-     */
-    public function flushAll()
-    {
-        $_REQUEST = [];
-    }
-
-    /**
-     * Return keys by pattern
-     *
-     * @param  string $pattern
-     * @return array
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @todo    0.4 implements filter by pattern
-     * @version 0.4
-     * @since   0.0
-     */
-    public function getKeys($pattern = null)
-    {
-        return array_keys($_REQUEST);
+        throw new Error('Request data provider is not unchangeable');
     }
 
     /**
      * Connect to data provider
      *
-     * @param  $connection
+     * @param  ArrayObject $connection
      * @return boolean
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.4
+     * @version 1.3
      * @since   0.0
      */
     protected function connect(&$connection)
     {
-        return isset($_REQUEST);
-    }
+        parent::connect($connection);
 
-    /**
-     * Close connection with data provider
-     *
-     * @param  $connection
-     * @return boolean
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since   0.0
-     */
-    protected function close(&$connection)
-    {
-        unset($_REQUEST);
+        $connection->offsetSet(
+            $this->getKeyPrefix(),
+            array_merge(
+                Core_Request::getParam(),
+                [
+                    'agent' => Core_Request::agent(),
+                    'ip' => Core_Request::ip(),
+                    'host' => Core_Request::host(),
+                    'method' => Core_Request::method(),
+                    'locale' => Core_Request::locale(),
+                    'query_string' => Core_Request::queryString(),
+                    'referer' => Core_Request::referer(),
+                    'uri' => Core_Request::uri(),
+                    'protocol' => Core_Request::protocol()
+                ]
+            )
+        );
+
         return true;
     }
 }

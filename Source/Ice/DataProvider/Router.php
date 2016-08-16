@@ -18,7 +18,7 @@ use Ice\Core\Logger;
 use Ice\Core\Request as Core_Request;
 use Ice\Core\Route;
 use Ice\Exception\Http_Not_Found;
-use Ice\Exception\Redirect;
+use Ice\Exception\Http_Redirect;
 
 /**
  * Class Router
@@ -56,7 +56,7 @@ class Router extends DataProvider
      */
     protected static function getDefaultKey()
     {
-        return Core_Request::getMethod() . Core_Request::uri(true);
+        return Core_Request::method() . Core_Request::uri(true);
     }
 
     /**
@@ -276,7 +276,7 @@ class Router extends DataProvider
      * @param $url
      * @param $method
      * @return array
-     * @throws Redirect
+     * @throws Http_Redirect
      */
     private function getRoutes($url, $method)
     {
@@ -335,7 +335,7 @@ class Router extends DataProvider
                     ? $route['routeName'] . $route['redirect']
                     : $route['redirect'];
 
-                throw new Redirect(Route::getInstance($routeName)->getUrl());
+                throw new Http_Redirect(Route::getInstance($routeName)->getUrl());
             }
         }
 

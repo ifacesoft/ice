@@ -9,9 +9,11 @@
 
 namespace Ice\Core;
 
+use Ebs\Model\Packet_Dynamic;
 use FirePHP;
 use Ice\Core;
 use Ice\Core\Console as Core_Console;
+use Ice\DataProvider\Request as DataProvider_Request;
 use Ice\Exception\Error;
 use Ice\Helper\Console;
 use Ice\Helper\Date;
@@ -172,7 +174,7 @@ class Logger
         self::$reserveMemory = null;
 
         if ($error = error_get_last()) {
-            Http::setHeader(Http::getStatusCodeHeader(500), true, 500);
+            Http::setHeader(Http::getStatusCodeHeader(500), 500);
             self::errorHandler($error['type'], $error['message'], $error['file'], $error['line'], []);
             self::renderLog();
         }
@@ -227,12 +229,13 @@ class Logger
         $exception = $this->createException($message, $file, $line, $e, $errcontext, (int)$errno);
 
         $output = [
-            'time' => date('H:i:s'),
-            'host' => Request::host(),
-            'uri' => Request::uri(),
-            'referer' => Request::referer(),
+            'time' => date('H:i:s'), // todo: check to right time (timezone)
             'lastTemplate' => Render::getLastTemplate()
         ];
+
+        $request = DataProvider_Request::getInstance();
+
+        $output = array_merge($output, $request->get(['host', 'uri', 'referer']));
 
         ini_set('memory_limit', '4G');
 
@@ -246,7 +249,13 @@ class Logger
             '/message' => $exception->getMessage(),
             'exception' => $message,
             'environment' => Environment::getInstance()->getName(),
-            'error_type' => Logger::$errorCodes[$exception->getCode()]
+            'error_type' => Logger::$errorCodes[$exception->getCode()],
+            'request_type' => Request::isCli() ? 'cli' : (Request::isAjax() ? 'ajax' : 'http'),
+            'request_data' => $_REQUEST,
+            'request_string' => $request->get('uri'),
+            'request_method' => $request->get('method'),
+            'error_context' => $exception->getErrContext(),
+            'session__fk' => session_id()
         ]);
 
         $this->save($logError);
@@ -422,7 +431,7 @@ class Logger
      *
      * @param  $message
      * @param  string|null $type
-     * @param  bool $isResource
+     * @param  bool $isResource  @todo: передаем сюда сам объект Resource или null (Статически типизуруем аргумент в методе)
      * @param  bool $logging
      * @return string
      *
@@ -448,7 +457,11 @@ class Logger
                 list($message, $params) = $message;
             }
 
-            $message = Resource::create($class)->get($message, $params);
+            if ($isResource instanceof Resource) {
+                $isResource->get($message, $params);
+            } else {
+                $message = Resource::create($class)->get($message, $params);
+            }
         }
 
         $name = Request::isCli() ? Core_Console::getCommand(null) : Request::uri();

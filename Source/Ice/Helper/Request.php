@@ -7,7 +7,7 @@ class Request
 {
     public static function getPaginationParams(array $params)
     {
-        return array_merge(Core_Request::getParams(['page', 'limit']), $params);
+        return array_merge(Core_Request::getParam(['page', 'limit']), $params);
     }
 
 //    public static function getOrderParams(array $params)
@@ -17,7 +17,7 @@ class Request
 //        $ascPattern = '/(?:[^\/]+\/)?' . QueryBuilder::SQL_ORDERING_ASC . '$/';
 //        $descPattern = '/(?:[^\/]+\/)?' . QueryBuilder::SQL_ORDERING_DESC . '$/';
 //
-//        foreach (Core_Request::getParams($params) as $name => $value) {
+//        foreach (Core_Request::getParam($params) as $name => $value) {
 //            if (!$value) {
 //                $orderParams[$name] = '';
 //            }

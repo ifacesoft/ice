@@ -503,6 +503,8 @@ abstract class Widget extends Container
 
     /**
      * @param string $templateClass
+     *
+     * @todo: Написать обработчик (init) конфига, где будет отдельный вызов setTemplateClass
      * @return null|string
      */
     public function setTemplateClass($templateClass = null)
@@ -1213,5 +1215,13 @@ abstract class Widget extends Container
         $widgetClass = get_class($this);
 
         return $widgetClass::getConfig()->gets('input', []);
+    }
+
+    public function getError($message) {
+        return $this->getLogger()->info($message, Logger::DANGER, $this->getResource());
+    }
+
+    public function getSuccess($message) {
+        return $this->getLogger()->info($message, Logger::SUCCESS, $this->getResource());
     }
 }

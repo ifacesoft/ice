@@ -10,7 +10,6 @@
 namespace Ice\Core;
 
 use Ice\Core;
-use Ice\DataProvider\Request as DataProvider_Request;
 use Ice\Exception\Access_Denied_Request;
 use Ice\Helper\Http;
 use Locale;
@@ -40,26 +39,17 @@ class Request
      * @version 1.3
      * @since   0.0
      */
-    public static function getParam($paramName, $default = null)
+    public static function getParam($paramName = null, $default = null)
     {
-        $params = self::getParams();
+        if (empty($paramName)) {
+            return $_REQUEST;
+        }
 
-        return array_key_exists($paramName, $params) ? $params[$paramName] : $default;
-    }
+        if (is_array($paramName)) {
+            return array_intersect_key($_REQUEST, array_flip($paramName));
+        }
 
-    /**
-     * Return all params from request
-     *
-     * @param  array $filterParams
-     * @return mixed
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since   0.0
-     */
-    public static function getParams(array $filterParams = [])
-    {
-        return DataProvider_Request::getInstance()->get($filterParams);
+        return array_key_exists($paramName, $_REQUEST) ? $_REQUEST[$paramName] : $default;
     }
 
     /**
@@ -118,12 +108,17 @@ class Request
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 1.3
      * @since   0.0
      */
     public static function queryString()
     {
-        return isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '';
+        return isset($_SERVER['REQUEST_URI'])
+            ? $_SERVER['REQUEST_URI']
+            : (isset($_SERVER['argv'])
+                ? implode(' ', $_SERVER['argv'])
+                : null
+            );
     }
 
     /**
@@ -179,7 +174,7 @@ class Request
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 1.3
      * @since   0.0
      */
     public static function agent()
@@ -188,7 +183,7 @@ class Request
             ? $_SERVER['HTTP_USER_AGENT']
             : (isset($_SERVER['SHELL'])
                 ? $_SERVER['SHELL']
-                : 'unknown');
+                : null);
     }
 
     /**
@@ -203,7 +198,7 @@ class Request
      */
     public static function referer()
     {
-        return isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '';
+        return isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : null;
     }
 
     /**
@@ -216,7 +211,7 @@ class Request
      * @version 0.0
      * @since   0.0
      */
-    public static function getMethod()
+    public static function method()
     {
         return isset($_SERVER['REQUEST_METHOD']) ? $_SERVER['REQUEST_METHOD'] : 'GET';
     }
@@ -227,13 +222,8 @@ class Request
 
         if (isset($_SERVER['HTTP_ORIGIN']) && isset($cors[$_SERVER['HTTP_ORIGIN']])) {
             Http::setHeader('Access-Control-Allow-Origin: ' . $_SERVER['HTTP_ORIGIN']);
-
-            Http::setHeader(
-                'Access-Control-Allow-Methods: ' . implode(', ', $cors[$_SERVER['HTTP_ORIGIN']]['methods'])
-            );
-            Http::setHeader(
-                'Access-Control-Allow-Headers: ' . implode(', ', $cors[$_SERVER['HTTP_ORIGIN']]['headers'])
-            );
+            Http::setHeader('Access-Control-Allow-Methods: ' . implode(', ', $cors[$_SERVER['HTTP_ORIGIN']]['methods']));
+            Http::setHeader('Access-Control-Allow-Headers: ' . implode(', ', $cors[$_SERVER['HTTP_ORIGIN']]['headers']));
 
             $credentials = empty($cors[$_SERVER['HTTP_ORIGIN']]['credentials']) || $cors[$_SERVER['HTTP_ORIGIN']]['credentials'] == 'false'
                 ? 'false' : 'true';

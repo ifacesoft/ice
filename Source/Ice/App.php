@@ -7,6 +7,7 @@ use Ice\Action\Install;
 use Ice\Action\Upgrade;
 use Ice\Core\Action;
 use Ice\Core\Action_Context;
+use Ice\Core\Debuger;
 use Ice\Core\Logger;
 use Ice\Core\Module;
 use Ice\Core\Profiler;
@@ -20,7 +21,7 @@ use Ice\Exception\Error;
 use Ice\Exception\Http_Bad_Request;
 use Ice\Exception\Http_Forbidden;
 use Ice\Exception\Http_Not_Found;
-use Ice\Exception\Redirect;
+use Ice\Exception\Http_Redirect;
 use Ice\Helper\File;
 use Ice\Widget\Http_Status;
 
@@ -54,8 +55,8 @@ class App
                     ? DataProvider_Request::getInstance()
                     : DataProvider_Router::getInstance();
 
-                $actionClass = $dataProvider->get('actionClass');
 
+                $actionClass = $dataProvider->get('actionClass');
 
                 if ($dataProvider instanceof DataProvider_Router) {
                     $routeParams = (array)$dataProvider->get('routeParams');
@@ -74,7 +75,7 @@ class App
                         }
                     }
                 } else {
-                    $params = (array)$dataProvider->get('params');
+                    $params = (array)$dataProvider->get();
                 }
             }
 
@@ -93,7 +94,7 @@ class App
             } else {
                 try {
                     throw $e;
-                } catch (Redirect $e) {
+                } catch (Http_Redirect $e) {
                     $result['redirectUrl'] = $e->getRedirectUrl();
                 } catch (Http_Bad_Request $e) {
                     $result = ['content' => Http_Status::getInstance('app', null, ['code' => 400, 'message' => $e->getMessage(), 'stackTrace' => $e->getTraceAsString()])];

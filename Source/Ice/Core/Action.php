@@ -14,7 +14,7 @@ use Ice\App;
 use Ice\DataProvider\Registry;
 use Ice\DataProvider\Repository;
 use Ice\Exception\Http;
-use Ice\Exception\Redirect;
+use Ice\Exception\Http_Redirect;
 use Ice\Helper\Access;
 use Ice\Helper\Input;
 use Ice\Helper\Json;
@@ -77,7 +77,7 @@ abstract class Action implements Cacheable
     /**
      * Return action registry
      *
-     * @return Registry
+     * @return Registry|DataProvider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
@@ -157,7 +157,7 @@ abstract class Action implements Cacheable
 
                 try {
                     $result = $subActionClass::call($subActionParams, $newLevel);
-                } catch (Redirect $e) {
+                } catch (Http_Redirect $e) {
                     throw $e;
                 } catch (Http $e) {
                     throw $e;
