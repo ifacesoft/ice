@@ -1884,7 +1884,7 @@ class QueryBuilder
 
         foreach ($widgets as $widget) {
             if ($applyWidgetQueryBuilderParts) {
-                $widget->queryBuilderPart($this, $widget->get());
+                $widget->queryBuilderPart($this);
             }
 
             $this->widgets[] = $widget;

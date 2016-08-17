@@ -151,8 +151,11 @@ class FormElement extends HtmlTag // todo: должен быть абстрак�
         $value = $this->getOption('value', []);
 
         if ($value && !is_array($value)) {
-            return $value;
-            $valueKey = $value;
+            if ($value === true) {
+                $valueKey = $this->getComponentName();
+            } else {
+                return $value;
+            }
         }
 
         $defaultValueKey = is_array($value) && array_key_exists('default', $value)

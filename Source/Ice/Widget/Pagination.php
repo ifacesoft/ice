@@ -195,9 +195,9 @@ class Pagination extends Widget
         return $this;
     }
 
-    public function queryBuilderPart(QueryBuilder $queryBuilder, array $input)
+    public function queryBuilderPart(QueryBuilder $queryBuilder)
     {
-        parent::queryBuilderPart($queryBuilder, $input);
+        parent::queryBuilderPart($queryBuilder);
 
         $queryBuilder->setPagination($this->get('page'), $this->get('limit'));
     }

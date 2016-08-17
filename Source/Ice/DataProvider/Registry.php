@@ -149,9 +149,7 @@ class Registry extends DataProvider
         $data = $connection->offsetGet($keyPrefix);
 
         foreach ($values as $key => $value) {
-            if ($value !== null && $value !== '') {
-                $data[$key] = $value;
-            }
+            $data[$key] = $value;
         }
 
         $connection->offsetSet($keyPrefix, $data);

@@ -435,18 +435,22 @@ abstract class Widget extends Container
 
     /**
      * @param QueryBuilder $queryBuilder
-     * @param array $input
      * @deprecated 1.1 Use $queryBuilder->filter($formWidget). Filter by all components of widget
      */
-    public function queryBuilderPart(QueryBuilder $queryBuilder, array $input)
+    public function queryBuilderPart(QueryBuilder $queryBuilder)
     {
         foreach ($this->getParts() as $part) {
             if ($part instanceof WidgetComponent_Widget) {
-                $part->getWidget()->queryBuilderPart($queryBuilder, $input);
+                $part->getWidget()->queryBuilderPart($queryBuilder);
             }
         }
     }
 
+    /**
+     *
+     * @deprecated call directly render()
+     * @return string
+     */
     public function __toString()
     {
         try {
