@@ -1,1 +1,1 @@
-<script src="<?= $component->getValue() ?>?<?=$component->getComponentName() ?>"></script>
+<script src="<?= $component->getValue() ?>?<?= $component->getComponentName() ?>"></script>

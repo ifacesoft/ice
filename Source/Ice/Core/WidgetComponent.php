@@ -2,12 +2,9 @@
 
 namespace Ice\Core;
 
-use Ice\Action\Deploy;
 use Ice\Core;
-use Ice\Exception\Error;
 use Ice\Exception\Not_Show;
 use Ice\Exception\Not_Valid;
-use Ice\Helper\Access;
 use Ice\Helper\Date;
 use Ice\Helper\Input;
 use Ice\Helper\String;
@@ -172,6 +169,20 @@ abstract class WidgetComponent
         return array_key_exists($name, $this->options) ? $this->options[$name] : $default;
     }
 
+    /**
+     * WidgetComponent config
+     *
+     * @return array
+     */
+    protected static function config()
+    {
+        return [
+            'render' => ['template' => true, 'class' => 'Ice:Php', 'layout' => null, 'resource' => null],
+            'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'WidgetComponent: Access denied!'],
+            'cache' => ['ttl' => -1, 'count' => 1000],
+        ];
+    }
+
     public function set(array $params)
     {
         /** @var WidgetComponent $widgetComponentClass */
@@ -231,47 +242,6 @@ abstract class WidgetComponent
     public function setOffset($offset)
     {
         $this->offset = $offset;
-    }
-
-    protected function getParamConfig($paramName = null)
-    {
-        $paramsConfig = [];
-
-        foreach ((array)$this->getOption('params', []) as $param => $config) {
-            if (is_int($param)) {
-                $param = $config;
-                $config = [];
-            }
-
-            if ($paramName !== null && $paramName != $param) {
-                continue;
-            }
-
-            $paramsConfig[$param] = $config;
-
-            if (is_array($paramsConfig[$param])) {
-                $paramsConfig[$param]['providers'] = isset($paramsConfig[$param]['providers'])
-                    ? array_merge(['default'], (array)$paramsConfig[$param]['providers'])
-                    : ['default'];
-            }
-
-        }
-
-        return $paramsConfig;
-    }
-
-    /**
-     * WidgetComponent config
-     *
-     * @return array
-     */
-    protected static function config()
-    {
-        return [
-            'render' => ['template' => true, 'class' => 'Ice:Php', 'layout' => null, 'resource' => null],
-            'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'WidgetComponent: Access denied!'],
-            'cache' => ['ttl' => -1, 'count' => 1000],
-        ];
     }
 
     public function cloneComponent($offset)
@@ -378,6 +348,33 @@ abstract class WidgetComponent
     public function getWidgetClass()
     {
         return $this->widgetClass;
+    }
+
+    protected function getParamConfig($paramName = null)
+    {
+        $paramsConfig = [];
+
+        foreach ((array)$this->getOption('params', []) as $param => $config) {
+            if (is_int($param)) {
+                $param = $config;
+                $config = [];
+            }
+
+            if ($paramName !== null && $paramName != $param) {
+                continue;
+            }
+
+            $paramsConfig[$param] = $config;
+
+            if (is_array($paramsConfig[$param])) {
+                $paramsConfig[$param]['providers'] = isset($paramsConfig[$param]['providers'])
+                    ? array_merge(['default'], (array)$paramsConfig[$param]['providers'])
+                    : ['default'];
+            }
+
+        }
+
+        return $paramsConfig;
     }
 
     public function mergeOptions(array $options)

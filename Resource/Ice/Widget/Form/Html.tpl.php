@@ -15,16 +15,18 @@
             <?php if ($component->getOption('readonly', false)) : ?>readonly="readonly"<?php endif; ?>
             <?php if ($component->getOption('required', false)) : ?>required="required"<?php endif; ?>
             <?php if ($component->getOption('autofocus', false)) : ?>autofocus="autofocus"<?php endif; ?>
-            ><?= $component->getValue() ?></textarea>
+        ><?= $component->getValue() ?></textarea>
         <?php if ($component->getHorizontal()) : ?></div><?php endif; ?>
 </div>
 <script>
-    CKEDITOR.replace( '<?= $component->getName() ?>', {
+    CKEDITOR.replace('<?= $component->getName() ?>', {
         filebrowserBrowseUrl: '/ice/ckeditor/browse'
     });
     for (var i in CKEDITOR.instances) {
-        if(CKEDITOR.instances[i].name == '<?= $component->getId() ?>'){
-            CKEDITOR.instances[i].on('change', function() { CKEDITOR.instances[i].updateElement() });
+        if (CKEDITOR.instances[i].name == '<?= $component->getId() ?>') {
+            CKEDITOR.instances[i].on('change', function () {
+                CKEDITOR.instances[i].updateElement()
+            });
         }
     }
 </script>

@@ -4,7 +4,6 @@ namespace Ice\WidgetComponent;
 
 use Ice\Action\Render;
 use Ice\Core\Action;
-use Ice\Core\Debuger;
 use Ice\Core\Request;
 use Ice\Core\Resource;
 use Ice\Core\Route;
@@ -79,6 +78,68 @@ class HtmlTag extends WidgetComponent
         }
 
         return Request::uri();
+    }
+
+    /**
+     * @return null
+     * @throws Error
+     */
+    public function getRoute()
+    {
+        $route = $this->getOption('route', null);
+
+        if (!$route) {
+            return null;
+        }
+
+        if (is_string($route)) {
+            $route = ['name' => $route];
+        }
+
+        if ($route === true) {
+            $route = ['name' => true];
+        }
+
+        $route = array_merge(
+            [
+                'name' => true,
+                'params' => [],
+                'withGet' => false,
+                'withDomain' => false,
+                'method' => 'POST'
+            ],
+            (array)$route
+        );
+
+        if ($route['name'] === true) {
+            $route['name'] = $this->getComponentName();
+        }
+
+        if (isset($route[0])) {
+            throw new Error('Use deprecated init route. Define named options', $this);
+        }
+
+        $routeParams = [];
+
+        $row = $this->get();
+
+        foreach ((array)$route['params'] as $routeParamKey => $routeParamValue) {
+            if (is_int($routeParamKey)) {
+                $routeParams[$routeParamValue] = !is_array($routeParamValue) && array_key_exists($routeParamValue, $row)
+                    ? $row[$routeParamValue]
+                    : $routeParamValue;
+
+                continue;
+            }
+
+            $routeParams[$routeParamKey] = !is_array($routeParamValue) && array_key_exists($routeParamValue, $row)
+                ? $row[$routeParamValue]
+                : $routeParamValue;
+        }
+
+        $route['params'] = $routeParams;
+
+        return $route;
     }
 
     public function getEventAttributesCode()
@@ -269,67 +330,5 @@ class HtmlTag extends WidgetComponent
         }
 
         return parent::getValidValue();
-    }
-
-    /**
-     * @return null
-     * @throws Error
-     */
-    public function getRoute()
-    {
-        $route = $this->getOption('route', null);
-
-        if (!$route) {
-            return null;
-        }
-
-        if (is_string($route)) {
-            $route = ['name' => $route];
-        }
-
-        if ($route === true) {
-            $route = ['name' => true];
-        }
-
-        $route = array_merge(
-            [
-                'name' => true,
-                'params' => [],
-                'withGet' => false,
-                'withDomain' => false,
-                'method' => 'POST'
-            ],
-            (array)$route
-        );
-
-        if ($route['name'] === true) {
-            $route['name'] = $this->getComponentName();
-        }
-
-        if (isset($route[0])) {
-            throw new Error('Use deprecated init route. Define named options', $this);
-        }
-
-        $routeParams = [];
-
-        $row = $this->get();
-
-        foreach ((array)$route['params'] as $routeParamKey => $routeParamValue) {
-            if (is_int($routeParamKey)) {
-                $routeParams[$routeParamValue] = !is_array($routeParamValue) && array_key_exists($routeParamValue, $row)
-                    ? $row[$routeParamValue]
-                    : $routeParamValue;
-
-                continue;
-            }
-
-            $routeParams[$routeParamKey] = !is_array($routeParamValue) && array_key_exists($routeParamValue, $row)
-                ? $row[$routeParamValue]
-                : $routeParamValue;
-        }
-
-        $route['params'] = $routeParams;
-
-        return $route;
     }
 }

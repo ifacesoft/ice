@@ -178,14 +178,6 @@ abstract class Container
     }
 
     /**
-     * @return string
-     */
-    public function getInstanceKey()
-    {
-        return $this->instanceKey;
-    }
-
-    /**
      * @return Logger
      */
     public function getLogger()
@@ -193,15 +185,24 @@ abstract class Container
         return Logger::getInstance(get_class($this));
     }
 
-    protected function getDataProviderSession($index = 'default')
+    public function removeInstance()
     {
-        return Session::getInstance(get_class($this), $index);
-    }
-
-    public function removeInstance() {
         /** @var Container|Core $class */
         $class = get_class($this);
 
         $class::getDataProvider('instance')->delete($this->getInstanceKey());
+    }
+
+    /**
+     * @return string
+     */
+    public function getInstanceKey()
+    {
+        return $this->instanceKey;
+    }
+
+    protected function getDataProviderSession($index = 'default')
+    {
+        return Session::getInstance(get_class($this), $index);
     }
 }

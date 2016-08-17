@@ -58,7 +58,7 @@ foreach ($component->getOption('row', []) as $key => $col) {
 
     if (is_string($key)) {
         $value = $key;
-        $sheet->mergeCells($cell . ':' . $render->decrementLetter($render->columnInc($col) ) . $render->getIndex());
+        $sheet->mergeCells($cell . ':' . $render->decrementLetter($render->columnInc($col)) . $render->getIndex());
     } else {
         $value = $col;
         $col = 1;

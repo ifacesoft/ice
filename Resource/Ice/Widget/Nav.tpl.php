@@ -6,14 +6,14 @@
     <?php endif; ?>
 <?php endforeach; ?>
 <?php if ($parts) : ?>
-<ul id="<?= $widgetId ?>"
-    class="<?= $widgetClass ?> nav<?php if (!empty($classes)) : ?> <?= $classes ?><?php endif; ?>"
-    data-widget='<?= $dataWidget ?>'
-    data-params='<?= $dataParams ?>'
-    data-for="<?= $parentWidgetId ?>"
->
-    <?php foreach ($parts as $part) : ?>
-        <?= $part->render() ?>
-    <?php endforeach; ?>
-</ul>
+    <ul id="<?= $widgetId ?>"
+        class="<?= $widgetClass ?> nav<?php if (!empty($classes)) : ?> <?= $classes ?><?php endif; ?>"
+        data-widget='<?= $dataWidget ?>'
+        data-params='<?= $dataParams ?>'
+        data-for="<?= $parentWidgetId ?>"
+    >
+        <?php foreach ($parts as $part) : ?>
+            <?= $part->render() ?>
+        <?php endforeach; ?>
+    </ul>
 <?php endif; ?>

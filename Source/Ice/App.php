@@ -7,7 +7,6 @@ use Ice\Action\Install;
 use Ice\Action\Upgrade;
 use Ice\Core\Action;
 use Ice\Core\Action_Context;
-use Ice\Core\Debuger;
 use Ice\Core\Logger;
 use Ice\Core\Module;
 use Ice\Core\Profiler;

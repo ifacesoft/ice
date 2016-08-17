@@ -175,6 +175,36 @@ abstract class DataProvider
     }
 
     /**
+     * Get current data provider key
+     *
+     * @return string
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since   0
+     */
+    public function getKey()
+    {
+        return $this->key;
+    }
+
+    /**
+     * Get current data provider index
+     *
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since   0.0
+     */
+    public function getIndex()
+    {
+        return $this->index;
+    }
+
+    /**
      * Return current scheme
      *
      * @return string
@@ -246,36 +276,6 @@ abstract class DataProvider
      * @since   0
      */
     abstract protected function connect(&$connection);
-
-    /**
-     * Get current data provider key
-     *
-     * @return string
-     *
-     * @author anonymous <email>
-     *
-     * @version 0
-     * @since   0
-     */
-    public function getKey()
-    {
-        return $this->key;
-    }
-
-    /**
-     * Get current data provider index
-     *
-     * @return string
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since   0.0
-     */
-    public function getIndex()
-    {
-        return $this->index;
-    }
 
     /**
      * Close self connection

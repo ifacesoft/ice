@@ -83,22 +83,6 @@ class Table_Rows extends Widget
     }
 
     /**
-     * Build checkbox tag part
-     *
-     * @param $columnName
-     * @param  array $options
-     * @param null $template
-     *
-     * @deprecated 1.3 Use td
-     *
-     * @return $this
-     */
-    public function span($columnName, array $options = [], $template = null)
-    {
-        return $this->td($columnName, $options, $template);
-    }
-
-    /**
      * Build span tag part
      *
      * @param  $columnName
@@ -127,6 +111,22 @@ class Table_Rows extends Widget
     {
         // todo: шаблон должен быть td, пока так
         return $this->addPart(new Table_Row_A($columnName, $options, $template, $this));
+    }
+
+    /**
+     * Build checkbox tag part
+     *
+     * @param $columnName
+     * @param  array $options
+     * @param null $template
+     *
+     * @deprecated 1.3 Use td
+     *
+     * @return $this
+     */
+    public function span($columnName, array $options = [], $template = null)
+    {
+        return $this->td($columnName, $options, $template);
     }
 
     /**

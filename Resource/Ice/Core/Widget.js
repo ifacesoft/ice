@@ -3,8 +3,8 @@
  */
 var Ice_Core_Widget = {
     click: function ($element, url, method, callback, confirm_message) {
-        if(confirm_message !== undefined) {
-            if(!confirm(confirm_message)){
+        if (confirm_message !== undefined) {
+            if (!confirm(confirm_message)) {
                 return false;
             }
         }

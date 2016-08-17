@@ -1,7 +1,6 @@
 <?php
 use Ice\Core\Logger;
 use Ice\Helper\Console;
-use Ice\Helper\Php;
 
 ?><?php if (isset($previous)) { ?>[<?= $time ?>] - host: <?= $host ?><?php if (!empty($uri)) { ?> | uri: <?= $uri ?><?php } ?><?php if (!empty($referer)) { ?> | referer: <?= $referer ?><?php } ?><?php if (!empty($lastTemplate)) { ?> | lastTemplate: <?= $lastTemplate ?><?php } ?>
 

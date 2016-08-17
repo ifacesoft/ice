@@ -1,6 +1,6 @@
 <tr>
     <?php if ($isShowCount) : ?>
-        <th rowspan="<?= ceil(count($columns) / $columnCount) ?>">#</th><?php endif; ?>
+    <th rowspan="<?= ceil(count($columns) / $columnCount) ?>">#</th><?php endif; ?>
     <?php
     $count = 0;
     foreach ($columns as $column) :

@@ -8,13 +8,13 @@
     <div class="col-md-<?= 12 - $component->getHorizontal() ?>"><?php endif; ?>
         <input <?= $component->getIdAttribute() ?>
             type="number"
-               <?= $component->getClassAttribute($component->getOption('resetFormClass', false) ? '' : 'form-control') ?>
-               name="<?= $component->getName() ?>"
-               value="<?= $component->getValue() ?>"
+            <?= $component->getClassAttribute($component->getOption('resetFormClass', false) ? '' : 'form-control') ?>
+            name="<?= $component->getName() ?>"
+            value="<?= $component->getValue() ?>"
             <?= $component->getPlaceholderAttribute() ?>
-               <?php if ($component->getOption('disabled', false)) : ?>disabled="disabled"<?php endif; ?>
-               <?php if ($component->getOption('readonly', false)) : ?>readonly="readonly"<?php endif; ?>
-               <?php if ($component->getOption('required', false)) : ?>required="required"<?php endif; ?>
+            <?php if ($component->getOption('disabled', false)) : ?>disabled="disabled"<?php endif; ?>
+            <?php if ($component->getOption('readonly', false)) : ?>readonly="readonly"<?php endif; ?>
+            <?php if ($component->getOption('required', false)) : ?>required="required"<?php endif; ?>
         >
         <?php if ($component->getHorizontal()) : ?></div><?php endif; ?>
 </div>

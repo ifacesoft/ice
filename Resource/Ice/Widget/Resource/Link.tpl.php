@@ -1,1 +1,1 @@
-<link href="<?= $component->getValue() ?>?<?=$component->getComponentName() ?>" rel="stylesheet">
+<link href="<?= $component->getValue() ?>?<?= $component->getComponentName() ?>" rel="stylesheet">

@@ -2,8 +2,6 @@
 
 namespace Ice\WidgetComponent;
 
-use Ice\Core\Debuger;
-
 class FormElement_TextInput extends FormElement
 {
     /**

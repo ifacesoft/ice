@@ -8,6 +8,6 @@
         <?php endif; ?>
         title="<?= $resource->get($options['tooltip']['title']); ?>"
     <?php endif; ?>
-        data-name="<?= $component->getName() ?>"
-        <?php if (!empty($options['disabled'])) : ?>disabled="disabled"<?php endif; ?>
-        type="<?= $component->getButtonType() ?>"><?= $component->getLabel() ?></button>
+    data-name="<?= $component->getName() ?>"
+    <?php if (!empty($options['disabled'])) : ?>disabled="disabled"<?php endif; ?>
+    type="<?= $component->getButtonType() ?>"><?= $component->getLabel() ?></button>

@@ -41,13 +41,13 @@ class FormElement_Button extends FormElement
         return $this->buttonType;
     }
 
-    protected function getClasses($classes = '')
-    {
-        return 'btn ' . parent::getClasses($classes);
-    }
-
     public function filter(QueryBuilder $queryBuilder)
     {
         return;
+    }
+
+    protected function getClasses($classes = '')
+    {
+        return 'btn ' . parent::getClasses($classes);
     }
 }

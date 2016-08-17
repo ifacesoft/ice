@@ -21,7 +21,7 @@
     <script>
         $(function () {
             $("#<?= $component->getId() ?>").datepicker({
-                format: '<?= $component->getDateMomentFormat() ?>', 
+                format: '<?= $component->getDateMomentFormat() ?>',
                 locale: '<?= $component->getLocale() ?>'
             });
         });

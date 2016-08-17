@@ -1221,11 +1221,13 @@ abstract class Widget extends Container
         return $widgetClass::getConfig()->gets('input', []);
     }
 
-    public function getError($message) {
+    public function getError($message)
+    {
         return $this->getLogger()->info($message, Logger::DANGER, $this->getResource());
     }
 
-    public function getSuccess($message) {
+    public function getSuccess($message)
+    {
         return $this->getLogger()->info($message, Logger::SUCCESS, $this->getResource());
     }
 }

@@ -1,5 +1,4 @@
 <?php
-use Ice\Helper\Php;
 
 ?>
 <meta charset="UTF-8"/>

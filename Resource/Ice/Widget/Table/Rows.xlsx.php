@@ -62,7 +62,7 @@ $sheet = $render->getSheet();
 foreach ($result as $offset => $row) {
     $count = 0;
 
-    foreach ($row as  $partName => $part) {
+    foreach ($row as $partName => $part) {
         $colspan = $part->getOption('colspan', 1);
         $count += $colspan;
 

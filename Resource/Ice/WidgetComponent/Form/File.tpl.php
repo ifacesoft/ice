@@ -10,7 +10,7 @@
             <img src="<?= $component->getShowFile() ?>" width="100px"/>
         <?php endif; ?>
 
-            <input <?= $component->getIdAttribute('file') ?> type="file" class="btn btn-default"/>
+        <input <?= $component->getIdAttribute('file') ?> type="file" class="btn btn-default"/>
         <input <?= $component->getIdAttribute() ?>
             <?= $component->getClassAttribute($component->getOption('resetFormClass', false) ? '' : 'form-control') ?>
             type="hidden"

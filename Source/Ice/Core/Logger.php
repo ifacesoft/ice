@@ -9,7 +9,6 @@
 
 namespace Ice\Core;
 
-use Ebs\Model\Packet_Dynamic;
 use FirePHP;
 use Ice\Core;
 use Ice\Core\Console as Core_Console;
@@ -24,7 +23,6 @@ use Ice\Helper\Object;
 use Ice\Helper\Profiler as Helper_Profiler;
 use Ice\Helper\String;
 use Ice\Model\Log_Error;
-use Ice\Model\Session;
 
 /**
  * Class Logger
@@ -325,10 +323,10 @@ class Logger
 //            $session->set(['session__fk' => $session__fk])->save();
 //            $log->set(['session' => $session])->save();
 //        } else {
-            $log->set([
-                'logger_class' => $this->class,
-                'session' => session_id()
-            ])->save();
+        $log->set([
+            'logger_class' => $this->class,
+            'session' => session_id()
+        ])->save();
 //        }
     }
 
@@ -427,11 +425,46 @@ class Logger
     }
 
     /**
+     *
+     * @param $value
+     * @param string $type (LOG|INFO|WARN|ERROR|DUMP|TRACE|EXCEPTION|TABLE|GROUP_START|GROUP_END)
+     * @param string $label
+     * @param array $options
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 1.0
+     * @since   0.0
+     */
+    public static function fb($value, $label = null, $type = 'LOG', $options = [])
+    {
+        if (
+            Request::isCli() ||
+            Environment::getInstance()->isProduction() ||
+            headers_sent() ||
+            !Loader::load('FirePHP', false) ||
+            String::endsWith(Request::host(), '.com') ||
+            String::endsWith(Request::host(), '.ru')
+        ) {
+            return;
+        }
+
+        $varSize = Helper_Profiler::getVarSize($value);
+
+        if ($varSize > pow(2, 18)) {
+            FirePHP::getInstance(true)->fb('Too big data: ' . $varSize . ' bytes (max: ' . pow(2, 17) . ')', $label, 'WARN', $options);
+            return;
+        }
+
+        FirePHP::getInstance(true)->fb($value, $label, $type, $options);
+    }
+
+    /**
      * Info message
      *
      * @param  $message
      * @param  string|null $type
-     * @param  bool $isResource  @todo: передаем сюда сам объект Resource или null (Статически типизуруем аргумент в методе)
+     * @param  bool $isResource @todo: передаем сюда сам объект Resource или null (Статически типизуруем аргумент в методе)
      * @param  bool $logging
      * @return string
      *
@@ -489,41 +522,6 @@ class Logger
             $message = '<div class="alert alert-' . $type . '">' . $message . '</div>';
             return $logging ? self::addLog($message) : $message;
         }
-    }
-
-    /**
-     *
-     * @param $value
-     * @param string $type (LOG|INFO|WARN|ERROR|DUMP|TRACE|EXCEPTION|TABLE|GROUP_START|GROUP_END)
-     * @param string $label
-     * @param array $options
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 1.0
-     * @since   0.0
-     */
-    public static function fb($value, $label = null, $type = 'LOG', $options = [])
-    {
-        if (
-            Request::isCli() ||
-            Environment::getInstance()->isProduction() ||
-            headers_sent() ||
-            !Loader::load('FirePHP', false) ||
-            String::endsWith(Request::host(), '.com') ||
-            String::endsWith(Request::host(), '.ru')
-        ) {
-            return;
-        }
-
-        $varSize = Helper_Profiler::getVarSize($value);
-
-        if ($varSize > pow(2, 18)) {
-            FirePHP::getInstance(true)->fb('Too big data: ' . $varSize . ' bytes (max: ' . pow(2, 17) . ')', $label, 'WARN', $options);
-            return;
-        }
-
-        FirePHP::getInstance(true)->fb($value, $label, $type, $options);
     }
 
     private function getFbType($type)

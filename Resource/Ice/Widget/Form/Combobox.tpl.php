@@ -6,15 +6,15 @@
     <?php if ($component->getHorizontal()) : ?>
     <div class="col-md-<?= 12 - $component->getHorizontal() ?>"><?php endif; ?>
         <select <?= $component->getIdAttribute() ?>
-                <?= $component->getClassAttribute($component->getOption('resetFormClass', false) ? '' : 'form-control') ?>
+            <?= $component->getClassAttribute($component->getOption('resetFormClass', false) ? '' : 'form-control') ?>
             name="<?= $component->getName() ?><?php if (!empty($options['multiple'])) : ?>[]<?php endif; ?>"
-                <?php if (!empty($options['multiple'])) : ?>multiple="multiple"<?php endif; ?>
-                <?php if (!empty($options['size'])) : ?>size="<?= $options['size'] ?>"<?php endif; ?>
+            <?php if (!empty($options['multiple'])) : ?>multiple="multiple"<?php endif; ?>
+            <?php if (!empty($options['size'])) : ?>size="<?= $options['size'] ?>"<?php endif; ?>
             <?= $component->getEventAttributesCode() ?>
-                <?php if ($component->getOption('disabled', false)) : ?>disabled="disabled"<?php endif; ?>
-                <?php if ($component->getOption('readonly', false)) : ?>readonly="readonly"<?php endif; ?>
-                <?php if ($component->getOption('required', false)) : ?>required="required"<?php endif; ?>
-                <?php if ($component->getOption('autofocus', false)) : ?>autofocus="autofocus"<?php endif; ?>
+            <?php if ($component->getOption('disabled', false)) : ?>disabled="disabled"<?php endif; ?>
+            <?php if ($component->getOption('readonly', false)) : ?>readonly="readonly"<?php endif; ?>
+            <?php if ($component->getOption('required', false)) : ?>required="required"<?php endif; ?>
+            <?php if ($component->getOption('autofocus', false)) : ?>autofocus="autofocus"<?php endif; ?>
         >
             <?php foreach ($component->getOption('items', []) as $option) : ?>
                 <option value="<?= htmlentities($option[$component->getName()]) ?>"
