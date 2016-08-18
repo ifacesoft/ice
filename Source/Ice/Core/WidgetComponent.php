@@ -528,7 +528,7 @@ abstract class WidgetComponent
                 $dateFormat = $dateDefaults->get('format');
             }
 
-            $value = Date::get(strtotime($this->value), $dateFormat);
+            $value = Date::get(strtotime($value), $dateFormat);
         }
 
         if ($truncate = $this->getOption('truncate')) {

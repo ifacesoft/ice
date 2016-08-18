@@ -129,7 +129,7 @@ class Config
      * Get config param values
      *
      * @param  string|null $key
-     * @param  bool $isRequired_default
+     * @param  bool $isRequired_default @todo: разделить эти аргументы
      * @return array
      * @throws Config_Error
      * @author dp <denis.a.shestakov@gmail.com>

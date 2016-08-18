@@ -96,6 +96,8 @@ abstract class Widget extends Container
         $widgetClass = get_class($this);
 
         try {
+            Access::check($widgetClass::getConfig()->gets('access', ['env' => null, 'request' => null, 'roles' => null]));
+
             $this->token = crc32(String::getRandomString());
 
             $this->setResourceClass();
@@ -124,7 +126,7 @@ abstract class Widget extends Container
             );
         } catch (Http $e) {
             throw $e;
-//        } catch (Access_Denied $e) {
+        } catch (Access_Denied $e) {
 //            throw $e;
         } catch (\Exception $e) {
             Logger::getInstance(__CLASS__)->error(['Widget {$0} init failed', $widgetClass], __FILE__, __LINE__, $e);
