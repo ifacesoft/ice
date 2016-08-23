@@ -16,7 +16,7 @@ use Ice\Core\Module;
  * @property mixed user_active
  * @property mixed user_created
  *
- * @see Ice\Core\Model
+ * @see \Ice\Core\Model
  *
  * @package Ice\Model
  */

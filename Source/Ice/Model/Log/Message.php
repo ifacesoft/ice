@@ -19,7 +19,7 @@ use Ice\Core\Model;
  * @property mixed attampt
  * @property mixed session__fk
  *
- * @see Ice\Core\Model
+ * @see \Ice\Core\Model
  *
  * @package Ebs\Model
  */

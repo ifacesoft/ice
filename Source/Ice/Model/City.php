@@ -10,7 +10,7 @@ use Ice\Core\Model;
  * @property mixed city_short
  * @property mixed country__fk
  *
- * @see Ice\Core\Model
+ * @see \Ice\Core\Model
  *
  * @package Ebs\Model
  */

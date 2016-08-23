@@ -14,7 +14,7 @@ use Ice\Core\Model;
  * @property mixed post__json
  * @property mixed exception__json
  *
- * @see Ice\Core\Model
+ * @see \Ice\Core\Model
  *
  * @package Ice\Model
  */

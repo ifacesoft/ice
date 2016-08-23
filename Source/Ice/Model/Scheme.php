@@ -12,7 +12,7 @@ use Ice\Core\Model;
  * @property mixed references__json
  * @property mixed indexes__json
  *
- * @see Ice\Core\Model
+ * @see \Ice\Core\Model
  *
  * @package Ebs\Model
  */

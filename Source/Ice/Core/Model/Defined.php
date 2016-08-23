@@ -14,7 +14,7 @@ namespace Ice\Core;
  *
  * Core defined abstract model class
  *
- * @see Ice\Core\Model
+ * @see \Ice\Core\Model
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *

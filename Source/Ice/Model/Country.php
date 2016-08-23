@@ -8,7 +8,7 @@ use Ice\Core\Model;
  * @property mixed country_pk
  * @property mixed country_name
  *
- * @see Ice\Core\Model
+ * @see \Ice\Core\Model
  *
  * @package Ebs\Model
  */

@@ -9,7 +9,7 @@ use Ice\Core\Model;
  * @property mixed token
  * @property mixed token_expired
  *
- * @see Ice\Core\Model
+ * @see \Ice\Core\Model
  *
  * @package Ebs\Model
  */

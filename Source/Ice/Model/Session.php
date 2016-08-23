@@ -10,7 +10,7 @@ use Ice\Core\Model;
  * @property mixed session_time
  * @property mixed session_lifetime
  *
- * @see Ice\Core\Model
+ * @see \Ice\Core\Model
  *
  * @package Ice\Model
  */

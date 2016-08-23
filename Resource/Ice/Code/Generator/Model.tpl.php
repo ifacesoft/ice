@@ -14,7 +14,7 @@ use Ice\Core\Model;
     <?php
 } ?>
 *
-* @see Ice\Core\Model
+* @see \Ice\Core\Model
 *
 <?php if ($namespace) { ?>
     * @package <?= $namespace ?>
