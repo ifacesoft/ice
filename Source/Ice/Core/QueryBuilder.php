@@ -279,7 +279,10 @@ class QueryBuilder
             }
 
             if ($value === null) {
-                $sqlComparison = QueryBuilder::SQL_COMPARISON_KEYWORD_IS_NULL;
+                if ($sqlComparison !== QueryBuilder::SQL_COMPARISON_KEYWORD_IS_NOT_NULL) {
+                    $sqlComparison = QueryBuilder::SQL_COMPARISON_KEYWORD_IS_NULL;
+                }
+
                 $valueCount = 1;
             } else {
                 $valueCount = is_string($value) && trim($value, '`') !== $value
@@ -688,7 +691,7 @@ class QueryBuilder
      */
     public function notEmpty($fieldName, $modelTableData = [], $sqlLogical = QueryBuilder::SQL_LOGICAL_AND)
     {
-        return $this->ne([$fieldName => ''], $modelTableData, $sqlLogical);
+        return $this->ne($fieldName, '', $modelTableData, $sqlLogical);
     }
 
     /**
