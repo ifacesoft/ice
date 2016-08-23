@@ -774,7 +774,13 @@ class QueryBuilder
      */
     public function not($fieldName, $modelTableData = [], $sqlLogical = QueryBuilder::SQL_LOGICAL_AND)
     {
-        return $this->eq([$fieldName => 0], $modelTableData, $sqlLogical);
+        $eq = [];
+
+        foreach ((array) $fieldName as $fn) {
+            $eq[$fn] = 0;
+        }
+
+        return $this->eq($eq, $modelTableData, $sqlLogical);
     }
 
     /**

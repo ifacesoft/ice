@@ -318,28 +318,23 @@ abstract class WidgetComponent
             return empty($params) ? [] : $params;
         }
 
-        return array_key_exists($paramName, $params) ? $params[$paramName] : $default;
+        $param = array_key_exists($paramName, $params) ? $params[$paramName] : $default;
 
-//        $valueKey = $this->getValueKey();
-//
-//        if (empty($this->get($valueKey))) {
-//            return;
-//        }
-//
-//        $dateFormat = $this->getOption('dateFormat');
-//
-//        if ($dateFormat === true) {
-//            $dateDefaults = Module::getInstance()->getDefault('date');
-//            $dateFormat = $dateDefaults->get('format');
-//        }
-//
-//        if ($dateFormat) {
-//            $this->set($valueKey, Date::get(strtotime($this->get($valueKey)), $dateFormat));
-//            $this->setOption('dateFormat', null);
-//        }
+        if (!$param) {
+            return $param;
+        }
 
+        if ($dateFormat = $this->getOption('dateFormat')) {
+            if ($dateFormat === true) {
+                $dateDefaults = Module::getInstance()->getDefault('date');
+                $dateFormat = $dateDefaults->get('format');
+            }
 
-//        return isset($params[$param]) ? $params[$param] : $default;
+            $param = Date::get(strtotime($param), $dateFormat);
+            $this->setOption('dateFormat', null);
+        }
+
+        return $param;
     }
 
     /**
@@ -512,14 +507,17 @@ abstract class WidgetComponent
             }
         }
 
-        if ($resource) {
-            $value = $resource->get($value, $this->get());
+        $resourceKey = $this->getOption('valueKey') ? $this->getValueKey() : $value;
+        $resourceParams = array_merge($this->get(), [$this->getValueKey() => $value]);
 
+        if ($resource) {
             if ($this->getOption('valueHardResource')) {
-                $value = $resource->get($this->getValueKey() . '_' . $value, $this->get());
+                $resourceKey = $this->getValueKey() . '_' . $value;
             }
+
+            $value = $resource->get($resourceKey, $resourceParams);
         } else {
-            $value = Replace::getInstance()->fetch($value, $this->get(), null, Render::TEMPLATE_TYPE_STRING);
+            $value = Replace::getInstance()->fetch($value, $resourceParams, null, Render::TEMPLATE_TYPE_STRING);
         }
 
         if ($dateFormat = $this->getOption('dateFormat')) {
