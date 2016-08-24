@@ -2,6 +2,7 @@
 namespace Ice\Core;
 
 use Ice\Exception\Access_Denied;
+use Ice\Exception\Error_Deprecated;
 use Ice\Exception\Http;
 use Ice\Exception\RouteNotFound;
 use Ice\Helper\Access;
@@ -1041,34 +1042,48 @@ abstract class Widget extends Container
     }
 
     /**
-     * @param string $columnName
-     * @param array $options
-     * @param string $template
+     * @param string $elementName
+     * @param Widget|array $options
      * @return $this
      */
-    public function widget($columnName, array $options = [], $template = null)
+    public function widget($elementName, $options)
     {
         try {
-            Access::check($options['widget']::getConfig()->gets('access'));
+            if (!is_array($options) || !isset($options['widget'])) {
+                $options = ['widget' => $this->getWidget($options, $elementName)];
+            }
+
+            /** @var Widget $widgetClass */
+            $widgetClass = get_class($options['widget']);
+
+            Access::check($widgetClass::getConfig()->gets('access'));
+
+            $options['widget']->setParentWidgetId($this->getInstanceKey());
+            $options['widget']->setParentWidgetClass(get_class($this));
+
+            return $this->addPart(
+                new WidgetComponent_Widget(
+                    $elementName
+                    ,$options
+                    ,null
+                    ,$this
+                )
+            );
         } catch (Access_Denied $e) {
             return $this;
         }
-
-        return $this->addPart(new WidgetComponent_Widget($columnName, $options, $template, $this));
     }
 
     /**
      * @param string $widgetClass
      * @param string $postfixKey
      * @return $this
+     * @throws Error_Deprecated
      */
     public function getWidget($widgetClass, $postfixKey = '')
     {
-        if ($widgetClass instanceof Widget) {
-            $widgetClass->setParentWidgetId($this->getInstanceKey());
-            $widgetClass->setParentWidgetClass(get_class($this));
-
-            return $widgetClass;
+        if (is_object($widgetClass)) {
+            throw new Error_Deprecated('Get widget receive only widget class');
         }
 
         $widgetClass = (array)$widgetClass;

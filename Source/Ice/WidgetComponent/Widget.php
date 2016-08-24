@@ -13,7 +13,7 @@ class Widget extends WidgetComponent
     {
         parent::__construct($componentName, $options, $template, $widget);
 
-        $this->widget = $widget->getWidget($options['widget']);
+        $this->widget = $options['widget'];
 
 //        try {
 //            Access::check($options['widget']::getConfig()->gets('access'));
