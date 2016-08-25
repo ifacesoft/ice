@@ -223,9 +223,15 @@ class QueryBuilder
      */
     public function notNull($fieldName, $modelTableData = [], $sqlLogical = QueryBuilder::SQL_LOGICAL_AND, $isUse = true)
     {
+        $eq = [];
+
+        foreach ((array) $fieldName as $fn) {
+            $eq[$fn] = null;
+        }
+
         return $this->where(
             $sqlLogical,
-            [$fieldName => null],
+            $eq,
             QueryBuilder::SQL_COMPARISON_KEYWORD_IS_NOT_NULL,
             $modelTableData,
             $isUse
