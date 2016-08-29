@@ -11,6 +11,7 @@ namespace Ice\DataProvider;
 
 use ArrayObject;
 use Ice\Core\DataProvider;
+use Ice\Core\Debuger;
 use Ice\Core\Exception;
 use Ice\Core\Request as Core_Request;
 use Ice\Exception\Error;
@@ -27,7 +28,7 @@ use Ice\Exception\Error;
  * @package    Ice
  * @subpackage DataProvider
  */
-class Request extends Registry
+class QueryResultRow extends Registry
 {
     const DEFAULT_KEY = 'default';
 
@@ -46,16 +47,6 @@ class Request extends Registry
     public function set(array $values = null, $ttl = null)
     {
         throw new Error('Request data provider is not unchangeable');
-    }
-
-    public function getIndex()
-    {
-        return Core_Request::class;
-    }
-
-    public function getKey()
-    {
-        return Request::getDefaultKey();
     }
 
     /**
@@ -108,22 +99,11 @@ class Request extends Registry
     {
         parent::connect($connection);
 
+        $queryBuilderClass = $this->getKey();
+
         $connection->offsetSet(
             $this->getKeyPrefix(),
-            array_merge(
-                Core_Request::getParam(),
-                [
-                    'agent' => Core_Request::agent(),
-                    'ip' => Core_Request::ip(),
-                    'host' => Core_Request::host(),
-                    'method' => Core_Request::method(),
-                    'locale' => Core_Request::locale(),
-                    'query_string' => Core_Request::queryString(),
-                    'referer' => Core_Request::referer(),
-                    'uri' => Core_Request::uri(),
-                    'protocol' => Core_Request::protocol()
-                ]
-            )
+            $queryBuilderClass::create(null)->getSelectQuery('*')->getRow()
         );
 
         return true;

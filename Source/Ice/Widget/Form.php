@@ -118,6 +118,11 @@ class Form extends Widget
         return $this->addPart(new FormElement_TextInput($fieldName, $options, $template, $this));
     }
 
+    public function span($fieldName, array $options = [], $template = 'Ice\Widget\Form\Span')
+    {
+        return $this->addPart(new FormElement_TextInput($fieldName, $options, $template, $this));
+    }
+
     /**
      * Add hidden type field
      *

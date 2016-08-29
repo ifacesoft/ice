@@ -25,7 +25,7 @@ use Ice\Exception\Http_Redirect;
  *
  * Data provider for router data
  *
- * @see Ice\Core\DataProvider
+ * @see \Ice\Core\DataProvider
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
@@ -34,6 +34,8 @@ use Ice\Exception\Http_Redirect;
  */
 class Router extends DataProvider
 {
+    private static $cacheData = [];
+
     /**
      * @param string $key
      * @param string $index
@@ -280,6 +282,12 @@ class Router extends DataProvider
      */
     private function getRoutes($url, $method)
     {
+        $cacheTag = $method . ':' . $url;
+
+        if (isset(Router::$cacheData[$cacheTag])) {
+            return Router::$cacheData[$cacheTag];
+        }
+
         $matchedRoutes = [];
         $foundRoutes = [];
 
@@ -339,7 +347,7 @@ class Router extends DataProvider
             }
         }
 
-        return array($matchedRoutes, $foundRoutes);
+        return Router::$cacheData[$cacheTag] = array($matchedRoutes, $foundRoutes);
     }
 
     /**

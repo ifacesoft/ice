@@ -12,7 +12,7 @@
 
             <td colspan="<?= $column ?>"><?= $key ?></td>
         <?php else : ?>
-            <td><?= $column ?></td>
+            <td><?php if ($column instanceof \Ice\Core\Widget || $column instanceof \Ice\Core\WidgetComponent) : ?><?= $column->render() ?><?php else : ?><?= $column ?> <?php endif; ?></td>
         <?php endif; ?>
     <?php endforeach; ?>
 </tr>

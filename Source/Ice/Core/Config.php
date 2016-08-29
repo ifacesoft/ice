@@ -23,7 +23,7 @@ use Ice\Helper\Object;
  *
  * Core config class
  *
- * @see Ice\Core\Container
+ * @see \Ice\Core\Container
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
@@ -33,6 +33,8 @@ use Ice\Helper\Object;
 class Config
 {
     use Stored;
+
+    private static $cacheData = [];
 
     /**
      * Config params
@@ -139,8 +141,14 @@ class Config
      */
     public function gets($key = null, $isRequired_default = true)
     {
+        $cacheTag = $this->getName() . ':' . $key;
+
+        if (isset(Config::$cacheData[$cacheTag])) {
+            return Config::$cacheData[$cacheTag];
+        }
+
         try {
-            return Helper_Config::gets($this->config, $key, $isRequired_default);
+            return Config::$cacheData[$cacheTag] = Helper_Config::gets($this->config, $key, $isRequired_default);
         } catch (Config_Param_NotFound $e) {
             throw new Config_Error(['Param not found for {$0}', $this->getName()], [], $e);
         }
