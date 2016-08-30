@@ -14,11 +14,12 @@ trait Configured
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 1.1
+     * @version 1.3
      * @since   1.1
      */
     public static function getConfig()
     {
+        /** @var Configured $class */
         $class = get_called_class();
 
         $baseClass = Object::getBaseClass($class);
@@ -31,7 +32,7 @@ trait Configured
 
         $config = Config::create(
             $class,
-            array_merge_recursive($class::config(), Config::getInstance($class, null, false, -1)->gets())
+            Config::getInstance($class, null, false, -1, $class::config())->gets()
         );
 
         return $repository->set(['config' => $config])['config'];

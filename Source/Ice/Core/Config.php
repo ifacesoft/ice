@@ -13,6 +13,7 @@ use Ice\Core;
 use Ice\DataProvider\Repository;
 use Ice\Exception\Config_Error;
 use Ice\Exception\Config_Param_NotFound;
+use Ice\Exception\Error;
 use Ice\Exception\FileNotFound;
 use Ice\Helper\Config as Helper_Config;
 use Ice\Helper\File;
@@ -99,7 +100,7 @@ class Config
      * @version 0.5
      * @since   0.5
      */
-    public static function create($configRouteName, array $configData = [])
+    public static function create($configRouteName, array $configData)
     {
         $configClass = self::getClass();
 
@@ -141,7 +142,7 @@ class Config
      */
     public function gets($key = null, $isRequired_default = true)
     {
-        $cacheTag = $this->getName() . ':' . $key;
+        $cacheTag = $this->getName() . '/' . $key;
 
         if (isset(Config::$cacheData[$cacheTag])) {
             return Config::$cacheData[$cacheTag];
@@ -161,14 +162,14 @@ class Config
      * @param  null $postfix
      * @param  bool $isRequired
      * @param  integer $ttl
+     * @param array $selfConfig
      * @return Config
-     * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.5
+     * @version 1.3
      * @since   0.0
      */
-    public static function getInstance($class, $postfix = null, $isRequired = false, $ttl = null)
+    public static function getInstance($class, $postfix = null, $isRequired = false, $ttl = null, array $selfConfig = [])
     {
         $baseClass = Object::getBaseClass($class);
 
@@ -195,6 +196,7 @@ class Config
 
         if ($baseClass != $class) {
             $baseClassPathes = Loader::getFilePath($baseClass, '.php', Module::CONFIG_DIR, false, false, false, true);
+
             foreach (array_reverse($baseClassPathes) as $configFilePath) {
                 $configFromFile = File::loadData($configFilePath);
 
@@ -229,7 +231,9 @@ class Config
             );
         }
 
-        return $repository->set([$class => Config::create($class, $config)], $ttl)[$class];
+        $configClass = self::getClass();
+
+        return $repository->set([$class => $configClass::create($class, array_merge_recursive($selfConfig, $config))], $ttl)[$class];
     }
 
     /**

@@ -202,24 +202,9 @@ abstract class Model
      */
     public static function getScheme()
     {
-        $repository = self::getRepository();
-        $key = 'scheme';
-
-        if ($scheme = $repository->get($key)) {
-            return $scheme;
-        }
-
-        /**
-         * @var Model $modelClass
-         */
         $modelClass = self::getClass();
 
-        $scheme = ModelScheme::create(
-            $modelClass,
-            array_merge_recursive($modelClass::config(), Config::getInstance($modelClass, null, false, -1)->gets())
-        );
-
-        return $repository->set([$key => $scheme])[$key];
+        return ModelScheme::getInstance($modelClass, null, false, -1, $modelClass::config());
     }
 
     protected static function config()

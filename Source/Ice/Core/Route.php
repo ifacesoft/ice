@@ -97,10 +97,11 @@ class Route extends Config
      * @param null $postfix
      * @param bool $isRequired
      * @param null $ttl
+     * @param array $selfConfig
      * @return Route
-     * @throws Exception
+     * @throws RouteNotFound
      */
-    public static function getInstance($routeName, $postfix = null, $isRequired = false, $ttl = null)
+    public static function getInstance($routeName, $postfix = null, $isRequired = false, $ttl = null, array $selfConfig = [])
     {
         $routes = self::getRoutes();
 

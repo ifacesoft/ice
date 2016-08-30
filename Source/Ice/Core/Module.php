@@ -288,14 +288,14 @@ class Module extends Config
      * @param  null $postfix
      * @param  bool $isRequired
      * @param  null $ttl
+     * @param array $selfConfig
      * @return Module
-     * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
      * @since   0.0
      */
-    public static function getInstance($moduleAlias = null, $postfix = null, $isRequired = false, $ttl = null)
+    public static function getInstance($moduleAlias = null, $postfix = null, $isRequired = false, $ttl = null, array $selfConfig = [])
     {
         $modules = Module::getAll();
 

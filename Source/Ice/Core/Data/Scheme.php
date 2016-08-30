@@ -22,7 +22,7 @@ use RegexIterator;
  *
  * Core data scheme container class
  *
- * @see Ice\Core\Container
+ * @see \Ice\Core\Container
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
@@ -110,12 +110,12 @@ class Data_Scheme
                         substr($modelPath, strlen($sourceDir), -4 - strlen($modelName))
                     ) . $modelName;
 
-                $config = $modelClass::getConfig()->gets();
+                $scheme = $modelClass::getConfig()->gets();
 
-                $config['modelClass'] = $modelClass;
-                $config['modelPath'] = substr($modelPath, strlen($sourceDir));
+                $scheme['modelClass'] = $modelClass;
+                $scheme['modelPath'] = substr($modelPath, strlen($sourceDir));
 
-                $dataSourceKey = $config['dataSourceKey'];
+                $dataSourceKey = $scheme['dataSourceKey'];
 
                 if ($module->getName() != $module1->getName()) {
                     $dataSourceName = strstr($dataSourceKey, '/', true);
@@ -125,7 +125,7 @@ class Data_Scheme
                     }
                 }
 
-                self::$tables[$dataSourceKey][$config['scheme']['tableName']] = $config;
+                self::$tables[$dataSourceKey][$scheme['scheme']['tableName']] = $scheme;
             }
         }
 

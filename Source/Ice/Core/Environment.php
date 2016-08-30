@@ -9,6 +9,7 @@
 
 namespace Ice\Core;
 
+use Ice\Core;
 use Ice\Exception\Access_Denied_Environment;
 
 /**
@@ -16,7 +17,7 @@ use Ice\Exception\Access_Denied_Environment;
  *
  * Core environment class
  *
- * @see Ice\Core\Container
+ * @see \Ice\Core\Container
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
@@ -52,8 +53,8 @@ class Environment extends Config
      * @param  null $postfix
      * @param  bool $isRequired
      * @param  null $ttl
-     * @return Environment
-     *
+     * @param array $selfConfig
+     * @return Environment|Config
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.5
@@ -63,7 +64,8 @@ class Environment extends Config
         $environmentName = Environment::PRODUCTION,
         $postfix = null,
         $isRequired = false,
-        $ttl = null
+        $ttl = null,
+        array $selfConfig = []
     )
     {
         if (Environment::$instance !== null) {

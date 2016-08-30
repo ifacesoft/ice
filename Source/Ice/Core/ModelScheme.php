@@ -13,11 +13,12 @@ class ModelScheme extends Config
      * @param null $postfix
      * @param bool $isRequired
      * @param null $ttl
-     * @return ModelScheme
+     * @param array $config
+     * @return ModelScheme|Config
      */
-    public static function getInstance($class, $postfix = null, $isRequired = false, $ttl = null)
+    public static function getInstance($class, $postfix = null, $isRequired = false, $ttl = null, array $config = [])
     {
-        return parent::getInstance($class, $postfix, $isRequired, $ttl);
+        return parent::getInstance($class, $postfix, $isRequired, $ttl, $config);
     }
 
     public function getFieldColumnMap()
