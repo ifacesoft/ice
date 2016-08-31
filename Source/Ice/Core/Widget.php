@@ -1,6 +1,7 @@
 <?php
 namespace Ice\Core;
 
+use Ice\DataProvider\Request as DataProvider_Request;
 use Ice\Exception\Access_Denied;
 use Ice\Exception\Http;
 use Ice\Exception\RouteNotFound;
@@ -81,11 +82,11 @@ abstract class Widget extends Container
 
     private $layout = null;
 
-    protected function __construct(array $data)
+    protected function __construct(array $defaultData)
     {
-        parent::__construct($data);
+        parent::__construct($defaultData);
 
-        unset($data['instanceKey']);
+        unset($defaultData['instanceKey']);
 
         $startTime = Profiler::getMicrotime();
         $startMemory = Profiler::getMemoryGetUsage();
@@ -104,24 +105,22 @@ abstract class Widget extends Container
             $this->setTemplateClass();
             $this->setRenderClass();
 
-            if (isset($data['parentWidgetId'])) {
-                $this->parentWidgetId = $data['parentWidgetId'];
-                unset($data['parentWidgetId']);
+            if (isset($defaultData['parentWidgetId'])) {
+                $this->parentWidgetId = $defaultData['parentWidgetId'];
+                unset($defaultData['parentWidgetId']);
             }
 
-            if (isset($data['parentWidgetClass'])) {
-                $this->parentWidgetClass = $data['parentWidgetClass'];
-                unset($data['parentWidgetClass']);
+            if (isset($defaultData['parentWidgetClass'])) {
+                $this->parentWidgetClass = $defaultData['parentWidgetClass'];
+                unset($defaultData['parentWidgetClass']);
             }
 
-            $this->setData($data);
-
-            $this->set(Input::get($widgetClass::getConfig()->gets('input', []), $data));
+            $this->set(Input::get($widgetClass::getConfig()->gets('input', []), $defaultData));
 
             $this->loadResource();
 
             $this->output = array_merge(
-                Input::get($widgetClass::getConfig()->gets('output', []), $data),
+                Input::get($widgetClass::getConfig()->gets('output', []), $defaultData),
                 (array)$this->build($this->get())
             );
         } catch (Http $e) {
@@ -402,7 +401,7 @@ abstract class Widget extends Container
 
     /**
      * @param $partName
-     * @return WidgetComponent
+     * @return WidgetComponent|WidgetComponent_Widget
      */
     public function getPart($partName)
     {

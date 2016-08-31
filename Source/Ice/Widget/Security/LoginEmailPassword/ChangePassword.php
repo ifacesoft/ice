@@ -104,7 +104,7 @@ class Security_LoginEmailPassword_ChangePassword extends Widget_Security
                     ]
                 ]
             )
-            ->div('ice-message', ['value' => '&nbsp;', 'encode' => false, 'resource' => false])
+            ->divMessage()
             ->button(
                 'change_password',
                 [

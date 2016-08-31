@@ -150,7 +150,7 @@ class Security_LoginEmailPassword_RestorePasswordConfirm extends Widget_Security
                     ]
                 ]
             )
-            ->div('ice-message', ['value' => '&nbsp;', 'encode' => false, 'resource' => false])
+            ->divMessage()
             ->button(
                 'restore_password_confirm',
                 [

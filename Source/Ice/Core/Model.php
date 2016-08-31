@@ -1571,11 +1571,6 @@ abstract class Model
         return Query::getBuilder(self::getClass(), $tableAlias);
     }
 
-    public function getModelCollection($fieldNames, $filter)
-    {
-
-    }
-
     /**
      * @param null $fieldName
      * @return mixed

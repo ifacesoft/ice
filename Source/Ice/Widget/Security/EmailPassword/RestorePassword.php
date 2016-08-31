@@ -38,7 +38,7 @@ class Security_EmailPassword_RestorePassword extends Widget_Security
                     ]
                 ]
             )
-            ->div('ice-message', ['value' => '&nbsp;', 'encode' => false, 'resource' => false])
+            ->divMessage()
             ->button(
                 'restore_password',
                 [

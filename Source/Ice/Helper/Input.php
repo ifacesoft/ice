@@ -3,6 +3,7 @@
 namespace Ice\Helper;
 
 use Ice\Core\DataProvider;
+use Ice\Core\Debuger;
 use Ice\Core\Exception;
 use Ice\DataProvider\Cli;
 use Ice\DataProvider\Request;
@@ -36,7 +37,10 @@ class Input
             }
 
             $dataProviderKeys = isset($param['providers'])
-                ? ($param['providers'] == '*' ? ['default', Request::class, Router::class, Cli::class, Session::class] : (array)$param['providers'])
+                ? ($param['providers'] == '*'
+                    ? ['default', Request::class, Router::class, Cli::class, Session::class]
+                    : (array)$param['providers']
+                )
                 : ['default'];
 
             foreach ($dataProviderKeys as $key => $dataProviderKey) {
@@ -62,7 +66,6 @@ class Input
                 try { // пока провайдер роутер понимает только нативные роуты (не понмает, например, от Symfony)
                     $input[$name] = DataProvider::getInstance($dataProviderKey, $index)->get($name, null, true);
                 } catch (Exception $e) {
-                    //
                 }
             }
 

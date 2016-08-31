@@ -279,7 +279,10 @@ class HtmlTag extends WidgetComponent
 
     public function getDataAction()
     {
-        return Json::encode($this->getEvent());
+        $event = $this->getEvent();
+        unset($event['code']);
+
+        return Json::encode($event);
     }
 
     /**

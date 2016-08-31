@@ -17,6 +17,7 @@ use Ice\Core\Exception;
 use Ice\Core\Logger;
 use Ice\Core\Request as Core_Request;
 use Ice\Core\Route;
+use Ice\Exception\Error;
 use Ice\Exception\Http_Not_Found;
 use Ice\Exception\Http_Redirect;
 
@@ -67,10 +68,11 @@ class Router extends DataProvider
      * @param  string $key
      * @param null $default
      * @param bool $require
-     * @return array
+     * @return mixed
+     * @throws Error
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 1.2
+     * @version 1.3
      * @since   0.0
      */
     public function get($key = null, $default = null, $require = false)
@@ -79,7 +81,15 @@ class Router extends DataProvider
             return $this->getConnection();
         }
 
-        return isset($this->getConnection()[$key]) ? $this->getConnection()[$key] : $default;
+        $value = array_key_exists($key, $this->getConnection()) ? $this->getConnection()[$key] : $default;
+
+        if ($require && ($value === null || $value === '')) {
+            $dataProviderClass = get_class($this);
+
+            throw new Error(['Param {$0} from data provider {$1} is require', [$key, $dataProviderClass]]);
+        }
+
+        return $value;
     }
 
     /**

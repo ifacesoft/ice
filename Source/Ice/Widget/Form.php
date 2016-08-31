@@ -4,6 +4,7 @@ namespace Ice\Widget;
 
 use Ice\Core\Widget;
 use Ice\Helper\Directory;
+use Ice\Helper\Json;
 use Ice\WidgetComponent\Form_Date;
 use Ice\WidgetComponent\Form_File;
 use Ice\WidgetComponent\Form_ListBox;
@@ -490,10 +491,17 @@ class Form extends Widget
             $compiledResult,
             [
                 'dataAction' => $component->getDataAction(),
+                'dataParams' => Json::encode($component->get()),
                 'onSubmit' => $component->getEvent()['ajax'] ? $component->getEventCode() : '',
                 'url' => $component->getHref(),
                 'method' => $component->getRoute() ? $component->getRoute()['method'] : 'POST'
             ]
         );
+    }
+
+    public function divMessage($timeout = 0) {
+        return $this
+            ->setTimeout($timeout)
+            ->div('ice-message', ['valueKey' => '&nbsp;', 'encode' => false, 'resource' => false]);
     }
 }

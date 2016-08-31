@@ -49,7 +49,7 @@ class Security_LoginPassword_Login extends Widget_Security
                     ]
                 ]
             )
-            ->div('ice-message', ['value' => '&nbsp;', 'encode' => false, 'resource' => false])
+            ->divMessage()
             ->button(
                 'login',
                 [

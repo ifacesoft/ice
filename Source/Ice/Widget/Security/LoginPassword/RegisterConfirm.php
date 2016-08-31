@@ -48,7 +48,7 @@ class Security_LoginPassword_RegisterConfirm extends Widget_Security
                     'params' => ['token' => ['providers' => Request::class]]
                 ]
             )
-            ->div('ice-message', ['value' => '&nbsp;', 'encode' => false, 'resource' => false])
+            ->divMessage()
             ->button(
                 'register_confirm',
                 [
