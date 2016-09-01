@@ -277,10 +277,16 @@ class HtmlTag extends WidgetComponent
         return isset($route['method']) ? $route['method'] : 'POST';
     }
 
+    /**
+     * @return string
+     */
     public function getDataAction()
     {
         $event = $this->getEvent();
+
         unset($event['code']);
+        unset($event['callback']);
+        unset($event['confirm_message']);
 
         return Json::encode($event);
     }
@@ -290,7 +296,13 @@ class HtmlTag extends WidgetComponent
      */
     public function getDataParams()
     {
-        return Json::encode($this->get());
+        $params = $this->get();
+
+        unset($params['code']);
+        unset($params['callback']);
+        unset($params['confirm_message']);
+
+        return Json::encode($params);
     }
 
     public function getHtmlTagAttributes()
