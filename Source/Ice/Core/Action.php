@@ -228,8 +228,7 @@ abstract class Action implements Cacheable
 
         $roles = isset($this->input['roles'])
             ? $this->input['roles']
-            : $actionClass::getConfig()->gets('access/roles', false);
-
+            : $actionClass::getConfig()->gets('access/roles', []);
 
         Access::check(['env' => $env, 'roles' => $roles, 'request' => $request]);
 
