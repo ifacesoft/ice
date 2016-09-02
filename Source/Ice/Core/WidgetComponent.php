@@ -636,7 +636,7 @@ abstract class WidgetComponent
 
     public function getLayout()
     {
-        return null; // todo: dummy - need implement
+        return $this->getOption('wrap');
     }
 
     protected function getNotValidResult(Not_Valid $e)
