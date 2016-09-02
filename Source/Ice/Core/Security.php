@@ -6,6 +6,7 @@ use Ice\Core;
 use Ice\Core\Model\Security_Account;
 use Ice\Core\Model\Security_User;
 use Ice\Exception\Access_Denied_Security;
+use Ice\Model\User;
 
 abstract class Security extends Container
 {
@@ -66,7 +67,7 @@ abstract class Security extends Container
     abstract public function getRoles();
 
     /**
-     * @return Security_User
+     * @return Security_User|User
      */
     abstract public function getUser();
 

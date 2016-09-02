@@ -23,7 +23,7 @@ use Ice\Helper\Json;
  *
  * Core action abstract class
  *
- * @see Ice\Core\Container
+ * @see \Ice\Core\Container
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
@@ -228,7 +228,8 @@ abstract class Action implements Cacheable
 
         $roles = isset($this->input['roles'])
             ? $this->input['roles']
-            : $actionClass::getConfig()->get('access/roles', false);
+            : $actionClass::getConfig()->gets('access/roles', false);
+
 
         Access::check(['env' => $env, 'roles' => $roles, 'request' => $request]);
 

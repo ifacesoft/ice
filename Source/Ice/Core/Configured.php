@@ -30,10 +30,7 @@ trait Configured
             return $config;
         }
 
-        $config = Config::create(
-            $class,
-            Config::getInstance($class, null, false, -1, $class::config())->gets()
-        );
+        $config = Config::getInstance($class, null, false, -1, $class::config());
 
         return $repository->set(['config' => $config])['config'];
     }

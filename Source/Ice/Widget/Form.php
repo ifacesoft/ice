@@ -499,9 +499,16 @@ class Form extends Widget
         );
     }
 
-    public function divMessage($timeout = 0) {
-        return $this
-            ->setTimeout($timeout)
-            ->div('ice-message', ['valueKey' => '&nbsp;', 'encode' => false, 'resource' => false]);
+    public function divMessage($timeout = null, $route = null)
+    {
+        if ($timeout !== null) {
+            $this->setTimeout($timeout);
+        }
+
+        if ($route !== null) {
+            $this->setRedirect($route);
+        }
+
+        return $this->div('ice-message', ['valueKey' => '&nbsp;', 'encode' => false, 'resource' => false]);
     }
 }
