@@ -13,7 +13,7 @@ class Symfony extends Bootstrap
         parent::__construct($data);
 
 //        set_error_handler('Ice\Core\Logger::errorHandler');
-//        register_shutdown_function('Ice\Core\Logger::shutdownHandler');
+        register_shutdown_function('session_write_close');
     }
 
     protected static function getDefaultKey()

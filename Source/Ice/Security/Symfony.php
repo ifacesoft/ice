@@ -4,8 +4,8 @@ namespace Ice\Security;
 
 use Application\Sonata\UserBundle\Entity\User;
 use Doctrine\ORM\EntityManager;
-use Ice\Core\Model;
-use Ice\Core\Model\Security_Account;
+use Ice\Core\Debuger;
+use Ice\Model\Account;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
@@ -65,12 +65,12 @@ class Symfony extends Ice
     }
 
     /**
-     * @param Security_Account|Model $account
-     * @return bool
+     * @param Account $account
+     * @return Account
      */
-    public function login(Security_Account $account)
+    public function login(Account $account)
     {
-        parent::login($account);
+        $account = parent::login($account);
 
         try {
             /** @var User $symfonyUser */

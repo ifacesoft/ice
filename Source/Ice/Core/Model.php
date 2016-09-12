@@ -1102,7 +1102,7 @@ abstract class Model
      *
      * @param  string|null $dataSourceKey
      * @param  bool $isSmart
-     * @return Model
+     * @return $this
      * @throws Exception
      *
      * @author dp <denis.a.shestakov@gmail.com>

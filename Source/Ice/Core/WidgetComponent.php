@@ -599,17 +599,6 @@ abstract class WidgetComponent
 
         return $result;
     }
-//
-//    protected function buildParams(array $values)
-//    {
-//        /** @var WidgetComponent $widgetComponentClass */
-//        $widgetComponentClass = get_class($this);
-//
-//        $widgetComponentClass::getRegistry($this->getId())->set($values);
-//
-//        Debuger::dump($values);
-//
-//    }
 
     /**
      * @return Render

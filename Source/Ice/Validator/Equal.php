@@ -1,13 +1,14 @@
 <?php
 namespace Ice\Validator;
 
+use Ice\Core\Debuger;
 use Ice\Core\Validator;
 use Ice\Exception\Error;
 
 /**
  * Class Equal
  *
- * @see     Ice\Core\Validator
+ * @see     \Ice\Core\Validator
  * @package Ice\Validator;
  * @author  dp <email>
  */

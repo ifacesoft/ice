@@ -499,14 +499,14 @@ class Form extends Widget
         );
     }
 
-    public function divMessage($timeout = null, $route = null)
+    public function divMessage($timeout = null, $routeRedirect = null)
     {
         if ($timeout !== null) {
             $this->setTimeout($timeout);
         }
 
-        if ($route !== null) {
-            $this->setRedirect($route);
+        if ($routeRedirect !== null) {
+            $this->setRedirect($routeRedirect);
         }
 
         return $this->div('ice-message', ['valueKey' => '&nbsp;', 'encode' => false, 'resource' => false]);

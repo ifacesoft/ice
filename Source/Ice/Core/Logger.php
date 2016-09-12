@@ -29,7 +29,7 @@ use Ice\Model\Log_Error;
  *
  * Core logger class
  *
- * @see Ice\Core\Container
+ * @see \Ice\Core\Container
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *

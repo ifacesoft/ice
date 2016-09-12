@@ -30,7 +30,7 @@
                     formName: '<?= $widgetClassName ?>',
                     fieldName: '<?= $component->getName() ?>'
                 },
-                autoUpload: <?php if (!empty($options['autoUpload']) && $options['autoUpload'] == false) : ?>false<?php else : ?>true<?php endif; ?>,
+                autoUpload: <?php if (!empty($component->getOption('autoUpload')) && $component->getOption('autoUpload') == false) : ?>false<?php else : ?>true<?php endif; ?>,
                 elements: {
                     list: '.js-files',
                     file: {

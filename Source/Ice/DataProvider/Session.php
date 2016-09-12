@@ -10,14 +10,16 @@
 namespace Ice\DataProvider;
 
 use Ice\Core\DataProvider;
+use Ice\Core\Debuger;
 use Ice\Core\Exception;
+use Ice\Exception\Error;
 
 /**
  * Class Session
  *
  * Data provider for session data
  *
- * @see Ice\Core\DataProvider
+ * @see \Ice\Core\DataProvider
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
@@ -195,7 +197,10 @@ class Session extends DataProvider
      */
     protected function connect(&$connection)
     {
-        $_SESSION[$this->getKey()][$this->getIndex()] = [];
+        if (!isset($_SESSION[$this->getKey()][$this->getIndex()])) {
+            $_SESSION[$this->getKey()][$this->getIndex()] = [];
+        }
+
         return true;
     }
 
@@ -212,7 +217,6 @@ class Session extends DataProvider
      */
     protected function close(&$connection)
     {
-        unset($_SESSION[$this->getKey()][$this->getIndex()]);
         return true;
     }
 }

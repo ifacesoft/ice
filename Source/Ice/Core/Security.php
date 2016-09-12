@@ -3,9 +3,9 @@
 namespace Ice\Core;
 
 use Ice\Core;
-use Ice\Core\Model\Security_Account;
 use Ice\Core\Model\Security_User;
 use Ice\Exception\Access_Denied_Security;
+use Ice\Model\Account;
 use Ice\Model\User;
 
 abstract class Security extends Container
@@ -42,7 +42,7 @@ abstract class Security extends Container
      * @param null $instanceKey
      * @param null $ttl
      * @param array $params
-     * @return Security
+     * @return Security|Container
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
@@ -73,9 +73,9 @@ abstract class Security extends Container
 
     /**
      * @param $account
-     * @return bool
+     * @return Account
      */
-    abstract public function login(Security_Account $account);
+    abstract public function login(Account $account);
 
     abstract public function logout();
 

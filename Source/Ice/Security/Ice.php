@@ -3,10 +3,11 @@
 namespace Ice\Security;
 
 use Ice\Core\Config;
+use Ice\Core\Debuger;
 use Ice\Core\Model;
-use Ice\Core\Model\Security_Account;
 use Ice\Core\Security;
 use Ice\Exception\Security_Auth;
+use Ice\Model\Account;
 use Ice\Model\Account_Phone_Password;
 use Ice\Model\User;
 
@@ -67,10 +68,10 @@ class Ice extends Security
     }
 
     /**
-     * @param Security_Account|Model $account
-     * @return bool
+     * @param Account $account
+     * @return Account
      */
-    public function login(Security_Account $account)
+    public function login(Account $account)
     {
         try {
             $user = $account->getUser();
@@ -99,12 +100,15 @@ class Ice extends Security
             return $this->getLogger()->exception('Ice security login failed', __FILE__, __LINE__, $e);
         }
 
-        return true;
+        return $account;
     }
 
     public function logout()
     {
         $this->setUser(null);
+
+        $this->getDataProviderSession()->flushAll();
+
         $this->autologin();
     }
 

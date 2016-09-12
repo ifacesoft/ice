@@ -115,7 +115,7 @@ abstract class Widget extends Container
                 unset($defaultData['parentWidgetClass']);
             }
 
-            $this->set(Input::get($widgetClass::getConfig()->gets('input', []), $defaultData));
+            $this->init($defaultData);
 
             $this->loadResource();
 
@@ -134,6 +134,13 @@ abstract class Widget extends Container
 
             Logger::fb(Profiler::getReport($key), 'widget', 'INFO');
         }
+    }
+
+    protected function init($data) {
+        /** @var Widget $widgetClass */
+        $widgetClass = get_class($this);
+
+        $this->set(Input::get($widgetClass::getConfig()->gets('input', []), $data));
     }
 
     /**

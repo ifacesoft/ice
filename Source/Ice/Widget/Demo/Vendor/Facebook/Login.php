@@ -21,7 +21,6 @@ class Demo_Vendor_Facebook_Login extends Block
         return $config;
     }
 
-
     protected function build(array $input)
     {
         return parent::build($input);

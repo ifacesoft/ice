@@ -2,12 +2,9 @@
 
 namespace Ice\Model;
 
-use Ice\Core\Config;
-use Ice\Core\Model;
-use Ice\Core\Model\Security_Account;
-use Ice\Core\Security;
+use Ice\Widget\Account_Form;
 
-class Account_Phone_Password extends Model implements Security_Account
+class Account_Phone_Password extends Account_Password
 {
     protected static function config()
     {
@@ -243,30 +240,19 @@ class Account_Phone_Password extends Model implements Security_Account
         ];
     }
 
-    /**
-     * Check is expired account
-     *
-     * @return bool
-     */
-    public function isExpired()
+    protected function getAccountData(Account_Form $accountForm)
     {
-        return strtotime($this->get('/expired')) < time();
+        return [
+            'phone' => $accountForm->get('phone'),
+            'password' => password_hash($accountForm->get('password'), PASSWORD_DEFAULT)
+        ];
     }
 
-    public function getUser()
+    protected function getUserData(Account_Form $accountForm)
     {
-        /** @var Model $userModelClass */
-        $userModelClass = Config::getInstance(Security::getClass())->get('userModelClass');
-        return $this->fetchOne($userModelClass, '*', true);
-    }
-
-    public function securityVerify(array $values)
-    {
-        return password_verify($values['password'], $this->get('password'));
-    }
-
-    public function securityHash(array $values)
-    {
-        return password_hash($values['new_password'], PASSWORD_DEFAULT);
+        return [
+            '/login' => $accountForm->get('phone'),
+            '/phone' => $accountForm->get('phone')
+        ];
     }
 }
