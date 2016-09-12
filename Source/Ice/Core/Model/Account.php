@@ -1,13 +1,13 @@
 <?php
 
-namespace Ice\Model;
+namespace Ice\Core;
 
 use Ice\Core\Model;
 use Ice\Model\Token;
 use Ice\Model\User;
 use Ice\Widget\Account_Form;
 
-abstract class Account extends Model
+abstract class Model_Account extends Model
 {
     /**
      * Check is expired account
@@ -19,7 +19,12 @@ abstract class Account extends Model
     /**
      * @return User|Model
      */
-    abstract public function getUser();
+    public function getUser()
+    {
+        /** @var Model $userModelClass */
+        $userModelClass = Config::getInstance(Security::getClass())->get('userModelClass');
+        return $this->fetchOne($userModelClass, '*', true);
+    }
 
     /**
      * @param array $values

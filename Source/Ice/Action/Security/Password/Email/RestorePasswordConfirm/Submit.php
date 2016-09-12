@@ -4,6 +4,7 @@ namespace Ice\Action;
 
 use Ice\Core\Logger;
 use Ice\Core\Model;
+use Ice\Core\Model_Account;
 use Ice\Helper\Date;
 use Ice\Model\Account;
 use Ice\Model\Token;
@@ -37,7 +38,7 @@ class Security_Password_Email_RestorePasswordConfirm_Submit extends Security
             $accountModelClass = $accountForm->getAccountEmailPasswordModelClass();
             $accountModelClassName = $accountModelClass::getClassName();
 
-            /** @var Account $account */
+            /** @var Model_Account $account */
             $account = $accountModelClass::createQueryBuilder()
                 ->inner(Token::class, '/pk', 'Token.id=' . $accountModelClassName . '.token_id AND Token.token="' . $token->get('token') . '"')
                 ->getSelectQuery(['/pk', 'password', '/expired', 'user__fk'])

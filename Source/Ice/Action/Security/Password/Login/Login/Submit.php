@@ -3,6 +3,7 @@
 namespace Ice\Action;
 
 use Ice\Core\Logger;
+use Ice\Core\Model_Account;
 use Ice\Model\Account;
 use Ice\Widget\Account_Password_Login_Login;
 
@@ -27,7 +28,7 @@ class Security_Password_Login_Login_Submit extends Security
         }
 
         try {
-            /** @var Account $account */
+            /** @var Model_Account $account */
             $account = $accountModelClass::createQueryBuilder()
                 ->eq(['login' => $securityForm->get('login')])
                 ->limit(1)

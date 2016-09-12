@@ -2,9 +2,10 @@
 
 namespace Ice\Model;
 
+use Ice\Core\Model_Account_Password;
 use Ice\Widget\Account_Form;
 
-class Account_Phone_Password extends Account_Password
+class Account_Password_Phone extends Model_Account_Password
 {
     protected static function config()
     {
@@ -235,8 +236,8 @@ class Account_Phone_Password extends Account_Password
                 'manyToMany' => [],
             ],
             'revision' => '08071232_r0w',
-            'modelClass' => 'Ice\Model\Account_Phone_Password',
-            'modelPath' => 'Ice/Model/Account/Phone/Password.php',
+            'modelClass' => 'Ice\Model\Account_Password_Phone',
+            'modelPath' => 'Ice/Model/Account/Password/Phone.php',
         ];
     }
 

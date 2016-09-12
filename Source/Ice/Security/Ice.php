@@ -3,12 +3,11 @@
 namespace Ice\Security;
 
 use Ice\Core\Config;
-use Ice\Core\Debuger;
 use Ice\Core\Model;
+use Ice\Core\Model_Account;
 use Ice\Core\Security;
 use Ice\Exception\Security_Auth;
-use Ice\Model\Account;
-use Ice\Model\Account_Phone_Password;
+use Ice\Model\Account_Password_Phone;
 use Ice\Model\User;
 
 class Ice extends Security
@@ -68,10 +67,10 @@ class Ice extends Security
     }
 
     /**
-     * @param Account $account
-     * @return Account
+     * @param Model_Account $account
+     * @return Model_Account
      */
-    public function login(Account $account)
+    public function login(Model_Account $account)
     {
         try {
             $user = $account->getUser();
@@ -126,7 +125,7 @@ class Ice extends Security
         if (!$userKey) {
             $userKey = 1;
             $user = $userModelClass::getModel($userKey, '*');
-            $this->login(Account_Phone_Password::create(['user' => $user]));
+            $this->login(Account_Password_Phone::create(['user' => $user]));
         } else {
             $user = $userModelClass::getModel($userKey, '*');
         }

@@ -2,6 +2,7 @@
 
 namespace Ice\Widget;
 
+use Ice\Core\Model_Account;
 use Ice\Helper\Date;
 use Ice\Model\Account;
 
@@ -125,7 +126,7 @@ abstract class Account_Form extends Form
     }
 
     /**
-     * @return Account
+     * @return Model_Account
      */
     public function getAccountModelClass()
     {
@@ -133,7 +134,7 @@ abstract class Account_Form extends Form
     }
 
     /**
-     * @param Account $accountModelClass
+     * @param Model_Account $accountModelClass
      * @return $this
      */
     public function setAccountModelClass($accountModelClass)

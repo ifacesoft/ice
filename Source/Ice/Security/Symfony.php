@@ -5,6 +5,7 @@ namespace Ice\Security;
 use Application\Sonata\UserBundle\Entity\User;
 use Doctrine\ORM\EntityManager;
 use Ice\Core\Debuger;
+use Ice\Core\Model_Account;
 use Ice\Model\Account;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
@@ -65,10 +66,10 @@ class Symfony extends Ice
     }
 
     /**
-     * @param Account $account
-     * @return Account
+     * @param Model_Account $account
+     * @return Model_Account
      */
-    public function login(Account $account)
+    public function login(Model_Account $account)
     {
         $account = parent::login($account);
 

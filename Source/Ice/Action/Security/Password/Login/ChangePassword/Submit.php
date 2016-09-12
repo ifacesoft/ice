@@ -3,6 +3,7 @@
 namespace Ice\Action;
 
 use Ice\Core\Logger;
+use Ice\Core\Model_Account;
 use Ice\Core\Security as Core_Security;
 use Ice\Model\Account;
 use Ice\Widget\Account_Password_Login_ChangePassword;
@@ -33,7 +34,7 @@ class Security_Password_Login_ChangePassword_Submit extends Security
         try {
             $values = $form->validate();
 
-            /** @var Account $account */
+            /** @var Model_Account $account */
             $account = $accountModelClass::createQueryBuilder()
                 ->eq(['user' => Core_Security::getInstance()->getUser()])
                 ->limit(1)

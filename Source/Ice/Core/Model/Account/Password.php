@@ -1,10 +1,11 @@
-<?php namespace Ice\Model;
+<?php namespace Ice\Core;
 
 use Ice\Core\Config;
 use Ice\Core\DataSource;
 use Ice\Core\Debuger;
 use Ice\Core\Model;
 use Ice\Core\Model\Security_User;
+use Ice\Core\Model_Account;
 use Ice\Core\Request;
 use Ice\Core\Router;
 use Ice\Core\Security;
@@ -32,7 +33,7 @@ use Ice\Widget\Account_Form;
  *
  * @package Ebs\Model
  */
-abstract class Account_Password extends Account
+abstract class Model_Account_Password extends Model_Account
 {
     /**
      * Check is expired account
@@ -42,13 +43,6 @@ abstract class Account_Password extends Account
     public function isExpired()
     {
         return strtotime($this->get('/expired')) < time();
-    }
-
-    public function getUser()
-    {
-        /** @var Model $userModelClass */
-        $userModelClass = Config::getInstance(Security::getClass())->get('userModelClass');
-        return $this->fetchOne($userModelClass, '*', true);
     }
 
     public function securityVerify(array $values)
@@ -85,10 +79,7 @@ abstract class Account_Password extends Account
             }
         }
 
-        $userModelClass = Config::getInstance(Security::getClass())->get('userModelClass');
-
-        /** @var Security_User|Model $user */
-        $user = $this->fetchOne($userModelClass, '/active', true);
+        $user = $this->getUser();
 
         if (!$user || !$user->isActive()) {
             $logger->exception('User is not active or not found', __FILE__, __LINE__);
@@ -103,13 +94,13 @@ abstract class Account_Password extends Account
 
     /**
      * @param Account_Form $accountForm
-     * @return \Ice\Model\Account
+     * @return Model_Account
      * @throws \Exception
      */
     public function signUp(Account_Form $accountForm)
     {
-        /** @var Account $accountModelClass */
-        $accountModelClass = __CLASS__;
+        /** @var Model_Account $accountModelClass */
+        $accountModelClass = get_class($this);
 
         /** @var DataSource $dataSource */
         $dataSource = $accountModelClass::getDataSource();

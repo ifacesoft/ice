@@ -9,6 +9,7 @@ use Ice\Core\Exception;
 use Ice\Core\Logger as Core_Logger;
 use Ice\Core\Model;
 use Ice\Core\Model\Security_User;
+use Ice\Core\Model_Account;
 use Ice\Core\Security as Core_Security;
 use Ice\Exception\Security_Account_Login;
 use Ice\Exception\Security_Account_Register;
@@ -25,14 +26,14 @@ abstract class Security extends Widget_Form_Event
      * Sing up by account
      *
      * @param Account_Form $accountForm
-     * @return Account
+     * @return Model_Account
      * @throws \Exception
      */
     final protected function signUp(Account_Form $accountForm)
     {
         $logger = $this->getLogger();
 
-        /** @var Account $accountModelClass */
+        /** @var Model_Account $accountModelClass */
         $accountModelClass = $accountForm->getAccountModelClass();
 
         $log = Log_Security::create([
@@ -40,7 +41,7 @@ abstract class Security extends Widget_Form_Event
             'form_class' => get_class($accountForm)
         ]);
 
-        /** @var Account $account */
+        /** @var Model_Account $account */
         $account = null;
 
         try {
@@ -67,12 +68,12 @@ abstract class Security extends Widget_Form_Event
     }
 
     /**
-     * @param Account $account
+     * @param Model_Account $account
      * @param Account_Form $accountForm
-     * @return Account
+     * @return Model_Account
      * @throws \Exception
      */
-    final protected function signIn(Account $account, Account_Form $accountForm)
+    final protected function signIn(Model_Account $account, Account_Form $accountForm)
     {
         $logger = $this->getLogger();
 
@@ -104,7 +105,7 @@ abstract class Security extends Widget_Form_Event
     /**
      * @param Token $token
      * @param array $input
-     * @return Account
+     * @return Model_Account
      */
     final protected function registerConfirm(Token $token, array $input)
     {
@@ -113,7 +114,7 @@ abstract class Security extends Widget_Form_Event
         /** @var Account_Form $accountForm */
         $accountForm = $input['widget'];
 
-        /** @var Account $accountClass */
+        /** @var Model_Account $accountClass */
         $accountClass = $token->get('modelClass');
 
         $log = Log_Security::create([
@@ -121,7 +122,7 @@ abstract class Security extends Widget_Form_Event
             'form_class' => get_class($accountForm)
         ]);
 
-        /** @var Account $account */
+        /** @var Model_Account $account */
         $account = $accountClass::getSelectQuery(['/pk', 'user__fk'], ['token' => $token])->getModel();
 
         if (!$account) {
@@ -156,7 +157,7 @@ abstract class Security extends Widget_Form_Event
     }
 
     /**
-     * @param Account $account
+     * @param Model_Account $account
      * @param $input
      * @return null
      * @throws Exception
@@ -251,7 +252,7 @@ abstract class Security extends Widget_Form_Event
             return $accountForm->getLogger()->exception([$error, [], $accountForm->getResource()], __FILE__, __LINE__);
         }
 
-        /** @var Account $account */
+        /** @var Model_Account $account */
         $account = $account->set($accountData)->save();
 
         $logger->save($log);

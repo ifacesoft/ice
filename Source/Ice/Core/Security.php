@@ -73,9 +73,9 @@ abstract class Security extends Container
 
     /**
      * @param $account
-     * @return Account
+     * @return Model_Account
      */
-    abstract public function login(Account $account);
+    abstract public function login(Model_Account $account);
 
     abstract public function logout();
 
