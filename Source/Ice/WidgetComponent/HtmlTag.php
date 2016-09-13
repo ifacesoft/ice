@@ -309,20 +309,12 @@ class HtmlTag extends WidgetComponent
     {
         $htmlTagAttributes = '';
 
-        if ($style = $this->getOption('stile', null)) {
-            if ($htmlTagAttributes) {
-                $htmlTagAttributes .= ' ';
-            }
-
-            $htmlTagAttributes .= 'style"=' . $style . '"';
-        }
-
         if ($style = $this->getOption('style', null)) {
             if ($htmlTagAttributes) {
                 $htmlTagAttributes .= ' ';
             }
 
-            $htmlTagAttributes .= 'style"=' . $style . '"';
+            $htmlTagAttributes .= 'style="' . $style . '"';
         }
 
         if ($title = $this->getOption('title', null)) {
@@ -330,7 +322,7 @@ class HtmlTag extends WidgetComponent
                 $htmlTagAttributes .= ' ';
             }
 
-            $htmlTagAttributes .= 'title"=' . $title . '"';
+            $htmlTagAttributes .= 'title="' . $title . '"';
         }
 
         return $htmlTagAttributes;

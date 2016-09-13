@@ -509,6 +509,6 @@ class Form extends Widget
             $this->setRedirect($routeRedirect);
         }
 
-        return $this->div('ice-message', ['valueKey' => '&nbsp;', 'encode' => false, 'resource' => false]);
+        return $this->div('ice-message', ['valueKey' => '', 'encode' => false, 'resource' => false]);
     }
 }
