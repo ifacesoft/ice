@@ -454,7 +454,7 @@ class Sql extends QueryTranslator
                         if ($isSpatial) {
                             $fieldAlias = 'asText(`' . $tableAlias . '`.`' . $columnName . '`)' . ' AS `' . $fieldAlias . '`';
                         } else {
-                            $dateTimezone = $modelSchemes[$modelClass]->get('columns/' . $columnName . '/options/dateTimezone', null);
+                            $dateTimezone = in_array($modelSchemes[$modelClass]->get('columns/' . $columnName . '/scheme/dataType'), ['date', 'datetime', 'timestamp']);
 
                             if ($fieldAlias == $columnName) {
                                 $column = '`' . $tableAlias . '`.`' . $columnName . '`';
