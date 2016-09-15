@@ -2,9 +2,11 @@
 
 namespace Ice\SessionHandler;
 
+use Ice\Core\Debuger;
 use Ice\Core\Request;
 use Ice\Core\Security;
 use Ice\Core\SessionHandler;
+use Ice\Exception\Error;
 use Ice\Helper\Date;
 use Ice\Model\Session;
 
@@ -67,13 +69,10 @@ class DataSource extends SessionHandler
      */
     public function destroy($session_id)
     {
-        $user = Security::getInstance()->getUser();
-
         Session::createQueryBuilder()
             ->eq(['/pk' => $session_id])
-            ->getUpdateQuery(['/deleted_at' => Date::get(time(), Date::FORMAT_MYSQL, $user->getTimezone())])
+            ->getUpdateQuery(['/deleted_at' => Date::get()])
             ->getQueryResult();
-
     }
 
     /**
@@ -145,8 +144,9 @@ class DataSource extends SessionHandler
             ->getRow();
 
         if ($this->session) {
-            if ($this->session['session_deleted_at'] != Date::ZERO || $this->session['cookie_lifetime'] <= strtotime($this->session['session_updated_at']) - strtotime($this->session['session_created_at'])) {
+            if ($this->session['session_deleted_at'] || $this->session['cookie_lifetime'] <= strtotime($this->session['session_updated_at']) - strtotime($this->session['session_created_at'])) {
                 $this->session['session_data'] = '';
+
                 session_regenerate_id();
             }
         } else {
@@ -192,13 +192,18 @@ class DataSource extends SessionHandler
      */
     public function write($session_id, $session_data)
     {
-        $user = Security::getInstance()->getUser();
-
         $this->session['session_data'] = $session_data;
-        $this->session['session_updated_at'] = Date::get(time(), Date::FORMAT_MYSQL, $user->getTimezone());
+        $this->session['session_updated_at'] = Date::get();
 
         if (isset($this->session['session_pk']) && $this->session['session_pk'] == $session_id) {
             $this->session['views']++;
+
+            if (!$this->session['user__fk']) {
+                $this->session['user__fk'] = Security::getInstance()->getUser()->getPkValue();
+            }
+
+            unset($this->session['session_created_at']);
+            unset($this->session['session_deleted_at']);
 
             Session::createQueryBuilder()
                 ->eq(['/pk' => $session_id])
@@ -210,6 +215,7 @@ class DataSource extends SessionHandler
             }
 
             $this->session['session_pk'] = $session_id;
+            $this->session['session_updated_at'] = Date::get();
 
             unset($this->session['session_created_at']);
             unset($this->session['session_deleted_at']);
@@ -222,10 +228,9 @@ class DataSource extends SessionHandler
         }
     }
 
-    function getVarFields()
+    public function getVarFields()
     {
         return [
-            'user__fk' => Security::getInstance()->getUser()->getPkValue(),
             'views' => 1
         ];
     }

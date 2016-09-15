@@ -145,12 +145,12 @@ abstract class Account_Form extends Form
 
     public function getConfirmationExpired()
     {
-        return Date::get(strtotime($this->confirmExpired));
+        return Date::get($this->confirmExpired);
     }
 
     public function getExpired()
     {
-        return Date::get(strtotime($this->expired));
+        return Date::get($this->expired);
     }
 
     /**

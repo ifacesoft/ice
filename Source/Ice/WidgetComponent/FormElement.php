@@ -74,8 +74,11 @@ class FormElement extends HtmlTag // todo: должен быть абстрак�
 
         $value = $this->getValue();
 
-        if ($dateFormat = $this->getOption('dateFormat')) {
-            $value = Date::get(strtotime($value), Date::FORMAT_MYSQL);
+        // todo: надо чета делать с этим.. теперь у нас фильтры
+        $dateFormat = $this->getOption('dateFormat');
+
+        if ($value && $dateFormat) {
+            $value = Date::get(strtotime($value), Date::FORMAT_MYSQL, null);
         }
 
         return [$this->getName() => is_array($value) ? $value : html_entity_decode($value)];

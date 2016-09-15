@@ -11,11 +11,10 @@ namespace Ice\QueryTranslator;
 
 use Ice\Core\Exception;
 use Ice\Core\Model;
-use Ice\Core\Module;
 use Ice\Core\Query;
 use Ice\Core\QueryBuilder;
 use Ice\Core\QueryTranslator;
-use Ice\Core\Security;
+use Ice\Helper\Date;
 use Ice\Helper\Mapping;
 
 /**
@@ -23,7 +22,7 @@ use Ice\Helper\Mapping;
  *
  * Translate with query translator mysqli
  *
- * @see Ice\Core\QueryTranslator
+ * @see \Ice\Core\QueryTranslator
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
@@ -102,7 +101,9 @@ class Sql extends QueryTranslator
         // @todo tableAlias должен приходить из $part
         $tableAlias = $modelClass::getClassName();
 
-        $fieldColumnMap = $modelClass::getScheme()->getFieldColumnMap();
+        $modelScheme = $modelClass::getScheme();
+
+        $fieldColumnMap = $modelScheme->getFieldColumnMap();
 
         $sql = "\n" . self::SQL_STATEMENT_UPDATE .
             "\n\t`" . $modelClass::getSchemeName() . '`.`' . $modelClass::getTableName() . '` `' . $tableAlias . '`';
@@ -111,9 +112,19 @@ class Sql extends QueryTranslator
         $sql .= implode(
             ',',
             array_map(
-                function ($fieldName) use ($fieldColumnMap, $tableAlias) {
-                    $columnName = $fieldColumnMap[$fieldName];
-                    return "\n\t`" . $tableAlias . '`.`' . $columnName . '` = ?';
+                function ($fieldName) use ($modelScheme, $fieldColumnMap, $tableAlias) {
+                    if (isset($fieldColumnMap[$fieldName])) {
+                        $columnName = $fieldColumnMap[$fieldName];
+
+                        $column = '`' . $tableAlias . '`.`' . $columnName . '`';
+
+                        $dateTimezone = in_array($modelScheme->get('columns/' . $columnName . '/scheme/dataType'), ['date', 'datetime', 'timestamp']);
+                    } else {
+                        $column = $fieldName;
+                        $dateTimezone = null;
+                    }
+
+                    return "\n\t" . $column . '=' . $this->getSignByTimezone($dateTimezone);
                 },
                 $part['fieldNames']
             )
@@ -163,14 +174,32 @@ class Sql extends QueryTranslator
             return $sql;
         }
 
-        $fieldColumnMap = $modelClass::getScheme()->getFieldColumnMap();
+        $modelScheme = $modelClass::getScheme();
+
+        $fieldColumnMap = $modelScheme->getFieldColumnMap();
 
         $sql .= "\n\t" . '(`' . implode('`,`', Mapping::columnNames($modelClass, $part['fieldNames'])) . '`)';
         $sql .= "\n" . self::SQL_CLAUSE_VALUES;
 
-        $values = "\n\t" . '(?' . str_repeat(',?', $fieldNamesCount - 1) . ')';
+        $values = implode(
+            ',',
+            array_map(
+                function ($fieldName) use ($modelScheme, $fieldColumnMap) {
+                    if (isset($fieldColumnMap[$fieldName])) {
+                        $columnName = $fieldColumnMap[$fieldName];
 
-        $sql .= $values;
+                        $dateTimezone = in_array($modelScheme->get('columns/' . $columnName . '/scheme/dataType'), ['date', 'datetime', 'timestamp']);
+                    } else {
+                        $dateTimezone = null;
+                    }
+
+                    return $this->getSignByTimezone($dateTimezone);
+                },
+                $part['fieldNames']
+            )
+        );
+
+        $sql .= "\n\t" . '(' . $values . ')';
 
         if ($part['rowCount'] > 1) {
             $sql .= str_repeat(',' . $values, $part['rowCount'] - 1);
@@ -257,7 +286,7 @@ class Sql extends QueryTranslator
 
                     $column = '`' . $tableAlias . '`.`' . $columnName . '`';
 
-                    $dateTimezone = $modelSchemes[$modelClass]->get('columns/' . $columnName . '/options/dateTimezone', null);
+                    $dateTimezone = in_array($modelSchemes[$modelClass]->get('columns/' . $columnName . '/scheme/dataType'), ['date', 'datetime', 'timestamp']);
                 } else {
                     $column = $fieldName;
                     $dateTimezone = null;
@@ -267,7 +296,7 @@ class Sql extends QueryTranslator
                     ? ' ' . $logicalOperator . "\n\t"
                     : "\n" . self::SQL_CLAUSE_WHERE . "\n\t";
 
-                $sql .= $column . ' ' . $this->buildWhere($comparisonOperator, ltrim($column, '('), $count, $this->dateTimezoneWhere($dateTimezone, $column));
+                $sql .= $column . ' ' . $this->buildWhere($comparisonOperator, ltrim($column, '('), $count, $this->getSignByTimezone($dateTimezone));
 
                 if ($column[0] == '(') {
                     $sql .= ')';
@@ -326,28 +355,20 @@ class Sql extends QueryTranslator
         return '';
     }
 
-    private function dateTimezoneWhere($dateTimezone, $column, $sign = '?')
+    private function getSignByTimezone($clientTimezone, $sign = '?')
     {
-        if ($dateTimezone === true) {
-            $dateTimezone = $column == '`User`.`created_at`'
-                ? null
-                : Security::getInstance()->getUser()->getTimezone();
-        }
-
-        if ($dateTimezone === null) {
+        if (empty($clientTimezone)) {
             return $sign;
         }
 
-        $dateDefaults = Module::getInstance()->getDefault('date');
-
-        if (!$dateTimezone) {
-            $dateTimezone = $dateDefaults->get('timezone');
+        if ($clientTimezone === true) {
+            $clientTimezone = Date::getClientTimezone();
         }
 
-        $timezone = $dateDefaults->get('storage_timezone');
+        $serverTimezone = Date::getServerTimezone();
 
-        if ($dateTimezone != $timezone) {
-            $sign = 'CONVERT_TZ(' . $sign . ',"' . $dateTimezone . '","' . $timezone . '")';
+        if ($clientTimezone != $serverTimezone) {
+            $sign = 'CONVERT_TZ(' . $sign . ',"' . $clientTimezone . '","' . $serverTimezone . '")';
         }
 
         return $sign;
@@ -437,7 +458,7 @@ class Sql extends QueryTranslator
 
                             if ($fieldAlias == $columnName) {
                                 $column = '`' . $tableAlias . '`.`' . $columnName . '`';
-                                $column = $this->dateTimezoneSelect($dateTimezone, $column, $columnName);
+                                $column = $this->getColumnByTimezone($dateTimezone, $column, $columnName);
                                 $fieldAlias = $column;
                             } else {
                                 if ($tableAlias === '') {
@@ -446,7 +467,7 @@ class Sql extends QueryTranslator
                                     $column = '`' . $tableAlias . '`.`' . $columnName . '`';
                                 }
 
-                                $column = $this->dateTimezoneSelect($dateTimezone, $column);
+                                $column = $this->getColumnByTimezone($dateTimezone, $column);
                                 $fieldAlias = $column . ' AS `' . $fieldAlias . '`';
                             }
                         }
@@ -483,28 +504,20 @@ class Sql extends QueryTranslator
         return $sql;
     }
 
-    private function dateTimezoneSelect($dateTimezone, $column, $alias = null)
+    private function getColumnByTimezone($clientTimezone, $column, $alias = null)
     {
-        if ($dateTimezone === true) {
-            $dateTimezone = $column == '`User`.`created_at`'
-                ? null
-                : Security::getInstance()->getUser()->getTimezone();
-        }
-
-        if ($dateTimezone === null) {
+        if (empty($clientTimezone)) {
             return $column;
         }
 
-        $dateDefaults = Module::getInstance()->getDefault('date');
-
-        if (!$dateTimezone) {
-            $dateTimezone = $dateDefaults->get('timezone');
+        if ($clientTimezone === true) {
+            $clientTimezone = Date::getClientTimezone();
         }
 
-        $timezone = $dateDefaults->get('storage_timezone');
+        $serverTimezone = Date::getServerTimezone();
 
-        if ($dateTimezone != $timezone) {
-            $column = 'CONVERT_TZ(' . $column . ',"' . $timezone . '","' . $dateTimezone . '")';
+        if ($clientTimezone != $serverTimezone) {
+            $column = 'CONVERT_TZ(' . $column . ',"' . $serverTimezone . '","' . $clientTimezone . '")';
         }
 
         return $alias ? $column . ' AS `' . $alias . '`' : $column;
@@ -545,7 +558,6 @@ class Sql extends QueryTranslator
                 : '`' . $joinModelClass::getSchemeName() . '`.`' . $joinModelClass::getTableName() . '`';
 
             $sql .= "\n" . $joinTable['type'] . "\n\t" . $table . ' `' . $tableAlias . '` ON (' . $joinTable['on'] . ')';
-
         }
 
         return $sql;

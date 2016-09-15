@@ -11,8 +11,10 @@ namespace Ice\Helper;
 
 use DateTime;
 use DateTimeZone;
+use Ice\Core\Debuger;
 use Ice\Core\Module;
 use Ice\Core\Security;
+use Ice\Exception\Error;
 
 /**
  * Class Date
@@ -23,9 +25,6 @@ use Ice\Core\Security;
  *
  * @package    Ice
  * @subpackage Helper
- *
- * @version 0.0
- * @since   0.0
  */
 class Date
 {
@@ -34,8 +33,8 @@ class Date
      */
     const FORMAT_MYSQL = 'Y-m-d H:i:s';
     const FORMAT_REVISION = 'mdHi';
-    const ZERO = '0000-00-00 00:00:00';
-    const FUTURE = '2099-12-31 00:00:00';
+//    const ZERO = '0000-00-00 00:00:00';
+//    const FUTURE = '2099-12-31 00:00:00';
     const FORMAT_MYSQL_DATE = 'Y-m-d';
 
     /**
@@ -52,46 +51,90 @@ class Date
         return Date::get(null, Date::FORMAT_REVISION);
     }
 
+    public static function getZero() {
+        return Date::get('0000-01-01 00:00:00');
+    }
+
+    public static function getFuture() {
+        return Date::get('2999-12-31 00:00:00');
+    }
+
+    public static function getTimezoneFromTo($time, $fromTimezone, $toTimezone)
+    {
+        return Date::get(Date::get($time, null, $fromTimezone, true), null, $toTimezone);
+    }
+
     /**
      * Return current data in default (mysql) format
      *
-     * @param  null $time
-     * @param  string $format
-     * @param bool $dateTimezone
+     * @param string|integer $serverDataTime
+     * @param string $format
+     * @param bool $clientTimezone
+     * @param bool $reverse
      * @return string
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 1.1
+     * @version 1.4
      * @since   0.0
      */
-    public static function get($time = null, $format = Date::FORMAT_MYSQL, $dateTimezone = true)
+    public static function get($serverDataTime = null, $format = null, $clientTimezone = true, $reverse = false)
     {
-        if ($time) {
-            return date($format, $time);
+        if (empty($serverDataTime)) {
+            $serverDataTime = 'now';
         }
 
-        if ($dateTimezone === true) {
-            $dateTimezone = new DateTimeZone(Security::getInstance()->getUser()->getTimezone());
+        if (empty($format)) {
+            $format = Date::FORMAT_MYSQL;
         }
 
-        $dateDefaults = Module::getInstance()->getDefault('date');
+        $serverTimezone = Date::getServerTimezone();
 
-        if (!$dateTimezone) {
-            $dateTimezone = new DateTimeZone($dateDefaults->get('timezone'));
+        $date = new DateTime(
+            date(Date::FORMAT_MYSQL, is_int($serverDataTime) ? $serverDataTime : strtotime($serverDataTime)),
+            new DateTimeZone($serverTimezone)
+        );
+
+        if (empty($clientTimezone)) {
+            return $date->format($format);
         }
 
-        $timezone = new DateTimeZone(date_default_timezone_get());
+        if ($clientTimezone === true) {
+            $clientTimezone = Date::getClientTimezone();
+        }
 
-        $date = new DateTime('now', $timezone);
+        if ($clientTimezone == $serverTimezone) {
+            return $date->format($format);
+        }
 
-        $date->setTimezone($dateTimezone);
+        if ($reverse) {
+            $date = new DateTime(
+                date(Date::FORMAT_MYSQL, is_int($serverDataTime) ? $serverDataTime : strtotime($serverDataTime)),
+                new DateTimeZone($clientTimezone)
+            );
+
+            $clientTimezone = $serverTimezone;
+        }
+
+        $date->setTimezone(new DateTimeZone($clientTimezone));
 
         return $date->format($format);
     }
 
-    public static function getMonth($time)
+    public static function getClientTimezone()
     {
-        return Date::strftime('%B', $time, 'ru_RU.UTF-8');
+        return Security::$loaded
+            ? Security::getInstance()->getUser()->getTimezone()
+            : Module::getInstance()->getDefault('date')->get('client_timezone');
+    }
+
+    public static function getServerTimezone()
+    {
+        return Module::getInstance()->getDefault('date')->get('server_timezone');
+    }
+
+    public static function getMonth($time, $locale = 'ru_RU.UTF-8')
+    {
+        return Date::strftime('%B', $time, $locale);
     }
 
     private static function strftime($format, $time, $locale)
@@ -103,19 +146,19 @@ class Date
         return $time;
     }
 
-    public static function getMonthShort($time)
+    public static function getMonthShort($time, $locale = 'ru_RU.UTF-8')
     {
-        return Date::strftime('%b', $time, 'ru_RU.UTF-8');
+        return Date::strftime('%b', $time, $locale);
     }
 
-    public static function getDayShort($time)
+    public static function getDayShort($time, $locale = 'ru_RU.UTF-8')
     {
-        return Date::strftime('%a', $time, 'ru_RU.UTF-8');
+        return Date::strftime('%a', $time, $locale);
     }
 
-    public static function getDay($time)
+    public static function getDay($time, $locale = 'ru_RU.UTF-8')
     {
-        return Date::strftime('%A', $time, 'ru_RU.UTF-8');
+        return Date::strftime('%A', $time, $locale);
     }
 
     /**
@@ -217,5 +260,10 @@ class Date
         ];
         $momentFormat = strtr($format, $replacements);
         return $momentFormat;
+    }
+
+    public static function getFormat()
+    {
+        return Module::getInstance()->getDefault('date')->get('format');
     }
 }

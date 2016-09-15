@@ -72,8 +72,8 @@ return [
             'request' => []
         ],
         'date' => [
-            'timezone' => 'UTC', // generate when install
-            'storage_timezone' => 'UTC',
+            'client_timezone' => 'UTC', // generate when install
+            'server_timezone' => 'UTC',
             'format' => 'd.m.y',
         ]
     ],

@@ -82,30 +82,7 @@ class Php
      */
     public static function castTo($type, $var)
     {
-        $varType = gettype($var);
 
-        if ($varType == $type) {
-            return $var;
-        }
-
-        switch ($type) {
-            case 'integer':
-                return (int)$var;
-            case 'string':
-                return (string)$var;
-            case 'boolean':
-                return (bool)$var;
-            case 'array':
-                return (array)$var;
-            case 'object':
-                return (object)$var;
-            case 'float':
-                return (float)$var;
-            case 'double':
-                return (double)$var;
-            case 'real':
-                return (real)$var;
-        }
 
         return $var;
     }

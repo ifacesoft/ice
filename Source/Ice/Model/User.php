@@ -1,5 +1,6 @@
 <?php namespace Ice\Model;
 
+use Ebs\Model\Packet_Dynamic;
 use Ice\Core\Model;
 use Ice\Core\Model\Security_User;
 use Ice\Core\Module;
@@ -200,7 +201,11 @@ class User extends Model implements Security_User
 
     public function getTimezone()
     {
-        return $this->get('timezone', Module::getInstance()->getDefault('date')->get('timezone'));
+        if ($timezone = $this->get('timezone', false)) {
+            return $timezone;
+        }
+
+        return Module::getInstance()->getDefault('date')->get('client_timezone');
     }
 
     /**

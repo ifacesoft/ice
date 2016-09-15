@@ -306,6 +306,7 @@ abstract class WidgetComponent
         /** @var Widget $widgetClass */
         $widgetClass = $this->getWidgetClass();
 
+
         $params = Input::get(
             $this->getParamConfig(),
             array_merge(
@@ -314,23 +315,35 @@ abstract class WidgetComponent
             )
         );
 
+//        if ($this->getComponentName() == 'last_login') {
+//            Debuger::dump([
+//                $this->getParamConfig(),
+//                array_merge(
+//                    $widgetClass::getRegistry($this->getWidgetId())->get(),
+//                    $registry->get()
+//                ),
+//                $params
+//            ]);
+//            die();
+//        }
+
         if ($paramName === null) {
             return empty($params) ? [] : $params;
         }
 
         $param = array_key_exists($paramName, $params) ? $params[$paramName] : $default;
 
-        if (!$param) {
-            return $param;
-        }
+       // todo: реализовать через фильтры
+        $dateFormat = $this->getOption('dateFormat');
 
-        if ($dateFormat = $this->getOption('dateFormat')) {
+        if ($param && $dateFormat) {
             if ($dateFormat === true) {
                 $dateDefaults = Module::getInstance()->getDefault('date');
                 $dateFormat = $dateDefaults->get('format');
             }
 
-            $param = Date::get(strtotime($param), $dateFormat);
+            $param = Date::get($param, $dateFormat, null);
+
             $this->setOption('dateFormat', null);
         }
 
@@ -520,16 +533,18 @@ abstract class WidgetComponent
             $value = Replace::getInstance()->fetch($value, $resourceParams, null, Render::TEMPLATE_TYPE_STRING);
         }
 
-        if ($dateFormat = $this->getOption('dateFormat')) {
+        $dateFormat = $this->getOption('dateFormat');
+
+        if ($value && $dateFormat) {
             if ($dateFormat === true) {
                 $dateDefaults = Module::getInstance()->getDefault('date');
                 $dateFormat = $dateDefaults->get('format');
             }
 
-            $value = Date::get(strtotime($value), $dateFormat);
+            $value = Date::get($value, $dateFormat, null);
         }
 
-        if ($truncate = $this->getOption('truncate')) {
+        if ($value && $truncate = $this->getOption('truncate')) {
             $value = String::truncate($value, $truncate);
         }
 

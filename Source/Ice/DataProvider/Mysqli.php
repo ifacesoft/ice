@@ -13,6 +13,7 @@ use Ice\Core\DataProvider;
 use Ice\Core\Exception;
 use Ice\Core\Logger;
 use Ice\Exception\Error;
+use Ice\Helper\Date;
 
 /**
  * Class Mysqli
@@ -33,7 +34,7 @@ class Mysqli extends DataProvider
     protected $options = [
         'host' => 'localhost',
         'port' => '3306',
-        'charset' => 'utf8'
+        'charset' => 'utf8',
     ];
 
     /**
@@ -258,6 +259,8 @@ class Mysqli extends DataProvider
         }
 
         $connection->set_charset($options['charset']);
+
+        $connection->query('SET time_zone = "' . Date::getServerTimezone() . '";');
 
         return $isConnected;
     }

@@ -21,7 +21,7 @@ abstract class SessionHandler extends Container implements SessionHandlerInterfa
      * @param string $instanceKey
      * @param null $ttl
      * @param array $params
-     * @return SessionHandler
+     * @return SessionHandler|Container
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
@@ -38,7 +38,7 @@ abstract class SessionHandler extends Container implements SessionHandlerInterfa
         return 'default';
     }
 
-    abstract function getConstFields();
+    abstract public function getConstFields();
 
-    abstract function getVarFields();
+    abstract public function getVarFields();
 }

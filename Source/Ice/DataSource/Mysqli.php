@@ -36,7 +36,7 @@ use mysqli_stmt;
  *
  * Implements mysqli data source
  *
- * @see Ice\Core\DataSource
+ * @see \Ice\Core\DataSource
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *

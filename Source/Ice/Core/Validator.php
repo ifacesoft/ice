@@ -18,18 +18,16 @@ use Ice\Widget\Model_Form;
  *
  * Abstract validator class
  *
- * @see Ice\Core\Container
+ * @see \Ice\Core\Container
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
  * @package    Ice
  * @subpackage Core
- *
- * @version 0.0
- * @since   0.0
  */
 abstract class Validator extends Container
 {
+// todo: зачем stored
     use Stored;
 
     const DEFAULT_KEY = 'instance';

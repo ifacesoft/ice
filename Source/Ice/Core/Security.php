@@ -5,18 +5,21 @@ namespace Ice\Core;
 use Ice\Core;
 use Ice\Core\Model\Security_User;
 use Ice\Exception\Access_Denied_Security;
-use Ice\Model\Account;
 use Ice\Model\User;
 
 abstract class Security extends Container
 {
     use Core;
 
+    public static $loaded = false;
+
     public function __construct(array $data)
     {
         parent::__construct($data);
 
         $this->autologin();
+
+        Security::$loaded = true;
     }
 
     abstract protected function autologin();

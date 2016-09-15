@@ -395,7 +395,7 @@ class Logger
         $value = str_replace(["\n", "\t"], ' ', $value);
 
         $name = Request::isCli() ? Core_Console::getCommand(null) : Request::uri();
-        $logFile = getLogDir() . date('Y-m-d') . '/LOG/' . urlencode($name) . '.log';
+        $logFile = getLogDir() . date(Date::FORMAT_MYSQL_DATE) . '/LOG/' . urlencode($name) . '.log';
 
         if (strlen($logFile) > 255) {
             $logFilename = substr($logFile, 0, 255 - 11);
@@ -442,9 +442,7 @@ class Logger
             Request::isCli() ||
             Environment::getInstance()->isProduction() ||
             headers_sent() ||
-            !Loader::load('FirePHP', false) ||
-            String::endsWith(Request::host(), '.com') ||
-            String::endsWith(Request::host(), '.ru')
+            !Loader::load('FirePHP', false)
         ) {
             return;
         }
@@ -507,7 +505,7 @@ class Logger
 
         $message = print_r($message, true);
 
-        File::createData($logFile, '[' . Date::get() . '] ' . $message . "\n", false, FILE_APPEND);
+        File::createData($logFile, '[' . date(Date::FORMAT_MYSQL) . '] ' . $message . "\n", false, FILE_APPEND);
 
         if (Request::isCli()) {
             $message = Console::getText(' ' . $message . ' ', Console::C_BLACK, self::$consoleColors[$type]) . "\n";

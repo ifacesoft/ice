@@ -111,6 +111,9 @@ return [
             'Ice\Core\Validator' => [
                 'instance' => 'Ice:Repository',
             ],
+            'Ice\Core\Filter' => [
+                'instance' => 'Ice:Repository',
+            ],
             'Ice\Core\Cache' => [
                 'tags' => 'Ice:Repository',
             ],
@@ -209,6 +212,9 @@ return [
             'Ice\Core\Validator' => [
                 'instance' => 'Ice:File',
             ],
+            'Ice\Core\Filter' => [
+                'instance' => 'Ice:File',
+            ],
             'Ice\Core\Cache' => [
                 'tags' => 'Ice:File',
             ],
@@ -302,6 +308,9 @@ return [
                 'model_scheme' => 'Ice:Registry',
             ],
             'Ice\Core\Validator' => [
+                'instance' => 'Ice:Registry',
+            ],
+            'Ice\Core\Filter' => [
                 'instance' => 'Ice:Registry',
             ],
             'Ice\Core\Cache' => [

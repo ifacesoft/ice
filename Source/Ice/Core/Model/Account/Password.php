@@ -127,7 +127,7 @@ abstract class Model_Account_Password extends Model_Account
                 $this->set(['token' => $token]);
 
                 if ($accountForm->isConfirmRequired()) {
-                    $this->set(['/expired' => Date::ZERO]);
+                    $this->set(['/expired' => null]);
                     $userData['/active'] = 0;
                 } else {
                     $this->set(['/expired' => $accountForm->getConfirmationExpired()]);

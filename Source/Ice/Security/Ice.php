@@ -3,9 +3,11 @@
 namespace Ice\Security;
 
 use Ice\Core\Config;
+use Ice\Core\Debuger;
 use Ice\Core\Model;
 use Ice\Core\Model_Account;
 use Ice\Core\Security;
+use Ice\Exception\Error;
 use Ice\Exception\Security_Auth;
 use Ice\Model\Account_Password_Phone;
 use Ice\Model\User;
@@ -74,7 +76,7 @@ class Ice extends Security
     {
         try {
             $user = $account->getUser();
-//
+
 //            session_regenerate_id();
 //
 //            if (ini_get("session.use_cookies")) {

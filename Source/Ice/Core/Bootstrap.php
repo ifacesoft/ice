@@ -10,6 +10,7 @@
 namespace Ice\Core;
 
 use Ice\Core;
+use Ice\Helper\Date;
 
 /**
  * Class Bootstrap
@@ -30,14 +31,13 @@ class Bootstrap extends Container
     {
         parent::__construct($data);
 
-        setlocale(LC_ALL, 'en_US.UTF-8');
-        setlocale(LC_NUMERIC, 'C');
-
-        date_default_timezone_set('UTC');
-
         Loader::init($data['loader'], !empty($data['force']));
         Logger::init();
+
+        $this->init();
     }
+
+
 
     /**
      * @return string
@@ -45,5 +45,14 @@ class Bootstrap extends Container
     public function getModuleConfigPath()
     {
         return $this->moduleConfigPath;
+    }
+
+    private function init()
+    {
+        // todo: устанавливать также как и таймзону (см. ниже)
+        setlocale(LC_ALL, 'en_US.UTF-8');
+        setlocale(LC_NUMERIC, 'C');
+
+        date_default_timezone_set(Date::getServerTimezone());
     }
 }

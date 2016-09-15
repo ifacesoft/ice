@@ -11,6 +11,7 @@ namespace Ice\Core;
 
 use Ice\Core;
 use Ice\Exception\Access_Denied_Environment;
+use Ice\Helper\String;
 
 /**
  * Class Environment
@@ -124,12 +125,14 @@ class Environment extends Config
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 1.4
      * @since   0.0
      */
     public function isProduction()
     {
-        return $this->getName() == Environment::PRODUCTION;
+        return $this->getName() == Environment::PRODUCTION
+        || String::endsWith(Request::host(), '.com')
+        || String::endsWith(Request::host(), '.ru');
     }
 
     /**

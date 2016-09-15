@@ -5,6 +5,7 @@ namespace Ice\Helper;
 use Ice\Core\DataProvider;
 use Ice\Core\Debuger;
 use Ice\Core\Exception;
+use Ice\Core\Filter;
 use Ice\DataProvider\Cli;
 use Ice\DataProvider\Request;
 use Ice\DataProvider\Router;
@@ -106,16 +107,21 @@ class Input
             $value = Php::castTo($param['type'], $value);
         }
 
-//        if (isset($param['validators'])) {
-//            foreach ((array)$param['validators'] as $validatorClass => $validatorParams) {
-//                if (is_int($validatorClass)) {
-//                    $validatorClass = $validatorParams;
-//                    $validatorParams = null;
-//                }
-//
-//                Validator::validate($validatorClass, $validatorParams, $name, $value);
-//            }
-//        }
+        if (isset($param['filters'])) {
+
+            /**
+             * @var Filter $filterClass
+             * @var array $filterOptions
+             */
+            foreach ((array)$param['filters'] as $filterClass => $filterOptions) {
+                if (is_int($filterClass)) {
+                    $filterClass = $filterOptions;
+                    $filterOptions = [];
+                }
+
+                $value = $filterClass::getInstance()->filter([$name => $value], $name, (array)$filterOptions);
+            }
+        }
 
         //        if (isset($param['converter']) && is_callable($param['converter'])) {
         //            $value = $param['converter']($value);

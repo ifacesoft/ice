@@ -83,8 +83,8 @@ abstract class Container
             }
         }
 
-        $startTime = Profiler::getMicrotime();
-        $startMemory = Profiler::getMemoryGetUsage();
+//        $startTime = Profiler::getMicrotime();
+//        $startMemory = Profiler::getMemoryGetUsage();
 
         if (!$instanceKey || $instanceKey == 'default') {
             $instanceKey = $class::getDefaultKey();
@@ -97,9 +97,9 @@ abstract class Container
             $dataProvider = $class::getDataProvider('instance');
 
             if ($ttl != -1 && $object = $dataProvider->get($instanceKey)) {
-                $message = $class . ' - ' . print_r($instanceKey, true);
+//                $message = $class . ' - ' . print_r($instanceKey, true);
 
-                Profiler::setPoint($message, $startTime, $startMemory);
+//                Profiler::setPoint($message, $startTime, $startMemory);
 //                Logger::log(Profiler::getReport($message), 'container (cache - ' . $dataProviderClassName .  ')', 'LOG');
                 return $object;
             }
@@ -107,9 +107,9 @@ abstract class Container
             $params['instanceKey'] = $instanceKey;
 
             if ($object = $class::create($params)) {
-                $message = $class . ' - ' . print_r($instanceKey, true);
+//                $message = $class . ' - ' . print_r($instanceKey, true);
 
-                Profiler::setPoint($message, $startTime, $startMemory);
+//                Profiler::setPoint($message, $startTime, $startMemory);
                 if ($ttl == -1) {
 //                    Logger::log(Profiler::getReport($message), 'container (not cache)', 'WARN');
                 } else {
@@ -119,8 +119,8 @@ abstract class Container
             }
 
         } catch (FileNotFound $e) {
-            $message = $class . ' - ' . print_r($instanceKey, true);
-            Profiler::setPoint($message, $startTime, $startMemory);
+//            $message = $class . ' - ' . print_r($instanceKey, true);
+//            Profiler::setPoint($message, $startTime, $startMemory);
 //            Logger::log(Profiler::getReport($message), 'container (error)', 'Error');
 
             if ($baseClass == Code_Generator::getClass()) {
