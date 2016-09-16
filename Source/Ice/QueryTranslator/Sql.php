@@ -9,6 +9,7 @@
 
 namespace Ice\QueryTranslator;
 
+use Ice\Core\Debuger;
 use Ice\Core\Exception;
 use Ice\Core\Model;
 use Ice\Core\Query;
@@ -181,29 +182,26 @@ class Sql extends QueryTranslator
         $sql .= "\n\t" . '(`' . implode('`,`', Mapping::columnNames($modelClass, $part['fieldNames'])) . '`)';
         $sql .= "\n" . self::SQL_CLAUSE_VALUES;
 
-        $values = implode(
-            ',',
-            array_map(
-                function ($fieldName) use ($modelScheme, $fieldColumnMap) {
-                    if (isset($fieldColumnMap[$fieldName])) {
-                        $columnName = $fieldColumnMap[$fieldName];
+        $values = "\n\t" . '(' . implode(
+                ',',
+                array_map(
+                    function ($fieldName) use ($modelScheme, $fieldColumnMap) {
+                        if (isset($fieldColumnMap[$fieldName])) {
+                            $columnName = $fieldColumnMap[$fieldName];
 
-                        $dateTimezone = in_array($modelScheme->get('columns/' . $columnName . '/scheme/dataType'), ['date', 'datetime', 'timestamp']);
-                    } else {
-                        $dateTimezone = null;
-                    }
+                            $dateTimezone = in_array($modelScheme->get('columns/' . $columnName . '/scheme/dataType'), ['date', 'datetime', 'timestamp']);
+                        } else {
+                            $dateTimezone = null;
+                        }
 
-                    return $this->getSignByTimezone($dateTimezone);
-                },
-                $part['fieldNames']
-            )
-        );
+                        return $this->getSignByTimezone($dateTimezone);
+                    },
+                    $part['fieldNames']
+                )
+            ) . ')';
 
-        $sql .= "\n\t" . '(' . $values . ')';
-
-        if ($part['rowCount'] > 1) {
-            $sql .= str_repeat(',' . $values, $part['rowCount'] - 1);
-        }
+        $sql .= $values;
+        $sql .= str_repeat(',' . $values, $part['rowCount'] - 1);
 
         $fieldNames = array_diff($part['fieldNames'], $modelClass::getScheme()->getPkFieldNames());
 
