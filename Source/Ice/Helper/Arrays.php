@@ -9,6 +9,7 @@
 
 namespace Ice\Helper;
 
+use Ice\Core\Debuger;
 use Ice\Core\Logger as Core_Logger;
 use Ice\Exception\Error;
 
@@ -117,28 +118,27 @@ class Arrays
      * @version 1.1
      * @since   0.0
      */
-    public static function group($array, $columns)
+    public static function group($array, $columnFieldNames, $indexFieldNames = null)
     {
         $group = [];
 
-        $keys = array_flip((array)$columns);
+        $columnKeys = array_flip((array)$columnFieldNames);
+        $indexKeys = empty($indexFieldNames) ? $columnKeys :  array_flip((array)$indexFieldNames);
 
         $indexes = [];
 
         $i = 0;
 
         foreach ($array as $key => $item) {
-            $values = array_intersect_key($item, $keys);
-
-            $index = implode('__', $values);
+            $index = implode('__', array_intersect_key($item, $indexKeys));
 
             if (!isset($indexes[$index])) {
-                $indexes[$index] = $i++;
-                $group[$indexes[$index]] = $values;
+                $indexes[$index] = empty($indexFieldNames) ? $i++ : $index;
+                $group[$indexes[$index]] = array_intersect_key($item, $columnKeys);
                 $group[$indexes[$index]]['items'] = [];
             }
 
-            $group[$indexes[$index]]['items'][$key] = array_diff_key($item, $keys);
+            $group[$indexes[$index]]['items'][$key] = array_diff_key($item, $columnKeys);
         }
 
         return $group;

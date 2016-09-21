@@ -540,16 +540,21 @@ class Query
         return $this->bindParts;
     }
 
-    public function getGroup($fieldNames, $ttl = null)
+    public function getGroup($columnFieldNames, $indexFieldNames = null, $ttl = null)
     {
         $modelClass = $this->getQueryBuilder()->getModelClass();
 
         $columns = [];
+        $index = [];
 
-        foreach ((array)$fieldNames as $fieldName) {
-            $columns[] = $modelClass::getFieldName($fieldName);
+        foreach ((array)$columnFieldNames as $columnFieldName) {
+            $columns[] = $modelClass::getFieldName($columnFieldName);
         }
 
-        return Arrays::group($this->getRows($ttl), $columns);
+        foreach ((array)$indexFieldNames as $indexFieldName) {
+            $index[] = $modelClass::getFieldName($indexFieldName);
+        }
+
+        return Arrays::group($this->getRows($ttl), $columns, $index);
     }
 }

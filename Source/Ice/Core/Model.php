@@ -331,16 +331,20 @@ abstract class Model
      * @version 0.0
      * @since   0.0
      */
-    public static function getFieldName($fieldName)
+    public static function getFieldName($fieldName, $tableAlias = null)
     {
         $fieldName = trim($fieldName);
 
         if ($fieldName[0] == '/') {
             $fieldName[0] = '_';
 
-            $modelClass = self::getClass();
+            if (!$tableAlias) {
+                $modelClass = self::getClass();
 
-            return strtolower($modelClass::getClassName()) . (strlen($fieldName) === 1 ? '' : $fieldName);
+                $tableAlias = $modelClass::getClassName();
+            }
+
+            return strtolower($tableAlias) . (strlen($fieldName) === 1 ? '' : $fieldName);
         }
 
         return $fieldName;

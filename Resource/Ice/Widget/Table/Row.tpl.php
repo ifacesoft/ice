@@ -1,4 +1,3 @@
-<thead>
 <tr>
     <?php foreach ($component->getOption('row', []) as $key => $column) : ?>
         <?php if (is_string($key)) : ?>
@@ -16,4 +15,3 @@
         <?php endif; ?>
     <?php endforeach; ?>
 </tr>
-</thead>

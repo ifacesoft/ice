@@ -1139,6 +1139,10 @@ class QueryBuilder
 
             if (count($fieldName) === 1) {
                 $fieldName = reset($fieldName);
+
+                if (!$fieldAlias) {
+                    $fieldAlias = $modelClass::getFieldName('/pk', $tableAlias);
+                }
             }
         }
 
@@ -1171,11 +1175,11 @@ class QueryBuilder
             }
         }
 
-        $fieldName = $modelClass::getFieldName($fieldName);
-
         if (!$fieldAlias) {
-            $fieldAlias = $fieldName;
+            $fieldAlias = $modelClass::getFieldName($fieldName, $tableAlias);
         }
+
+        $fieldName = $modelClass::getFieldName($fieldName);
 
         $this->sqlParts[self::PART_SELECT][$modelClass][$tableAlias]['columns'][$fieldAlias] = $fieldName;
 
@@ -1490,7 +1494,7 @@ class QueryBuilder
      * @param  array $fieldNameAlias
      * @param  array $modelTableData
      * @return QueryBuilder
-     *
+     * @deprecated  1.5 use ::func
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
@@ -1515,7 +1519,7 @@ class QueryBuilder
         }
 
         if (!$fieldAlias) {
-            $fieldAlias = strtolower($modelClass::getClassName()) . '__count';
+            $fieldAlias = strtolower($tableAlias) . '__count';
         }
 
         $this->select('COUNT(' . implode(',', $fieldNames) . ')', $fieldAlias, [$modelClass => '']);
@@ -1571,6 +1575,7 @@ class QueryBuilder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
+     * @deprecated 1.5 use ::func
      * @version 0.6
      * @since   0.0
      */
@@ -1593,7 +1598,7 @@ class QueryBuilder
         }
 
         if (!$fieldAlias) {
-            $fieldAlias = strtolower($modelClass::getClassName()) . '__count';
+            $fieldAlias = strtolower($tableAlias) . '__count';
         }
 
         $this->select('GROUP_CONCAT(' . implode(',', $fieldNames) . ')', $fieldAlias, [$modelClass => '']);
@@ -2097,7 +2102,7 @@ class QueryBuilder
 //            }
 
         if (!$fieldAlias) {
-            $fieldAlias = strtolower($modelClass::getClassName()) . '__' . strtolower($funcName);
+            $fieldAlias = strtolower($tableAlias) . '__' . strtolower($funcName);
         }
 
         $modelScheme = $modelClass::getScheme();
