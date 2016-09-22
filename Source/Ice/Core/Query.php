@@ -540,7 +540,7 @@ class Query
         return $this->bindParts;
     }
 
-    public function getGroup($columnFieldNames, $indexFieldNames = null, $ttl = null)
+    public function getGroup($columnFieldNames, $groups = ['items' => '*'], $indexFieldNames = null, $ttl = null)
     {
         $modelClass = $this->getQueryBuilder()->getModelClass();
 
@@ -555,6 +555,6 @@ class Query
             $index[] = $modelClass::getFieldName($indexFieldName);
         }
 
-        return Arrays::group($this->getRows($ttl), $columns, $index);
+        return Arrays::group($this->getRows($ttl), $columns, $groups, $index);
     }
 }

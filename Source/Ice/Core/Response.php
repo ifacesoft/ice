@@ -131,7 +131,7 @@ class Response
         }
 
         if ($this->statusCode) {
-            Http::setHeader(Http::getStatusCodeHeader($this->statusCode), $this->statusCode);
+            Http::setStatusCodeHeader($this->statusCode);
         }
 
         echo $this->content;

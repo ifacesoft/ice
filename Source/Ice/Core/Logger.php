@@ -172,7 +172,7 @@ class Logger
         self::$reserveMemory = null;
 
         if ($error = error_get_last()) {
-            Http::setHeader(Http::getStatusCodeHeader(500), 500);
+            Http::setStatusCodeHeader(500);
             self::errorHandler($error['type'], $error['message'], $error['file'], $error['line'], []);
             self::renderLog();
         }

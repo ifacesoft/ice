@@ -54,7 +54,6 @@ class App
                     ? DataProvider_Request::getInstance()
                     : DataProvider_Router::getInstance();
 
-
                 $actionClass = $dataProvider->get('actionClass');
 
                 if ($dataProvider instanceof DataProvider_Router) {

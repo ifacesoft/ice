@@ -115,30 +115,69 @@ class Arrays
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 1.1
+     * @version 1.5
      * @since   0.0
      */
-    public static function group($array, $columnFieldNames, $indexFieldNames = null)
+    public static function group($array, $columnFieldNames, $groups, $indexFieldNames = null)
     {
         $group = [];
 
         $columnKeys = array_flip((array)$columnFieldNames);
-        $indexKeys = empty($indexFieldNames) ? $columnKeys :  array_flip((array)$indexFieldNames);
+        $indexKeys = empty($indexFieldNames) ? $columnKeys : array_flip((array)$indexFieldNames);
+
+        $groupColumnKeys = [];
 
         $indexes = [];
+        $groupIndexes = [];
 
         $i = 0;
 
         foreach ($array as $key => $item) {
-            $index = implode('__', array_intersect_key($item, $indexKeys));
+            $column = array_intersect_key($item, $columnKeys);
 
-            if (!isset($indexes[$index])) {
-                $indexes[$index] = empty($indexFieldNames) ? $i++ : $index;
-                $group[$indexes[$index]] = array_intersect_key($item, $columnKeys);
-                $group[$indexes[$index]]['items'] = [];
+            $index = implode('__', array_filter($column));
+
+            if (!$index) {
+                continue;
             }
 
-            $group[$indexes[$index]]['items'][$key] = array_diff_key($item, $columnKeys);
+            if (!isset($indexes[$index])) {
+                $indexes[$index] = empty($indexFieldNames)
+                    ? $i++
+                    : implode('__', array_intersect_key($item, $indexKeys));
+
+                $group[$indexes[$index]] = $column;
+
+                foreach ($groups as $groupKey => $groupColumns) {
+                    $groupColumnKeys[$groupKey] = array_flip((array)$groupColumns);
+
+                    $groupIndexes[$groupKey] = [];
+                    $group[$indexes[$index]][$groupKey] = [];
+                }
+                unset($groupColumns);
+            }
+
+            foreach ($groups as $groupKey => $groupColumns) {
+                $column = $groupColumns == '*'
+                    ? array_diff_key($item, $columnKeys)
+                    : array_intersect_key($item,  $groupColumnKeys[$groupKey]);
+
+                $groupIndex = implode('__', array_filter($column));
+
+                if (!$groupIndex) {
+                    continue;
+                }
+
+                if (!in_array($groupIndex, $groupIndexes[$groupKey])) {
+                    $groupIndexes[$groupKey][] = $groupIndex;
+
+                    if ($groupColumns != '*' && !is_array($groupColumns)) {
+                        $group[$indexes[$index]][$groupKey][] = reset($column);
+                    } else {
+                        $group[$indexes[$index]][$groupKey][$key] = $column;
+                    }
+                }
+            }
         }
 
         return $group;

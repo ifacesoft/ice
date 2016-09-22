@@ -2,6 +2,7 @@
 
 namespace Ice\Filter;
 
+use Ice\Core\Debuger;
 use Ice\Core\Filter;
 use Ice\Exception\Filter_Invalid;
 

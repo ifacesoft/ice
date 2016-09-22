@@ -306,7 +306,6 @@ abstract class WidgetComponent
         /** @var Widget $widgetClass */
         $widgetClass = $this->getWidgetClass();
 
-
         $params = Input::get(
             $this->getParamConfig(),
             array_merge(

@@ -59,7 +59,7 @@ class Http_Status extends Block
      */
     protected function build(array $input)
     {
-        Http::setHeader(Http::getStatusCodeHeader($input['code']), $input['code']);
+        Http::setStatusCodeHeader($input['code']);
 
         $this->setTemplateClass('_' . $input['code']);
 
