@@ -112,7 +112,7 @@ class Mysqli extends DataSource
 
         $modelClass = $query->getQueryBuilder()->getModelClass();
 
-        $pkFieldNames = $modelClass::getScheme()->getPkFieldNames();
+        $pkFieldNamesAsKeys = array_flip($modelClass::getScheme()->getPkFieldNames());
 
 //        $statementResultMetadata = $statement->result_metadata();
 //
@@ -162,7 +162,7 @@ class Mysqli extends DataSource
 
 //            $data[QueryResult::ROWS][] = $row;
 
-            $id = implode('_', array_intersect_key($row, array_flip($pkFieldNames)));
+            $id = implode('_', array_intersect_key($row, $pkFieldNamesAsKeys));
 
             if ($id) {
                 if (!isset($data[QueryResult::ROWS][$id])) {
@@ -385,9 +385,9 @@ class Mysqli extends DataSource
          * @var Model $modelClass
          */
         $modelClass = $query->getQueryBuilder()->getModelClass();
-        $pkFieldNames = $modelClass::getScheme()->getPkFieldNames();
+        $pkFieldNamesAsKeys = array_flip($modelClass::getScheme()->getPkFieldNames());
 
-        $pkFieldName = count($pkFieldNames) == 1 ? reset($pkFieldNames) : null;
+        $pkFieldName = count($pkFieldNamesAsKeys) == 1 ? reset($pkFieldNamesAsKeys) : null;
 
         $insertId = $statement->insert_id;
 
@@ -401,7 +401,7 @@ class Mysqli extends DataSource
                 }
             }
 
-            $insertKeys = array_intersect_key($row, array_flip($pkFieldNames));
+            $insertKeys = array_intersect_key($row, array_flip($pkFieldNamesAsKeys));
 
             $data[QueryResult::INSERT_ID][] = $insertKeys;
             $data[QueryResult::ROWS][implode('_', $insertKeys)] = $row;
@@ -452,10 +452,10 @@ class Mysqli extends DataSource
          * @var Model $modelclass
          */
         $modelclass = $query->getQueryBuilder()->getModelClass();
-        $pkFieldNames = $modelclass::getScheme()->getPkFieldNames();
+        $pkFieldNamesAsKeys = array_flip($modelclass::getScheme()->getPkFieldNames());
 
         foreach ($query->getBindParts()[QueryBuilder::PART_SET] as $row) {
-            $insertKey = implode('_', array_intersect_key($row, array_flip($pkFieldNames)));
+            $insertKey = implode('_', array_intersect_key($row, $pkFieldNamesAsKeys));
             $data[QueryResult::ROWS][$insertKey] = $row;
         }
 

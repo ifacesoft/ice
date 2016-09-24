@@ -1332,11 +1332,18 @@ abstract class Model
     {
         $this->beforeDelete();
 
-        Query::getBuilder(get_class($this))->getDeleteQuery($this->getPk(), $dataSourceKey)->getQueryResult();
+        $affectedRows = Query::getBuilder(get_class($this))
+            ->getDeleteQuery($this->getPk(), $dataSourceKey)
+            ->getQueryResult()
+            ->getAffectedRows();
 
-        $this->afterDelete();
+        if ($affectedRows) {
+            $this->afterDelete();
 
-        return $this;
+            return $this;
+        }
+
+        return null;
     }
 
     /**

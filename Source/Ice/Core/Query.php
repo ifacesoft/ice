@@ -540,8 +540,12 @@ class Query
         return $this->bindParts;
     }
 
-    public function getGroup($columnFieldNames, $groups = ['items' => '*'], $indexFieldNames = null, $ttl = null)
+    public function getGroup($columnFieldNames, array $groups = null, $indexFieldNames = null, $ttl = null)
     {
+        if (!$groups) {
+            $groups = ['items' => '*'];
+        }
+
         $modelClass = $this->getQueryBuilder()->getModelClass();
 
         $columns = [];
