@@ -277,11 +277,15 @@ class Request
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.2
+     * @version 1.5
      * @since   0.0
      */
     public static function isAjax()
     {
+        if (isset($_REQUEST['ajax'])) {
+            return (boolean) $_REQUEST['ajax'];
+        }
+
         return isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest';
     }
 

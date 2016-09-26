@@ -11,6 +11,7 @@ namespace Ice\DataSource;
 
 use Ice\Core\DataProvider;
 use Ice\Core\DataSource;
+use Ice\Core\Debuger;
 use Ice\Core\Exception;
 use Ice\Core\Logger;
 use Ice\Core\Model;
@@ -387,7 +388,7 @@ class Mysqli extends DataSource
         $modelClass = $query->getQueryBuilder()->getModelClass();
         $pkFieldNamesAsKeys = array_flip($modelClass::getScheme()->getPkFieldNames());
 
-        $pkFieldName = count($pkFieldNamesAsKeys) == 1 ? reset($pkFieldNamesAsKeys) : null;
+        $pkFieldName = count($pkFieldNamesAsKeys) == 1 ? key($pkFieldNamesAsKeys) : null;
 
         $insertId = $statement->insert_id;
 
@@ -401,7 +402,7 @@ class Mysqli extends DataSource
                 }
             }
 
-            $insertKeys = array_intersect_key($row, array_flip($pkFieldNamesAsKeys));
+            $insertKeys = array_intersect_key($row, $pkFieldNamesAsKeys);
 
             $data[QueryResult::INSERT_ID][] = $insertKeys;
             $data[QueryResult::ROWS][implode('_', $insertKeys)] = $row;
