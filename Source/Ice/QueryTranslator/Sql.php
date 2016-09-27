@@ -33,6 +33,7 @@ use Ice\Helper\Mapping;
 class Sql extends QueryTranslator
 {
     const SQL_CALC_FOUND_ROWS = 'SQL_CALC_FOUND_ROWS';
+    const SQL_DISTINCT = 'DISTINCT';
     const SQL_STATEMENT_CREATE = 'CREATE TABLE IF NOT EXISTS';
     const SQL_STATEMENT_DROP = 'DROP TABLE IF EXISTS';
     const SQL_STATEMENT_SELECT = 'SELECT';
@@ -421,6 +422,8 @@ class Sql extends QueryTranslator
 
         $calcFoundRows = array_shift($part);
 
+        $distinct = array_shift($part);
+
         if (empty($part)) {
             return $sql;
         }
@@ -494,7 +497,7 @@ class Sql extends QueryTranslator
             ? '(' . $select['table']->getBody() . ')'
             : '`' . $modelClass::getSchemeName() . '`.`' . $modelClass::getTableName() . '`';
 
-        $sql .= "\n" . self::SQL_STATEMENT_SELECT . ($calcFoundRows ? ' ' . self::SQL_CALC_FOUND_ROWS . ' ' : '') .
+        $sql .= "\n" . self::SQL_STATEMENT_SELECT . ($calcFoundRows ? ' ' . self::SQL_CALC_FOUND_ROWS . ' ' : '') . ($distinct ? ' ' . self::SQL_DISTINCT . ' ' : '') .
             "\n\t" . implode(',' . "\n\t", $fields) .
             "\n" . self::SQL_CLAUSE_FROM .
             "\n\t" . $table . ' `' . $tableAlias . '`';

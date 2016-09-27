@@ -47,7 +47,7 @@ class QueryBuilder
     const PART_LIMIT = 'limit';
     const DEFAULT_PART_CREATE = [];
     const DEFAULT_PART_DROP = ['_drop' => null];
-    const DEFAULT_PART_SELECT = ['_calcFoundRows' => null];
+    const DEFAULT_PART_SELECT = ['_calcFoundRows' => null, '_distinct' => null];
     const DEFAULT_PART_VALUES = ['_update' => null];
     const DEFAULT_PART_JOIN = [];
     const DEFAULT_PART_SET = [];
@@ -1512,9 +1512,14 @@ class QueryBuilder
         $fieldColumnMap = $modelClass::getScheme()->getFieldColumnMap();
 
         foreach ((array)$fieldName as $name) {
-            $name = $fieldColumnMap[$name];
+            if (isset($fieldColumnMap[$name])) {
+                $name = $fieldColumnMap[$name];
+                $fieldNames[] = '`' . $tableAlias . '`.`' . $modelClass::getFieldName($name) . '`';
+            } else {
+                $fieldNames[] = $name;
+            }
 
-            $fieldNames[] = '`' . $tableAlias . '`.`' . $modelClass::getFieldName($name) . '`';
+            // Потенциально баг.. не понятно что приходит в name,. посмотреть аналогичные вызовы
             $this->appendCacheTag($modelClass, $name, true, false);
         }
 
@@ -1591,9 +1596,14 @@ class QueryBuilder
         $fieldColumnMap = $modelClass::getScheme()->getFieldColumnMap();
 
         foreach ((array)$fieldName as $name) {
-            $name = $fieldColumnMap[$name];
+            if (isset($fieldColumnMap[$name])) {
+                $name = $fieldColumnMap[$name];
+                $fieldNames[] = '`' . $tableAlias . '`.`' . $modelClass::getFieldName($name) . '`';
+            } else {
+                $fieldNames[] = $name;
+            }
 
-            $fieldNames[] = '`' . $tableAlias . '`.`' . $modelClass::getFieldName($name) . '`';
+            // Потенциально баг.. не понятно что приходит в name,. посмотреть аналогичные вызовы
             $this->appendCacheTag($modelClass, $name, true, false);
         }
 
@@ -1998,6 +2008,17 @@ class QueryBuilder
     public function isCalcFoundRows()
     {
         return $this->sqlParts[self::PART_SELECT]['_calcFoundRows'];
+    }
+
+    public function setDistinct($distinct = true)
+    {
+        $this->sqlParts[self::PART_SELECT]['_distinct'] = $distinct;
+        return $this;
+    }
+
+    public function isDistinct()
+    {
+        return $this->sqlParts[self::PART_SELECT]['_distinct'];
     }
 
     public function filter(Form $form)

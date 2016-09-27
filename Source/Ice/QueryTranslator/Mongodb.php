@@ -261,6 +261,8 @@ class Mongodb extends QueryTranslator
 
         $calcFoundRows = array_shift($part);
 
+        $distinct = array_shift($part);
+
         if (empty($part)) {
             return $sql;
         }
