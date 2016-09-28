@@ -27,7 +27,7 @@ class Pagination extends Widget
     {
         return [
             'render' => ['template' => true, 'class' => 'Ice:Php', 'layout' => null, 'resource' => __CLASS__],
-            'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'Widget: Access denied!'],
+            'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'Access denied'],
             'resource' => ['js' => null, 'css' => null, 'less' => null, 'img' => null],
             'cache' => ['ttl' => -1, 'count' => 1000],
             'input' => [

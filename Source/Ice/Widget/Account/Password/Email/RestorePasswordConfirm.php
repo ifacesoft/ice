@@ -16,7 +16,7 @@ class Account_Password_Email_RestorePasswordConfirm extends Account_Form
     {
         return [
             'render' => ['template' => Form::getClass(), 'class' => 'Ice:Php', 'layout' => null, 'resource' => true],
-            'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'Widget: Access denied!'],
+            'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'Access denied'],
             'resource' => ['js' => null, 'css' => null, 'less' => null, 'img' => null],
             'cache' => ['ttl' => -1, 'count' => 1000],
             'input' => [],

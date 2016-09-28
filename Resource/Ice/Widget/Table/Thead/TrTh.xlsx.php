@@ -37,7 +37,7 @@ foreach ($component->getOption('row', []) as $key => $col) {
     $cell = $render->getColumn() . $render->getIndex();
 
     $option = [];
-    $optionExcel = [];
+    $optionExcel = $component->getOption('excel', []);
 
     if (is_array($col)) {
         $option = $col;

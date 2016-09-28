@@ -81,6 +81,7 @@ class Http
         'rtf' => 'application/rtf',
         'xls' => 'application/vnd.ms-excel',
         'ppt' => 'application/vnd.ms-powerpoint',
+        'xlsx' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
 
         // open office
         'odt' => 'application/vnd.oasis.opendocument.text',

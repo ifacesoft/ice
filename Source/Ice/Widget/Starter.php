@@ -21,7 +21,7 @@ class Starter extends Block
     {
         return [
             'render' => ['template' => null, 'class' => 'Ice:Php', 'layout' => 'div.container>div.starter-template', 'resource' => null],
-            'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'Widget: Access denied!'],
+            'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'Access denied'],
             'resource' => ['js' => null, 'css' => null, 'less' => null, 'img' => null],
             'resource' => ['js' => null, 'css' => true, 'less' => null, 'img' => null],
             'cache' => ['ttl' => -1, 'count' => 1000],

@@ -16,7 +16,7 @@ class Title_Route extends Widget
     {
         return [
             'render' => ['template' => '', 'class' => 'Ice:Php', 'layout' => null, 'resource' => null],
-            'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'Widget: Access denied!'],
+            'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'Access denied'],
             'resource' => ['js' => null, 'css' => null, 'less' => null, 'img' => null],
             'cache' => ['ttl' => -1, 'count' => 1000],
             'input' => [

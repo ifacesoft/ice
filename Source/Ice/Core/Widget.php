@@ -1,6 +1,7 @@
 <?php
 namespace Ice\Core;
 
+use Composer\Installer\PackageEvent;
 use Ice\DataProvider\Request as DataProvider_Request;
 use Ice\Exception\Access_Denied;
 use Ice\Exception\Http;
@@ -15,7 +16,7 @@ use Ice\Widget\Resource_Dynamic;
 use Ice\WidgetComponent\HtmlTag;
 use Ice\WidgetComponent\HtmlTag_A;
 use Ice\WidgetComponent\Widget as WidgetComponent_Widget;
-
+use Ice\WidgetComponent\Alert as WidgetComponent_Alert;
 
 abstract class Widget extends Container
 {
@@ -97,8 +98,6 @@ abstract class Widget extends Container
         $widgetClass = get_class($this);
 
         try {
-            Access::check($widgetClass::getConfig()->gets('access', ['env' => null, 'request' => null, 'roles' => null]));
-
             $this->token = crc32(String::getRandomString());
 
             $this->setResourceClass();
@@ -115,6 +114,8 @@ abstract class Widget extends Container
                 unset($defaultData['parentWidgetClass']);
             }
 
+            Access::check($widgetClass::getConfig()->gets('access', ['env' => null, 'request' => null, 'roles' => null, 'message' => '']));
+
             $this->init($defaultData);
 
             $this->loadResource();
@@ -126,7 +127,13 @@ abstract class Widget extends Container
         } catch (Http $e) {
             throw $e;
         } catch (Access_Denied $e) {
-//            throw $e;
+            $this->setTemplateClass('Ice\Widget\Blank');
+
+            $message = $e->getMessage();
+
+            if ($message) {
+                $this->alert('access_denied', ['classes' => 'alert-danger', 'params' => ['access_denied' => $e->getMessage()]]);
+            }
         } catch (\Exception $e) {
             Logger::getInstance(__CLASS__)->error(['Widget {$0} init failed', $widgetClass], __FILE__, __LINE__, $e);
         } finally {
@@ -136,7 +143,8 @@ abstract class Widget extends Container
         }
     }
 
-    protected function init($data) {
+    protected function init($data)
+    {
         /** @var Widget $widgetClass */
         $widgetClass = get_class($this);
 
@@ -276,7 +284,7 @@ abstract class Widget extends Container
      *  {
      *      return [
      *          'render' => ['template' => null, 'class' => 'Ice:Php', 'layout' => null, 'resource' => null],
-     *          'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'Widget: Access denied!'],
+     *          'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'Access denied'],
      *          'resource' => ['js' => null, 'css' => null, 'less' => null, 'img' => null],
      *          'cache' => ['ttl' => -1, 'count' => 1000],
      *          'input' => [],
@@ -365,7 +373,7 @@ abstract class Widget extends Container
     {
         return [
             'render' => ['template' => 'Ice\Widget\Blank', 'class' => 'Ice:Php', 'layout' => null, 'resource' => null],
-            'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'Widget: Access denied!'],
+            'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'Access denied'],
             'resource' => ['js' => null, 'css' => null, 'less' => null, 'img' => null],
             'cache' => ['ttl' => -1, 'count' => 1000],
             'input' => [],
@@ -854,6 +862,19 @@ abstract class Widget extends Container
     }
 
     /**
+     * Build a tag part
+     *
+     * @param  $columnName
+     * @param  array $options
+     * @param  string $template
+     * @return $this
+     */
+    public function alert($columnName, array $options = [], $template = null)
+    {
+        return $this->addPart(new WidgetComponent_Alert($columnName, $options, $template, $this));
+    }
+
+    /**
      * @param WidgetComponent $part
      * @return $this
      */
@@ -863,22 +884,11 @@ abstract class Widget extends Container
             return $this;
         }
 
-//        try {
-//            $roles = $part->getOption('roles');
-//            $access = $part->getOption('access');
-//
-//            if (!$access) {
-//                $access = [];
-//            }
-//
-//            if ($roles) {
-//                $access['roles'] = $roles;
-//            }
-//
-//            Access::check($access);
-//        } catch (Access_Denied $e) {
-//            return $this;
-//        }
+        $access = $part->getOption('access', ['roles' => []]);
+
+        if ($access['roles'] && !Security::getInstance()->check((array)$access['roles'])) {
+            return $this;
+        }
 
         $componentName = $part->getComponentName();
 

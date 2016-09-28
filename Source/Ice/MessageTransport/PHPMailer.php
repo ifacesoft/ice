@@ -59,6 +59,14 @@ class PHPMailer extends MessageTransport
         PHPMailer::cc($phpMailer, $message->getCc());
         PHPMailer::bcc($phpMailer, $message->getBcc());
 
+        foreach ($message->getAttachments() as $name => $attachment) {
+            if (is_string($attachment)) {
+                $phpMailer->addStringAttachment($attachment, $name);
+            } else {
+                $phpMailer->addAttachment($attachment['path'], $name, $attachment['encoding'], $attachment['type']);
+            }
+        }
+
         if (!$phpMailer->send()) {
             $this->getLogger()->exception($phpMailer->ErrorInfo, __FILE__, __LINE__);
         }

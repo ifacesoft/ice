@@ -161,8 +161,8 @@ return [
         'en' => 'Forbidden',
         'ru' => 'Запрещено',
     ],
-    'Access_Denied_Security - Widget: Access denied!' => [
-        'ru' => 'Access_Denied_Security - Widget: Access denied!',
+    'Access_Denied_Security - Access denied' => [
+        'ru' => 'Access_Denied_Security - Access denied',
     ],
     'RouteNotFound - Route {$0} not found' => [
         'ru' => 'RouteNotFound - Route {$0} not found',

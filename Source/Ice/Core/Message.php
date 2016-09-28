@@ -51,6 +51,8 @@ abstract class Message
      */
     private $body = null;
 
+    private $attachments = [];
+
     public static function create()
     {
         $class = self::getClass();
@@ -197,6 +199,24 @@ abstract class Message
     public function setBcc($bcc)
     {
         $this->bcc = $bcc;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getAttachments()
+    {
+        return $this->attachments;
+    }
+
+    /**
+     * @param array $attachments
+     */
+    public function addAttachment($name, $attachment)
+    {
+        $this->attachments[$name] = $attachment;
+
         return $this;
     }
 }
