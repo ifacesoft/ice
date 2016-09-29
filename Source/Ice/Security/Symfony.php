@@ -87,10 +87,8 @@ class Symfony extends Ice
             $firewall = 'main';
             $token = new UsernamePasswordToken($symfonyUser, null, $firewall, $symfonyUser->getRoles());
             $this->getKernel()->getContainer()->get('security.token_storage')->setToken($token);
-//            $this->getKernel()->getContainer()->get('security.authentication.manager')->authenticate($token);
-//            $session = $this->getKernel()->getContainer()->get('session');
-//            $session->set('_security_' . $firewall, serialize($token));
-//            $session->save();
+            $session = $this->getKernel()->getContainer()->get('session');
+            $session->set('_security_' . $firewall, serialize($token));
 
             $this->setSymfonyUser($symfonyUser);
         } catch (\Exception $e) {
