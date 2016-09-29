@@ -3,6 +3,7 @@
 namespace Ice\Action;
 
 use Ice\Core\Action;
+use Ice\Core\Debuger;
 use Ice\Core\Widget;
 use Ice\DataProvider\Request;
 use Ice\Exception\Access_Denied;

@@ -56,17 +56,21 @@ foreach ($component->getOption('row', []) as $key => $col) {
         $sheet->getColumnDimension($render->getColumn())->setVisible($optionExcel['columnVisible']);
     }
 
-    if (is_string($key)) {
+    if (!is_int($key)) {
         $value = $key;
         $sheet->mergeCells($cell . ':' . $render->decrementLetter($render->columnInc($col)) . $render->getIndex());
     } else {
         $value = $col;
         $col = 1;
+    }
+
+    if ($value instanceof \Ice\Core\WidgetComponent) {
+        $value = $value->render($render);
+    } else{
+        $sheet->setCellValue($cell, $value);
         $render->columnInc($col);
     }
 
-    /** @var PHPExcel_Worksheet $sheet */
-    $sheet->setCellValue($cell, $value);
     $sheet->getStyle($cell)->applyFromArray($cellStyle);
 }
 

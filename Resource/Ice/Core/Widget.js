@@ -42,7 +42,8 @@ var Ice_Core_Widget = {
         if (method == 'GET') {
             var a = document.createElement('a');
             a.href = url;
-            url = a.pathname + '?' + $.param(data) + a.hash;
+            var pathname = (a.pathname.charAt(0) == "/") ? a.pathname : "/" + a.pathname;
+            url = pathname + '?' + $.param(data) + a.hash;
             data = {};
         }
 
