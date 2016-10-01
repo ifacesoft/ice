@@ -47,7 +47,7 @@ abstract class Account_Form extends Form
      *
      * @var string
      */
-    private $expired = '+100 years';
+    private $expired = '+1 years';
 
     private $accountModelClass = null;
 
