@@ -1,7 +1,10 @@
 <?php
 namespace Ice\Action;
 
-use Ice\Widget\Account_Password_LoginEmail_ChangePassword;
+use Ice\Validator\Email;
+use Ice\Widget\Account_Password_Email_ChangePassword;
+use Ice\Widget\Account_Password_Login_ChangePassword;
+use Ice\Core\Security as Core_Security;
 
 class Security_Password_LoginEmail_ChangePassword_Submit extends Security
 {
@@ -12,21 +15,36 @@ class Security_Password_LoginEmail_ChangePassword_Submit extends Security
      */
     public function run(array $input)
     {
-        /** @var Security_Password_LoginEmail_ChangePassword $form */
-        $form = $input['widget'];
+        $widget = $input['widget'];
 
-        $output = Security_Password_Login_ChangePassword_Submit::call([
-            'widgets' => $input['widgets'],
-            'widget' => $form
-        ]);
+        $login = Core_Security::getInstance()->getUser()->get('/login');
 
-        if (!isset($output['error'])) {
-            return $output;
+        if (Email::getInstance()->validate(['login' => $login], 'login', [])) {
+            $output = Security_Password_Email_ChangePassword_Submit::call([
+                'widgets' => $input['widgets'],
+                'widget' => Account_Password_Email_ChangePassword::getInstance($widget->getInstanceKey())
+                    ->setAccountModelClass($widget->getAccountEmailPasswordModelClass())
+                    ->set([
+                        'password' => $widget->get('password'),
+                        'new_password' => $widget->get('new_password'),
+                        'confirm_password' => $widget->get('confirm_password')
+                    ])
+            ]);
+
+            if (!isset($output['error'])) {
+                return $output;
+            }
         }
 
-        return Security_Password_Email_ChangePassword_Submit::call([
+        return Security_Password_Login_ChangePassword_Submit::call([
             'widgets' => $input['widgets'],
-            'widget' => $form
+            'widget' => Account_Password_Login_ChangePassword::getInstance($widget->getInstanceKey())
+                ->setAccountModelClass($widget->getAccountLoginPasswordModelClass())
+                ->set([
+                    'password' => $widget->get('password'),
+                    'new_password' => $widget->get('new_password'),
+                    'confirm_password' => $widget->get('confirm_password')
+                ])
         ]);
     }
 }

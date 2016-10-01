@@ -15,11 +15,10 @@ class Security_Password_LoginEmail_Login_Submit extends Security
      */
     public function run(array $input)
     {
-        /** @var Account_Password_LoginEmail_Login $widget */
         $widget = $input['widget'];
 
         if (Email::getInstance()->validate($widget->get(), 'username', [])) {
-            return Security_Password_Email_Login_Submit::call([
+            $output = Security_Password_Email_Login_Submit::call([
                 'widgets' => $input['widgets'],
                 'widget' => Account_Password_Email_Login::getInstance($widget->getInstanceKey())
                     ->setAccountModelClass($widget->getAccountEmailPasswordModelClass())
@@ -29,17 +28,21 @@ class Security_Password_LoginEmail_Login_Submit extends Security
                         'password' => $widget->get('password')
                     ])
             ]);
-        } else {
-            return Security_Password_Login_Login_Submit::call([
-                'widgets' => $input['widgets'],
-                'widget' => Account_Password_Login_Login::getInstance($widget->getInstanceKey())
-                    ->setAccountModelClass($widget->getAccountLoginPasswordModelClass())
-                    ->setProlongate($widget->getProlongate())// todo: так же надо прокинуть остальные свойства (redirect, timeout etc.)
-                    ->set([
-                        'login' => $widget->get('username'),
-                        'password' => $widget->get('password')
-                    ])
-            ]);
+
+            if (!isset($output['error'])) {
+                return $output;
+            }
         }
+
+        return Security_Password_Login_Login_Submit::call([
+            'widgets' => $input['widgets'],
+            'widget' => Account_Password_Login_Login::getInstance($widget->getInstanceKey())
+                ->setAccountModelClass($widget->getAccountLoginPasswordModelClass())
+                ->setProlongate($widget->getProlongate())// todo: так же надо прокинуть остальные свойства (redirect, timeout etc.)
+                ->set([
+                    'login' => $widget->get('username'),
+                    'password' => $widget->get('password')
+                ])
+        ]);
     }
 }

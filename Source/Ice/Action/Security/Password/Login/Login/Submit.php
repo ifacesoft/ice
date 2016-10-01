@@ -29,11 +29,7 @@ class Security_Password_Login_Login_Submit extends Security
 
         try {
             /** @var Model_Account $account */
-            $account = $accountModelClass::createQueryBuilder()
-                ->eq(['login' => $securityForm->get('login')])
-                ->limit(1)
-                ->getSelectQuery(['/pk', 'password', '/expired', 'user__fk'])
-                ->getModel();
+            $account = $accountModelClass::getAccountByLogin($securityForm->get('login'));
 
             if (!$account) {
                 $logger->exception(['Account with login {$0} not found', $securityForm->get('login')], __FILE__, __LINE__);
