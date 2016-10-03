@@ -42,7 +42,7 @@ class Symfony extends Ice
             $url = $kernel
                 ->getContainer()
                 ->get('router')
-                ->generate($routeName, array_merge($this->getParams(), $routeParams)); // todo: должно быть как строчкой ниже
+                ->generate($routeName, array_merge((array)$this->getParams(), $routeParams)); // todo: должно быть как строчкой ниже
 //                ->generate($routeName, $routeParams);
         }
 
