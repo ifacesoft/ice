@@ -26,17 +26,21 @@ class PHPMailer extends MessageTransport
 
         $this->phpMailer->isSMTP();
 
-        $this->phpMailer->SMTPSecure = 'tls';
-        $this->phpMailer->SMTPAuth = true;
-
         $this->phpMailer->SMTPDebug = $config->get($key . '/debug');
         $this->phpMailer->Debugoutput = 'html';
 
         $this->phpMailer->Host = $config->get($key . '/smtpHost');
         $this->phpMailer->Port = $config->get($key . '/smtpPort');
 
-        $this->phpMailer->Username = $config->get($key . '/smtpUser');
-        $this->phpMailer->Password = $config->get($key . '/smtpPass');
+        if ($username = $config->get($key . '/smtpUser')) {
+            $this->phpMailer->SMTPAuth = true;
+            $this->phpMailer->SMTPSecure = 'tls';
+            $this->phpMailer->Username = $username;
+            $this->phpMailer->Password = $config->get($key . '/smtpPass');
+        } else {
+            $this->phpMailer->SMTPAuth = false;
+            $this->phpMailer->SMTPSecure = false;
+        }
 
         $this->phpMailer->setFrom($this->getFromAddress(), $this->getFromName());
         $this->phpMailer->addReplyTo($this->getReplyToAddress(), $this->getReplyToName());
