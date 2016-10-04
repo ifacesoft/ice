@@ -84,10 +84,10 @@ return [
             'smtpPort' => null, // required
             'smtpUser' => null, // required
             'smtpPass' => null, // required
-            'fromAddress' => 'robot@iceframework.net',
-            'fromName' => 'ice robot :)',
-            'replyToAddress' => 'reply@iceframework.net',
-            'replyToName' => 'Test'
+//            'fromAddress' => 'robot@iceframework.net',
+//            'fromName' => 'ice robot :)',
+//            'replyToAddress' => 'reply@iceframework.net',
+//            'replyToName' => 'Test'
         ]
     ]
 ];

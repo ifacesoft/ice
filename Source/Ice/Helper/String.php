@@ -9,6 +9,7 @@
 
 namespace Ice\Helper;
 
+use Ice\Core\Debuger;
 use Ice\Core\Exception;
 
 /**
@@ -186,5 +187,9 @@ class String
         }
 
         return $pos === false ? mb_strlen($haystack) : $pos;
+    }
+
+    public static function removeSpecChars($string) {
+        return preg_replace('/[^\w -]+/u', '', $string);
     }
 }

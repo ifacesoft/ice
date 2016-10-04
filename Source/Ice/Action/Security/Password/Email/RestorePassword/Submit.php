@@ -17,7 +17,7 @@ class Security_Password_Email_RestorePassword_Submit extends Security
 
         try {
             /** @var Model $accountModelClass */
-            $accountModelClass = $accountForm->getAccountEmailPasswordModelClass();
+            $accountModelClass = $accountForm->getAccountModelClass();
 
             if (!$accountModelClass) {
                 return $logger

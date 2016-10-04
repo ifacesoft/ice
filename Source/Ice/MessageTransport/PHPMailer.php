@@ -43,7 +43,10 @@ class PHPMailer extends MessageTransport
         }
 
         $this->phpMailer->setFrom($this->getFromAddress(), $this->getFromName());
-        $this->phpMailer->addReplyTo($this->getReplyToAddress(), $this->getReplyToName());
+
+        if ($replyToAddress = $this->getReplyToAddress()) {
+            $this->phpMailer->addReplyTo($this->getReplyToAddress(), $this->getReplyToName());
+        }
 
         $this->phpMailer->isHTML(true);
     }

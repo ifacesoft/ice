@@ -17,7 +17,7 @@ class Security_Password_Login_RestorePassword_Submit extends Security
 
         try {
             /** @var Model $accountModelClass */
-            $accountModelClass = $accountForm->getAccountLoginPasswordModelClass();
+            $accountModelClass = $accountForm->getAccountModelClass();
 
             if (!$accountModelClass) {
                 return $logger
@@ -28,7 +28,8 @@ class Security_Password_Login_RestorePassword_Submit extends Security
                     );
             }
 
-            $account = $accountModelClass::getSelectQuery(['/pk', '/expired'], ['login' => $accountForm->get('login')])->getModel();
+            /** @var Model_Account $account */
+            $account = $accountModelClass::getAccountByLogin($accountForm->get('login'));
 
             if (!$account) {
                 return [

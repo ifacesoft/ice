@@ -24,7 +24,7 @@ abstract class MessageTransport extends Container
         $this->fromAddress = $config->get($key . '/fromAddress');
         $this->fromName = $config->get($key . '/fromName', false);
 
-        $this->replyToAddress = $config->get($key . '/replyToAddress');
+        $this->replyToAddress = $config->get($key . '/replyToAddress', '');
         $this->replyToName = $config->get($key . '/replyToName', false);
     }
 

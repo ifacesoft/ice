@@ -82,8 +82,6 @@ class Php
      */
     public static function castTo($type, $var)
     {
-
-
         return $var;
     }
 

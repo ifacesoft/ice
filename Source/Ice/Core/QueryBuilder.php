@@ -872,13 +872,18 @@ class QueryBuilder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.6
+     * @version 1.5
      * @since   0.0
      */
-    public function inner($modelTableData, $fieldNames = null, $condition = null)
+    public function inner($modelTableData, $fieldNames = null, $condition = null, $isUse = true)
     {
-        return $this->select($fieldNames, null, $modelTableData)
-            ->join(QueryBuilder::SQL_CLAUSE_INNER_JOIN, $modelTableData, $condition);
+        if ($isUse) {
+            $this
+                ->select($fieldNames, null, $modelTableData)
+                ->join(QueryBuilder::SQL_CLAUSE_INNER_JOIN, $modelTableData, $condition);
+        }
+
+        return $this;
     }
 
     /**
@@ -1275,10 +1280,15 @@ class QueryBuilder
      * @version 0.6
      * @since   0.0
      */
-    public function left($modelTableData, $fieldNames = null, $condition = null)
+    public function left($modelTableData, $fieldNames = null, $condition = null, $isUse = true)
     {
-        return $this->select($fieldNames, null, $modelTableData)
-            ->join(QueryBuilder::SQL_CLAUSE_LEFT_JOIN, $modelTableData, $condition);
+        if ($isUse) {
+            $this
+                ->select($fieldNames, null, $modelTableData)
+                ->join(QueryBuilder::SQL_CLAUSE_LEFT_JOIN, $modelTableData, $condition);
+        }
+
+        return $this;
     }
 
     /**

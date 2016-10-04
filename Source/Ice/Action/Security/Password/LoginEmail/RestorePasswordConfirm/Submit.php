@@ -2,6 +2,8 @@
 
 namespace Ice\Action;
 
+use Ice\Widget\Account_Password_Email_RestorePasswordConfirm;
+use Ice\Widget\Account_Password_Login_RestorePasswordConfirm;
 use Ice\Widget\Account_Password_LoginEmail_RestorePasswordConfirm;
 
 class Security_Password_LoginEmail_RestorePasswordConfirm_Submit extends Security
@@ -13,25 +15,26 @@ class Security_Password_LoginEmail_RestorePasswordConfirm_Submit extends Securit
      */
     public function run(array $input)
     {
-        /** @var Security_Password_LoginEmail_RestorePasswordConfirm $form */
-        $form = $input['widget'];
+        $widget = $input['widget'];
 
-        $accountLoginPasswordSubmitClass = $form->getAccountLoginPasswordSubmitClass();
+        $accountEmailPasswordSubmitClass = $widget->getAccountEmailPasswordSubmitClass();
 
-        $output = $accountLoginPasswordSubmitClass::call([
+        $output = $accountEmailPasswordSubmitClass::call([
             'widgets' => $input['widgets'],
-            'widget' => $form
+            'widget' => Account_Password_Email_RestorePasswordConfirm::getInstance($widget->getInstanceKey())
+                ->setAccountModelClass($widget->getAccountEmailPasswordModelClass())
         ]);
 
         if (!isset($output['error'])) {
             return $output;
         }
 
-        $accountEmailPasswordSubmitClass = $form->getAccountEmailPasswordSubmitClass();
+        $accountLoginPasswordSubmitClass = $widget->getAccountLoginPasswordSubmitClass();
 
-        return $accountEmailPasswordSubmitClass::call([
+        return $accountLoginPasswordSubmitClass::call([
             'widgets' => $input['widgets'],
-            'widget' => $form
+            'widget' => Account_Password_Login_RestorePasswordConfirm::getInstance($widget->getInstanceKey())
+                ->setAccountModelClass($widget->getAccountLoginPasswordModelClass())
         ]);
     }
 }

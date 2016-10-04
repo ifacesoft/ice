@@ -2,6 +2,9 @@
 
 namespace Ice\Action;
 
+use Ice\Validator\Email;
+use Ice\Widget\Account_Password_Login_RestorePassword;
+use Ice\Widget\Account_Password_Email_RestorePassword;
 use Ice\Widget\Account_Password_LoginEmail_RestorePassword;
 
 class Security_Password_LoginEmail_RestorePassword_Submit extends Security
@@ -13,29 +16,34 @@ class Security_Password_LoginEmail_RestorePassword_Submit extends Security
      */
     public function run(array $input)
     {
-        /** @var Security_Password_LoginEmail_RestorePassword $form */
-        $form = $input['widget'];
+        $widget = $input['widget'];
 
-        $form->set(['login' => $form->getPart('username')->get('username')]);
+        if (Email::getInstance()->validate($widget->get(), 'username', [])) {
+            $accountEmailPasswordSubmitClass = $widget->getAccountEmailPasswordSubmitClass();
 
-        $accountLoginPasswordSubmitClass = $form->getAccountLoginPasswordSubmitClass();
+            $output = $accountEmailPasswordSubmitClass::call([
+                'widgets' => $input['widgets'],
+                'widget' => Account_Password_Email_RestorePassword::getInstance($widget->getInstanceKey())
+                    ->setAccountModelClass($widget->getAccountEmailPasswordModelClass())
+                    ->set([
+                        'email' => $widget->get('username'),
+                    ])
+            ]);
 
-        $output = $accountLoginPasswordSubmitClass::call([
-            'widgets' => $input['widgets'],
-            'widget' => $form
-        ]);
-
-        if (!isset($output['error'])) {
-            return $output;
+            if (!isset($output['error'])) {
+                return $output;
+            }
         }
 
-        $form->set(['email' => $form->getPart('username')->get('username')]);
+        $accountLoginPasswordSubmitClass = $widget->getAccountLoginPasswordSubmitClass();
 
-        $accountEmailPasswordSubmitClass = $form->getAccountEmailPasswordSubmitClass();
-
-        return $accountEmailPasswordSubmitClass::call([
+        return $accountLoginPasswordSubmitClass::call([
             'widgets' => $input['widgets'],
-            'widget' => $form
+            'widget' => Account_Password_Login_RestorePassword::getInstance($widget->getInstanceKey())
+                ->setAccountModelClass($widget->getAccountLoginPasswordModelClass())
+                ->set([
+                    'login' => $widget->get('username'),
+                ])
         ]);
     }
 }
