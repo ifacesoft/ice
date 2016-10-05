@@ -132,6 +132,10 @@ class Resource implements Cacheable
      */
     public static function create($class)
     {
+        if (is_object($class)) {
+            $class = get_class($class);
+        }
+
         $repository = Resource::getRepository($class);
 
         if ($resource = $repository->get('resource')) {

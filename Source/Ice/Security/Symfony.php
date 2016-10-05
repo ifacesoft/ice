@@ -84,7 +84,7 @@ class Symfony extends Ice
                 $this->getLogger()->exception('Symfony user not found', __FILE__, __LINE__);
             }
 
-            $firewall = 'main';
+            $firewall = 'default';
             $token = new UsernamePasswordToken($symfonyUser, null, $firewall, $symfonyUser->getRoles());
             $this->getKernel()->getContainer()->get('security.token_storage')->setToken($token);
             $session = $this->getKernel()->getContainer()->get('session');
