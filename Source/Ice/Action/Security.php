@@ -217,16 +217,6 @@ abstract class Security extends Widget_Form_Event
             'form_class' => get_class($accountForm)
         ]);
 
-        if ($account->isExpired()) {
-            $error = 'Account is expired';
-
-            $log->set('error', $logger->info($error, Core_Logger::DANGER, true));
-
-            $logger->save($log);
-
-            return $accountForm->getLogger()->exception([$error, [], $accountForm->getResource()], __FILE__, __LINE__);
-        }
-
         $userModelClass = Config::getInstance(Core_Security::getClass())->get('userModelClass');
 
         /** @var Security_User|Model $user */
