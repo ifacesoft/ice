@@ -6,8 +6,8 @@
             <?php if ($component->getOption('required', false) === false) : ?>allow_single_deselect: true,<?php endif; ?>
             <?php if ($component->getOption('multiple', false)) : ?>placeholder_text_multiple: '<?= $component->getPlaceholder() ?>',
             <?php else : ?>placeholder_text_single: '<?= $component->getPlaceholder() ?>',<?php endif; ?>
-            max_selected_options: 5,
-            no_results_text: 'Oops, nothing found!'
+            max_selected_options: <?= $component->getOption('maxSelectedOptions', 0) ?>,
+            no_results_text: '<?= $component->getOption('noResultsText', 'Oops, nothing found!') ?>'
         });
     });
 </script>

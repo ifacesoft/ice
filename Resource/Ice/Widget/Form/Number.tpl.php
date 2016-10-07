@@ -12,6 +12,7 @@
             name="<?= $component->getName() ?>"
             value="<?= $component->getValue() ?>"
             <?= $component->getPlaceholderAttribute() ?>
+            <?= $component->getEventAttributesCode() ?>
             <?php if ($component->getOption('disabled', false)) : ?>disabled="disabled"<?php endif; ?>
             <?php if ($component->getOption('readonly', false)) : ?>readonly="readonly"<?php endif; ?>
             <?php if ($component->getOption('required', false)) : ?>required="required"<?php endif; ?>

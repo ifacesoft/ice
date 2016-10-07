@@ -34,7 +34,7 @@ class Date
     const FORMAT_MYSQL = 'Y-m-d H:i:s';
     const FORMAT_REVISION = 'mdHi';
 //    const ZERO = '0000-00-00 00:00:00';
-//    const FUTURE = '2099-12-31 00:00:00';
+    const FUTURE = '2099-12-31 00:00:00';
     const FORMAT_MYSQL_DATE = 'Y-m-d';
 
     /**
