@@ -65,6 +65,6 @@ class Class_Generator
             1
         );
 
-        file_put_contents($filePath, $code);
+        file_put_contents($filePath, str_replace("\t", str_repeat(' ', 4), $code));
     }
 }
