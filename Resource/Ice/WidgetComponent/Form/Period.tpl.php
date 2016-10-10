@@ -43,12 +43,12 @@
     <script>
         $(function () {
             $("#<?= $component->getId('from') ?>").datepicker({
-                format: '<?= $component->getDateFormat() ?>',
+                format: '<?= $component->getDateMomentFormat() ?>',
                 locale: '<?= $component->getLocale() ?>'
             });
             $("#<?= $component->getId('to') ?>").datepicker({
                 useCurrent: false,
-                format: '<?= $component->getDateFormat() ?>',
+                format: '<?= $component->getDateMomentFormat() ?>',
                 locale: '<?= $component->getLocale() ?>'
             });
             $("#<?= $component->getId('from') ?>").on("dp.change", function (e) {

@@ -9,6 +9,7 @@
 namespace Ice\Action;
 
 use Ice\Core\Action;
+use Ice\Core\Debuger;
 use Ice\Core\Widget;
 use Ice\DataProvider\Request;
 use Ice\DataProvider\Router;
@@ -28,9 +29,8 @@ class Render_Excel extends Action
             'cache' => ['ttl' => -1, 'count' => 1000],
             'actions' => [],
             'input' => [
-                'class' => ['providers' => ['default', Router::class, Request::class]],
-                'params' => ['providers' => ['default', Router::class, Request::class], 'default' => []],
-                'widget' => ['default' => null, 'providers' => ['default', Request::class]]
+                'class' => ['providers' => Request::class],
+                'params' => ['providers' => Request::class, 'default' => []],
             ],
             'output' => []
         ];
