@@ -63,6 +63,11 @@ abstract class Security extends Container
     }
 
     /**
+     * Add user roles
+     */
+    abstract public function addRoles($roles);
+
+    /**
      * All user roles
      *
      * @return string[]
