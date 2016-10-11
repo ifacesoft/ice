@@ -37,10 +37,10 @@ class Security_Password_Email_RegisterConfirm_Submit extends Security
                 parent::run($input)
             );
         } catch (\Exception $e) {
-            $logger->error('Подтверждение не удалось', __FILE__, __LINE__, $e);
+            $logger->error($e->getMessage(), __FILE__, __LINE__, $e);
 
             return [
-                'error' => $logger->info('Подтверждение не удалось', Logger::DANGER, true)
+                'error' => $logger->info($e->getMessage(), Logger::DANGER, true)
             ];
         }
     }

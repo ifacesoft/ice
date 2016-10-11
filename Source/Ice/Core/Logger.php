@@ -140,23 +140,28 @@ class Logger
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 1.5
      * @since   0.0
      */
     public static function init()
     {
+        self::$reserveMemory = str_repeat(' ', pow(2, 15));
+
         error_reporting(E_ALL | E_STRICT);
 
-        ini_set('display_errors', !Environment::getInstance()->isProduction());
+        ob_start();
 
-        self::$reserveMemory = str_repeat(' ', pow(2, 15));
+        if (Environment::getInstance()->isProduction()) {
+            ini_set('display_errors', 0);
+            return;
+        }
+
+        ini_set('display_errors', 1);
 
         ini_set('xdebug.var_display_max_depth', -1);
         ini_set('xdebug.profiler_enable', 1);
         ini_set('xdebug.max_nesting_level', 200);
         ini_set('xdebug.profiler_output_dir', Module::getInstance()->getPath(Module::LOG_DIR) . 'xdebug');
-
-        ob_start();
     }
 
     /**
@@ -323,9 +328,10 @@ class Logger
 //            $session->set(['session__fk' => $session__fk])->save();
 //            $log->set(['session' => $session])->save();
 //        } else {
-        $log->set([
+        $log
+            ->set([
             'logger_class' => $this->class,
-            'session' => session_id()
+            'session__fk' => session_id()
         ])->save();
 //        }
     }

@@ -15,6 +15,8 @@ class Security_Password_LoginEmail_ChangePassword_Submit extends Security
      */
     public function run(array $input)
     {
+        $error = '';
+
         $widget = $input['widget'];
 
         $login = Core_Security::getInstance()->getUser()->get('/login');
@@ -34,9 +36,11 @@ class Security_Password_LoginEmail_ChangePassword_Submit extends Security
             if (!isset($output['error'])) {
                 return $output;
             }
+
+            $error .= $output['error'];
         }
 
-        return Security_Password_Login_ChangePassword_Submit::call([
+        $output = Security_Password_Login_ChangePassword_Submit::call([
             'widgets' => $input['widgets'],
             'widget' => Account_Password_Login_ChangePassword::getInstance($widget->getInstanceKey())
                 ->setAccountModelClass($widget->getAccountLoginPasswordModelClass())
@@ -46,5 +50,11 @@ class Security_Password_LoginEmail_ChangePassword_Submit extends Security
                     'confirm_password' => $widget->get('confirm_password')
                 ])
         ]);
+
+        if (!isset($output['error'])) {
+            return $output;
+        }
+
+        return ['error' => $error . ' ' . $output['error']];
     }
 }

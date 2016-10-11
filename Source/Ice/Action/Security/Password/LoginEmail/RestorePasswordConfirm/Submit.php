@@ -29,12 +29,20 @@ class Security_Password_LoginEmail_RestorePasswordConfirm_Submit extends Securit
             return $output;
         }
 
+        $error = $output['error'];
+
         $accountLoginPasswordSubmitClass = $widget->getAccountLoginPasswordSubmitClass();
 
-        return $accountLoginPasswordSubmitClass::call([
+        $output = $accountLoginPasswordSubmitClass::call([
             'widgets' => $input['widgets'],
             'widget' => Account_Password_Login_RestorePasswordConfirm::getInstance($widget->getInstanceKey())
                 ->setAccountModelClass($widget->getAccountLoginPasswordModelClass())
         ]);
+
+        if (!isset($output['error'])) {
+            return $output;
+        }
+
+        return ['error' => $error . ' ' . $output['error']];
     }
 }

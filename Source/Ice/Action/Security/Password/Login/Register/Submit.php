@@ -57,10 +57,10 @@ class Security_Password_Login_Register_Submit extends Security
                 'error' => $logger->info('Пользователь уже существует', Logger::DANGER, true)
             ];
         } catch (\Exception $e) {
-            $logger->error('Регистрация не удалась', __FILE__, __LINE__, $e);
+            $logger->error($e->getMessage(), __FILE__, __LINE__, $e);
 
             return [
-                'error' => $logger->info('Регистрация не удалась', Logger::DANGER, true)
+                'error' => $logger->info($e->getMessage(), Logger::DANGER, true)
             ];
         }
     }

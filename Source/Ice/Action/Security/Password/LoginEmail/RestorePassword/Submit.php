@@ -16,6 +16,8 @@ class Security_Password_LoginEmail_RestorePassword_Submit extends Security
      */
     public function run(array $input)
     {
+        $error = '';
+
         $widget = $input['widget'];
 
         if (Email::getInstance()->validate($widget->get(), 'username', [])) {
@@ -33,11 +35,13 @@ class Security_Password_LoginEmail_RestorePassword_Submit extends Security
             if (!isset($output['error'])) {
                 return $output;
             }
+
+            $error .= $output['error'];
         }
 
         $accountLoginPasswordSubmitClass = $widget->getAccountLoginPasswordSubmitClass();
 
-        return $accountLoginPasswordSubmitClass::call([
+        $output = $accountLoginPasswordSubmitClass::call([
             'widgets' => $input['widgets'],
             'widget' => Account_Password_Login_RestorePassword::getInstance($widget->getInstanceKey())
                 ->setAccountModelClass($widget->getAccountLoginPasswordModelClass())
@@ -45,5 +49,11 @@ class Security_Password_LoginEmail_RestorePassword_Submit extends Security
                     'login' => $widget->get('username'),
                 ])
         ]);
+
+        if (!isset($output['error'])) {
+            return $output;
+        }
+
+        return ['error' => $error . ' ' . $output['error']];
     }
 }

@@ -45,10 +45,10 @@ class Security_Password_Login_RestorePassword_Submit extends Security
             );
 
         } catch (\Exception $e) {
-            $logger->error('Запрос на восстановление пароля не удался', __FILE__, __LINE__, $e);
+            $logger->error($e->getMessage(), __FILE__, __LINE__, $e);
 
             return [
-                'error' => $logger->info('Запрос на восстановление пароля не удался', Logger::DANGER, true)
+                'error' => $logger->info($e->getMessage(), Logger::DANGER, true)
             ];
         }
     }
