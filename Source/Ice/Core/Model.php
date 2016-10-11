@@ -871,7 +871,7 @@ abstract class Model
     {
         $modelClass = self::getClass();
 
-        return $modelClass::getSelectQuery([$itemKey => 'itemKey', $itemTitle => 'itemTitle'])->getRows();
+        return $modelClass::getSelectQuery([$itemKey, $itemTitle])->getRows();
     }
 
     public function setPkValue($pkValue)
