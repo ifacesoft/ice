@@ -30,7 +30,7 @@ abstract class Account_Form extends Form
      *
      * @var string
      */
-    private $confirmExpired = '+3 hours';
+    private $confirmExpired = '+3 days';
 
     /**
      * Block user without confirm

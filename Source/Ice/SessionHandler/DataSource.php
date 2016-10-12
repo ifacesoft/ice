@@ -24,6 +24,7 @@ class DataSource extends SessionHandler
 {
     private $session_lifetime = 2592000;
     private $cookie_lifetime = 7200;
+    private $cookie_lifetime_fresh = true;
 
 //cookie_lifetime: 7200
 //cookie_domain: %cookie_domain%
@@ -209,6 +210,20 @@ class DataSource extends SessionHandler
                 ->eq(['/pk' => $session_id])
                 ->getUpdateQuery($this->session)
                 ->getQueryResult();
+
+            if ($this->cookie_lifetime_fresh) {
+                $cookie = session_get_cookie_params();
+
+                setcookie(
+                    session_name(),
+                    $session_id,
+                    strtotime(Date::get('+' . $this->cookie_lifetime . ' seconds')),
+                    $cookie['path'],
+                    $cookie['domain'],
+                    $cookie['secure'],
+                    $cookie['httponly']
+                );
+            }
         } else {
             if (isset($this->session['session_pk'])) {
                 $this->session['session__fk'] = $this->session['session_pk'];
