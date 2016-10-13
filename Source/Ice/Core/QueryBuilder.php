@@ -1109,7 +1109,7 @@ class QueryBuilder
      * @version 0.6
      * @since   0.2
      */
-    private function select($fieldName, $fieldAlias, $modelTableData)
+    public function select($fieldName, $fieldAlias, $modelTableData)
     {
         /**
          * @var Model $modelClass

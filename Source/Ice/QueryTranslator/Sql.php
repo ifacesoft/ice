@@ -297,6 +297,7 @@ class Sql extends QueryTranslator
 
                 $sql .= $column . ' ' . $this->buildWhere($comparisonOperator, ltrim($column, '('), $count, $this->getSignByTimezone($dateTimezone));
 
+                // dirty hack
                 if ($column[0] == '(') {
                     $sql .= ')';
                 }
@@ -377,6 +378,8 @@ class Sql extends QueryTranslator
     {
         $sql = '';
 
+        $modelSchemes = [];
+
         /**
          * @var Model $modelClass
          * @var array $having
@@ -384,7 +387,11 @@ class Sql extends QueryTranslator
         foreach ($part as $tableAlias => $having) {
             $modelClass = $having['class'];
 
-            $fields = $modelClass::getScheme()->getFieldColumnMap();
+            $fieldColumnMap = $modelClass::getScheme()->getFieldColumnMap();
+
+            if (!isset($modelSchemes[$modelClass])) {
+                $modelSchemes[$modelClass] = $modelClass::getScheme();
+            }
 
             foreach ($having['data'] as $fieldNameArr) {
                 list($logicalOperator, $fieldName, $comparisonOperator, $count) = $fieldNameArr;
@@ -393,12 +400,27 @@ class Sql extends QueryTranslator
                     $fieldName = $fields[$fieldName];
                 }
 
+                if (isset($fieldColumnMap[$fieldName])) {
+                    $columnName = $fieldColumnMap[$fieldName];
+
+                    $column = '`' . $tableAlias . '`.`' . $columnName . '`';
+
+                    $dateTimezone = in_array($modelSchemes[$modelClass]->get('columns/' . $columnName . '/scheme/dataType'), ['date', 'datetime', 'timestamp']);
+                } else {
+                    $column = $fieldName;
+                    $dateTimezone = null;
+                }
+
                 $sql .= $sql
                     ? ' ' . $logicalOperator . "\n\t"
                     : "\n" . self::SQL_CLAUSE_HAVING . "\n\t";
 
-                $sql .= '`' . $fieldName . '` ' .
-                    $this->buildWhere($comparisonOperator, $fieldName, $count);
+                $sql .= $column . ' ' . $this->buildWhere($comparisonOperator, ltrim($column, '('), $count, $this->getSignByTimezone($dateTimezone));
+
+                // dirty hack
+                if ($column[0] == '(') {
+                    $sql .= ')';
+                }
             }
         }
 
