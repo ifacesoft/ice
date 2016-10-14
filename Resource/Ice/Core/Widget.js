@@ -13,6 +13,10 @@ var Ice_Core_Widget = {
             ? $element
             : null;
 
+        if ($form) {
+            jQuery($form).find('button').prop('disabled', true);
+        }
+
         var $widget = $form
             ? $form
             : $element.closest('#' + $element.attr('data-for'));
@@ -80,6 +84,14 @@ var Ice_Core_Widget = {
         };
 
         Ice_Core_Widget.reRender($widget, dataAction.class, data, widgetCallback, url, 'POST');
+
+        if ($form) {
+            var buttons = jQuery($form).find('button');
+            setTimeout(function () {
+                    jQuery(buttons).prop('disabled', false);
+                }
+                , 1000);
+        }
     },
 
     reRender: function ($widget, actionClass, actionParams, callback, url, method) {

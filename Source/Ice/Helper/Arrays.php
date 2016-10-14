@@ -110,9 +110,11 @@ class Arrays
      * Group array by known column
      *
      * @param  $array
-     * @param  $columns
+     * @param $columnFieldNames
+     * @param $groups
+     * @param null $indexFieldNames
      * @return array
-     *
+     * @internal param $columns
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 1.5
