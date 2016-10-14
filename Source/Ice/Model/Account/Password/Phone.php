@@ -4,6 +4,7 @@ namespace Ice\Model;
 
 use Ice\Core\Model_Account_Password;
 use Ice\Widget\Account_Form;
+use Ice\Widget\Account_Form_Register;
 
 class Account_Password_Phone extends Model_Account_Password
 {
@@ -249,8 +250,10 @@ class Account_Password_Phone extends Model_Account_Password
         ];
     }
 
-    protected function getUserData(Account_Form $accountForm)
+    protected function getUserData(Account_Form_Register $accountForm)
     {
+        // todo: check $accountForm->isUpdateUserOnAddAccount()
+        
         return [
             '/login' => $accountForm->get('phone'),
             '/phone' => $accountForm->get('phone')

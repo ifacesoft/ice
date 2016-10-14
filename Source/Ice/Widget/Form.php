@@ -130,7 +130,7 @@ class Form extends Widget
      * @param $fieldName
      * @param  array $options
      * @param  string $template
-     * @return Form
+     * @return $this
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *

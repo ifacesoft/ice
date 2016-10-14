@@ -5,7 +5,7 @@ namespace Ice\Widget;
 use Ice\Action\Security_Password_Email_Register_Submit;
 use Ice\DataProvider\Request;
 
-class Account_Password_Email_Register extends Account_Form
+class Account_Password_Email_Register extends Account_Form_Register
 {
     protected static function config()
     {

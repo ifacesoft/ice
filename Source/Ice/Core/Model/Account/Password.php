@@ -17,6 +17,7 @@ use Ice\Message\Mail;
 use Ice\Model\Account;
 use Ice\Model\Token;
 use Ice\Widget\Account_Form;
+use Ice\Widget\Account_Form_Register;
 
 /**
  * Class Account_Email_Password
@@ -90,14 +91,14 @@ abstract class Model_Account_Password extends Model_Account
 
     abstract protected function getAccountData(Account_Form $accountForm);
 
-    abstract protected function getUserData(Account_Form $accountForm);
+    abstract protected function getUserData(Account_Form_Register $accountForm);
 
     /**
-     * @param Account_Form $accountForm
+     * @param Account_Form_Register $accountForm
      * @return Model_Account
      * @throws \Exception
      */
-    public function signUp(Account_Form $accountForm)
+    public function signUp(Account_Form_Register $accountForm)
     {
         /** @var Model_Account $accountModelClass */
         $accountModelClass = get_class($this);
@@ -138,10 +139,7 @@ abstract class Model_Account_Password extends Model_Account
                 $userData['/active'] = 1;
             }
 
-            /** @var Security_User|Model $userModelClass */
-            $userModelClass = Config::getInstance(Security::getClass())->get('userModelClass');
-
-            $this->set(['user' => $userModelClass::create($userData)->save()])->save();
+            $this->set(['user' => $this->signUpUser($userData)])->save();
 
             if ($token) {
                 $this->sendRegisterConfirm($accountForm, $token);

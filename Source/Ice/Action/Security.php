@@ -19,17 +19,18 @@ use Ice\Model\Account;
 use Ice\Model\Log_Security;
 use Ice\Model\Token;
 use Ice\Widget\Account_Form;
+use Ice\Widget\Account_Form_Register;
 
 abstract class Security extends Widget_Form_Event
 {
     /**
      * Sing up by account
      *
-     * @param Account_Form $accountForm
+     * @param Account_Form_Register $accountForm
      * @return Model_Account
      * @throws \Exception
      */
-    final protected function signUp(Account_Form $accountForm)
+    final protected function signUp(Account_Form_Register $accountForm)
     {
         $logger = $this->getLogger();
 
