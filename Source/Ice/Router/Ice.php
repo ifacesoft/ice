@@ -11,10 +11,10 @@ class Ice extends Router
 {
     /**
      * @param null $routeName
+     * @param bool $force
      * @return null|string
-     * @throws \Ice\Exception\RouteNotFound
      */
-    public function getUrl($routeName = null)
+    public function getUrl($routeName = null, $force = false)
     {
         if (!$routeName) {
             $routeName = $this->getName();
@@ -71,9 +71,10 @@ class Ice extends Router
     }
 
     /**
+     * @param bool $force
      * @return array
      */
-    public function getParams()
+    public function getParams($force = false)
     {
         $params = DataProvider_Router::getInstance()->get();
 

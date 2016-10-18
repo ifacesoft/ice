@@ -87,10 +87,7 @@ var Ice_Core_Widget = {
 
         if ($form) {
             var buttons = jQuery($form).find('button');
-            setTimeout(function () {
-                    jQuery(buttons).prop('disabled', false);
-                }
-                , 1000);
+            setTimeout(function () { jQuery(buttons).prop('disabled', false); }, 1000);
         }
     },
 

@@ -343,11 +343,13 @@ class QueryBuilder
             $tableAlias = null;
         } else {
             $modelTableData = (array)$modelTableData;
-            if (count($modelTableData) > 1) {
-                $modelTableData = [array_shift($modelTableData) => array_shift($modelTableData)];
-            }
 
-            list($modelClass, $tableAlias) = each($modelTableData);
+            if (count($modelTableData) > 1) {
+                $modelClass = array_shift($modelTableData);
+                $tableAlias = array_shift($modelTableData);
+            } else {
+                list($modelClass, $tableAlias) = each($modelTableData);
+            }
 
             if (is_int($modelClass)) {
                 $modelClass = $tableAlias;
@@ -1111,9 +1113,7 @@ class QueryBuilder
      */
     public function select($fieldName, $fieldAlias, $modelTableData)
     {
-        /**
-         * @var Model $modelClass
-         */
+        /** @var Model $modelClass */
         list($modelClass, $tableAlias) = $this->getModelClassTableAlias($modelTableData);
 
         if ($modelClass instanceof Query) {
