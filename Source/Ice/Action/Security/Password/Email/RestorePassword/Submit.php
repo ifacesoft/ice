@@ -2,8 +2,8 @@
 
 namespace Ice\Action;
 
+use Ebs\Model\Account_Email_Password;
 use Ice\Core\Logger;
-use Ice\Core\Model;
 use Ice\Widget\Account_Form;
 
 class Security_Password_Email_RestorePassword_Submit extends Security
@@ -16,7 +16,7 @@ class Security_Password_Email_RestorePassword_Submit extends Security
         $logger = $accountForm->getLogger();
 
         try {
-            /** @var Model $accountModelClass */
+            /** @var Account_Email_Password $accountModelClass */
             $accountModelClass = $accountForm->getAccountModelClass();
 
             if (!$accountModelClass) {
@@ -28,7 +28,11 @@ class Security_Password_Email_RestorePassword_Submit extends Security
                     );
             }
 
-            $account = $accountModelClass::getSelectQuery(['/pk', '/expired'], ['email' => $accountForm->get('email')])->getModel();
+            /** @var Account_Email_Password $account */
+            $account = $accountModelClass::getSelectQuery(
+                ['/pk', '/expired', 'token__fk'],
+                ['email' => $accountForm->get('email')]
+            )->getModel();
 
             if (!$account) {
                 return [

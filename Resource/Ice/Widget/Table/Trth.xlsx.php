@@ -46,15 +46,22 @@ foreach ($component->getWidget()->getParts() as $part) {
         $sheet->getColumnDimension($render->getColumn())->setWidth($optionExcel['width']);
     }
 
+    if (array_key_exists('rowVisible', $optionExcel)) {
+        $sheet->getRowDimension($render->getIndex())->setVisible($optionExcel['rowVisible']);
+    }
+
     if (array_key_exists('columnVisible', $optionExcel)) {
         $sheet->getColumnDimension($render->getColumn())->setVisible($optionExcel['columnVisible']);
     }
 
     $cell = $render->getColumn() . $render->getIndex();
+    $finishCell = $render->decrementLetter($render->columnInc($colspan)) . $render->getIndex();
+
+    if ($cell != $finishCell) {
+        $sheet->mergeCells($cell . ':' . $finishCell);
+    }
 
     $sheet->setCellValue($cell, $part->getLabel());
-
-    $render->columnInc();
 }
 
 $maxColumn = $render->getColumn();

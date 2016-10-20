@@ -26,6 +26,14 @@ class PHPMailer extends MessageTransport
 
         $this->phpMailer->isSMTP();
 
+        $this->phpMailer->SMTPOptions = array(
+            'ssl' => array(
+                'verify_peer' => false,
+                'verify_peer_name' => false,
+                'allow_self_signed' => true
+            )
+        );
+
         $this->phpMailer->SMTPDebug = $config->get($key . '/debug');
         $this->phpMailer->Debugoutput = 'html';
 

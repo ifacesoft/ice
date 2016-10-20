@@ -50,7 +50,7 @@ class Sql extends QueryTranslator
     const SQL_CLAUSE_ORDER = 'ORDER';
     const SQL_CLAUSE_LIMIT = 'LIMIT';
     const ON_DUPLICATE_KEY_UPDATE = 'ON DUPLICATE KEY UPDATE';
-    const DEFAULT_KEY = 'instance';
+    const DEFAULT_KEY = 'default';
 
     /**
      * Return default key

@@ -28,7 +28,7 @@ abstract class Filter extends Container
 // todo: зачем stored
     use Stored;
 
-    const DEFAULT_KEY = 'instance';
+    const DEFAULT_KEY = 'default';
 
     /**
      * Return filter instance
@@ -51,7 +51,7 @@ abstract class Filter extends Container
     /**
      * Default action key
      *
-     * @return Core
+     * @return string
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *

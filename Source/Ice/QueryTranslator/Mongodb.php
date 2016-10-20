@@ -21,7 +21,7 @@ use Ice\Helper\Mapping;
  *
  * Translate with query translator mysqli
  *
- * @see Ice\Core\QueryTranslator
+ * @see \Ice\Core\QueryTranslator
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
@@ -30,7 +30,7 @@ use Ice\Helper\Mapping;
  */
 class Mongodb extends QueryTranslator
 {
-    const DEFAULT_KEY = 'instance';
+    const DEFAULT_KEY = 'default';
 
     private static $operators = [
         QueryBuilder::SQL_COMPARISON_OPERATOR_GREATER => '$gt',

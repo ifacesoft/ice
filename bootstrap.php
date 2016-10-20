@@ -47,15 +47,16 @@ try {
     }
 
     require_once ICE_DIR . 'Source/Ice/Core/DataProvider.php';
+    require_once ICE_DIR . 'Source/Ice/Core/Module.php';
     require_once ICE_DIR . 'Source/Ice/Helper/Date.php';
+    require_once ICE_DIR . 'Source/Ice/Helper/Config.php';
     require_once ICE_DIR . 'Source/Ice/DataProvider/File.php';
+    require_once ICE_DIR . 'Source/Ice/DataProvider/Registry.php';
     require_once ICE_DIR . 'Source/Ice/DataProvider/Apc.php';
     require_once ICE_DIR . 'Source/Ice/DataProvider/Redis.php';
     require_once ICE_DIR . 'Source/Ice/DataProvider/Repository.php';
     require_once ICE_DIR . 'Source/Ice/Core/Render.php';
     require_once ICE_DIR . 'Source/Ice/Helper/Api/Client/Yandex/Translate.php';
-//    require_once ICE_DIR . 'Source/Ice/Exception/Config/Param.php';
-//    require_once ICE_DIR . 'Source/Ice/Exception/Config/Param/NotFound.php';
 
     \Ice\Core\Bootstrap::getInstance($config['module']['bootstrapClass'], null, ['loader' => $loader]);
 

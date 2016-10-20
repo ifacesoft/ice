@@ -11,8 +11,10 @@ namespace Ice\Core;
 
 use Ice\Core;
 use Ice\DataProvider\Session;
+use Ice\Exception\Error;
 use Ice\Exception\FileNotFound;
 use Ice\Helper\Object;
+use Ice\Helper\Hash;
 
 /**
  * Class Container
@@ -27,6 +29,8 @@ use Ice\Helper\Object;
 abstract class Container
 {
     private $instanceKey = null;
+
+    private static $cacheData = [];
 
     /**
      * Container constructor.
@@ -83,9 +87,6 @@ abstract class Container
             }
         }
 
-//        $startTime = Profiler::getMicrotime();
-//        $startMemory = Profiler::getMemoryGetUsage();
-
         if (!$instanceKey || $instanceKey == 'default') {
             $instanceKey = $class::getDefaultKey();
         }
@@ -93,31 +94,29 @@ abstract class Container
         $logger = Logger::getInstance(__CLASS__);
 
         $object = null;
+
         try {
-            $dataProvider = $class::getDataProvider('instance');
-
-            if ($ttl != -1 && $object = $dataProvider->get($instanceKey)) {
-//                $message = $class . ' - ' . print_r($instanceKey, true);
-
-//                Profiler::setPoint($message, $startTime, $startMemory);
-//                Logger::log(Profiler::getReport($message), 'container (cache - ' . $dataProviderClassName .  ')', 'LOG');
-                return $object;
-            }
-
             $params['instanceKey'] = $instanceKey;
 
-            if ($object = $class::create($params)) {
-//                $message = $class . ' - ' . print_r($instanceKey, true);
+            $instanceKeyHash = Hash::get($params);
 
-//                Profiler::setPoint($message, $startTime, $startMemory);
-                if ($ttl == -1) {
-//                    Logger::log(Profiler::getReport($message), 'container (not cache)', 'WARN');
-                } else {
-//                    Logger::log(Profiler::getReport($message), 'container (new - ' . $dataProviderClassName .  ')', 'INFO');
-                    $dataProvider->set([$instanceKey => $object], $ttl);
+            if ($ttl != -1 && isset(Container::$cacheData[$class]) && isset(Container::$cacheData[$class][$instanceKeyHash])) {
+                return Container::$cacheData[$class][$instanceKeyHash];
+            }
+
+            if ($object = $class::create($params)) {
+                if ($ttl != -1 && $object) {
+                    if (!isset(Container::$cacheData[$class])) {
+                        Container::$cacheData[$class] = [];
+                    }
+
+                    return Container::$cacheData[$class][$instanceKeyHash] = $object;
                 }
             }
 
+            if (!$object) {
+                throw new Error('Object not created');
+            }
         } catch (FileNotFound $e) {
 //            $message = $class . ' - ' . print_r($instanceKey, true);
 //            Profiler::setPoint($message, $startTime, $startMemory);
@@ -185,12 +184,11 @@ abstract class Container
         return Logger::getInstance(get_class($this));
     }
 
-    public function removeInstance()
+    public function removeInstance($params = [])
     {
-        /** @var Container|Core $class */
-        $class = get_class($this);
+        $params['instanceKey'] = $this->getInstanceKey();
 
-        $class::getDataProvider('instance')->delete($this->getInstanceKey());
+        unset(Container::$cacheData[get_class($this)][Hash::get($params)]);
     }
 
     /**

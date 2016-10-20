@@ -11,6 +11,7 @@ use Ice\Core\Model;
 use Ice\Core\Model\Security_User;
 use Ice\Core\Model_Account;
 use Ice\Core\Security as Core_Security;
+use Ice\Exception\Error;
 use Ice\Exception\Security_Account_Login;
 use Ice\Exception\Security_Account_Register;
 use Ice\Helper\Logger;
@@ -178,10 +179,22 @@ abstract class Security extends Widget_Form_Event
             'form_class' => get_class($accountForm)
         ]);
 
+        $token = Token::getModel($account->get('token__fk', false), '*');
+
+        if ($token) {
+            $tokenData = $token->get('token_data');
+
+            if (isset($tokenData['function']) && $tokenData['function'] != __FUNCTION__) {
+
+                throw new Error('Account not confirmed');
+            }
+        }
+
         $token = Token::create([
             '/' => md5(String::getRandomString()),
             '/expired' => $accountForm->getConfirmationExpired(),
             'modelClass' => $accountModelClass,
+            'token_data' => ['function' => __FUNCTION__]
         ])->save();
 
         $account->set(['token' => $token])->save();

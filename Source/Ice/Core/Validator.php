@@ -30,7 +30,7 @@ abstract class Validator extends Container
 // todo: зачем stored
     use Stored;
 
-    const DEFAULT_KEY = 'instance';
+    const DEFAULT_KEY = 'default';
 
     /**
      * Return validator instance
@@ -38,7 +38,7 @@ abstract class Validator extends Container
      * @param  null $instanceKey
      * @param  null $ttl
      * @param array $params
-     * @return Validator
+     * @return Validator|Core
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *

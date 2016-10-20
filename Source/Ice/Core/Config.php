@@ -151,7 +151,7 @@ class Config
         try {
             return Config::$cacheData[$cacheTag] = Helper_Config::gets($this->config, $key, $isRequired_default);
         } catch (Config_Param_NotFound $e) {
-            throw new Config_Error(['Param not found for {$0}', $this->getName()], [], $e);
+            throw new Config_Error(['Param {$0} not found in config {$1}', [$key, $this->getName()]], [], $e);
         }
     }
 

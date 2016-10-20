@@ -2,6 +2,7 @@
 
 namespace Ice\Action;
 
+use Ebs\Model\Account_Login_Password;
 use Ice\Core\Logger;
 use Ice\Core\Model;
 use Ice\Widget\Account_Form;
@@ -16,7 +17,7 @@ class Security_Password_Login_RestorePassword_Submit extends Security
         $logger = $accountForm->getLogger();
 
         try {
-            /** @var Model $accountModelClass */
+            /** @var Account_Login_Password $accountModelClass */
             $accountModelClass = $accountForm->getAccountModelClass();
 
             if (!$accountModelClass) {
@@ -28,7 +29,7 @@ class Security_Password_Login_RestorePassword_Submit extends Security
                     );
             }
 
-            /** @var Model_Account $account */
+            /** @var Account_Login_Password $account */
             $account = $accountModelClass::getAccountByLogin($accountForm->get('login'));
 
             if (!$account) {

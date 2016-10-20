@@ -37,19 +37,19 @@ foreach ($component->getOption('row', []) as $key => $col) {
     $cell = $render->getColumn() . $render->getIndex();
 
     $option = [];
-    $optionExcel = [];
+    $optionExcel = $component->getOption('excel', []);
 
     if (is_array($col)) {
         $option = $col;
         $col = isset($option['colspan']) ? $option['colspan'] : 1;
     }
 
-    if (isset($option['excel'])) {
-        $optionExcel = $option['excel'];
-    }
-
     if (!empty($optionExcel['width'])) {
         $sheet->getColumnDimension($render->getColumn())->setWidth($optionExcel['width']);
+    }
+
+    if (array_key_exists('rowVisible', $optionExcel)) {
+        $sheet->getRowDimension($render->getIndex())->setVisible($optionExcel['rowVisible']);
     }
 
     if (array_key_exists('columnVisible', $optionExcel)) {

@@ -122,7 +122,7 @@ abstract class Model_Account_Password extends Model_Account
                     '/' => md5(String::getRandomString()),
                     '/expired' => $accountForm->getConfirmationExpired(),
                     'modelClass' => $accountModelClass,
-                    '/data' => ['account_expired' => $accountForm->getExpired()]
+                    '/data' => ['account_expired' => $accountForm->getExpired(), 'function' => __FUNCTION__]
                 ])->save();
 
                 $this->set(['token' => $token]);

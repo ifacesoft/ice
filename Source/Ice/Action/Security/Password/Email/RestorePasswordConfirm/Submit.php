@@ -45,7 +45,7 @@ class Security_Password_Email_RestorePasswordConfirm_Submit extends Security
                 ->getModel();
 
             if (!$account) {
-                $accountForm->getLogger()->exception('Account not found', __FILE__, __LINE__);
+                $accountForm->getLogger()->exception('Account email with token not fount', __FILE__, __LINE__);
             }
 
             $accountData = ['password' => $account->securityHash($values, 'new_password')];

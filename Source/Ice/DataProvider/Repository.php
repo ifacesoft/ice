@@ -18,7 +18,7 @@ use Ice\Core\Exception;
  *
  * Data provider for object cache
  *
- * @see Ice\Core\DataProvider
+ * @see \Ice\Core\DataProvider
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
