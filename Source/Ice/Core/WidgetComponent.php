@@ -497,7 +497,7 @@ abstract class WidgetComponent
     {
         $value = $this->getValidValue();
 
-        if (empty($value)) {
+        if (empty($value) || $value == '&nbsp;') {
             return $value;
         }
 
