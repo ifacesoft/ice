@@ -5,7 +5,6 @@ namespace Ice\Action;
 use Ice\Validator\Email;
 use Ice\Widget\Account_Password_Login_RestorePassword;
 use Ice\Widget\Account_Password_Email_RestorePassword;
-use Ice\Widget\Account_Password_LoginEmail_RestorePassword;
 
 class Security_Password_LoginEmail_RestorePassword_Submit extends Security
 {
@@ -20,7 +19,9 @@ class Security_Password_LoginEmail_RestorePassword_Submit extends Security
 
         $widget = $input['widget'];
 
-        if (Email::getInstance()->validate($widget->get(), 'username', [])) {
+        $isEmail = Email::getInstance()->validate($widget->get(), 'username', []);
+
+        if ($isEmail) {
             $accountEmailPasswordSubmitClass = $widget->getAccountEmailPasswordSubmitClass();
 
             $output = $accountEmailPasswordSubmitClass::call([
@@ -54,6 +55,6 @@ class Security_Password_LoginEmail_RestorePassword_Submit extends Security
             return $output;
         }
 
-        return ['error' => $error . ' ' . $output['error']];
+        return ['error' => $isEmail ? $error : $output['error']];
     }
 }

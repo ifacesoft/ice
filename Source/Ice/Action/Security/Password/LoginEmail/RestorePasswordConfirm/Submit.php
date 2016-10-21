@@ -4,7 +4,6 @@ namespace Ice\Action;
 
 use Ice\Widget\Account_Password_Email_RestorePasswordConfirm;
 use Ice\Widget\Account_Password_Login_RestorePasswordConfirm;
-use Ice\Widget\Account_Password_LoginEmail_RestorePasswordConfirm;
 
 class Security_Password_LoginEmail_RestorePasswordConfirm_Submit extends Security
 {
@@ -43,6 +42,7 @@ class Security_Password_LoginEmail_RestorePasswordConfirm_Submit extends Securit
             return $output;
         }
 
+        return ['error' => $error];
         return ['error' => $error . ' ' . $output['error']];
     }
 }

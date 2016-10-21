@@ -398,21 +398,19 @@ class Logger
 
     public static function log($value, $label = null, $type = 'LOG', $options = [])
     {
-        if (Environment::getInstance()->isProduction()) {
-            return;
-        }
-
         $value = str_replace(["\n", "\t"], ' ', $value);
 
-        $name = Request::isCli() ? Core_Console::getCommand(null) : Request::uri();
-        $logFile = getLogDir() . date(Date::FORMAT_MYSQL_DATE) . '/LOG/' . urlencode($name) . '.log';
+        if (!Environment::getInstance()->isProduction()) {
+            $name = Request::isCli() ? Core_Console::getCommand(null) : Request::uri();
+            $logFile = getLogDir() . \date(Date::FORMAT_MYSQL_DATE) . '/LOG/' . urlencode($name) . '.log';
 
-        if (strlen($logFile) > 255) {
-            $logFilename = substr($logFile, 0, 255 - 11);
-            $logFile = $logFilename . '_' . crc32(substr($logFile, 255 - 11));
+            if (strlen($logFile) > 255) {
+                $logFilename = substr($logFile, 0, 255 - 11);
+                $logFile = $logFilename . '_' . crc32(substr($logFile, 255 - 11));
+            }
+
+            File::createData($logFile, '[' . \date(Date::FORMAT_MYSQL) . '] ' . $label . ': ' . $value . "\n", false, FILE_APPEND);
         }
-
-        File::createData($logFile, '[' . date(Date::FORMAT_MYSQL) . '] ' . $label . ': ' . $value . "\n", false, FILE_APPEND);
 
         if (Request::isCli()) {
             $colors = [
@@ -479,10 +477,6 @@ class Logger
      */
     public function info($message, $type = Logger::INFO, $isResource = false, $logging = true)
     {
-        if (Environment::getInstance()->isProduction()) {
-            return '';
-        }
-
         if (!$type) {
             $type = self::INFO;
         }
@@ -505,17 +499,19 @@ class Logger
             }
         }
 
-        $name = Request::isCli() ? Core_Console::getCommand(null) : Request::uri();
-        $logFile = getLogDir() . date('Y-m-d') . '/INFO/' . urlencode($name) . '.log';
+        if (!Environment::getInstance()->isProduction()) {
+            $name = Request::isCli() ? Core_Console::getCommand(null) : Request::uri();
+            $logFile = getLogDir() . \date('Y-m-d') . '/INFO/' . urlencode($name) . '.log';
 
-        if (strlen($logFile) > 255) {
-            $logFilename = substr($logFile, 0, 255 - 11);
-            $logFile = $logFilename . '_' . crc32(substr($logFile, 255 - 11));
+            if (strlen($logFile) > 255) {
+                $logFilename = substr($logFile, 0, 255 - 11);
+                $logFile = $logFilename . '_' . crc32(substr($logFile, 255 - 11));
+            }
+
+            $message = print_r($message, true);
+
+            File::createData($logFile, '[' . \date(Date::FORMAT_MYSQL) . '] ' . $message . "\n", false, FILE_APPEND);
         }
-
-        $message = print_r($message, true);
-
-        File::createData($logFile, '[' . date(Date::FORMAT_MYSQL) . '] ' . $message . "\n", false, FILE_APPEND);
 
         if (Request::isCli()) {
             $message = Console::getText(' ' . $message . ' ', Console::C_BLACK, self::$consoleColors[$type]) . "\n";

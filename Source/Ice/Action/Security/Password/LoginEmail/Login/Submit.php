@@ -3,7 +3,6 @@ namespace Ice\Action;
 
 use Ice\Validator\Email;
 use Ice\Widget\Account_Password_Email_Login;
-use Ice\Widget\Account_Password_LoginEmail_Login;
 use Ice\Widget\Account_Password_Login_Login;
 
 class Security_Password_LoginEmail_Login_Submit extends Security

@@ -21,7 +21,9 @@ class Security_Password_LoginEmail_ChangePassword_Submit extends Security
 
         $login = Core_Security::getInstance()->getUser()->get('/login');
 
-        if (Email::getInstance()->validate(['login' => $login], 'login', [])) {
+        $isEmail = Email::getInstance()->validate(['login' => $login], 'login', []);
+
+        if ($isEmail) {
             $output = Security_Password_Email_ChangePassword_Submit::call([
                 'widgets' => $input['widgets'],
                 'widget' => Account_Password_Email_ChangePassword::getInstance($widget->getInstanceKey())
@@ -55,6 +57,6 @@ class Security_Password_LoginEmail_ChangePassword_Submit extends Security
             return $output;
         }
 
-        return ['error' => $error . ' ' . $output['error']];
+        return ['error' => $isEmail ? $error : $output['error']];
     }
 }
