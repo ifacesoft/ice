@@ -499,6 +499,9 @@ abstract class Action implements Cacheable
         return $this;
     }
 
+    /**
+     * @return Logger
+     */
     public function getLogger()
     {
         return Logger::getInstance(get_class($this));

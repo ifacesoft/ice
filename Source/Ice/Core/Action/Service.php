@@ -61,4 +61,11 @@ abstract class Action_Service extends Action
 
         return true;
     }
+
+    protected function unlock(Logger $logger, array $input) {
+        File::createData($this->getLockFilePath($input), ['iterations' => $this->iterations . '!']);
+        $logger->info('Service finished.. (Iteration: #' . $this->iterations . ')', Logger::INFO);
+
+        return true;
+    }
 }
