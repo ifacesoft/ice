@@ -19,7 +19,7 @@ use Ice\Helper\Emmet;
  *
  * Implementation view render cli template
  *
- * @see Ice\Core\Render
+ * @see \Ice\Core\Render
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *

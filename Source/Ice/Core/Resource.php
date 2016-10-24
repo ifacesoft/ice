@@ -167,10 +167,7 @@ class Resource implements Cacheable
 
     public function set($message)
     {
-        if (empty($message)) {
-//            $e = new \Exception();
-//            print_r($e->getTraceAsString());die();
-
+        if (empty($message) || Environment::getInstance()->isProduction()) {
             Logger::getInstance(__CLASS__)->warning('Empty resource message', __FILE__, __LINE__);
 
             return $message;

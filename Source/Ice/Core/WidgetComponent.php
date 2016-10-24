@@ -298,33 +298,29 @@ abstract class WidgetComponent
 
     public function get($paramName = null, $default = null)
     {
+        /** @var Widget $widgetClass */
+        $widgetClass = $this->getWidgetClass();
         /** @var WidgetComponent $widgetComponentClass */
         $widgetComponentClass = get_class($this);
 
-        $registry = $widgetComponentClass::getRegistry($this->getId());
-
-        /** @var Widget $widgetClass */
-        $widgetClass = $this->getWidgetClass();
-
-        $params = Input::get(
-            $this->getParamConfig(),
-            array_merge(
-                $widgetClass::getRegistry($this->getWidgetId())->get(),
-                $registry->get()
-            )
+        $params = array_merge(
+            $widgetClass::getRegistry($this->getWidgetId())->get(),
+            $widgetComponentClass::getRegistry($this->getId())->get()
         );
 
-//        if ($this->getComponentName() == 'last_login') {
-//            Debuger::dump([
-//                $this->getParamConfig(),
-//                array_merge(
-//                    $widgetClass::getRegistry($this->getWidgetId())->get(),
-//                    $registry->get()
-//                ),
-//                $params
-//            ]);
-//            die();
-//        }
+        $paramConfig = [];
+
+        foreach ($this->getParamConfig() as $param => $value) {
+            if (is_array($value)) {
+                $paramConfig[$param] = $value;
+            } else {
+                $params[$param] = $value;
+            }
+        }
+
+        if (!empty($paramConfig)) {
+            $params = array_merge(Input::get($this->getParamConfig(), $params), $params);
+        }
 
         if ($paramName === null) {
             return empty($params) ? [] : $params;
@@ -332,7 +328,7 @@ abstract class WidgetComponent
 
         $param = array_key_exists($paramName, $params) ? $params[$paramName] : $default;
 
-       // todo: реализовать через фильтры
+        // todo: реализовать через фильтры
         $dateFormat = $this->getOption('dateFormat');
 
         if ($param && $dateFormat) {

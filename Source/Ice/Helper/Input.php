@@ -13,6 +13,8 @@ use Ice\DataProvider\Session;
 
 class Input
 {
+
+
     /**
      * Gets all declared input data
      *

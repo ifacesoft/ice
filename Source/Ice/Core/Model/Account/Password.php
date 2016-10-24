@@ -165,7 +165,7 @@ abstract class Model_Account_Password extends Model_Account
         Mail::create()
             ->setRecipients([$accountForm->get('email') => $accountForm->get('fio')])
             ->setSubject('Подтверждение регистрации в ЭБС')
-            ->setBody('<p>Для подтверждения учетной записи перейдите по ссылке <a href="' . $urlFull . '">' . $urlFull . '</a></p>' .
+            ->setBody('<p>Для подтверждения учетной записи перейдите по ссылке <a href="' . $urlFull . '">' . $urlFull . '</a> </p>' .
                 '<p>Вы можете внести ключ подтверждения ' . $token->get('/') . ' самостоятельно на странице <a href="' . $url . '">' . $url . '</a></p>')
             ->send();
     }

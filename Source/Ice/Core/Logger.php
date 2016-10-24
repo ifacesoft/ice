@@ -43,12 +43,23 @@ class Logger
 {
     use Core;
 
-    const DANGER = 'danger';
+    /** PSR-3 */
+    const EMERGENCY = 'emergency';
+    const ALERT     = 'alert';
+    const CRITICAL  = 'critical';
+    const ERROR     = 'error';
+    const WARNING   = 'warning';
+    const NOTICE    = 'notice';
+    const INFO      = 'info';
+    const DEBUG     = 'debug';
+
     const SUCCESS = 'success';
-    const INFO = 'info';
-    const WARNING = 'warning';
-    const DEBUG = 'debug';
+
+    /** @deprecated 1.5  */
+    const DANGER = 'danger';
+    /** @deprecated 1.5  */
     const MESSAGE = 'cli';
+    /** @deprecated 1.5  */
     const GREY = 'hidden';
 
     /**
