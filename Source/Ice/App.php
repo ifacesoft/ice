@@ -134,9 +134,9 @@ class App
 
         Logger::fb(Profiler::getReport(__CLASS__), __CLASS__, 'LOG');
 
-        if (!Request::isCli() && function_exists('fastcgi_finish_request') && !headers_sent()) {
-            fastcgi_finish_request();
-        }
+//        if (!headers_sent() && !Request::isCli() && function_exists('fastcgi_finish_request')) {
+//            fastcgi_finish_request();
+//        }
     }
 
     /**
