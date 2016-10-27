@@ -51,7 +51,7 @@ trait Core
      *
      * @param  string|null $className
      * @param null $baseClass
-     * @return Core
+     * @return Core|string
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 1.1
@@ -198,7 +198,7 @@ trait Core
      * Return repository storage for class
      *
      * @param  string $index
-     * @return Repository
+     * @return Repository|DataProvider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
@@ -214,7 +214,7 @@ trait Core
      * Return cacher storage for class
      *
      * @param  string $index
-     * @return Repository
+     * @return Cacher|DataProvider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
