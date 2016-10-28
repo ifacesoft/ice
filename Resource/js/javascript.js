@@ -108,6 +108,10 @@ var Ice = {
         return $.parseJSON(json.replace(/[\n\t\r]/g, ""));
     },
 
+    jsonToArray: function (json) {
+        return $.makeArray(Ice.jsonToObject(json));
+    },
+
     objectMerge: function (obj1, obj2) {
         return $.extend({}, obj1, obj2);
     },

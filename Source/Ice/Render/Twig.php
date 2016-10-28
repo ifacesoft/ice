@@ -57,7 +57,7 @@ class Twig extends Render
      * @param null $instanceKey
      * @param null $ttl
      * @param array $params
-     * @return Twig
+     * @return Twig|Render
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
@@ -86,7 +86,7 @@ class Twig extends Render
     public function fetch($template, array $data = [], $layout = null, $templateType = Render::TEMPLATE_TYPE_FILE)
     {
         if (empty($template)) {
-            throw new \Exception('Template is empty');
+            return $template;
         }
 
         try {

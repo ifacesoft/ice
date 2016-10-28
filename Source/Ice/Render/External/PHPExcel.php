@@ -43,7 +43,7 @@ class External_PHPExcel extends Render
     public function fetch($template, array $data = [], $layout = null, $templateType = Render::TEMPLATE_TYPE_FILE)
     {
         if (empty($template)) {
-            throw new \Exception('Template is empty');
+            return '';
         }
 
         $templateFilePath = Loader::getFilePath($template, External_PHPExcel::TEMPLATE_EXTENTION, Module::RESOURCE_DIR, false, true);

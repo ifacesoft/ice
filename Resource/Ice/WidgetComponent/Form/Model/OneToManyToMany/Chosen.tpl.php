@@ -38,7 +38,7 @@
         }).change(function () {
             if ($("#<?= $component->getId('many') ?>").val()) {
                 $("#<?= $component->getId() ?> option").remove()
-                <?= $component->getId() ?>_items[$("#<?= $component->getId('many') ?>").val()].forEach(function (item, key) {
+                $.each(<?= $component->getId() ?>_items[$("#<?= $component->getId('many') ?>").val()], function (key, item) {
                     $("#<?= $component->getId() ?>").append('<option value="' + item['<?= $component->getItemKey() ?>'] + '">' + Ice.replaceRender('<?= $component->getItemTitle() ?>', item) + '</option>');
                 });
                 $("#<?= $component->getId() ?>").trigger("chosen:updated");
@@ -54,7 +54,7 @@
 
         if ($("#<?= $component->getId('many') ?>").val()) {
             $("#<?= $component->getId() ?> option").remove();
-            <?= $component->getId() ?>_items[$("#<?= $component->getId('many') ?>").val()].forEach(function (item, key) {
+            $.each(<?= $component->getId() ?>_items[$("#<?= $component->getId('many') ?>").val()], function (key, item) {
                 $("#<?= $component->getId() ?>").append('<option value="' + item['<?= $component->getItemKey() ?>'] + '">' + Ice.replaceRender('<?= $component->getItemTitle() ?>', item) + '</option>');
             });
             $("#<?= $component->getId() ?>").trigger("chosen:updated");

@@ -21,7 +21,7 @@ use Ice\Helper\Emmet;
  *
  * Implementation view render php template
  *
- * @see Ice\Core\Render
+ * @see \Ice\Core\Render
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
@@ -41,7 +41,7 @@ class Php extends Render
      * @param  mixed $instanceKey
      * @param  int $ttl
      * @param array $params
-     * @return Php
+     * @return Php|Render
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
@@ -70,7 +70,7 @@ class Php extends Render
     public function fetch($template, array $data = [], $layout = null, $templateType = Render::TEMPLATE_TYPE_FILE)
     {
         if (empty($template)) {
-            throw new \Exception('Template is empty');
+            return $template;
         }
 
         if ($templateType == Render::TEMPLATE_TYPE_STRING) {

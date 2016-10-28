@@ -65,7 +65,7 @@ class Replace extends Render
     public function fetch($template, array $data = [], $layout = null, $templateType = Render::TEMPLATE_TYPE_FILE)
     {
         if (empty($template)) {
-            throw new \Exception('Template is empty');
+            return $template;
         }
 
         if ($templateType == Render::TEMPLATE_TYPE_FILE) {

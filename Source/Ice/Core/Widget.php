@@ -81,8 +81,6 @@ abstract class Widget extends Container
     private $templateClass = null;
     private $renderClass = null;
 
-    private $layout = null;
-
     protected function __construct(array $defaultData)
     {
         parent::__construct($defaultData);

@@ -2,6 +2,7 @@
 
 namespace Ice\WidgetComponent;
 
+use Ice\Core\Debuger;
 use Ice\Core\Model;
 use Ice\Core\QueryBuilder;
 use Ice\Core\Widget as Core_Widget;
@@ -99,7 +100,7 @@ class Form_Model_ManyToMany extends FormElement_Chosen
     {
         $modelClass = $this->getItemModelClass();
 
-        foreach ($this->get($this->getName()) as $value) { // todo: Возможно это переписать на parent::filter - тут ничего сложного
+        foreach ((array)$this->get($this->getName()) as $value) { // todo: Возможно это переписать на parent::filter - тут ничего сложного
             if ($value) {
                 $queryBuilder->pk($value, $modelClass);
             }

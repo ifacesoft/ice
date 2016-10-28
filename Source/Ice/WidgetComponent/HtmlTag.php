@@ -100,6 +100,10 @@ class HtmlTag extends WidgetComponent
             $route = ['name' => true];
         }
 
+        if ($route['name'] === null) {
+            $route['name'] = Router::getInstance()->getName();
+        }
+
         $route = array_merge(
             [
                 'name' => true,

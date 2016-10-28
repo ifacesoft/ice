@@ -296,17 +296,19 @@ abstract class WidgetComponent
         return Resource::create($this->resourceClass);
     }
 
-    public function get($paramName = null, $default = null)
+    public function get($paramName = null, $default = null, $withWidgetParams = true)
     {
         /** @var Widget $widgetClass */
         $widgetClass = $this->getWidgetClass();
         /** @var WidgetComponent $widgetComponentClass */
         $widgetComponentClass = get_class($this);
 
-        $params = array_merge(
-            $widgetClass::getRegistry($this->getWidgetId())->get(),
-            $widgetComponentClass::getRegistry($this->getId())->get()
-        );
+        $params = $withWidgetParams
+            ? array_merge(
+                $widgetClass::getRegistry($this->getWidgetId())->get(),
+                $widgetComponentClass::getRegistry($this->getId())->get()
+            )
+            : $widgetComponentClass::getRegistry($this->getId())->get();
 
         $paramConfig = [];
 
@@ -380,9 +382,13 @@ abstract class WidgetComponent
         return $paramsConfig;
     }
 
-    public function mergeOptions(array $options)
+    /**
+     * @param $name
+     * @param $value
+     */
+    public function setOption($name, $value)
     {
-        $this->options = array_merge($this->options, $options);
+        $this->options[$name] = $value;
     }
 //
 //    /**
@@ -393,13 +399,9 @@ abstract class WidgetComponent
 //        return $this->params;
 //    }
 
-    /**
-     * @param $name
-     * @param $value
-     */
-    public function setOption($name, $value)
+    public function mergeOptions(array $options)
     {
-        $this->options[$name] = $value;
+        $this->options = array_merge($this->options, $options);
     }
 
     /**
@@ -493,7 +495,10 @@ abstract class WidgetComponent
     {
         $value = $this->getValidValue();
 
-        if (empty($value) || $value == '&nbsp;') {
+        /**
+         * 0 is too value
+         */
+        if ($value === null || $value === '' || $value === '&nbsp;') {
             return $value;
         }
 
