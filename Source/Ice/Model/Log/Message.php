@@ -385,24 +385,12 @@ class Log_Message extends Model
                         1 => 'log_message_pk',
                     ],
                 ],
-                'FOREIGN KEY' => [
-                    'fk_ice_log_message_ice_session' => [
-                        'fk_ice_log_message_ice_session' => 'session__fk',
-                    ],
-                ],
+                'FOREIGN KEY' => [],
                 'UNIQUE' => [],
             ],
-            'references' => [
-                'ice_session' => [
-                    'constraintName' => 'fk_ice_log_message_ice_session',
-                    'onUpdate' => 'NO ACTION',
-                    'onDelete' => 'NO ACTION',
-                ],
-            ],
+            'references' => [],
             'relations' => [
-                'oneToMany' => [
-                    'Ice\Model\Session' => 'session__fk',
-                ],
+                'oneToMany' => [],
                 'manyToOne' => [],
                 'manyToMany' => [],
             ],
