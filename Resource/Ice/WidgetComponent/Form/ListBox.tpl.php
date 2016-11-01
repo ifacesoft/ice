@@ -20,8 +20,8 @@
         >
             <?php foreach ($component->getItems() as $item) : ?>
                 <?php
-                $selected = !(is_array($component->getValue()) && in_array($item[$component->getItemKey()], $component->getValue()))
-                    && !(!is_array($component->getValue()) && $item[$component->getItemKey()] == html_entity_decode($component->getValue()));
+                $selected = (is_array($component->getValue()) && in_array($item[$component->getItemKey()], $component->getValue()))
+                    || (!is_array($component->getValue()) && $item[$component->getItemKey()] === html_entity_decode($component->getValue()));
                 ?>
                 <option value="<?= htmlentities($item[$component->getItemKey()]) ?>"
                         <?php if ($selected) : ?>selected="selected"<?php endif; ?>

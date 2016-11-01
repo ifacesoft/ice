@@ -15,8 +15,6 @@ use Ice\Helper\Json;
 use Ice\Helper\Model as Helper_Model;
 use Ice\Helper\Object;
 use Ice\Helper\Spatial;
-use Ice\Widget\Model_Form;
-use Ice\Widget\Model_Table;
 
 /**
  * Class Model
@@ -973,15 +971,30 @@ abstract class Model
         foreach (array($this->row, $this->json, $this->fk) as $fields) {
             if (array_key_exists($fieldName, $fields)) {
                 if ($fields[$fieldName] === null) {
-                    if ($default === null) {
-                        Logger::getInstance(__CLASS__)->exception(
-                            ['field "{$0}" of model "{$1}" is null', [$fieldName, $modelName]],
-                            __FILE__,
-                            __LINE__
-                        );
-                    } else {
+                    if ($default !== null) {
                         return $default;
                     }
+
+                    $modelScheme = $modelClass::getScheme();
+                    $fieldColumnMap = $modelScheme->getFieldColumnMap();
+
+                    $columnScheme = $modelScheme->gets('columns/' . $fieldColumnMap[$fieldName] . '/scheme');
+
+                    $default = $columnScheme['default'];
+
+                    if ($default !== null) {
+                        return $default;
+                    }
+
+                    if ($columnScheme['nullable']) {
+                        return $fields[$fieldName];
+                    }
+
+                    Logger::getInstance(__CLASS__)->exception(
+                        ['field "{$0}" of model "{$1}" is null', [$fieldName, $modelName]],
+                        __FILE__,
+                        __LINE__
+                    );
                 }
 
                 return $fields[$fieldName];
@@ -1214,12 +1227,15 @@ abstract class Model
     {
         $this->beforeInsert();
 
-        if ($affected = $this->getAffected()) {
-            $insertId = Query::getBuilder($modelClass)
-                ->getInsertQuery($affected, $isSmart, $dataSourceKey)
-                ->getQueryResult()
-                ->getInsertId();
 
+        $affected = $this->getAffected();
+
+        $insertId = Query::getBuilder($modelClass)
+            ->getInsertQuery($affected, $isSmart, $dataSourceKey)
+            ->getQueryResult()
+            ->getInsertId();
+
+        if ($affected) {
             if ($isSmart && $model = $modelClass::create(array_filter($this->row, function ($value) {
                     return $value !== null;
                 }))->find('/pk')
@@ -1227,10 +1243,10 @@ abstract class Model
 
                 $this->set($model->getPk());
             }
+        }
 
-            if ($this->pk === null) {
-                $this->set(reset($insertId));
-            }
+        if ($this->pk === null) {
+            $this->set(reset($insertId));
         }
 
         $this->afterInsert();
@@ -1400,54 +1416,54 @@ abstract class Model
         return $this->json;
     }
 
-    /**
-     * Return link of model
-     *
-     * @param  Model $modelClass
-     * @param  mixed $modelPk
-     * @param  Model|null $linkModelClass
-     * @param  string|null $dataSourceKey
-     * @param  int $ttl
-     * @return Model|null
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.2
-     * @since   0.0
-     */
-    public function getLink($modelClass, $modelPk, $linkModelClass = null, $dataSourceKey = null, $ttl = null)
-    {
-        /**
-         * @var Model $selfClass
-         */
-        $selfClass = get_class($this);
-
-        $selfClassName = $selfClass::getClassName();
-        $className = $modelClass::getClassName();
-
-        if (!$linkModelClass) {
-            $namespace = $selfClass::getNamespace();
-
-            $modelClasses = Data_Scheme::getInstance()->getModelClasses();
-
-            /**
-             * @var Model $linkModelClass
-             */
-            $linkModelClass = isset($modelClasses[$namespace . $selfClassName . '_' . $className . '_Link'])
-                ? $namespace . $selfClassName . '_' . $className . '_Link'
-                : $namespace . $className . '_' . $selfClassName . '_Link';
-        }
-
-        return $linkModelClass::getSelectQuery(
-            '*',
-            [
-                strtolower($selfClassName) . '__fk' => $this->getPk(),
-                strtolower($className) . '__fk' => $modelPk
-            ],
-            ['page' => 1, 'limit' => 1],
-            $dataSourceKey
-        )->getModel(null, $ttl);
-    }
+//    /**
+//     * Return link of model
+//     *
+//     * @param  Model $modelClass
+//     * @param  mixed $modelPk
+//     * @param  Model|null $linkModelClass
+//     * @param  string|null $dataSourceKey
+//     * @param  int $ttl
+//     * @return Model|null
+//     *
+//     * @author dp <denis.a.shestakov@gmail.com>
+//     *
+//     * @version 0.2
+//     * @since   0.0
+//     */
+//    public function getLink($modelClass, $modelPk, $linkModelClass = null, $dataSourceKey = null, $ttl = null)
+//    {
+//        /**
+//         * @var Model $selfClass
+//         */
+//        $selfClass = get_class($this);
+//
+//        $selfClassName = $selfClass::getClassName();
+//        $className = $modelClass::getClassName();
+//
+//        if (!$linkModelClass) {
+//            $namespace = $selfClass::getNamespace();
+//
+//            $modelClasses = Data_Scheme::getInstance()->getModelClasses();
+//
+//            /**
+//             * @var Model $linkModelClass
+//             */
+//            $linkModelClass = isset($modelClasses[$namespace . $selfClassName . '_' . $className . '_Link'])
+//                ? $namespace . $selfClassName . '_' . $className . '_Link'
+//                : $namespace . $className . '_' . $selfClassName . '_Link';
+//        }
+//
+//        return $linkModelClass::getSelectQuery(
+//            '*',
+//            [
+//                strtolower($selfClassName) . '__fk' => $this->getPk(),
+//                strtolower($className) . '__fk' => $modelPk
+//            ],
+//            ['page' => 1, 'limit' => 1],
+//            $dataSourceKey
+//        )->getModel(null, $ttl);
+//    }
 
     /**
      * Get query builder by current model

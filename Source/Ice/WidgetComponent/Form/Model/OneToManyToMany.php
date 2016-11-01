@@ -130,9 +130,4 @@ class Form_Model_OneToManyToMany extends Form_Model_OneToMany
 
         return '';
     }
-
-    protected function buildParams(array $values)
-    {
-        parent::buildParams($values);
-    }
 }

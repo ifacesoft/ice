@@ -1151,11 +1151,10 @@ class QueryBuilder
             }
         }
 
+        $modelScheme = $modelClass::getScheme();
+
         if ($fieldName == '*') {
-            $fieldName = array_merge(
-                $modelClass::getScheme()->getFieldNames(),
-                $modelClass::getScheme()->getPkFieldNames()
-            );
+            $fieldName = array_merge($modelScheme->getFieldNames(), $modelScheme->getPkFieldNames());
         }
 //
         if (is_array($fieldName)) {

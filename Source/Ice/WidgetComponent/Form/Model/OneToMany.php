@@ -2,12 +2,21 @@
 
 namespace Ice\WidgetComponent;
 
-use Ice\Core\Debuger;
 use Ice\Core\Model;
 use Ice\Core\QueryBuilder;
+use Ice\Core\Widget as Core_Widget;
 
 class Form_Model_OneToMany extends FormElement_Chosen
 {
+    public function __construct($componentName, array $options, $template, Core_Widget $widget)
+    {
+        if (!isset($options['comparison'])) {
+            $options['comparison'] = '=';
+        }
+
+        parent::__construct($componentName, $options, $template, $widget);
+    }
+
     public function getItems($fieldNames = [])
     {
         /** @var Model $modelClass */
@@ -30,11 +39,15 @@ class Form_Model_OneToMany extends FormElement_Chosen
             }
         }
 
-        $fieldNames = strpos($this->getItemTitle(), '{$') === false
-            ? array_merge([$this->getItemTitle()], (array)$fieldNames)
-            : array_diff(array_merge(array_keys($this->get(null, [], false)), (array)$fieldNames), [$this->getValueKey()]);
+        $params = array_filter((array)$this->getOption('params', []), function ($item) {
+            return is_string($item);
+        });
 
-        $this->setOption('items', $queryBuilder->getSelectQuery(array_merge((array)$this->getItemKey(), $fieldNames))->getRows());
+        $itemTitle = strpos($this->getItemTitle(), '{$') === false
+            ? array_merge([$this->getItemTitle()], (array)$fieldNames)
+            : array_diff(array_merge($params, (array)$fieldNames), [$this->getValueKey()]);
+
+        $this->setOption('items', $queryBuilder->getSelectQuery(array_merge((array)$this->getItemKey(), $itemTitle))->getRows());
 
         return parent::getItems();
     }
@@ -47,35 +60,20 @@ class Form_Model_OneToMany extends FormElement_Chosen
         return $this->getOption('itemModel');
     }
 
-    public function getItemKey()
+    public function join(QueryBuilder $queryBuilder)
     {
-        /** @var Model $modelClass */
-        $modelClass = $this->getItemModel();
+        /** @var Model|string $modelClass */
+        list($modelClass, $tableAlias) = $queryBuilder->getModelClassTableAlias($this->getItemModel());
 
-        return $modelClass::getPkFieldName();
-    }
+        $params = array_filter((array)$this->getOption('params', []), function ($item) {
+            return is_string($item);
+        });
 
-    /**
-     * @param QueryBuilder $queryBuilder
-     */
-    public function filter(QueryBuilder $queryBuilder)
-    {
-        $modelClass = $this->getItemModel();
+        $itemTitle = strpos($this->getItemTitle(), '{$') === false
+            ? (array)$this->getItemTitle()
+            : array_diff($params, [$this->getValueKey()]);
 
-        $this->setOption('name', $modelClass::getPkFieldName());
-        $this->setOption('comparison', '=');
-
-        parent::filter($queryBuilder, $modelClass);
-//
-//        $typeahead = $this->getName() . '_typeahead';
-//
-//        $typeaheadValue = $this->get($typeahead);
-//
-//        if ($typeaheadValue === null || $typeaheadValue === '') {
-//            return;
-//        }
-//
-//        $queryBuilder->like($this->getItemTitle(), '%' . $typeaheadValue . '%', $this->getItemModel());
+        return $queryBuilder->left([$modelClass => $tableAlias], array_merge((array)$this->getItemKey(), $itemTitle));
     }
 
     public function save(Model $model)
@@ -87,48 +85,5 @@ class Form_Model_OneToMany extends FormElement_Chosen
         }
 
         return $save;
-    }
-
-    protected function buildParams(array $values)
-    {
-        parent::buildParams($values);
-
-//        $name = $this->getName();
-//        $typeahead = $this->getName() . '_typeahead';
-//
-//        $typeaheadValue = $this->get($typeahead);
-//
-//        /** @var Model $modelClass */
-//        $modelClass = $this->getItemModel();
-//
-//        if ($typeaheadValue === null || $typeaheadValue === '') {
-//            if ($value = $this->get($name)) {
-//                $model = $modelClass::getModel($value, [$modelClass::getPkFieldName(), $this->getItemTitle()]);
-//
-//                if ($model) {
-//                    $this->set($typeahead, $model->get($this->getItemTitle()));
-//
-//                    return;
-//                }
-//            }
-//
-//            $this->set($name, null);
-//            $this->set($typeahead, null);
-//
-//            return;
-//        }
-//
-//        $typeaheadModel = $modelClass::getSelectQuery([$modelClass::getPkFieldName(), $this->getItemTitle()], [$this->getItemTitle() => $typeaheadValue])->getModel();
-//
-//        if ($typeaheadModel) {
-//            $this->set($name, $typeaheadModel->getPkValue());
-//        } else {
-//            if ($this->getOption('itemAutoCreate', false)) {
-//                $this->set($name, $modelClass::create([$this->getItemTitle() => $typeaheadValue])->save()->getPkValue());
-//            } else {
-//                $this->set($name, 0);
-////            $this->set($typeahead, null); // не обнуляем - ищем по вхождению
-//            }
-//        }
     }
 }

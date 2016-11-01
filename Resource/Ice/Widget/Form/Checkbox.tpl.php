@@ -3,8 +3,8 @@
         class="<?php if ($component->getHorizontal()) : ?> col-md-<?= 12 - $component->getHorizontal() ?> col-md-offset-<?= $component->getHorizontal() ?><?php endif; ?>"
         for="<?= $component->getId() ?>">
         <div class="checkbox" style="margin-left: 20px;">
-            <input <?= $component->getIdAttribute('hidden') ?> type="hidden" name="<?= $component->getName() ?>"
-                                                               value="0"/>
+            <input <?= $component->getIdAttribute('hidden') ?>
+                    type="hidden" name="<?= $component->getName() ?>" value="0"/>
             <input <?= $component->getIdAttribute() ?>
                 type="checkbox"
                 <?= $component->getClassAttribute() ?>

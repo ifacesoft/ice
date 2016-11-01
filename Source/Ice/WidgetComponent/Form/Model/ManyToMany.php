@@ -40,20 +40,19 @@ class Form_Model_ManyToMany extends FormElement_Chosen
         return parent::getItems();
     }
 
-    /**
-     * @return null
-     */
+    public function getItemKeysName($componentName = null)
+    {
+        return ($componentName ? $componentName : $this->getComponentName()) . '_keys';
+    }
+
+    public function getItemTitlesName($componentName = null)
+    {
+        return ($componentName ? $componentName : $this->getComponentName()) . '_titles';
+    }
+
     public function getItemModelClass()
     {
         return $this->getOption('itemModelClass');
-    }
-
-    public function getItemKey()
-    {
-        /** @var Model $modelClass */
-        $modelClass = $this->getItemModelClass();
-
-        return $modelClass::getPkFieldName();
     }
 
     public function save(Model $model)
@@ -96,84 +95,43 @@ class Form_Model_ManyToMany extends FormElement_Chosen
         return $this->getOption('linkForeignKey');
     }
 
+    public function join(QueryBuilder $queryBuilder) {
+        /** @var Model|string $modelClass */
+        list($modelClass, $tableAlias) = $queryBuilder->getModelClassTableAlias($this->getItemModelClass());
+
+        $fieldColumnMap = $modelClass::getScheme()->getFieldColumnMap();
+
+        $queryBuilder->left([$modelClass => $tableAlias])
+            ->func(['GROUP_CONCAT' => $this->getItemKeysName()], 'DISTINCT ' . $tableAlias . '.' . $fieldColumnMap[$this->getItemKey()], $modelClass)
+            ->func(['GROUP_CONCAT' => $this->getItemTitlesName()], 'DISTINCT ' . $tableAlias . '.' . $fieldColumnMap[$this->getItemTitle()], $modelClass);
+
+        return $queryBuilder;
+    }
+
+    /**
+     * @param QueryBuilder $queryBuilder
+     * @return QueryBuilder
+     */
     public function filter(QueryBuilder $queryBuilder)
     {
-        $modelClass = $this->getItemModelClass();
+        /** @var Model $modelClass */
+        list($modelClass, $tableAlias) = $queryBuilder->getModelClassTableAlias($this->getItemModelClass());
 
-        foreach ((array)$this->get($this->getName()) as $value) { // todo: Возможно это переписать на parent::filter - тут ничего сложного
+        foreach ((array)$this->get($this->getName()) as $value) { // todo: Возможно это переписать на parent::filter - тут ничего сложного (см OneToMany)
             if ($value) {
                 $queryBuilder->pk($value, $modelClass);
             }
         }
 
-//        parent::filter($queryBuilder);
-//
-//        $typeahead = $this->getName() . '_typeahead';
-//
-//        $typeaheadValue = $this->get($typeahead);
-//
-//        if ($typeaheadValue === null || $typeaheadValue === '') {
-//            return;
-//        }
-//
-//        $queryBuilder->like($this->getItemTitle(), '%' . $typeaheadValue . '%', $this->getItemModel());
+        return $queryBuilder;
     }
 
-    protected function buildParams(array $values)
+    protected function getValidValue()
     {
-        parent::buildParams($values);
-
-        $name = $this->getName();
-
-        if ($this->get($name, null) === null && isset($values['pk'])) {
-            /** @var Model $itemModelClass */
-            $itemModelClass = $this->getItemModelClass();
-
-            $rows = $itemModelClass::createQueryBuilder()
-                ->inner($this->getLinkModelClass())
-                ->eq([$this->getLinkKey() => $values['pk']], $this->getLinkModelClass())
-                ->getSelectQuery($this->getItemKey())
-                ->getColumn();
-
-            $this->set($this->getName(), empty($rows) ? [] : $rows);
+        if ($value = parent::getValidValue()) {
+            return $value;
         }
 
-//        $name = $this->getName();
-//        $typeahead = $this->getName() . '_typeahead';
-//
-//        $typeaheadValue = $this->get($typeahead);
-//
-//        /** @var Model $modelClass */
-//        $modelClass = $this->getItemModel();
-//
-//        if ($typeaheadValue === null || $typeaheadValue === '') {
-//            if ($value = $this->get($name)) {
-//                $model = $modelClass::getModel($value, [$modelClass::getPkFieldName(), $this->getItemTitle()]);
-//
-//                if ($model) {
-//                    $this->set($typeahead, $model->get($this->getItemTitle()));
-//
-//                    return;
-//                }
-//            }
-//
-//            $this->set($name, null);
-//            $this->set($typeahead, null);
-//
-//            return;
-//        }
-//
-//        $typeaheadModel = $modelClass::getSelectQuery([$modelClass::getPkFieldName(), $this->getItemTitle()], [$this->getItemTitle() => $typeaheadValue])->getModel();
-//
-//        if ($typeaheadModel) {
-//            $this->set($name, $typeaheadModel->getPkValue());
-//        } else {
-//            if ($this->getOption('itemAutoCreate', false)) {
-//                $this->set($name, $modelClass::create([$this->getItemTitle() => $typeaheadValue])->save()->getPkValue());
-//            } else {
-//                $this->set($name, 0);
-////            $this->set($typeahead, null); // не обнуляем - ищем по вхождению
-//            }
-//        }
+        return explode(',', $this->get($this->getItemKeysName(), ''));
     }
 }

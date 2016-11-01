@@ -2,6 +2,7 @@
 
 namespace Ice\WidgetComponent;
 
+use Ice\Core\Debuger;
 use Ice\Core\Model;
 use Ice\Core\QueryBuilder;
 use Ice\Core\Widget as Core_Widget;
@@ -114,6 +115,14 @@ class FormElement extends HtmlTag // todo: должен быть абстрак�
         return $this->name = $this->getOption('name') ? $this->getOption('name') : $this->getComponentName();
     }
 
+    public function join(QueryBuilder $queryBuilder) {
+        return $queryBuilder;
+    }
+
+    /**
+     * @param QueryBuilder $queryBuilder
+     * @return QueryBuilder
+     */
     public function filter(QueryBuilder $queryBuilder)
     {
         $option = array_merge($this->getOption(), $this->getOption('filter', []));
@@ -121,7 +130,7 @@ class FormElement extends HtmlTag // todo: должен быть абстрак�
         $value = $this->getValue();
 
         if ($value === null || $value === '' || (is_array($value)) && empty($value)) {
-            return;
+            return $queryBuilder;
         }
 
         if (!isset($option['comparison'])) {
@@ -144,6 +153,8 @@ class FormElement extends HtmlTag // todo: должен быть абстрак�
                     $queryBuilder->like($this->getName(), '%' . $val . '%', $option['modelClass']);
             }
         }
+
+        return $queryBuilder;
     }
 
     protected function getValidValue()

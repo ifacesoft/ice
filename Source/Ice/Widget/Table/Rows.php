@@ -1,6 +1,7 @@
 <?php
 namespace Ice\Widget;
 
+use Ice\Core\Debuger;
 use Ice\Core\QueryBuilder;
 use Ice\Core\QueryResult;
 use Ice\Core\Widget;
@@ -192,6 +193,8 @@ class Table_Rows extends Widget
      */
     public function manyToMany($columnName, array $options = [], $template = null)
     {
+        $options['valueKey'] = $columnName . '_titles';
+
         return $this->td($columnName, $options, $template);
     }
 

@@ -321,7 +321,7 @@ abstract class WidgetComponent
         }
 
         if (!empty($paramConfig)) {
-            $params = array_merge(Input::get($this->getParamConfig(), $params), $params);
+            $params = array_merge($params, Input::get($this->getParamConfig(), $params));
         }
 
         if ($paramName === null) {
@@ -370,13 +370,13 @@ abstract class WidgetComponent
             }
 
             $paramsConfig[$param] = $config;
-
-            if (is_array($paramsConfig[$param])) {
-                $paramsConfig[$param]['providers'] = isset($paramsConfig[$param]['providers'])
-                    ? array_merge(['default'], (array)$paramsConfig[$param]['providers'])
-                    : ['default'];
-            }
-
+//
+//            // todo:добавлять default, только если providers не определено - собственно обычное поведение Input::get() --> поэтому выпилить совсем
+//            if (is_array($paramsConfig[$param])) {
+//                $paramsConfig[$param]['providers'] = isset($paramsConfig[$param]['providers'])
+//                    ? array_merge(['default'], (array)$paramsConfig[$param]['providers'])
+//                    : ['default'];
+//            }
         }
 
         return $paramsConfig;

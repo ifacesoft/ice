@@ -41,9 +41,13 @@ class FormElement_Button extends FormElement
         return $this->buttonType;
     }
 
+    /**
+     * @param QueryBuilder $queryBuilder
+     * @return QueryBuilder
+     */
     public function filter(QueryBuilder $queryBuilder)
     {
-        return;
+        return $queryBuilder;
     }
 
     protected function getClasses($classes = '')

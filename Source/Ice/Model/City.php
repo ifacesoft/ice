@@ -88,6 +88,7 @@ class City extends Model
                                     1 => 'tableName',
                                 ],
                             ],
+                            'target' => '_blank'
                         ],
                         'add' => [
                             'required' => true,
@@ -148,6 +149,7 @@ class City extends Model
                             'comparison' => '=',
                         ],
                         'itemModel' => 'Ice\Model\Country',
+                        'itemKey' => 'country_pk',
                         'itemTitle' => 'country_name',
                     ],
                 ],
