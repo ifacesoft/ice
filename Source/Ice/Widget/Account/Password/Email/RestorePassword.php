@@ -30,7 +30,7 @@ class Account_Password_Email_RestorePassword extends Account_Form
                     'placeholder' => true,
                     'params' => [
                         'email' => [
-                            'providers' => Request::class,
+                            'providers' => [Request::class, 'default'],
                             'validators' => 'Ice:Email'
                         ]
                     ]

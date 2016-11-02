@@ -18,12 +18,16 @@
                 <?php if ($component->getOption('required', false)) : ?>required="required"<?php endif; ?>
                 <?php if ($component->getOption('autofocus', false)) : ?>autofocus="autofocus"<?php endif; ?>
         >
-            <?php foreach ($component->getItems() as $item) : ?>
+            <?php
+            $value = $component->getValue();
+            $itemKey = $component->getItemKey();
+
+            foreach ($component->getItems() as $item) : ?>
                 <?php
-                $selected = (is_array($component->getValue()) && in_array($item[$component->getItemKey()], $component->getValue()))
-                    || (!is_array($component->getValue()) && $item[$component->getItemKey()] === html_entity_decode($component->getValue()));
+                $selected = (is_array($value) && in_array($item[$itemKey], $value))
+                    || (!is_array($value) && (string)$item[$itemKey] === html_entity_decode($value));
                 ?>
-                <option value="<?= htmlentities($item[$component->getItemKey()]) ?>"
+                <option value="<?= htmlentities($item[$itemKey]) ?>"
                         <?php if ($selected) : ?>selected="selected"<?php endif; ?>
                 ><?= $component->getTitle($item) ?></option>
             <?php endforeach; ?>

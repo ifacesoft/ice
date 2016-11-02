@@ -28,7 +28,7 @@ class Account_Password_Email_Login extends Account_Form
                     'placeholder' => true,
                     'params' => [
                         'email' => [
-                            'providers' => Request::class,
+                            'providers' => [Request::class, 'default'],
                             'validators' => 'Ice:Email'
                         ]
                     ]
@@ -41,7 +41,7 @@ class Account_Password_Email_Login extends Account_Form
                     'placeholder' => true,
                     'params' => [
                         'password' => [
-                            'providers' => Request::class,
+                            'providers' => [Request::class, 'default'],
                             'validators' => ['Ice:Length_Min' => 5]
                         ]
                     ]

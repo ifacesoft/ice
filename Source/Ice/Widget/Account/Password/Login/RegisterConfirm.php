@@ -44,7 +44,11 @@ class Account_Password_Login_RegisterConfirm extends Account_Form
                 [
                     'required' => true,
                     'placeholder' => true,
-                    'params' => ['token' => ['providers' => Request::class]]
+                    'params' => [
+                        'token' => [
+                            'providers' => [Request::class, 'default'],
+                        ]
+                    ]
                 ]
             )
             ->divMessage()

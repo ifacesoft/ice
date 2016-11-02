@@ -28,7 +28,7 @@ class Account_Password_Login_Register extends Account_Form_Register
                     'placeholder' => true,
                     'params' => [
                         'login' => [
-                            'providers' => Request::class,
+                            'providers' => [Request::class, 'default'],
                             'validators' => ['Ice:Length_Min' => 3]
                         ]
                     ]
@@ -41,7 +41,7 @@ class Account_Password_Login_Register extends Account_Form_Register
                     'placeholder' => true,
                     'params' => [
                         'password' => [
-                            'providers' => Request::class,
+                            'providers' => [Request::class, 'default'],
                             'validators' => ['Ice:Length_Min' => 5]
                         ]
                     ]
@@ -53,7 +53,7 @@ class Account_Password_Login_Register extends Account_Form_Register
                     'placeholder' => true,
                     'params' => [
                         'confirm_password' => [
-                            'providers' => Request::class,
+                            'providers' => [Request::class, 'default'],
                             'validators' => [
                                 'Ice:Equal' => [
                                     'value' => $this->get('password'),

@@ -30,7 +30,7 @@ class Account_Password_Login_ChangePassword extends Account_Form
                     'placeholder' => true,
                     'params' => [
                         'password' => [
-                            'providers' => Request::class,
+                            'providers' => [Request::class, 'default'],
                             'validators' => ['Ice:Length_Min' => 5]
                         ]
                     ]
@@ -43,7 +43,7 @@ class Account_Password_Login_ChangePassword extends Account_Form
                     'placeholder' => true,
                     'params' => [
                         'new_password' => [
-                            'providers' => Request::class,
+                            'providers' => [Request::class, 'default'],
                             'validators' => ['Ice:Length_Min' => 5]
                         ]
                     ]
@@ -55,7 +55,7 @@ class Account_Password_Login_ChangePassword extends Account_Form
                     'placeholder' => true,
                     'params' => [
                         'confirm_password' => [
-                            'providers' => Request::class,
+                            'providers' => [Request::class, 'default'],
                             'validators' => [
                                 'Ice:Equal' => [
                                     'value' => $this->get('new_password'),

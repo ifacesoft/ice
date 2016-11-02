@@ -38,7 +38,11 @@ class Account_Password_Email_RestorePasswordConfirm extends Account_Form
                 [
                     'placeholder' => true,
                     'required' => true,
-                    'params' => ['token' => ['providers' => Request::class]]
+                    'params' => [
+                        'token' => [
+                            'providers' => [Request::class, 'default'],
+                        ]
+                    ]
                 ]
             )
             ->password(
@@ -46,7 +50,12 @@ class Account_Password_Email_RestorePasswordConfirm extends Account_Form
                 [
                     'placeholder' => true,
                     'required' => true,
-                    'params' => ['new_password' => ['providers' => Request::class]]
+                    'params' => [
+                        'new_password' =>
+                            [
+                                'providers' => [Request::class, 'default'],
+                            ]
+                    ]
                 ]
             )
             ->password(
@@ -56,7 +65,7 @@ class Account_Password_Email_RestorePasswordConfirm extends Account_Form
                     'required' => true,
                     'params' => [
                         'confirm_password' => [
-                            'providers' => Request::class,
+                            'providers' => [Request::class, 'default'],
                             'validators' => [
                                 'Ice:Equal' => [
                                     'value' => $this->get('new_password'),

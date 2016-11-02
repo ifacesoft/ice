@@ -30,7 +30,7 @@ class Account_Password_Login_RestorePassword extends Account_Form
                     'placeholder' => true,
                     'params' => [
                         'login' => [
-                            'providers' => Request::class,
+                            'providers' => [Request::class, 'default'],
                             'validators' => ['Ice:Length_Min' => 2]
                         ]
                     ]

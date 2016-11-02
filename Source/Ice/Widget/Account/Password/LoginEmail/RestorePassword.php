@@ -111,7 +111,7 @@ class Account_Password_LoginEmail_RestorePassword extends Account_Form
                     'placeholder' => true,
                     'params' => [
                         'username' => [
-                            'providers' => Request::class,
+                            'providers' => [Request::class, 'default'],
                             'validators' => ['Ice:Length_Min' => 3]
                         ]
                     ]

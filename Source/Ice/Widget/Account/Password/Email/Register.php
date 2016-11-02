@@ -28,7 +28,7 @@ class Account_Password_Email_Register extends Account_Form_Register
                     'placeholder' => true,
                     'params' => [
                         'email' => [
-                            'providers' => Request::class,
+                            'providers' => [Request::class, 'default'],
                             'validators' => 'Ice:Email'
                         ]
                     ]
@@ -41,7 +41,7 @@ class Account_Password_Email_Register extends Account_Form_Register
                     'placeholder' => true,
                     'params' => [
                         'password' => [
-                            'providers' => Request::class,
+                            'providers' => [Request::class, 'default'],
                             'validators' => ['Ice:Length_Min' => 5]
                         ]
                     ]
@@ -54,7 +54,7 @@ class Account_Password_Email_Register extends Account_Form_Register
                     'required' => true,
                     'params' => [
                         'confirm_password' => [
-                            'providers' => Request::class,
+                            'providers' => [Request::class, 'default'],
                             'validators' => [
                                 'Ice:Equal' => [
                                     'value' => $this->getPart('password')->get('password'),

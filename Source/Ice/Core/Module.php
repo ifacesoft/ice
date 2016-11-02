@@ -19,7 +19,7 @@ use Ice\Helper\String;
  *
  * Core module class
  *
- * @see Ice\Core\Container
+ * @see \Ice\Core\Container
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
