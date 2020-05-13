@@ -9,8 +9,9 @@ return [
                         'Ice' => [
                             'vendor_css' => [
                                 'path' => 'css/vendor/',
-                                'css' => ['empty.css'],
+                                'css' => ['alxlit/bootstrap-chosen/bootstrap-chosen.css'],
                                 'isCopy' => false,
+                                'css_replace' => ['url("', 'url("/resource/node_modules/drmonty-chosen/'],
                             ],
                             'vendor' => [
                                 'path' => 'vendor/',
@@ -24,7 +25,7 @@ return [
                             ],
                             'module' => [
                                 'path' => 'Ice/',
-                                'css' => ['Widget/Menu.css', 'Core/Widget/Form/File.css'],
+                                'css' => ['Widget/Form/File.css'],
                                 'isCopy' => false,
                             ],
                         ],
@@ -56,7 +57,7 @@ return [
                             ],
                             'module' => [
                                 'path' => 'Ice/',
-                                'js' => ['Helper/String.js', 'Widget/Form.js', 'Widget/Menu.js', 'Widget/Data.js'],
+                                'js' => ['Helper/String.js', 'Core/Widget.js'],
                                 'isCopy' => false,
                             ],
                         ],
@@ -65,19 +66,10 @@ return [
             ],
         ],
     ],
-    'Ice\Action\Admin_Navigation' => [
-        'input' => [
-            'items' => [
-                'default' => [
-                    ['routeName' => 'ice_admin_database']
-                ]
-            ]
-        ]
-    ],
     'Ice\Action\Cache_Hit' => [
         'input' => [
             'routeNames' => [
-                'default' =>['ice_test']
+                'default' => ['ice_test']
             ]
         ]
     ],

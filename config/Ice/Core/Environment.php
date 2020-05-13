@@ -9,286 +9,209 @@
 
 return [
     'production' => [
-        'Ice\Core\Data_Provider' => [
-            'Ice\Data\Provider\Redis' => [
-                'session' => [
-                    'ttl' => 60 * 60 * 24
-                ],
-            ],
-            'Ice\Data\Provider\File' => [
-                'session' => [
-                    'ttl' => 60 * 60 * 24
-                ],
-            ],
-            'Ice\Data\Provider\Mysqli' => [
+        'Ice\Core\MessageTransport' => [
+            'Ice\MessageTransport\PHPMailer' => [
                 'default' => [
-                    'username' => 'root',
-                    'password' => '',
-                ]
-            ],
-            'Ice\Data\Provider\Mongodb' => [
-                'default' => [
+                    'debug' => 0,
+                    'smtpHost' => '127.0.0.1',
+                    'smtpPort' => 25,
+                    'smtpUser' => null,
+                    'smtpPass' => null,
+//            'fromAddress' => 'ice@iceframework.net',
+//            'fromName' => 'Robot :)',
+//            'replyToAddress' => 'reply@iceframework.net',
+//            'replyToName' => 'Test',
+                    'redirectTo' => [
+                        '/example\.com$/' => []
+                    ],
+                    'devAddress' => []
                 ]
             ]
         ],
-        'dataProviderKeys' => [
-            'Ice\Core\Bootstrap' => [
-                'instance' => 'Ice:Registry/bootstrap',
+        'Ice\Core\DataProvider' => [
+            'Ice\DataProvider\Apc' => [
+                'default' => [],
             ],
+            'Ice\DataProvider\Redis' => [
+                'default' => [
+                    'host' => '127.0.0.1',
+                    'port' => 6379,
+                    'timeout' => 1
+                ],
+            ],
+            'Ice\DataProvider\Tarantool' => [
+                'localhost' => [
+                    'host' => '127.0.0.1',
+                    'port' => 3301,
+                ],
+            ],
+            'Ice\DataProvider\File' => [
+                'default' => [
+                    'path' => 'var/db/'
+                ],
+            ],
+            'Ice\DataProvider\Mysqli' => [
+                'default' => [
+                    'host' => '127.0.0.1',
+                    'username' => 'root',
+                    'password' => '',
+                    'port' => '3306',
+                    'charset' => 'utf8',
+                ]
+            ],
+            'Ice\DataProvider\Mongodb' => [
+                'default' => [
+                    'host' => 'localhost',
+                    'port' => '27017'
+                ]
+            ],
+            'Ice\DataProvider\Cacher' => [
+                'default' => [
+                    'tagProviders' => []
+                ]
+            ],
+            'Ice\DataProvider\Repository' => [
+                'default' => []
+            ],
+            'Ice\DataProvider\Session' => [
+                'default' => []
+            ],
+            'Ice\DataProvider\Security' => [
+                'default' => []
+            ],
+            'Ice\DataProvider\Cli' => [
+                'default' => []
+            ],
+            'Ice\DataProvider\Router' => [
+                'default' => []
+            ],
+            'Ice\DataProvider\Request_Http_Raw' => [
+                'default' => []
+            ],
+            'Ice\DataProvider\QueryResultRow' => [
+                'default' => []
+            ],
+        ],
+        'ini_set_session' => [
+            'use_cookies' => 1,
+            'cookie_domain' => '',
+            'cookie_lifetime' => 86400,
+            'gc_maxlifetime' => 86400,
+        ],
+        'dataProviderKeys' => [
             'Ice\Core\Loader' => [
-                'loader' => 'Ice:Registry/loader',
+                'loader' => 'Ice:Registry',
             ],
             'Ice\Core\Action' => [
-                'instance' => 'Ice:Repository/action',
-                'cache' => 'Ice:Repository/action'
+                'cache' => 'Ice:Repository'
             ],
             'Ice\Core\Route' => [
-                'instance' => 'Ice:Repository/route',
-                'route' => 'Ice:Repository/route',
-                'routes' => 'Ice:Repository/route',
+                'route' => 'Ice:Repository',
+                'routes' => 'Ice:Repository',
             ],
             'Ice\Core\Config' => [
-                'instance' => 'Ice:Repository/config',
-                'config' => 'Ice:Repository/config',
-                'route' => 'Ice:Repository/config',
-                'routes' => 'Ice:Repository/config',
-                'model_scheme' => 'Ice:Repository/config',
-            ],
-            'Ice\Core\Converter' => [
-                'instance' => 'Ice:Repository/converter',
-            ],
-            'Ice\Core\Widget' => [
-                'instance' => 'Ice:Repository/widget',
-            ],
-            'Ice\Core\Widget_Form' => [
-                'instance' => 'Ice:Repository/widget_form',
-            ],
-            'Ice\Core\Widget_Menu' => [
-                'instance' => 'Ice:Repository/widget_menu',
-            ],
-            'Ice\Core\Widget_Data' => [
-                'instance' => 'Ice:Repository/widget_data',
-            ],
-            'Ice\Core\Container' => [
-                'instance' => 'Ice:Repository/container',
-            ],
-            'Ice\Core\View_Render' => [
-                'instance' => 'Ice:Registry/view_render',
-            ],
-            'Ice\Core\Query_Translator' => [
-                'instance' => 'Ice:Repository/query_translator',
+                'config' => 'Ice:Repository',
+                'route' => 'Ice:Repository',
+                'routes' => 'Ice:Repository',
+                'model_scheme' => 'Ice:Repository',
             ],
             'Ice\Core\Query' => [
-                'instance' => 'Ice:Repository/query',
-                'sql' => 'Ice:Repository/query',
-                'query' => 'Ice:Repository/query',
+                'sql' => 'Ice:Repository',
+                'query' => 'Ice:Repository',
             ],
-            'Ice\Core\Code_Generator' => [
-                'instance' => 'Ice:Repository/code_generator',
+            'Ice\Core\DataSource' => [
+                'cache' => 'Ice:File'
             ],
-            'Ice\Core\Data_Source' => [
-                'instance' => 'Ice:Repository/data_source',
-                'cache' => 'Ice:File/data_source'
+            'Ice\Core\DataScheme' => [
+                'data_scheme' => 'Ice:Repository',
             ],
-            'Ice\Core\Data_Scheme' => [
-                'data_scheme' => 'Ice:Repository/data_scheme',
-            ],
-            'Ice\Core\Model_Scheme' => [
-                'model_scheme' => 'Ice:Repository/model_scheme',
-            ],
-            'Ice\Core\Validator' => [
-                'instance' => 'Ice:Repository/validator',
+            'Ice\Core\ModelScheme' => [
+                'model_scheme' => 'Ice:Repository',
             ],
             'Ice\Core\Cache' => [
-                'tags' => 'Ice:Repository/cache',
-            ],
-            'Ice\Core\View' => [
-                'instance' => 'Ice:Repository/view',
-                'view' => 'Ice:Repository/view',
-            ],
-            'Ice\Core\Resource' => [
-                'instance' => 'Ice:Repository/resource'
-            ],
-            'Ice\Core\Module' => [
-                'instance' => 'Ice:Repository/module'
+                'tags' => 'Ice:Repository',
             ],
             'Ice\Core\Session' => [
-                'session' => 'Ice:Repository/session'
-            ]
+                'session' => 'Ice:File'
+            ],
         ],
     ],
     'test' => [
         'dataProviderKeys' => [
-            'Ice\Core\Bootstrap' => [
-                'instance' => 'Ice:Registry/bootstrap',
-            ],
             'Ice\Core\Loader' => [
-                'loader' => 'Ice:Registry/loader',
+                'loader' => 'Ice:Registry',
             ],
             'Ice\Core\Action' => [
-                'instance' => 'Ice:File/action',
-                'cache' => 'Ice:File/action'
+                'cache' => 'Ice:File'
             ],
             'Ice\Core\Route' => [
-                'instance' => 'Ice:File/route',
-                'route' => 'Ice:File/route',
-                'routes' => 'Ice:File/route',
+                'route' => 'Ice:File',
+                'routes' => 'Ice:File',
             ],
             'Ice\Core\Config' => [
-                'instance' => 'Ice:File/config',
-                'config' => 'Ice:File/config',
-                'route' => 'Ice:File/config',
-                'routes' => 'Ice:File/config',
-                'model_scheme' => 'Ice:File/config',
-            ],
-            'Ice\Core\Converter' => [
-                'instance' => 'Ice:File/converter',
-            ],
-            'Ice\Core\Widget' => [
-                'instance' => 'Ice:File/widget',
-            ],
-            'Ice\Core\Widget_Form' => [
-                'instance' => 'Ice:File/widget_form',
-            ],
-            'Ice\Core\Widget_Menu' => [
-                'instance' => 'Ice:File/widget_menu',
-            ],
-            'Ice\Core\Widget_Data' => [
-                'instance' => 'Ice:File/widget_data',
-            ],
-            'Ice\Core\Container' => [
-                'instance' => 'Ice:File/container',
-            ],
-            'Ice\Core\View_Render' => [
-                'instance' => 'Ice:Registry/view_render',
-            ],
-            'Ice\Core\Query_Translator' => [
-                'instance' => 'Ice:File/query_translator',
+                'config' => 'Ice:File',
+                'route' => 'Ice:File',
+                'routes' => 'Ice:File',
+                'model_scheme' => 'Ice:File',
             ],
             'Ice\Core\Query' => [
-                'instance' => 'Ice:File/query',
-                'sql' => 'Ice:File/query',
-                'query' => 'Ice:File/query',
+                'sql' => 'Ice:File',
+                'query' => 'Ice:File',
             ],
-            'Ice\Core\Code_Generator' => [
-                'instance' => 'Ice:File/code_generator',
+            'Ice\Core\DataSource' => [
+                'cache' => 'Ice:File'
             ],
-            'Ice\Core\Data_Source' => [
-                'instance' => 'Ice:File/data_source',
-                'cache' => 'Ice:File/data_source'
+            'Ice\Core\DataScheme' => [
+                'data_scheme' => 'Ice:File',
             ],
-            'Ice\Core\Data_Scheme' => [
-                'data_scheme' => 'Ice:File/data_scheme',
-            ],
-            'Ice\Core\Model_Scheme' => [
-                'model_scheme' => 'Ice:File/model_scheme',
-            ],
-            'Ice\Core\Validator' => [
-                'instance' => 'Ice:File/validator',
+            'Ice\Core\ModelScheme' => [
+                'model_scheme' => 'Ice:File',
             ],
             'Ice\Core\Cache' => [
-                'tags' => 'Ice:File/cache',
-            ],
-            'Ice\Core\View' => [
-                'instance' => 'Ice:File/view',
-                'view' => 'Ice:File/view',
-            ],
-            'Ice\Core\Resource' => [
-                'instance' => 'Ice:File/resource'
-            ],
-            'Ice\Core\Module' => [
-                'instance' => 'Ice:File/module'
+                'tags' => 'Ice:File',
             ],
             'Ice\Core\Session' => [
-                'session' => 'Ice:File/session'
-            ]
+                'session' => 'Ice:File'
+            ],
         ]
     ],
     'development' => [
         'dataProviderKeys' => [
-            'Ice\Core\Bootstrap' => [
-                'instance' => 'Ice:Registry/bootstrap',
-            ],
             'Ice\Core\Loader' => [
-                'loader' => 'Ice:Registry/loader',
+                'loader' => 'Ice:Registry',
             ],
             'Ice\Core\Action' => [
-                'instance' => 'Ice:Registry/action',
-                'output' => 'Ice:Registry/action'
+                'output' => 'Ice:Registry'
             ],
             'Ice\Core\Route' => [
-                'instance' => 'Ice:Registry/route',
-                'route' => 'Ice:Registry/route',
-                'routes' => 'Ice:Registry/route',
+                'route' => 'Ice:Registry',
+                'routes' => 'Ice:Registry',
             ],
             'Ice\Core\Config' => [
-                'instance' => 'Ice:Registry/config',
-                'config' => 'Ice:Registry/config',
-                'route' => 'Ice:Registry/config',
-                'routes' => 'Ice:Registry/config',
-                'model_scheme' => 'Ice:Registry/config',
-            ],
-            'Ice\Core\Converter' => [
-                'instance' => 'Ice:Registry/converter',
-            ],
-            'Ice\Core\Widget' => [
-                'instance' => 'Ice:Registry/widget',
-            ],
-            'Ice\Core\Widget_Form' => [
-                'instance' => 'Ice:Registry/widget_form',
-            ],
-            'Ice\Core\Widget_Menu' => [
-                'instance' => 'Ice:Registry/widget_menu',
-            ],
-            'Ice\Core\Widget_Data' => [
-                'instance' => 'Ice:Registry/widget_data',
-            ],
-            'Ice\Core\Container' => [
-                'instance' => 'Ice:Registry/container',
-            ],
-            'Ice\Core\View_Render' => [
-                'instance' => 'Ice:Registry/config'
-            ],
-            'Ice\Core\Query_Translator' => [
-                'instance' => 'Ice:Registry/query_translator',
+                'config' => 'Ice:Registry',
+                'route' => 'Ice:Registry',
+                'routes' => 'Ice:Registry',
+                'model_scheme' => 'Ice:Registry',
             ],
             'Ice\Core\Query' => [
-                'instance' => 'Ice:Registry/query',
-                'sql' => 'Ice:Registry/query',
-                'query' => 'Ice:Registry/query',
+                'sql' => 'Ice:Registry',
+                'query' => 'Ice:Registry',
             ],
-            'Ice\Core\Code_Generator' => [
-                'instance' => 'Ice:Registry/code_generator',
+            'Ice\Core\DataSource' => [
+                'cache' => 'Ice:Registry'
             ],
-            'Ice\Core\Data_Source' => [
-                'instance' => 'Ice:Registry/data_source',
-                'cache' => 'Ice:Registry/cache'
+            'Ice\Core\DataScheme' => [
+                'data_scheme' => 'Ice:Registry',
             ],
-            'Ice\Core\Data_Scheme' => [
-                'data_scheme' => 'Ice:Registry/data_scheme',
-            ],
-            'Ice\Core\Model_Scheme' => [
-                'model_scheme' => 'Ice:Registry/model_scheme',
-            ],
-            'Ice\Core\Validator' => [
-                'instance' => 'Ice:Registry/validator',
+            'Ice\Core\ModelScheme' => [
+                'model_scheme' => 'Ice:Registry',
             ],
             'Ice\Core\Cache' => [
-                'tags' => 'Ice:File/cache',
-            ],
-            'Ice\Core\View' => [
-                'instance' => 'Ice:Registry/view',
-                'view' => 'Ice:Registry/view',
-            ],
-            'Ice\Core\Resource' => [
-                'instance' => 'Ice:Registry/resource',
-            ],
-            'Ice\Core\Module' => [
-                'instance' => 'Ice:Registry/module'
+                'tags' => 'Ice:File',
             ],
             'Ice\Core\Session' => [
-                'session' => 'Ice:File/session'
-            ]
+                'session' => 'Ice:File'
+            ],
         ],
     ]
 ];

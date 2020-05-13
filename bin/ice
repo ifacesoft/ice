@@ -1,0 +1,13 @@
+#!/usr/bin/env php
+<?php
+/**
+ * @file Console script
+ *
+ * Run and flush ice application via console
+ * @author dp <denis.a.shestakov@gmail.com>
+ *
+ * @version 1.10
+ * @since 0.0
+ */
+
+require_once __DIR__ . '/../source/run.php';

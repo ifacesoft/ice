@@ -26,6 +26,9 @@ return [
             ]
         ]
     ],
+    'ice_ajax' => [
+        'route' => '/ajax'
+    ],
     'ice_widget_form_file_upload' => [
         'route' => '/widget/form/file/upload',
         'request' => ['POST' => 'Ice:Widget_Form_File_Upload']
@@ -51,6 +54,18 @@ return [
             ]
         ]
     ],
+    'ice_render_excel' => [
+        'route' => '/render/excel',
+        'request' => [
+            'GET' => [
+                'actionClass' => 'Ice:Render_Excel',
+            ],
+            'POST' => [
+                'actionClass' => 'Ice:Render_Excel',
+            ]
+        ]
+    ],
     '_Security' => '/security',
-    '_Admin' => '/admin',
+    '_Private' => '/private',
+    '_CKEditor' => '/ckeditor',
 ];
