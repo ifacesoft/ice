@@ -2,28 +2,24 @@
 
 namespace Ice;
 
-use Composer\Config;
 use Composer\Script\Event;
-use Ice\Action\Check;
-use Ice\Action\Http_Status;
-use Ice\Action\Install;
-use Ice\Action\Layout_Main;
 use Ice\Core\Action;
 use Ice\Core\Action_Context;
-use Ice\Core\Debuger;
-use Ice\Core\Environment;
+use Ice\Core\Loader;
 use Ice\Core\Logger;
 use Ice\Core\Profiler;
 use Ice\Core\Request;
 use Ice\Core\Response;
-use Ice\Core\Route;
-use Ice\Data\Provider\Cli;
-use Ice\Data\Provider\Request as Data_Provider_Request;
-use Ice\Data\Provider\Router;
+use Ice\Core\Session;
+use Ice\DataProvider\Cli as DataProvider_Cli;
+use Ice\DataProvider\Request as DataProvider_Request;
+use Ice\DataProvider\Router as DataProvider_Router;
+use Ice\Exception\Error;
 use Ice\Exception\Http_Bad_Request;
+use Ice\Exception\Http_Forbidden;
 use Ice\Exception\Http_Not_Found;
-use Ice\Exception\Redirect;
-use Ice\Helper\File;
+use Ice\Exception\Http_Redirect;
+use Ice\Widget\Http_Status;
 
 class App
 {
@@ -31,87 +27,150 @@ class App
 
     private static $context = null;
 
-    public static function run()
+    public static function run($throwException = false)
     {
-        Logger::fb(
-            Profiler::getReport(BOOTSTRAP_CLASS, '/' . Environment::getInstance()->getName()),
-            __CLASS__,
-            'LOG'
-        );
-
         $startTime = Profiler::getMicrotime();
         $startMemory = Profiler::getMemoryGetUsage();
 
-        $actionClass = 'unknown';
+        $dataProvider = null;
+        $actionClass = null;
+        $params = [];
 
+        $result = [];
+
+        /** @var Action $actionClass */
         try {
-            /**
-             * @var Action $actionClass
-             * @var array $input
-             */
-            list($actionClass, $input) = App::getAction();
+            if (Request::isCli()) {
+                $dataProvider = DataProvider_Cli::getInstance();
 
-            App::getResponse()->setView($actionClass::call($input));
-        } catch (Redirect $e) {
-            App::getResponse()->setRedirectUrl($e->getRedirectUrl());
-        } catch (Http_Bad_Request $e) {
-            $httpStatusAction = [['Ice:Http_Status' => 'main', ['code' => 400, 'exception' => $e]]];
-            App::getResponse()->setView(Layout_Main::call(['actions' => $httpStatusAction]));
-        } catch (Http_Not_Found $e) {
-            $httpStatusAction = [['Ice:Http_Status' => 'main', ['code' => 404, 'exception' => $e]]];
-            App::getResponse()->setView(Layout_Main::call(['actions' => $httpStatusAction]));
+                $actionClass = $dataProvider->get('actionClass');
+                $params = (array)$dataProvider->get('params');
+            } else {
+                Request::init();
+
+                $dataProvider = Request::isAjax()
+                    ? DataProvider_Request::getInstance()
+                    : DataProvider_Router::getInstance();
+
+                $actionClass = $dataProvider->get('actionClass');
+
+                if ($dataProvider instanceof DataProvider_Router) {
+                    $routeParams = (array)$dataProvider->get('routeParams');
+
+                    if (isset($routeParams['params'])) {
+                        $params = $routeParams['params'];
+                    }
+
+                    if ($response = $dataProvider->get('response')) {
+                        if (isset($response['contentType'])) {
+                            App::getResponse()->setContentType($response['contentType']);
+                        }
+
+                        if (isset($response['statusCode'])) {
+                            App::getResponse()->setStatusCode($response['statusCode']);
+                        }
+                    }
+                } else {
+                    $params = (array)$dataProvider->get();
+                }
+            }
+
+            if (!$actionClass) {
+                throw new Error('Action class is empty');
+            }
+
+            $actionClass = Action::getClass($actionClass);
+
+            if (!Loader::load($actionClass)) {
+                throw new Error('Action class not load (Expected: ' . $actionClass . ')');
+            }
+
+            $result = $actionClass::call($params);
         } catch (\Exception $e) {
             if (Request::isCli()) {
-                Logger::getInstance(__CLASS__)->error('Application failure', __FILE__, __LINE__, $e);
+                Logger::getInstance(__CLASS__)->error('Application (App): run action failure', __FILE__, __LINE__, $e);
+
+                $result = ['error' => Logger::getInstance(__CLASS__)->info($e->getMessage(), Logger::DANGER)];
             } else {
-                $httpStatusAction = [['Ice:Http_Status' => 'main', ['code' => 500, 'exception' => $e]]];
-                App::getResponse()->setView(Layout_Main::call(['actions' => $httpStatusAction]));
+                if ($throwException) {
+                    throw $e;
+                }
+
+                try {
+                    throw $e;
+                } catch (Http_Redirect $e) {
+                    $result['redirect'] = $e->getRedirectUrl();
+                } catch (Http_Bad_Request $e) {
+                    $result = ['content' => Http_Status::getInstance('app', null, ['code' => 400, 'message' => $e->getMessage(), 'stackTrace' => $e->getTraceAsString()])];
+                } catch (Http_Forbidden $e) {
+                    $result = ['content' => Http_Status::getInstance('app', null, ['code' => 403, 'message' => $e->getMessage(), 'stackTrace' => $e->getTraceAsString()])];
+                } catch (Http_Not_Found $e) {
+                    $result = ['content' => Http_Status::getInstance('app', null, ['code' => 404, 'message' => $e->getMessage(), 'stackTrace' => $e->getTraceAsString()])];
+                } catch (\Exception $e) {
+                    Logger::getInstance(__CLASS__)->error('Application (Http): run action failure', __FILE__, __LINE__, $e);
+                    $result = [
+                        'content' => Http_Status::getInstance('app', null, ['message' => $e->getMessage(), 'stackTrace' => $e->getTraceAsString()]),
+                        'error' => Logger::getInstance(__CLASS__)->info($e->getMessage(), Logger::DANGER)
+                    ];
+                }
+            }
+        } catch (\Throwable $e) {
+            if (Request::isCli()) {
+                Logger::getInstance(__CLASS__)->error('Application (App): run action failure', __FILE__, __LINE__, $e);
+
+                $result = ['error' => Logger::getInstance(__CLASS__)->info($e->getMessage(), Logger::DANGER)];
+            } else {
+                if ($throwException) {
+                    throw $e;
+                }
+
+                try {
+                    throw $e;
+                } catch (Http_Redirect $e) {
+                    $result['redirect'] = $e->getRedirectUrl();
+                } catch (Http_Bad_Request $e) {
+                    $result = ['content' => Http_Status::getInstance('app', null, ['code' => 400, 'message' => $e->getMessage(), 'stackTrace' => $e->getTraceAsString()])];
+                } catch (Http_Forbidden $e) {
+                    $result = ['content' => Http_Status::getInstance('app', null, ['code' => 403, 'message' => $e->getMessage(), 'stackTrace' => $e->getTraceAsString()])];
+                } catch (Http_Not_Found $e) {
+                    $result = ['content' => Http_Status::getInstance('app', null, ['code' => 404, 'message' => $e->getMessage(), 'stackTrace' => $e->getTraceAsString()])];
+                } catch (\Exception $e) {
+                    Logger::getInstance(__CLASS__)->error('Application (Http): run action failure', __FILE__, __LINE__, $e);
+                    $result = [
+                        'content' => Http_Status::getInstance('app', null, ['message' => $e->getMessage(), 'stackTrace' => $e->getTraceAsString()]),
+                        'error' => Logger::getInstance(__CLASS__)->info($e->getMessage(), Logger::DANGER)
+                    ];
+                }
             }
         }
 
-        App::getResponse()->send();
+        if (Request::isCli()) {
+            if (isset($result['error'])) {
+                fwrite(STDERR, $result['error'] . "\n");
+            } else {
+                try {
+                    if (isset($result['content'])) {
+                        fwrite(STDOUT, $result['content'] . "\n");
+                    }
+                } catch (\Exception $e) {
+                    fwrite(STDERR, Logger::getInstance(__CLASS__)->error('Application (App): render content failure', __FILE__, __LINE__, $e) . "\n");
+                }
+            }
+        } else {
+            try {
+                App::getResponse()->send($result);
+            } catch (\Exception $e) {
+                echo Logger::getInstance(__CLASS__)->error('Application (Http): render content failure', __FILE__, __LINE__, $e);
+            }
+        }
 
         Profiler::setPoint($actionClass, $startTime, $startMemory);
 
-        Logger::fb(Profiler::getReport($actionClass), __CLASS__, 'LOG');
+        Logger::fb(Profiler::getReport(__CLASS__), __CLASS__, 'LOG');
 
-        Logger::renderLog();
-
-        if (!Request::isCli() && function_exists('fastcgi_finish_request')) {
-            fastcgi_finish_request();
-        }
-    }
-
-    private static function getAction()
-    {
-        if (Request::isCli()) {
-            ini_set('memory_limit', '1024M');
-
-            $input = Cli::getInstance()->get();
-            $actionClass = $input['actionClass'];
-            unset($input['actionClass']);
-
-            return [Action::getClass($actionClass), $input];
-        }
-
-        if (Request::isAjax()) {
-            $input = Data_Provider_Request::getInstance()->get();
-
-            Logger::fb($input);
-
-            if (!empty($input['call'])) {
-                $actionClass = $input['call'];
-                unset($input['call']);
-
-                return [Action::getClass($actionClass), $input];
-            }
-        }
-
-        $router = Router::getInstance();
-        $routeRequest = Route::getInstance($router->get('routeName'))->gets('request/' . $router->get('method'));
-        list($actionClass, $input) = each($routeRequest);
-
-        return [Action::getClass($actionClass), $input];
+//        if (!headers_sent() && !Request::isCli() && function_exists('fastcgi_finish_request')) {
+//            fastcgi_finish_request();
+//        }
     }
 
     /**
@@ -154,56 +213,11 @@ class App
 
     public static function update(Event $event)
     {
-        $composer = $event->getComposer();
+//        $composer = $event->getComposer();
+//
+//        /** @var Config $composerConfig */
+//        $composerConfig = $composer->getConfig();
 
-        /** @var Config $composerConfig */
-        $composerConfig = $composer->getConfig();
-
-        define('ICE_DIR', dirname(dirname(__DIR__)) . '/');
-        define('MODULE_DIR', getcwd() . '/');
-
-        App::check();
-    }
-
-    private static function check()
-    {
-        $moduleConfigFilePath = MODULE_DIR . 'Config/Ice/Core/Module.php';
-        $configFilePath = MODULE_DIR . 'Config/Ice/Core/Config.php';
-        $environmentConfigFilePath = MODULE_DIR . 'Config/Ice/Core/Environment.php';
-
-        if (
-            file_exists($moduleConfigFilePath) &&
-            file_exists($configFilePath) &&
-            file_exists($environmentConfigFilePath)
-        ) {
-            require_once ICE_DIR . 'bootstrap.php';
-
-            echo Check::call();
-
-            return;
-        }
-
-        $moduleConfig = [
-            'alias' => 'Draft',
-            'module' => [
-                'configDir' => 'Config/',
-                'sourceDir' => 'Source/',
-                'resourceDir' => 'Resource/',
-                'logDir' => '../_log/',
-                'cacheDir' => '../_cache/',
-                'uploadDir' => '../_upload/',
-                'compiledResourceDir' => '../_resource/',
-                'downloadDir' => '../_resource/download/',
-            ],
-            'modules' => [
-                'ifacesoft/ice' => '/ice'
-            ]
-        ];
-
-        File::createData($moduleConfigFilePath, $moduleConfig);
-
-        require_once ICE_DIR . 'bootstrap.php';
-
-        echo Install::call()->getContent();
+        system(realpath(__DIR__ . '/../../bin/') . '/ice Ice:Upgrade');
     }
 }

@@ -9,6 +9,8 @@
 
 namespace Ice\Helper;
 
+use DateTime;
+
 /**
  * Class Memory
  *
@@ -24,21 +26,38 @@ class Profiler
     /**
      * Return memory size of variable
      *
-     * @param  mixed $var Variable
+     * @param $start_memory
+     * @param mixed $var Variable
+     * @param bool $toString
      * @return int
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 1.10
      * @since   0.0
      */
-    public static function getVarSize($var)
+    public static function getVar($start_memory, $var, $toString = false)
     {
-        $start_memory = memory_get_usage();
-        $tmp = Json::decode(Json::encode($var));
-        $varSize = memory_get_usage() - $start_memory;
-        unset($tmp);
-        return $varSize;
+        try {
+//            ob_start();
+//            print_r($var);
+//            $varSize = ob_get_length();
+//            ob_end_clean();
+
+            $var = unserialize(serialize($var));
+            $varSize = memory_get_usage() - $start_memory;
+
+            $maxVarSize = pow(2, 18);
+
+            if ($varSize > $maxVarSize) {
+//            Core_Logger::getInstance(__CLASS__)->warning(['Too big data: {$0} bytes (max: {$1})', [Profiler::getPrettyMemory($varSize), Profiler::getPrettyMemory($maxVarSize)]], __FILE__, __LINE__);
+
+                return null;
+            }
+
+            return $toString ? Php::varToPhpString($var) : $var;
+        } catch (\Exception $e) {
+            return null;
+        }
     }
 
     /**
@@ -48,13 +67,19 @@ class Profiler
      * @return string
      *
      * @author dp <denis.a.shestakov@gmail.com>
-     *
+     * @todo сделать так-же как memory
      * @version 0.6
      * @since   0.6
      */
     public static function getPrettyTime($time)
     {
-        return round($time, 5) * 1000 . ' ms';
+        $seconds = (int)$time;
+
+        $miliseconds = round(($time - $seconds) * 1000, 3);
+
+        $diff = (new DateTime('@0'))->diff(new DateTime("@$seconds"));
+
+        return $diff->format('%a days, %h hours, %i minutes and %s seconds') . ' (' . $miliseconds . ' ms)';
     }
 
     /**
@@ -75,6 +100,6 @@ class Profiler
         }
         static $unit = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
         return round($memory / pow(1024, ($i = floor(log($memory, 1024)))), 2) . ' ' .
-        (isset($unit[$i]) ? $unit[$i] : 'undefined');
+            (isset($unit[$i]) ? $unit[$i] : 'undefined');
     }
 }

@@ -1,9 +1,10 @@
-<nav class="Widget_Menu_Nav<?php if (!empty($navClasses)) { ?> <?= $navClasses ?><?php } ?>">
-    <ul class="nav<?php if (!empty($classes)) { ?> <?= $classes ?><?php } ?>"
-        <?php if ($style) { ?>style="<?= $style ?>"<?php } ?>>
-
-        <?php foreach ($items as $item) : ?>
-            <?= $item ?>
-        <?php endforeach; ?>
-    </ul>
-</nav>
+<ul id="<?= $widgetId ?>"
+    class="<?= $widgetClass ?>  nav <?php if (!empty($classes)) : ?><?= $classes ?><?php endif; ?>"
+    data-widget='<?= $dataWidget ?>'
+    data-params='<?= $dataParams ?>'
+    data-for="<?= $parentWidgetId ?>"
+>
+    <?php foreach (reset($result) as $part) : ?>
+        <?= $part->render() ?>
+    <?php endforeach; ?>
+</ul>

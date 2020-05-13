@@ -10,37 +10,38 @@
 namespace Ice\Core;
 
 use Ice\App;
-use Ice\Core;
-use Ice\Data\Provider\Cli as Data_Provider_Cli;
-use Ice\Data\Provider\File;
-use Ice\Data\Provider\Registry;
-use Ice\Data\Provider\Repository;
-use Ice\Data\Provider\Request as Data_Provider_Request;
-use Ice\Data\Provider\Router as Data_Provider_Router;
-use Ice\Data\Provider\Session as Data_Provider_Session;
-use Ice\Exception\Http_Bad_Request;
-use Ice\Exception\Http_Not_Found;
-use Ice\Exception\Redirect;
-use Ice\Exception\Security_AccessDenied;
+use Ice\DataProvider\Registry;
+use Ice\DataProvider\Repository;
+use Ice\Exception\Config_Error;
+use Ice\Exception\Console_Run;
+use Ice\Exception\Error;
+use Ice\Exception\FileNotFound;
+use Ice\Exception\Http;
+use Ice\Exception\Http_Redirect;
+use Ice\Exception\Http_Unauthorized;
+use Ice\Helper\Access;
+use Ice\Helper\Input;
 use Ice\Helper\Json;
-use Ice\Helper\Php;
-use Ice\Helper\Validator as Helper_Validator;
+use Ice\Helper\Console as Helper_Console;
+use Ebs\Action\Private_Subscriber_RegistrationRequest_New_Confirm;
+
 
 /**
  * Class Action
  *
  * Core action abstract class
  *
- * @see Ice\Core\Container
+ * @see \Ice\Core\Container
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
  * @package    Ice
  * @subpackage Core
  */
-abstract class Action implements Cacheable
+abstract class Action
 {
     use Stored;
+    use Configured;
 
     /**
      * Child Actions
@@ -56,7 +57,7 @@ abstract class Action implements Cacheable
      *
      * @var array
      */
-    private $input = [];
+    private $input = null;
 
     /**
      * Cache ttl
@@ -65,12 +66,8 @@ abstract class Action implements Cacheable
      */
     private $ttl = null;
 
-    /**
-     * Action view
-     *
-     * @var View
-     */
-    private $view = null;
+
+    private $result = null;
 
     /**
      * Private constructor of action
@@ -87,438 +84,262 @@ abstract class Action implements Cacheable
     /**
      * Return action registry
      *
-     * @return Registry
+     * @return Registry|DataProvider
      *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
+     * @throws Exception
      * @version 0.5
      * @since   0.5
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
      */
     public static function getRegistry()
     {
         return Registry::getInstance(__CLASS__, self::getClass());
     }
 
-    public static function call(array $input = [], $level = 0)
+    /**
+     * @param array $params
+     * @param int $level
+     * @param bool $background
+     * @param array $options
+     * @return null
+     * @throws Config_Error
+     * @throws Console_Run
+     * @throws Error
+     * @throws Exception
+     * @throws Http
+     * @throws Http_Redirect
+     * @throws FileNotFound
+     */
+    public static function call(array $params = [], $level = 0, $background = false, array $options = [])
     {
+        if ($background) {
+            array_walk($params, function (&$value, $key) {
+                return $value = $key . '=' . (trim($value) ? escapeshellarg(trim($value)) : '');
+            });
+
+            $commands = ICE_DIR . 'bin/ice ' . escapeshellarg(get_called_class()) . ' ' . implode(' ', $params);
+
+            Helper_Console::run($commands, true, true);
+
+            return [];
+        }
+
         $startTime = Profiler::getMicrotime();
         $startMemory = Profiler::getMemoryGetUsage();
 
-        /**
-         * @var Action $actionClass
-         */
+        $logger = Logger::getInstance(__CLASS__);
+
+        /** @var Action $actionClass */
         $actionClass = self::getClass();
 
         if (Request::isCli()) {
-            Action::getLogger()->info(['{$0}call: {$1}...', [str_repeat("\t", $level), $actionClass]], Logger::MESSAGE);
+            $logger->info(['{$0}call: {$1}...', [str_repeat("\t", $level), $actionClass]], Logger::MESSAGE, true);
         }
 
-        Action::checkResponse($input);
+//        if ($actionClass::getConfig()->get('cache/ttl') != -1) {
+//            $actionCacher = Action::getCacher($actionClass);
+//        }
 
-        $input = $actionClass::getInput($input);
+        /** @var Action $action */
+        $action = $actionClass::create($params, $options);
 
+        $inputString = Json::encode($action->getInput());
 
-        $env = $actionClass::getConfig()->get('access/env', false);
-
-        if (isset($input['env'])) {
-            $env = $input['env'];
-        }
-
-        if ($env && $env != Environment::getInstance()->getName()) {
-            return View::create($actionClass);
-        }
-
-        $request = $actionClass::getConfig()->get('access/request', false);
-
-        if (isset($input['request'])) {
-            $request = $input['request'];
-        }
-
-        if ($request) {
-            switch ($request) {
-                case 'cli':
-                    if (!Request::isCli()) {
-                        return View::create($actionClass);
-                    }
-                    break;
-                case 'ajax':
-                    if (!Request::isAjax()) {
-                        return View::create($actionClass);
-                    }
-                    break;
-                default:
-            }
-        }
-
-        //        $actionCacher = Action::getCacher();
-
-        if ($actionClass::getConfig()->get('ttl', false) == 3600) {
-            $actionCacher = File::getInstance($actionClass);
-        }
-
-        $inputString = Json::encode($input);
         $hash = crc32($inputString);
         $actionHash = $actionClass . '/' . $hash;
 
         App::getContext()->initAction($actionClass, $hash);
-        $action = null;
 
-        if (isset($actionCacher)) {
-            /**
-             * @var Action $action
-             */
-            $action = $actionCacher->get($actionHash);
-        }
-        if (!$action) {
-            $action = $actionClass::create();
+//        if (isset($actionCacher) && $act = $actionCacher->get($actionHash)) {
+//            return $act->result;
+//        }
 
-            $action->setInput($input);
-
-            $output = (array)$action->run($input);
-
-            Profiler::setPoint($actionClass . ' ' . $hash, $startTime, $startMemory);
-            Logger::fb($input, 'action - ' . $actionClass . ' start', 'INFO');
-            Logger::fb(Profiler::getReport($actionClass . ' ' . $hash), 'action finish', 'INFO');
-            //            if ($content = $actionContext->getContent()) {
-            //                App::getContext()->setContent(null);
-            //                return $content;
-            //            }
-
-            $startTimeAfter = Profiler::getMicrotime();
-            $startMemoryAfter = Profiler::getMemoryGetUsage();
-
-            $rawActions = array_merge($action->actions, $actionClass::getConfig()->gets('actions', false));
-
-            /**
-             * @var string $actionKey
-             * @var array $actionData
-             * @var Action $subActionClass
-             * @var array $subActionParams
-             */
-            foreach ($action->getActions($rawActions) as $actionKey => $actionData) {
-                $newLevel = $level + 1;
-
-                foreach ($actionData as $subActionClass => $actionItem) {
-                    /**
-                     * @var Action $subActionClass
-                     */
-                    list($subActionClass, $subActionParams) = each($actionItem);
-
-                    $subView = null;
-
-                    try {
-                        $subView = $subActionClass::call($subActionParams, $newLevel)->getContent();
-                    } catch (Redirect $e) {
-                        throw $e;
-                    } catch (Http_Bad_Request $e) {
-                        throw $e;
-                    } catch (Http_Not_Found $e) {
-                        throw $e;
-                    } catch (Security_AccessDenied $e) {
-                        $subView = $e->getMessage();
-                    } catch (\Exception $e) {
-                        $subView = Action::getLogger()->error(
-                            ['Calling subAction "{$0}" in action "{$1}" failed', [$subActionClass, $actionClass]],
-                            __FILE__,
-                            __LINE__,
-                            $e
-                        );
-                    }
-
-                    $output[$actionKey][] = $subView;
-                }
+        $action->result = $action->transaction(
+            function ($action) {
+                return (array)$action->run($action->getInput());
             }
-
-            Profiler::setPoint('Action ' . $actionClass . ' (childs)', $startTimeAfter, $startMemoryAfter);
-
-            $action->setOutput($output);
-
-            $action->getView()->render();
-            if (isset($actionCacher)) {
-                $actionCacher->set($actionHash, $action, $action->getTtl());
-            }
-            if (Request::isCli()) {
-                Action::getLogger()->info(
-                    ['{$0}{$1} complete!', [str_repeat("\t", $level), $actionClass::getClassName()]],
-                    Logger::MESSAGE
-                );
-            }
-        }
-
-        return $action->getView();
-    }
-
-    private static function checkResponse(&$input)
-    {
-        if (isset($input['response'])) {
-            if (isset($input['response']['contentType'])) {
-                App::getResponse()->setContentType($input['response']['contentType']);
-            }
-
-            if (isset($input['response']['statusCode'])) {
-                App::getResponse()->setStatusCode($input['response']['statusCode']);
-            }
-
-            unset($input['response']);
-        }
-    }
-
-    /**
-     * @param array $data
-     * @return array
-     * @throws Redirect
-     */
-    public static function getInput(array $data = [])
-    {
-        $params = array_merge(
-            self::getConfig()->gets('input', false),
-            ['actions', 'template', 'layout', 'viewRenderClass', 'env']
         );
 
-        $input = Action::prepareInput($params, $data);
+        $key = 'run - ' . $actionClass . '/' . $hash;
 
-        if (isset($input['redirectUrl'])) {
-            throw new Redirect($input['redirectUrl']);
-        }
+        Profiler::setPoint($key, $startTime, $startMemory);
 
-        return $input;
-    }
+        Logger::fb($params, 'action: call ' . $actionClass . '/' . $hash, 'INFO');
+        Logger::fb(Profiler::getReport($key), 'action', 'INFO');
+        //            if ($content = $actionContext->getContent()) {
+        //                App::getContext()->setContent(null);
+        //                return $content;
+        //            }
 
-    /**
-     * Get action config
-     *
-     * @return Config
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since   0.5
-     */
-    public static function getConfig()
-    {
-        $repository = self::getRepository();
+        $startTimeAfter = Profiler::getMicrotime();
+        $startMemoryAfter = Profiler::getMemoryGetUsage();
 
-        if ($config = $repository->get('config')) {
-            return $config;
-        }
+        $rawActions = array_merge($action->actions, $actionClass::getConfig()->gets('actions', []));
 
         /**
-         * @var Action $actionClass
+         * @var string $actionKey
+         * @var array $actionData
+         * @var Action $subActionClass
+         * @var array $subActionParams
          */
-        $actionClass = self::getClass();
+        foreach ($action->getActions($rawActions) as $actionKey => $actionData) {
+            $newLevel = $level + 1;
 
-        $config = Config::create(
-            $actionClass,
-            array_merge_recursive(
-                $actionClass::config(),
-                Config::getInstance($actionClass, null, false, -1)
-                    ->gets()
-            )
-        );
+            foreach ($actionData as $subActionClass => $actionItem) {
+                /**@var Action $subActionClass */
+                list($subActionClass, $subActionParams) = each($actionItem);
 
-        return $repository->set('config', $config);
-    }
+                $result = [];
 
-    /**
-     * Return action repository
-     *
-     * @return Repository
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since   0.5
-     */
-    public static function getRepository()
-    {
-        return Repository::getInstance(__CLASS__, self::getClass());
-    }
-
-    /**
-     * Action config
-     *
-     * example:
-     * ```php
-     *  $config = [
-     *      'actions' => [
-     *          ['Ice:Title', ['title' => 'page title'], 'title'],
-     *          ['Ice:Another_Action, ['param' => 'value']
-     *      ],
-     *      'view' => [
-     *          'layout' => Emmet::PANEL_BODY,
-     *          'template' => _Custom,
-     *          'viewRenderClass' => Ice:Twig,
-     *      ],
-     *      'input' => [
-     *          Request::DEFAULT_DATA_PROVIDER_KEY => [
-     *              'paramFromGETorPOST => [
-     *                  'default' => 'defaultValue',
-     *                  'validators' => ['Ice:PATTERN => PATTERN::LETTERS_ONLY]
-     *                  'type' => 'string'
-     *              ]
-     *          ]
-     *      ],
-     *      'output' => ['Ice:Resource/Ice\Action\Index'],
-     *      'ttl' => 3600,
-     *      'roles' => []
-     *  ];
-     * ```
-     *
-     * @return array
-     *
-     * @author anonymous <email>
-     *
-     * @version 0
-     * @since   0
-     */
-    protected static function config()
-    {
-        return [];
-    }
-
-    private static function prepareInput($params, $data)
-    {
-        $dataProviderKeyMap = [
-            'request' => Data_Provider_Request::DEFAULT_DATA_PROVIDER_KEY,
-            'router' => Data_Provider_Router::DEFAULT_DATA_PROVIDER_KEY,
-            'session' => Data_Provider_Session::DEFAULT_DATA_PROVIDER_KEY,
-            'cli' => Data_Provider_Cli::DEFAULT_DATA_PROVIDER_KEY,
-        ];
-
-        $input = [];
-
-        foreach ($params as $name => $param) {
-            if (is_int($name)) {
-                $name = $param;
-                $param = [];
-            }
-
-            if (is_string($param)) {
-                $input[$name] = $param;
-                continue;
-            }
-
-            $dataProviderKeys = isset($param['providers'])
-                ? (array)$param['providers']
-                : ['default'];
-
-            foreach ($dataProviderKeys as $dataProviderKey) {
-                if (isset($input[$name])) {
-                    continue;
+                try {
+                    $result = $subActionClass::call($subActionParams, $newLevel);
+                } catch (Http_Redirect $e) {
+                    throw $e;
+                } catch (Http $e) {
+                    throw $e;
+                } catch (\Exception $e) {
+                    $result['error'] = $logger->error(
+                        ['Calling subAction "{$0}" in action "{$1}" failed', [$subActionClass, $actionClass]],
+                        __FILE__,
+                        __LINE__,
+                        $e
+                    );
                 }
 
-                if (isset($dataProviderKeyMap[$dataProviderKey])) {
-                    $dataProviderKey = $dataProviderKeyMap[$dataProviderKey];
-                }
-
-                if ($dataProviderKey == 'default') {
-                    if (array_key_exists($name, $data)) {
-                        $input[$name] = $data[$name];
-                        continue;
-                    }
-
-                    if (isset($param['default'])) {
-                        $input[$name] = $param['default'];
-                    }
-
-                    continue;
-                }
-
-                $input[$name] = Data_Provider::getInstance($dataProviderKey)->get($name);
-            }
-
-            if ($value = Action::getInputParam($name, isset($input[$name]) ? $input[$name] : null, $param)) {
-                $input[$name] = $value;
+                $action->result[$actionKey][] = $result;
             }
         }
 
-        return $input;
-    }
+        Profiler::setPoint('Action ' . $actionClass . ' (childs)', $startTimeAfter, $startMemoryAfter);
 
-    /**
-     * Return valid input value
-     *
-     * @param  $name
-     * @param  $value
-     * @param  $param
-     * @return mixed
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since   0.5
-     */
-    public static function getInputParam($name, $value, $param)
-    {
-        if (empty($param)) {
-            return $value;
+//        if (isset($actionCacher)) {
+//            $actionCacher->set([$actionHash => $action], $action->getTtl());
+//        }
+
+        if (Request::isCli()) {
+            $logger->info(
+                ['{$0}{$1} complete!', [str_repeat("\t", $level), $actionClass::getClassName()]],
+                Logger::MESSAGE,
+                true
+            );
         }
 
-        if ($value === null && isset($param['default'])) {
-            $value = $param['default'];
-        }
-
-        if (isset($param['type'])) {
-            $value = Php::castTo($param['type'], $value);
-        }
-
-        if (isset($param['validators'])) {
-            foreach ((array)$param['validators'] as $validatorClass => $validatorParams) {
-                if (is_int($validatorClass)) {
-                    $validatorClass = $validatorParams;
-                    $validatorParams = null;
-                }
-
-                Helper_Validator::validate($validatorClass, $validatorParams, $name, $value);
-            }
-        }
-
-        //        if (isset($param['converter']) && is_callable($param['converter'])) {
-        //            $value = $param['converter']($value);
-        //        }
-
-        return $value;
+        return $action->result;
     }
 
     /**
      * Get action object by name
-     *
+     * @param array $params
      * @return Action
-     * @throws Redirect
-     *
+     * @throws Exception
+     * @throws Config_Error
+     * @throws FileNotFound
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.5
+     * @version 1.1
      * @since   0.0
      */
-    public static function create()
+    private static function create(array $params = [], array $options = [])
     {
         $actionClass = self::getClass();
 
-        return new $actionClass();
+        /** @var Action $action */
+        $action = new $actionClass();
+
+        $action->init($params, $options);
+
+        return $action;
     }
 
     /**
-     * Init input params
-     *
-     * @param array $input
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since   0.5
+     * @param array $data
+     * @throws Exception
+     * @throws Config_Error
+     * @throws FileNotFound
      */
-    public function setInput($input)
+    protected function init(array $data, array $options = [])
     {
-        $this->initActions($input);
-        $this->initView($input);
-        $this->initTtl($input);
+        /** @var Action|Configured $actionClass */
+        $actionClass = get_class($this);
 
-        $this->input = $input;
+        $config = $actionClass::getConfig();
+
+//        $this->setInput(Input::get($config->gets('input', []), $data, $actionClass)); // use this ensteed next
+        $this->initInput($config->gets('input', []), $data);
+
+        $env = isset($this->input['env'])
+            ? $this->input['env']
+            : $config->get('access/env', false);
+
+        $request = isset($this->input['request'])
+            ? $this->input['request']
+            : $config->get('access/request', false);
+
+//        $roles = isset($this->input['roles'])
+//            ? $this->input['roles']
+//            : $actionClass::getConfig()->gets('access/roles', []);
+
+
+        $checkAuth = $config->get('access/auth', null);
+
+        if ($checkAuth !== null) {
+            if (!Security::getInstance()->isAuth() && $checkAuth) {
+                throw new Http_Unauthorized();
+            }
+        }
+
+        $roles = $config->gets('access/roles', []);
+
+        if (!empty($options['access']['roles'])) {
+            $roles = array_merge($roles, (array)$options['access']['roles']);
+        }
+
+        if (Request::isCli()) {
+            $roles = [];
+        }
+
+        Access::check(['env' => $env, 'roles' => $roles, 'request' => $request]);
+
+        $this->initActions();
+        $this->initTtl();
     }
 
-    private function initActions(&$input)
+    /**
+     * @param array $configInput
+     * @param array $data
+     * @throws Exception
+     * @throws Config_Error
+     * @throws FileNotFound
+     * @deprecated use before in init (*)
+     */
+    protected function initInput(array $configInput, array $data = [])
     {
+        /** @var Action|Configured $actionClass */
+        $actionClass = get_class($this);
+
+        $extendFields = ['actions', 'template', 'layout', 'viewRenderClass', 'env'];
+
+        $configInput = array_merge(
+            $actionClass::getConfig()->gets('input', []),
+            $configInput, ['actions', 'template', 'layout', 'viewRenderClass', 'env']
+        );
+
+        $input = Input::get($configInput, $data);
+
+        foreach ($extendFields as $extendField) {
+            if ($input[$extendField] === null) {
+                unset($input[$extendField]);
+            }
+        }
+
+        $this->setInput($input);
+    }
+
+    private function initActions()
+    {
+        $input = $this->getInput();
+
         if (isset($input['actions'])) {
             foreach ((array)$input['actions'] as $key => $action) {
                 if (is_string($action)) {
@@ -529,7 +350,25 @@ abstract class Action implements Cacheable
             }
 
             unset($input['actions']);
+
+            $this->setInput($input);
         }
+    }
+
+    /**
+     * @return array
+     */
+    public function getInput()
+    {
+        return $this->input;
+    }
+
+    /**
+     * @param array $input
+     */
+    public function setInput($input)
+    {
+        $this->input = $input;
     }
 
     protected function addAction(array $action)
@@ -537,83 +376,24 @@ abstract class Action implements Cacheable
         $this->actions[] = $action;
     }
 
-    private function initView(&$input)
+    private function initTtl()
     {
-        /**
-         * @var Action $actionClass
-         */
-        $actionClass = get_class($this);
+        $input = $this->getInput();
 
-        $view = $this->getView();
+        if (isset($input['cache']['ttl'])) {
+            $this->setTtl($input['cache']['ttl']);
 
-        if (array_key_exists('template', $input)) {
-            $view->setTemplate($input['template']);
-            unset($input['template']);
-        } else {
-            $view->setTemplate($actionClass::getConfig()->get('view/template', false));
-        }
+            unset($input['cache']['ttl']);
 
-        if (array_key_exists('viewRenderClass', $input)) {
-            $view->setViewRenderClass($input['viewRenderClass']);
-            unset($input['viewRenderClass']);
-        } else {
-            $view->setViewRenderClass($actionClass::getConfig()->get('view/viewRenderClass', false));
-        }
-
-        if (array_key_exists('layout', $input)) {
-            $view->setLayout($input['layout']);
-            unset($input['layout']);
-        } else {
-            $view->setLayout($actionClass::getConfig()->get('view/layout', false));
-        }
-    }
-
-    /**
-     * @return View
-     */
-    public function getView()
-    {
-        if ($this->view) {
-            return $this->view;
-        }
-
-        return $this->view = View::create(get_class($this));
-    }
-
-    private function initTtl(&$input)
-    {
-        if (isset($input['ttl'])) {
-            $this->setTtl($input['ttl']);
-            unset($input['ttl']);
+            $this->setInput($input);
         } else {
             $this->setTtl(null);
         }
     }
 
-    /**
-     * Action config
+    /** Run action
      *
-     * @return array
-     *
-     *  protected static function config()
-     *  {
-     *      return [
-     *          'view' => ['template' => '', 'viewRenderClass' => null],
-     *          'actions' => [],
-     *          'input' => [],
-     *          'output' => [],
-     *          'ttl' => -1,
-     *          'access' => [
-     *              'roles' => [],
-     *              'request' => null,
-     *              'env' => null
-     *          ]
-     *      ];
-     *  }
-     *
-     * /** Run action
-     *
-     * @param  array $input
+     * @param array $input
      * @return array
      */
     abstract public function run(array $input);
@@ -665,25 +445,7 @@ abstract class Action implements Cacheable
             }
         }
 
-        $class = $class[0] == '_'
-            ? get_class($this) . $class
-            : Action::getClass($class);
-
-        return [$key, $class, $params];
-    }
-
-    /**
-     * @param array $output
-     */
-    public function setOutput($output)
-    {
-        foreach (self::getConfig()->gets('output', false) as $name => $dataProviderKey) {
-            if (!isset($output[$name])) {
-                $output[$name] = Data_Provider::getInstance($dataProviderKey)->get($name);
-            }
-        }
-
-        $this->getView()->setData($output);
+        return [$key, Action::getClass($class, $this), $params];
     }
 
     /**
@@ -699,6 +461,9 @@ abstract class Action implements Cacheable
      *
      * @param integer $ttl
      *
+     * @throws Exception
+     * @throws Config_Error
+     * @throws FileNotFound
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.5
@@ -711,32 +476,86 @@ abstract class Action implements Cacheable
              * @var Action $actionClass
              */
             $actionClass = get_class($this);
-            $ttl = $actionClass::getConfig()->get('ttl', false);
+            $ttl = $actionClass::getConfig()->get('cache/ttl', false);
         }
 
         $this->ttl = $ttl;
     }
 
     /**
+     * Return action repository
+     *
+     * @return Repository
+     *
+     * @throws Exception
+     * @version 0.5
+     * @since   0.5
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     */
+    public static function getRepository()
+    {
+        return Repository::getInstance(__CLASS__, self::getClass());
+    }
+
+    /**
+     * Action config
+     * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since   0.5
+     */
+    protected static function config()
+    {
+        return [
+            'view' => ['template' => '', 'viewRenderClass' => null, 'layout' => null],
+            'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'Action: Access denied!'],
+            'cache' => ['ttl' => -1, 'count' => 1000],
+            'input' => [],
+            'output' => [],
+            'dataSources' => []
+        ];
+    }
+
+    /**
+     * @param array $output
+     * @throws Exception
+     * @throws Config_Error
+     * @throws FileNotFound
+     */
+    public function setOutput($output)
+    {
+        foreach (self::getConfig()->gets('output', []) as $name => $dataProviderKey) {
+            if (!isset($output[$name])) {
+                $output[$name] = DataProvider::getInstance($dataProviderKey)->get($name);
+            }
+        }
+
+        $this->getView()->setData($output);
+    }
+
+    /**
      * Validate cacheable object
      *
-     * @param  $value
-     * @return Cacheable
+     * @return array
      *
-     * @author anonymous <email>
-     *
+     * @throws Exception
      * @version 0
      * @since   0
+     * @author anonymous <email>
+     *
      */
-    public function validate($value)
+    public function validate()
     {
-        return $this;
+        return Validator::validateParams($this->getInput(), $this->getInputConfig());
     }
 
     /**
      * Invalidate cacheable object
      *
-     * @return Cacheable
+     * @return Action
      *
      * @author anonymous <email>
      *
@@ -746,5 +565,126 @@ abstract class Action implements Cacheable
     public function invalidate()
     {
         return $this;
+    }
+
+    /**
+     * @return Logger
+     * @throws Error
+     * @throws FileNotFound
+     */
+    public function getLogger()
+    {
+        return Logger::getInstance(get_class($this));
+    }
+
+    /**
+     * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @deprecated 1.10 use Action::getConfigData
+     * @version 1.9
+     * @since   1.9
+     */
+    public function getInputConfig()
+    {
+        return $this->getConfigData('input', []);
+    }
+
+    public function getConfigData($configPart, $default)
+    {
+        /** @var Action $actionClass */
+        $actionClass = get_class($this);
+
+        return is_array($default)
+            ? $actionClass::getConfig()->gets($configPart, $default)
+            : $actionClass::getConfig()->get($configPart, $default);
+    }
+
+    /**
+     * @param $dataSourceName
+     * @return \Ice\Core|Container|DataSource
+     * @throws Exception
+     */
+    protected function getDataSource($dataSourceName)
+    {
+        return DataSource::getInstance(
+            $this->getConfigData('dataSources/' . $dataSourceName . '/classKey', null)
+        );
+    }
+
+    /**
+     * @param DataProvider|string $dataProviderClass
+     * @param string $key
+     * @param string $index
+     * @return DataProvider
+     *
+     * @throws Exception
+     * @todo Need rename to getDataProvider
+     */
+    public function getDProvider($dataProviderClass, $key = 'default', $index = null)
+    {
+        if (!$index) {
+            $index = get_class($this);
+        }
+
+        return $dataProviderClass::getInstance($key, $index);
+    }
+
+    public function transactionBegin()
+    {
+        foreach ($this->getConfigData('dataSources', []) as $dataSourceName => $dataSourceData) {
+            if (!empty($dataSourceData['transaction'])) {
+                $this->getDataSource($dataSourceName)->beginTransaction();
+            }
+        }
+    }
+
+    public function transactionCommit()
+    {
+        foreach ($this->getConfigData('dataSources', []) as $dataSourceName => $dataSourceData) {
+            if (!empty($dataSourceData['transaction'])) {
+                $this->getDataSource($dataSourceName)->commitTransaction();
+            }
+        }
+    }
+
+    public function transactionRollback()
+    {
+        foreach ($this->getConfigData('dataSources', []) as $dataSourceName => $dataSourceData) {
+            if (!empty($dataSourceData['transaction'])) {
+                $this->getDataSource($dataSourceName)->rollbackTransaction(new Error('Transaction rollback'));
+            }
+        }
+    }
+
+    public function transacionRestart($callback = null)
+    {
+        $this->transactionRollback();
+
+        if (is_callable($callback)) {
+            $callback();
+        }
+
+        $this->transactionBegin();
+    }
+
+    private function transaction($callback)
+    {
+        $result = null;
+
+        try {
+            $this->transactionBegin();
+
+            $result = $callback($this);
+
+            $this->transactionCommit();
+        } catch (Exception $e) {
+            $this->transactionRollback();
+
+            throw $e;
+        }
+
+        return $result;
     }
 }

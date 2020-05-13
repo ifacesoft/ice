@@ -27,6 +27,31 @@ use Ice\Core\Action;
  * @version 0.0
  * @since   0.0
  */
-class Layout_Blank extends Layout
+class Layout_Blank extends Action
 {
+    /**
+     * Action config
+     *
+     * @return array
+     */
+    protected static function config()
+    {
+        return [
+            'view' => ['template' => null, 'viewRenderClass' => 'Ice:Php', 'layout' => ''],
+            'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'Action: Access denied!'],
+            'cache' => ['ttl' => -1, 'count' => 1000],
+            'actions' => [],
+            'input' => [],
+            'output' => []
+        ];
+    }
+
+    /** Run action
+     *
+     * @param  array $input
+     * @return array
+     */
+    public function run(array $input)
+    {
+    }
 }

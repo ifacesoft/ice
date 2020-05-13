@@ -1,11 +1,26 @@
+/web/bundles/
+/app/bootstrap.php.cache
+/app/cache/*
+/app/config/parameters.yml
+/app/logs/*
+!app/cache/.gitkeep
+!app/logs/.gitkeep
+/build/
+/vendor
+/bin/
+/composer.phar
 *.orig
+/web/uploads
+/.idea/
 
-.git
 .hg
+.git
 
 .idea
 
-Resource/api
-Resource/uml
-
 composer.phar
+
+var
+vendor
+
+Web/resource

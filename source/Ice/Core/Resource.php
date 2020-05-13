@@ -9,21 +9,20 @@
 namespace Ice\Core;
 
 use Ice\Core;
-use Ice\Data\Provider\Cacher;
-use Ice\Data\Provider\Repository;
+use Ice\DataProvider\Repository;
 use Ice\Exception\FileNotFound;
 use Ice\Helper\Api_Client_Yandex_Translate;
 use Ice\Helper\File;
 use Ice\Helper\Json;
-use Ice\Helper\String;
-use Ice\View\Render\Replace;
+use Ice\Helper\Type_String;
+use Ice\Render\Replace;
 
 /**
  * Class Resource
  *
  * Core resource (localizations) class
  *
- * @see Ice\Core\Container
+ * @see \Ice\Core\Container
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
@@ -58,7 +57,6 @@ class Resource implements Cacheable
      */
     private function __construct()
     {
-
     }
 
     /**
@@ -73,7 +71,7 @@ class Resource implements Cacheable
      * @version 0.0
      * @since   0.0
      */
-    public function get($message, $params = null, $class = null)
+    public function get($message, $params = [], $class = null)
     {
         if ($class) {
             return Resource::create($class)->get($message, $params);
@@ -81,10 +79,10 @@ class Resource implements Cacheable
 
         $locale = Request::locale();
 
-        $cacher = Cacher::getInstance($this->class, __CLASS__);
+        $repository = Resource::getRepository($class);
         $key = $locale . '/' . crc32(Json::encode([$message, $params]));
 
-        if ($localizedMessage = $cacher->get($key)) {
+        if ($localizedMessage = $repository->get($key)) {
             return $localizedMessage;
         }
 
@@ -96,14 +94,30 @@ class Resource implements Cacheable
             $this->resource[$message][$locale] = $this->set(rtrim($message, ';'));
         }
 
-        return $cacher->set(
-            $key,
-            Replace::getInstance()->fetch(
-                $this->resource[$message][$locale],
+        $resourceMessage = $this->resource[$message][$locale];
+
+        $render = strstr($resourceMessage, '/', true);
+
+        if (Type_String::endsWith($render, ['Php', 'Smarty', 'Twig', 'Replace'])) {
+            $renderClass = Render::getClass($render);
+
+            if (Loader::load($renderClass, false)) {
+                $resourceMessage = substr($this->resource[$message][$locale], strlen($render) + 1);
+            } else {
+                $renderClass = Replace::getClass();
+            }
+        } else {
+            $renderClass = Replace::getClass();
+        }
+
+        return $repository->set([
+            $key => $renderClass::getInstance()->fetch(
+                $resourceMessage,
                 (array)$params,
-                View_Render::TEMPLATE_TYPE_STRING
+                null,
+                Render::TEMPLATE_TYPE_STRING
             )
-        );
+        ])[$key];
     }
 
     /**
@@ -120,12 +134,26 @@ class Resource implements Cacheable
      */
     public static function create($class)
     {
-        $repository = Resource::getRepository();
+        if (is_object($class)) {
+            $class = get_class($class);
+        }
 
-        if ($resource = $repository->get($class)) {
+        $repository = Resource::getRepository($class);
+
+        if ($resource = $repository->get('resource')) {
             return $resource;
         }
 
+        $resource = new Resource();
+
+        $resource->resource = Resource::getResources($class);
+        $resource->class = $class;
+
+        return $repository->set(['resource' => $resource])['resource'];
+    }
+
+    private static function getResources($class)
+    {
         $resources = [];
 
         $resourceFiles = Loader::getFilePath($class, '.res.php', Module::RESOURCE_DIR, false, true, false, true);
@@ -136,25 +164,28 @@ class Resource implements Cacheable
             }
         }
 
-        $resource = new Resource();
-
-        $resource->resource = $resources;
-        $resource->class = $class;
-
-        return $repository->set($class, $resource);
+        return $resources;
     }
 
     public function set($message)
     {
-        $resourceFile = Loader::getFilePath($this->class, '.res.php', Module::RESOURCE_DIR, false, true, true);
-
-        $data = file_exists($resourceFile)
-            ? File::loadData($resourceFile)
-            : [];
-
-        if (!isset($data[$message])) {
-            $data[$message] = [];
+        if (Environment::getInstance()->isProduction()) {
+            return $message;
         }
+
+        if (empty($message)) {
+            Logger::getInstance(__CLASS__)->warning('Empty resource message', __FILE__, __LINE__);
+
+            return $message;
+        }
+
+        $oldData = Resource::getResources($this->class);
+
+        $data = [];
+
+        $data[$message] = isset($oldData[$message])
+            ? $oldData[$message]
+            : [];
 
         try {
             $from = Api_Client_Yandex_Translate::detect($message);
@@ -163,11 +194,11 @@ class Resource implements Cacheable
                 $data[$message][$from] = $message;
             }
 
-            $requestConfig = Request::getConfig();
+            $requestConfig = Config::getInstance(Request::getClass());
 
             if ($requestConfig->get('multiLocale')) {
                 foreach (Api_Client_Yandex_Translate::getLangs($from) as $lang) {
-                    if (String::startsWith($lang, $from)) {
+                    if (Type_String::startsWith($lang, $from)) {
                         $to = substr($lang, strlen($from . '_'));
 
                         if (!isset($data[$message][$to])) {
@@ -185,11 +216,21 @@ class Resource implements Cacheable
                 }
             }
         } catch (\Exception $e) {
-            Resource::getLogger()->exception('error', __FILE__, __LINE__, $e);
+            Logger::getInstance(__CLASS__)->exception('error', __FILE__, __LINE__, $e);
             $data[$message][Request::locale()] = $message;
         }
 
-        File::createData($resourceFile, $data);
+        $moduleResourceFile = getResourceDir() . str_replace(['\\', '_'], '/', $this->class) . '.res.php';
+
+        $moduleResourceData = file_exists($moduleResourceFile)
+            ? File::loadData($moduleResourceFile)
+            : [];
+
+        $resourceData = array_merge($moduleResourceData, array_diff_key($data, $moduleResourceData));
+
+        ksort($resourceData);
+
+        File::createData($moduleResourceFile, $resourceData);
 
         return $message;
     }
@@ -223,5 +264,13 @@ class Resource implements Cacheable
     public function invalidate()
     {
         // TODO: Implement invalidate() method.
+    }
+
+    /**
+     * @return string
+     */
+    public function getResourceClass()
+    {
+        return $this->class;
     }
 }

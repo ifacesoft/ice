@@ -30,7 +30,7 @@ class Test_Php extends Action
      *          ]
      *      ],
      *      'output' => ['Ice:Resource/Ice\Action\Index'],
-     *      'ttl' => 3600,
+     *      'cache' => ['ttl' => -1, 'count' => 1000],
      *      'roles' => []
      *  ];
      * ```
@@ -46,7 +46,8 @@ class Test_Php extends Action
     {
         return [
             'view' => ['viewRenderClass' => 'Ice:Php', 'layout' => ''],
-            'input' => 'inputTestPhp'
+            'input' => 'inputTestPhp',
+            'cache' => ['ttl' => -1, 'count' => 1000],
         ];
     }
 

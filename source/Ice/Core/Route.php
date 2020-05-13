@@ -9,11 +9,10 @@
 
 namespace Ice\Core;
 
-use Ice\Core;
-use Ice\Data\Provider\Router;
-use Ice\Exception\Http_Not_Found;
+use Ice\Exception\Error;
+use Ice\Exception\RouteNotFound;
 use Ice\Helper\File;
-use Ice\View\Render\Replace;
+use Ice\Render\Replace;
 
 /**
  * Class Route
@@ -29,28 +28,97 @@ use Ice\View\Render\Replace;
  */
 class Route extends Config
 {
+    const PARAM_DIDITS = '(\d+)';
+
+    public function getLayoutActionClassName($method)
+    {
+        return $this->get('request/' . $method . '/layout');
+    }
+
+    public function getResponseRedirect($method)
+    {
+        return Route::getUrl($this->gets('request/' . $method . '/response/redirect', []));
+    }
+
+    /**
+     * Generate url by route with query string
+     *
+     * @param  array $params
+     * @return string
+     * @throws \Exception
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @todo из квери стринг убирать параметры, которые присутствуют в роуте
+     *
+     * @version 1.1
+     * @since   0.0
+     */
+    public function getUrl(array $params = [])
+    {
+//        $params = array_filter($params, function ($param) {
+//            return !is_array($param);
+//        });
+
+        $params = array_filter($params, function ($param) {
+            return $param !== null && $param !== '' && !is_array($param);
+        });
+
+        $url = Replace::getInstance()->fetch($this->getRoute(), array_intersect_key($params, $this->gets('params')), null, Render::TEMPLATE_TYPE_STRING);
+
+        return $params ? $url . '?' . http_build_query(array_diff_key($params, $this->gets('params'))) : $url;
+    }
+
+    /**
+     * Return route string
+     *
+     * @return mixed
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since   0.0
+     * @throws Exception
+     */
+    public function getRoute()
+    {
+        return $this->get('route');
+    }
+
+    /**
+     * @return Route|null
+     * @throws Exception
+     * @throws RouteNotFound
+     */
+    public function getParentRoute()
+    {
+        if ($parentRouteName = $this->get('parent', false)) {
+            return Route::getInstance($parentRouteName);
+        }
+
+        return null;
+    }
+
     /**
      * @param null $routeName
      * @param null $postfix
      * @param bool $isRequired
      * @param null $ttl
+     * @param array $selfConfig
      * @return Route
      * @throws Exception
+     * @throws RouteNotFound
+     * @throws \Ice\Exception\Config_Error
      */
-    public static function getInstance($routeName, $postfix = null, $isRequired = false, $ttl = null)
+    public static function getInstance($routeName, $postfix = null, $isRequired = false, $ttl = null, array $selfConfig = [])
     {
         $routes = self::getRoutes();
 
+        if (is_array($routeName)) {
+            $routeName = reset($routeName);
+        }
+
         if (!isset($routes[$routeName])) {
-            Route::getLogger()->exception(
-                ['Route {$0} not found', $routeName],
-                __FILE__,
-                __LINE__,
-                null,
-                null,
-                -1,
-                Http_Not_Found::getClass()
-            );
+            throw new RouteNotFound(['Route {$0} not found', $routeName]);
         }
 
         return $routes[$routeName];
@@ -58,12 +126,12 @@ class Route extends Config
 
     /**
      * Return all routes
-     *
      * @return Route[]
-     *
+     * @throws Exception
+     * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 1.10
      * @since   0.0
      */
     public static function getRoutes()
@@ -77,142 +145,16 @@ class Route extends Config
         $routeFilePathes = [];
 
         foreach (Module::getAll() as $module) {
-            $routeFilePathes[$module->get('context')] = $module->get(Module::CONFIG_DIR) . 'Ice/Core/Route.php';
-        }
+            $routeConfigPath = $module->getPath(Module::CONFIG_DIR) . 'Ice/Core/Route.php';
 
-        return $dataProvider->set('routes', self::getRouteFileData($routeFilePathes));
-    }
-
-    /**
-     * Return route data from file
-     *
-     * @param  array $routeFilePathes
-     * @return array
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.2
-     * @since   0.0
-     */
-    private static function getRouteFileData(array $routeFilePathes)
-    {
-        $routes = [];
-
-        $defaultConfig = Config::getDefault(__CLASS__);
-
-        foreach ($routeFilePathes as $context => $routeFilePath) {
-            $configFromFile = File::loadData($routeFilePath);
-
-            if (!is_array($configFromFile)) {
-                self::getLogger()->warning(['Не валидный файл конфиг: {$0}', $routeFilePath], __FILE__, __LINE__);
-                continue;
-            }
-
-            foreach ($configFromFile as $routeName => $route) {
-                if ($routeName[0] == '_') {
-                    $configFilePathes = [];
-
-                    $configFilePathes[$context . $route] =
-                        strstr($routeFilePath, '.php', true) . str_replace('_', '/', $routeName) . '.php';
-
-                    $routes += self::getRouteFileData($configFilePathes);
-                    continue;
-                }
-
-                $route = array_merge_recursive($route, $defaultConfig);
-                $route['route'] = $context . $route['route'];
-
-                if (isset($routes[$routeName])) {
-                    Route::getLogger()->warning(
-                        ['Route name "{$0}" already defined in other route config', $routeName],
-                        __FILE__,
-                        __LINE__
-                    );
-                    continue;
-                }
-
-                if (substr_count($route['route'], '{$') != count($route['params'])) {
-                    Route::getLogger()->warning(
-                        ['Count of params in {$0} not equal with count of defined params', $route['route']],
-                        __FILE__,
-                        __LINE__,
-                        null,
-                        [$route['route'], $route['params']]
-                    );
-                    continue;
-                }
-
-                $patterns = [];
-                foreach ($route['params'] as $paramName => $paramPattern) {
-                    if (is_array($paramPattern)) {
-                        list($paramPattern, $optional) = $paramPattern;
-
-                        if ($optional) {
-                            $paramPattern = '(?:' . $paramPattern . ')?';
-                        }
-                    }
-
-                    $patterns[$paramName] = $paramPattern;
-                }
-
-                $route['pattern'] = Replace::getInstance()->fetch(
-                    '#^' . $route['route'] . '$#',
-                    $patterns,
-                    View_Render::TEMPLATE_TYPE_STRING
-                );
-
-                if (isset($route['alias'])) {
-                    foreach ($route['alias'] as $method => $alias)
-                    $route['request'][$method] = $routes[$route['alias'][$method]]->gets('request/' . $method);
-                }
-
-                foreach ($route['request'] as &$request) {
-                    if (is_string($request)) {
-                        $actionClass = $request;
-                        $actionParams = [];
-                    } else {
-                        list($actionClass, $actionParams) = each($request);
-                    }
-
-
-                    if (is_int($actionClass)) {
-                        $actionClass = $actionParams;
-                        $actionParams = [];
-                    }
-
-                    $request = [Action::getClass($actionClass) => $actionParams];
-                }
-
-                $routes[$routeName] = Route::create($routeName, $route);
+            if ($context = $module->get('context', '')) {
+                $routeFilePathes[$context] = $routeConfigPath;
+            } else {
+                $routeFilePathes[] = $routeConfigPath;
             }
         }
 
-        return $routes;
-    }
-
-    public function getLayoutActionClassName($method)
-    {
-        return $this->get('request/' . $method . '/layout');
-    }
-
-    public function getResponseRedirect($method)
-    {
-        return Route::getUrl($this->gets('request/' . $method . '/response/redirect', false));
-    }
-
-    /**
-     * Generate url by route
-     *
-     * @param  array $params
-     * @return string
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.6
-     * @since   0.0
-     */
-    public function getUrl(array $params = [])
-    {
-        return Replace::getInstance()->fetch($this->getRoute(), $params, View_Render::TEMPLATE_TYPE_STRING);
+        return $dataProvider->set(['routes' => self::getRouteFileData($routeFilePathes)])['routes'];
     }
     //
     //    /**
@@ -227,7 +169,7 @@ class Route extends Config
     //     * @version 0.4
     //     * @since 0.4
     //     */
-    //    public static function getInstance($key = null, $ttl = null)
+    //    public static function getInstance($key = null, $ttl = null, array $params = [])
     //    {
     //        if (!$key) {
     //            $key = Route::getDefaultKey();
@@ -237,17 +179,110 @@ class Route extends Config
     //    }
 
     /**
-     * Return route string
+     * Return route data from file
      *
-     * @return mixed
-     *
+     * @param  array $routeFilePathes
+     * @return array
+     * @throws Exception
+     * @throws \Ice\Exception\Config_Error
+     * @throws \Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 0.2
      * @since   0.0
      */
-    public function getRoute()
+    private static function getRouteFileData(array $routeFilePathes)
     {
-        return $this->get('route');
+        $routes = [];
+
+        $defaultConfig = Config::getDefault(__CLASS__);
+
+        foreach ($routeFilePathes as $context => $routeFilePath) {
+            if (\is_int($context)) {
+                $context = '';
+            }
+
+            $configFromFile = File::loadData($routeFilePath, false);
+
+            if (!$configFromFile) {
+                continue;
+            }
+
+            if (!\is_array($configFromFile)) {
+                Logger::getInstance(__CLASS__)->warning(['Не валидный файл конфиг: {$0}', $routeFilePath], __FILE__, __LINE__);
+                continue;
+            }
+
+            foreach ($configFromFile as $routeName => $route) {
+                if (strpos($routeName, '_') === 0) {
+                    $configFilePathes = [];
+
+                    $configFilePathes[$context . $route] = strstr($routeFilePath, '.php', true) . str_replace('_', '/', $routeName) . '.php';
+
+                    $routes += self::getRouteFileData($configFilePathes);
+                    continue;
+                }
+
+                $route = array_merge_recursive($route, $defaultConfig->gets());
+                $route['route'] = $context . $route['route'];
+
+                if (substr_count($route['route'], '{$') !== \count($route['params'])) {
+                    Logger::getInstance(__CLASS__)->warning(
+                        ['Count of params in {$0} not equal with count of defined params', $route['route']],
+                        __FILE__,
+                        __LINE__,
+                        null,
+                        [$route['route'], $route['params']]
+                    );
+                    continue;
+                }
+
+                $patterns = [];
+
+                foreach ($route['params'] as $paramName => $paramPattern) {
+                    list($pattern, $optional) = array_pad((array)$paramPattern, 2, false);
+
+                    if ($optional) {
+                        $pattern = '(?:' . $pattern . ')?';
+                    }
+
+                    $patterns[$paramName] = $pattern;
+                }
+
+                $route['pattern'] = Replace::getInstance()->fetch(
+                    '#^' . $route['route'] . '$#',
+                    $patterns,
+                    null,
+                    Render::TEMPLATE_TYPE_STRING
+                );
+
+                if (isset($route['alias'])) {
+                    foreach ($route['alias'] as $method => $alias) {
+                        $route['request'][$method] = $routes[$route['alias'][$method]]->gets('request/' . $method, []);
+                    }
+                }
+
+                $route = self::create($routeName, $route);
+
+                if (isset($routes[$routeName])) {
+                    $route->set($routes[$routeName]->gets());
+                    unset($routes[$routeName]);
+                }
+
+                $routes[$routeName] = $route;
+            }
+        }
+
+        return $routes;
+    }
+
+    /**
+     * @param $configRouteName
+     * @param array $configData
+     * @return Route
+     */
+    public static function create($configRouteName, array $configData = [])
+    {
+        return parent::create($configRouteName, $configData);
     }
 }

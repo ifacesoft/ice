@@ -1,31 +1,18 @@
 <?php
 return [
-    'Application failure' => [
-        'en' => 'Application failure',
-        'be' => 'Збой прыкладанні',
-        'ca' => 'Aplicació fracàs',
-        'cs' => 'Selhání aplikace',
-        'da' => 'Anvendelse fiasko',
-        'de' => 'Anwendungsfehler',
-        'el' => 'Εφαρμογή αποτυχία',
-        'es' => 'El fallo de la aplicación',
-        'et' => 'Taotluse jätmine',
-        'fi' => 'Hakemuksen jättäminen',
-        'fr' => 'L\'échec de l\'Application',
-        'hu' => 'Alkalmazás hiba',
-        'it' => 'La mancata applicazione',
-        'lt' => 'Taikymo nesėkmė',
-        'lv' => 'Pieteikumu neveiksmes',
-        'mk' => 'Апликацијата неуспех',
-        'nl' => 'Toepassingsfout',
-        'no' => 'Apparatfeil',
-        'pt' => 'Falha de aplicativo',
-        'ru' => 'Сбой приложения',
-        'sk' => 'Aplikácia zlyhanie',
-        'sl' => 'Prijave okvare',
-        'sq' => 'Aplikimi dështimit',
-        'sv' => 'Misslyckande',
-        'tr' => 'Uygulama hatası',
-        'uk' => 'Збій програми',
+    'Application (App): render content failure' => [
+        'ru' => 'Application (App): render content failure',
+    ],
+    'Application (Http): run action failure' => [
+        'ru' => 'Application (Http): run action failure',
+    ],
+    'Application (App): run action failure' => [
+        'ru' => 'Application (App): run action failure',
+    ],
+    'Warning: Invalid argument supplied for foreach()' => [
+        'ru' => 'Warning: Invalid argument supplied for foreach()',
+    ],
+    'Application (Http): render content failure' => [
+        'ru' => 'Application (Http): render content failure',
     ],
 ];

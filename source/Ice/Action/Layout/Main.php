@@ -27,19 +27,35 @@ use Ice\Core\Action;
  * @version 0.0
  * @since   0.0
  */
-class Layout_Main extends Layout
+class Layout_Main extends Action
 {
+    /**
+     * Action config
+     *
+     * @return array
+     */
     protected static function config()
     {
-        return array_merge_recursive(
-            [
-                'actions' => [
-                    'Ice:Header',
-                    'Ice:Resource_Css',
-                    'Ice:Resource_Js'
-                ],
+        return [
+            'view' => ['template' => null, 'viewRenderClass' => 'Ice:Php', 'layout' => ''],
+            'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => 'Action: Access denied!'],
+            'cache' => ['ttl' => -1, 'count' => 1000],
+            'actions' => [
+                'Ice:Header',
+                'Ice:Resource_Css',
+                'Ice:Resource_Js'
             ],
-            parent::config()
-        );
+            'input' => [],
+            'output' => []
+        ];
+    }
+
+    /** Run action
+     *
+     * @param  array $input
+     * @return array
+     */
+    public function run(array $input)
+    {
     }
 }

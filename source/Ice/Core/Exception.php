@@ -11,6 +11,7 @@ namespace Ice\Core;
 
 use ErrorException;
 use Ice\Core;
+use Ice\Core\Resource;
 
 /**
  * Class Exception
@@ -30,7 +31,7 @@ abstract class Exception extends ErrorException
      * Error context data
      * @var array
      */
-    private $errcontext = null;
+    private $errorContext = null;
 
     /**
      * Constructor exception of ice application
@@ -48,54 +49,42 @@ abstract class Exception extends ErrorException
      *
      * @version 0.0
      * @since   0.0
+     * @throws \Ice\Exception\FileNotFound
      */
     public function __construct(
         $message,
         $errcontext = [],
-        \Exception $previous = null,
+        $previous = null,
         $errfile = null,
         $errline = null,
         $errno = 0
     )
     {
-        $this->errcontext = $errcontext;
+        $this->errorContext = $errcontext;
 
-        $isExistsResourceClass = class_exists('Ice\Core\Resource', false);
+        /** @var Resource $resource */
+        $resource = Resource::create(__CLASS__);
 
-        if ($errno <= 0 && $isExistsResourceClass) {
-            $params = null;
-            $class = null;
-            if (is_array($message)) {
-                switch (count($message)) {
-                    case 2:
-                        list($message, $params) = $message;
-                        break;
-                    case 3:
-                        list($message, $params, $class) = $message;
-                        break;
-                    default:
-                        break;
-                }
-            }
+        $message = (array)$message;
 
-            $message = Exception::getResource()->get($message, $params, $class);
-        } else {
-            if (is_array($message)) {
-                if (!$isExistsResourceClass && !empty($message[1])) {
-                    $message[0] = str_replace(
-                        array_map(
-                            function ($var) {
-                                return '{$' . $var . '}';
-                            },
-                            array_keys((array)$message[1])
-                        ),
-                        array_values((array)$message[1]),
-                        $message[0]
-                    );
-                }
-
+        $params = null;
+        $class = null;
+        switch (count($message)) {
+            case 2:
+                list($message, $params) = $message;
+                break;
+            case 3:
+                list($message, $params, $class) = $message;
+                break;
+            default:
                 $message = reset($message);
-            }
+                break;
+        }
+
+        if ($message) {
+            $message = $resource->get($message, $params, $class);
+//            $message = print_r([$message, $params, $class], true);
+//            var_dump($message);
         }
 
         if (!$errfile) {
@@ -111,19 +100,7 @@ abstract class Exception extends ErrorException
             }
         }
 
-        /**
-         * @var Exception $exceptionClass
-         */
-        $exceptionClass = get_class($this);
-
-        parent::__construct(
-            $exceptionClass::getClassName() . ' - ' . $message,
-            $errno,
-            1,
-            $errfile,
-            $errline,
-            $previous
-        );
+        parent::__construct($message, $errno, 1, $errfile, $errline, $previous);
     }
 
     /**
@@ -135,11 +112,11 @@ abstract class Exception extends ErrorException
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 1.10
      * @since   0.0
      */
-    public function getErrContext()
+    public function getErrorContext()
     {
-        return $this->errcontext;
+        return $this->errorContext;
     }
 }

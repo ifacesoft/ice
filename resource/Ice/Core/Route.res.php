@@ -31,20 +31,36 @@ return [
     'Route file path not found for {$0}' => [
         'ru' => 'Route file path not found for {$0}',
     ],
-    'ice_admin_database' => [
+    'adm_database' => [
         'en' => 'Databases',
-        'ru' => 'Базы данных',
+        'ru' => 'Справочники',
     ],
     'Route {$0} not found' => [
         'en' => 'Route {$0} not found',
         'ru' => 'Маршрут {$0} не найдена',
     ],
-    'ebs_admin_report' => [
-        'en' => 'ebs_admin_report',
-        'ru' => 'ebs_admin_report',
+    'ice_main' => [
+        'en' => 'Main',
+        'ru' => 'Главная',
     ],
-    'ebs_admin_tool' => [
-        'en' => 'ebs_admin_tool',
-        'ru' => 'ebs_admin_tool',
+    'adm_dashboard' => [
+        'en' => 'Dashboard',
+        'ru' => 'Панель администрирования',
+    ],
+    'ice_private' => [
+        'en' => 'Private office',
+        'ru' => 'Личный кабинет',
+    ],
+    'ice_private_profile' => [
+        'en' => 'Profile',
+        'ru' => 'Профиль',
+    ],
+    'ice_security_logout' => [
+        'en' => 'ice_security_logout',
+        'ru' => 'Выйти',
+    ],
+    'adm_database_dashboard' => [
+        'en' => 'adm_database_dashboard',
+        'ru' => 'Панель управления справочниками',
     ],
 ];

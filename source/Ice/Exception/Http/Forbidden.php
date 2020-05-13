@@ -9,20 +9,32 @@
 
 namespace Ice\Exception;
 
-use Ice\Core\Exception;
-
 /**
  * Class Http_Forbidden
  *
  * Implements page not found exception
  *
- * @see Ice\Core\Exception
+ * @see \Ice\Core\Exception
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
  * @package    Ice
  * @subpackage Exception
  */
-class Http_Forbidden extends Exception
+class Http_Forbidden extends Http
 {
+    public function __construct($message = 'Forbidden', array $errcontext = [], \Exception $previous = null, $errfile = null, $errline = null, $errno = 403)
+    {
+        parent::__construct($message, $errcontext, $previous, $errfile, $errline, $errno);
+    }
+
+    public function getHttpCode()
+    {
+        return 403;
+    }
+
+    public function getHttpMessage()
+    {
+        return 'Forbidden';
+    }
 }

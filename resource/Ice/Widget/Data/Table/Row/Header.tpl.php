@@ -1,6 +1,6 @@
-<tr<?php if (!empty($headerStyle)) : ?> style="<?= $headerStyle ?>"<?php endif;
-?>>
-    <th rowspan="<?= ceil(count($columns) / $columnCount) ?>">#</th>
+<tr>
+    <?php if ($isShowCount) : ?>
+    <th rowspan="<?= ceil(count($columns) / $columnCount) ?>">/</th><?php endif; ?>
     <?php
     $count = 0;
     foreach ($columns as $column) :
@@ -11,7 +11,7 @@
     ?><?php if (isset($column['options']['colspan'])) : ?> colspan="<?= $column['options']['colspan'] ?>"<?php endif;
     ?>>
         <?php else :
-        $count = 1
+        $count = $colspan
         ?>
 </tr>
 <tr>
@@ -22,12 +22,10 @@
         <?= $column['title'] ?>
         <?php if (isset($column['options']['sortable']) && $column['options']['sortable'] === true) : ?>
             <a href="<?= $column['href'] ?>" onclick='<?= $column['onclick'] ?>'
-               data-url='<?= $column['dataUrl'] ?>'
-               data-json='<?= $column['dataJson'] ?>'
-               data-action='<?= $column['dataAction'] ?>'
-               data-block='<?= $column['dataBlock'] ?>'
+               data-widget='<?= $dataWidget ?>'
+               data-for="<?= $parentWidgetId ?>"
                data-name='<?= $column['name'] ?>'
-               data-value='<?= $column['dataValue'] ?>'
+               data-params='<?= $column['dataParams'] ?>'
                class="btn btn-default btn-sm<?php if ($column['dataValue']) : ?> active<?php endif; ?>">
                 <?php if ($column['dataValue'] == 'ASC') : ?>
                     &darr;

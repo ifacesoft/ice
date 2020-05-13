@@ -2,7 +2,6 @@
 namespace Ice\Action;
 
 use Ice\Core\Action;
-use Ice\Core\Module;
 use Ice\Helper\Console;
 
 class CodeSniffer extends Action
@@ -30,7 +29,8 @@ class CodeSniffer extends Action
                         'phpcs' => '/scripts/phpcs'
                     ]
                 ]
-            ]
+            ],
+            'cache' => ['ttl' => -1, 'count' => 1000],
         ];
     }
 
@@ -51,11 +51,11 @@ class CodeSniffer extends Action
         $phpcs = VENDOR_DIR . $input['vendor'] . $input['command']['phpcs'];
 
         Console::run(
-            'php ' . $phpcbf . ' ' . Module::getInstance()->get(Module::SOURCE_DIR) . ' --standard=PSR2'
+            'php ' . $phpcbf . ' ' . \getSourceDir() . ' --standard=PSR2'
         );
 
         Console::run(
-            'php ' . $phpcs . ' ' . Module::getInstance()->get(Module::SOURCE_DIR) . ' --report-full --standard=PSR2'
+            'php ' . $phpcs . ' ' . \getSourceDir() . ' --report-full --standard=PSR2'
         );
     }
 }

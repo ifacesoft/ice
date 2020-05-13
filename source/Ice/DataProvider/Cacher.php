@@ -7,44 +7,44 @@
  * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
-namespace Ice\Data\Provider;
+namespace Ice\DataProvider;
 
 use Ice\Core\Cache;
 use Ice\Core\Cacheable;
-use Ice\Core\Data_Provider;
-use Ice\Core\Environment;
+use Ice\Core\DataProvider;
 use Ice\Core\Exception;
+use Ice\Exception\Error;
+use Ice\Helper\Hash;
 
 /**
  * Class String
  *
  * Data provider for cache
  *
- * @see Ice\Core\Data_Provider
+ * @see \Ice\Core\DataProvider
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
  * @package    Ice
- * @subpackage Data_Provider
+ * @subpackage DataProvider
  */
-class Cacher extends Data_Provider
+class Cacher extends DataProvider
 {
-    const DEFAULT_DATA_PROVIDER_KEY = 'Ice:Cacher/default';
-    const DEFAULT_KEY = 'instance';
+    const DEFAULT_KEY = 'default';
 
-    /**
-     * Return default data provider key
-     *
-     * @return string
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since   0.4
-     */
-    protected static function getDefaultDataProviderKey()
+    private $tag = '00000000';
+
+    public function __construct($key, $index)
     {
-        return self::DEFAULT_DATA_PROVIDER_KEY;
+        parent::__construct($key, $index);
+
+        $tags = [];
+
+        foreach ($this->getOptions()->gets('tagProviders') as $dataProvider => $name) {
+            $tags = array_merge($tags, DataProvider::getInstance($dataProvider)->get($name, []));
+        }
+
+        $this->tag = Hash::get($tags, Hash::HASH_CRC32);
     }
 
     /**
@@ -66,29 +66,33 @@ class Cacher extends Data_Provider
      * Get data from data provider by key
      *
      * @param  string $key
+     * @param null $default
+     * @param bool $require
      * @return Cacheable
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.5
+     * @version 1.2
      * @since   0.0
      */
-    public function get($key = null)
+    public function get($key = null, $default = null, $require = false)
     {
-        /**
-         * @var Cache $cache
-         */
-        if ($cache = $this->getConnection()->get($key)) {
-            return $cache->validate();
-        }
+        $cache = $this->getConnection()->get($this->getTag($key), $default, $require);
 
-        return null;
+        return $cache ? $cache->validate() : $default;
+    }
+
+    /**
+     * @return string
+     */
+    protected function getTag($key)
+    {
+        return $this->tag . DataProvider::KEY_DELIMETER . $key;
     }
 
     /**
      * Get instance connection of data provider
      *
-     * @return Data_Provider
+     * @return DataProvider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
@@ -103,38 +107,31 @@ class Cacher extends Data_Provider
     /**
      * Set data to data provider
      *
-     * @param  string $key
-     * @param  $value
-     * @param  null $ttl
-     * @return mixed setted value
+     * @param array $values
+     * @param null $ttl
+     * @return array
      *
+     * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 1.2
      * @since   0.0
      */
-    public function set($key, $value = null, $ttl = null)
+    public function set(array $values = null, $ttl = null)
     {
-        if (is_array($key) && $value === null) {
-            foreach ($key as $index => $value) {
-                $this->set($index, $value, $ttl);
-            }
-
-            return $key;
-        }
-
-        if ($ttl == -1) {
-            return $value;
+        if ($ttl === -1) {
+            return $values;
         }
 
         if ($ttl === null) {
-            $options = $this->getOptions();
-            $ttl = isset($options['ttl']) ? $options['ttl'] : 3600;
+            $ttl = $this->getOptions()->get('ttl', 3600);
         }
 
-        $this->getConnection()->set($key, Cache::create($value, time()), $ttl);
+        foreach ($values as $key => $value) {
+            $this->getConnection()->set([$this->getTag($key) => Cache::create($value, microtime(true)), $ttl]);
+        }
 
-        return $value;
+        return $values;
     }
 
     /**
@@ -152,7 +149,7 @@ class Cacher extends Data_Provider
      */
     public function delete($key, $force = true)
     {
-        return $this->getConnection()->delete($key, $force);
+        return $this->getConnection()->delete($this->getTag($key), $force);
     }
 
     /**
@@ -169,7 +166,7 @@ class Cacher extends Data_Provider
      */
     public function incr($key, $step = 1)
     {
-        return $this->getConnection()->incr($key, $step);
+        return $this->getConnection()->incr($this->getTag($key), $step);
     }
 
     /**
@@ -186,7 +183,7 @@ class Cacher extends Data_Provider
      */
     public function decr($key, $step = 1)
     {
-        return $this->getConnection()->decr($key, $step);
+        return $this->getConnection()->decr($this->getTag($key), $step);
     }
 
     /**
@@ -226,25 +223,21 @@ class Cacher extends Data_Provider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.5
+     * @version 1.13
      * @since   0.0
      */
     protected function connect(&$connection)
     {
-        if (!Environment::isLoaded() || Environment::getInstance()->isDevelopment()) {
-            return $connection = Registry::getInstance($this->getKey(), $this->getIndex());
-        }
+//        if (!Environment::isLoaded() || Environment::getInstance()->isDevelopment()) {
+//            $dataProviderClass = Registry::class;
+//        } else {
+//            /**@var DataProvider $dataProviderClass */
+//            $dataProviderClass = class_exists('Redis', false)
+//                ? Redis::getClass()
+//                : File::getClass();
+//        }
 
-        if (!Environment::getInstance()->isProduction()) {
-            return $connection = File::getInstance($this->getKey(), $this->getIndex());
-        }
-
-        /**
-         * @var Data_Provider $dataProviderClass
-         */
-        $dataProviderClass = class_exists('Redis', false)
-            ? Redis::getClass()
-            : File::getClass();
+        $dataProviderClass = Registry::class;
 
         return $connection = $dataProviderClass::getInstance($this->getKey(), $this->getIndex());
     }
@@ -264,5 +257,38 @@ class Cacher extends Data_Provider
     {
         $connection = null;
         return true;
+    }
+
+    /**
+     * Set expire time (seconds)
+     *
+     * @param  $key
+     * @param  int $ttl
+     * @return mixed new value
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since   0
+     */
+    public function expire($key, $ttl)
+    {
+        // TODO: Implement expire() method.
+    }
+
+    /**
+     * Check for errors
+     *
+     * @return void
+     *
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since   0.0
+     */
+    function checkErrors()
+    {
+        // TODO: Implement checkErrors() method.
     }
 }

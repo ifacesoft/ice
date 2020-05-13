@@ -3,6 +3,7 @@
 namespace Ice\Helper;
 
 use Ice\Core\Logger;
+use Ice\Exception\Config_Param_NotFound;
 
 class Config
 {
@@ -11,62 +12,38 @@ class Config
      *
      * @param  array $config
      * @param  $key
-     * @param  bool $isRequired
+     * @param  bool $isRequired_default todo: Подутать, как сделать понятнее
      * @return array
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
      * @since   0.4
      */
-    public static function gets(array $config, $key = null, $isRequired = true)
+    public static function gets(array $config, $key = null, $isRequired_default = true)
     {
         if (empty($key)) {
             return $config;
         }
 
-        $params = Config::isSetKey($config, $key);
+        try {
+            $params = $config;
 
-        if ($params === false) {
-            if ($isRequired) {
-                Logger::getInstance(__CLASS__)->exception(
-                    ['Could not found required param {$0}', $key],
-                    __FILE__,
-                    __LINE__,
-                    null,
-                    $config
-                );
+            foreach (explode('/', $key) as $keyPart) {
+                if (!array_key_exists($keyPart, $params)) {
+                    throw new \Exception('Param ' . $key . ' not found'); // Именно не Config_Param_NotFound
+                }
+
+                $params = $params[$keyPart];
             }
 
-            return [];
-        }
-
-        return (array)$params;
-    }
-
-    /**
-     * Check is set key in config
-     *
-     * @param  array $config
-     * @param  $key
-     * @return array|bool
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since   0.4
-     */
-    private static function isSetKey(array $config, $key)
-    {
-        $params = $config;
-
-        foreach (explode('/', $key) as $keyPart) {
-            if (!array_key_exists($keyPart, $params)) {
-                return false;
+            return (array)$params;
+        } catch (\Exception $e) {
+            if ($isRequired_default === true) {
+                throw new Config_Param_NotFound(['Could not found required param {$0}', $key], $config, $e);
             }
 
-            $params = $params[$keyPart];
+            return (array)$isRequired_default;
         }
-
-        return $params;
     }
 
     /**

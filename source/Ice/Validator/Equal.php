@@ -2,15 +2,14 @@
 namespace Ice\Validator;
 
 use Ice\Core\Validator;
+use Ice\Exception\Error;
 
 /**
  * Class Equal
  *
- * @see     Ice\Core\Validator
+ * @see     \Ice\Core\Validator
  * @package Ice\Validator;
  * @author  dp <email>
- * @version 0
- * @since   0
  */
 class Equal extends Validator
 {
@@ -37,17 +36,36 @@ class Equal extends Validator
      *      ];
      * ```
      *
-     * @param  $data
-     * @param  mixed|null $scheme
-     * @return boolean
-     *
+     * @param array $data
+     * @param $name
+     * @param array $params
+     * @return bool
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 1.2
      * @since   0.0
      */
-    public function validate($data, $scheme = null)
+    public function validate(array $data, $name, array $params)
     {
-        return in_array($data, (array)$scheme);
+        $value = null;
+
+        if (array_key_exists('name', $params)) {
+            $value = $data[$params['name']];
+        }
+
+        if ($value === null && array_key_exists('value', $params)) {
+            $value = $params['value'];
+        }
+
+        if ($value === null && $params) {
+            $value = reset($params);
+        }
+
+        return $data[$name] === $value;
+    }
+
+    public function getMessage()
+    {
+        return 'Param \'{$0}\' not equal {$2}';
     }
 }

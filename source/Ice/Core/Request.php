@@ -10,7 +10,7 @@
 namespace Ice\Core;
 
 use Ice\Core;
-use Ice\Data\Provider\Request as Data_Provider_Request;
+use Ice\Exception\Access_Denied_Request;
 use Ice\Helper\Http;
 use Locale;
 
@@ -23,9 +23,6 @@ use Locale;
  *
  * @package    Ice
  * @subpackage Core
- *
- * @version 0.0
- * @since   0.0
  */
 class Request
 {
@@ -35,32 +32,24 @@ class Request
      * Return param from request
      *
      * @param  string $paramName Param name
+     * @param null $default
      * @return mixed
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 1.3
      * @since   0.0
      */
-    public static function getParam($paramName)
+    public static function getParam($paramName = null, $default = null)
     {
-        $params = self::getParams();
-        return isset($params[$paramName]) ? $params[$paramName] : null;
-    }
+        if (empty($paramName)) {
+            return $_REQUEST;
+        }
 
-    /**
-     * Return all params from request
-     *
-     * @param  array $filterParams
-     * @return mixed
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since   0.0
-     */
-    public static function getParams(array $filterParams = [])
-    {
-        return Data_Provider_Request::getInstance()->get($filterParams);
+        if (is_array($paramName)) {
+            return array_intersect_key($_REQUEST, array_flip($paramName));
+        }
+
+        return array_key_exists($paramName, $_REQUEST) ? $_REQUEST[$paramName] : $default;
     }
 
     /**
@@ -75,10 +64,10 @@ class Request
      */
     public static function locale()
     {
-        $config = Request::getConfig();
+        $config = Config::getInstance(__CLASS__);
 
-        if (!$config->get('multiLocale')) {
-            return $config->get('locale');
+        if (!$config->get('multiLocale', 0)) {
+            return $config->get('locale', 'en');
         }
 
         if (isset($_SESSION['locale'])) {
@@ -87,7 +76,7 @@ class Request
 
         $locale = class_exists('Locale', false) && isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])
             ? Locale::acceptFromHttp($_SERVER['HTTP_ACCEPT_LANGUAGE'])
-            : $config->get('locale');
+            : $config->get('locale', 'en');
 
         $strPos = strpos($locale, '_');
 
@@ -108,7 +97,7 @@ class Request
     public static function uri($withoutQueryString = false)
     {
         return isset($_SERVER['REQUEST_URI'])
-            ? ($withoutQueryString ? strtok($_SERVER['REQUEST_URI'], '?') : $_SERVER['REQUEST_URI'])
+            ? urldecode(($withoutQueryString ? strtok($_SERVER['REQUEST_URI'], '?') : $_SERVER['REQUEST_URI']))
             : '';
     }
 
@@ -119,12 +108,17 @@ class Request
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 1.3
      * @since   0.0
      */
     public static function queryString()
     {
-        return isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '';
+        return isset($_SERVER['REQUEST_URI'])
+            ? $_SERVER['REQUEST_URI']
+            : (isset($_SERVER['argv'])
+                ? implode(' ', $_SERVER['argv'])
+                : null
+            );
     }
 
     /**
@@ -134,14 +128,15 @@ class Request
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 1.1
      * @since   0.0
      */
     public static function host()
     {
         if (!isset($_SERVER['HTTP_HOST'])) {
-            $_SERVER['HTTP_HOST'] = 'localhost';
-            $_SERVER['SERVER_NAME'] = 'localhost';
+
+            $_SERVER['HTTP_HOST'] = gethostname();
+            $_SERVER['SERVER_NAME'] = gethostname();
         }
 
         return $_SERVER['HTTP_HOST'];
@@ -161,14 +156,11 @@ class Request
     {
         if (isset($_SERVER['HTTP_CLIENT_IP']) && filter_var($_SERVER['HTTP_CLIENT_IP'], FILTER_VALIDATE_IP)) {
             return $_SERVER['HTTP_CLIENT_IP'];
-        } elseif (isset($_SERVER['HTTP_X_FORWARDED_FOR']) && filter_var(
-                $_SERVER['HTTP_X_FORWARDED_FOR'],
-                FILTER_VALIDATE_IP
-            )
-        ) {
+            // todo: заголовок HTTP_X_FORWARDED_FOR можно подделать, поэтому надо предусмотреть возможность получать таой заголовок только с разрешенных REMOTE_ADDR (или как-то так) + см др реализации, в т.ч symfony getClientIp
+        } elseif (isset($_SERVER['HTTP_X_FORWARDED_FOR']) && filter_var($_SERVER['HTTP_X_FORWARDED_FOR'], FILTER_VALIDATE_IP)) {
             return $_SERVER['HTTP_X_FORWARDED_FOR'];
-//        } elseif (isset($_SERVER['HTTP_X_REAL_IP']) && filter_var($_SERVER['HTTP_X_REAL_IP'], FILTER_VALIDATE_IP)) {
-//            return $_SERVER['HTTP_X_REAL_IP'];
+        } elseif (isset($_SERVER['HTTP_X_REAL_IP']) && filter_var($_SERVER['HTTP_X_REAL_IP'], FILTER_VALIDATE_IP)) {
+            return $_SERVER['HTTP_X_REAL_IP'];
         } elseif (isset($_SERVER['REMOTE_ADDR']) && filter_var($_SERVER['REMOTE_ADDR'], FILTER_VALIDATE_IP)) {
             return $_SERVER['REMOTE_ADDR'];
         }
@@ -183,7 +175,7 @@ class Request
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 1.3
      * @since   0.0
      */
     public static function agent()
@@ -192,7 +184,7 @@ class Request
             ? $_SERVER['HTTP_USER_AGENT']
             : (isset($_SERVER['SHELL'])
                 ? $_SERVER['SHELL']
-                : 'unknown');
+                : null);
     }
 
     /**
@@ -207,7 +199,61 @@ class Request
      */
     public static function referer()
     {
-        return isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '';
+        return isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : null;
+    }
+
+    /**
+     * Return request method
+     *
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since   0.0
+     */
+    public static function method()
+    {
+        return isset($_SERVER['REQUEST_METHOD']) ? $_SERVER['REQUEST_METHOD'] : 'GET';
+    }
+
+    public static function init()
+    {
+        $cors = Config::getInstance(__CLASS__)->gets('cors');
+
+        if (isset($_SERVER['HTTP_ORIGIN']) && isset($cors[$_SERVER['HTTP_ORIGIN']])) {
+            Http::setHeader('Access-Control-Allow-Origin: ' . $_SERVER['HTTP_ORIGIN']);
+            Http::setHeader('Access-Control-Allow-Methods: ' . implode(', ', $cors[$_SERVER['HTTP_ORIGIN']]['methods']));
+            Http::setHeader('Access-Control-Allow-Headers: ' . implode(', ', $cors[$_SERVER['HTTP_ORIGIN']]['headers']));
+
+            $credentials = empty($cors[$_SERVER['HTTP_ORIGIN']]['credentials']) || $cors[$_SERVER['HTTP_ORIGIN']]['credentials'] == 'false'
+                ? 'false' : 'true';
+
+            Http::setHeader('Access-Control-Allow-Credentials: ' . $credentials);
+        }
+
+        if (Request::isOptions()) {
+            exit;
+        }
+    }
+
+    public static function isOptions()
+    {
+        return isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] == 'OPTIONS';
+    }
+
+    public static function checkAccess($requests, $message)
+    {
+        if (
+            !$requests ||
+            (Request::isCli() && in_array('cli', (array)$requests)) ||
+            (Request::isAjax() && in_array('ajax', (array)$requests)) ||
+            in_array('http', (array)$requests)
+        ) {
+            return;
+        }
+
+        throw new Access_Denied_Request($message);
     }
 
     /**
@@ -232,49 +278,43 @@ class Request
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.2
+     * @version 1.5
      * @since   0.0
      */
     public static function isAjax()
     {
+        if (isset($_REQUEST['ajax'])) {
+            return (boolean)$_REQUEST['ajax'];
+        }
+
         return isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest';
     }
 
     /**
-     * Return request method
-     *
+     * @todo SERVER_PROTOCOL rename to REQUEST_SCHEME
+     * @deprecated use scheme
      * @return string
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since   0.0
      */
-    public static function getMethod()
+    public static function protocol()
     {
-        return isset($_SERVER['REQUEST_METHOD']) ? $_SERVER['REQUEST_METHOD'] : '';
-    }
-
-    public static function init()
-    {
-        $cors = Request::getConfig()->gets('cors');
-
-        if (isset($_SERVER['HTTP_ORIGIN']) && isset($cors[$_SERVER['HTTP_ORIGIN']])) {
-            Http::setHeader('Access-Control-Allow-Origin: ' . $_SERVER['HTTP_ORIGIN']);
-            if (!empty($cors[$_SERVER['HTTP_ORIGIN']]['cookie'])) {
-                Http::setHeader('Access-Control-Allow-Credentials: true');
-            }
-            Http::setHeader(
-                'Access-Control-Allow-Methods: ' . implode(', ', $cors[$_SERVER['HTTP_ORIGIN']]['methods'])
-            );
-            Http::setHeader(
-                'Access-Control-Allow-Headers: ' . implode(', ', $cors[$_SERVER['HTTP_ORIGIN']]['headers'])
-            );
+        if ((!empty($_SERVER['REQUEST_SCHEME']) && $_SERVER['REQUEST_SCHEME'] == 'https') ||
+            (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') ||
+            (!empty($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == '443')) {
+            return 'https://';
+        } else {
+            return 'http://';
         }
     }
 
-    public static function isOptions()
+    public static function getHeader($name, $default = null)
     {
-        return isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] == 'OPTIONS';
+        $name = 'HTTP_' . str_replace('-', '_', strtoupper($name));
+
+        return isset($_SERVER[$name]) ? $_SERVER[$name] : $default;
+    }
+
+    public static function authToken($default = '')
+    {
+        return Request::getHeader('X-Auth-Token', $default);
     }
 }

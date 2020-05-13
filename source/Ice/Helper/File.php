@@ -9,8 +9,10 @@
 
 namespace Ice\Helper;
 
+use Ice\Core\Debuger;
 use Ice\Core\Exception;
 use Ice\Core\Logger as Core_Logger;
+use Ice\Exception\Error;
 
 /**
  * Class File
@@ -28,33 +30,38 @@ use Ice\Core\Logger as Core_Logger;
 class File
 {
     /**
-     * Save data into file
+     * InfoSave data into file
      *
      * @param  $path
      * @param  $data
      * @param  bool $phpData
      * @param  int $file_put_contents_flag
+     * @param bool $isPretty
      * @return mixed
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
      * @since   0.0
+     * @throws Exception
      */
-    public static function createData($path, $data, $phpData = true, $file_put_contents_flag = 0)
+    public static function createData($path, $data, $phpData = true, $file_put_contents_flag = LOCK_EX, $isPretty = true)
     {
-        if (empty($path)) {
-            Core_Logger::getInstance()->error('File path is empty', __FILE__, __LINE__);
+        if (!$path) {
+            Core_Logger::getInstance(__CLASS__)->error('File path is empty', __FILE__, __LINE__);
+            return $data;
         }
 
         $dir = Directory::get(dirname($path));
 
-        $dataString = $phpData ? Php::varToPhpString($data) : $data;
+        $dataString = $phpData ? Php::varToPhpString($data, true, $isPretty) : $data;
+
+        // todo: переписать на использование fopen + flock
         file_put_contents($path, $dataString, $file_put_contents_flag);
 
         if (function_exists('posix_getuid') && posix_getuid() == fileowner($path)) {
-            chmod($path, 0664);
-            chgrp($path, filegroup($dir));
+            chmod($path, 0666);
+//            chgrp($path, filegroup($dir));
         }
 
         return $data;
@@ -69,21 +76,24 @@ class File
      * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.1
+     * @version 1.13
      * @since   0.0
      */
     public static function loadData($path, $isRequire = true)
     {
-        if (empty($path)) {
-            Core_Logger::getInstance()->error('File path is empty', __FILE__, __LINE__);
-        }
-
-        if (file_exists($path)) {
-            return include $path;
+        // todo: переписать на использование fopen + flock
+        if ($path && file_exists($path) && filesize($path)) {
+            try {
+                return include $path;
+            } catch (\Exception $e) {
+                Core_Logger::getInstance(__CLASS__)->error('File include failed', __FILE__, __LINE__, $e);
+            } catch (\Throwable $e) {
+                Core_Logger::getInstance(__CLASS__)->error('File include failed', __FILE__, __LINE__, $e);
+            }
         }
 
         if ($isRequire) {
-            Core_Logger::getInstance()->exception(['File {$0} with data not found', $path], __FILE__, __LINE__);
+            Core_Logger::getInstance(__CLASS__)->error(['File {$0} with data not found', $path], __FILE__, __LINE__);
         }
 
         return null;
@@ -94,17 +104,39 @@ class File
      *
      * @param $from
      * @param $to
-     *
+     * @param bool $isRequire
+     * @return mixed
+     * @throws Error
+     * @throws Exception
+     * @throws \Ice\Exception\FileNotFound
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 1.2
      * @since   0.0
      */
-    public static function move($from, $to)
+    public static function move($from, $to, $isRequire = true)
     {
-        Directory::get(dirname($to));
-        rename($from, $to);
-        return $to;
+        if ($from == $to || empty($from) || empty($to)) {
+            return false;
+        }
+
+        if (File::copy($from, $to, $isRequire)) {
+            if (unlink($from)) {
+                return true;
+            } else {
+                if ($isRequire) {
+                    throw  new Error(['Remove file {$0} failed', $from]);
+                } else {
+                    return false;
+                }
+            }
+        }
+
+        if ($isRequire) {
+            throw  new Error(['Move from {$0} to {$1} failed', [$from, $to]]);
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -113,16 +145,70 @@ class File
      * @param $from
      * @param $to
      *
+     * @param bool $isRequire
+     * @return bool
+     * @throws Error
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.2
+     * @version 1.2
      * @since   0.2
+     * @throws Exception
      */
-    public static function copy($from, $to)
+    public static function copy($from, $to, $isRequire = true)
     {
+        /** todo: использовать валидатор для урла */
+        if (filter_var($from, FILTER_VALIDATE_URL)) {
+            $headers = @get_headers($from);
+            $isReadable = $headers && strpos($headers[0], '200') !== false;
+        } else {
+            $isReadable = is_file($from) && is_readable($from);
+        }
+
+        if (!$isReadable) {
+            if ($isRequire) {
+                throw  new Error(['Copy from {$0} to {$1} failed: Source file not readable', [$from, $to]]);
+            } else {
+                return false;
+            }
+        }
+
+        $fromFile = fopen($from, 'rb');
+
+        if (!$from || !$fromFile) {
+            fclose($fromFile);
+
+            if ($isRequire) {
+                throw  new Error(['Copy from {$0} to {$1} failed: Can\'t open readable source file', [$from, $to]]);
+            } else {
+                return false;
+            }
+        }
+
         Directory::get(dirname($to));
-        copy($from, $to);
-        return $to;
+
+        $toFile = fopen($to, 'wb');
+
+        if (!$to || !$toFile) {
+            fclose($toFile);
+
+            if ($isRequire) {
+                throw  new Error(['Copy from {$0} to {$1} failed: Can\'t open writable source file', [$from, $to]]);
+            } else {
+                return false;
+            }
+        }
+
+        $length = 1024 * 8;
+
+        while (!feof($fromFile)) {
+            fwrite($toFile, fread($fromFile, $length), $length);
+        }
+
+        fclose($toFile);
+
+        fclose($fromFile);
+
+        return true;
     }
 
     /**
@@ -144,7 +230,7 @@ class File
     public static function loadCsvData($path, $delimiter = ',', $enclosure = '"', $escape = '\\', $isRequire = true)
     {
         if (empty($path)) {
-            Core_Logger::getInstance()->error('File path is empty', __FILE__, __LINE__);
+            Core_Logger::getInstance(__CLASS__)->error('File path is empty', __FILE__, __LINE__);
         }
 
         //        if (file_exists($path)) {
@@ -169,7 +255,7 @@ class File
         }
 
         if ($isRequire) {
-            Core_Logger::getInstance()->exception(['File {$0} with data not found', $path], __FILE__, __LINE__);
+            Core_Logger::getInstance(__CLASS__)->exception(['File {$0} with data not found', $path], __FILE__, __LINE__);
         }
 
         return null;

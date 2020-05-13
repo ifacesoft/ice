@@ -4,7 +4,7 @@ namespace Ice\Helper;
 
 use Ice\Core\Config as Core_Config;
 use Ice\Core\Request as Core_Request;
-use Ice\Data\Provider\Repository;
+use Ice\DataProvider\Repository;
 
 class Api_Client_Yandex_Translate
 {
@@ -82,7 +82,7 @@ class Api_Client_Yandex_Translate
         $yaKey = Core_Config::getInstance(__CLASS__)->get('translateKey');
 
         if (empty($yaKey)) {
-            return Core_Request::getConfig()->get('locale');
+            return Core_Config::getInstance(Core_Request::class)->get('locale');
         }
 
         $url = Api_Client_Yandex_Translate::URL . 'detect?key=' . $yaKey . '&text=' . $text;
@@ -91,7 +91,7 @@ class Api_Client_Yandex_Translate
             return $detect;
         }
 
-        return Core_Request::getConfig()->get('locale');
+        return Core_Config::getInstance(Core_Request::class)->get('locale');
     }
 
     /**
@@ -115,7 +115,7 @@ class Api_Client_Yandex_Translate
             return $text;
         }
 
-        $url = Api_Client_Yandex_Translate::URL . 'translate?key=' . $yaKey . '&text=' . $text . '&lang=' . $direction;
+        $url = Api_Client_Yandex_Translate::URL . 'translate?key=' . $yaKey . '&text=' . urlencode($text) . '&lang=' . $direction;
 
         if ($translate = Json::decode(Http::getContents($url))['text'][0]) {
             return $translate;
@@ -166,7 +166,7 @@ class Api_Client_Yandex_Translate
     public static function getLocales($locale = null)
     {
         if (!$locale) {
-            $locale = Core_Request::getConfig()->get('locale');
+            $locale = Core_Config::getInstance(Core_Request::class)->get('locale');
         }
 
         $locales = [];
@@ -204,7 +204,7 @@ class Api_Client_Yandex_Translate
             return [];
         }
 
-        $requestLocale = Core_Request::getConfig()->get('locale');
+        $requestLocale = Core_Config::getInstance(Core_Request::getClass())->get('locale');
 
         $url = Api_Client_Yandex_Translate::URL . 'getLangs?key=' . $yaKey . '&ui=' . $requestLocale;
 
@@ -213,12 +213,12 @@ class Api_Client_Yandex_Translate
         $directions = [$langs['langs'][$locale] => $locale . '_' . $locale];
 
         foreach ($langs['dirs'] as $direction) {
-            if (String::startsWith($direction, $locale)) {
+            if (Type_String::startsWith($direction, $locale)) {
                 $directions[$langs['langs'][substr($direction, strlen($locale . '_'))]] = $direction;
             }
         }
 
-        if ($directions = $repository->set($key, $directions)) {
+        if ($directions = $repository->set([$key => $directions])) {
             return $directions;
         }
 

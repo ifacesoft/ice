@@ -9,8 +9,6 @@
 
 namespace Ice\Exception;
 
-use Ice\Core\Exception;
-
 /**
  * Class Http_Not_Found
  *
@@ -22,10 +20,16 @@ use Ice\Core\Exception;
  *
  * @package    Ice
  * @subpackage Exception
- *
- * @version 0.4
- * @since   0.0
  */
-class Http_Not_Found extends Exception
+class Http_Not_Found extends Http
 {
+    public function getHttpCode()
+    {
+        return 404;
+    }
+
+    public function getHttpMessage()
+    {
+        return 'Not Found';
+    }
 }

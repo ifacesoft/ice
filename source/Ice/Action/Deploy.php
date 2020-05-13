@@ -16,8 +16,8 @@ use Ice\Core\Action;
  *
  * Deploy main module
  *
- * @see Ice\Core\Action
- * @see Ice\Core\Action_Context
+ * @see \Ice\Core\Action
+ * @see \Ice\Core\Action_Context
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
@@ -51,7 +51,7 @@ class Deploy extends Action
      *          ]
      *      ],
      *      'output' => ['Ice:Resource/Ice\Action\Index'],
-     *      'ttl' => 3600,
+     *      'cache' => ['ttl' => -1, 'count' => 1000],
      *      'roles' => []
      *  ];
      * ```
@@ -72,7 +72,8 @@ class Deploy extends Action
                 'Ice:Orm_Migrate',
 //                'Ice:Cache_Hit',
                 'Ice:Resource',
-            ]
+            ],
+            'cache' => ['ttl' => -1, 'count' => 1000],
         ];
     }
 

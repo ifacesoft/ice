@@ -3,10 +3,14 @@ imports:
 
 filter:
 #    paths:
-#        - Source/*
+#        - source/*
     excluded_paths:
-        - Test/*
-        - Resource/*
+        - bin/*
+        - config/*
+        - resource/*
+        - tests/*
+        - var/*
+        - public/*
 tools:
     external_code_coverage:
         timeout: 2100 # Timeout in seconds.

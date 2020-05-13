@@ -11,114 +11,53 @@ namespace Ice\Core;
 
 use Ice\Core;
 use Ice\Helper\Validator as Helper_Validator;
+use Ice\Widget\Model_Form;
 
 /**
  * Class Validator
  *
  * Abstract validator class
  *
- * @see Ice\Core\Container
+ * @see \Ice\Core\Container
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
  * @package    Ice
  * @subpackage Core
- *
- * @version 0.0
- * @since   0.0
  */
 abstract class Validator extends Container
 {
+// todo: зачем stored
     use Stored;
 
-    const DEFAULT_KEY = 'instance';
-
-    /**
-     * Validate data by validate scheme
-     *
-     * example usage:
-     * ```php
-     *      $validateScheme = [
-     *          'FIELD_NAME' => 'VALIDATOR_NAME'
-     *      ];
-     * ```
-     * or
-     * ```php
-     *      $validateScheme = [
-     *          FIELD_NAME' => [
-     *              'VALIDATOR_NAME' => 'VALIDATOR_PARAM'
-     *          ]
-     *      ];
-     * ```
-     * or
-     * ```php
-     *      $validateScheme = [
-     *          'FIELD_NAME' => [
-     *              'VALIDATOR_NAME' => [
-     *                  'params' => [
-     *                      'VALIDATOR_PARAM_NAME1' => 'VALIDATOR_PARAM_VALUE1',
-     *                      'VALIDATOR_PARAM_NAME2 => 'VALIDATOR_PARAM_VALUE2'
-     *                  ],
-     *                  'message' => 'validate failed for {$0}',
-     *                  'exception' => 'Ice:Http_Not_Found'
-     *              ]
-     *          ]
-     *      ];
-     * ```
-     *
-     * @param  $data
-     * @param  array $validateScheme
-     * @return array
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @todo Заменить на Helper_Array::validate()
-     *
-     * @version 0.0
-     * @since   0.0
-     */
-    public static function validateByScheme(array $data, array $validateScheme)
-    {
-        foreach ($validateScheme as $param => $validators) {
-            foreach ((array)$validators as $validatorName => $validatorParams) {
-                if (is_int($validatorName)) {
-                    $validatorName = $validatorParams;
-                    $validatorParams = null;
-                }
-
-                $value = isset($data[$param]) ? $data[$param] : null;
-
-                Helper_Validator::validate($validatorName, $validatorParams, $param, $value);
-            }
-        }
-
-        return $data;
-    }
+    const DEFAULT_KEY = 'default';
 
     /**
      * Return validator instance
      *
-     * @param  null $key
+     * @param  null $instanceKey
      * @param  null $ttl
-     * @return Validator
+     * @param array $params
+     * @return Validator|Core
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.1
      * @since   0.1
+     * @throws Exception
      */
-    public static function getInstance($key = null, $ttl = null)
+    public static function getInstance($instanceKey = null, $ttl = null, array $params = [])
     {
-        return parent::getInstance($key, $ttl);
+        return parent::getInstance($instanceKey, $ttl, $params);
     }
 
-    public static function schemeColumnPlugin($columnName, $table)
+    public static function schemeColumnOptions($columnName, $table, $tablePrefixes)
     {
         $validators = [];
 
-        switch ($table['columns'][$columnName][Widget_Form::getClass()]) {
-            case 'Text':
-            case 'Textarea':
+        switch ($table['columns'][$columnName]['options']['type']) {
+            case 'text':
+            case 'textarea':
                 $validators['Ice:Length_Max'] = (int)$table['columns'][$columnName]['scheme']['length'];
                 break;
             default:
@@ -130,30 +69,44 @@ abstract class Validator extends Container
             $validators[] = 'Ice:Not_Null';
         }
 
-        return $validators;
+        return $validators ? ['validators' => $validators] : [];
     }
 
     /**
-     * Create new instance of validator
-     *
-     * @param  $key
-     * @return Validator
+     * @param $params
+     * @param $paramsOptions
      *
      * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since   0.0
+     * @todo Заменить на Helper_Array::validate()
+     * @version 1.1
+     * @since   1.1
+     * @return array
+     * @throws Exception
      */
-    protected static function create($key)
+    public static function validateParams(array $params, array $paramsOptions)
     {
-        $class = self::getClass();
-        return new $class();
+        foreach ($paramsOptions as $paramName => $options) {
+            if (empty($options['validators'])) {
+                continue;
+            }
+
+            foreach ((array)$options['validators'] as $validatorName => $validatorParams) {
+                if (is_int($validatorName)) {
+                    $validatorName = $validatorParams;
+                    $validatorParams = null;
+                }
+
+                $params[$paramName] = Helper_Validator::validate($validatorName, $validatorParams, $params, $paramName);
+            }
+        }
+
+        return $params;
     }
 
     /**
      * Default action key
      *
-     * @return Core
+     * @return string
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
@@ -202,14 +155,19 @@ abstract class Validator extends Container
      *      ];
      * ```
      *
-     * @param  $value
+     * @param array $data
+     * @param $name
      * @param  mixed $params
-     * @return boolean
-     *
+     * @return bool
      * @author anonymous <email>
      *
-     * @version 0
-     * @since   0
+     * @version 1.2
+     * @since   0.0
      */
-    abstract public function validate($value, $params = null);
+    abstract public function validate(array $data, $name, array $params);
+
+    public function getMessage()
+    {
+        return 'param \'{$0}\' with value \'{$1}\' is not valid';
+    }
 }

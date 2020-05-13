@@ -18,8 +18,8 @@ use Ice\Helper\Console;
  *
  * Default ice form action
  *
- * @see Ice\Core\Action
- * @see Ice\Core\Action_Context
+ * @see \Ice\Core\Action
+ * @see \Ice\Core\Action_Context
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
@@ -56,7 +56,7 @@ class PhpUnit extends Action
      *          ]
      *      ],
      *      'output' => ['Ice:Resource/Ice\Action\Index'],
-     *      'ttl' => 3600,
+     *      'cache' => ['ttl' => -1, 'count' => 1000],
      *      'roles' => []
      *  ];
      * ```
@@ -75,7 +75,8 @@ class PhpUnit extends Action
             'input' => [
                 'vendor' => ['default' => 'phpunit/phpunit'],
                 'command' => ['default' => '/phpunit']
-            ]
+            ],
+            'cache' => ['ttl' => -1, 'count' => 1000],
         ];
     }
 
@@ -92,17 +93,17 @@ class PhpUnit extends Action
      */
     public function run(array $input)
     {
-        $modulePath = Module::getInstance()->get('path');
+        $modulePath = getModuleDir();
 
         foreach (Module::getAll() as $module) {
             $path = $module->get('path');
 
             $command = VENDOR_DIR . $input['vendor'] . $input['command'] .
-                ' --configuration ' . $path . 'Config/vendor/phpunit.xml' .
+                ' --configuration ' . $path . 'config/vendor/phpunit.xml' .
                 ' --bootstrap ' . $path . 'bootstrap.php';
 
             if ($path == $modulePath) {
-                $command .= ' --coverage-clover=' . $path . 'Var/vendor/phpunit/coverage.xml';
+                $command .= ' --coverage-clover=' . $path . 'vendor/phpunit/coverage.xml';
             }
 
             Console::run($command . ' ' . $path . 'Test');

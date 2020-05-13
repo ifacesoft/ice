@@ -62,4 +62,17 @@ return [
         'tr' => '"{$0}" model "{$1}" boş alan ',
         'uk' => 'поле "{$0}" моделі "{$1}" is null',
     ],
+    'Model::__get: Foreign key is missing - {$0} in model {$1}' => [
+        'en' => 'Model::__get: Foreign key is missing - {$0} in model {$1}',
+        'ru' => 'Модель::__получить: внешний ключ отсутствует - {$0} в модели {$1}',
+    ],
+    'Field {$0} not found in Model {$1}' => [
+        'ru' => 'Field {$0} not found in Model {$1}',
+    ],
+    'field "{$0}" of model "{$1}" is null' => [
+        'ru' => 'field "{$0}" of model "{$1}" is null',
+    ],
+    'Could not set value: Field "{$0}" not found in Model "{$1}"' => [
+        'ru' => 'Could not set value: Field "{$0}" not found in Model "{$1}"',
+    ],
 ];

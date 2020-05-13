@@ -1,21 +1,32 @@
 <?php
+
 namespace Ice\Helper;
 
 use Ice\Core\Request as Core_Request;
 
 class Http
 {
-    /**
-     * Headers by http response code
-     *
-     * @var array
-     */
-    private static $statusCodeHeaders = [
-        '400' => 'HTTP/1.1 400 Bad Request',
-        '403' => 'HTTP/1.1 403 Forbidden',
-        '404' => 'HTTP/1.1 404 Not Found',
-        '500' => 'HTTP/1.1 500 Internal Server Error'
-    ];
+//    /**
+//     * Headers by http response code
+//     *
+//     * @var array
+//     */
+//    private static $statusCodeHeaders = [
+//        200 => 'HTTP/1.1 200 OK', // Успешно
+//        201 => 'HTTP/1.1 201 Created', // Создано
+//        202 => 'HTTP/1.1 202 Accepted', // Принято
+//        400 => 'HTTP/1.1 400 Bad Request', // Плохой, неверный запрос
+//        401 => 'HTTP/1.1 401 Unauthorized', // Не авторизован
+//        403 => 'HTTP/1.1 403 Forbidden', // В доступе отказано
+//        404 => 'HTTP/1.1 404 Not Found', // Не найдено
+//        405 => 'HTTP/1.1 405 Method Not Allowed', // Метод не поддерживается
+//        409 => 'HTTP/1.1 409 Conflict', // Конфликт
+//        412 => 'HTTP/1.1 412 Precondition Failed', // Условие ложно
+//        413 => 'HTTP/1.1 413 Request Entity Too Large', // Размер запроса слижком велик
+//        500 => 'HTTP/1.1 500 Internal Server Error', // Внутренняя ошибка сервера
+//        501 => 'HTTP/1.1 501 Not Implemented', // Не реализовано
+//        503 => 'HTTP/1.1 502 Service Unavailable' // Сервис не доступен
+//    ];
 
     /**
      * Mime types by file extensions
@@ -71,6 +82,8 @@ class Http
         'rtf' => 'application/rtf',
         'xls' => 'application/vnd.ms-excel',
         'ppt' => 'application/vnd.ms-powerpoint',
+        'xlsx' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'docx' => ' application/vnd.openxmlformats-officedocument.wordprocessingml.document',
 
         // open office
         'odt' => 'application/vnd.oasis.opendocument.text',
@@ -97,23 +110,42 @@ class Http
     }
 
     /**
-     * Return status code header by code
+     * Return content type header by file extension
      *
-     * @param  $code
-     * @return mixed
+     * @param  $length
+     * @return string
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @package    Ice
      * @subpackage Helper
      *
-     * @version 0.4
-     * @since   0.4
+     * @version 1.1
+     * @since   1.1
      */
-    public static function getStatusCodeHeader($code)
+    public static function getContentLength($length)
     {
-        return Http::$statusCodeHeaders[$code];
+        return 'Content-Length: ' . $length;
     }
+
+//    /**
+//     * Return status code header by code
+//     *
+//     * @param  $code
+//     * @return mixed
+//     *
+//     * @author dp <denis.a.shestakov@gmail.com>
+//     *
+//     * @package    Ice
+//     * @subpackage Helper
+//     *
+//     * @version 0.4
+//     * @since   0.4
+//     */
+//    public static function getStatusCodeHeader($code)
+//    {
+//        return Http::$statusCodeHeaders[$code];
+//    }
 
     /**
      * Gets content via http
@@ -138,10 +170,18 @@ class Http
         return file_get_contents($url);
     }
 
-    public static function setHeader($header, $force = false, $code = null)
+    public static function setHeader($header, $code = null, $replace = true)
     {
         if (!headers_sent()) {
-            header($header, $force, $code);
+            header($header, $replace, $code);
         }
+    }
+
+    public static function setStatusCodeHeader($code)
+    {
+        if (!headers_sent()) {
+            http_response_code($code);
+        }
+//        Http::setHeader(Http::getStatusCodeHeader($code), $code);
     }
 }

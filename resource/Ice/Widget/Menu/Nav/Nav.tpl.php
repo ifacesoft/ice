@@ -1,4 +1,6 @@
 <li>
-    <a href="<?php if (isset($options['href'])) : ?><?= $options['href'] ?><?php endif; ?>#<?= $name ?>"><?= $title ?></a>
-    <?= $options['nav'] ?>
+    <a <?= $component->getIdAttribute() ?> <?= $component->getClassAttribute() ?>
+        href="<?= $component->getHref() ?>#<?= $component->getComponentName() ?>"
+    ><?= $component->getValue() ?></a>
+    <?= $component->getOption('nav') ?>
 </li>

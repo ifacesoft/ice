@@ -3,7 +3,6 @@
 namespace Ice\Action;
 
 use Ice\Core\Action;
-use Ice\Core\Debuger;
 use Ice\Core\Route;
 
 class Cache_Hit extends Action
@@ -13,23 +12,23 @@ class Cache_Hit extends Action
      *
      * @return array
      */
-       protected static function config()
-       {
-           return [
-               'view' => ['template' => '', 'viewRenderClass' => null],
-               'actions' => [],
-               'input' => ['routeNames' => ['default' => []]],
-               'output' => [],
-               'ttl' => -1,
-               'access' => [
-                   'roles' => [],
-                   'request' => 'cli',
-                   'env' => null
-               ]
-           ];
-       }
+    protected static function config()
+    {
+        return [
+            'view' => ['template' => '', 'viewRenderClass' => null],
+            'actions' => [],
+            'input' => ['routeNames' => ['default' => []]],
+            'output' => [],
+            'cache' => ['ttl' => -1, 'count' => 1000],
+            'access' => [
+                'roles' => [],
+                'request' => 'cli',
+                'env' => null
+            ]
+        ];
+    }
 
-     /** Run action
+    /** Run action
      *
      * @param  array $input
      * @return array
@@ -38,7 +37,7 @@ class Cache_Hit extends Action
     {
         foreach ($input['routeNames'] as $routeName => $params) {
             if (is_int($routeName)) {
-               $routeName = $params;
+                $routeName = $params;
                 $params = [];
             }
 

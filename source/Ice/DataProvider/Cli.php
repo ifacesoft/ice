@@ -7,42 +7,27 @@
  * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
-namespace Ice\Data\Provider;
+namespace Ice\DataProvider;
 
 use Ice\Core\Action;
-use Ice\Core\Data_Provider;
+use Ice\Core\DataProvider;
+use Ice\Exception\Error;
 
 /**
- * Class Cli
+ * Class App
  *
  * Data provider for cli streams
  *
- * @see Ice\Core\Data_Provider
+ * @see \Ice\Core\DataProvider
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
  * @package    Ice
- * @subpackage Data_Provider
+ * @subpackage DataProvider
  */
-class Cli extends Data_Provider
+class Cli extends DataProvider
 {
-    const DEFAULT_DATA_PROVIDER_KEY = 'Ice:Cli/default';
-    const DEFAULT_KEY = 'instance';
-
-    /**
-     * Return default data provider key
-     *
-     * @return string
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since   0.0
-     */
-    protected static function getDefaultDataProviderKey()
-    {
-        return self::DEFAULT_DATA_PROVIDER_KEY;
-    }
+    const DEFAULT_KEY = 'default';
 
     /**
      * Return default key
@@ -62,62 +47,72 @@ class Cli extends Data_Provider
     /**
      * Get data from data provider by key
      *
-     * @param  string $key
+     * @param string $key
+     * @param null $default
+     * @param bool $require
      * @return mixed
-     *
+     * @throws Error
+     * @throws \Ice\Core\Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.5
+     * @version 1.2
      * @since   0.0
      */
-    public function get($key = null)
+    public function get($key = null, $default = null, $require = false)
     {
         $this->getConnection();
 
-        if (!$key) {
-            return $_SERVER['argv'];
+        if (empty($key)) {
+            return empty($_SERVER['argv']) ? [] : $_SERVER['argv'];
         }
 
-        return isset($_SERVER['argv'][$key]) ? $_SERVER['argv'][$key] : null;
+        $value = isset($_SERVER['argv']) && array_key_exists($key, $_SERVER['argv'])
+            ? $_SERVER['argv'][$key]
+            : $default;
+
+        if ($value === null && $require) {
+            throw new Error(['Param {$0} from data provider {$1} is require', ['key', __CLASS__]]);
+        }
+
+        return $value;
     }
 
     /**
      * Set data to data provider
      *
-     * @param  string $key
-     * @param  $value
-     * @param  null $ttl
-     * @throws \Exception
-     * @return mixed setted value
+     * @param array $values
+     * @param null $ttl
+     * @return array
      *
+     * @throws \Ice\Core\Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.5
+     * @version 1.2
      * @since   0.0
      */
-    public function set($key, $value = null, $ttl = null)
+    public function set(array $values = null, $ttl = null)
     {
-        if (is_array($key) && $value === null) {
-            foreach ($key as $index => $value) {
-                $this->set($index, $value, $ttl);
-            }
-
-            return $key;
+        if ($ttl === -1) {
+            return $values;
         }
 
         $this->getConnection();
 
-        return $_SERVER['argv'][$key] = $value;
+        foreach ($values as $key => $value) {
+            $_SERVER['argv'][$key] = $value;
+        }
+
+        return $values;
     }
 
     /**
      * Delete from data provider by key
      *
-     * @param  string $key
-     * @param  bool $force if true return boolean else deleted value
-     * @throws \Exception
+     * @param string $key
+     * @param bool $force if true return boolean else deleted value
      * @return mixed|boolean
      *
+     * @throws \Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
@@ -132,10 +127,10 @@ class Cli extends Data_Provider
      * Increment value by key with defined step (default 1)
      *
      * @param  $key
-     * @param  int $step
-     * @throws \Exception
+     * @param int $step
      * @return mixed new value
      *
+     * @throws \Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
@@ -150,10 +145,10 @@ class Cli extends Data_Provider
      * Decrement value by key with defined step (default 1)
      *
      * @param  $key
-     * @param  int $step
-     * @throws \Exception
+     * @param int $step
      * @return mixed new value
      *
+     * @throws \Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
@@ -180,7 +175,7 @@ class Cli extends Data_Provider
     /**
      * Return keys by pattern
      *
-     * @param  string $pattern
+     * @param string $pattern
      * @return array
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -208,37 +203,31 @@ class Cli extends Data_Provider
     {
         $connection = [];
 
+        if (empty($_SERVER['argv'])) {
+            return (bool)$connection;
+        }
+
         array_shift($_SERVER['argv']);
 
         foreach ($_SERVER['argv'] as $key => $arg) {
-            $param = explode('=', $arg);
+            $pos = mb_strpos($arg, '=');
 
             if (!isset($connection['actionClass'])) {
-                if (count($param) == 1) {
-                    $connection['actionClass'] = Action::getClass($arg);
-                    unset($_SERVER['argv'][$key]);
-                    continue;
+                if ($pos === false) {
+                    $connection['actionClass'] = $arg;
+                } else {
+                    $connection['actionClass'] = mb_substr($arg, $pos + 1);
                 }
 
-                if (count($param) == 2) {
-                    list($param, $value) = $param;
-
-                    if ($param == 'action') {
-                        $connection['actionClass'] = Action::getClass($value);
-                        unset($_SERVER['argv'][$key]);
-                        continue;
-                    }
-                }
+                unset($_SERVER['argv'][$key]);
+                continue;
             }
 
-            if (count($param) == 2) {
-                list($param, $value) = $param;
-            } else {
-                $param = $arg;
-                $value = null;
+            if ($pos === false) {
+                throw new Error(['Cli param {$0} invalid', $key], $_SERVER['argv']);
             }
-
-            $connection[$param] = $value;
+            
+            $connection[mb_substr($arg, 0, $pos)] = mb_substr($arg, $pos + 1);
 
             unset($_SERVER['argv'][$key]);
         }
@@ -263,5 +252,38 @@ class Cli extends Data_Provider
     {
         $connection = null;
         return true;
+    }
+
+    /**
+     * Set expire time (seconds)
+     *
+     * @param  $key
+     * @param int $ttl
+     * @return mixed new value
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since   0
+     */
+    public function expire($key, $ttl)
+    {
+        // TODO: Implement expire() method.
+    }
+
+    /**
+     * Check for errors
+     *
+     * @return void
+     *
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since   0.0
+     */
+    function checkErrors()
+    {
+        // TODO: Implement checkErrors() method.
     }
 }

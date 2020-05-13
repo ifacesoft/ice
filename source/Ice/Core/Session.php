@@ -10,6 +10,7 @@
 namespace Ice\Core;
 
 use Ice\Core;
+use Ice\SessionHandler\Native;
 
 /**
  * Class Session
@@ -20,9 +21,6 @@ use Ice\Core;
  *
  * @package    Ice
  * @subpackage Core
- *
- * @version 0.0
- * @since   0.0
  */
 class Session
 {
@@ -38,149 +36,31 @@ class Session
      */
     public static function init()
     {
-        session_set_save_handler(
-            'Ice\Core\Session::open',
-            'Ice\Core\Session::close',
-            'Ice\Core\Session::read',
-            'Ice\Core\Session::write',
-            'Ice\Core\Session::destroy',
-            'Ice\Core\Session::gc'
-        );
+        if (session_status() === PHP_SESSION_NONE) {
+            $sessionHandler = SessionHandler::getInstance();
 
-        session_start();
+            if (!($sessionHandler instanceof Native)) {
+                session_set_save_handler($sessionHandler, true);
+
+                foreach (Environment::getInstance()->get('ini_set_session', []) as  $sessionParamsName => $sessionParamValue) {
+                    if (is_array($sessionParamValue)) {
+                        $sessionParamValue = reset($sessionParamValue);
+                    }
+
+                    ini_set('session.' . $sessionParamsName, $sessionParamValue);
+                }
+
+                session_register_shutdown();
+            }
+
+            if (!\headers_sent()) {
+                session_start();
+            }
+        }
     }
 
-    /**
-     * PHP >= 5.4.0<br/>
-     * Close the session
-     *
-     * @link   http://php.net/manual/en/sessionhandlerinterafce.close.php
-     * @return bool <p>
-     * The return value (usually TRUE on success, FALSE on failure).
-     * Note this value is returned internally to PHP for processing.
-     * </p>
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since   0.0
-     */
-    public static function close()
+    public static function id()
     {
-        return true;
-    }
-
-    /**
-     * PHP >= 5.4.0<br/>
-     * Destroy a session
-     *
-     * @link   http://php.net/manual/en/sessionhandlerinterafce.destroy.php
-     * @param  int $session_id The session ID being destroyed.
-     * @return bool <p>
-     * The return value (usually TRUE on success, FALSE on failure).
-     * Note this value is returned internally to PHP for processing.
-     * </p>
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since   0.0
-     */
-    public static function destroy($session_id)
-    {
-        Session::getDataProvider('session')->delete($session_id);
-    }
-
-    /**
-     * PHP >= 5.4.0<br/>
-     * Cleanup old sessions
-     *
-     * @link   http://php.net/manual/en/sessionhandlerinterafce.gc.php
-     * <p>
-     * Sessions that have not updated for
-     * the last maxlifetime seconds will be removed.
-     * </p>
-     * @return bool <p>
-     * The return value (usually TRUE on success, FALSE on failure).
-     * Note this value is returned internally to PHP for processing.
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since   0.0
-     */
-    public static function gc()
-    {
-        return true;
-    }
-
-    /**
-     * PHP >= 5.4.0<br/>
-     * Initialize session
-     *
-     * @link   http://php.net/manual/en/sessionhandlerinterafce.open.php
-     * @return bool <p>
-     * The return value (usually TRUE on success, FALSE on failure).
-     * Note this value is returned internally to PHP for processing.
-     * </p>
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since   0.0
-     */
-    public static function open()
-    {
-        return true;
-    }
-
-    /**
-     * PHP >= 5.4.0<br/>
-     * Read session data
-     *
-     * @link   http://php.net/manual/en/sessionhandlerinterafce.read.php
-     * @param  string $session_id The session id to read data for.
-     * @return string <p>
-     * Returns an encoded string of the read data.
-     * If nothing was read, it must return an empty string.
-     * Note this value is returned internally to PHP for processing.
-     * </p>
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since   0.0
-     */
-    public static function read($session_id)
-    {
-        return Session::getDataProvider()->get($session_id);
-    }
-
-    /**
-     * PHP >= 5.4.0<br/>
-     * Write session data
-     *
-     * @link   http://php.net/manual/en/sessionhandlerinterafce.write.php
-     * @param  string $session_id The session id.
-     * @param  string $session_data <p>
-     * The encoded session data. This data is the
-     * result of the PHP internally encoding
-     * the $_SESSION superglobal to a serialized
-     * string and passing it as this parameter.
-     * Please note sessions use an alternative serialization method.
-     * </p>
-     * @return bool <p>
-     * The return value (usually TRUE on success, FALSE on failure).
-     * Note this value is returned internally to PHP for processing.
-     * </p>
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since   0.0
-     */
-    public static function write($session_id, $session_data)
-    {
-        Session::getDataProvider()->set($session_id, $session_data);
+        return session_id();
     }
 }

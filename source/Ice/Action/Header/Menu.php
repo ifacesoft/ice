@@ -4,7 +4,6 @@ namespace Ice\Action;
 
 use Ice\Core\Action;
 use Ice\Core\Request;
-use Ice\Widget\Menu\Nav;
 
 class Header_Menu extends Action
 {
@@ -20,7 +19,7 @@ class Header_Menu extends Action
             'actions' => [],
             'input' => [],
             'output' => [],
-            'ttl' => -1,
+            'cache' => ['ttl' => -1, 'count' => 1000],
             'access' => [
                 'roles' => [],
                 'request' => null,
@@ -47,15 +46,14 @@ class Header_Menu extends Action
         }
 
         $navMenu = Nav::create(Request::uri(), __CLASS__)
-            ->setClasses('nav-pills')
+            ->addClasses('nav-pills')
             ->link('guide', 'Руководство', ['href' => $hrefPrefix . '/guide', 'target' => $target])
 //            ->link('cookbook', 'Полезные статьи', ['href' => $hrefPrefix . '/cookbook', 'target' => $target])
 //            ->link('blog', 'Блог', ['href' => $hrefPrefix . '/blog', 'target' => $target])
 //            ->link('forum', 'Форум', ['href' => $hrefPrefix . '/forum', 'target' => $target])
             ->link('github', 'GitHub', ['href' => 'https://github.com/ifacesoft/Ice/tree/master', 'target' => $target])
             ->link('bitbucket', 'Bitbucket', ['href' => 'https://bitbucket.org/dp_ifacesoft/ice', 'target' => $target])
-            ->link('api', 'Api', ['href' => $hrefPrefix . '/resource/api/Ice/1.0', 'target' => $target])
-//            ->link('roadmap', 'План разработки', ['href' => $hrefPrefix . '/roadMap', 'target' => $target])
+            ->link('api', 'Api', ['href' => $hrefPrefix . '/resource/api/Ice/1.0', 'target' => $target])//            ->link('roadmap', 'План разработки', ['href' => $hrefPrefix . '/roadMap', 'target' => $target])
         ;
 
         return ['menu' => $navMenu];

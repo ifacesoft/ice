@@ -9,8 +9,8 @@
 
 namespace Ice\Core;
 
-use Ice\Core;
-use Ice\Data\Provider\Repository;
+use Ice\DataProvider\Repository;
+use Ice\Exception\Error;
 
 /**
  * Class Cache
@@ -71,7 +71,7 @@ class Cache
      *
      * @param  Cacheable $cacheable
      * @param  $cacheTime
-     * @param  array $tags
+     * @param  array $validateTags
      * @return Cacheable|null
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -79,20 +79,20 @@ class Cache
      * @version 0.5
      * @since   0.5
      */
-    public static function validateTimeTags(Cacheable $cacheable, array $tags, $cacheTime)
+    public static function validateTimeTags(Cacheable $cacheable, array $validateTags, $cacheTime)
     {
-        if (empty($tags)) {
+        if (empty($validateTags)) {
             return null;
         }
 
         $repository = Cache::getRepository($cacheable);
 
-        foreach (Cache::getKeys($cacheable) as $key) {
+        foreach (Cache::getKeys($validateTags) as $key) {
             $time = $repository->get($key);
 
             if (!$time) {
-                $time = time();
-                $repository->set($key, $time);
+                $time = microtime(true);
+                $repository->set([$key => $time]);
             }
 
             if ($time >= $cacheTime) {
@@ -167,10 +167,10 @@ class Cache
     {
         $repository = Cache::getRepository($cacheable);
 
-        $time = time();
+        $time = microtime(true);
 
         foreach (self::getKeys($invalidateTags) as $key) {
-            $repository->set($key, $time);
+            $repository->set([$key => $time]);
         }
 
         return $cacheable;
@@ -178,12 +178,11 @@ class Cache
 
     /**
      * Validate cache
-     *
      * @return Cacheable|null
-     *
+     * @throws Error
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.5
+     * @version 1.2
      * @since   0.0
      */
     public function validate()
@@ -192,6 +191,6 @@ class Cache
             return $this->cacheable->validate($this->value);
         }
 
-        return $this->cacheable;
+        throw new Error(['Object {$0} mast be implementation Cacheble interface', get_class($this->cacheable)]);
     }
 }

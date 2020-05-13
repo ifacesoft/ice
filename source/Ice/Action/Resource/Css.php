@@ -9,19 +9,20 @@
 
 namespace Ice\Action;
 
-use CSSmin;
 use Ice\Core\Action;
 use Ice\Core\Module;
-use Ice\Helper\Arrays;
+use Ice\Exception\Error;
 use Ice\Helper\Directory;
+use Ice\Helper\File;
+use Minify_CSSmin;
 
 /**
  * Class Title
  *
  * Action of generation css for includes into html tag head (<script.. and <link..)
  *
- * @see Ice\Core\Action
- * @see Ice\Core\Action_Context
+ * @see \Ice\Core\Action
+ * @see \Ice\Core\Action_Context
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
@@ -38,7 +39,7 @@ class Resource_Css extends Action
                 'resources' => ['default' => []],
                 'context' => ['default' => '/resource/'],
             ],
-            'ttl' => 3600
+            'cache' => ['ttl' => 3600, 'count' => 1000],
         ];
     }
 
@@ -47,24 +48,24 @@ class Resource_Css extends Action
      *
      * @param  array $input
      * @return array
-     *
+     * @throws Error
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.6
+     * @version 1.10
      * @since   0.0
+     * @throws \Ice\Core\Exception
      */
     public function run(array $input)
     {
         $resources = [];
+        $compiledResourceDir = getCompiledResourceDir();
 
-        $compiledResourceDir = Module::getInstance()->get('compiledResourceDir');
-
-        foreach (array_keys(Module::getAll()) as $name) {
-            if (file_exists($cssSource = Module::getInstance($name)->get('path') . 'Resource/css/style.css')) {
+        foreach (array_keys(Module::getAll()) as $moduleName) {
+            if (file_exists($cssSource = getResourceDir($moduleName) . 'css/style.css')) {
                 $resources[] = [
                     'source' => $cssSource,
-                    'resource' => $compiledResourceDir . $name . '/style.pack.css',
-                    'url' => $input['context'] . $name . '/style.pack.css',
+                    'resource' => $compiledResourceDir . $moduleName . '/style.pack.css',
+                    'url' => $input['context'] . $moduleName . '/style.pack.css',
                     'pack' => true,
                     'css_replace' => []
                 ];
@@ -72,15 +73,20 @@ class Resource_Css extends Action
         }
 
         foreach ($input['resources'] as $from => $config) {
-            foreach ($config as $name => $configResources) {
+            foreach ($config as $moduleName => $configResources) {
                 foreach ($configResources as $resourceKey => $resourceItem) {
-                    $source = $from == 'modules' // else from vendors
-                        ? Module::getInstance($name)->get('path') . 'Resource/'
-                        : VENDOR_DIR . $name . '/';
-
-                    $res = $from == 'modules' // else from vendors
-                        ? $name . '/' . $resourceKey . '/'
-                        : 'vendor/' . $resourceKey . '/';
+                    switch ($from) {
+                        case 'modules':
+                            $source = getResourceDir($moduleName);
+                            $res = $moduleName . '/' . $resourceKey . '/';
+                            break;
+                        case 'node_modules';
+                            $source = NODE_MODULES_DIR . $resourceKey . '/';
+                            $res = 'node_modules/' . $resourceKey . '/';
+                            break;
+                        default:
+                            throw new Error(['From {$0} handler not implemented', $from]);
+                    }
 
                     $resourceItemPath = is_array($resourceItem['path'])
                         ? reset($resourceItem['path'])
@@ -88,7 +94,7 @@ class Resource_Css extends Action
 
                     $source .= $resourceItemPath;
 
-                    if ($resourceItem['isCopy']) {
+                    if (isset($resourceItem['isCopy']) && $resourceItem['isCopy'] === true) {
                         Directory::copy($source, Directory::get($compiledResourceDir . $res));
                     }
 
@@ -105,9 +111,7 @@ class Resource_Css extends Action
             }
         }
 
-        $this->pack($resources);
-
-        return ['css' => array_unique(Arrays::column($resources, 'url'))];
+        return $this->pack($resources);
     }
 
     /**
@@ -119,15 +123,16 @@ class Resource_Css extends Action
      *
      * @version 0.0
      * @since   0.0
+     * @return array
+     * @throws \Ice\Core\Exception
      */
     private function pack($resources)
     {
-        if (!class_exists('CSSMin', false)) {
-            include_once VENDOR_DIR . 'mrclay/minify/min/lib/CSSmin.php';
-        }
         $handlers = [];
 
-        $CSSmin = new CSSMin();
+        $CSSmin = new Minify_CSSmin();
+
+        $cache = [];
 
         foreach ($resources as $resource) {
             if (!isset($handlers[$resource['resource']])) {
@@ -136,7 +141,7 @@ class Resource_Css extends Action
             }
 
             $pack = $resource['pack']
-                ? $CSSmin->run(file_get_contents($resource['source']))
+                ? $CSSmin->minify(file_get_contents($resource['source']))
                 : file_get_contents($resource['source']);
 
             if (!empty($resource['css_replace'])) {
@@ -147,13 +152,26 @@ class Resource_Css extends Action
                 $handlers[$resource['resource']],
                 '/* ' . str_replace(dirname(MODULE_DIR), '', $resource['source']) . " */\n" . $pack . "\n\n\n"
             );
+
+            if (!isset($cache[$resource['url']])) {
+                $cache[$resource['url']] = [];
+            }
+
+            $cache[$resource['url']][] = $resource['source'];
         }
 
         foreach ($handlers as $filePath => $handler) {
             fclose($handler);
 
-//            chmod($filePath, 0664);
-//            chgrp($filePath, filegroup(dirname($filePath)));
+            if (function_exists('posix_getuid') && posix_getuid() == fileowner($filePath)) {
+                chmod($filePath, 0666);
+                chgrp($filePath, filegroup(dirname($filePath)));
+            }
         }
+
+        return [
+            'styles' =>
+                File::createData(getCompiledResourceDir() . 'style.cache.php', $cache)
+        ];
     }
 }

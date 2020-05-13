@@ -180,4 +180,9 @@ class Model_Collection_Iterator implements Iterator
 
         $this->position = 0;
     }
+
+    public static function getConfig()
+    {
+        return Config::getInstance(get_called_class());
+    }
 }

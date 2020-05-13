@@ -33,6 +33,7 @@ class Resource extends Action
         return [
             'view' => ['template' => ''],
             'actions' => ['Ice:Resource_Css', 'Ice:Resource_Js'],
+            'cache' => ['ttl' => -1, 'count' => 1000],
         ];
     }
 
@@ -49,24 +50,24 @@ class Resource extends Action
      */
     public function run(array $input)
     {
-        $compiledResourceDir = Module::getInstance()->get('compiledResourceDir');
+        $compiledResourceDir = getCompiledResourceDir();
 
         foreach (array_keys(Module::getAll()) as $name) {
             $modulePath = Module::getInstance($name)->get('path');
 
-            if (file_exists($imgSource = $modulePath . 'Resource/img')) {
+            if (file_exists($imgSource = $modulePath . 'resource/img')) {
                 Directory::copy($imgSource, Directory::get($compiledResourceDir . 'img'));
             }
-            if (file_exists($fontSource = $modulePath . 'Resource/font')) {
+            if (file_exists($fontSource = $modulePath . 'resource/font')) {
                 Directory::copy($fontSource, Directory::get($compiledResourceDir . 'font'));
             }
-            if (file_exists($apiSource = $modulePath . 'Resource/api')) {
+            if (file_exists($apiSource = $modulePath . 'resource/api')) {
                 Directory::copy($apiSource, Directory::get($compiledResourceDir . 'api'));
             }
-            if (file_exists($umlSource = $modulePath . 'Resource/uml')) {
+            if (file_exists($umlSource = $modulePath . 'resource/uml')) {
                 Directory::copy($umlSource, Directory::get($compiledResourceDir . 'uml'));
             }
-            if (file_exists($docSource = $modulePath . 'Resource/doc')) {
+            if (file_exists($docSource = $modulePath . 'resource/doc')) {
                 Directory::copy($docSource, Directory::get($compiledResourceDir . 'doc'));
             }
         }

@@ -16,15 +16,12 @@ use Ice\Core\Validator;
  *
  * Validate empty data
  *
- * @see Ice\Core\Validator
+ * @see \Ice\Core\Validator
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
  * @package    Ice
  * @subpackage Validator
- *
- * @version 0.0
- * @since   0.0
  */
 class Emptys extends Validator
 {
@@ -40,17 +37,23 @@ class Emptys extends Validator
      *  ],
      *  'name' => 'Ice:Not_Null'
      *
-     * @param  $data
-     * @param  null $scheme
-     * @return boolean
+     * @param array $data
+     * @param $name
+     * @param array $params
+     * @return bool
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 1.2
      * @since   0.0
      */
-    public function validate($data, $scheme = null)
+    public function validate(array $data, $name, array $params)
     {
-        return empty($value);
+        return empty($data[$name]);
+    }
+
+    public function getMessage()
+    {
+        return 'Param \'{$0}\' is empty';
     }
 }

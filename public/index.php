@@ -11,4 +11,4 @@
  * @since 0.0
  */
 
-require_once dirname(__DIR__) . '/app.php';
+require_once __DIR__ . '/../source/run.php';

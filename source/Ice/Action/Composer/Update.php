@@ -49,7 +49,8 @@ class Composer_Update extends Action
                 'roles' => [],
                 'request' => 'cli',
                 'env' => null
-            ]
+            ],
+            'cache' => ['ttl' => -1, 'count' => 1000],
         ];
     }
 
@@ -68,12 +69,18 @@ class Composer_Update extends Action
     {
         $composerPharFile = MODULE_DIR . 'composer.phar';
 
-        Console::run([
+        $commands = [
             'php ' . $composerPharFile . ' self-update',
             'php ' . $composerPharFile . ' clear-cache',
             'php ' . $composerPharFile . ' update --prefer-source --optimize-autoloader',
             'php ' . $composerPharFile . ' show -i'
-        ]);
+        ];
+
+        if (!file_exists($composerPharFile)) {
+            array_unshift($commands, 'curl -sS https://getcomposer.org/installer | php');
+        }
+
+        Console::run($commands);
 
         Console::getText('For composer update use command "./cli Ice:Deploy" or directly "./cli Ice:Composer_Update"', Console::C_YELLOW);
     }

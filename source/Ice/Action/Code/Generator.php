@@ -3,8 +3,10 @@
 namespace Ice\Action;
 
 use Ice\Core\Action;
+use Ice\Code\Generator\Action as CodeGenerator_Action;
 
-class Code_Generator extends Action{
+class Code_Generator extends Action
+{
 
     /**
      * Action config
@@ -16,26 +18,26 @@ class Code_Generator extends Action{
      * @version 0
      * @since   0
      */
-       protected static function config()
-       {
-           return [
-               'view' => ['template' => ''],
-               'actions' => [],
-               'input' => [
-                   'baseClass',
-                   'class',
-               ],
-               'output' => [],
-               'ttl' => -1,
-               'access' => [
-                   'roles' => [],
-                   'request' => 'cli',
-                   'env' => null
-              ]
-           ];
-       }
+    protected static function config()
+    {
+        return [
+            'view' => ['template' => ''],
+            'actions' => [],
+            'input' => [
+                'baseClass',
+                'class',
+            ],
+            'output' => [],
+            'cache' => ['ttl' => -1, 'count' => 1000],
+            'access' => [
+                'roles' => [],
+                'request' => 'cli',
+                'env' => null
+            ]
+        ];
+    }
 
-      /** Run action
+    /** Run action
      *
      * @param  array $input
      * @return array
@@ -44,12 +46,13 @@ class Code_Generator extends Action{
      *
      * @version 0
      * @since   0
+     * @throws \Ice\Core\Exception
      */
     public function run(array $input)
     {
         switch ($input['baseClass']) {
             case 'action':
-                Action::getCodeGenerator()->generate(Action::getClass($input['class']));
+                CodeGenerator_Action::getInstance(Action::getClass($input['class']))->generate();
                 break;
             case 'view':
                 break;

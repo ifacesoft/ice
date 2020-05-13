@@ -16,7 +16,7 @@ use Ice\Core;
  *
  * Core code generator container abstract class
  *
- * @see Ice\Core\Container
+ * @see \Ice\Core\Container
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
@@ -30,28 +30,6 @@ abstract class Code_Generator extends Container
 {
     use Core;
 
-    /**
-     * Create instance of code generator
-     *
-     * @param  string $key Class of generated object
-     * @return mixed
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since   0.0
-     */
-    protected static function create($key)
-    {
-        $class = self::getClass();
-
-        if ($key) {
-            $class .= '_' . $key;
-        }
-
-        return new $class($key);
-    }
-
     protected static function getDefaultKey()
     {
         return null;
@@ -60,7 +38,6 @@ abstract class Code_Generator extends Container
     /**
      * Generate code and other
      *
-     * @param  $class
      * @param  array $data Sended data requered for generate
      * @param  bool $force Force if already generate
      * @return string
@@ -70,5 +47,5 @@ abstract class Code_Generator extends Container
      * @version 0
      * @since   0
      */
-    abstract public function generate($class, array $data = null, $force = false);
+    abstract public function generate(array $data = [], $force = false);
 }

@@ -1,35 +1,31 @@
 <?php
 
-namespace Ice\Data\Provider;
+namespace Ice\DataProvider;
 
-use Ice\Core\Data_Provider;
+use Ice\Core\DataProvider;
 use Ice\Core\Exception;
 use Ice\Core\Logger;
 
-class Mongodb extends Data_Provider
+/**
+ * Class Mongodb
+ *
+ * Data provider for mongodb
+ *
+ * @see \Ice\Core\DataProvider
+ *
+ * @author dp <denis.a.shestakov@gmail.com>
+ *
+ * @package    Ice
+ * @subpackage DataProvider
+ */
+class Mongodb extends DataProvider
 {
-    const DEFAULT_DATA_PROVIDER_KEY = 'Ice:Mongodb/default';
     const DEFAULT_KEY = 'default';
 
     protected $options = [
         'host' => 'localhost',
         'port' => '27017'
     ];
-
-    /**
-     * Return default data provider key
-     *
-     * @return string
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since   0.4
-     */
-    protected static function getDefaultDataProviderKey()
-    {
-        return self::DEFAULT_DATA_PROVIDER_KEY;
-    }
 
     /**
      * Return default key
@@ -50,14 +46,15 @@ class Mongodb extends Data_Provider
      * Get data from data provider by key
      *
      * @param  string $key
+     * @param null $default
+     * @param bool $require
      * @return mixed
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.4
+     * @version 1.2
      * @since   0.4
      */
-    public function get($key = null)
+    public function get($key = null, $default = null, $require = false)
     {
         // TODO: Implement get() method.
     }
@@ -65,18 +62,21 @@ class Mongodb extends Data_Provider
     /**
      * Set data to data provider
      *
-     * @param  string $key
-     * @param  $value
+     * @param array $values
      * @param  null $ttl
-     * @return mixed setted value
+     * @return array
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.4
+     * @version 1.2
      * @since   0.4
      */
-    public function set($key, $value = null, $ttl = null)
+    public function set(array $values = null, $ttl = null)
     {
+        if ($ttl === -1) {
+            return $values;
+        }
+
         // TODO: Implement set() method.
     }
 
@@ -186,19 +186,28 @@ class Mongodb extends Data_Provider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.4
+     * @version 1.13
      * @since   0.4
      */
     protected function connect(&$connection)
     {
         $options = $this->getOptions();
 
+        $user = $options->get('username');
+        $host = $options->get('host');
+        $port = $options->get('port');
+
         try {
-            $connection = new \MongoClient('mongodb://' . $options['host'] . ':' . $options['port']);
-        } catch (\MongoConnectionException $e) {
-//            Mongodb::getLogger()->exception('mongodb - ' . $e->getMessage(), __FILE__, __LINE__, $e);
-            Mongodb::getLogger()
-                ->info(['mongodb - #' . $e->getCode() . ': {$0}', $e->getMessage()], Logger::WARNING);
+            $connection = new \MongoClient('mongodb://' . $host . ':' . $port);
+        } catch (\Exception $e) {
+            Logger::getInstance(__CLASS__)
+                ->info(
+                    [
+                        'mongodb - #' . $e->getCode() . ': {$0}',
+                        $e->getMessage() . ' (' . $user . '@' . $host . ':' . $port . ')'
+                    ],
+                    Logger::WARNING
+                );
             return false;
         }
 
@@ -217,6 +226,38 @@ class Mongodb extends Data_Provider
      */
     protected function close(&$connection)
     {
-        // TODO: Implement close() method.
+    }
+
+    /**
+     * Set expire time (seconds)
+     *
+     * @param  $key
+     * @param  int $ttl
+     * @return mixed new value
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since   0
+     */
+    public function expire($key, $ttl)
+    {
+        // TODO: Implement expire() method.
+    }
+
+    /**
+     * Check for errors
+     *
+     * @return void
+     *
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since   0.0
+     */
+    function checkErrors()
+    {
+        // TODO: Implement checkErrors() method.
     }
 }

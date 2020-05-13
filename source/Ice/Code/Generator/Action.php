@@ -11,72 +11,59 @@ namespace Ice\Code\Generator;
 
 use Ice\Core\Code_Generator;
 use Ice\Core\Config;
-use Ice\Core\Debuger;
 use Ice\Core\Loader;
 use Ice\Core\Logger;
 use Ice\Core\Module;
-use Ice\Core\View;
 use Ice\Helper\File;
-use Ice\Helper\Object;
-use Ice\View\Render\Php;
+use Ice\Helper\Class_Object;
+use Ice\Render\Php;
 
 /**
  * Class Action
  *
  * Action code generator
  *
- * @see Ice\Core\Code_Generator
+ * @see \Ice\Core\Code_Generator
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
  * @package    Ice
  * @subpackage Code_Generator
- *
- * @version 0.0
- * @since   0.0
  */
 class Action extends Code_Generator
 {
     /**
      * Generate code and other
      *
-     * @param  $class
      * @param  array $data Sended data requered for generate
      * @param  bool $force Force if already generate
      * @return string
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 1.10
      * @since   0.0
      */
-    public function generate($class, array $data = [], $force = false)
+    public function generate(array $data = [], $force = false)
     {
-        //        $class = Object::getClass(Action::getClass(), $data);
-        $namespace = Object::getNamespace(Action::getClass(), $class);
+        $class = $this->getInstanceKey();
 
-        $module = Module::getInstance(Object::getModuleAlias($class));
+        $module = Module::getInstance();
 
-        $path = $module->get(Module::SOURCE_DIR);
-
-        //        if ($namespace) {
-        //            $path .= 'Class/';
-        //        }
-
-        $filePath = $path . str_replace(['\\', '_'], '/', $class) . '.php';
+        $filePath = \getSourceDir(Class_Object::getModuleAlias($class)) . str_replace(['\\', '_'], '/', $class) . '.php';
 
         $isFileExists = file_exists($filePath);
 
         if (!$force && $isFileExists) {
-            Code_Generator::getLogger()->info(['Action {$0} already created', $class]);
+            $this->getLogger()->info(['Action {$0} already created', $class]);
             return;
         }
 
-        $data['namespace'] = rtrim($namespace, '\\');
-        $data['actionName'] = Object::getName($class);
+        $data['namespace'] = $module->getNamespace() . '\\Action';
+        $data['actionName'] = Class_Object::getClassName($class);
 
-        if (!isset($data['defaultViewRenderClass'])) {
-            $data['defaultViewRenderClass'] = Config::getConfig()->get(View::getClass() . '/viewRenderClass');
-        }
+//        if (!isset($data['defaultViewRenderClass'])) {
+//            $data['defaultViewRenderClass'] = Config::getInstance(Config::getClass())->get(ViiewOld::getClass() . '/viewRenderClass');
+//        }
 
         $classString = Php::getInstance()->fetch(__CLASS__, $data);
 
@@ -87,7 +74,7 @@ class Action extends Code_Generator
             : 'Action {$0} created';
 
         if ($isFileExists) {
-            Code_Generator::getLogger()->info([$message, $class], Logger::SUCCESS);
+            $this->getLogger()->info([$message, $class], Logger::SUCCESS);
         }
 
         Loader::load($class);

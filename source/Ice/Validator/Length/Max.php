@@ -9,24 +9,19 @@
 
 namespace Ice\Validator;
 
-use Ice\Core\Validator;
-
 /**
  * Class Length_Max
  *
  * Validate length max data
  *
- * @see Ice\Core\Validator
+ * @see \Ice\Core\Validator
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
  * @package    Ice
  * @subpackage Validator
- *
- * @version 0.0
- * @since   0.0
  */
-class Length_Max extends Validator
+class Length_Max extends Not_Null
 {
     /**
      * Validate data by scheme
@@ -40,19 +35,33 @@ class Length_Max extends Validator
      *  ],
      *  'name' => 'Ice:Not_Null'
      *
-     * @param  $data
-     * @param  null $scheme
-     * @return boolean
+     * @param array $data
+     * @param $name
+     * @param array $params
+     * @return bool
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 1.2
      * @since   0.0
      */
-    public function validate($data, $scheme = null)
+    public function validate(array $data, $name, array $params)
     {
+        $length = null;
 
+        if (array_key_exists('length', $params)) {
+            $length = $params['length'];
+        }
 
-        return strlen($data) <= (int)$scheme;
+        if ($length === null && $params) {
+            $length = reset($params);
+        }
+
+        return parent::validate($data, $name, $params) && $length !== null && mb_strlen($data[$name]) <= (int)$length;
+    }
+
+    public function getMessage()
+    {
+        return 'Length of param \'{$0}\' mast be less then {$3} characters';
     }
 }

@@ -10,8 +10,14 @@ syntax: regexp
 
 ^\.idea
 
+^vendor
+^node_modules
+
+^var
+
+^public/resource
+^public/ckeditor
+^public/download
+^public/coverage
+
 composer.phar
-
-^Resource/api
-^Resource/uml
-

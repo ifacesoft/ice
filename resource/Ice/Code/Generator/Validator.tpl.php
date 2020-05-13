@@ -38,7 +38,7 @@ use Ice\Core\Validator;
     * @param null $scheme
     * @return boolean
     */
-    public function validate($data, $scheme = null)
+    public function validate(array $data, $name, array $params)
     {
     throw new \Ice\Core\Exception(['Implement validator {$0}', '<?= $validatorName ?>']);
     }

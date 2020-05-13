@@ -9,6 +9,9 @@
 
 namespace Ice\Helper;
 
+use Ebs\Model\Publisher;
+use Ice\Core\Debuger;
+
 /**
  * Class Model
  *
@@ -53,12 +56,12 @@ class Model
         $fieldName = strtolower($columnName);
 
         $primaryKeys = $table['indexes']['PRIMARY KEY']['PRIMARY'];
-        $foreignKeys = Arrays::column($table['indexes']['FOREIGN KEY'], 0, '');
+        $foreignKeys = Type_Array::column($table['indexes']['FOREIGN KEY'], 0, '');
 
         if (in_array($columnName, $foreignKeys)) {
             $column['is_foreign'] = true;
             if (substr($fieldName, -4, 4) != '__fk') {
-                $fieldName = String::trim($fieldName, ['__id', '_id', 'id'], String::TRIM_TYPE_RIGHT) . '__fk';
+                $fieldName = Type_String::trim($fieldName, ['__id', '_id', 'id'], Type_String::TRIM_TYPE_RIGHT) . '__fk';
             }
         } elseif (in_array($columnName, $primaryKeys)) {
             $column['is_primary'] = true;
@@ -71,5 +74,27 @@ class Model
         }
 
         return $fieldName;
+    }
+
+    public static function schemeColumnScheme($columnName, $table, $tablePrefixes)
+    {
+        $default = isset($table['columns'][$columnName]['scheme']['default'])
+            ? $table['columns'][$columnName]['scheme']['default']
+            : null;
+
+        return [
+            'default' => $default === null ? null : trim($default, '\'')
+        ];
+    }
+
+    public static function schemeColumnOptions($columnName, $table, $tablePrefixes)
+    {
+       return [
+            'name' => Model::getFieldNameByColumnName(
+                $columnName,
+                $table,
+                $tablePrefixes
+            )
+        ];
     }
 }

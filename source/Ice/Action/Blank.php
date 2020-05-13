@@ -16,8 +16,8 @@ use Ice\Core\Action;
  *
  * Action with simple blank template
  *
- * @see Ice\Core\Action
- * @see Ice\Core\Action_Context
+ * @see \Ice\Core\Action
+ * @see \Ice\Core\Action_Context
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
@@ -51,7 +51,7 @@ class Blank extends Action
      *          ]
      *      ],
      *      'output' => ['Ice:Resource/Ice\Action\Index'],
-     *      'ttl' => 3600,
+     *      'cache' => ['ttl' => -1, 'count' => 1000],
      *      'roles' => []
      *  ];
      * ```
@@ -66,7 +66,8 @@ class Blank extends Action
     protected static function config()
     {
         return [
-            'view' => ['viewRenderClass' => 'Ice:Php']
+            'view' => ['viewRenderClass' => 'Ice:Php'],
+            'cache' => ['ttl' => -1, 'count' => 1000],
         ];
     }
 

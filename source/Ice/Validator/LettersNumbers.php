@@ -9,8 +9,6 @@ use Ice\Core\Validator;
  * @see     Ice\Core\Validator
  * @package Ice\Validator;
  * @author  dp <email>
- * @version 0
- * @since   0
  */
 class LettersNumbers extends Validator
 {
@@ -36,17 +34,18 @@ class LettersNumbers extends Validator
      *      ];
      * ```
      *
-     * @param  $data
-     * @param  mixed|null $scheme
-     * @return boolean
-     *
+     * @param array $data
+     * @param $name
+     * @param  array $params
+     * @return bool
+     * @internal param $data
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.1
-     * @since   0.1
+     * @version 1.2
+     * @since   0.0
      */
-    public function validate($data, $scheme = null)
+    public function validate(array $data, $name, array $params)
     {
-        return ctype_alnum($data);
+        return ctype_alnum($data[$name]);
     }
 }

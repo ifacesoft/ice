@@ -7,13 +7,13 @@
  * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
-namespace Ice\Query\Translator;
+namespace Ice\QueryTranslator;
 
 use Ice\Core\Debuger;
 use Ice\Core\Exception;
 use Ice\Core\Model;
-use Ice\Core\Query_Builder;
-use Ice\Core\Query_Translator;
+use Ice\Core\QueryBuilder;
+use Ice\Core\QueryTranslator;
 use Ice\Helper\Mapping;
 
 /**
@@ -21,52 +21,37 @@ use Ice\Helper\Mapping;
  *
  * Translate with query translator mysqli
  *
- * @see Ice\Core\Query_Translator
+ * @see \Ice\Core\QueryTranslator
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
  * @package    Ice
- * @subpackage Query_Translator
+ * @subpackage QueryTranslator
  */
-class Mongodb extends Query_Translator
+class Mongodb extends QueryTranslator
 {
-    const DEFAULT_CLASS_KEY = 'Ice:Mongodb/default';
-    const DEFAULT_KEY = 'instance';
+    const DEFAULT_KEY = 'default';
 
     private static $operators = [
-        Query_Builder::SQL_COMPARISON_OPERATOR_GREATER => '$gt',
-        Query_Builder::SQL_COMPARISON_OPERATOR_LESS => '$lt',
-        Query_Builder::SQL_COMPARISON_OPERATOR_GREATER_OR_EQUAL => '$gte',
-        Query_Builder::SQL_COMPARISON_OPERATOR_LESS_OR_EQUAL => '$lte',
-        Query_Builder::SQL_COMPARISON_KEYWORD_REGEXP => '$regex',
-        Query_Builder::SQL_COMPARISON_OPERATOR_NOT_EQUAL => '$ne',
-        Query_Builder::SQL_COMPARISON_KEYWORD_IN => '$in',
-        Query_Builder::SQL_COMPARISON_KEYWORD_IS_NULL => '$notExists', // dummy
-        Query_Builder::SQL_COMPARISON_KEYWORD_IS_NOT_NULL => '$exists',
-        Query_Builder::SQL_COMPARISON_KEYWORD_LIKE => '$like', // dummy
-        Query_Builder::SQL_COMPARISON_KEYWORD_RLIKE => '$rlike', // dummy
-        Query_Builder::SQL_COMPARISON_KEYWORD_RLIKE_REVERSE => '$rlikeReverse', // dummy
-        Query_Builder::SEARCH_KEYWORD => '$search'
+        QueryBuilder::SQL_COMPARISON_OPERATOR_GREATER => '$gt',
+        QueryBuilder::SQL_COMPARISON_OPERATOR_LESS => '$lt',
+        QueryBuilder::SQL_COMPARISON_OPERATOR_GREATER_OR_EQUAL => '$gte',
+        QueryBuilder::SQL_COMPARISON_OPERATOR_LESS_OR_EQUAL => '$lte',
+        QueryBuilder::SQL_COMPARISON_KEYWORD_REGEXP => '$regex',
+        QueryBuilder::SQL_COMPARISON_OPERATOR_NOT_EQUAL => '$ne',
+        QueryBuilder::SQL_COMPARISON_KEYWORD_IN => '$in',
+        QueryBuilder::SQL_COMPARISON_KEYWORD_IS_NULL => '$notExists', // dummy
+        QueryBuilder::SQL_COMPARISON_KEYWORD_IS_NOT_NULL => '$exists',
+        QueryBuilder::SQL_COMPARISON_KEYWORD_LIKE => '$like', // dummy
+        QueryBuilder::SQL_COMPARISON_KEYWORD_RLIKE => '$rlike', // dummy
+        QueryBuilder::SQL_COMPARISON_KEYWORD_RLIKE_REVERSE => '$rlikeReverse', // dummy
+        QueryBuilder::SEARCH_KEYWORD => '$search'
     ];
 
     private static $orderings = [
-        Query_Builder::SQL_ORDERING_ASC => 1,
-        Query_Builder::SQL_ORDERING_DESC => -1
+        QueryBuilder::SQL_ORDERING_ASC => 1,
+        QueryBuilder::SQL_ORDERING_DESC => -1
     ];
-
-    /**
-     * Return default class key
-     *
-     * @return string
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since   0.4
-     */
-    protected static function getDefaultClassKey()
-    {
-        return Mongodb::DEFAULT_CLASS_KEY;
-    }
 
     /**
      * Return default key
@@ -93,7 +78,7 @@ class Mongodb extends Query_Translator
      * @version 0.4
      * @since   0.4
      */
-    public function translateDrop(array $part)
+    public function translateDrop(array $part, $modelClass)
     {
         $modelClass = array_shift($part);
 
@@ -245,7 +230,7 @@ class Mongodb extends Query_Translator
                     ? $fieldColumnMap[$fieldName]
                     : $fieldName;
 
-                $columnNames[$columnName][] = $comparisonOperator == Query_Builder::SQL_COMPARISON_OPERATOR_EQUAL
+                $columnNames[$columnName][] = $comparisonOperator == QueryBuilder::SQL_COMPARISON_OPERATOR_EQUAL
                     ? null
                     : Mongodb::$operators[$comparisonOperator];
             }
@@ -276,17 +261,21 @@ class Mongodb extends Query_Translator
 
         $calcFoundRows = array_shift($part);
 
+        $distinct = array_shift($part);
+
+        $sqlNoCache = array_shift($part);
+
         if (empty($part)) {
             return $sql;
         }
 
         list($modelClass, $items) = each($part);
 
-        list($tableAlias, $fieldNames) = each($items);
+        list($tableAlias, $select) = each($items);
 
         $columnNames = [];
 
-        foreach (Mapping::columnNames($modelClass, array_keys($fieldNames)) as $columnName) {
+        foreach (Mapping::columnNames($modelClass, array_keys($select['columns'])) as $columnName) {
             $columnNames[] = $columnName;
         }
 

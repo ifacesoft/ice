@@ -3,11 +3,10 @@
 namespace Ice\Action;
 
 use Ice\Core\Action;
-use Ice\Core\Data_Source;
-use Ice\Core\Data_Scheme;
+use Ice\Core\DataScheme;
 use Ice\Core\Model;
 use Ice\Core\Module;
-use Ice\Exception\DataSource_TableNotFound;
+use Ice\Exception\DataSource_Statement_TableNotFound;
 use Ice\Helper\Json;
 use Ice\Model\Scheme;
 
@@ -31,7 +30,7 @@ class Orm_Sync_DataSource extends Action
             'actions' => [],
             'input' => ['force' => ['default' => 0]],
             'output' => [],
-            'ttl' => -1,
+            'cache' => ['ttl' => -1, 'count' => 1000],
             'roles' => []
         ];
     }
@@ -39,8 +38,10 @@ class Orm_Sync_DataSource extends Action
     /** Run action
      *
      * @param  array $input
-     * @return array
+     * @return void
      *
+     * @throws \Ice\Core\Exception
+     * @throws \Ice\Exception\Config_Error
      * @author anonymous <email>
      *
      * @version 0
@@ -52,10 +53,10 @@ class Orm_Sync_DataSource extends Action
 
         $dataSourceTables = $module->getDataSourceTables();
 
-        foreach (Data_Scheme::getTables($module) as $dataSourceKey => $tables) {
+        foreach (DataScheme::getTables($module) as $dataSourceKey => $tables) {
             try {
                 $schemes = Scheme::createQueryBuilder()->getSelectQuery('*', [], $dataSourceKey)->getRows();
-            } catch (DataSource_TableNotFound $e) {
+            } catch (DataSource_Statement_TableNotFound $e) {
                 Scheme::createTable($dataSourceKey);
                 $schemes = [];
             }
@@ -77,7 +78,7 @@ class Orm_Sync_DataSource extends Action
 //                $tableSource = &$sourceTables[$tableName]['source'];
 //
 //                if ($table['sourceHash'] != $tableSourceHash) {
-//                    Data_Source::getLogger()->info([
+//                    DataSource::getLogger()->info([
 //                        'Update source for model {$0}: {$1}',
 //                        [
 //                            $sourceTables[$tableName]['modelClass'],
@@ -93,7 +94,7 @@ class Orm_Sync_DataSource extends Action
 //                $tableIndexes = &$sourceTables[$tableName]['indexes'];
 //
 //                if ($table['indexesHash'] != $tableIndexesHash) {
-//                    Data_Source::getLogger()->info([
+//                    DataSource::getLogger()->info([
 //                        'Update indexes for model {$0}: {$1}',
 //                        [$sourceTables[$tableName]['modelClass'], Json::encode($table['indexes'])]
 //                    ]);
@@ -113,7 +114,7 @@ class Orm_Sync_DataSource extends Action
 //                    $table['referencesHash'] = '';
 //                }
 //                if ($table['referencesHash'] != $sourceTables[$tableName]['referencesHash']) {
-//                    Data_Source::getLogger()->info([
+//                    DataSource::getLogger()->info([
 //                        'Update references for model {$0}: {$1}',
 //                        [$sourceTables[$tableName]['modelClass'], Json::encode($table['references'])]
 //                    ]);
@@ -139,7 +140,7 @@ class Orm_Sync_DataSource extends Action
 //                        $references[$referenceClassName] = $columnName;
 //                    }
 //                    $table['oneToMany'] = $references;
-//                    Data_Source::getLogger()->info([
+//                    DataSource::getLogger()->info([
 //                        'Update OneToMany references for model {$0}: {$1}',
 //                        [$sourceTables[$tableName]['modelClass'], Json::encode($table['oneToMany'])]
 //                    ]);
@@ -165,7 +166,7 @@ class Orm_Sync_DataSource extends Action
 //                        $references[$referenceClassName] = $columnName;
 //                    }
 //                    $table['manyToOne'] = $references;
-//                    Data_Source::getLogger()->info([
+//                    DataSource::getLogger()->info([
 //                        'Update ManyToOne references for model {$0}: {$1}',
 //                        [$sourceTables[$tableName]['modelClass'], Json::encode($table['manyToOne'])]
 //                    ]);
@@ -195,7 +196,7 @@ class Orm_Sync_DataSource extends Action
 //                        $references[$referenceClassName] = $linkClassName;
 //                    }
 //                    $table['manyToMany'] = $references;
-//                    Data_Source::getLogger()->info([
+//                    DataSource::getLogger()->info([
 //                        'Update ManyToMany references for model {$0}: {$1}',
 //                        [$sourceTables[$tableName]['modelClass'], Json::encode($table['manyToMany'])]
 //                    ]);
@@ -212,7 +213,7 @@ class Orm_Sync_DataSource extends Action
 //                            'source' => $column['source'],
 //                            'sourceHash' => $column['sourceHash']
 //                        ];
-//                        Data_Source::getLogger()->info([
+//                        DataSource::getLogger()->info([
 //                            'Create field {$0} for model {$1}',
 //                            [$column['fieldName'], $sourceTables[$tableName]['modelClass']]
 //                        ]);
@@ -224,7 +225,7 @@ class Orm_Sync_DataSource extends Action
 //                    $columnSource = &$sourceTables[$tableName]['columns'][$columnName]['source'];
 //
 //                    if ($column['sourceHash'] != $columnSourceHash) {
-//                        Data_Source::getLogger()->info([
+//                        DataSource::getLogger()->info([
 //                            'Update field {$0} for model {$1}: {$2}',
 //                            [
 //                                $column['fieldName'],
@@ -241,7 +242,7 @@ class Orm_Sync_DataSource extends Action
 //                }
 //
 //                foreach ($dataSourceColumns as $columnName => $column) {
-//                    Data_Source::getLogger()->info([
+//                    DataSource::getLogger()->info([
 //                        'Remove field {$0} for model {$1}',
 //                        [$column['fieldName'], $sourceTables[$tableName]['modelClass']]
 //                    ]);
@@ -250,7 +251,7 @@ class Orm_Sync_DataSource extends Action
 //                }
 //
 //                if ($updated) {
-//                    Model::getCodeGenerator()->generate($sourceTables[$tableName]['modelClass'], $table, $input['force']);
+//                    CodeGenerator_Model::getInstance($sourceTables[$tableName]['modelClass'])->generate($table, $input['force']);
 //                }
 //
 //                unset($sourceTables[$tableName]);
@@ -261,7 +262,7 @@ class Orm_Sync_DataSource extends Action
 //            foreach ($sourceTables as $tableName => $table) {
 //                if (array_key_exists($tableName, $schemes)) {
 //                    $this->deleteModel(
-//                        $module->get(Module::Scheme_DIR) . $table['modelPath'],
+//                        $module->getPart(Module::Scheme_DIR) . $table['modelPath'],
 //                        $tableName,
 //                        $sourceTables);
 //                }
@@ -271,8 +272,11 @@ class Orm_Sync_DataSource extends Action
 
     /**
      * @param Model $modelClass
-     * @param $dataSourceKey
      * @param $table
+     * @param $dataSourceKey
+     * @throws \Ice\Core\Exception
+     * @throws \Ice\Exception\Config_Error
+     * @throws \Ice\Exception\FileNotFound
      */
     private function createTable($modelClass, $table, $dataSourceKey)
     {
@@ -292,7 +296,7 @@ class Orm_Sync_DataSource extends Action
             $dataSourceKey
         )->getQueryResult();
 
-        Data_Source::getLogger()->info(
+        $this->getLogger()->info(
             ['{$0}: Table {$1} successfully created', [$dataSourceKey, $table['scheme']['tableName']]]
         );
     }
@@ -304,8 +308,8 @@ class Orm_Sync_DataSource extends Action
             unlink($modelFilePath);
         }
 
-        Scheme::createQueryBuilder()->deleteQuery($tableName, $dataSourceKey)->getQueryResult();
+        Scheme::createQueryBuilder()->getDeleteQuery($tableName, $dataSourceKey)->getQueryResult();
 
-        Data_Source::getLogger()->info(['Model {$0} deleted', $sourceTables[$tableName]['modelClass']]);
+        $this->getLogger()->info(['Model {$0} deleted', $sourceTables[$tableName]['modelClass']]);
     }
 }

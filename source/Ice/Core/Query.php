@@ -9,19 +9,16 @@
 
 namespace Ice\Core;
 
-use Ice\Core;
-use Ice\Helper\Arrays;
+use Ice\Exception\Error;
+use Ice\Helper\Type_Array;
 use Ice\Helper\Json;
-use Ice\Widget\Data\Table;
-use Ice\Widget\Form\Simple;
-use Ice\Widget\Menu\Pagination;
 
 /**
  * Class Query
  *
  * Core query class
  *
- * @see Ice\Core\Container
+ * @see \Ice\Core\Container
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
@@ -33,7 +30,7 @@ class Query
     use Stored;
 
     /**
-     * @var Query_Builder
+     * @var QueryBuilder
      */
     private $queryBuilder = null;
 
@@ -80,7 +77,7 @@ class Query
     /**
      * Create new instance of query
      *
-     * @param  Query_Builder $queryBuilder
+     * @param  QueryBuilder $queryBuilder
      * @param  $dataSourceKey
      * @return Query
      *
@@ -89,8 +86,9 @@ class Query
      * @todo    Need caching
      * @version 0.6
      * @since   0.0
+     * @throws \Exception
      */
-    public static function create(Query_Builder $queryBuilder, $dataSourceKey)
+    public static function create(QueryBuilder $queryBuilder, $dataSourceKey)
     {
         $query = new Query();
 
@@ -123,11 +121,12 @@ class Query
     /**
      * @param $modelClass
      * @param $tableAlias
-     * @return Query_Builder
+     * @return QueryBuilder
+     * @throws Exception
      */
     public static function getBuilder($modelClass, $tableAlias = null)
     {
-        return Query_Builder::create($modelClass, $tableAlias);
+        return QueryBuilder::create($modelClass, $tableAlias);
     }
 
     /**
@@ -142,7 +141,7 @@ class Query
      */
     public function isCalcFoundRows()
     {
-        $selectQueryParts = $this->queryBuilder->getSqlParts(Query_Builder::PART_SELECT);
+        $selectQueryParts = $this->queryBuilder->getSqlParts(QueryBuilder::PART_SELECT);
         return reset($selectQueryParts);
     }
 
@@ -161,11 +160,379 @@ class Query
     {
         $this->bindParts = $bindParts;
 
-        if ($this->queryBuilder->getQueryType() == Query_Builder::TYPE_SELECT) {
+        if ($this->queryBuilder->getQueryType() === QueryBuilder::TYPE_SELECT) {
             $this->bindHash = md5(json_encode($bindParts));
         }
 
         return $this;
+    }
+
+    /**
+     * Return validate tags
+     *
+     * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.6
+     * @since   0.0
+     */
+    public function getValidateTags()
+    {
+        return $this->queryBuilder->getCacheTags()[Cache::VALIDATE];
+    }
+
+    /**
+     * Return invalidate tags
+     *
+     * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.6
+     * @since   0.0
+     */
+    public function getInvalidateTags()
+    {
+        return $this->queryBuilder->getCacheTags()[Cache::INVALIDATE];
+    }
+
+    /**
+     * Return full hash of query
+     *
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since   0.0
+     * @throws Exception
+     */
+    public function getFullHash()
+    {
+        if ($this->bindHash === null) {
+            $this->getLogger()->exception('Bind hash is empty', __FILE__, __LINE__, null, $this);
+        }
+
+        return $this->hash . '/' . $this->bindHash;
+    }
+
+    public function getLogger()
+    {
+        return Logger::getInstance($this->getModelClass());
+    }
+
+    /**
+     * @deprecated use $this->getQueryBuilder()->getModelClass()
+     * @return Model|string
+     */
+    public function getModelClass()
+    {
+        return $this->getQueryBuilder()->getModelClass();
+    }
+
+    /**
+     * @deprecated use $this->getQueryBuilder()->getTableAlias()
+     * @return Model|string
+     */
+    public function getTableAlias()
+    {
+        return $this->getQueryBuilder()->getTableAlias();
+    }
+
+    /**
+     * @return QueryBuilder
+     */
+    public function getQueryBuilder()
+    {
+        return $this->queryBuilder;
+    }
+
+    public function getAfterSelectTriggers()
+    {
+        return $this->queryBuilder->getTriggers()['afterSelect'];
+    }
+
+    /**
+     * Get collection from data
+     *
+     * @param  null $ttl
+     * @return Model_Collection
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.6
+     * @since   0.0
+     * @throws \Exception
+     */
+    public function getModelCollection($ttl = null)
+    {
+        $queryResult = $this->getQueryResult($ttl);
+
+        return Model_Collection::create(
+            $queryResult->getQuery()->getQueryBuilder()->getModelClass(),
+            $queryResult->getRows()
+        );
+    }
+
+    /**
+     * Execute query
+     *
+     * @param  int $ttl
+     * @param bool $indexKeys
+     * @return QueryResult
+     *
+     * @throws Exception
+     * @author dp <denis.a.shestakov@gmail.com>
+     * @todo: Реализовать indexKeys (по умолчанию false, true = индекс - первичный ключ.. )
+     * @version 1.1
+     * @since   0.4
+     */
+    public function getQueryResult($ttl = null, $indexKeys = true)
+    {
+        /** @var DataSource $dataSource */
+        $dataSource = $this->getDataSource();
+
+        $queryResult = $dataSource->executeQuery($this, $ttl, $indexKeys);
+
+        foreach ($this->queryBuilder->getWidgets() as $widget) {
+            $widget->setQueryResult($queryResult);
+        }
+
+        return $queryResult;
+    }
+
+    /**
+     * Return data source name
+     *
+     * @return \Ice\Core|Container
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since   0.0
+     * @throws Exception
+     */
+    public function getDataSource()
+    {
+        return DataSource::getInstance($this->getDataSourceKey());
+    }
+
+    /**
+     * Return data source key of query
+     *
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since   0.4
+     */
+    public function getDataSourceKey()
+    {
+        return $this->dataSourceKey;
+    }
+
+    /**
+     * Get value from data
+     *
+     * @desc Результат запроса - единственное значение.
+     *
+     * @param null|string $fieldName
+     * @param  null $ttl
+     * @param null $default
+     * @return mixed
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 1.14
+     * @since   0.0
+     * @throws \Exception
+     */
+    public function getValue($fieldName = null, $ttl = null, $default = null)
+    {
+        $row = $this->getRow(null, $ttl);
+
+        if ($fieldName) {
+            $modelClass = $this->getQueryBuilder()->getModelClass();
+
+            $fieldName = $modelClass::getFieldName($fieldName);
+        }
+
+        return $row
+            ? ($fieldName ? $row[$fieldName] : reset($row))
+            : $default;
+    }
+
+    /**
+     * Get first row from data
+     *
+     * @desc Результат запроса - единственная запись таблицы.
+     *
+     * @param  null $pk
+     * @param  null $ttl
+     * @return array|null
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.6
+     * @since   0.0
+     * @throws \Exception
+     */
+    public function getRow($pk = null, $ttl = null)
+    {
+        $rows = $this->getRows($ttl);
+
+        if (empty($rows)) {
+            return null;
+        }
+
+        if (isset($pk)) {
+            return isset($rows[$pk]) ? $rows[$pk] : null;
+        }
+
+        return reset($rows);
+    }
+
+    /**
+     * Return all rows from data as array
+     *
+     * @param  null $ttl
+     * @param bool $indexKeys
+     * @return array
+     * @throws Exception
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.6
+     * @since   0.0
+     */
+    public function getRows($ttl = null, $indexKeys = true)
+    {
+        return $this->getQueryResult($ttl, $indexKeys)->getRows();
+    }
+
+    /**
+     * Return model from data
+     *
+     * @param  null $pk
+     * @param  null $ttl
+     * @return Model|null
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.6
+     * @since   0.0
+     * @throws \Exception
+     */
+    public function getModel($pk = null, $ttl = null)
+    {
+        $row = $this->getRow($pk, $ttl);
+
+        if (empty($row)) {
+            return null;
+        }
+
+        $modelClass = $this->queryBuilder->getModelClass();
+
+        return $modelClass::create($row)->clearAffected();
+    }
+
+    /**
+     * Return column in data
+     *
+     * @param null|string $fieldName
+     * @param  null $indexKey
+     * @param  null $ttl
+     * @return array
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 1.0
+     * @since   0.0
+     * @throws \Exception
+     */
+    public function getColumn($fieldName = null, $indexKey = null, $ttl = null)
+    {
+        $modelClass = $this->getQueryBuilder()->getModelClass();
+
+        if ($fieldName) {
+            $fieldName = (array)$fieldName;
+            foreach ($fieldName as &$name) {
+                $name = $modelClass::getFieldName($name);
+            }
+        }
+
+        if ($indexKey) {
+            if (\is_array($indexKey)) {
+                foreach ($indexKey as &$key) {
+                    $key = $modelClass::getFieldName($key);
+                }
+            } else {
+                $indexKey = $modelClass::getFieldName($indexKey);
+            }
+        }
+
+        $rows = $this->getRows($ttl); // todo: должен быть ArrayObject чтобы передавался по ссылке в ::column
+
+        if (!$rows) {
+            return [];
+        }
+
+        if (!$fieldName) {
+            $row = reset($rows);
+
+            reset($row);
+
+            $fieldName = key($row);
+        }
+
+        return Type_Array::column($rows, $fieldName, $indexKey);
+    }
+
+    /**
+     * Return keys of data
+     *
+     * @param  null $ttl
+     * @return array
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.6
+     * @since   0.0
+     * @throws \Exception
+     */
+    public function getKeys($ttl = null)
+    {
+        return array_keys($this->getRows($ttl));
+    }
+
+    public function dumpQuery($die = false)
+    {
+        Debuger::dump($this->getBody(), $this->getBinds());
+
+        if ($die) {
+            die();
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param DataSource|null $dataSource
+     * @return mixed
+     * @throws Exception
+     * @throws \Exception
+     */
+    public function getBody(DataSource $dataSource = null)
+    {
+        if (!$dataSource) {
+            $dataSource = $this->getDataSource();
+        }
+
+        $repository = Query::getRepository($dataSource->getDataSourceKey());
+
+        $key = 'body_' . md5(Json::encode([$this->getQueryBuilder()->getSqlParts(), [$this->getModelClass(), $this->getTableAlias()]]));
+
+        //TODO: cache turned off
+//        if ($queryString = $repository->get($key)) {
+//            return $queryString;
+//        }
+
+        return $repository->set([$key => $dataSource->translate($this)])[$key];
     }
 
     /**
@@ -213,309 +580,52 @@ class Query
     }
 
     /**
-     * Return validate tags
-     *
+     * @param $columnFieldNames
+     * @param array|null $groups
+     * @param null $indexFieldNames
+     * @param null $ttl
+     * @param null $indexGroupFieldNames
      * @return array
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.6
-     * @since   0.0
+     * @TODO отсортировать аргументы
+     * @throws \Exception
      */
-    public function getValidateTags()
+    public function getGroup($columnFieldNames, array $groups = null, $indexFieldNames = null, $ttl = null, $indexGroupFieldNames = null, array $aggregate = [], array $exclude = [])
     {
-        return $this->queryBuilder->getCacheTags()[Cache::VALIDATE];
-    }
+        $modelClass = $this->getQueryBuilder()->getModelClass();
 
-    /**
-     * Return invalidate tags
-     *
-     * @return array
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.6
-     * @since   0.0
-     */
-    public function getInvalidateTags()
-    {
-        return $this->queryBuilder->getCacheTags()[Cache::INVALIDATE];
-    }
+        $columns = [];
+        $index = [];
 
-    /**
-     * Return full hash of query
-     *
-     * @return string
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since   0.0
-     */
-    public function getFullHash()
-    {
-        if ($this->bindHash === null) {
-            Query::getLogger()->exception('Bind hash is empty', __FILE__, __LINE__, null, $this);
+        foreach ((array)$columnFieldNames as $columnFieldName) {
+            $columns[] = $modelClass::getFieldName($columnFieldName);
         }
 
-        return $this->hash . '/' . $this->bindHash;
-    }
-
-    public function getBody()
-    {
-        $queryTranslatorClass = $this->getDataSource()->getQueryTranslatorClass();
-        return $queryTranslatorClass::getInstance()->translate($this->getBodyParts());
-    }
-
-    /**
-     * Return data source name
-     *
-     * @return Data_Source
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since   0.0
-     */
-    public function getDataSource()
-    {
-        return Data_Source::getInstance($this->getDataSourceKey());
-    }
-
-    /**
-     * Return data source key of query
-     *
-     * @return string
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since   0.4
-     */
-    public function getDataSourceKey()
-    {
-        return $this->dataSourceKey;
-    }
-
-    /**
-     * Return query body parts
-     *
-     * @return array
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since   0.4
-     */
-    public function getBodyParts()
-    {
-        return $this->queryBuilder->getSqlParts();
-    }
-
-    public function getAfterSelectTriggers()
-    {
-        return $this->queryBuilder->getTriggers()['afterSelect'];
-    }
-
-    /**
-     * Get collection from data
-     *
-     * @param  null $ttl
-     * @return Model_Collection
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.6
-     * @since   0.0
-     */
-    public function getModelCollection($ttl = null)
-    {
-        $queryResult = $this->getQueryResult($ttl);
-
-        return Model_Collection::create(
-            $queryResult->getQuery()->getQueryBuilder()->getModelClass(),
-            $queryResult->getRows()
-        );
-    }
-
-    /**
-     * Execute query
-     *
-     * @param  int $ttl
-     * @return Query_Result
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @todo    костылькостылем погоняет((
-     * @version 0.6
-     * @since   0.4
-     */
-    public function getQueryResult($ttl = null)
-    {
-        $queryResult = $this->getDataSource()->execute($this, $ttl);
-
-        $params = [];
-
-        if (isset($this->queryBuilder->getWidgets()[Simple::getClass()])) {
-            foreach ($this->queryBuilder->getWidgets()[Simple::getClass()] as $widget) {
-                $params += (array)$widget->getValues();
-            }
+        if ($indexFieldNames === true) {
+            $indexFieldNames = $columnFieldNames;
         }
 
-        if (isset($this->queryBuilder->getWidgets()[Pagination::getClass()])) {
-            foreach ($this->queryBuilder->getWidgets()[Pagination::getClass()] as $widget) {
-                $params += $widget->getValues();
-            }
+        foreach ((array)$indexFieldNames as $indexFieldName) {
+            $index[] = $modelClass::getFieldName($indexFieldName);
         }
 
-        if (isset($this->queryBuilder->getWidgets()[Table::getClass()])) {
-            foreach ($this->queryBuilder->getWidgets()[Table::getClass()] as $widget) {
-                foreach ($widget->getValues() as $key => $value) {
-                    if ($value) {
-                        if (!isset($params[$key])) {
-                            $params[$key] = $value;
-                        } else {
-                            $params[$key] .= '/' . $value;
-                        }
-                    }
-                }
-            }
-        }
-
-        foreach ($this->queryBuilder->getWidgets() as $uis) {
-            foreach ($uis as $widget) {
-                $widget->setParams($params);
-                $widget->setQueryResult($queryResult);
-            }
-        }
-
-        return $queryResult;
+        return Type_Array::group($this->getRows($ttl, false), $columns, $groups, $index, $indexGroupFieldNames, $aggregate, $exclude);
     }
 
     /**
-     * @return Query_Builder
+     * Научиться Делать запросы в режиме билдера каскаюно..
+     *
+     * MyModel::query(['id'], 'MyMode1')
+     *      ->where('active=1')
+     *      ->fromQuery(['id', 'some'], 'ActiveMyModel')
+     *      ->where('some=1')
+     *      ->getRows();
+     *
+     * select id from (select id from my_model MyModel1 where active=1) ActiveMyModel where some=1
+     *
+     * @param $tableAlias
      */
-    public function getQueryBuilder()
+    public function fromQuery(array $fieldNames, $tableAlias)
     {
-        return $this->queryBuilder;
-    }
 
-    /**
-     * Get value from data
-     *
-     * @desc Результат запроса - единственное значение.
-     *
-     * @param  null $columnName
-     * @param  null $ttl
-     * @return mixed
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.6
-     * @since   0.0
-     */
-    public function getValue($columnName = null, $ttl = null)
-    {
-        $row = $this->getRow(null, $ttl);
-        return $row ? ($columnName ? $row[$columnName] : reset($row)) : null;
-    }
-
-    /**
-     * Get first row from data
-     *
-     * @desc Результат запроса - единственная запись таблицы.
-     *
-     * @param  null $pk
-     * @param  null $ttl
-     * @return array|null
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.6
-     * @since   0.0
-     */
-    public function getRow($pk = null, $ttl = null)
-    {
-        $rows = $this->getRows($ttl);
-
-        if (empty($rows)) {
-            return null;
-        }
-
-        if (isset($pk)) {
-            return isset($rows[$pk]) ? $rows[$pk] : null;
-        }
-
-        return reset($rows);
-    }
-
-    /**
-     * Return all rows from data as array
-     *
-     * @param  null $ttl
-     * @return array
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.6
-     * @since   0.0
-     */
-    public function getRows($ttl = null)
-    {
-        return $this->getQueryResult($ttl)->getRows();
-    }
-
-    /**
-     * Return model from data
-     *
-     * @param  null $pk
-     * @param  null $ttl
-     * @return Model|null
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.6
-     * @since   0.0
-     */
-    public function getModel($pk = null, $ttl = null)
-    {
-        $row = $this->getRow($pk, $ttl);
-
-        if (empty($row)) {
-            return null;
-        }
-
-        $modelClass = $this->queryBuilder->getModelClass();
-
-        return $modelClass::create($row)->clearAffected();
-    }
-
-    /**
-     * Return column in data
-     *
-     * @param  null $fieldName
-     * @param  null $indexKey
-     * @param  null $ttl
-     * @return array
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.6
-     * @since   0.0
-     */
-    public function getColumn($fieldName = null, $indexKey = null, $ttl = null)
-    {
-        return empty($fieldName)
-            ? $this->getKeys()
-            : Arrays::column($this->getRows($ttl), $fieldName, $indexKey);
-    }
-
-    /**
-     * Return keys of data
-     *
-     * @param  null $ttl
-     * @return array
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.6
-     * @since   0.0
-     */
-    public function getKeys($ttl = null)
-    {
-        return array_keys($this->getRows($ttl));
     }
 }

@@ -7,10 +7,9 @@
  * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
-namespace Ice\Data\Provider;
+namespace Ice\DataProvider;
 
-use Ice\Core\Data_Provider;
-use Ice\Core\Environment;
+use Ice\Core\DataProvider;
 use Ice\Core\Exception;
 
 /**
@@ -18,32 +17,16 @@ use Ice\Core\Exception;
  *
  * Data provider for object cache
  *
- * @see Ice\Core\Data_Provider
+ * @see \Ice\Core\DataProvider
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
  * @package    Ice
- * @subpackage Data_Provider
+ * @subpackage DataProvider
  */
-class Repository extends Data_Provider
+class Repository extends DataProvider
 {
-    const DEFAULT_DATA_PROVIDER_KEY = 'Ice:Repository/default';
-    const DEFAULT_KEY = 'instance';
-
-    /**
-     * Return default data provider key
-     *
-     * @return string
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since   0.4
-     */
-    protected static function getDefaultDataProviderKey()
-    {
-        return self::DEFAULT_DATA_PROVIDER_KEY;
-    }
+    const DEFAULT_KEY = 'default';
 
     /**
      * Return default key
@@ -64,22 +47,23 @@ class Repository extends Data_Provider
      * Get data from data provider by key
      *
      * @param  string $key
+     * @param null $default
+     * @param bool $require
      * @return mixed
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 1.2
      * @since   0.0
      */
-    public function get($key = null)
+    public function get($key = null, $default = null, $require = false)
     {
-        return $this->getConnection()->get($key);
+        return $this->getConnection()->get($key, $default, $require);
     }
 
     /**
      * Get instance connection of data provider
      *
-     * @return Data_Provider
+     * @return DataProvider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
@@ -94,19 +78,18 @@ class Repository extends Data_Provider
     /**
      * Set data to data provider
      *
-     * @param  string $key
-     * @param  $value
+     * @param array $values
      * @param  integer $ttl
-     * @return mixed setted value
+     * @return array
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 1.2
      * @since   0.0
      */
-    public function set($key, $value = null, $ttl = 0)
+    public function set(array $values = null, $ttl = null)
     {
-        return $this->getConnection()->set($key, $value, $ttl);
+        return $this->getConnection()->set($values, $ttl);
     }
 
     /**
@@ -198,25 +181,21 @@ class Repository extends Data_Provider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.5
+     * @version 1.13
      * @since   0.0
      */
     protected function connect(&$connection)
     {
-        if (!Environment::isLoaded() || Environment::getInstance()->isDevelopment()) {
-            return $connection = Registry::getInstance($this->getKey(), $this->getIndex());
-        }
+//        if (!Environment::isLoaded() || Environment::getInstance()->isDevelopment()) {
+//            $dataProviderClass = Registry::class;
+//        } else {
+//            /** @var DataProvider $dataProviderClass */
+//            $dataProviderClass = function_exists('apc_store')
+//                ? Apc::getClass()
+//                : File::getClass();
+//        }
 
-        if (!Environment::getInstance()->isProduction()) {
-            return $connection = File::getInstance($this->getKey(), $this->getIndex());
-        }
-
-        /**
-         * @var Data_Provider $dataProviderClass
-         */
-        $dataProviderClass = function_exists('apc_store')
-            ? Apc::getClass()
-            : File::getClass();
+        $dataProviderClass = Registry::class;
 
         return $connection = $dataProviderClass::getInstance($this->getKey(), $this->getIndex());
     }
@@ -236,5 +215,38 @@ class Repository extends Data_Provider
     {
         $connection = null;
         return true;
+    }
+
+    /**
+     * Set expire time (seconds)
+     *
+     * @param  $key
+     * @param  int $ttl
+     * @return mixed new value
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since   0
+     */
+    public function expire($key, $ttl)
+    {
+        // TODO: Implement expire() method.
+    }
+
+    /**
+     * Check for errors
+     *
+     * @return void
+     *
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since   0.0
+     */
+    function checkErrors()
+    {
+        // TODO: Implement checkErrors() method.
     }
 }

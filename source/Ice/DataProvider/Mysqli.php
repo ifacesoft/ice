@@ -7,49 +7,32 @@
  * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
-namespace Ice\Data\Provider;
+namespace Ice\DataProvider;
 
-use Ice\Core\Data_Provider;
+use Ice\Core\DataProvider;
+use Ice\Core\Debuger;
 use Ice\Core\Exception;
 use Ice\Core\Logger;
+use Ice\Exception\DataSource;
+use Ice\Exception\Error;
+use Ice\Helper\Date;
+use Symfony\Component\Debug\Debug;
 
 /**
  * Class Mysqli
  *
  * Data provider for Mysql connection
  *
- * @see Ice\Core\Data_Provider
+ * @see \Ice\Core\DataProvider
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
  * @package    Ice
- * @subpackage Data_Provider
+ * @subpackage DataProvider
  */
-class Mysqli extends Data_Provider
+class Mysqli extends DataProvider
 {
-    const DEFAULT_DATA_PROVIDER_KEY = 'Ice:Mysqli/default';
     const DEFAULT_KEY = 'default';
-
-    protected $options = [
-        'host' => 'localhost',
-        'port' => '3306',
-        'charset' => 'utf8'
-    ];
-
-    /**
-     * Return default data provider key
-     *
-     * @return string
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since   0.4
-     */
-    protected static function getDefaultDataProviderKey()
-    {
-        return self::DEFAULT_DATA_PROVIDER_KEY;
-    }
 
     /**
      * Return default key
@@ -69,94 +52,39 @@ class Mysqli extends Data_Provider
     /**
      * Get data from data provider by key
      *
-     * table:field/value or table
-     *
      * @param  string $key
-     * @return mixed
-     *
+     * @param null $default
+     * @param bool $require
+     * @return array|null
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 1.2
      * @since   0.0
      */
-    public function get($key = null)
+    public function get($key = null, $default = null, $require = false)
     {
-        if (empty($key)) {
-            return null;
-        }
-
-        $sql = '';
-
-        foreach ((array)$key as $value) {
-            if (strpos($value, ':')) {
-                list($table, $field) = explode(':', $value);
-                list($field, $value) = explode('/', $field);
-
-                $sql .= empty($sql)
-                    ? $table . ' WHERE '
-                    : ' AND ';
-
-                $sql .= '`' . $field . '`="' . $value . '"';
-            } else {
-                $sql .= $value;
-                break;
-            }
-        }
-
-        $result = $this->getConnection()->query('SELECT * FROM ' . $sql, MYSQLI_USE_RESULT);
-
-        if ($this->getConnection()->errno) {
-            Mysqli::getLogger()->error(
-                ['mysql - #' . $this->getConnection()->errno . ': {$0}', $this->getConnection()->error],
-                __FILE__,
-                __LINE__
-            );
-            return [];
-        }
-
-        $data = [];
-
-        while ($row = $result->fetch_assoc()) {
-            $data[] = $row;
-        }
-
-        $result->close();
-
-        return $data;
-    }
-
-    /**
-     * Get instance connection of data provider
-     *
-     * @return \Mysqli
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since   0.0
-     */
-    public function getConnection()
-    {
-        return parent::getConnection();
+        // TODO: Implement getKeys() method.
     }
 
     /**
      * Set data to data provider
      *
-     * @param  string $key
-     * @param  $value
+     * @param array $values
      * @param  null $ttl
-     * @throws \Exception
-     * @return mixed setted value
+     * @return array
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 1.2
      * @since   0.0
      */
-    public function set($key, $value = null, $ttl = null)
+    public function set(array $values = null, $ttl = null)
     {
-        throw new \Exception('Implement set() method.');
+        if ($ttl === -1) {
+            return $values;
+        }
+
+        // TODO: Implement getKeys() method.
     }
 
     /**
@@ -239,17 +167,26 @@ class Mysqli extends Data_Provider
     public function setScheme($scheme)
     {
         if (!$this->getConnection()->select_db($scheme)) {
-            Mysqli::getLogger()->exception(
-                ['mysql - #' . $this->getConnection()->errno . ': {$0}', $this->getConnection()->error],
-                __FILE__,
-                __LINE__,
-                null,
-                $scheme,
-                0
-            );
+            throw new DataSource(['mysql - #' . $this->getConnection()->errno . ': {$0}', $this->getConnection()->error]);
         }
 
         parent::setScheme($scheme);
+    }
+
+    /**
+     * Get instance connection of data provider
+     *
+     * @return \Mysqli
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since   0.0
+     * @throws Exception
+     */
+    public function getConnection()
+    {
+        return parent::getConnection();
     }
 
     /**
@@ -276,37 +213,52 @@ class Mysqli extends Data_Provider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 1.13
      * @since   0.0
+     * @throws Exception
      */
     protected function connect(&$connection)
     {
         $options = $this->getOptions();
 
-        $connection = mysqli_init();
+        $user = $options->get('username');
+        $pass = $options->get('password');
+        $host = $options->get('host');
+        $port = $options->get('port');
+        $charset = $options->get('charset');
 
-        $isConnected = $connection->real_connect(
-            $options['host'],
-            $options['username'],
-            $options['password'],
-            null,
-            $options['port']
-        );
+        $connection = \mysqli_init();
 
-        if (!$isConnected) {
-//            Mysqli::getLogger()->exception(
-//                ['mysql - #' . $connection->errno . ': {$0}', $connection->error],
-//                __FILE__,
-//                __LINE__
-//            );
-            Mongodb::getLogger()
-                ->info(['mysql - #' . $connection->errno . ': {$0}', $connection->error], Logger::WARNING);
+        try {
+            $connect = $connection->real_connect(/*'p:' . */$host, $user, $pass, null, $port);
+
+            $error = $connect ? $connection->connect_error : 'Connect mysql failed';
+
+            if ($error) {
+                $connection = null;
+
+                throw new DataSource($error);
+            }
+        } catch (\Exception $e) {
+            $connection = null;
+
+            return false;
+        } catch (\Throwable $e) {
+            $connection = null;
+
             return false;
         }
 
-        $connection->set_charset($options['charset']);
+        $connection->set_charset($charset);
 
-        return $isConnected;
+//        ALTER DATABASE dreams_twitter CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci;
+        
+        // todo: параметры соединения должны назначиться в конфиге
+        $connection->query('SET SESSION time_zone = "' . Date::getServerTimezone() . '";');
+        $connection->query('SET SESSION group_concat_max_len = 4294967295;');
+        $connection->query('SET NAMES utf8mb4;');
+
+        return (bool)$connection;
     }
 
     /**
@@ -325,5 +277,49 @@ class Mysqli extends Data_Provider
         $connection->close();
         $connection = null;
         return true;
+    }
+
+    /**
+     * Set expire time (seconds)
+     *
+     * @param  $key
+     * @param  int $ttl
+     * @return mixed new value
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since   0
+     */
+    public function expire($key, $ttl)
+    {
+        // TODO: Implement expire() method.
+    }
+
+    /**
+     * Check for errors
+     *
+     * @return void
+     *
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since   0.0
+     */
+    function checkErrors()
+    {
+        // TODO: Implement checkErrors() method.
+    }
+
+    /**
+     * @param null $key
+     * @param string $index
+     * @return Mysqli
+     * @throws Exception
+     */
+    public static function getInstance($key = null, $index = DataProvider::DEFAULT_INDEX)
+    {
+        return parent::getInstance($key, $index);
     }
 }

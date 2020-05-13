@@ -7,50 +7,29 @@
  * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
-namespace Ice\Data\Provider;
+namespace Ice\DataProvider;
 
-use Ice\Core\Data_Provider;
+use Ice\Core\DataProvider;
 use Ice\Core\Exception;
+use Ice\Core\Logger;
+use Ice\Exception\Error;
 
 /**
  * Class Redis
  *
  * Data provider for redis storage
  *
- * @see Ice\Core\Data_Provider
+ * @see \Ice\Core\DataProvider
+ *
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
  * @package    Ice
- * @subpackage Data_Provider
- *
- * @version 0.0
- * @since   0.0
+ * @subpackage DataProvider
  */
-class Redis extends Data_Provider
+class Redis extends DataProvider
 {
-    const DEFAULT_DATA_PROVIDER_KEY = 'Ice:Redis/default';
-    const DEFAULT_KEY = 'instance';
-
-    protected $options = [
-        'host' => 'localhost',
-        'port' => 6379
-    ];
-
-    /**
-     * Return default data provider key
-     *
-     * @return string
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since   0.4
-     */
-    protected static function getDefaultDataProviderKey()
-    {
-        return self::DEFAULT_DATA_PROVIDER_KEY;
-    }
+    const DEFAULT_KEY = 'default';
 
     /**
      * Return default key
@@ -70,33 +49,45 @@ class Redis extends Data_Provider
     /**
      * Set data to data provider
      *
-     * @param  string $key
-     * @param  $value
-     * @param  null $ttl
-     * @return mixed setted value
-     *
+     * @param array $values
+     * @param null $ttl
+     * @return array
+     * @throws Error
+     * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 1.2
+     * @since   0.0
      */
-    public function set($key, $value = null, $ttl = null)
+    public function set(array $values = null, $ttl = null)
     {
-        if (is_array($key) && $value === null) {
-            foreach ($key as $index => $value) {
-                $this->set($index, $value, $ttl);
-            }
-
-            return $key;
-        }
-
-        if ($ttl == -1) {
-            return $value;
+        if ($ttl === -1) {
+            return $values;
         }
 
         if ($ttl === null) {
-            $options = $this->getOptions();
-            $ttl = isset($options['ttl']) ? $options['ttl'] : 3600;
+            $ttl = $this->getOptions()->get('ttl', 3600);
         }
 
-        return $this->getConnection()->set($this->getFullKey($key), $value, $ttl) ? $value : null;
+        $connection = $this->getConnection();
+
+        foreach ($values as $key => $value) {
+            $fullKey = $this->getFullKey($key);
+
+            if (is_numeric($value)) {
+                $connection->rawCommand('set', $fullKey, $value);
+                $connection->setTimeout($fullKey, $ttl);
+
+                $this->checkErrors();
+
+                continue;
+            }
+
+            $connection->set($fullKey, $value, $ttl);
+            $this->checkErrors();
+        }
+
+        return $values;
     }
 
     /**
@@ -104,10 +95,11 @@ class Redis extends Data_Provider
      *
      * @return \Redis
      *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
+     * @throws Exception
      * @version 0.0
      * @since   0.0
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
      */
     public function getConnection()
     {
@@ -115,13 +107,121 @@ class Redis extends Data_Provider
     }
 
     /**
+     * Check for errors
+     * @return void
+     * @throws Error
+     * @throws Exception
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since   0.0
+     */
+    public function checkErrors()
+    {
+        if ($error = $this->getConnection()->getLastError()) {
+            $this->getConnection()->clearLastError();
+            throw new Error($error);
+        }
+    }
+
+    /**
+     * Set data to data provider
+     *
+     * @param $key
+     * @param array $values
+     * @param null $ttl
+     * @return array
+     * @throws Error
+     * @throws Exception
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 1.6
+     * @since   1.6
+     */
+    public function hSet($key, array $values = null, $ttl = null)
+    {
+        if ($ttl === -1) {
+            dump([$key, $values, $ttl]);
+            return $values;
+        }
+
+        if ($ttl === null) {
+            $ttl = $this->getOptions()->get('ttl', 3600);
+        }
+
+        $fullKey = $this->getFullKey($key);
+
+        foreach ($values as $field => $value) {
+            $this->getConnection()->hset($fullKey, $field, $value);
+            $this->checkErrors();
+        }
+
+        if ($ttl === true) {
+            $this->persist($fullKey);
+        } else {
+            $this->expire($fullKey, $ttl);
+        }
+
+        return $values;
+    }
+
+    /**
+     * Set expire time (seconds)
+     *
+     * @param  $key
+     * @param int $ttl
+     * @return mixed new value
+     *
+     * @throws Exception
+     * @version 1.6
+     * @since   1.6
+     * @author anonymous <email>
+     *
+     */
+    public function expire($key, $ttl)
+    {
+        $connection = $this->getConnection();
+
+        $return = true;
+
+        foreach ((array)$key as $k) {
+            if (!$connection->expire($k, $ttl)) {
+                $return = false;
+            }
+        }
+
+        return $return;
+    }
+
+    /**
+     * @param $key
+     * @return bool
+     * @throws Exception
+     * @todo Define in parent (need for all providers)
+     */
+    public function persist($key)
+    {
+        $connection = $this->getConnection();
+
+        $return = true;
+
+        foreach ((array)$key as $k) {
+            if (!$connection->persist($k)) {
+                $return = false;
+            }
+        }
+
+        return $return;
+    }
+
+    /**
      * Delete from data provider by key
      *
-     * @param  string $key
-     * @param  bool $force if true return boolean else deleted value
-     * @throws Exception
+     * @param string $key
+     * @param bool $force if true return boolean else deleted value
      * @return mixed|boolean
      *
+     * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
@@ -130,13 +230,13 @@ class Redis extends Data_Provider
     public function delete($key, $force = true)
     {
         if ($force) {
-            $this->getConnection()->delete($this->getFullKey($key));
+            $this->getConnection()->del($this->getFullKey($key));
             return true;
         }
 
         $value = $this->get($key);
 
-        $this->getConnection()->delete($this->getFullKey($key));
+        $this->getConnection()->del($this->getFullKey($key));
 
         return $value;
     }
@@ -144,54 +244,104 @@ class Redis extends Data_Provider
     /**
      * Get data from data provider by key
      *
-     * @param  string $key
+     * @param string $key
+     * @param null $default
+     * @param bool $require
      * @return mixed
-     *
+     * @throws Error
+     * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.4
+     * @version 1.2
      * @since   0.0
      */
-    public function get($key = null)
+    public function get($key = null, $default = null, $require = false)
     {
         $value = $this->getConnection()->get($this->getFullKey($key));
-        return $value === false ? null : $value;
+
+        if ($value === false) {
+            $value = $default;
+        }
+
+        if ($value === null && $require) {
+            throw new Error(['Param {$0} from data provider {$1} is require', ['key', __CLASS__]]);
+        }
+
+        return $value;
+    }
+
+    /**
+     * Get data from data provider by key
+     *
+     * @param string $key
+     * @param null $field
+     * @param null $default
+     * @param bool $require
+     * @return mixed
+     * @throws Error
+     * @throws Exception
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 1.6
+     * @since   1.6
+     */
+    public function hGet($key, $field = null, $default = null, $require = false)
+    {
+        $value = $field
+            ? $this->getConnection()->hGet($this->getFullKey($key), $field)
+            : $this->getConnection()->hGetAll($this->getFullKey($key));
+
+        if ($value === false) {
+            $value = $default;
+        }
+
+        if ($value === null && $require) {
+            throw new Error(['Param {$0} from data provider {$1} is require', ['key', __CLASS__]]);
+        }
+
+        return $value;
     }
 
     /**
      * Increment value by key with defined step (default 1)
      *
      * @param  $key
-     * @param  int $step
-     * @throws Exception
+     * @param int $step
      * @return mixed new value
      *
+     * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.4
+     * @version 1.9
      * @since   0.0
      */
     public function incr($key, $step = 1)
     {
-        return $this->getConnection()->incrBy($this->getFullKey($key), $step);
+        $value = $this->getConnection()->incrBy($this->getFullKey($key), $step);
+        $this->checkErrors();
+
+        return $value;
     }
 
     /**
      * Decrement value by key with defined step (default 1)
      *
      * @param  $key
-     * @param  int $step
-     * @throws Exception
+     * @param int $step
      * @return mixed new value
      *
+     * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.4
+     * @version 1.9
      * @since   0.0
      */
     public function decr($key, $step = 1)
     {
-        return $this->getConnection()->decrBy($this->getFullKey($key), $step);
+        $value = $this->getConnection()->decrBy($this->getFullKey($key), $step);
+        $this->checkErrors();
+
+        return $value;
     }
 
     /**
@@ -204,29 +354,30 @@ class Redis extends Data_Provider
      */
     public function flushAll()
     {
-        $this->getConnection()->delete($this->getConnection()->getKeys($this->getKeyPrefix() . '*'));
+        $this->getConnection()->del($this->getConnection()->keys($this->getKeyPrefix() . '*'));
     }
 
     /**
      * Return keys by pattern
      *
-     * @param  string $pattern
+     * @param string $pattern
      * @return array
      *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
+     * @throws Exception
      * @version 0.0
      * @since   0.0
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
      */
     public function getKeys($pattern = null)
     {
-        $keyPrefix = $this->getKeyPrefix() . Data_Provider::PREFIX_KEY_DELIMETER;
+        $keyPrefix = $this->getKeyPrefix() . DataProvider::PREFIX_KEY_DELIMETER;
 
         $size = strlen($keyPrefix);
 
         $keys = [];
 
-        foreach ($this->getConnection()->getKeys($keyPrefix . $pattern . '*') as $key) {
+        foreach ($this->getConnection()->keys(addslashes($keyPrefix . $pattern . '*')) as $key) {
             $keys[] = substr($key, $size);
         }
 
@@ -236,9 +387,10 @@ class Redis extends Data_Provider
     /**
      * Connect to data provider
      *
-     * @param  $connection
-     * @return boolean
-     *
+     * @param $connection
+     * @return bool
+     * @throws Error
+     * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
@@ -250,22 +402,52 @@ class Redis extends Data_Provider
 
         $connection = new \Redis();
 
-        $isConnected = $connection->connect($options['host'], $options['port']);
+        try {
+            $authHost = $options->get('host');
 
-        if (!$isConnected) {
-            Mysqli::getLogger()->exception('redis - ' . $this->getConnection()->getLastError(), __FILE__, __LINE__);
+            $auth = null;
+
+            if (strpos($authHost, '@')) {
+                list($auth, $host) = explode('@', $authHost);
+            } else {
+                $host = $authHost;
+            }
+
+            $port = $options->get('port');
+
+            if (!$connection->connect($host, $port, $options->get('timeout'), null, 500)) {
+                Logger::getInstance(__CLASS__)->error('Redis not connected! ' . $host . ':' . $port . ' - ' . $connection->getLastError(), __FILE__, __LINE__);
+
+                return null;
+            }
+
+            if ($auth) {
+                if (!$connection->auth($auth)) {
+                    Logger::getInstance(__CLASS__)->error('Redis not authenticated! ' . $host . ':' . $port . ' - ' . $connection->getLastError(), __FILE__, __LINE__);
+                    return null;
+                }
+            }
+
+            if (function_exists('igbinary_serialize') && defined('\Redis::SERIALIZER_IGBINARY')) {
+                $connection->setOption(\Redis::OPT_SERIALIZER, \Redis::SERIALIZER_IGBINARY);
+            } else {
+                $connection->setOption(\Redis::OPT_SERIALIZER, \Redis::SERIALIZER_PHP);
+            }
+
+            // $connection->setOption(\Redis::OPT_PREFIX, 'ice:');
+
+            if ($connection->ping()) {
+                return $connection;
+            }
+
+            Logger::getInstance(__CLASS__)->error('Redis not pinged! ' . $host . ':' . $port . ' - ' . $connection->getLastError(), __FILE__, __LINE__);
+
+            return null;
+        } catch (\Exception $e) {
+            Logger::getInstance(__CLASS__)->error('Redis failed! ' . $host . ':' . $port . ' - ' . $e->getMessage(), __FILE__, __LINE__);
+
+            return null;
         }
-
-        if (function_exists('igbinary_serialize')) {
-            $connection->setOption(\Redis::OPT_SERIALIZER, \Redis::SERIALIZER_IGBINARY);
-        } else {
-            $connection->setOption(\Redis::OPT_SERIALIZER, \Redis::SERIALIZER_PHP);
-        }
-
-        $connection->setOption(\Redis::OPT_PREFIX, 'ice/');
-
-        return $isConnected;
-
     }
 
     /**
@@ -274,10 +456,11 @@ class Redis extends Data_Provider
      * @param  $connection
      * @return boolean
      *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
+     * @throws Exception
      * @version 0.0
      * @since   0.0
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
      */
     protected function close(&$connection)
     {

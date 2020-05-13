@@ -9,17 +9,16 @@
 
 namespace Ice;
 
+require_once __DIR__ . '/../Ice/Helper/Class/Object.php';
+
 use Ice\Core\Code_Generator;
-use Ice\Core\Config;
-use Ice\Core\Data_Provider;
+use Ice\Core\DataProvider;
 use Ice\Core\Debuger;
 use Ice\Core\Environment;
-use Ice\Core\Logger;
-use Ice\Core\Resource;
-use Ice\Data\Provider\Cacher;
-use Ice\Data\Provider\Registry;
-use Ice\Data\Provider\Repository;
-use Ice\Helper\Object;
+use Ice\DataProvider\Cacher;
+use Ice\DataProvider\Registry;
+use Ice\DataProvider\Repository;
+use Ice\Helper\Class_Object;
 
 /**
  * Trait Core
@@ -32,6 +31,8 @@ use Ice\Helper\Object;
  */
 trait Core
 {
+    private static $selfCache = [];
+
     /**
      * Return short name of class (Ice:Class_Name)
      *
@@ -44,92 +45,83 @@ trait Core
      */
     public static function getShortName()
     {
-        return Object::getShortName(self::getClass());
+        return Class_Object::getShortName(self::getClass());
     }
 
     /**
      * Return class by base class
      *
      * @param  string|null $className
-     * @return Core
-     *
+     * @param null $baseClass
+     * @return Core|string
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 1.10
      * @since   0.0
      */
-    public static function getClass($className = null)
+    public static function getClass($className = null, $baseClass = null)
     {
-        return empty($className)
-            ? get_called_class()
-            : Object::getClass(get_called_class(), $className);
-    }
+        if (empty($className)) {
+            return get_called_class();
+        }
 
-    /**
-     * Return instance of resource for self class
-     *
-     * @return Resource
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since   0.0
-     */
-    public static function getResource()
-    {
-        return Resource::create(self::getClass());
-    }
+        if (!strpos($className, ':') && strpos($className, '\\')) {
+            return $className;
+        }
 
-    /**
-     * Return config of self class
-     *
-     * @param  null $postfix
-     * @param  bool $isRequired
-     * @param  null $ttl
-     * @return Config
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since   0.0
-     */
-    public static function getConfig($postfix = null, $isRequired = false, $ttl = null)
-    {
-        return Config::getInstance(self::getClass(), $postfix, $isRequired, $ttl);
+        if ($className[0] == '_' && $baseClass) {
+            if (is_object($baseClass)) {
+                $baseClass = get_class($baseClass);
+            }
+
+            if (strlen($className) > 1 && $className[1] == '_') {
+                return substr($baseClass, 0, strrpos($baseClass, '_')) . substr($className, 1);
+            } else {
+                return $baseClass . $className;
+            }
+        } else {
+            return Class_Object::getClass(get_called_class(), $className);
+        }
     }
 
     /**
      * Return dat provider for self class
      *
-     * @param  string|null $postfix
-     * @return Data_Provider
+     * @param  string|null $key
+     * @return DataProvider
      *
      * @author dp <denis.a.shestakov@gmail.com>
-     *
+     * @deprecated 1.10
      * @version 0.0
      * @since   0.0
      */
-    public static function getDataProvider($postfix = null)
+    public static function getDataProvider($key)
     {
-        if (empty($postfix)) {
-            $postfix = strtolower(self::getClassName());
-        }
-
-        return Environment::getInstance()->getProvider(self::getBaseClass(), $postfix);
+        return Environment::getInstance()->getProvider(self::getClass(), $key);
     }
 
     /**
-     * Return class name (without namespace)
+     * Return code generator for self class type
      *
-     * @return string
+     * @param $class
+     * @return Code_Generator
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @deprecated;
+     *
+     * @version 1.1
      * @since   0.0
      */
-    public static function getClassName()
+    public static function getCodeGenerator($class)
     {
-        return Object::getName(self::getClass());
+        $baseClass = self::getBaseClass();
+
+        $codeGeneratorClass = $baseClass == self::getClass()
+            ? $baseClass
+            : $baseClass . '_' . self::getClassName();
+
+        return Code_Generator::getInstance($codeGeneratorClass . '/' . $class);
     }
 
     /**
@@ -144,28 +136,26 @@ trait Core
      */
     public static function getBaseClass()
     {
-        return Object::getBaseClass(self::getClass());
+        return Class_Object::getBaseClass(self::getClass());
     }
 
     /**
-     * Return code generator for self class type
+     * Return class name (without namespace)
      *
-     * @return Code_Generator
+     * @return string
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.5
+     * @version 0.0
      * @since   0.0
      */
-    public static function getCodeGenerator()
+    public static function getClassName()
     {
-        $baseClass = self::getBaseClass();
+        return Class_Object::getClassName(self::getClass());
+    }
 
-        $class = $baseClass == self::getClass()
-            ? self::getModuleAlias() . ':' . self::getClassName()
-            : self::getModuleAlias() . ':' . $baseClass::getClassName() . '_' . self::getClassName();
-
-        return Code_Generator::getInstance($class);
+    public static function getClassNamespace() {
+        return substr(static::class, 0, strrpos(static::class, '\\'));
     }
 
     /**
@@ -182,49 +172,25 @@ trait Core
      */
     public static function getModuleAlias()
     {
-        return Object::getModuleAlias(self::getClass());
+        return Class_Object::getModuleAlias(self::getClass());
     }
 
-    /**
-     * Return namespace by base class
-     *
-     * @return string
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since   0.0
-     */
-    public static function getNamespace()
+    public static function getModuleNamespace()
     {
-        return Object::getNamespace(self::getBaseClass(), self::getClass());
-    }
-
-    /**
-     * Return logger for self class
-     *
-     * @return Logger
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since   0.0
-     */
-    public static function getLogger()
-    {
-        return Logger::getInstance(self::getClass());
+        return Class_Object::getNamespace(self::getBaseClass(), self::getClass());
     }
 
     /**
      * Return registry storage for class
      *
      * @param  string $index
-     * @return Registry
+     * @return Registry|DataProvider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.5
      * @since   0.0
+     * @throws Core\Exception
      */
     public static function getRegistry($index = 'default')
     {
@@ -235,7 +201,7 @@ trait Core
      * Return repository storage for class
      *
      * @param  string $index
-     * @return Repository
+     * @return Repository|DataProvider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
@@ -251,7 +217,7 @@ trait Core
      * Return cacher storage for class
      *
      * @param  string $index
-     * @return Repository
+     * @return Cacher|DataProvider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
@@ -273,10 +239,5 @@ trait Core
     {
         Debuger::dump($this);
         return $this;
-    }
-
-    public function __toString()
-    {
-        return (string)get_class($this);
     }
 }

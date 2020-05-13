@@ -21,6 +21,7 @@ use Ice\Core;
  * @package    Ice
  * @subpackage Core
  *
+ * @deprecated 2.0
  * @version 0.2
  * @since   0.0
  */
@@ -80,7 +81,7 @@ class Action_Context
             return $this;
         }
 
-        Action::getLogger()->exception(
+        Logger::getInstance(__CLASS__)->exception(
             [
                 'Action {$0} with input hash {$1} already runned ({$2}). May by found infinite loop.',
                 [$actionClass, $hash, $this->fullStack[$actionClass][$hash]]

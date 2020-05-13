@@ -2,8 +2,7 @@
 
 namespace Ice\Core;
 
-use Ice\Helper\Console;
-use Ice\Helper\Directory;
+use Ice\Helper\Console as Helper_Console;
 use Ice\Helper\File;
 use Ice\Helper\Php;
 
@@ -38,28 +37,76 @@ class Debuger
      *
      * @param $arg
      *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
+     * @return mixed
+     * @throws Exception
+     * @throws \Ice\Exception\Config_Error
      * @version 0.0
      * @since   0.0
+     * @author dp <denis.a.shestakov@gmail.com>
      */
     public static function dump($arg)
     {
         foreach (func_get_args() as $arg) {
             $var = stripslashes(Php::varToPhpString($arg));
 
+            $var = str_replace("\x1e", Helper_Console::getText('\x1E', Helper_Console::C_YELLOW), $var);
+
             if (!Request::isAjax()) {
                 if (Request::isCli()) {
-                    fwrite(STDOUT, Console::getText($var, Console::C_CYAN) . "\n");
+                    fwrite(STDOUT, Helper_Console::getText($var, Helper_Console::C_CYAN) . "\n");
                 } else {
                     echo '<div class="alert alert-' . Logger::INFO . '">' . str_replace('<span style="color: #0000BB">&lt;?php&nbsp;</span>', '', highlight_string('<?php // Debug value:' . "\n" . $var . "\n", true)) . '</div>';
                 }
-
-                $logFile = Directory::get(Module::getInstance()->get('logDir')) . date('Y-m-d') . '/DEBUG.log';
-                File::createData($logFile, $var, false, FILE_APPEND);
             }
 
+            $name = Request::isCli() ? Console::getCommand(null) : Request::uri();
+            $logFile = Module::getInstance()->getPath(Module::LOG_DIR) . date('Y-m-d') . '/DEBUG/' . urlencode($name) . '.log';
+
+            if (strlen($logFile) > 255) {
+                $logFilename = substr($logFile, 0, 255 - 11);
+                $logFile = $logFilename . '_' . crc32(substr($logFile, 255 - 11));
+            }
+
+            File::createData($logFile, $var, false, FILE_APPEND);
+
             Logger::fb($arg, 'debug', 'INFO');
+
+        }
+
+        return $arg;
+    }
+    
+    /**
+     * Debug variables
+     *
+     * @param $arg
+     *
+     * @return mixed
+     * @throws Exception
+     * @throws \Ice\Exception\Config_Error
+     * @version 0.0
+     * @since   0.0
+     * @author dp <denis.a.shestakov@gmail.com>
+     */
+    public static function dumpToFile($arg)
+    {
+        foreach (func_get_args() as $arg) {
+            $var = stripslashes(Php::varToPhpString($arg));
+
+            $var = str_replace("\x1e", Helper_Console::getText('\x1E', Helper_Console::C_YELLOW), $var);
+
+            $name = Request::isCli() ? Console::getCommand(null) : Request::uri();
+            $logFile = Module::getInstance()->getPath(Module::LOG_DIR) . date('Y-m-d') . '/DEBUG/' . urlencode($name) . '.log';
+
+            if (strlen($logFile) > 255) {
+                $logFilename = substr($logFile, 0, 255 - 11);
+                $logFile = $logFilename . '_' . crc32(substr($logFile, 255 - 11));
+            }
+
+            File::createData($logFile, $var, false, FILE_APPEND);
+
+            Logger::fb($arg, 'debug', 'INFO');
+
         }
 
         return $arg;

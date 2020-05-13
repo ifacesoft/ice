@@ -28,4 +28,7 @@ return [
         'tr' => 'Bağlama hatası parametreler ',
         'uk' => 'Bind params недостатності',
     ],
+    '#8: {$0} - {$1} [{$2}]' => [
+        'ru' => '#8: {$0} - {$1} [{$2}]',
+    ],
 ];

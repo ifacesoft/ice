@@ -10,20 +10,26 @@
 namespace Ice\Core;
 
 use Ice\Core;
-use Ice\Data\Provider\Repository;
+use Ice\DataProvider\Registry;
+use Ice\DataProvider\Repository;
+use Ice\Exception\Config_Error;
+use Ice\Exception\Config_Param_NotFound;
+use Ice\Exception\Error;
 use Ice\Exception\FileNotFound;
 use Ice\Helper\Config as Helper_Config;
 use Ice\Helper\File;
-use Ice\Helper\Object;
+use Ice\Helper\Class_Object;
 
 /**
  * Class Config
  *
  * Core config class
  *
- * @see Ice\Core\Container
+ * @see \Ice\Core\Container
  *
  * @author dp <denis.a.shestakov@gmail.com>
+ *
+ * @todo 1. методы сделать не статичными. 2. Сделвть итерацию по конфигу. 3. удалить метод gets
  *
  * @package    Ice
  * @subpackage Core
@@ -31,6 +37,8 @@ use Ice\Helper\Object;
 class Config
 {
     use Stored;
+
+    private static $cacheData = [];
 
     /**
      * Config params
@@ -54,100 +62,38 @@ class Config
      * @version 0.5
      * @since   0.0
      */
-    protected function __construct()
+    private function __construct()
     {
     }
 
     /**
-     * Get config object by type or key
+     * Return default config for class
      *
-     * @param  mixed $class
-     * @param  null $postfix
-     * @param  bool $isRequired
-     * @param  integer $ttl
+     * @param  $key
      * @return Config
+     *
+     * @throws Config_Error
      * @throws Exception
+     * @throws FileNotFound
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.5
-     * @since   0.0
+     * @since   0.5
      */
-    public static function getInstance($class, $postfix = null, $isRequired = false, $ttl = null)
+    public static function getDefault($key)
     {
-        $baseClass = Object::getBaseClass($class);
-
-        if ($postfix) {
-            $class .= '_' . $postfix;
-        }
-
-        /**
-         * @var Repository $repository
-         */
-        $repository = self::getRepository();
-
-        if ($_config = $ttl >= 0 ? $repository->get($class) : null) {
-            return $_config;
-        }
-
-        $config = [];
-
-        if ($class != __CLASS__ && $coreConfig = Config::getConfig()->gets($class, false)) {
-            $config = array_merge_recursive($coreConfig, $config);
-        }
-
-        if ($baseClass != $class) {
-            $baseClassPathes = Loader::getFilePath($baseClass, '.php', Module::CONFIG_DIR, false, false, false, true);
-            foreach (array_reverse($baseClassPathes) as $configFilePath) {
-                $configFromFile = File::loadData($configFilePath);
-
-                if (!is_array($configFromFile)) {
-                    Config::getLogger()->exception(['Не валидный файл конфиг: {$0}', $configFilePath], __FILE__, __LINE__);
-                }
-                if (isset($configFromFile[$class])) {
-                    $config = array_merge_recursive($configFromFile[$class], $config);
-                }
-            }
-        }
-
-        try {
-            $classPathes = Loader::getFilePath($class, '.php', Module::CONFIG_DIR, $isRequired, false, false, true);
-            foreach (array_reverse($classPathes) as $configFilePath) {
-                $configFromFile = File::loadData($configFilePath);
-                if (!is_array($configFromFile)) {
-                    Config::getLogger()->exception(['Не валидный файл конфиг: {$0}', $configFilePath], __FILE__, __LINE__);
-                }
-                $config = array_merge_recursive($configFromFile, $config);
-            }
-        } catch (FileNotFound $e) {
-            Config::getLogger()->exception(
-                ['Config for {$0} not found', $class],
-                __FILE__,
-                __LINE__,
-                $e,
-                null,
-                -1,
-                'Ice:ConfigNotFound'
-            );
-        }
-
-        return $repository->set($class, Config::create($class, $config), $ttl);
+        return self::getInstance(__CLASS__)->getConfig('defaults/' . $key);
     }
 
     /**
-     * Get config param values
-     *
-     * @param  string|null $key
-     * @param  bool $isRequired
-     * @return array
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since   0.0
+     * @param $key
+     * @return Config
+     * @throws Config_Error
+     * @throws FileNotFound
      */
-    public function gets($key = null, $isRequired = true)
+    public function getConfig($key)
     {
-        return Helper_Config::gets($this->config, $key, $isRequired);
+        return self::create($this->getName() . '/' . $key, $this->gets($key));
     }
 
     /**
@@ -162,7 +108,7 @@ class Config
      * @version 0.5
      * @since   0.5
      */
-    public static function create($configRouteName, array $configData = [])
+    public static function create($configRouteName, array $configData)
     {
         $configClass = self::getClass();
 
@@ -176,19 +122,137 @@ class Config
     }
 
     /**
-     * Return default config for class
+     * Return config name
      *
-     * @param  $key
-     * @return array
+     * @return string
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.5
-     * @since   0.5
+     * @version 0.0
+     * @since   0.0
      */
-    public static function getDefault($key)
+    public function getName()
     {
-        return Config::getConfig()->gets('defaults/' . $key, false);
+        return $this->name;
+    }
+
+    /**
+     * Get config param values
+     *
+     * @param  string|null $key
+     * @param  bool $isRequired_default @todo: разделить эти аргументы
+     * @return array
+     * @throws Config_Error
+     * @throws FileNotFound
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @deprecated 1.10 use Config::get($key, (array) $default)
+     *
+     * @version 1.1
+     * @since   0.0
+     */
+    public function gets($key = null, $isRequired_default = true)
+    {
+        $cacheTag = $this->getName() . '/' . $key;
+
+        if (isset(self::$cacheData[$cacheTag])) {
+            return self::$cacheData[$cacheTag];
+        }
+
+        try {
+            return self::$cacheData[$cacheTag] = Helper_Config::gets($this->config, $key, $isRequired_default);
+        } catch (Config_Param_NotFound $e) {
+            throw new Config_Error(['Param {$0} not found in config {$1}', [$key, $this->getName()]], [], $e);
+        }
+    }
+
+    /**
+     * Get config object by type or key
+     *
+     * @param  mixed $class
+     * @param  null $postfix
+     * @param  bool $isRequired
+     * @param  integer $ttl
+     * @param array $selfConfig
+     * @return Config
+     * @throws Config_Error
+     * @throws Exception
+     * @throws FileNotFound
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 1.3
+     * @since   0.0
+     */
+    public static function getInstance($class, $postfix = null, $isRequired = false, $ttl = null, array $selfConfig = [])
+    {
+        if ($postfix) {
+            $class .= '_' . $postfix;
+        }
+
+        /**
+         * @var Repository $repository
+         */
+        $repository = $class === Environment::class
+            ? Registry::getInstance()
+            : self::getRepository();
+
+        if ($_config = $ttl >= 0 ? $repository->get($class) : null) {
+            return $_config;
+        }
+
+        $config = [];
+
+        $logger = Logger::getInstance($class);
+
+        // todo:  Это используется в админке
+        $baseClass = Class_Object::getBaseClass($class);
+
+        if ($baseClass !== $class) {
+            $baseClassPathes = Loader::getFilePath($baseClass, '.php', Module::CONFIG_DIR, false, false, false, true);
+
+            foreach (array_reverse($baseClassPathes) as $configFilePath) {
+                $configFromFile = File::loadData($configFilePath);
+
+                if (!is_array($configFromFile)) {
+                    $logger->exception(['Не валидный файл конфиг: {$0}', $configFilePath], __FILE__, __LINE__);
+                }
+                if (isset($configFromFile[$class])) {
+                    $config = array_merge_recursive($configFromFile[$class], $config);
+                }
+            }
+        }
+        //
+
+        try {
+            $classPathes = Loader::getFilePath($class, '.php', Module::CONFIG_DIR, $isRequired, false, false, true);
+
+            foreach (array_reverse($classPathes) as $configFilePath) {
+                $configFromFile = File::loadData($configFilePath);
+                if (!is_array($configFromFile)) {
+                    $logger->exception(['Не валидный файл конфиг: {$0}', $configFilePath], __FILE__, __LINE__);
+                }
+                $config = array_merge_recursive($configFromFile, $config);
+            }
+        } catch (FileNotFound $e) {
+            $logger->exception(
+                ['Config for {$0} not found', $class],
+                __FILE__,
+                __LINE__,
+                $e,
+                null,
+                -1,
+                'Ice:Config_NotFound'
+            );
+        }
+
+        $coreConfig = $class === __CLASS__
+            ? []
+            : self::getInstance(__CLASS__)->gets($class, []);
+
+        /** @var Config $configClass */
+        $configClass = self::getClass();
+
+        return $repository->set([$class => $configClass::create($class, array_merge_recursive($config, $coreConfig, $selfConfig))], $ttl)[$class];
     }
 
     /**
@@ -210,18 +274,22 @@ class Config
      * Get config param value
      *
      * @param  string|null $key
-     * @param  bool $isRequired
+     * @param  bool $isRequired_default
      * @throws Exception
-     * @return string
+     * @return string|array
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 1.10
      * @since   0.0
      */
-    public function get($key = null, $isRequired = true)
+    public function get($key = null, $isRequired_default = true)
     {
-        $params = $this->gets($key, $isRequired);
+        $params = $this->gets($key, $isRequired_default);
+
+        if (is_array($isRequired_default)) {
+            return $params;
+        }
 
         return empty($params) ? null : reset($params);
     }
@@ -235,11 +303,18 @@ class Config
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.5
+     * @version 1.1
      * @since   0.5
      */
-    public function set($key, $value, $force = false)
+    public function set($key, $value = null, $force = false)
     {
+        if (is_array($key)) {
+            foreach ($key as $param => $value) {
+                Helper_Config::set($this->config, $param, $value, $force);
+            }
+            return;
+        }
+
         Helper_Config::set($this->config, $key, $value, $force);
     }
 
@@ -263,6 +338,10 @@ class Config
      *
      * @param  $revision
      * @return Config
+     * @throws Config_Error
+     * @throws Error
+     * @throws Exception
+     * @throws FileNotFound
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.5
@@ -272,25 +351,10 @@ class Config
     {
         File::move(
             Loader::getFilePath($this->getName(), '.php', Module::CONFIG_DIR, false, true),
-            Loader::getFilePath($this->getName() . '/' . $revision, '.php', 'Var/Backup/Config/', false, true)
+            Loader::getFilePath($this->getName() . '/' . $revision, '.php', 'var/backup/config/', false, true)
         );
 
         return $this;
-    }
-
-    /**
-     * Return config name
-     *
-     * @return string
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since   0.0
-     */
-    public function getName()
-    {
-        return $this->name;
     }
 
     /**
@@ -298,6 +362,8 @@ class Config
      *
      * @param null $path
      * @return Config
+     * @throws Exception
+     * @throws FileNotFound
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6

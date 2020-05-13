@@ -7,27 +7,27 @@
  * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
-namespace Ice\Query\Translator;
+namespace Ice\QueryTranslator;
 
 use Ice\Core\Exception;
-use Ice\Core\Query_Translator;
+use Ice\Core\QueryTranslator;
 
 /**
  * Class Defined
  *
  * Translate with query translator defined
  *
- * @see Ice\Core\Query_Translator
+ * @see Ice\Core\QueryTranslator
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
  * @package    Ice
- * @subpackage Query_Translator
+ * @subpackage QueryTranslator
  *
  * @version 0.0
  * @since   0.0
  */
-class Defined extends Query_Translator
+class Defined extends QueryTranslator
 {
     /**
      * Translate query parts to sql string
@@ -41,7 +41,7 @@ class Defined extends Query_Translator
      * @version 0.0
      * @since   0.0
      */
-    public function translate(array $sqlParts)
+    public function translate(array $sqlParts, $modelClassTableAlias)
     {
         return 'Not Implements';
     }

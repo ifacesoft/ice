@@ -11,7 +11,7 @@ namespace Ice\Core;
 
 use Countable;
 use Ice\Core;
-use Ice\Helper\Arrays;
+use Ice\Helper\Type_Array;
 use IteratorAggregate;
 
 /**
@@ -165,7 +165,7 @@ class Model_Collection implements IteratorAggregate, Countable
 
         if ($data instanceof Model) {
             if (!($data instanceof $modelClass)) {
-                Model_Collection::getLogger()->exception(
+                $this->getLogger()->exception(
                     [
                         'Add model {$0} to collection of model {$1} failure: type mismatch',
                         [get_class($data), $modelClass]
@@ -182,7 +182,7 @@ class Model_Collection implements IteratorAggregate, Countable
             $modelClass2 = $data->getModelClass();
 
             if ($modelClass != $modelClass2) {
-                Model_Collection::getLogger()->exception(
+                $this->getLogger()->exception(
                     [
                         'Add collection of model {$0} to collection of model {$1} failure: type mismatch',
                         [$modelClass2, $modelClass]
@@ -196,7 +196,7 @@ class Model_Collection implements IteratorAggregate, Countable
         }
 
         if (!is_array($data)) {
-            Model_Collection::getLogger()->exception(
+            $this->getLogger()->exception(
                 'Data mast by Model, Model_Collection or array type',
                 __FILE__,
                 __LINE__,
@@ -228,19 +228,9 @@ class Model_Collection implements IteratorAggregate, Countable
         return $this;
     }
 
-    /**
-     * Return collection as array
-     *
-     * @return array
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since   0.4
-     */
-    public function getRows()
+    public function getLogger()
     {
-        return $this->rows;
+        return Logger::getInstance($this->getModelClass());
     }
 
     /**
@@ -307,26 +297,23 @@ class Model_Collection implements IteratorAggregate, Countable
         $pkFieldNames = $modelClass::getScheme()->getPkFieldNames();
 
         $this->rows = Query::getBuilder($modelClass)
-            ->deleteQuery(Arrays::column($this->getRows(), reset($pkFieldNames)), $dataSourceKey)
+            ->getDeleteQuery(Type_Array::column($this->getRows(), reset($pkFieldNames)), $dataSourceKey)
             ->getRows();
     }
 
     /**
-     * (PHP 5 &gt;= 5.0.0)<br/>
-     * Retrieve an external iterator
+     * Return collection as array
      *
-     * @link   http://php.net/manual/en/iteratoraggregate.getiterator.php
-     * @return Model_Collection_Iterator An instance of an object implementing <b>Iterator</b> or
-     * <b>Traversable</b>
+     * @return array
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
-     * @since   0.0
+     * @since   0.4
      */
-    public function getIterator()
+    public function getRows()
     {
-        return Model_Collection_Iterator::create($this->getModelClass(), $this->getRows());
+        return $this->rows;
     }
 
     //    /**
@@ -378,6 +365,24 @@ class Model_Collection implements IteratorAggregate, Countable
     //    }
 
     /**
+     * (PHP 5 &gt;= 5.0.0)<br/>
+     * Retrieve an external iterator
+     *
+     * @link   http://php.net/manual/en/iteratoraggregate.getiterator.php
+     * @return Model_Collection_Iterator An instance of an object implementing <b>Iterator</b> or
+     * <b>Traversable</b>
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.4
+     * @since   0.0
+     */
+    public function getIterator()
+    {
+        return Model_Collection_Iterator::create($this->getModelClass(), $this->getRows());
+    }
+
+    /**
      * Insert or update collection
      *
      * @param  string|null $dataSourceKey
@@ -413,7 +418,7 @@ class Model_Collection implements IteratorAggregate, Countable
      */
     public function column($columnKey = null, $indexKey = null)
     {
-        return Arrays::column($this->getRows(), $columnKey, $indexKey);
+        return Type_Array::column($this->getRows(), $columnKey, $indexKey);
     }
 
     /**
@@ -421,7 +426,7 @@ class Model_Collection implements IteratorAggregate, Countable
      *
      * @param  null $modelClass
      * @param  null $tableAlias
-     * @return Query_Builder
+     * @return QueryBuilder
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
@@ -456,6 +461,11 @@ class Model_Collection implements IteratorAggregate, Countable
 
         $modelClass = $this->getModelClass();
 
-        return Arrays::column($this->getRows(), $modelClass::getScheme()->getPkFieldNames(), '');
+        return Type_Array::column($this->getRows(), $modelClass::getScheme()->getPkFieldNames(), '');
+    }
+
+    public static function getConfig()
+    {
+        return Config::getInstance(get_called_class());
     }
 }

@@ -7,16 +7,17 @@
  * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
-namespace Ice\Data\Source;
+namespace Ice\DataSource;
 
-use Ice\Core\Data_Provider;
-use Ice\Core\Data_Source;
+use Ice\Core\DataProvider;
+use Ice\Core\DataSource;
+use Ice\Core\Logger;
 use Ice\Core\Model;
 use Ice\Core\Module;
 use Ice\Core\Query;
-use Ice\Core\Query_Builder;
-use Ice\Core\Query_Result;
-use Ice\Core\Query_Translator;
+use Ice\Core\QueryBuilder;
+use Ice\Core\QueryResult;
+use Ice\Core\QueryTranslator;
 use Ice\Helper\Query as Helper_Query;
 
 /**
@@ -24,29 +25,28 @@ use Ice\Helper\Query as Helper_Query;
  *
  * Implements defined data source
  *
- * @see Ice\Core\Data_Source
+ * @see \Ice\Core\DataSource
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
  * @package    Ice
- * @subpackage Data_Source
- *
- * @version 0.0
- * @since   0.0
+ * @subpackage DataSource
  */
-class Defined extends Data_Source
+class Defined extends DataSource
 {
     /**
      * Execute query select to data source
      *
      * @param  Query $query
+     * @param bool $indexKeys
      * @return array
+     * @throws \Ice\Core\Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
      * @since   0.0
      */
-    public function executeSelect(Query $query)
+    public function executeSelect(Query $query, $indexKeys = true)
     {
         /**
          * @var Model $modelClass
@@ -80,33 +80,33 @@ class Defined extends Data_Source
                     $whereQuery = null;
 
                     switch ($part[2]) {
-                        case Query_Builder::SQL_COMPARISON_OPERATOR_EQUAL:
+                        case QueryBuilder::SQL_COMPARISON_OPERATOR_EQUAL:
                             if (!isset($row[$part[1]]) || $row[$part[1]] != reset($part[3])) {
                                 return false;
                             }
                             break;
-                        case Query_Builder::SQL_COMPARISON_OPERATOR_NOT_EQUAL:
+                        case QueryBuilder::SQL_COMPARISON_OPERATOR_NOT_EQUAL:
                             if ($row[$part[1]] == reset($part[3])) {
                                 return false;
                             }
                             break;
-                        case Query_Builder::SQL_COMPARISON_KEYWORD_IN:
+                        case QueryBuilder::SQL_COMPARISON_KEYWORD_IN:
                             if (!in_array($row[$part[1]], $part[3])) {
                                 return false;
                             }
                             break;
-                        case Query_Builder::SQL_COMPARISON_KEYWORD_IS_NULL:
+                        case QueryBuilder::SQL_COMPARISON_KEYWORD_IS_NULL:
                             if ($row[$part[1]] !== null) {
                                 return false;
                             }
                             break;
-                        case Query_Builder::SQL_COMPARISON_KEYWORD_IS_NOT_NULL:
+                        case QueryBuilder::SQL_COMPARISON_KEYWORD_IS_NOT_NULL:
                             if ($row[$part[1]] === null) {
                                 return false;
                             }
                             break;
                         default:
-                            Defined::getLogger()->exception(
+                            Logger::getInstance(__CLASS__)->exception(
                                 ['Unknown comparsion operator {$0}', $part[2]],
                                 __FILE__,
                                 __LINE__
@@ -121,8 +121,8 @@ class Defined extends Data_Source
         $rows = array_filter($rows, $filterFunction(Helper_Query::convertWhereForFilter($query)));
 
         return [
-            Query_Result::ROWS => $rows,
-            Query_Result::NUM_ROWS => count($rows)
+            QueryResult::ROWS => $rows,
+            QueryResult::NUM_ROWS => count($rows)
         ];
     }
 
@@ -130,7 +130,7 @@ class Defined extends Data_Source
      * Execute query insert to data source
      *
      * @param  Query $query
-     * @return array
+     * @return void
      * @throws \Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
@@ -186,7 +186,7 @@ class Defined extends Data_Source
      */
     public function getDataScheme()
     {
-        return Data_Source::getDefault()->getDataScheme();
+        return DataSource::getDefault()->getDataScheme();
     }
 
     /**
@@ -289,7 +289,7 @@ class Defined extends Data_Source
     /**
      * Return data provider class
      *
-     * @return Data_Provider
+     * @return DataProvider
      *
      * @author anonymous <email>
      *
@@ -304,7 +304,7 @@ class Defined extends Data_Source
     /**
      * Return query translator class
      *
-     * @return Query_Translator
+     * @return QueryTranslator
      *
      * @author anonymous <email>
      *
@@ -319,12 +319,14 @@ class Defined extends Data_Source
     /**
      * Begin transaction
      *
+     * @param string $isolationLevel
+     *
      * @author anonymous <email>
      *
      * @version 0
      * @since   0
      */
-    public function beginTransaction()
+    public function beginTransaction($isolationLevel = null)
     {
         // TODO: Implement beginTransaction() method.
     }
@@ -349,8 +351,9 @@ class Defined extends Data_Source
      *
      * @version 0
      * @since   0
+     * @param null $e
      */
-    public function rollbackTransaction()
+    public function rollbackTransaction($e = null)
     {
         // TODO: Implement rollbackTransaction() method.
     }
@@ -369,5 +372,127 @@ class Defined extends Data_Source
     public function getReferences($tableName)
     {
         // TODO: Implement getReferences() method.
+    }
+
+    /**
+     * Create save point
+     *
+     * @param $savePoint
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since   0
+     */
+    public function savePoint($savePoint)
+    {
+        // TODO: Implement savePointTransaction() method.
+    }
+
+    /**
+     * Rollback save point
+     *
+     * @param $savePoint
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since   0
+     */
+    public function rollbackSavePoint($savePoint)
+    {
+        // TODO: Implement rollbackSavePoint() method.
+    }
+
+    /**
+     * Commit save point
+     *
+     * @param $savePoint
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since   0
+     */
+    public function releaseSavePoint($savePoint)
+    {
+        // TODO: Implement releaseSavePoint() method.
+    }
+
+    /**
+     * Execute native query
+     *
+     * @param $query
+     * @return QueryResult
+     */
+    public function executeNativeQuery($query)
+    {
+        // TODO: Implement executeNativeQuery() method.
+    }
+
+    /**
+     * Execute native query
+     *
+     * @param $sql
+     * @return mixed
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since   0
+     */
+    public function query($sql)
+    {
+        // TODO: Implement query() method.
+    }
+
+    /**
+     * Translate ice query language for get data
+     *
+     * @param $iceql
+     * @return mixed
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since   0
+     */
+    public function translateGet(array $iceql)
+    {
+        // TODO: Implement translateGet() method.
+    }
+
+    /**
+     * Translate ice query language for set data
+     *
+     * @param $iceql
+     * @return mixed setted value
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since   0
+     */
+    public function translateSet(array $iceql)
+    {
+        // TODO: Implement translateSet() method.
+    }
+
+    /**
+     * Translate ice query language for delete data
+     *
+     * @param $iceql
+     * @return bool|mixed
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since   0
+     */
+    public function translateDelete(array $iceql)
+    {
+        // TODO: Implement translateDelete() method.
+    }
+
+    public function escapeString($string)
+    {
+        // TODO: Implement escapeString() method.
     }
 }

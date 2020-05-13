@@ -7,43 +7,28 @@
  * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
-namespace Ice\Data\Provider;
+namespace Ice\DataProvider;
 
 use ArrayObject;
-use Ice\Core\Data_Provider;
+use Ice\Core\DataProvider;
 use Ice\Core\Exception;
+use Ice\Exception\Error;
 
 /**
  * Class Registry
  *
  * Data provider for registry data
  *
- * @see Ice\Core\Data_Provider
+ * @see \Ice\Core\DataProvider
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
  * @package    Ice
- * @subpackage Data_Provider
+ * @subpackage DataProvider
  */
-class Registry extends Data_Provider
+class Registry extends DataProvider
 {
-    const DEFAULT_DATA_PROVIDER_KEY = 'Ice:Registry/default';
-    const DEFAULT_KEY = 'instance';
-
-    /**
-     * Return default data provider key
-     *
-     * @return string
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since   0.4
-     */
-    protected static function getDefaultDataProviderKey()
-    {
-        return self::DEFAULT_DATA_PROVIDER_KEY;
-    }
+    const DEFAULT_KEY = 'default';
 
     /**
      * Return default key
@@ -70,26 +55,39 @@ class Registry extends Data_Provider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.4
+     * @version 1.3
      * @since   0.0
      */
     public function delete($key, $force = true)
     {
-        $keyPrefix = $this->getKeyPrefix();
-        $data = $this->getConnection()->$keyPrefix;
-
-        if ($force) {
-            unset($data[$key]);
-            $this->getConnection()->$keyPrefix = $data;
-            return true;
+        if (empty($key)) {
+            return is_array($key) ? [] : null;
         }
 
-        $value = $data[$key];
+        $connection = $this->getConnection();
 
-        unset($data[$key]);
-        $this->getConnection()->$keyPrefix = $data;
+        $keyPrefix = $this->getKeyPrefix();
 
-        return $value;
+        $data = $connection->offsetGet($keyPrefix);
+
+        if (empty($data)) {
+            return is_array($key) ? [] : null;
+        }
+
+        $values = [];
+
+        foreach ((array)$key as $k) {
+            $values[$k] = !$force && array_key_exists($k, $data)
+                ? $data[$k]
+                : null;
+
+            unset($data[$k]);
+        }
+
+        $connection->offsetSet($keyPrefix, $data);
+
+
+        return is_array($key) ? $values : reset($values);
     }
 
     /**
@@ -101,6 +99,7 @@ class Registry extends Data_Provider
      *
      * @version 0.0
      * @since   0.0
+     * @throws Exception
      */
     public function getConnection()
     {
@@ -123,76 +122,93 @@ class Registry extends Data_Provider
      */
     public function incr($key, $step = 1)
     {
-        return $this->set($key, $this->get($key) + $step);
+        return $this->set([$key => $this->get($key) + $step])[$key];
     }
 
     /**
      * Set data to data provider
      *
-     * @param  string $key
-     * @param  $value
+     * @param array $values
      * @param  integer $ttl
-     * @return mixed setted value
+     * @return array
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 1.3
      * @since   0.0
+     * @throws Exception
      */
-    public function set($key, $value = null, $ttl = 0)
+    public function set(array $values = null, $ttl = null)
     {
-        if (is_array($key) && $value === null) {
-            foreach ($key as $index => $value) {
-                $this->set($index, $value, $ttl);
-            }
-
-            return $key;
+        if ($ttl === -1) {
+            return $values;
         }
 
-        if ($ttl == -1) {
-            return $value;
-        }
+        $connection = $this->getConnection();
 
         $keyPrefix = $this->getKeyPrefix();
 
-        if (!isset($this->getConnection()->$keyPrefix)) {
-            $this->getConnection()->$keyPrefix = [$key => $value];
-            return $value;
+        $data = $connection->offsetGet($keyPrefix);
+
+        foreach ($values as $key => $value) {
+            $data[$key] = $value;
         }
 
-        $data = $this->getConnection()->$keyPrefix;
-        $data[$key] = $value;
-        $this->getConnection()->$keyPrefix = $data;
+        $connection->offsetSet($keyPrefix, $data);
 
-        return $value;
+        return $values;
     }
 
     /**
      * Get data from data provider by key
      *
      * @param  string $key
+     * @param null $default
+     * @param bool $require
      * @return mixed
-     *
+     * @throws Error
+     * @throws \Ice\Exception\FileNotFound
+     * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 1.3
      * @since   0.0
      */
-    public function get($key = null)
+    public function get($key = null, $default = null, $require = false)
     {
+        $connection = $this->getConnection();
+
         $keyPrefix = $this->getKeyPrefix();
 
-        if (!isset($this->getConnection()->$keyPrefix)) {
-            return null;
-        }
-
-        $data = $this->getConnection()->$keyPrefix;
+        $data = $connection->offsetGet($keyPrefix);
 
         if (empty($key)) {
             return $data;
         }
 
-        return isset($data[$key]) ? $data[$key] : null;
+        if (empty($data)) {
+            return is_array($key) ? (array)$default : $default;
+        }
+
+        $values = [];
+
+        foreach ((array)$key as $k) {
+            if (!array_key_exists($k, $data)) {
+                if ($require) {
+                    throw new Error(['Param {$0} from data provider {$1} is require', [$k, get_class($this)]]);
+                }
+
+                if (is_array($default)) {
+                    $values[$k] = array_key_exists($k, $default) ? $default[$k] : null;
+                } else {
+                    $values[$k] = $default;
+                }
+            } else {
+                $values[$k] = $data[$k];
+            }
+        }
+
+        return is_array($key) ? $values : reset($values);
     }
 
     /**
@@ -211,7 +227,7 @@ class Registry extends Data_Provider
      */
     public function decr($key, $step = 1)
     {
-        return $this->set($key, $this->get($key) - $step);
+        return $this->set([$key => $this->get($key) - $step])[$key];
     }
 
     /**
@@ -219,13 +235,12 @@ class Registry extends Data_Provider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.4
+     * @version 1.3
      * @since   0.0
      */
     public function flushAll()
     {
-        $keyPrefix = $this->getKeyPrefix();
-        $this->getConnection()->$keyPrefix = [];
+        $this->getConnection()->offsetSet($this->getKeyPrefix(), []);
     }
 
     /**
@@ -234,6 +249,9 @@ class Registry extends Data_Provider
      * @param  string $pattern
      * @return array
      *
+     * @throws Error
+     * @throws \Ice\Exception\FileNotFound
+     * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
@@ -252,12 +270,13 @@ class Registry extends Data_Provider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 1.3
      * @since   0.0
      */
     protected function connect(&$connection)
     {
-        $connection = new ArrayObject();
+        $connection = new ArrayObject([$this->getKeyPrefix() => []]);
+
         return true;
     }
 
@@ -275,6 +294,40 @@ class Registry extends Data_Provider
     protected function close(&$connection)
     {
         $connection = null;
+
         return true;
+    }
+
+    /**
+     * Set expire time (seconds)
+     *
+     * @param  $key
+     * @param  int $ttl
+     * @return mixed new value
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since   0
+     */
+    public function expire($key, $ttl)
+    {
+        // TODO: Implement expire() method.
+    }
+
+    /**
+     * Check for errors
+     *
+     * @return void
+     *
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since   0.0
+     */
+    function checkErrors()
+    {
+        // TODO: Implement checkErrors() method.
     }
 }

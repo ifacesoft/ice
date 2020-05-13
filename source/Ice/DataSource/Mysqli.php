@@ -7,21 +7,33 @@
  * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
-namespace Ice\Data\Source;
+namespace Ice\DataSource;
 
-use Ice\Core\Converter;
-use Ice\Core\Data_Provider;
-use Ice\Core\Data_Source;
+use Ice\Core\DataProvider;
+use Ice\Core\DataSource;
+use Ice\Core\Debuger;
 use Ice\Core\Exception;
+use Ice\Core\Logger;
 use Ice\Core\Model;
 use Ice\Core\Module;
+use Ice\Core\Profiler;
 use Ice\Core\Query;
-use Ice\Core\Query_Builder;
-use Ice\Core\Query_Result;
-use Ice\Core\Query_Translator;
-use Ice\Helper\Arrays;
+use Ice\Core\QueryBuilder;
+use Ice\Core\QueryResult;
+use Ice\Core\QueryTranslator;
+use Ice\Exception\DataSource as Exception_DataSource;
+use Ice\Exception\DataSource_Deadlock;
+use Ice\Exception\DataSource_Delete;
+use Ice\Exception\DataSource_Insert;
+use Ice\Exception\DataSource_Insert_DuplicateEntry;
+use Ice\Exception\DataSource_Select;
+use Ice\Exception\DataSource_Statement_Error;
+use Ice\Exception\DataSource_Statement_TableNotFound;
+use Ice\Exception\DataSource_Statement_UnknownColumn;
+use Ice\Exception\DataSource_Update;
 use Ice\Helper\Model as Helper_Model;
-use Ice\Helper\String;
+use Ice\Helper\Type_Array;
+use Ice\Helper\Type_String;
 use mysqli_result;
 use mysqli_stmt;
 
@@ -30,50 +42,71 @@ use mysqli_stmt;
  *
  * Implements mysqli data source
  *
- * @see Ice\Core\Data_Source
+ * @see \Ice\Core\DataSource
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
  * @package    Ice
- * @subpackage Data_Source
+ * @subpackage DataSource
  */
-class Mysqli extends Data_Source
+class Mysqli extends DataSource
 {
-    const DATA_PROVIDER_CLASS = 'Ice\Data\Provider\Mysqli';
-    const QUERY_TRANSLATOR_CLASS = 'Ice\Query\Translator\Sql';
+    const DATA_PROVIDER_CLASS = 'Ice\DataProvider\Mysqli';
+    const QUERY_TRANSLATOR_CLASS = 'Ice\QueryTranslator\Sql';
+
+    const TRANSACTION_REPEATABLE_READ = 'REPEATABLE READ';
+    const TRANSACTION_READ_COMMITTED = 'READ COMMITTED';
+    const TRANSACTION_READ_UNCOMMITTED = 'READ UNCOMMITTED';
+    const TRANSACTION_SERIALIZABLE = 'SERIALIZABLE';
+
+    protected $savePointLevel = null;
 
     /**
      * Execute query select to data source
      *
-     * @param  Query $query
+     * @param Query $query
+     * @param bool $indexKeys
      * @return array
      * @throws Exception
+     * @throws \Ice\Exception\Error
+     * @throws \Ice\Exception\FileNotFound
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
      * @since   0.0
      */
-    public function executeSelect(Query $query)
+    public function executeSelect(Query $query, $indexKeys = true)
     {
         $data = [];
 
         $statement = $this->getStatement($query->getBody(), $query->getBinds());
+
+        $logger = Logger::getInstance(__CLASS__);
 
         if ($statement->execute() === false) {
             $errno = $statement->errno;
             $error = $statement->error;
             $statement->close();
 
-            Data_Source::getLogger()->exception(
-                [
-                    '#' . $errno . ': {$0} - {$1} [{$2}]',
-                    [$error, print_r($query->getBody(), true), implode(', ', $query->getBinds())]
-                ],
-                __FILE__,
-                __LINE__
+            $sql = [print_r($query->getBody(), true), print_r($query->getBinds(), true)];
+
+            Logger::log(
+                '#' . $errno . ': ' . $error . ' - ' . print_r($sql, true),
+                'query (error)',
+                'ERROR'
             );
+
+            switch ($errno) {
+                default:
+                    $exceptionClass = DataSource_Select::class;
+            }
+
+            throw new $exceptionClass([
+                '#' . $errno . ': {$0} - {$1} [{$2}]',
+                [$error, print_r($query->getBody(), true), implode(', ', $query->getBinds())]
+            ]);
         }
-        //            $statement->store_result(); // Так почемуто не работает
+
         /**
          * @var mysqli_result $result
          */
@@ -84,7 +117,7 @@ class Mysqli extends Data_Source
             $error = $statement->error;
             $statement->close();
 
-            Data_Source::getLogger()->exception(
+            $logger->exception(
                 [
                     '#' . $errno . ': {$0} - {$1} [{$2}]',
                     [$error, print_r($query->getBody(), true), implode(', ', $query->getBinds())]
@@ -96,42 +129,89 @@ class Mysqli extends Data_Source
 
         $modelClass = $query->getQueryBuilder()->getModelClass();
 
-        $pkFieldNames = $modelClass::getScheme()->getPkFieldNames();
+        $pkFieldNamesAsKeys = array_flip($modelClass::getScheme()->getPkFieldNames());
 
-        $data[Query_Result::NUM_ROWS] = $result->num_rows;
-        $data[Query_Result::ROWS] = [];
+//        $statementResultMetadata = $statement->result_metadata();
+//
+//        $bindResultVars = [];
+//        $row = [];
+//        while($field = $statementResultMetadata->fetch_field()) {
+//            $bindResultVars[] = &$row[$field->name];
+//        }
+//
+//        call_user_func_array(array($statement, 'bind_result'), $bindResultVars);
 
-        while ($row = $result->fetch_assoc()) {
-            foreach ($query->getAfterSelectTriggers() as list($method, $params)) {
-                $row = $modelClass::$method($row, $params);
+        $rows = $result->fetch_all(MYSQLI_ASSOC);
 
-                if (!$row) {
-                    Mysqli::getLogger()->exception(
-                        ['Trigger(method) {$0} of model {$1} must return row. Fix it.', [$method, $modelClass]],
+        $numRows = $result->num_rows;
+
+        $result->free_result();
+        $statement->free_result();
+        $statement->close();
+
+        unset($result);
+        unset($statement);
+
+        if ($query->isCalcFoundRows()) {
+            $result = $this->query('SELECT FOUND_ROWS()');
+            $foundRows = $result->fetch_row();
+            $result->close();
+            $data[QueryResult::FOUND_ROWS] = reset($foundRows);
+        } else {
+            $data[QueryResult::FOUND_ROWS] = $numRows;
+        }
+
+        $data[QueryResult::ROWS] = [];
+
+        foreach ($rows as $row) {
+//        while ($row = $result->fetch_assoc()) {
+            foreach ($query->getAfterSelectTriggers() as list($afterSelectTrigger, $params, $triggerModelClass)) {
+                $row = is_callable($afterSelectTrigger)
+                    ? $afterSelectTrigger($row, $params)
+                    : $triggerModelClass::$afterSelectTrigger($row, $params);
+
+                if ($row === null) {
+                    $logger->exception(
+                        ['Trigger (method) {$0} form model {$1} must return row. Fix it.', [$afterSelectTrigger, $triggerModelClass]],
                         __FILE__,
                         __LINE__
                     );
                 }
             }
 
-            $data[Query_Result::ROWS][implode('_', array_intersect_key($row, array_flip($pkFieldNames)))] = $row;
+            if (!$row) {
+                continue;
+            }
+
+            $id = implode('_', array_intersect_key($row, $pkFieldNamesAsKeys));
+
+            if ($id && $indexKeys) {
+                if (!isset($data[QueryResult::ROWS][$id])) {
+                    $data[QueryResult::ROWS][$id] = $row;
+                }
+            } else {
+                $data[QueryResult::ROWS][] = $row;
+            }
+//        }
         }
 
-        $result->close();
-        $statement->free_result();
-        $statement->close();
+        $data[QueryResult::NUM_ROWS] = count($data[QueryResult::ROWS]);
 
-        if ($query->isCalcFoundRows()) {
-            $result = $this->getConnection()->query('SELECT FOUND_ROWS()');
-            $foundRows = $result->fetch_row();
-            $result->close();
-            $data[Query_Result::FOUND_ROWS] = reset($foundRows);
-        } else {
-            $data[Query_Result::FOUND_ROWS] = $data[Query_Result::NUM_ROWS];
-        }
+        // todo: Это надо!!
+//        if ($numRows != $data[QueryResult::NUM_ROWS]) {
+//            throw new DataSource_Select_Error('Real selected rows not equal result num rows: duplicate primary key');
+//        }
 
-        foreach ($query->getQueryBuilder()->getTransforms() as list($converterClass, $params)) {
-            $data = Converter::getInstance($converterClass)->convert($data, $params);
+        foreach ($query->getQueryBuilder()->getTransforms() as list($transform, $params, $transformModelClass)) {
+            $data = $transformModelClass::$transform($data, $params);
+
+            if (!$data) {
+                $logger->exception(
+                    ['Transform (method) {$0} for model {$1} must return row. Fix it.', [$transform, $transformModelClass]],
+                    __FILE__,
+                    __LINE__
+                );
+            }
         }
 
         return $data;
@@ -141,7 +221,7 @@ class Mysqli extends Data_Source
      * Prepare query statement for query
      *
      * @param    $body
-     * @param    array $binds
+     * @param array $binds
      * @return   mysqli_stmt
      * @throws   Exception
      * @internal param array $bodyParts
@@ -154,24 +234,42 @@ class Mysqli extends Data_Source
     {
         $statement = $this->getConnection()->prepare($body);
 
+        $logger = Logger::getInstance(__CLASS__);
+
         if (!$statement) {
             switch ($this->getConnection()->errno) {
                 case 1146:
-                    $exceptionClass = 'Ice:DataSource_TableNotFound';
+                    $exceptionClass = DataSource_Statement_TableNotFound::class;
+                    break;
+                case 1054:
+                    $exceptionClass = DataSource_Statement_UnknownColumn::class;
+                    break;
+                case 2006:
+                    try {
+                        $statement = $this->reconnect()->prepare($body);
+
+                        if (!$statement) {
+                            $exceptionClass = DataSource_Statement_Error::class;
+                        }
+                    } catch (\Exception $e) {
+                        $exceptionClass = DataSource_Statement_Error::class;
+                    }
                     break;
                 default:
-                    $exceptionClass = 'Ice:DataSource_Error';
+                    $exceptionClass = DataSource_Statement_Error::class;
             }
 
-            Data_Source::getLogger()->exception(
-                ['#' . $this->getConnection()->errno . ': {$0}', $this->getConnection()->error],
-                __FILE__,
-                __LINE__,
-                null,
-                [$body, $binds],
-                -1,
-                $exceptionClass
-            );
+            if (isset($exceptionClass)) {
+                $logger->exception(
+                    ['#' . $this->getConnection()->errno . ': {$0}', $this->getConnection()->error],
+                    __FILE__,
+                    __LINE__,
+                    null,
+                    [$body, $binds],
+                    -1,
+                    $exceptionClass
+                );
+            }
         }
 
         $types = '';
@@ -179,18 +277,18 @@ class Mysqli extends Data_Source
             $types .= gettype($bind)[0];
         }
 
-        $values = [str_replace('N', 's', $types)];
+        if ($types) {
+            $bindParams = array_merge([str_replace('N', 's', $types)], $binds);
 
-        if (!empty($types)) {
-            $values = array_merge($values, $binds);
-
-            if (call_user_func_array(array($statement, 'bind_param'), $this->makeValuesReferenced($values)) === false) {
-                Mysqli::getLogger()->exception(
+            try {
+                call_user_func_array(array($statement, 'bind_param'), $this->makeValuesReferenced($bindParams));
+            } catch (\Exception $e) {
+                throw new DataSource_Statement_Error(
                     'Bind params failure',
+                    ['types' => $types, 'values' => array_slice($bindParams, 1), 'body' => $body, 'binds' => $binds],
+                    $e,
                     __FILE__,
-                    __LINE__,
-                    null,
-                    ['types' => $types, 'values' => $values, 'body' => $body, 'binds' => $binds]
+                    __LINE__
                 );
             }
         }
@@ -201,13 +299,14 @@ class Mysqli extends Data_Source
     /**
      * Get connection instance
      *
-     * @param  string|null $scheme
-     * @return \Mysqli
+     * @param string|null $scheme
+     * @return \Mysqli|Object
      *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
+     * @throws Exception
      * @version 0.0
      * @since   0.0
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
      */
     public function getConnection($scheme = null)
     {
@@ -235,18 +334,110 @@ class Mysqli extends Data_Source
     }
 
     /**
+     * @param $sql
+     * @return mixed
+     * @throws Exception
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 1.1
+     * @since   1.1
+     */
+    public function query($sql)
+    {
+        $startTime = Profiler::getMicrotime();
+        $startMemory = Profiler::getMemoryGetUsage();
+
+        $connection = $this->getSourceDataProvider()->getConnection();
+
+        $result = $connection->query($sql);
+
+        if ($result === false) {
+            $errno = $this->getConnection()->errno;
+            $error = $this->getConnection()->error;
+
+            Logger::log(
+                '#' . $errno . ': ' . $error . ' - ' . $sql,
+                'query (error)',
+                'ERROR'
+            );
+
+            switch ($errno) {
+                case 1062:
+                    $exceptionClass = DataSource_Insert_DuplicateEntry::class;
+                    break;
+                case 1213:
+                    $exceptionClass = DataSource_Deadlock::class;
+                    break;
+                default:
+                    $exceptionClass = Exception_DataSource::class;
+            }
+
+            throw new $exceptionClass(['#' . $errno . ': {$0} - {$1}', [$error, $sql]]);
+        }
+
+        Profiler::setPoint($sql, $startTime, $startMemory);
+        Logger::log(Profiler::getReport($sql), 'sql (native)', 'SQL/NATIVE_INFO');
+
+        return $result;
+    }
+
+    /**
+     * Execute native query
+     *
+     * @param string $sql
+     * @return QueryResult
+     *
+     * @throws Exception
+     * @version 1.1
+     * @since   1.1
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     */
+    public function executeNativeQuery($sql)
+    {
+        $result = $this->query($sql);
+
+        $data[QueryResult::ROWS] = [];
+
+        if (is_object($result)) {
+            if ($result->num_rows) {
+                $data[QueryResult::ROWS] = $result->fetch_all(MYSQLI_ASSOC);
+            }
+
+            $result->free_result();
+        }
+
+        $data[QueryResult::NUM_ROWS] = count($data[QueryResult::ROWS]);
+        $data[QueryResult::FOUND_ROWS] = $data[QueryResult::NUM_ROWS];
+
+        return $data;
+    }
+
+    /**
      * Execute query insert to data source
      *
-     * @param  Query $query
+     * @param Query $query
      * @return array
      * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @todo Add trigger affect column + affect column value
      *
      * @version 0.4
      * @since   0.0
      */
     public function executeInsert(Query $query)
     {
+//        // выпилить когда надо будет
+//        if (in_array('roles', $query->getQueryBuilder()->getSqlParts()['values']['fieldNames'])) {
+//            \file_put_contents(
+//                MODULE_DIR . 'rolesInsert_' . \Ice\Helper\Date::get(null, \Ice\Helper\Date::FORMAT_MYSQL_DATE) . '.log',
+//                print_r(['session' => session_id(), 'server' => $_SERVER, 'values' => $query->getBindParts()['values']], true),
+//                FILE_APPEND
+//            );
+//        }
+
         $data = [];
 
         $statement = $this->getStatement($query->getBody(), $query->getBinds());
@@ -256,27 +447,34 @@ class Mysqli extends Data_Source
             $error = $statement->error;
             $statement->close();
 
-            Data_Source::getLogger()->exception(
-                [
-                    '#' . $errno . ': {$0} - {$1} [{$2}]',
-                    [$error, print_r($query->getBody(), true), implode(', ', $query->getBinds())]
-                ],
-                __FILE__,
-                __LINE__
-            );
+            switch ($errno) {
+                case 1062:
+                    $exceptionClass = DataSource_Insert_DuplicateEntry::class;
+                    break;
+                case 1213:
+                    $exceptionClass = DataSource_Deadlock::class;
+                    break;
+                default:
+                    $exceptionClass = DataSource_Insert::class;
+            }
+
+            throw new $exceptionClass([
+                '#' . $errno . ': {$0} - {$1} [{$2}]',
+                [$error, print_r($query->getBody(), true), implode(', ', $query->getBinds())]
+            ]);
         }
 
         /**
          * @var Model $modelClass
          */
         $modelClass = $query->getQueryBuilder()->getModelClass();
-        $pkFieldNames = $modelClass::getScheme()->getPkFieldNames();
+        $pkFieldNamesAsKeys = array_flip($modelClass::getScheme()->getPkFieldNames());
 
-        $pkFieldName = count($pkFieldNames) == 1 ? reset($pkFieldNames) : null;
+        $pkFieldName = count($pkFieldNamesAsKeys) == 1 ? key($pkFieldNamesAsKeys) : null;
 
         $insertId = $statement->insert_id;
 
-        foreach ($query->getBindParts()[Query_Builder::PART_VALUES] as $row) {
+        foreach ($query->getBindParts()[QueryBuilder::PART_VALUES] as $row) {
             if ($pkFieldName) {
                 if (!isset($row[$pkFieldName])) {
                     $row[$pkFieldName] = $insertId;
@@ -286,13 +484,13 @@ class Mysqli extends Data_Source
                 }
             }
 
-            $insertKeys = array_intersect_key($row, array_flip($pkFieldNames));
+            $insertKeys = array_intersect_key($row, $pkFieldNamesAsKeys);
 
-            $data[Query_Result::INSERT_ID][] = $insertKeys;
-            $data[Query_Result::ROWS][implode('_', $insertKeys)] = $row;
+            $data[QueryResult::INSERT_ID][] = $insertKeys;
+            $data[QueryResult::ROWS][implode('_', $insertKeys)] = $row;
         }
 
-        $data[Query_Result::AFFECTED_ROWS] = $statement->affected_rows;
+        $data[QueryResult::AFFECTED_ROWS] = $statement->affected_rows;
 
         $statement->close();
 
@@ -302,16 +500,27 @@ class Mysqli extends Data_Source
     /**
      * Execute query update to data source
      *
-     * @param  Query $query
+     * @param Query $query
      * @return array
      * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @todo Add trigger affect column + affect column value
      *
      * @version 0.2
      * @since   0.0
      */
     public function executeUpdate(Query $query)
     {
+//        // выпилить когда надо будет
+//        if (in_array('roles', $query->getQueryBuilder()->getSqlParts()['set']['fieldNames'])) {
+//            \file_put_contents(
+//                MODULE_DIR . 'rolesUpdate_' . \Ice\Helper\Date::get(null, \Ice\Helper\Date::FORMAT_MYSQL_DATE) . '.log',
+//                print_r(['session' => session_id(), 'server' => $_SERVER, 'set' => $query->getBindParts()['set']], true),
+//                FILE_APPEND
+//            );
+//        }
+
         $data = [];
 
         $statement = $this->getStatement($query->getBody(), $query->getBinds());
@@ -321,28 +530,32 @@ class Mysqli extends Data_Source
             $error = $statement->error;
             $statement->close();
 
-            Data_Source::getLogger()->exception(
-                [
-                    '#' . $errno . ': {$0} - {$1} [{$2}]',
-                    [$error, print_r($query->getBody(), true), implode(', ', $query->getBinds())]
-                ],
-                __FILE__,
-                __LINE__
-            );
+            switch ($errno) {
+                case 1213:
+                    $exceptionClass = DataSource_Deadlock::class;
+                    break;
+                default:
+                    $exceptionClass = DataSource_Update::class;
+            }
+
+            throw new $exceptionClass([
+                '#' . $errno . ': {$0} - {$1} [{$2}]',
+                [$error, print_r($query->getBody(), true), implode(', ', $query->getBinds())]
+            ]);
         }
 
         /**
          * @var Model $modelclass
          */
         $modelclass = $query->getQueryBuilder()->getModelClass();
-        $pkFieldNames = $modelclass::getScheme()->getPkFieldNames();
+        $pkFieldNamesAsKeys = array_flip($modelclass::getScheme()->getPkFieldNames());
 
-        foreach ($query->getBindParts()[Query_Builder::PART_SET] as $row) {
-            $insertKey = implode('_', array_intersect_key($row, array_flip($pkFieldNames)));
-            $data[Query_Result::ROWS][$insertKey] = $row;
+        foreach ($query->getBindParts()[QueryBuilder::PART_SET] as $row) {
+            $insertKey = implode('_', array_intersect_key($row, $pkFieldNamesAsKeys));
+            $data[QueryResult::ROWS][$insertKey] = $row;
         }
 
-        $data[Query_Result::AFFECTED_ROWS] = $statement->affected_rows;
+        $data[QueryResult::AFFECTED_ROWS] = $statement->affected_rows;
 
         $statement->close();
 
@@ -352,7 +565,7 @@ class Mysqli extends Data_Source
     /**
      * Execute query update to data source
      *
-     * @param  Query $query
+     * @param Query $query
      * @return array
      * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
@@ -371,17 +584,21 @@ class Mysqli extends Data_Source
             $error = $statement->error;
             $statement->close();
 
-            Data_Source::getLogger()->exception(
-                [
-                    '#' . $errno . ': {$0} - {$1} [{$2}]',
-                    [$error, print_r($query->getBody(), true), implode(', ', $query->getBinds())]
-                ],
-                __FILE__,
-                __LINE__
-            );
+            switch ($errno) {
+                case 1213:
+                    $exceptionClass = DataSource_Deadlock::class;
+                    break;
+                default:
+                    $exceptionClass = DataSource_Delete::class;
+            }
+
+            throw new $exceptionClass([
+                '#' . $errno . ': {$0} - {$1} [{$2}]',
+                [$error, print_r($query->getBody(), true), implode(', ', $query->getBinds())]
+            ]);
         }
 
-        $data[Query_Result::AFFECTED_ROWS] = $statement->affected_rows;
+        $data[QueryResult::AFFECTED_ROWS] = $statement->affected_rows;
 
         $statement->close();
 
@@ -391,19 +608,18 @@ class Mysqli extends Data_Source
     /**
      * Get data Scheme from data source
      *
-     * @param  Module $module
+     * @param Module $module
      * @return array
+     * @throws Exception
+     * @throws \Ice\Exception\Config_Error
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.5
+     * @version 1.1
      * @since   0.0
      */
     public function getTables(Module $module)
     {
         $tables = [];
-
-        $dataProvider = $this->getSourceDataProvider();
-        $dataProvider->setScheme('information_schema');
 
         $tableDefault = [
             'dataSourceKey' => $this->getDataSourceKey(),
@@ -418,78 +634,100 @@ class Mysqli extends Data_Source
             ],
         ];
 
-        foreach ($dataProvider->get('TABLES:TABLE_SCHEMA/' . $this->scheme) as $table) {
-            if ($module->checkTableByPrefix($table['TABLE_NAME'], $this->getDataSourceKey())) {
-                if (!isset($tables[$table['TABLE_NAME']])) {
-                    $tables[$table['TABLE_NAME']] = $tableDefault;
+        $iceql = ['information_schema.TABLES/TABLE_NAME,ENGINE,TABLE_COLLATION,TABLE_COMMENT' => 'TABLE_SCHEMA:' . $this->scheme];
+
+        foreach ($this->get($iceql) as $table) {
+            $moduleAlias = $module->getModuleAliasByTableName($table['TABLE_NAME'], $this->getDataSourceKey());
+
+            if (!$moduleAlias) {
+                continue;
+            }
+
+            if (!isset($tables[$table['TABLE_NAME']])) {
+                $tables[$table['TABLE_NAME']] = $tableDefault;
+            }
+
+            $data = &$tables[$table['TABLE_NAME']];
+
+            $data['revision'] = date('mdHi') . '_' . strtolower(Type_String::getRandomString(3));
+            $data['moduleAlias'] =  $moduleAlias;
+            $data['modelClass'] =  Module::getInstance($moduleAlias)->getModelClass($table['TABLE_NAME'], $this->getDataSourceKey());
+
+            $dataScheme = &$data['scheme'];
+            $dataScheme = [
+                'tableName' => $table['TABLE_NAME'],
+                'engine' => $table['ENGINE'],
+                'charset' => $table['TABLE_COLLATION'],
+                'comment' => $table['TABLE_COMMENT']
+            ];
+
+            $data['indexes'] = $this->getIndexes($table['TABLE_NAME']);
+
+            $data['references'] = $this->getReferences($table['TABLE_NAME']);
+
+            foreach ($data['references'] as $tableName => $reference) {
+                foreach ($data['indexes']['FOREIGN KEY'] as $indexes) {
+                    foreach ($indexes as $constraintName => $columnNames) {
+                        if ($constraintName != $reference['constraintName']) {
+                            continue;
+                        }
+
+                        $data['relations']['oneToMany'][$tableName] = $columnNames;
+
+                        if (!isset($tables[$tableName])) {
+                            $tables[$tableName] = $tableDefault;
+                        }
+
+                        $tables[$tableName]['relations']['manyToOne'][$table['TABLE_NAME']] = $columnNames;
+
+                        break;
+                    }
                 }
+            }
 
-                $data = &$tables[$table['TABLE_NAME']];
-
-                $data['revision'] = date('mdHi') . '_' . strtolower(String::getRandomString(3));
-
-                $dataScheme = &$data['scheme'];
-                $dataScheme = [
-                    'tableName' => $table['TABLE_NAME'],
-                    'engine' => $table['ENGINE'],
-                    'charset' => $table['TABLE_COLLATION'],
-                    'comment' => $table['TABLE_COMMENT']
-                ];
-
-                $data['indexes'] = $this->getIndexes($table['TABLE_NAME']);
-
-                $data['references'] = $this->getReferences($table['TABLE_NAME']);
-
-                foreach ($data['references'] as $tableName => $reference) {
-                    foreach ($data['indexes']['FOREIGN KEY'] as $indexes) {
-                        foreach ($indexes as $constraintName => $columnNames) {
-                            if ($constraintName != $reference['constraintName']) {
-                                continue;
+            if (count($data['references'])) {
+                foreach ($data['references'] as $tableName1 => $reference1) {
+                    foreach ($data['references'] as $tableName2 => $reference2) {
+                        if ($tableName1 != $tableName2) {
+                            if (!isset($tables[$tableName1]['relations']['manyToMany'][$tableName2])) {
+                                $tables[$tableName1]['relations']['manyToMany'][$tableName2] = [];
                             }
 
-                            $data['relations']['oneToMany'][$tableName] = $columnNames;
-
-                            if (!isset($tables[$tableName])) {
-                                $tables[$tableName] = $tableDefault;
-                            }
-
-                            $tables[$tableName]['relations']['manyToOne'][$table['TABLE_NAME']] = $columnNames;
-
-                            break;
+                            $tables[$tableName1]['relations']['manyToMany'][$tableName2][] = $table['TABLE_NAME'];
                         }
                     }
                 }
+            }
 
-                if (count($data['references'])) {
-                    foreach ($data['references'] as $tableName1 => $reference1) {
-                        foreach ($data['references'] as $tableName2 => $reference2) {
-                            if ($tableName1 != $tableName2) {
-                                $tables[$tableName1]['relations']['manyToMany'][$tableName2] = $table['TABLE_NAME'];
-                            }
-                        }
-                    }
+            $columns = &$data['columns'];
+            foreach ($this->getColumns($table['TABLE_NAME']) as $columnName => $column) {
+                $tablePrefixes = [];
+
+                foreach ($module->getDataSourcePrefixes($this->getDataSourceKey()) as $prefixes) {
+                    $tablePrefixes += $prefixes;
                 }
 
-                $columns = &$data['columns'];
-                foreach ($this->getColumns($table['TABLE_NAME']) as $columnName => $column) {
-                    $columns[$columnName]['scheme'] = $column;
+                /** @depricated @todo: удалить когда извавимся от fieldName */
+                $columns[$columnName]['fieldName'] = Helper_Model::getFieldNameByColumnName(
+                    $columnName,
+                    $data,
+                    $tablePrefixes
+                );
 
-                    $tablePrefixes = [];
+                $columns[$columnName]['scheme'] = $column;
 
-                    foreach ($module->getDataSourcePrefixes($this->getDataSourceKey()) as $prefixes) {
-                        $tablePrefixes += $prefixes;
-                    }
+                foreach (Model::getConfig()->gets('schemeColumnScheme') as $columnPluginClass) {
+                    $columns[$columnName]['scheme'] = array_merge(
+                        $columns[$columnName]['scheme'],
+                        $columnPluginClass::schemeColumnScheme($columnName, $data, $tablePrefixes));
+                }
 
-                    $columns[$columnName]['fieldName'] = Helper_Model::getFieldNameByColumnName(
-                        $columnName,
-                        $data,
-                        $tablePrefixes
-                    );
+                $columns[$columnName]['options'] = [];
 
-                    foreach (Model::getConfig()->gets('schemeColumnPlugins') as $columnPluginClass) {
-                        $columns[$columnName][$columnPluginClass] =
-                            $columnPluginClass::schemeColumnPlugin($columnName, $data);
-                    }
+                foreach (Model::getConfig()->gets('schemeColumnOptions') as $columnPluginClass) {
+                    $columns[$columnName]['options'] = array_merge(
+                        $columns[$columnName]['options'],
+                        $columnPluginClass::schemeColumnOptions($columnName, $data, $tablePrefixes));
                 }
             }
         }
@@ -503,16 +741,14 @@ class Mysqli extends Data_Source
      * @param  $tableName
      * @return array
      *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
+     * @throws Exception
      * @version 0.0
      * @since   0.0
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
      */
     public function getIndexes($tableName)
     {
-        $dataProvider = $this->getSourceDataProvider();
-        $dataProvider->setScheme('information_schema');
-
         $constraints = [
             'PRIMARY KEY' => [
                 'PRIMARY' => []
@@ -521,15 +757,15 @@ class Mysqli extends Data_Source
             'UNIQUE' => []
         ];
 
-        $key = ['TABLE_CONSTRAINTS:TABLE_SCHEMA/' . $this->scheme, 'TABLE_CONSTRAINTS:TABLE_NAME/' . $tableName];
+        $iceql = ['information_schema.TABLE_CONSTRAINTS/CONSTRAINT_TYPE,CONSTRAINT_NAME' => 'TABLE_SCHEMA:' . $this->scheme . ',TABLE_NAME:' . $tableName];
 
-        foreach ($dataProvider->get($key) as $constraint) {
+        foreach ($this->get($iceql) as $constraint) {
             $constraints[$constraint['CONSTRAINT_TYPE']][$constraint['CONSTRAINT_NAME']] = [];
         }
 
-        $key = ['STATISTICS:TABLE_SCHEMA/' . $this->scheme, 'STATISTICS:TABLE_NAME/' . $tableName];
+        $iceql = ['information_schema.STATISTICS/INDEX_NAME,SEQ_IN_INDEX,COLUMN_NAME' => 'TABLE_SCHEMA:' . $this->scheme . ',TABLE_NAME:' . $tableName];
 
-        $indexes = $dataProvider->get($key);
+        $indexes = $this->get($iceql);
 
         foreach ($constraints['PRIMARY KEY'] as $constraintName => &$constraint) {
             foreach ($indexes as $index) {
@@ -553,13 +789,13 @@ class Mysqli extends Data_Source
             }
         }
 
-        $flippedIndexes = Arrays::column($indexes, 'INDEX_NAME', 'COLUMN_NAME');
+        $flippedIndexes = Type_Array::column($indexes, 'INDEX_NAME', 'COLUMN_NAME');
 
         $foreignKeys = [];
 
-        $key = ['KEY_COLUMN_USAGE:TABLE_SCHEMA/' . $this->scheme, 'KEY_COLUMN_USAGE:TABLE_NAME/' . $tableName];
+        $iceql = ['information_schema.KEY_COLUMN_USAGE/COLUMN_NAME,CONSTRAINT_NAME' => 'TABLE_SCHEMA:' . $this->scheme . ',TABLE_NAME:' . $tableName];
 
-        $referenceColumns = Arrays::column($dataProvider->get($key), 'COLUMN_NAME', 'CONSTRAINT_NAME');
+        $referenceColumns = Type_Array::column($this->get($iceql), 'COLUMN_NAME', 'CONSTRAINT_NAME');
 
         foreach (array_keys($constraints['FOREIGN KEY']) as $constraintName) {
             $columnName = $referenceColumns[$constraintName];
@@ -577,21 +813,19 @@ class Mysqli extends Data_Source
      * @param  $tableName
      * @return array
      *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
+     * @throws Exception
      * @version 0.6
      * @since   0.6
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
      */
     public function getReferences($tableName)
     {
-        $dataProvider = $this->getSourceDataProvider();
-        $dataProvider->setScheme('information_schema');
-
         $references = [];
 
-        $key = ['REFERENTIAL_CONSTRAINTS:CONSTRAINT_SCHEMA/' . $this->scheme, 'CONSTRAINTS:TABLE_NAME/' . $tableName];
+        $iceql = ['information_schema.REFERENTIAL_CONSTRAINTS/REFERENCED_TABLE_NAME,CONSTRAINT_NAME,UPDATE_RULE,DELETE_RULE' => 'CONSTRAINT_SCHEMA:' . $this->scheme . ',TABLE_NAME:' . $tableName];
 
-        foreach ($dataProvider->get($key) as $reference) {
+        foreach ($this->get($iceql) as $reference) {
             $references[$reference['REFERENCED_TABLE_NAME']] = [
                 'constraintName' => $reference['CONSTRAINT_NAME'],
                 'onUpdate' => $reference['UPDATE_RULE'],
@@ -608,26 +842,29 @@ class Mysqli extends Data_Source
      * @param  $tableName
      * @return array
      *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
+     * @throws Exception
      * @version 0.0
      * @since   0.0
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
      */
     public function getColumns($tableName)
     {
         $columns = [];
 
-        $dataProvider = $this->getSourceDataProvider();
-        $dataProvider->setScheme('information_schema');
+        $iceql = ['information_schema.COLUMNS/COLUMN_NAME,COLUMN_DEFAULT,CHARACTER_MAXIMUM_LENGTH,DATETIME_PRECISION,NUMERIC_PRECISION,NUMERIC_SCALE,EXTRA,COLUMN_TYPE,DATA_TYPE,CHARACTER_SET_NAME,IS_NULLABLE,COLUMN_COMMENT' => 'TABLE_SCHEMA:' . $this->scheme . ',TABLE_NAME:' . $tableName];
 
-        $key = ['COLUMNS:TABLE_SCHEMA/' . $this->scheme, 'COLUMNS:TABLE_NAME/' . $tableName];
+        foreach ($this->get($iceql) as $column) {
+            $extra = $column['EXTRA'];
 
-        foreach ($dataProvider->get($key) as $column) {
-            $columnName = $column['COLUMN_NAME'];
             $default = $default = $column['COLUMN_DEFAULT'];
 
-            if (empty($default) && strstr($columnName, '__json') == '__json') {
-                $default = '[]';
+            if ($default === '' || strtolower($default) == 'null' || strtolower($extra) == 'auto_increment') {
+                $default = null;
+            }
+
+            if (strtolower($default) == 'current_timestamp()') {
+                $default = 'CURRENT_TIMESTAMP';
             }
 
             $length = !isset($column['CHARACTER_MAXIMUM_LENGTH'])
@@ -636,7 +873,7 @@ class Mysqli extends Data_Source
                     : $column['DATETIME_PRECISION'])
                 : $column['CHARACTER_MAXIMUM_LENGTH'];
 
-            $columns[$columnName] = [
+            $columns[$column['COLUMN_NAME']] = [
                 'extra' => $column['EXTRA'],
                 'type' => $column['COLUMN_TYPE'],
                 'dataType' => $column['DATA_TYPE'],
@@ -654,7 +891,7 @@ class Mysqli extends Data_Source
     /**
      * Execute query create table to data source
      *
-     * @param  Query $query
+     * @param Query $query
      * @return array
      * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
@@ -668,12 +905,14 @@ class Mysqli extends Data_Source
 
         $statement = $this->getStatement($query->getBody(), $query->getBinds());
 
+        $logger = Logger::getInstance(__CLASS__);
+
         if ($statement->execute() === false) {
             $errno = $statement->errno;
             $error = $statement->error;
             $statement->close();
 
-            Data_Source::getLogger()->exception(
+            $logger->exception(
                 [
                     '#' . $errno . ': {$0} - {$1} [{$2}]',
                     [$error, print_r($query->getBody(), true), implode(', ', $query->getBinds())]
@@ -683,7 +922,7 @@ class Mysqli extends Data_Source
             );
         }
 
-        $data[Query_Result::AFFECTED_ROWS] = $statement->affected_rows;
+        $data[QueryResult::AFFECTED_ROWS] = $statement->affected_rows;
 
         $statement->close();
 
@@ -693,7 +932,7 @@ class Mysqli extends Data_Source
     /**
      * Execute query drop table to data source
      *
-     * @param  Query $query
+     * @param Query $query
      * @return array
      * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
@@ -707,12 +946,14 @@ class Mysqli extends Data_Source
 
         $statement = $this->getStatement($query->getBody(), $query->getBinds());
 
+        $logger = Logger::getInstance(__CLASS__);
+
         if ($statement->execute() === false) {
             $errno = $statement->errno;
             $error = $statement->error;
             $statement->close();
 
-            Data_Source::getLogger()->exception(
+            $logger->exception(
                 [
                     '#' . $errno . ': {$0} - {$1} [{$2}]',
                     [$error, print_r($query->getBody(), true), implode(', ', $query->getBinds())]
@@ -722,7 +963,7 @@ class Mysqli extends Data_Source
             );
         }
 
-        $data[Query_Result::AFFECTED_ROWS] = $statement->affected_rows;
+        $data[QueryResult::AFFECTED_ROWS] = $statement->affected_rows;
 
         $statement->close();
 
@@ -732,7 +973,7 @@ class Mysqli extends Data_Source
     /**
      * Return data provider class
      *
-     * @return Data_Provider
+     * @return DataProvider|string
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
@@ -747,7 +988,7 @@ class Mysqli extends Data_Source
     /**
      * Return query translator class
      *
-     * @return Query_Translator
+     * @return QueryTranslator|string
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
@@ -762,41 +1003,449 @@ class Mysqli extends Data_Source
     /**
      * Begin transaction
      *
+     * @param string $isolationLevel SET TRANSACTION ISOLATION LEVEL (REPEATABLE READ|READ COMMITTED|READ UNCOMMITTED|SERIALIZABLE)
+     * @throws Exception
+     * @since   0.5
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.5
-     * @since   0.5
+     * @version 1.1
      */
-    public function beginTransaction()
+    public function beginTransaction($isolationLevel = null)
     {
-        $this->getConnection()->autocommit(false);
+        if ($this->savePointLevel === null) {
+            $this->savePointLevel = 0;
+
+            if ($isolationLevel) {
+                $this->executeNativeQuery('SET TRANSACTION ISOLATION LEVEL ' . $isolationLevel);
+            }
+
+            $this->getConnection()->autocommit(false);
+            Logger::log('false', 'mysql autocommit', 'INFO');
+
+//            $this->getConnection()->begin_transaction(0, 'level_' . $this->savePointLevel);
+            Logger::log('level_' . $this->savePointLevel, 'mysql transaction', 'INFO');
+        } else {
+            $this->savePointLevel++;
+
+            $this->savePoint('transaction');
+        }
+    }
+
+    /**
+     * Create save point transactions
+     *
+     * @param $savePoint
+     *
+     * @throws Exception
+     * @version 1.1
+     * @since   1.1
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     */
+    public function savePoint($savePoint)
+    {
+        $this->executeNativeQuery('SAVEPOINT ' . 'level_' . $this->savePointLevel . '_' . $savePoint);
     }
 
     /**
      * Commit transaction
      *
+     * @throws Exception
+     * @version 1.1
+     * @since   0.5
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.5
-     * @since   0.5
      */
     public function commitTransaction()
     {
-        $this->getConnection()->commit();
-        $this->getConnection()->autocommit(true);
+        if ($this->savePointLevel === 0) {
+            $this->getConnection()->commit();
+            Logger::log('level_' . $this->savePointLevel, 'mysql commit', 'INFO');
+
+            $this->savePointLevel = null;
+
+            $this->getConnection()->autocommit(true);
+            Logger::log('true', 'mysql autocommit', 'INFO');
+
+            $this->executeNativeQuery('SET TRANSACTION ISOLATION LEVEL ' . Mysqli::TRANSACTION_REPEATABLE_READ);
+        } else {
+            $this->releaseSavePoint('transaction');
+
+            $this->savePointLevel--;
+        }
+    }
+
+    /**
+     * Release save point transactions
+     *
+     * @param $savePoint
+     *
+     * @throws Exception
+     * @version 1.1
+     * @since   1.1
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     */
+    public function releaseSavePoint($savePoint)
+    {
+        $this->executeNativeQuery('RELEASE SAVEPOINT ' . 'level_' . $this->savePointLevel . '_' . $savePoint);
     }
 
     /**
      * Rollback transaction
+     * @param null $e
+     * @throws Exception
+     * @since   0.5
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 1.1
+     */
+    public function rollbackTransaction($e = null)
+    {
+        Logger::getInstance()->warning(['Transaction rollback (level: {$0})', $this->savePointLevel], __FILE__, __LINE__, $e);
+
+        if ($this->savePointLevel === 0) {
+            $this->getConnection()->rollback();
+            Logger::log('level_' . $this->savePointLevel, 'mysql rollback', 'INFO');
+
+            $this->savePointLevel = null;
+
+            $this->getConnection()->autocommit(true);
+            Logger::log('true', 'mysql autocommit', 'INFO');
+
+            $this->executeNativeQuery('SET TRANSACTION ISOLATION LEVEL ' . Mysqli::TRANSACTION_REPEATABLE_READ);
+        } else {
+            $this->rollbackSavePoint('transaction');
+
+            $this->savePointLevel--;
+        }
+    }
+
+    /**
+     * Rollback save point transactions
+     *
+     * @param $savePoint
+     *
+     * @throws Exception
+     * @version 1.1
+     * @since   1.1
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     */
+    public function rollbackSavePoint($savePoint)
+    {
+        $this->executeNativeQuery('ROLLBACK TO SAVEPOINT ' . 'level_' . $this->savePointLevel . '_' . $savePoint);
+    }
+
+    /**
+     * Translate ice query language for get data
+     *
+     * @param array $iceql
+     * @return mixed
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.5
-     * @since   0.5
+     * @version 1.1
+     * @since   1.1
      */
-    public function rollbackTransaction()
+    public function translateGet(array $iceql)
     {
-        $this->getConnection()->rollback();
-        $this->getConnection()->autocommit(true);
+        $tables = [];
+
+        foreach ($iceql as $tablePart => $wherePart) {
+            if (is_int($tablePart)) {
+                $tablePart = $wherePart;
+                $wherePart = [];
+            }
+
+            list($table, $columnsPart) = explode('/', $tablePart);
+
+            if ($pos = strpos($table, ':')) {
+                $tableAlias = substr($table, $pos + 1);
+                $table = substr($table, 0, $pos);
+            } else {
+                $tableAlias = Type_String::getRandomString(3, 1);
+            }
+
+            $join = null;
+
+            if (strpos($tableAlias, '=')) {
+                $join = $tableAlias;
+                $tableAlias = substr($tableAlias, 0, strpos($tableAlias, '.'));
+            }
+
+            $tables[$tableAlias] = [
+                'table' => $table,
+                'join' => $join
+            ];
+
+            $columns = [];
+
+            foreach (explode(',', $columnsPart) as $column) {
+                $columnAlias = null;
+
+                if ($pos = strpos($column, ':')) {
+                    $columnAlias = substr($column, $pos + 1);
+                    $column = substr($column, 0, $pos);
+                }
+
+                $modifiers = explode('|', $column);
+
+                $column = array_shift($modifiers);
+
+                if (!$columnAlias) {
+                    $columnAlias = $column;
+                }
+
+                $columns[$columnAlias] = [
+                    'column' => $column,
+                    'order' => in_array('ASC', $modifiers) ? 'ASC' : (in_array('DESC', $modifiers) ? 'DESC' : null),
+                    'group' => in_array('GROUP', $modifiers)
+                ];
+            }
+
+            unset($column);
+
+            $tables[$tableAlias]['columns'] = $columns;
+
+            $wheres = [];
+
+            foreach (explode(',', $wherePart) as $where) {
+                list($where, $value) = explode(':', $where);
+
+                $whereModifiers = explode('|', $where);
+                $where = array_shift($whereModifiers);
+
+                $valueModifiers = explode('|', $value);
+
+                $wheres[$where] = [
+                    'value' => array_shift($valueModifiers),
+                    'condition' => in_array('OR', $whereModifiers) ? 'OR' : 'AND',
+                    'operator' => in_array('LIKE', $valueModifiers) ? 'LIKE' : (in_array('<>', $valueModifiers) ? '<>' : '='),
+                ];
+            }
+
+            $tables[$tableAlias]['where'] = $wheres;
+        }
+
+        $sql = "\n" . 'SELECT';
+
+        $isFirst = true;
+
+        foreach ($tables as $tableAlias => $table) {
+            foreach ($table['columns'] as $columnAlias => $column) {
+                if ($isFirst) {
+                    $isFirst = false;
+                } else {
+                    $sql .= ',';
+                }
+
+                $sql .= "\n\t`" . $tableAlias . '`.`' . $column['column'] . '`';
+
+                if ($column['column'] != $columnAlias) {
+                    $sql .= ' AS `' . $columnAlias . '`';
+                }
+            }
+        }
+
+        $isWhere = false;
+
+        foreach ($tables as $tableAlias => $table) {
+            $sql .= $table['join']
+                ? "\n" . 'LEFT JOIN ' . $table['table'] . ' `' . $tableAlias . '` ON (' . $table['join'] . ')'
+                : "\n" . 'FROM ' . $table['table'] . ' `' . $tableAlias . '`';
+
+            if (!empty($table['where'])) {
+                $isWhere = true;
+            }
+        }
+
+        if ($isWhere) {
+            $sql .= "\n" . 'WHERE';
+
+            $isFirst = true;
+
+            foreach ($tables as $tableAlias => $table) {
+                foreach ($table['where'] as $where => $value) {
+                    if ($isFirst) {
+                        $sql .= "\n\t`" . $tableAlias . '`.`' . $where . '`' . $value['operator'] . '"' . $value['value'] . '"';
+                        $isFirst = false;
+                    } else {
+                        $sql .= "\n\t" . $value['condition'] . ' `' . $tableAlias . '`.`' . $where . '`' . $value['operator'] . '"' . $value['value'] . '"';
+                    }
+                }
+            }
+        }
+
+        return $sql . "\n";
+    }
+
+    /**
+     * Translate ice query language for set data
+     *
+     * @param array $iceql
+     * @return mixed setted value
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 1.1
+     * @since   1.1
+     */
+    public function translateSet(array $iceql)
+    {
+        $tables = [];
+
+        foreach ($iceql as $tablePart => $wherePart) {
+            if (is_int($tablePart)) {
+                $tablePart = $wherePart;
+                $wherePart = [];
+            }
+
+            list($table, $columnsPart) = explode('/', $tablePart);
+
+            if ($pos = strpos($table, ':')) {
+                $tableAlias = substr($table, $pos + 1);
+                $table = substr($table, 0, $pos);
+            } else {
+                $tableAlias = Type_String::getRandomString(3, 1);
+            }
+
+            $join = null;
+
+            if (strpos($tableAlias, '=')) {
+                $join = $tableAlias;
+                $tableAlias = substr($tableAlias, 0, strpos($tableAlias, '.'));
+            }
+
+            $tables[$tableAlias] = [
+                'table' => $table,
+                'join' => $join
+            ];
+
+            $columns = [];
+
+            foreach (explode(',', $columnsPart) as $column) {
+                $columnAlias = null;
+
+                if ($pos = strpos($column, ':')) {
+                    $columnAlias = substr($column, $pos + 1);
+                    $column = substr($column, 0, $pos);
+                }
+
+                $modifiers = explode('|', $column);
+
+                $column = array_shift($modifiers);
+
+                if (!$columnAlias) {
+                    $columnAlias = $column;
+                }
+
+                $columns[$columnAlias] = [
+                    'column' => $column,
+                    'order' => in_array('ASC', $modifiers) ? 'ASC' : (in_array('DESC', $modifiers) ? 'DESC' : null),
+                    'group' => in_array('GROUP', $modifiers)
+                ];
+            }
+
+            unset($column);
+
+            $tables[$tableAlias]['columns'] = $columns;
+
+            $wheres = [];
+
+            foreach (explode(',', $wherePart) as $where) {
+                list($where, $value) = explode(':', $where);
+
+                $whereModifiers = explode('|', $where);
+                $where = array_shift($whereModifiers);
+
+                $valueModifiers = explode('|', $value);
+
+                $wheres[$where] = [
+                    'value' => array_shift($valueModifiers),
+                    'condition' => in_array('OR', $whereModifiers) ? 'OR' : 'AND',
+                    'operator' => in_array('LIKE', $valueModifiers) ? 'LIKE' : (in_array('<>', $valueModifiers) ? '<>' : '='),
+                ];
+            }
+
+            $tables[$tableAlias]['where'] = $wheres;
+        }
+
+        $sql = "\n" . 'SELECT';
+
+        $isFirst = true;
+
+        foreach ($tables as $tableAlias => $table) {
+            foreach ($table['columns'] as $columnAlias => $column) {
+                if ($isFirst) {
+                    $isFirst = false;
+                } else {
+                    $sql .= ',';
+                }
+
+                $sql .= "\n\t`" . $tableAlias . '`.`' . $column['column'] . '`';
+
+                if ($column['column'] != $columnAlias) {
+                    $sql .= ' AS `' . $columnAlias . '`';
+                }
+            }
+        }
+
+        $isWhere = false;
+
+        foreach ($tables as $tableAlias => $table) {
+            $sql .= $table['join']
+                ? "\n" . 'LEFT JOIN ' . $table['table'] . ' `' . $tableAlias . '` ON (' . $table['join'] . ')'
+                : "\n" . 'FROM ' . $table['table'] . ' `' . $tableAlias . '`';
+
+            if (!empty($table['where'])) {
+                $isWhere = true;
+            }
+        }
+
+        if ($isWhere) {
+            $sql .= "\n" . 'WHERE';
+
+            $isFirst = true;
+
+            foreach ($tables as $tableAlias => $table) {
+                foreach ($table['where'] as $where => $value) {
+                    if ($isFirst) {
+                        $sql .= "\n\t`" . $tableAlias . '`.`' . $where . '`' . $value['operator'] . '"' . $value['value'] . '"';
+                        $isFirst = false;
+                    } else {
+                        $sql .= "\n\t" . $value['condition'] . ' `' . $tableAlias . '`.`' . $where . '`' . $value['operator'] . '"' . $value['value'] . '"';
+                    }
+                }
+            }
+        }
+
+        return $sql . "\n";
+    }
+
+    /**
+     * Translate ice query language for delete data
+     *
+     * @param array $iceql
+     * @return bool|mixed
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 1.1
+     * @since   1.1
+     */
+    public function translateDelete(array $iceql)
+    {
+        // TODO: Implement translateDelete() method.
+    }
+
+    /**
+     * @param $string
+     * @return string
+     * @throws Exception
+     */
+    public function escapeString($string)
+    {
+        return $this->getConnection()->real_escape_string($string);
     }
 }

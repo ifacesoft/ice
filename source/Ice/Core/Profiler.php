@@ -3,11 +3,14 @@
 namespace Ice\Core;
 
 use Ice\Helper\Profiler as Helper_Profiler;
+use XHProfRuns_Default;
 
 class Profiler
 {
     const TIME = 'timing';
     const MEMORY = 'memoryUsage';
+
+    private static $isXhprofEnabled = false;
 
     /**
      * Profile data
@@ -138,7 +141,7 @@ class Profiler
      */
     public static function getReport($name, $postfix = '')
     {
-        $message = $name . $postfix . ' [';
+        $message = '[';
 
         if (isset(Profiler::$profiler[$name])) {
             $message .= 'Time: ' . Helper_Profiler::getPrettyTime(Profiler::$profiler[$name][Profiler::TIME]) . ' ';
@@ -148,6 +151,45 @@ class Profiler
             $message .= 'Mem: ' . Helper_Profiler::getPrettyMemory(Profiler::$profiler[$name][Profiler::MEMORY]) . ' ';
         }
 
-        return $message . '(peak: ' . Helper_Profiler::getPrettyMemory(memory_get_peak_usage(true)) . ')]';
+        return $message . '(peak: ' . Helper_Profiler::getPrettyMemory(memory_get_peak_usage(true)) . ')] ' . $name . $postfix;
+    }
+
+    public static function xhprofEnable()
+    {
+        if (Profiler::$isXhprofEnabled) {
+            Profiler::xphrofDisable();
+        }
+
+        if (function_exists('\xhprof_enable')) {
+            \xhprof_enable(XHPROF_FLAGS_CPU + XHPROF_FLAGS_MEMORY);
+        }
+
+        if (function_exists('\tideways_xhprof_enable')) {
+            \tideways_xhprof_enable(TIDEWAYS_XHPROF_FLAGS_MEMORY | TIDEWAYS_XHPROF_FLAGS_CPU);
+        }
+
+        Profiler::$isXhprofEnabled = true;
+    }
+
+    public static function xphrofDisable()
+    {
+        if (Profiler::$isXhprofEnabled) {
+            $xhprof_data = null;
+
+            if (function_exists('\xhprof_disable')) {
+                $xhprof_data = xhprof_disable();
+            }
+
+            if (function_exists('\tideways_xhprof_disable')) {
+                $xhprof_data = tideways_xhprof_disable();
+            }
+
+            if ($xhprof_data) {
+                $xhprof_runs = new XHProfRuns_Default();
+                $xhprof_runs->save_run($xhprof_data, "xhprof_testing");
+            }
+
+            Profiler::$isXhprofEnabled = false;
+        }
     }
 }

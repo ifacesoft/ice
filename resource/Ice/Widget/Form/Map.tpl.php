@@ -1,0 +1,1 @@
+<div <?= $component->getIdAttribute() ?>></div>

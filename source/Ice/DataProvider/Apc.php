@@ -7,42 +7,27 @@
  * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
-namespace Ice\Data\Provider;
+namespace Ice\DataProvider;
 
-use Ice\Core\Data_Provider;
+use Ice\Core\DataProvider;
 use Ice\Core\Exception;
+use Ice\Exception\Error;
 
 /**
  * Class Apc
  *
  * Data provider for apc cache
  *
- * @see Ice\Core\Data_Provider
+ * @see \Ice\Core\DataProvider
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
  * @package    Ice
- * @subpackage Data_Provider
+ * @subpackage DataProvider
  */
-class Apc extends Data_Provider
+class Apc extends DataProvider
 {
-    const DEFAULT_DATA_PROVIDER_KEY = 'Ice:Apc/default';
-    const DEFAULT_KEY = 'instance';
-
-    /**
-     * Return default data provider key
-     *
-     * @return string
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since   0.4
-     */
-    protected static function getDefaultDataProviderKey()
-    {
-        return self::DEFAULT_DATA_PROVIDER_KEY;
-    }
+    const DEFAULT_KEY = 'default';
 
     /**
      * Return default key
@@ -62,36 +47,33 @@ class Apc extends Data_Provider
     /**
      * Set data to data provider
      *
-     * @param  string $key
-     * @param  $value
-     * @param  null $ttl
-     * @return mixed setted value
+     * @param array $values
+     * @param null $ttl
+     * @return array
      *
+     * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 1.2
      * @since   0.0
      */
-    public function set($key, $value = null, $ttl = null)
+    public function set(array $values = null, $ttl = null)
     {
-        if (is_array($key) && $value === null) {
-            foreach ($key as $index => $value) {
-                $this->set($index, $value, $ttl);
-            }
-
-            return $key;
-        }
-
-        if ($ttl == -1) {
-            return $value;
+        if ($ttl === -1) {
+            return $values;
         }
 
         if ($ttl === null) {
-            $options = $this->getOptions();
-            $ttl = isset($options['ttl']) ? $options['ttl'] : 3600;
+            $ttl = $this->getOptions()->get('ttl', 3600);
         }
 
-        return apc_store($this->getFullKey($key), $value, $ttl) ? $value : null;
+        foreach ($values as $key => $value) {
+            if (!apc_store($this->getFullKey($key), $value, $ttl)) {
+//                throw new Error(['{$0} set  param {$1} fail', [__CLASS__, $key]]);
+            }
+        }
+
+        return $values;
     }
 
     /**
@@ -126,18 +108,30 @@ class Apc extends Data_Provider
      * Get data from data provider by key
      *
      * @param  string $key
-     * @throws Exception
+     * @param null $default
+     * @param bool $require
      * @return mixed
-     *
+     * @throws Error
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.4
+     * @version 1.2
      * @since   0.0
      */
-    public function get($key = null)
+    public function get($key = null, $default = null, $require = false)
     {
-        $value = apc_fetch($this->getFullKey($key));
-        return $value === false ? null : $value;
+        $success = false;
+
+        $value = apc_fetch($this->getFullKey($key), $success);
+
+        if ($success === false) {
+            $value = $default;
+        }
+
+        if ($value === null && $require) {
+            throw new Error(['Param {$0} from data provider {$1} is require', ['key', __CLASS__]]);
+        }
+
+        return $value;
     }
 
     /**
@@ -233,5 +227,38 @@ class Apc extends Data_Provider
     protected function close(&$connection)
     {
         return true;
+    }
+
+    /**
+     * Set expire time (seconds)
+     *
+     * @param  $key
+     * @param  int $ttl
+     * @return mixed new value
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since   0
+     */
+    public function expire($key, $ttl)
+    {
+        // TODO: Implement expire() method.
+    }
+
+    /**
+     * Check for errors
+     *
+     * @return void
+     *
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since   0.0
+     */
+    function checkErrors()
+    {
+        // TODO: Implement checkErrors() method.
     }
 }

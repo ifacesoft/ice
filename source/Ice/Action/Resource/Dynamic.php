@@ -9,25 +9,24 @@
 
 namespace Ice\Action;
 
-use CSSmin;
-use Ice\App;
 use Ice\Core\Action;
-use Ice\Core\Data_Provider;
+use Ice\Core\DataProvider;
 use Ice\Core\Loader;
 use Ice\Core\Module;
-use Ice\Core\Request;
 use Ice\Core\Route;
-use Ice\Helper\Arrays;
+use Ice\DataProvider\Router;
 use Ice\Helper\Directory;
-use JSMin;
+use Ice\Helper\File;
+use JSMin\JSMin;
+use Minify_CSSmin;
 
 /**
  * Class Title
  *
  * Action of generation js and css for includes into html tag head (<script.. and <link..)
  *
- * @see Ice\Core\Action
- * @see Ice\Core\Action_Context
+ * @see \Ice\Core\Action
+ * @see \Ice\Core\Action_Context
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
@@ -72,7 +71,7 @@ class Resource_Dynamic extends Action
          */
         $actionClass = self::getClass();
 
-        $dataProvider = Data_Provider::getInstance($actionClass::getRegistryDataProviderKey());
+        $dataProvider = DataProvider::getInstance($actionClass::getRegistryDataProviderKey());
 
         $customResources = $dataProvider->get($resourceType);
 
@@ -107,10 +106,11 @@ class Resource_Dynamic extends Action
             'input' => [
                 'js' => ['default' => []],
                 'css' => ['default' => []],
-                'routeName' => ['providers' => 'router', 'default' => '/'],
+                'routeName' => ['providers' => Router::class, 'default' => '/'],
                 'context' => ['default' => '/resource/'],
+                'widgetClasses' => ['default' => ['js' => [], 'css' => [], 'less' => []]],
             ],
-            'ttl' => 3600
+            'cache' => ['ttl' => 3600, 'count' => 1000],
         ];
     }
 
@@ -132,42 +132,41 @@ class Resource_Dynamic extends Action
             'css' => []
         ];
 
-        $compiledResourceDir = Module::getInstance()->get('compiledResourceDir');
+        $compiledResourceDir = getCompiledResourceDir();
 
         $moduleAlias = Module::getInstance()->getAlias();
 
         $jsRes = $moduleAlias . '/js/';
         $cssRes = $moduleAlias . '/css/';
 
-        if (!Request::isCli()) {
-            $resourceName = Route::getInstance($input['routeName'])->getName();
+        $resourceName = Route::getInstance($input['routeName'])->getName();
 
-            $jsFile = $resourceName . '.pack.js';
-            $cssFile = $resourceName . '.pack.css';
+        $jsFile = $resourceName . '.pack.js';
+        $cssFile = $resourceName . '.pack.css';
 
-            $jsResource = Directory::get($compiledResourceDir . $jsRes) . $jsFile;
-            $cssResource = Directory::get($compiledResourceDir . $cssRes) . $cssFile;
+        $jsResource = Directory::get($compiledResourceDir . $jsRes) . $jsFile;
+        $cssResource = Directory::get($compiledResourceDir . $cssRes) . $cssFile;
 
-            $callStack = App::getContext()->getFullStack();
+        foreach ($input['widgetClasses']['js'] as $actionClass) {
+            if (file_exists($jsSource = Loader::getFilePath($actionClass, '.js', Module::RESOURCE_DIR, false))) {
+                $resources['js'][] = [
+                    'source' => $jsSource,
+                    'resource' => $jsResource,
+                    'url' => $input['context'] . $jsRes . $jsFile,
+                    'pack' => true
+                ];
+            }
+        }
 
-            foreach (array_keys($callStack) as $actionClass) {
-                if (file_exists($jsSource = Loader::getFilePath($actionClass, '.js', MODULE::RESOURCE_DIR, false))) {
-                    $resources['js'][] = [
-                        'source' => $jsSource,
-                        'resource' => $jsResource,
-                        'url' => $input['context'] . $jsRes . $jsFile,
-                        'pack' => true
-                    ];
-                }
-                if (file_exists($cssSource = Loader::getFilePath($actionClass, '.css', MODULE::RESOURCE_DIR, false))) {
-                    $resources['css'][] = [
-                        'source' => $cssSource,
-                        'resource' => $cssResource,
-                        'url' => $input['context'] . $cssRes . $cssFile,
-                        'pack' => true,
-                        'css_replace' => []
-                    ];
-                }
+        foreach ($input['widgetClasses']['css'] as $actionClass) {
+            if (file_exists($cssSource = Loader::getFilePath($actionClass, '.css', Module::RESOURCE_DIR, false))) {
+                $resources['css'][] = [
+                    'source' => $cssSource,
+                    'resource' => $cssResource,
+                    'url' => $input['context'] . $cssRes . $cssFile,
+                    'pack' => true,
+                    'css_replace' => []
+                ];
             }
         }
 
@@ -201,12 +200,7 @@ class Resource_Dynamic extends Action
             }
         }
 
-        $this->pack($resources);
-
-        return array(
-            'js' => array_unique(Arrays::column($resources['js'], 'url')),
-            'css' => array_unique(Arrays::column($resources['css'], 'url'))
-        );
+        return $this->pack($resources, $input['routeName']);
     }
 
     /**
@@ -218,30 +212,20 @@ class Resource_Dynamic extends Action
      *
      * @version 0.0
      * @since   0.0
+     * @return array
+     * @throws \Ice\Core\Exception
      */
-    private function pack($resources)
+    private function pack($resources, $routeName)
     {
-        if (!class_exists('JSMin', false) && !function_exists('jsmin')) {
-            include_once VENDOR_DIR . 'mrclay/minify/min/lib/JSMin.php';
-
-            /**
-             * Custom implementation jsmin
-             *
-             * @param  $js
-             * @return string
-             */
-            function jsmin($js)
-            {
-                return JSMin::minify($js);
-            }
-        }
-
-        if (!class_exists('CSSMin', false)) {
-            include_once VENDOR_DIR . 'mrclay/minify/min/lib/CSSmin.php';
-        }
         $handlers = [];
 
-        $CSSmin = new CSSMin();
+        $CSSmin = new Minify_CSSmin();
+
+        $cache = [
+            'js' => [],
+            'css' => [],
+            'less' => []
+        ];
 
         foreach ($resources['js'] as $resource) {
             if (!isset($handlers[$resource['resource']])) {
@@ -250,13 +234,19 @@ class Resource_Dynamic extends Action
             }
 
             $pack = $resource['pack']
-                ? jsmin(file_get_contents($resource['source']))
+                ? JSMin::minify(file_get_contents($resource['source']))
                 : file_get_contents($resource['source']);
 
             fwrite(
                 $handlers[$resource['resource']],
                 '/* ' . str_replace(dirname(MODULE_DIR), '', $resource['source']) . " */\n" . $pack . "\n\n\n"
             );
+
+            if (!isset($cache['js'][$resource['url']])) {
+                $cache['js'][$resource['url']] = [];
+            }
+
+            $cache['js'][$resource['url']][] = $resource['source'];
         }
 
         foreach ($resources['css'] as $resource) {
@@ -266,7 +256,7 @@ class Resource_Dynamic extends Action
             }
 
             $pack = $resource['pack']
-                ? $CSSmin->run(file_get_contents($resource['source']))
+                ? $CSSmin->minify(file_get_contents($resource['source']))
                 : file_get_contents($resource['source']);
 
             if (!empty($resource['css_replace'])) {
@@ -274,13 +264,28 @@ class Resource_Dynamic extends Action
             }
 
             fwrite($handlers[$resource['resource']], '/* Ice: ' . $resource['source'] . " */\n" . $pack . "\n\n\n");
+
+            if (!isset($cache['css'][$resource['url']])) {
+                $cache['css'][$resource['url']] = [];
+            }
+
+            $cache['css'][$resource['url']][] = $resource['source'];
         }
 
         foreach ($handlers as $filePath => $handler) {
             fclose($handler);
 
-//            chmod($filePath, 0664);
-//            chgrp($filePath, filegroup(dirname($filePath)));
+            if (function_exists('posix_getuid') && posix_getuid() == fileowner($filePath)) {
+                chmod($filePath, 0666);
+                chgrp($filePath, filegroup(dirname($filePath)));
+            }
         }
+
+        $resourceDir = getCompiledResourceDir();
+
+        return [
+            'javascripts' => File::createData($resourceDir . 'javascript.' . $routeName . '.cache.php', $cache['js']),
+            'styles' => File::createData($resourceDir . 'style.' . $routeName . '.cache.php', $cache['css']),
+        ];
     }
 }

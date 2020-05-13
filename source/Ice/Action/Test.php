@@ -2,6 +2,7 @@
 namespace Ice\Action;
 
 use Ice\Core\Action;
+use Ice\DataProvider\Request;
 
 class Test extends Action
 {
@@ -30,7 +31,7 @@ class Test extends Action
      *          ]
      *      ],
      *      'output' => ['Ice:Resource/Ice\Action\Index'],
-     *      'ttl' => 3600,
+     *      'cache' => ['ttl' => -1, 'count' => 1000],
      *      'roles' => []
      *  ];
      * ```
@@ -48,7 +49,7 @@ class Test extends Action
             'view' => ['viewRenderClass' => 'Ice:Php', 'layout' => ''],
             'input' => [
                 'test' => [
-                    'providers' => 'request',
+                    'providers' => Request::class,
                     'default' => 'test'
                 ]
             ],
@@ -58,7 +59,8 @@ class Test extends Action
                 ['_Twig', ['inputTestTwig' => 'inputTestTwig']],
                 ['_Php', ['inputTestPhp' => 'inputTestPhp1'], 'firstPhp'],
                 ['_Php', ['inputTestPhp' => 'inputTestPhp2']]
-            ]
+            ],
+            'cache' => ['ttl' => -1, 'count' => 1000],
         ];
     }
 

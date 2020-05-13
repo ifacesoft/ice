@@ -10,13 +10,15 @@
 namespace Ice\Core;
 
 use Ice\Core;
+use Ice\Exception\Access_Denied_Environment;
+use Ice\Helper\Type_String;
 
 /**
  * Class Environment
  *
  * Core environment class
  *
- * @see Ice\Core\Container
+ * @see \Ice\Core\Container
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
@@ -31,6 +33,28 @@ class Environment extends Config
 
     private static $instance = null;
 
+    public static function isLoaded()
+    {
+        return self::$instance !== null;
+    }
+
+    /**
+     * @param $environments
+     * @param $message
+     * @throws Access_Denied_Environment
+     * @throws Exception
+     * @throws \Ice\Exception\Config_Error
+     * @throws \Ice\Exception\FileNotFound
+     */
+    public static function checkAccess($environments, $message)
+    {
+        if (!$environments || in_array(Environment::getInstance()->getName(), (array)$environments)) {
+            return;
+        }
+
+        throw new Access_Denied_Environment($message);
+    }
+
     /**
      * Return application environment
      *
@@ -38,8 +62,11 @@ class Environment extends Config
      * @param  null $postfix
      * @param  bool $isRequired
      * @param  null $ttl
-     * @return Environment
-     *
+     * @param array $selfConfig
+     * @return Environment|Config
+     * @throws Exception
+     * @throws \Ice\Exception\Config_Error
+     * @throws \Ice\Exception\FileNotFound
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.5
@@ -49,16 +76,19 @@ class Environment extends Config
         $environmentName = Environment::PRODUCTION,
         $postfix = null,
         $isRequired = false,
-        $ttl = null
+        $ttl = null,
+        array $selfConfig = []
     )
     {
-        if (Environment::$instance !== null) {
-            return Environment::$instance;
+        if (self::$instance !== null) {
+            return self::$instance;
         }
 
         $host = Request::host();
 
-        foreach (Environment::getConfig(null, true, -1)->gets('environments') as $hostPattern => $name) {
+        $config = Config::getInstance(__CLASS__, null, true);
+
+        foreach ($config->gets('environments') as $hostPattern => $name) {
             $matches = [];
             preg_match($hostPattern, $host, $matches);
 
@@ -70,23 +100,23 @@ class Environment extends Config
 
         $environment = [];
 
-        foreach (Environment::getConfig()->gets() as $name => $config) {
-            if ($name == 'environments') {
+        foreach ($config->gets() as $name => $env) {
+            if ($name === 'environments') {
                 continue;
             }
 
-            $environment = array_merge_recursive($config, $environment);
-            if ($name == $environmentName) {
+            $environment = array_merge_recursive($env, $environment);
+            if ($name === $environmentName) {
                 break;
             }
         }
 
-        return Environment::$instance = Environment::create($environmentName, $environment);
+        return self::$instance = self::create($environmentName, $environment);
     }
 
-    public static function isLoaded()
+    public function getHostname()
     {
-        return Environment::$instance;
+        return gethostname();
     }
 
     /**
@@ -101,7 +131,7 @@ class Environment extends Config
      */
     public function isDevelopment()
     {
-        return $this->getName() == Environment::DEVELOPMENT;
+        return $this->getName() === self::DEVELOPMENT;
     }
 
     /**
@@ -111,60 +141,50 @@ class Environment extends Config
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 1.4
      * @since   0.0
      */
     public function isProduction()
     {
-        return $this->getName() == Environment::PRODUCTION;
+        return $this->getName() === self::PRODUCTION
+//            || Type_String::endsWith(Request::host(), '.com')
+//            || Type_String::endsWith(Request::host(), '.ru')
+            ;
     }
 
     /**
      * Retern Data Provider by class name
      *
      * @param  string $class Class (found data provider for this class)
+     * @param $key
      * @param  string $index Index of data provider
-     * @return Data_Provider
-     *
+     * @return DataProvider
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
      * @since   0.0
+     * @throws Exception
      */
-    public function getProvider($class, $index)
+    public function getProvider($class, $key, $index = 'default')
     {
-        return Data_Provider::getInstance($this->getDataProviderKey($class, $index), $index);
+        return DataProvider::getInstance($this->getDataProviderKey($class, $key), $index);
     }
 
     /**
      * Return data provider key by class name
      *
-     * @param  $class
-     * @param  $index
-     * @throws Exception
+     * @param $class
+     * @param $key
      * @return string
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 1.1
      * @since   0.0
+     * @throws Exception
      */
-    public function getDataProviderKey($class, $index)
+    public function getDataProviderKey($class, $key)
     {
-        $key = 'dataProviderKeys/' . $class . '/' . $index;
-
-        $dataProviderKey = $this->get($key);
-
-        if ($dataProviderKey === null) {
-            Environment::getLogger()->exception(
-                ['In environment config param {$0} not found', $key],
-                __FILE__,
-                __LINE__
-            );
-        }
-
-        return is_array($dataProviderKey)
-            ? reset($dataProviderKey)
-            : $dataProviderKey;
+        $dataProviderKey = $this->get('dataProviderKeys/' . $class::getBaseClass() . '/' . $key);
+        return $pos = strpos($dataProviderKey, '/') ? $dataProviderKey : $dataProviderKey . '/' . $class;
     }
 }

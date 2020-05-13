@@ -4,8 +4,7 @@ namespace Ice\Action;
 
 use FileAPI;
 use Ice\Core\Action;
-use Ice\Core\Debuger;
-use Ice\Core\Module;
+use Ice\DataProvider\Request;
 use Ice\Helper\File;
 
 class Widget_Form_File_Upload extends Action
@@ -22,17 +21,13 @@ class Widget_Form_File_Upload extends Action
             'view' => ['template' => '', 'viewRenderClass' => null],
             'actions' => [],
             'input' => [
-                'token' => ['providers' => 'request'],
-                'formName' => ['providers' => 'request'],
-                'fieldName' => ['providers' => 'request'],
+                'token' => ['providers' => Request::class],
+                'formName' => ['providers' => Request::class],
+                'fieldName' => ['providers' => Request::class],
             ],
             'output' => [],
             'ttl' => -1,
-            'access' => [
-                'roles' => [],
-                'request' => null,
-                'env' => null
-            ]
+            'access' => ['roles' => [], 'request' => null, 'env' => null]
         ];
     }
 
@@ -94,7 +89,7 @@ class Widget_Form_File_Upload extends Action
                 ['temp', $input['formName'], $input['fieldName'], $input['token'], basename($files['name'])]
             );
 
-            $filename = File::copy($files['tmp_name'], Module::getInstance()->get(Module::UPLOAD_DIR) . $to);
+            $filename = File::copy($files['tmp_name'], getUploadDir() . $to);
             list($mime) = explode(';', mime_content_type($filename));
 
             $data[$name] = [

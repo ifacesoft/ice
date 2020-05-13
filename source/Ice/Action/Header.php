@@ -26,7 +26,7 @@ class Header extends Action
             'actions' => '_Menu',
             'input' => [],
             'output' => ['resource' => 'Ice:Resource/Ice\Action\Header'],
-            'ttl' => -1,
+            'cache' => ['ttl' => -1, 'count' => 1000],
             'roles' => []
         ];
     }

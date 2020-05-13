@@ -1,33 +1,15 @@
 <?php
 
-namespace Ice\Data\Provider;
+namespace Ice\DataProvider;
 
-use Ice\Core\Data_Provider;
+use Ice\Core\DataProvider;
 use Ice\Core\Exception;
 use Ice\Core\Resource as Core_Resource;
-use Ice\Helper\Object;
+use Ice\Helper\Class_Object;
 
-class Resource extends Data_Provider
+class Resource extends DataProvider
 {
-    const DEFAULT_DATA_PROVIDER_KEY = 'Ice:Resource/default';
     const DEFAULT_KEY = 'Ice\Action\Test';
-
-    private $resourceKey = null;
-
-    /**
-     * Return default data provider key
-     *
-     * @return string
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since   0.5
-     */
-    protected static function getDefaultDataProviderKey()
-    {
-        return self::DEFAULT_DATA_PROVIDER_KEY;
-    }
 
     /**
      * Return default key
@@ -48,14 +30,15 @@ class Resource extends Data_Provider
      * Get data from data provider by key
      *
      * @param  string $key
+     * @param null $default
+     * @param bool $require
      * @return mixed
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.5
+     * @version 1.2
      * @since   0.5
      */
-    public function get($key = null)
+    public function get($key = null, $default = null, $require = false)
     {
         return $key ? $this->getConnection()[$key] : $this->getConnection();
     }
@@ -78,28 +61,28 @@ class Resource extends Data_Provider
     /**
      * Set data to data provider
      *
-     * @param  string $key
-     * @param  $value
+     * @param array $values
      * @param  null $ttl
-     * @return mixed setted value
+     * @return array
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.5
+     * @version 1.2
      * @since   0.5
      */
-    public function set($key, $value = null, $ttl = null)
+    public function set(array $values = null, $ttl = null)
     {
-        //        if (is_array($key) && $value === null) {
-        //            foreach ($key as $index => $value) {
-        //                $this->set($index, $value, $ttl);
-        //            }
-        //
-        //            return $key;
-        //        }
-        //
-        //        return $this->getConnection()['resource'][$this->getResourceKey()]->set($key, $value);
-        // TODO: Implement set() method.
+        if ($ttl === -1) {
+            return $values;
+        }
+
+        // TODO: Implement getKeys() method.
+
+//        foreach ($values as $key => $value) {
+//            $this->getConnection()['resource'][$this->getResourceKey()]->set($key, $value);
+//        }
+//
+//        return $values;
     }
 
     /**
@@ -215,7 +198,7 @@ class Resource extends Data_Provider
             return $this->resourceKey;
         }
 
-        return $this->resourceKey = Object::getName($this->getKey());
+        return $this->resourceKey = Class_Object::getClassName($this->getKey());
     }
 
     /**
@@ -231,5 +214,38 @@ class Resource extends Data_Provider
     protected function close(&$connection)
     {
         // TODO: Implement close() method.
+    }
+
+    /**
+     * Set expire time (seconds)
+     *
+     * @param  $key
+     * @param  int $ttl
+     * @return mixed new value
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since   0
+     */
+    public function expire($key, $ttl)
+    {
+        // TODO: Implement expire() method.
+    }
+
+    /**
+     * Check for errors
+     *
+     * @return void
+     *
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since   0.0
+     */
+    function checkErrors()
+    {
+        // TODO: Implement checkErrors() method.
     }
 }

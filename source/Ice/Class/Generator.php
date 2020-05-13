@@ -2,7 +2,6 @@
 namespace Ice;
 
 use Ice\Core\Module;
-use Ice\Helper\Object;
 use Ice\Helper\Php;
 
 class Class_Generator
@@ -40,11 +39,9 @@ class Class_Generator
 
     public function generate($data)
     {
-        $module = Module::getInstance(Object::getModuleAlias($this->class));
+        $module = Module::getInstance($data['moduleAlias']);
 
-        $path = $module->get(Module::SOURCE_DIR);
-
-        $filePath = $path . str_replace(['\\', '_'], '/', $this->class) . '.php';
+        $filePath = $module->getPath(Module::SOURCE_DIR) . str_replace(['\\', '_'], '/', $this->class) . '.php';
 
         $code = file_get_contents($filePath);
 
@@ -70,6 +67,6 @@ class Class_Generator
             1
         );
 
-        file_put_contents($filePath, $code);
+        file_put_contents($filePath, str_replace("\t", str_repeat(' ', 4), $code));
     }
 }

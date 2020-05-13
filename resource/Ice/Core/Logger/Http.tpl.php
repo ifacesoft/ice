@@ -1,5 +1,4 @@
 <?php
-use Ice\Helper\Php;
 
 ?>
 <meta charset="UTF-8"/>
@@ -16,8 +15,8 @@ use Ice\Helper\Php;
         <?php } ?>
         <pre><span style="color: red;"><?= $message ?></span><?= "\n\t" ?><span
                 style="color: blue;"><?= $errPoint ?></span></pre>
-        <?php if (!empty($errcontext)) { ?>
-            <span style="font-size: 12px;"><?= highlight_string(Php::varToPhpString($errcontext), true) ?></span>
+        <?php if ($errcontext) { ?>
+            <span style="font-size: 12px;"><?= highlight_string($errcontext, true) ?></span>
         <?php } ?>
         <pre
             style="margin: 0;"><?= str_replace('#', '</span>#', str_replace('):', '):<span style="color: grey;">', str_replace(dirname(MODULE_DIR), '', $stackTrace))) ?></pre>

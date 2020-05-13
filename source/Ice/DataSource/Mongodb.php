@@ -1,52 +1,59 @@
 <?php
 
-namespace Ice\Data\Source;
+namespace Ice\DataSource;
 
-use Ice\Core\Data_Provider;
-use Ice\Core\Data_Source;
+use Ice\Core\DataProvider;
+use Ice\Core\DataSource;
+use Ice\Core\Logger;
 use Ice\Core\Model;
 use Ice\Core\Module;
 use Ice\Core\Query;
-use Ice\Core\Query_Result;
-use Ice\Core\Query_Translator;
+use Ice\Core\QueryResult;
+use Ice\Core\QueryTranslator;
 use Ice\Helper\Json;
-use Ice\Helper\String;
+use Ice\Helper\Type_String;
 use MongoCursor;
 use MongoId;
 
-class Mongodb extends Data_Source
+class Mongodb extends DataSource
 {
-    const DATA_PROVIDER_CLASS = 'Ice\Data\Provider\Mongodb';
-    const QUERY_TRANSLATOR_CLASS = 'Ice\Query\Translator\Mongodb';
+    const DATA_PROVIDER_CLASS = 'Ice\DataProvider\Mongodb';
+    const QUERY_TRANSLATOR_CLASS = 'Ice\QueryTranslator\Mongodb';
 
     /**
      * Return instance of mongodb
      *
-     * @param  null $key
+     * @param  null $instanceKey
      * @param  null $ttl
+     * @param array $params
      * @return Mongodb
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
      * @since   0.4
+     * @throws \Ice\Core\Exception
      */
-    public static function getInstance($key = null, $ttl = null)
+    public static function getInstance($instanceKey = null, $ttl = null, array $params = [])
     {
-        return parent::getInstance($key, $ttl);
+        return parent::getInstance($instanceKey, $ttl, $params);
     }
 
     /**
      * Execute query select to data source
      *
      * @param  Query $query
+     * @param bool $indexKeys
      * @return array
+     * @throws \Ice\Core\Exception
+     * @throws \Ice\Exception\Error
+     * @throws \Ice\Exception\FileNotFound
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
      * @since   0.4
      */
-    public function executeSelect(Query $query)
+    public function executeSelect(Query $query, $indexKeys = true)
     {
         $data = [];
 
@@ -62,7 +69,7 @@ class Mongodb extends Data_Source
 
         $pkFieldName = count($pkFieldNames) == 1 ? reset($pkFieldNames) : null;
 
-        $data[Query_Result::ROWS] = [];
+        $data[QueryResult::ROWS] = [];
 
         $filter = isset($statement['where']) && isset($statement['where']['data'])
             ? $statement['where']['data']
@@ -90,10 +97,10 @@ class Mongodb extends Data_Source
             foreach ($cursor as $row) {
                 $pkFieldValue = $row['_id']->{'$id'};
                 unset($row['_id']);
-                $data[Query_Result::ROWS][$pkFieldValue] = array_merge([$pkFieldName => $pkFieldValue], $row);
+                $data[QueryResult::ROWS][$pkFieldValue] = array_merge([$pkFieldName => $pkFieldValue], $row);
             }
         } catch (\MongoException $e) {
-            Mongodb::getLogger()->exception(
+            Logger::getInstance(__CLASS__)->exception(
                 [
                     '#' . $e->getCode() . ': {$0} - {$1} [{$2}]',
                     [$e->getMessage(), print_r($query->getBody(), true), implode(', ', $query->getBinds())]
@@ -104,7 +111,7 @@ class Mongodb extends Data_Source
             );
         }
 
-        $data[Query_Result::NUM_ROWS] = count($data[Query_Result::ROWS]);
+        $data[QueryResult::NUM_ROWS] = count($data[QueryResult::ROWS]);
 
         return $data;
     }
@@ -159,7 +166,7 @@ class Mongodb extends Data_Source
                                     }
                                 }
                             } catch (\MongoException $e) {
-                                Mongodb::getLogger()->exception('Build statement failed', __FILE__, __LINE__, $e, $id);
+                                Logger::getInstance(__CLASS__)->exception('Build statement failed', __FILE__, __LINE__, $e, $id);
                             }
                         } else {
                             $row[$columnName] = isset($operator)
@@ -181,7 +188,7 @@ class Mongodb extends Data_Source
         }
 
         if (!empty($binds)) {
-            Mongodb::getLogger()->exception(
+            Logger::getInstance(__CLASS__)->exception(
                 'Bind params failure',
                 __FILE__,
                 __LINE__,
@@ -242,17 +249,17 @@ class Mongodb extends Data_Source
 
         $pkFieldName = count($pkFieldNames) == 1 ? reset($pkFieldNames) : null;
 
-        $data[Query_Result::ROWS] = [];
+        $data[QueryResult::ROWS] = [];
 
         foreach ($statement['insert']['data'] as $row) {
             $pkFieldValue = $row['_id']->{'$id'};
             unset($row['_id']);
             $insertId = [$pkFieldName => $pkFieldValue];
-            $data[Query_Result::INSERT_ID][] = $insertId;
-            $data[Query_Result::ROWS][$pkFieldValue] = array_merge($insertId, $row);
+            $data[QueryResult::INSERT_ID][] = $insertId;
+            $data[QueryResult::ROWS][$pkFieldValue] = array_merge($insertId, $row);
         }
 
-        $data[Query_Result::AFFECTED_ROWS] = count($statement['insert']['data']);
+        $data[QueryResult::AFFECTED_ROWS] = count($statement['insert']['data']);
 
         return $data;
     }
@@ -281,7 +288,7 @@ class Mongodb extends Data_Source
 
         $this->getConnection()->$tableName->update($statement['where']['data'], $statement['update']['data']);
 
-        $data[Query_Result::AFFECTED_ROWS] = 1;
+        $data[QueryResult::AFFECTED_ROWS] = 1;
 
         return $data;
     }
@@ -310,7 +317,7 @@ class Mongodb extends Data_Source
 
         $this->getConnection()->$tableName->remove($statement['where']['data']);
 
-        $data[Query_Result::AFFECTED_ROWS] = 1;
+        $data[QueryResult::AFFECTED_ROWS] = 1;
 
         return $data;
     }
@@ -381,7 +388,7 @@ class Mongodb extends Data_Source
             $data = &$tables[$name];
 
             $data = [
-                'revision' => date('mdHi') . '_' . strtolower(String::getRandomString(2)),
+                'revision' => date('mdHi') . '_' . strtolower(Type_String::getRandomString(2)),
                 'dataSourceKey' => $this->getDataSourceKey(),
                 'scheme' => [],
                 'schemeHash' => crc32(Json::encode([])),
@@ -450,7 +457,7 @@ class Mongodb extends Data_Source
     /**
      * Return data provider class
      *
-     * @return Data_Provider
+     * @return DataProvider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
@@ -465,7 +472,7 @@ class Mongodb extends Data_Source
     /**
      * Return query translator class
      *
-     * @return Query_Translator
+     * @return QueryTranslator
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
@@ -480,12 +487,14 @@ class Mongodb extends Data_Source
     /**
      * Begin transaction
      *
+     * @param string $isolationLevel
+     *
      * @author anonymous <email>
      *
      * @version 0
      * @since   0
      */
-    public function beginTransaction()
+    public function beginTransaction($isolationLevel = null)
     {
         // TODO: Implement beginTransaction() method.
     }
@@ -510,8 +519,9 @@ class Mongodb extends Data_Source
      *
      * @version 0
      * @since   0
+     * @param null $e
      */
-    public function rollbackTransaction()
+    public function rollbackTransaction($e = null)
     {
         // TODO: Implement rollbackTransaction() method.
     }
@@ -531,5 +541,122 @@ class Mongodb extends Data_Source
     public function getReferences($tableName)
     {
         return [];
+    }
+
+    /**
+     * Create save point
+     *
+     * @param $savePoint
+     */
+    public function savePoint($savePoint)
+    {
+        // TODO: Implement savePointTransaction() method.
+    }
+
+    /**
+     * Rollback save point
+     *
+     * @param $savePoint
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since   0
+     */
+    public function rollbackSavePoint($savePoint)
+    {
+        // TODO: Implement rollbackSavePoint() method.
+    }
+
+    /**
+     * Commit save point
+     *
+     * @param $savePoint
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since   0
+     */
+    public function releaseSavePoint($savePoint)
+    {
+        // TODO: Implement releaseSavePoint() method.
+    }
+
+    /**
+     * Execute native query
+     *
+     * @param $query
+     * @return QueryResult
+     */
+    public function executeNativeQuery($query)
+    {
+        // TODO: Implement executeNativeQuery() method.
+    }
+
+    /**
+     * Execute native query
+     *
+     * @param $sql
+     * @return mixed
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since   0
+     */
+    public function query($sql)
+    {
+        // TODO: Implement query() method.
+    }
+
+    /**
+     * Translate ice query language for get data
+     *
+     * @param $iceql
+     * @return mixed
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since   0
+     */
+    public function translateGet(array $iceql)
+    {
+        // TODO: Implement translateGet() method.
+    }
+
+    /**
+     * Translate ice query language for set data
+     *
+     * @param $iceql
+     * @return mixed setted value
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since   0
+     */
+    public function translateSet(array $iceql)
+    {
+        // TODO: Implement translateSet() method.
+    }
+
+    /**
+     * Translate ice query language for delete data
+     *
+     * @param $iceql
+     * @return bool|mixed
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since   0
+     */
+    public function translateDelete(array $iceql)
+    {
+        // TODO: Implement translateDelete() method.
+    }
+
+    public function escapeString($string)
+    {
+        // TODO: Implement escapeString() method.
     }
 }

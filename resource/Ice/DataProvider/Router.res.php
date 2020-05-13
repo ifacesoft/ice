@@ -1,35 +1,9 @@
 <?php
 return [
-    'Implementation {$0} is required for {$1}' => [],
     'Route not found for {$0} request of {$1}, but matched routes for pattern {$2}' => [
         'en' => 'Route not found for {$0} request of {$1}, but matched routes for pattern {$2}',
     ],
-    'route for url \'{$0}\' not found' => [
-        'en' => 'route for url \'{$0}\' not found',
-        'be' => 'маршрут для URL-адрас \'{$0}\' не знойдзены',
-        'ca' => 'ruta de la url \'{$0}\' no trobat',
-        'cs' => 'trasa pro url \'{$0}\' nebyl nalezen',
-        'da' => 'ruten for url \'{$0}\' blev ikke fundet',
-        'de' => 'route für url \'{$0}\' wurde nicht gefunden',
-        'el' => 'διαδρομή για το url \'{$0}\' δεν βρέθηκε',
-        'es' => 'ruta para la dirección url \'{$0}\' no encontrado',
-        'et' => 'marsruut url \'{$0}\' ei leitud',
-        'fi' => 'reitti url " {$0}\' ei löydy',
-        'fr' => 'itinéraire url \'{$0}\' ne trouve pas',
-        'hu' => 'útvonal url \'{$0}\' nem található',
-        'it' => 'percorso per url " {$0}\' non trovata',
-        'lt' => 'maršrutas " url " {$0}\' nerasta',
-        'lv' => 'maršruts url \'{$0}\' nav atrasts',
-        'mk' => 'пат за url \'{$0}\' не е пронајден',
-        'nl' => 'route voor url \'{$0}\' niet gevonden',
-        'no' => 'rute for url \'{$0}\' ble ikke funnet',
-        'pt' => 'encaminhar para a url \'{$0}\' não encontrado',
-        'ru' => 'маршрут для URL \'{$0}\' не найден',
-        'sk' => 'trasy pre adresu url, \'{$0}\' nebol nájdený',
-        'sl' => 'pot za url \'{$0}\' ni mogoče najti',
-        'sq' => 'rruga për url \'{$0}\' nuk u gjet',
-        'sv' => 'rutten för url \'{$0}\' hittades inte',
-        'tr' => 'url route{$0} \'\' bulunamadı ',
-        'uk' => 'маршрут для URL \'{$0}\' не знайдений',
+    'Http_Not_Found - Route for url \'{$0}\' not found' => [
+        'ru' => 'Http_Not_Found - Route for url \'{$0}\' not found',
     ],
 ];

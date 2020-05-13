@@ -15,8 +15,8 @@ use Ice\Core\Logger;
 use Ice\Core\Module;
 use Ice\Core\Validator as Core_Validator;
 use Ice\Helper\File;
-use Ice\Helper\Object;
-use Ice\View\Render\Php;
+use Ice\Helper\Class_Object;
+use Ice\Render\Php;
 
 /**
  * Class Validator
@@ -29,50 +29,39 @@ use Ice\View\Render\Php;
  *
  * @package    Ice
  * @subpackage Code_Generator
- *
- * @version 0.0
- * @since   0.0
  */
 class Validator extends Code_Generator
 {
     /**
      * Generate code and other
      *
-     * @param  $class
      * @param  array $data Sended data requered for generate
      * @param  bool $force Force if already generate
      * @return mixed
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 1.1
      * @since   0.0
      */
-    public function generate($class, array $data = [], $force = false)
+    public function generate(array $data = [], $force = false)
     {
-        //        $class = Object::getClass(Core_Validator::getClass(), $data);
-        $namespace = Object::getNamespace(Core_Validator::getClass(), $class);
+        $class = $this->getInstanceKey();
 
-        $module = Module::getInstance(Object::getModuleAlias($class));
+        $module = Module::getInstance();
 
-        $path = $module->get(Module::SOURCE_DIR);
-
-        //        if ($namespace) {
-        //            $path .= 'Class/';
-        //        }
-
-        $filePath = $path . str_replace(['\\', '_'], '/', $class) . '.php';
+        $filePath = \getSourceDir(Class_Object::getModuleAlias($class)) . str_replace(['\\', '_'], '/', $class) . '.php';
 
         $isFileExists = file_exists($filePath);
 
         if (!$force && $isFileExists) {
-            Code_Generator::getLogger()->info(['Validator {$0} already created', $class]);
+            $this->getLogger()->info(['Validator {$0} already created', $class]);
             return;
         }
 
         $data = [
-            'namespace' => rtrim($namespace, '\\'),
-            'validatorName' => Object::getName($class)
+            'namespace' => $module->getNamespace(),
+            'validatorName' => Class_Object::getClassName($class)
         ];
 
         $classString = Php::getInstance()->fetch(__CLASS__, $data);
@@ -84,7 +73,7 @@ class Validator extends Code_Generator
             : 'Validator {$0} created';
 
         if ($isFileExists) {
-            Code_Generator::getLogger()->info([$message, $class], Logger::SUCCESS);
+            $this->getLogger()->info([$message, $class], Logger::SUCCESS);
         }
 
         Loader::load($class);

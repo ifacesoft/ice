@@ -1,9 +1,13 @@
 language: php
+
+dist: trusty
+
 php:
   - 5.6
-  - 5.5
-#  - 5.4
-#  - hhvm
+  - 5.6
+  - 5.6
+  - 5.6
+  - hhvm
 
 services:
   - redis-server
@@ -12,11 +16,11 @@ services:
 before_script:
   - mysql -e "create database IF NOT EXISTS test;" -uroot
   - ./Bin/install.sh
-  - wget http://getcomposer.org/composer.phar
-  - php composer.phar install
+
+install: composer update
 
 script: ./cli Ice:PhpUnit
 
 after_script:
 - travis_retry wget https://scrutinizer-ci.com/ocular.phar
-- php ocular.phar code-coverage:upload --access-token="e94d23c2fde554972a6c0e1ca4fee4db3b97663e82b35267c3f85c9f0726d0cc" --format=php-clover Var/vendor/phpunit/coverage.xml
+- php ocular.phar code-coverage:upload --access-token="e94d23c2fde554972a6c0e1ca4fee4db3b97663e82b35267c3f85c9f0726d0cc" --format=php-clover vendor/phpunit/coverage.xml

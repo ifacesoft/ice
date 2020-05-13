@@ -9,23 +9,26 @@
 
 namespace Ice\Core;
 
-use FirePHP;
+use ChromePhp;
 use Ice\Core;
-use Ice\Helper\Console;
-use Ice\Helper\Directory;
+use Ice\DataProvider\Request as DataProvider_Request;
+use Ice\Exception\Error;
+use Ice\Helper\Console as Helper_Console;
+use Ice\Helper\Date;
 use Ice\Helper\File;
-use Ice\Helper\Http;
 use Ice\Helper\Logger as Helper_Logger;
-use Ice\Helper\Object;
+use Ice\Helper\Class_Object;
 use Ice\Helper\Profiler as Helper_Profiler;
-use Ice\Helper\Resource as Helper_Resource;
+use Ice\Helper\Type_String;
+use Ice\Model\Log_Error;
+use Throwable;
 
 /**
  * Class Logger
  *
  * Core logger class
  *
- * @see Ice\Core\Container
+ * @see \Ice\Core\Container
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
@@ -39,12 +42,23 @@ class Logger
 {
     use Core;
 
-    const DANGER = 'danger';
-    const SUCCESS = 'success';
-    const INFO = 'info';
+    /** PSR-3 */
+    const EMERGENCY = 'emergency';
+    const ALERT = 'alert';
+    const CRITICAL = 'critical';
+    const ERROR = 'error';
     const WARNING = 'warning';
+    const NOTICE = 'notice';
+    const INFO = 'info';
     const DEBUG = 'debug';
+
+    const SUCCESS = 'success';
+
+    /** @deprecated 1.5 */
+    const DANGER = 'danger';
+    /** @deprecated 1.5 */
     const MESSAGE = 'cli';
+    /** @deprecated 1.5 */
     const GREY = 'hidden';
 
     /**
@@ -88,13 +102,13 @@ class Logger
      * @var array
      */
     public static $consoleColors = [
-        self::INFO => Console::C_CYAN,
-        self::WARNING => Console::C_YELLOW,
-        self::DANGER => Console::C_RED,
-        self::SUCCESS => Console::C_GREEN,
-        self::DEBUG => Console::C_CYAN,
-        self::MESSAGE => Console::C_MAGENTA,
-        self::GREY => Console::C_GRAY
+        self::INFO => Helper_Console::C_CYAN,
+        self::WARNING => Helper_Console::C_YELLOW,
+        self::DANGER => Helper_Console::C_RED,
+        self::SUCCESS => Helper_Console::C_GREEN,
+        self::DEBUG => Helper_Console::C_CYAN,
+        self::MESSAGE => Helper_Console::C_MAGENTA,
+        self::GREY => Helper_Console::C_GRAY
     ];
 
     /**
@@ -109,13 +123,15 @@ class Logger
      *
      * @var string
      */
-    private $class;
+    private $class = null;
 
     /**
      * Private constructor for logger object
      *
      * @param string $class Class (Logger for this class)
      *
+     * @throws Error
+     * @throws \Ice\Exception\FileNotFound
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
@@ -123,6 +139,10 @@ class Logger
      */
     private function __construct($class)
     {
+        if (!$class) {
+            throw new Error('Class for logger not defined');
+        }
+
         $this->class = $class;
     }
 
@@ -131,22 +151,27 @@ class Logger
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 1.5
      * @since   0.0
      */
     public static function init()
     {
-        error_reporting(E_ALL | E_STRICT);
+        self::$reserveMemory = str_repeat('#', pow(2, 20));
 
-        ini_set('display_errors', !Environment::getInstance()->isProduction());
+        if (Environment::getInstance()->isProduction()) {
+            error_reporting(E_ALL & ~E_STRICT & ~E_NOTICE & ~E_USER_NOTICE & ~E_DEPRECATED & ~E_USER_DEPRECATED);
+            ini_set('display_errors', 0);
 
-        self::$reserveMemory = str_repeat(' ', pow(2, 15));
+            return;
+        }
+
+        error_reporting(E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED); // Оставить только E_ALL
+        ini_set('display_errors', 1);
 
         ini_set('xdebug.var_display_max_depth', -1);
         ini_set('xdebug.profiler_enable', 1);
-        ini_set('xdebug.profiler_output_dir', Module::getInstance()->get('logDir') . 'xdebug');
-
-        ob_start();
+        ini_set('xdebug.max_nesting_level', 200);
+        ini_set('xdebug.profiler_output_dir', Module::getInstance()->getPath(Module::LOG_DIR) . 'xdebug');
     }
 
     /**
@@ -159,15 +184,24 @@ class Logger
      */
     public static function shutdownHandler()
     {
-        self::$reserveMemory;
+        self::$reserveMemory = null;
 
+        //todo: Response output mast by here
         if ($error = error_get_last()) {
-            Http::setHeader(Http::getStatusCodeHeader(500), true, 500);
+//            Http::setStatusCodeHeader(500);
+            $error['message'] .= ' [peak: ' . Helper_Profiler::getPrettyMemory(memory_get_peak_usage(true)) . ']';
+
             self::errorHandler($error['type'], $error['message'], $error['file'], $error['line'], []);
             self::renderLog();
         }
 
-        session_write_close();
+        if (session_status() !== PHP_SESSION_NONE) {
+            session_write_close();
+        }
+
+        if (ob_get_level()) {
+            ob_get_flush();
+        }
     }
 
     /**
@@ -179,111 +213,40 @@ class Logger
      * @param $errline
      * @param $errcontext
      *
+     * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 1.10
      * @since   0.0
      */
-    public static function errorHandler($errno, $errstr, $errfile, $errline, $errcontext)
+    public static function errorHandler($errno, $errstr, $errfile, $errline, $errcontext = [])
     {
+        $lowLevelErrors = [E_WARNING, E_NOTICE, E_USER_WARNING, E_USER_NOTICE, E_STRICT, E_DEPRECATED, E_USER_DEPRECATED];
+
+        if (!Environment::getInstance()->isDevelopment() && in_array($errno, $lowLevelErrors)) {
+            return;
+        }
+
+        // Выпилить
+        if (in_array($errno, [E_USER_DEPRECATED])) {
+            return;
+        }
+//
+//        if (Type_String::startsWith($errstr, ['include(/var/www/ebs/var/cache/', 'unlink(/var/www/ebs/var/cache/'])) {
+//            return;
+//        }
+
         if ($errno == E_WARNING && strpos($errstr, 'filemtime():') !== false
             || $errno == E_WARNING && strpos($errstr, 'mysqli::real_connect():') !== false
         ) {
-            Logger::getLogger()->info($errstr, self::WARNING, false);
             return; // подавляем ошибку смарти и ошибку подключения mysql (пароль в открытом виде)
         }
 
-        self::getInstance()->error($errstr, $errfile, $errline, null, $errcontext, $errno);
-    }
-
-    /**
-     * Info message
-     *
-     * @param  $message
-     * @param  string|null $type
-     * @param  bool $isResource
-     * @param  bool $logging
-     * @return string
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since   0.0
-     */
-    public function info($message, $type = null, $isResource = true, $logging = true)
-    {
-        if (!$type) {
-            $type = self::INFO;
-        }
-
-        if ($isResource) {
-            /**
-             * @var Core $class
-             */
-            $class = $this->class;
-            $params = null;
-            if (is_array($message)) {
-                list($message, $params) = $message;
-            }
-
-            $message = $class::getResource()->get($message, $params);
-        }
-
-        $logFile = Directory::get(Module::getInstance()->get('logDir')) . date('Y-m-d') . '/INFO.log';
-        File::createData($logFile, $message . "\n", false, FILE_APPEND);
-
-        Logger::fb($message, 'info', 'INFO');
-
-        if (Request::isCli()) {
-            $message = Console::getText(' ' . $message . ' ', Console::C_BLACK, self::$consoleColors[$type]) . "\n";
-            fwrite(STDOUT, $message);
-            return $logging ? $message : '';
-        } else {
-            $message = '<div class="alert alert-' . $type . '">' . $message . '</div>';
-            return $logging ? self::addLog($message) : $message;
-        }
-    }
-
-    /**
-     *
-     * @param $value
-     * @param string $type (LOG|INFO|WARN|ERROR|DUMP|TRACE|EXCEPTION|TABLE|GROUP_START|GROUP_END)
-     * @param string $label
-     * @param array $options
-     */
-    public static function fb($value, $label = null, $type = 'LOG', $options = [])
-    {
-        if (
-            !Request::isCli() &&
-            !Environment::getInstance()->isProduction() &&
-            !headers_sent()
-            && Loader::load('FirePHP', false)
-        ) {
-            $varSize = Helper_Profiler::getVarSize($value);
-
-            if ($varSize > pow(2, 17)) {
-                FirePHP::getInstance(true)->fb('Too big data: ' . $varSize . ' bytes (max: ' . pow(2, 17) . ')', $label, 'WARN', $options);
-                return;
-            }
-
-            FirePHP::getInstance(true)->fb($value, $label, $type, $options);
-        }
-    }
-
-    /**
-     * Add message into log stack
-     *
-     * @param  $message
-     * @return mixed
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since   0.0
-     */
-    public static function addLog($message)
-    {
-        return self::$log[] = $message;
+//        if (in_array($errno, [E_PARSE, E_ERROR, E_COMPILE_ERROR, E_CORE_ERROR])) {
+//            self::getInstance()->exception($errstr, $errfile, $errline, null, $errcontext, $errno);
+//        } else {
+            self::getInstance()->error($errstr, $errfile, $errline, null, $errcontext, $errno);
+//        }
     }
 
     /**
@@ -292,41 +255,70 @@ class Logger
      * @param  $message
      * @param  $file
      * @param  $line
-     * @param  \Exception $e
+     * @param  \Exception|Throwable $e
      * @param  null $errcontext
      * @param  int $errno
-     * @return null|string
+     * @return string
      * @throws Exception
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
      * @since   0.0
+     * @throws \Exception
      */
-    public function error($message, $file, $line, \Exception $e = null, $errcontext = null, $errno = 0)
+    public function error($message, $file, $line, $e = null, $errcontext = null, $errno = 0)
     {
-        $exception = $this->createException($message, $file, $line, $e, $errcontext, (int) $errno);
+        if (
+            Environment::getInstance()->isProduction()
+            && in_array($errno, [E_WARNING, E_NOTICE, E_USER_WARNING, E_USER_NOTICE, E_STRICT, E_DEPRECATED, E_USER_DEPRECATED])) {
+            return '';
+        }
+
+        $exception = $this->createException($message, $file, $line, $e, $errcontext, (int)$errno);
+
+        $exceptionText = Helper_Logger::getMessage($exception);
 
         $output = [
-            'time' => date('H:i:s'),
-            'host' => Request::host(),
-            'uri' => Request::uri(),
-            'referer' => Request::referer(),
-            'lastTemplate' => View_Render::getLastTemplate()
+            'time' => \date('H:i:s') . ' ' . microtime(true), // todo: check to right time (timezone)
+            'lastTemplate' => Render::getLastTemplate()
         ];
 
-        Helper_Logger::outputFile($exception, $output);
-        Helper_Logger::outputDb($exception);
+        $request = DataProvider_Request::getInstance();
+
+        $output = array_merge($output, $request->get(['host', 'uri', 'referer']));
+
+        Helper_Logger::outputFile($exception, $output, $this->class);
+//        Helper_Logger::outputDb($exception);
         Helper_Logger::outputFb($exception, $output);
 
-        $message = Helper_Logger::getMessage($exception);
+        $environment = Environment::getInstance();
+
+//        if (Module::$loaded) {
+        $logError = Log_Error::create([
+            'message' => Type_String::truncate($exception->getMessage(), 255),
+            'exception' => $exceptionText,
+            'hostname' => $environment->getHostname(),
+            'environment' => $environment->getName(),
+            'error_type' => Logger::getErrorType($exception->getCode()),
+            'request_type' => Request::isCli() ? 'cli' : (Request::isAjax() ? 'ajax' : 'http'),
+            'request_data' => $_REQUEST,
+            'request_string' => $request->get('uri'),
+            'request_method' => $request->get('method'),
+            'error_context' => $exception->getErrorContext(),
+            'session__fk' => session_id()
+        ]);
+
+        $this->save($logError);
+//        }
 
         if (Request::isCli()) {
-            fwrite(STDOUT, $message . "\n");
-            return $message;
+            fwrite(STDOUT, $exceptionText . "\n");
         } else {
-            return Logger::addLog($message);
+            Logger::addLog($exceptionText);
         }
+
+        return $message;
     }
 
     /**
@@ -349,22 +341,22 @@ class Logger
         $message,
         $file,
         $line,
-        \Exception $e = null,
+        $e = null,
         $errcontext = [],
         $errno = 0,
         $exceptionClass = 'Ice:Error'
     )
     {
-        $message = (array)$message;
-        if (!isset($message[1])) {
-            $message[1] = [];
-        }
-        $message[2] = $this->class;
+//        $message = (array)$message;
+//        if (!isset($message[1])) {
+//            $message[1] = [];
+//        }
+//        $message[2] = $this->class;
 
         /**
          * @var Exception $exceptionClass
          */
-        $exceptionClass = Object::getClass(Exception::getClass(), $exceptionClass);
+        $exceptionClass = Class_Object::getClass(Exception::getClass(), $exceptionClass);
 
         if (is_array($errcontext) && isset($errcontext['e'])) {
             unset($errcontext['e']);
@@ -374,11 +366,48 @@ class Logger
     }
 
     /**
+     * @param Model $log
+     * @throws Exception
+     */
+    public function save($log)
+    {
+        try {
+            $log
+                ->set([
+                    'logger_class' => $this->class,
+                    'session__fk' => session_id()
+                ])->save();
+        } catch (\Exception $e) {
+
+        } catch (\Throwable $e) {
+
+        }
+    }
+
+    /**
+     * Add message into log stack
+     *
+     * @param  $message
+     * @return mixed
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since   0.0
+     */
+    public static function addLog($message)
+    {
+        return self::$log[] = $message;
+    }
+
+    /**
      * Return new instance of logger
      *
      * @param  string $class
      * @return Logger
      *
+     * @throws Error
+     * @throws \Ice\Exception\FileNotFound
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
@@ -417,6 +446,172 @@ class Logger
         self::$log = [];
     }
 
+    public static function log($value, $label = null, $type = 'LOG', $options = [])
+    {
+        $value = str_replace(["\n", "\t"], ' ', $value);
+
+        if ($pos = strrpos($type, '_')) {
+            $typePath = substr($type, 0, $pos);
+            $type = substr($type, $pos + 1);
+        } else {
+            $typePath = $type;
+        }
+
+        if (Environment::getInstance()->isDevelopment()) {
+            $name = Request::isCli() ? Console::getCommand(null) : Request::uri();
+            $logFile = getLogDir() . \date(Date::FORMAT_MYSQL_DATE) . '/' . $typePath . '/' . urlencode($name) . '.log';
+
+            if (strlen($logFile) > 255) {
+                $logFilename = substr($logFile, 0, 255 - 11);
+                $logFile = $logFilename . '_' . crc32(substr($logFile, 255 - 11));
+            }
+
+            File::createData($logFile, '[' . \date(Date::FORMAT_MYSQL) . ' ' . microtime(true) . '] ' . $label . ': ' . $value . "\n\n", false, FILE_APPEND);
+        }
+
+        if (Request::isCli()) {
+            $colors = [
+                'INFO' => Helper_Console::C_GREEN,
+                'DUMP' => Helper_Console::C_CYAN,
+                'WARN' => Helper_Console::C_YELLOW,
+                'ERROR' => Helper_Console::C_RED,
+                'LOG' => Helper_Console::C_CYAN,
+            ];
+
+            $message = Helper_Console::getText($label . ': ' . $value, Helper_Console::C_BLACK, $colors[$type]) . "\n";
+            fwrite(STDOUT, $message);
+        } else {
+            Logger::fb($value, $label, $type, $options);
+        }
+    }
+
+    /**
+     *
+     * @param $value
+     * @param string $type (LOG|INFO|WARN|ERROR|DUMP|TRACE|EXCEPTION|TABLE|GROUP_START|GROUP_END)
+     * @param string $label
+     * @param array $options
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 1.13
+     * @since   0.0
+     * @throws \Ice\Exception\Config_Error
+     */
+    public static function fb($value, $label = null, $type = 'LOG', $options = [])
+    {
+        $firePhp = VENDOR_DIR . 'ccampbell/chromephp/ChromePhp.php';
+
+        if (Request::isCli() || Environment::getInstance()->isProduction() || headers_sent() || !is_file($firePhp)) {
+            return;
+        }
+
+        if (!class_exists('FirePHP', false) && is_file($firePhp)) {
+            require_once $firePhp;
+        }
+
+        switch (strtolower($type)) {
+            case ChromePhp::WARN:
+                ChromePhp::warn(Helper_Profiler::getVar(memory_get_usage(), $value));
+                break;
+            case ChromePhp::ERROR:
+                ChromePhp::error(Helper_Profiler::getVar(memory_get_usage(), $value));
+                break;
+            case ChromePhp::INFO:
+                ChromePhp::info(Helper_Profiler::getVar(memory_get_usage(), $value));
+                break;
+            default:
+                ChromePhp::log(Helper_Profiler::getVar(memory_get_usage(), $value));
+        }
+    }
+
+    /**
+     * Info message
+     *
+     * @param  $message
+     * @param  string|null $type
+     * @param  bool $isResource @todo: передаем сюда сам объект Resource или null (Статически типизуруем аргумент в методе)
+     * @param  bool $logging
+     * @return string
+     *
+     * @throws Exception
+     * @throws \Ice\Exception\Config_Error
+     * @throws \Ice\Exception\FileNotFound
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since   0.0
+     */
+    public function info($message, $type = Logger::INFO, $isResource = false, $logging = true)
+    {
+        if (!$type) {
+            $type = self::INFO;
+        }
+
+        if ($isResource) {
+            /**
+             * @var Core $class
+             */
+            $class = $this->class;
+            $params = null;
+
+            if (is_array($message)) {
+                list($message, $params) = $message;
+            }
+
+            if ($isResource instanceof Resource) {
+                $isResource->get($message, $params);
+            } else {
+                $message = Resource::create($class)->get($message, $params);
+            }
+        }
+
+        if (Environment::getInstance()->isDevelopment()) {
+            $name = Request::isCli() ? Console::getCommand(null) : Request::uri();
+            $logFile = getLogDir() . \date('Y-m-d') . '/INFO/' . urlencode($name) . '.log';
+
+            if (strlen($logFile) > 255) {
+                $logFilename = substr($logFile, 0, 255 - 11);
+                $logFile = $logFilename . '_' . crc32(substr($logFile, 255 - 11));
+            }
+
+            $message = print_r($message, true);
+
+            File::createData(
+                $logFile,
+                '[' . \date(Date::FORMAT_MYSQL) . ' ' . microtime(true) . '] ' . $message . "\n",
+                false,
+                FILE_APPEND
+            );
+        }
+
+        if (Request::isCli()) {
+            $message = Helper_Console::getText(' ' . $message . ' ', Helper_Console::C_BLACK, self::$consoleColors[$type]) . "\n";
+
+//            fwrite(STDOUT, $message); // ob_cache|ob_get_clean not catch stdout
+            echo $message;
+
+            return $logging ? $message : '';
+        } else {
+            Logger::fb($message, 'info', $this->getFbType($type));
+
+            $message = '<div class="alert alert-' . $type . '">' . print_r($message, true) . '</div>';
+            return $logging ? self::addLog($message) : $message;
+        }
+    }
+
+    private function getFbType($type)
+    {
+        switch ($type) {
+            case Logger::DANGER:
+                return 'ERROR';
+            case Logger::WARNING:
+                return 'WARN';
+            default:
+                return 'INFO';
+        }
+    }
+
     /**
      * Notice
      *
@@ -432,8 +627,9 @@ class Logger
      *
      * @version 0.0
      * @since   0.0
+     * @throws Exception
      */
-    public function notice($message, $file, $line, \Exception $e = null, $errcontext = null, $errno = E_USER_NOTICE)
+    public function notice($message, $file, $line, $e = null, $errcontext = null, $errno = E_USER_NOTICE)
     {
         return $this->error($message, $file, $line, $e, $errcontext, $errno);
     }
@@ -453,8 +649,9 @@ class Logger
      *
      * @version 0.0
      * @since   0.0
+     * @throws Exception
      */
-    public function warning($message, $file, $line, \Exception $e = null, $errcontext = null, $errno = E_USER_WARNING)
+    public function warning($message, $file, $line, $e = null, $errcontext = null, $errno = E_USER_WARNING)
     {
         return $this->error($message, $file, $line, $e, $errcontext, $errno);
     }
@@ -469,6 +666,7 @@ class Logger
      * @param  null $errcontext
      * @param  int $errno
      * @param  string $exceptionClass
+     * @return null
      * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
@@ -488,25 +686,7 @@ class Logger
         throw $this->createException($message, $file, $line, $e, $errcontext, $errno, $exceptionClass);
     }
 
-    /**
-     * Log
-     *
-     * @param $message
-     *
-     * @param  string $type
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since   0.4
-     */
-    public function log($message, $type = Logger::SUCCESS)
-    {
-        if (!Environment::getInstance()->isProduction()) {
-            //            if (Request::isCli()) {
-            $this->info(Helper_Resource::getMessage($message), $type, false);
-            //            } else {
-            //                Logger::fb($message, 'log', 'LOG');
-            //            }
-        }
+    public static function getErrorType($code) {
+        return isset(self::$errorCodes[$code]) ? Logger::$errorCodes[$code] : 'UNKNOWN_ERROR';
     }
 }

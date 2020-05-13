@@ -30,7 +30,7 @@ class Test_Twig extends Action
      *          ]
      *      ],
      *      'output' => ['Ice:Resource/Ice\Action\Index'],
-     *      'ttl' => 3600,
+     *      'cache' => ['ttl' => -1, 'count' => 1000],
      *      'roles' => []
      *  ];
      * ```
@@ -46,7 +46,8 @@ class Test_Twig extends Action
     {
         return [
             'view' => ['viewRenderClass' => 'Ice:Twig', 'layout' => ''],
-            'input' => 'inputTestTwig'
+            'input' => 'inputTestTwig',
+            'cache' => ['ttl' => -1, 'count' => 1000],
         ];
     }
 

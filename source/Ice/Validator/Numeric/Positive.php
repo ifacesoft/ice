@@ -20,9 +20,6 @@ namespace Ice\Validator;
  *
  * @package    Ice
  * @subpackage Validator
- *
- * @version 0.0
- * @since   0.0
  */
 class Numeric_Positive extends Numeric
 {
@@ -38,17 +35,18 @@ class Numeric_Positive extends Numeric
      *  ],
      *  'name' => 'Ice:Not_Null'
      *
-     * @param  $data
-     * @param  null $scheme
-     * @return boolean
+     * @param array $data
+     * @param $name
+     * @param array $params
+     * @return bool
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 1.2
      * @since   0.0
      */
-    public function validate($data, $scheme = null)
+    public function validate(array $data, $name, array $params)
     {
-        return parent::validate($data, $scheme) && $data > 0;
+        return parent::validate($data, $name, $params) && $data[$name] > 0;
     }
 }

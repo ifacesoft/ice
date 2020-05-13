@@ -1,5 +1,6 @@
 <tr>
-    <td rowspan="<?= ceil(count($columns) / $columnCount) ?>"><?= $id ?></td>
+    <?php if ($isShowCount) : ?>
+        <td rowspan="<?= ceil(count($columns) / $columnCount) ?>"><?= $id ?></td><?php endif; ?>
     <?php
     $count = 0;
     foreach ($columns as $columnName => $column) :
@@ -10,7 +11,7 @@
     ?><?php if (isset($column['options']['colspan'])) : ?> colspan="<?= $column['options']['colspan'] ?>"<?php endif;
     ?>>
         <?php else :
-        $count = 1
+        $count = $colspan
         ?>
 </tr>
 <tr>

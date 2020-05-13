@@ -16,7 +16,7 @@ use Ice\Core\Exception;
  *
  * Implements file not found exception
  *
- * @see Ice\Core\Exception
+ * @see \Ice\Core\Exception
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *

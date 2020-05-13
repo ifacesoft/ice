@@ -3,10 +3,6 @@
     padding: 0;
 }
 
-li {
-    list-style: none;
-}
-
 .notifications {
     position: fixed;
     z-index: 9999;
@@ -15,7 +11,7 @@ li {
 /* Positioning */
 .notifications.top-right {
     right: 10px;
-    top: 25px;
+    top: 75px;
 }
 
 /* Notification Element */
@@ -34,4 +30,9 @@ hr.hrline {
 .pseudo-link {
     text-decoration: none;
     border-bottom: 1px dashed;
+    cursor: pointer;
+}
+
+.form-horizontal .checkbox .control-label {
+    text-align: left;
 }

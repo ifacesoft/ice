@@ -11,9 +11,9 @@ namespace Ice\Core;
 
 use Composer\Autoload\ClassLoader;
 use Ice\Core;
-use Ice\Data\Provider\Repository;
+use Ice\DataProvider\Repository;
 use Ice\Exception\FileNotFound;
-use Ice\Helper\Object;
+use Ice\Helper\Class_Object;
 
 /**
  * Class Loader
@@ -24,78 +24,92 @@ use Ice\Helper\Object;
  *
  * @package    Ice
  * @subpackage Core
- *
- * @version 0.0
- * @since   0.0
  */
 class Loader
 {
     use Core;
 
-    /**
-     * @var array Registred autoloaders
-     */
-    private static $autoLoaders = [];
+    /** @var null */
+    private static $autoloaders = [];
 
-    /**
-     * Composer loader
-     *
-     * @var ClassLoader
-     */
-    private static $loader = null;
-
-    private static $forceLoading = null;
+    private static $forceLoading = false;
 
     /**
      * @var Repository
      */
     private static $repository = null;
 
-    /**
-     * Load class
-     *
-     * @param  $class
-     * @param  bool $isRequired
-     * @return bool
-     * @throws Exception
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since   0.0
-     */
-    public static function load($class, $isRequired = true)
+    public static function autoload($class)
     {
-        if (class_exists($class, false)) {
-            return true;
-        }
-
-        if (self::$repository && $fileName = self::$repository->get($class)) {
-            include_once $fileName;
-            return true;
-        }
-
-        $fileName = self::getFilePath($class, '.php', Module::SOURCE_DIR, $isRequired);
+        $fileName = Loader::getFilePath($class, '.php', Module::SOURCE_DIR, false);
 
         if (file_exists($fileName)) {
             include_once $fileName;
 
-            if (class_exists($class, false) || interface_exists($class, false) || trait_exists($class, false)) {
-                self::$repository->set($class, $fileName);
-                return true;
-            }
-
-            if (!self::$forceLoading && $isRequired) {
-                Loader::getLogger()->exception(
+            if (!Loader::isExistsClass($class)) {
+                Logger::getInstance(__CLASS__)->exception(
                     ['File {$0} exists, but class {$1} not found', [$fileName, $class]],
                     __FILE__,
                     __LINE__
                 );
             }
+
+            return $fileName;
         }
 
-        if (!self::$forceLoading && $isRequired) {
-            Loader::getLogger()->exception(['Class {$0} not found', $class], __FILE__, __LINE__, null);
+        return null;
+    }
+
+    public static function isExistsClass($class)
+    {
+        return class_exists($class, false) || interface_exists($class, false) || trait_exists($class, false);
+    }
+
+    /**
+     * Load class
+     *
+     * @param  $class
+     * @return bool
+     * @throws Exception
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 1.10
+     * @since   0.0
+     */
+    public static function load($class)
+    {
+        if (class_exists($class, false)) {
+            return true;
         }
+
+        if (Loader::$repository) {
+            if ($fileName = Loader::$repository->get($class)) {
+                include_once $fileName;
+                return true;
+            }
+        }
+
+        foreach (Loader::$autoloaders as $autoLoader) {
+            $fileName = null;
+            if ($autoLoader[0] instanceof ClassLoader) {
+                if ($fileName = $autoLoader[0]->findFile($class)) {
+                    include_once $fileName;
+                }
+            } else {
+                $fileName = call_user_func($autoLoader, $class);
+            }
+
+            if (is_string($fileName) && !empty($fileName) && Loader::isExistsClass($class)) {
+                if (Loader::$repository) {
+                    Loader::$repository->set([$class => $fileName]);
+                }
+
+                return true;
+            }
+        }
+
+        // todo: раскомментить
+//        Logger::getInstance(__CLASS__)->warning(['Class {$0} not found', $class], __FILE__, __LINE__, null);
 
         return false;
     }
@@ -110,9 +124,11 @@ class Loader
      * @param  bool $isNotEmpty
      * @param  bool $isOnlyFirst
      * @param  bool $allMatchedPathes
-     * @throws FileNotFound
      * @return null|string
      *
+     * @throws Exception
+     * @throws FileNotFound
+     * @throws \Ice\Exception\Config_Error
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
@@ -133,12 +149,18 @@ class Loader
         $fullStackPathes = [];
         $matchedPathes = [];
 
-        $modules = $isOnlyFirst
-            ? [Module::getInstance(Object::getModuleAlias($class))]
-            : Module::getAll();
+        if ($isOnlyFirst) {
+            try {
+                $modules = [Module::getInstance(Class_Object::getModuleAlias($class))];
+            } catch (\Exception $e) {
+                $modules = [Module::getInstance()];
+            }
+        } else {
+            $modules = Module::getAll();
+        }
 
         foreach ($modules as $module) {
-            $typePathes = $module->gets($path, false);
+            $typePathes = $module->gets('pathes/' . $path, []);
 
             if (empty($typePathes)) {
                 $typePathes = [$path];
@@ -163,27 +185,10 @@ class Loader
 
         if ($isRequired) {
             if (!$allMatchedPathes || empty($matchedPathes)) {
-                if (self::$loader && $fileName = self::$loader->findFile($class)) {
-                    if (!$allMatchedPathes) {
-                        return $fileName;
-                    }
-
-                    $fullStackPathes[] = $fileName;
-                    $matchedPathes[] = $fileName;
+                if (self::$forceLoading) {
+                    return null;
                 } else {
-                    if (self::$forceLoading) {
-                        return null;
-                    } else {
-                        Loader::getLogger()->exception(
-                            ['Files for {$0} not found', $class],
-                            __FILE__,
-                            __LINE__,
-                            null,
-                            $fullStackPathes,
-                            -1,
-                            'Ice:FileNotFound'
-                        );
-                    }
+                    throw new FileNotFound(['Files for {$0} not found', $class], $fullStackPathes);
                 }
             }
         }
@@ -195,70 +200,18 @@ class Loader
         return $isNotEmpty && !empty($fullStackPathes) ? reset($fullStackPathes) : '';
     }
 
-    /**
-     * Unregister class autoloader
-     *
-     * example:
-     * ```php
-     *      Loader::unregister('Ice\Core\Loader::load')
-     * ```
-     *
-     * @param $autholoader string string autoload method
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since   0.0
-     */
-    public static function unregister($autholoader)
+    public static function init()
     {
-        foreach (self::$autoLoaders as $key => $loader) {
-            if ($loader == $autholoader) {
-                spl_autoload_unregister($autholoader);
-                unset(self::$autoLoaders[$key]);
-                break;
-            }
-        }
-    }
+        self::$autoloaders = spl_autoload_functions();
 
-    public static function init(ClassLoader $loader, $forceLoading = false)
-    {
-        self::$loader = $loader;
-        self::$forceLoading = $forceLoading;
-
-        self::$repository = Loader::getRepository();
-
-        spl_autoload_unregister([$loader, 'loadClass']);
-
-        Loader::register([$loader, 'loadClass']);
-        Loader::register('Ice\Core\Loader::load');
-    }
-
-    /**
-     * Register class autoloader
-     *
-     * example:
-     * ```php
-     *      Loader::register('Ice\Core\Loader::load')
-     * ```
-     *
-     * @param $autoLoader array autoloaders method
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.2
-     * @since   0.0
-     */
-    public static function register($autoLoader)
-    {
-        foreach (self::$autoLoaders as $loader) {
-            spl_autoload_unregister($loader);
+        foreach (self::$autoloaders as $autholoader) {
+            spl_autoload_unregister($autholoader);
         }
 
-        array_unshift(self::$autoLoaders, $autoLoader);
+        array_unshift(self::$autoloaders, [__CLASS__, 'autoload']);
 
-        foreach (self::$autoLoaders as $loader) {
-            spl_autoload_register($loader);
-        }
+        spl_autoload_register('Ice\Core\Loader::load');
+
+        self::$repository = self::getRepository();
     }
 }

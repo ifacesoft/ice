@@ -16,16 +16,13 @@ use Ice\Core\Action;
  *
  * Simple title
  *
- * @see Ice\Core\Action
- * @see Ice\Core\Action_Context
+ * @see \Ice\Core\Action
+ * @see \Ice\Core\Action_Context
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
  * @package    Ice
  * @subpackage Action
- *
- * @version 0.0
- * @since   0.0
  */
 class Title extends Action
 {
@@ -54,7 +51,7 @@ class Title extends Action
      *          ]
      *      ],
      *      'output' => ['Ice:Resource/Ice\Action\Index'],
-     *      'ttl' => 3600,
+     *      'cache' => ['ttl' => -1, 'count' => 1000],
      *      'roles' => []
      *  ];
      * ```
@@ -70,7 +67,8 @@ class Title extends Action
     {
         return [
             'view' => ['viewRenderClass' => 'Ice:Php', 'layout' => ''],
-            'input' => 'title'
+            'input' => 'title',
+            'cache' => ['ttl' => -1, 'count' => 1000],
         ];
     }
 

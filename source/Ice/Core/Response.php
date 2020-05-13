@@ -24,11 +24,6 @@ use Ice\Helper\Json;
 class Response
 {
     /**
-     * @var View
-     */
-    private $view = null;
-
-    /**
      * Content type
      *
      * @var string
@@ -40,14 +35,13 @@ class Response
      *
      * @var string
      */
-    private $statusCode = null;
+    private $statusCode = 200;
 
-    /**
-     * Redirect url
-     *
-     * @var string|null
-     */
-    private $redirectUrl = null;
+    private $content = null;
+
+    private $error = null;
+
+    private $success = null;
 
     /**
      * Private constructor of Request object
@@ -77,45 +71,74 @@ class Response
     }
 
     /**
+     * @param null $content
+     */
+    public function setContent($content)
+    {
+        $this->content = $content;
+    }
+
+    /**
+     * @param null $error
+     */
+    public function setError($error)
+    {
+        $this->error = $error;
+    }
+
+    /**
+     * @param null $success
+     */
+    public function setSuccess($success)
+    {
+        $this->success = $success;
+    }
+
+    /**
      * Send data to standard output stream
+     *
+     * @param array $result
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
      * @since   0.0
+     * @throws \Exception
      */
-    public function send()
+    public function send(array $result)
     {
-        if ($this->redirectUrl) {
+        $redirectUrl = isset($result['redirect']) ? $result['redirect'] : null;
+
+        if ($redirectUrl && !Request::isAjax()) {
             if (headers_sent()) {
-                echo '<script type="text/javascript">location.href="' . $this->redirectUrl . '"</script>';
+                echo '<script type="text/javascript">location.href="' . $redirectUrl . '"</script>';
                 return;
             }
 
-            Http::setHeader('Location: ' . $this->redirectUrl, false, $this->statusCode);
+            $this->statusCode = 302; // todo: обязательно должен быть код редиректа (Иначе апач игнорирует хедер локейшн)
+
+            Http::setHeader('Location: ' . $redirectUrl, $this->statusCode);
+            
             return;
         }
 
-        if (!$this->view || !($this->view instanceof View)) {
-            Logger::getInstance(__CLASS__)->exception(['Response broken. View not found {$0}', $this->view], __FILE__, __LINE__);
+        if ($this->content === null) {
+            $this->content = $this->contentType == 'json' || Request::isAjax()
+                ? str_replace(dirname(MODULE_DIR), '', Json::encode($result))
+                : str_replace(dirname(MODULE_DIR), '', reset($result));
         }
 
-        if (Request::isCli()) {
-            fwrite(empty($this->view->getErrors()) ? STDOUT : STDERR, $this->view->getContent());
-            return;
-        }
+        // Http::setHeader(Http::getContentLength(mb_strlen($this->content))); //todo: иногда отдает не правильно, хз почему
 
         if ($this->contentType) {
-            Http::setHeader(Http::getContentTypeHeader($this->contentType), true, $this->statusCode);
+            Http::setHeader(Http::getContentTypeHeader($this->contentType));
         }
 
         if ($this->statusCode) {
-            Http::setHeader(Http::getStatusCodeHeader($this->statusCode), true, $this->statusCode);
+            Http::setStatusCodeHeader($this->statusCode);
         }
 
-        echo Request::isAjax()
-            ? str_replace(dirname(MODULE_DIR), '', Json::encode($this->view->getResult()))
-            : str_replace(dirname(MODULE_DIR), '', $this->view->getContent());
+        echo is_array($this->content) ? Json::encode($this->content) : $this->content;
     }
 
     /**
@@ -166,15 +189,26 @@ class Response
     }
 
     /**
-     * @param View $view
+     * @return string
      */
-    public function setView($view)
+    public function getContentType()
     {
-        $this->view = $view;
+        return $this->contentType;
     }
 
-    public function setContent($content)
+    /**
+     * @return string
+     */
+    public function getStatusCode()
     {
-        $this->view->setContent($content);
+        return $this->statusCode;
+    }
+
+    /**
+     * @return null
+     */
+    public function getContent()
+    {
+        return $this->content;
     }
 }

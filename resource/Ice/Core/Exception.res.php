@@ -1,171 +1,241 @@
 <?php
 return [
+    '#1021: {$0} - {$1} [{$2}]' => [
+        'ru' => '#1021: {$0} - {$1} [{$2}]',
+    ],
+    '#1034: {$0} - {$1} [{$2}]' => [
+        'ru' => '#1034: {$0} - {$1} [{$2}]',
+    ],
+    '#1048: {$0} - {$1} [{$2}]' => [
+        'ru' => '#1048: {$0} - {$1} [{$2}]',
+    ],
+    '#1052: {$0}' => [
+        'ru' => '#1052: {$0}',
+    ],
+    '#1053: {$0} - {$1} [{$2}]' => [
+        'ru' => '#1053: {$0} - {$1} [{$2}]',
+    ],
+    '#1054: {$0}' => [
+        'ru' => '#1054: {$0}',
+    ],
+    '#1056: {$0}' => [
+        'ru' => '#1056: {$0}',
+    ],
+    '#1060: {$0}' => [
+        'ru' => '#1060: {$0}',
+    ],
+    '#1062: {$0} - {$1} [{$2}]' => [
+        'ru' => '#1062: {$0} - {$1} [{$2}]',
+    ],
+    '#1064: {$0}' => [
+        'ru' => '#1064: {$0}',
+    ],
+    '#1066: {$0}' => [
+        'ru' => '#1066: {$0}',
+    ],
+    '#1118: {$0} - {$1} [{$2}]' => [
+        'ru' => '#1118: {$0} - {$1} [{$2}]',
+    ],
+    '#1146: {$0}' => [
+        'ru' => '#1146: {$0}',
+    ],
+    '#1153: {$0} - {$1} [{$2}]' => [
+        'ru' => '#1153: {$0} - {$1} [{$2}]',
+    ],
+    '#1205: {$0} - {$1} [{$2}]' => [
+        'ru' => '#1205: {$0} - {$1} [{$2}]',
+    ],
+    '#1241: {$0}' => [
+        'ru' => '#1241: {$0}',
+    ],
+    '#1305: {$0}' => [
+        'ru' => '#1305: {$0}',
+    ],
+    '#1305: {$0} - {$1}' => [
+        'ru' => '#1305: {$0} - {$1}',
+    ],
+    '#1364: {$0} - {$1} [{$2}]' => [
+        'ru' => '#1364: {$0} - {$1} [{$2}]',
+    ],
+    '#1390: {$0}' => [
+        'ru' => '#1390: {$0}',
+    ],
+    '#1429: {$0} - {$1} [{$2}]' => [
+        'ru' => '#1429: {$0} - {$1} [{$2}]',
+    ],
+    '#1430: {$0} - {$1} [{$2}]' => [
+        'ru' => '#1430: {$0} - {$1} [{$2}]',
+    ],
+    '#1451: {$0} - {$1} [{$2}]' => [
+        'ru' => '#1451: {$0} - {$1} [{$2}]',
+    ],
+    '#1452: {$0} - {$1} [{$2}]' => [
+        'ru' => '#1452: {$0} - {$1} [{$2}]',
+    ],
+    '#1582: {$0}' => [
+        'ru' => '#1582: {$0}',
+    ],
+    '#1583: {$0}' => [
+        'ru' => '#1583: {$0}',
+    ],
+    '#2006: {$0}' => [
+        'ru' => '#2006: {$0}',
+    ],
+    '#2006: {$0} - {$1}' => [
+        'ru' => '#2006: {$0} - {$1}',
+    ],
+    '#2031: {$0} - {$1} [{$2}]' => [
+        'ru' => '#2031: {$0} - {$1} [{$2}]',
+    ],
+    'Action class is empty' => [
+        'en' => 'Action class is empty',
+    ],
+    'Action class not found' => [
+        'ru' => 'Action class not found',
+    ],
+    'Action class not load (Expected: --configuration)' => [
+        'en' => 'Action class not load (Expected: --configuration)',
+    ],
+    'Application (App): run action failure' => [
+        'en' => 'Application (App): run action failure',
+        'ru' => 'Application (App): run action failure',
+    ],
+    'Autoloaders is empty' => [
+        'en' => 'Autoloaders is empty',
+    ],
+    'Autologin failed. User {$0} with key {$1} not found' => [
+        'en' => 'Autologin failed. User {$0} with key {$1} not found',
+    ],
+    'Connect failed' => [
+        'en' => 'Connect failed',
+    ],
+    'Data provider "{$0}" connection failed' => [
+        'en' => 'Data provider "{$0}" connection failed',
+    ],
+    'Class \'Ifacesoft\\Ice\\Core\\App\' not found [peak: 16 MB]' => [
+        'en' => 'Class \'Ifacesoft\\Ice\\Core\\App\' not found [peak: 16 MB]',
+    ],
+    'Class \'Ifacesoft\\Ice\\Core\\Service\' not found [peak: 8 MB]' => [
+        'en' => 'Class \'Ifacesoft\\Ice\\Core\\Service\' not found [peak: 8 MB]',
+    ],
+    'Class \'Ifacesoft\\Ice\\Core\\Singleton\' not found [peak: 12 MB]' => [
+        'en' => 'Class \'Ifacesoft\\Ice\\Core\\Singleton\' not found [peak: 12 MB]',
+    ],
+    'Class \'Test\\Ifacesoft\\Ice\\Core\\ServiceTest\' not found [peak: 12 MB]' => [
+        'en' => 'Class \'Test\\Ifacesoft\\Ice\\Core\\ServiceTest\' not found [peak: 12 MB]',
+    ],
+    'Class \'Tests\\Behat\\Gherkin\\Keywords\\KeywordsTest\' not found [peak: 10 MB]' => [
+        'en' => 'Class \'Tests\\Behat\\Gherkin\\Keywords\\KeywordsTest\' not found [peak: 10 MB]',
+    ],
+    'Class Ifacesoft\\Ice\\Cli\\Response contains 1 abstract method and must therefore be declared abstract or implement the remaining methods (Ifacesoft\\Ice\\Core\\ServiceInterface::getValidId) [peak: 12 MB]' => [
+        'en' => 'Class Ifacesoft\\Ice\\Cli\\Response contains 1 abstract method and must therefore be declared abstract or implement the remaining methods (Ifacesoft\\Ice\\Core\\ServiceInterface::getValidId) [peak: 12 MB]',
+    ],
+    'Class Ifacesoft\\Ice\\Cli\\Response contains 2 abstract methods and must therefore be declared abstract or implement the remaining methods (Ifacesoft\\Ice\\Core\\Service::doWell, Ifacesoft\\Ice\\Core\\ServiceInterface::getValidId) [peak: 12 MB]' => [
+        'en' => 'Class Ifacesoft\\Ice\\Cli\\Response contains 2 abstract methods and must therefore be declared abstract or implement the remaining methods (Ifacesoft\\Ice\\Core\\Service::doWell, Ifacesoft\\Ice\\Core\\ServiceInterface::getValidId) [peak: 12 MB]',
+    ],
+    'Class Ifacesoft\\Ice\\Core\\Component\\Html5_Metadata_Head contains 1 abstract method and must therefore be declared abstract or implement the remaining methods (Ifacesoft\\Ice\\Core\\Component::render) [peak: 8 MB]' => [
+        'en' => 'Class Ifacesoft\\Ice\\Core\\Component\\Html5_Metadata_Head contains 1 abstract method and must therefore be declared abstract or implement the remaining methods (Ifacesoft\\Ice\\Core\\Component::render) [peak: 8 MB]',
+    ],
+    'Class Ifacesoft\\Ice\\Core\\Component\\Html5_Metadata_Meta contains 1 abstract method and must therefore be declared abstract or implement the remaining methods (Ifacesoft\\Ice\\Core\\Component\\Html5::getHtmlTag) [peak: 8 MB]' => [
+        'en' => 'Class Ifacesoft\\Ice\\Core\\Component\\Html5_Metadata_Meta contains 1 abstract method and must therefore be declared abstract or implement the remaining methods (Ifacesoft\\Ice\\Core\\Component\\Html5::getHtmlTag) [peak: 8 MB]',
+    ],
+    'Class Ifacesoft\\Ice\\Core\\Component\\Html_RootElement_Html contains 2 abstract methods and must therefore be declared abstract or implement the remaining methods (Ifacesoft\\Ice\\Core\\Service::doWell, Ifacesoft\\Ice\\Core\\ServiceInterface::getValidId) [peak: 14 MB]' => [
+        'en' => 'Class Ifacesoft\\Ice\\Core\\Component\\Html_RootElement_Html contains 2 abstract methods and must therefore be declared abstract or implement the remaining methods (Ifacesoft\\Ice\\Core\\Service::doWell, Ifacesoft\\Ice\\Core\\ServiceInterface::getValidId) [peak: 14 MB]',
+    ],
+    'Class {$0} not found' => [
+        'en' => 'Class {$0} not found',
+    ],
+    'Connect failed' => [
+        'en' => 'Connect failed',
+        'ru' => 'Connect failed',
+    ],
+    'Could not found required param {$0}' => [
+        'ru' => 'Could not found required param {$0}',
+    ],
+    'Data provider "{$0}" connection failed' => [
+        'en' => 'Data provider "{$0}" connection failed',
+        'ru' => 'Data provider "{$0}" connection failed',
+    ],
+    'Declaration of Ifacesoft\\Ice\\Core\\Request::getServiceId(array $params, Ifacesoft\\Ice\\Core\\Config $config) must be compatible with Ifacesoft\\Ice\\Core\\ServiceInterface::getServiceId(array $data) [peak: 12 MB]' => [
+        'en' => 'Declaration of Ifacesoft\\Ice\\Core\\Request::getServiceId(array $params, Ifacesoft\\Ice\\Core\\Config $config) must be compatible with Ifacesoft\\Ice\\Core\\ServiceInterface::getServiceId(array $data) [peak: 12 MB]',
+    ],
     'File {$0} exists, but class {$1} not found' => [
         'ru' => 'File {$0} exists, but class {$1} not found',
     ],
-    'Sql query is empty' => [
-        'ru' => 'Sql query is empty',
+    'Files for {$0} not found' => [
+        'en' => 'Files for {$0} not found',
     ],
-    'Invalid command line. Usage: ./cli Action_Call param=value' => [
-        'en' => 'Invalid command line. Usage: ./cli Action_Call param=value',
+    'For part {$0} with event {$1} of widget {$2} must be defined action param' => [
+        'ru' => 'For part {$0} with event {$1} of widget {$2} must be defined action param',
     ],
-    'Не удалось забиндить параметры' => [
-        'en' => 'Не удалось забиндить параметры',
-    ],
-    'Unknown data source query statment type ""' => [
-        'en' => 'Unknown data source query statment type ""',
-    ],
-    'Primary key is empty' => [
-        'en' => 'Primary key is empty',
+    'Forbidden' => [
+        'en' => 'Forbidden',
+        'ru' => 'В доступе отказано',
     ],
     'Implement flushAll() method.' => [
         'ru' => 'Implement flushAll() method.',
     ],
-    'Could not set value:
-. Field "" not found in Model "Upload_Task"' => [
-        'ru' => 'Could not set value:
-. Field "" not found in Model "Upload_Task"',
-    ],
     'Implement set() method.' => [
         'en' => 'Implement set() method.',
     ],
-    'Could not set value:
-. Field "" not found in Model "Test"' => [
-        'en' => 'Could not set value:
-. Field "" not found in Model "Test"',
+    'Invalid argument supplied for foreach()' => [
+        'en' => 'Invalid argument supplied for foreach()',
     ],
-    'Query is empty' => [
-        'en' => 'Query is empty',
+    'Invalid callback Ifacesoft\\Ice\\Core\\Profiler::__wakeup, cannot access private method Ifacesoft\\Ice\\Core\\Profiler::__wakeup() [peak: 10 MB]' => [
+        'en' => 'Invalid callback Ifacesoft\\Ice\\Core\\Profiler::__wakeup, cannot access private method Ifacesoft\\Ice\\Core\\Profiler::__wakeup() [peak: 10 MB]',
+    ],
+    'Invalid command line. Usage: ./cli Action_Call param=value' => [
+        'en' => 'Invalid command line. Usage: ./cli Action_Call param=value',
+    ],
+    'Method not granted in {$0}' => [
+        'en' => 'Method not granted in {$0}',
     ],
     'Not implemented' => [
         'en' => 'Not implemented',
     ],
-    'Data_Scheme_Error - Array' => [
-        'en' => 'Data_Scheme_Error - Array',
-        'be' => 'Data_Scheme_Error - Масіў',
-        'ca' => 'Data_Scheme_Error - Matriu De',
-        'cs' => 'Data_Scheme_Error - Pole',
-        'da' => 'Data_Scheme_Error - Array',
-        'de' => 'Data_Scheme_Error - Array',
-        'el' => 'Data_Scheme_Error - Πίνακα',
-        'es' => 'Data_Scheme_Error - Matriz',
-        'et' => 'Data_Scheme_Error - Massiivi',
-        'fi' => 'Data_Scheme_Error - Array',
-        'fr' => 'Data_Scheme_Error - Tableau',
-        'hu' => 'Data_Scheme_Error - Tömb',
-        'it' => 'Data_Scheme_Error - Array',
-        'lt' => 'Data_Scheme_Error - Matrica',
-        'lv' => 'Data_Scheme_Error - Masīvs',
-        'mk' => 'Data_Scheme_Error - Низа',
-        'nl' => 'Data_Scheme_Error - Array',
-        'no' => 'Data_Scheme_Error - Array',
-        'pt' => 'Data_Scheme_Error - Matriz',
-        'ru' => 'Data_Scheme_Error - Массив',
-        'sk' => 'Data_Scheme_Error - Pole',
-        'sl' => 'Data_Scheme_Error - Matrične',
-        'sq' => 'Data_Scheme_Error - Grup',
-        'sv' => 'Data_Scheme_Error - Array',
-        'tr' => 'Data_Scheme_Error - Dizi',
-        'uk' => 'Data_Scheme_Error - Масив',
+    'Not_Configured - Check config of widget {$0} for {$1}' => [
+        'ru' => 'Not_Configured - Check config of widget {$0} for {$1}',
     ],
-    'FileNotFound - Array' => [
-        'en' => 'FileNotFound - Array',
-        'be' => 'Filename - Масіў',
-        'ca' => 'FileNotFound - Matriu De',
-        'cs' => 'FileNotFound - Pole',
-        'da' => 'FileNotFound - Array',
-        'de' => 'FileNotFound - Array',
-        'el' => 'FileNotFound - Πίνακα',
-        'es' => 'FileNotFound - Matriz',
-        'et' => 'FileNotFound - Massiivi',
-        'fi' => 'FileNotFound - Array',
-        'fr' => 'FileNotFound - Tableau',
-        'hu' => 'FileNotFound - Tömb',
-        'it' => 'FileNotFound - Array',
-        'lt' => 'FileNotFound - Matrica',
-        'lv' => 'FileNotFound - Masīvs',
-        'mk' => 'FileNotFound - Низа',
-        'nl' => 'FileNotFound - Array',
-        'no' => 'FileNotFound - Array',
-        'pt' => 'FileNotFound - Matriz',
-        'ru' => 'Filename - Массив',
-        'sk' => 'FileNotFound - Pole',
-        'sl' => 'FileNotFound - Matrične',
-        'sq' => 'FileNotFound - Grup',
-        'sv' => 'FileNotFound - Array',
-        'tr' => 'FileNotFound - Dizi',
-        'uk' => 'Filename - Масив',
+    'Object of class Ifacesoft\\Ice\\Core\\Component\\Html5_Sections_H1 could not be converted to string' => [
+        'en' => 'Object of class Ifacesoft\\Ice\\Core\\Component\\Html5_Sections_H1 could not be converted to string',
     ],
-    'Error - Array' => [
-        'en' => 'Error - Array',
-        'be' => 'Памылка - Масіў',
-        'ca' => 'Error - Matriu De',
-        'cs' => 'Chyba - Pole',
-        'da' => 'Fejl - Array',
-        'de' => 'Fehler - Array',
-        'el' => 'Σφάλμα - Πίνακα',
-        'es' => 'Error - Matriz',
-        'et' => 'Viga - Massiivi',
-        'fi' => 'Virhe - Array',
-        'fr' => 'Erreur - Tableau',
-        'hu' => 'Hiba - Tömb',
-        'it' => 'Errore Di Matrice',
-        'lt' => 'Klaida - Matrica',
-        'lv' => 'Kļūda - Masīvs',
-        'mk' => 'Грешка - Низа',
-        'nl' => 'Fout - Array',
-        'no' => 'Feil - Array',
-        'pt' => 'Erro - Matriz',
-        'ru' => 'Ошибка - Массив',
-        'sk' => 'Chyba - Pole',
-        'sl' => 'Napaka - Matrične',
-        'sq' => 'Gabim - Grup',
-        'sv' => 'Fel - Array',
-        'tr' => 'Hata - Dizi',
-        'uk' => 'Помилка - Масив',
+    'Param {$0} from data provider {$1} is require' => [
+        'ru' => 'Param {$0} from data provider {$1} is require',
     ],
-    'route for url \'{$0}\' not found' => [
-        'en' => 'route for url \'{$0}\' not found',
-        'be' => 'маршрут для url-адрас \'{$0}\' не знойдзены',
-        'ca' => 'ruta de la url \'{$0}\' no trobat',
-        'cs' => 'trasy pro url, \'{$0}\' nebyl nalezen',
-        'da' => 'ruten for url \'{$0}\' blev ikke fundet',
-        'de' => 'route für url \'{$0}\' wurde nicht gefunden',
-        'el' => 'διαδρομή για το url \'{$0}\' δεν βρέθηκε',
-        'es' => 'la ruta de la dirección url \'{$0}\' no se encuentra',
-        'et' => 'marsruut url \'{$0}\' ei leitud',
-        'fi' => 'reitti url " {$0}\' ei löydy',
-        'fr' => 'route de l\'url de \'{$0}\' ne trouve pas',
-        'hu' => 'útvonal url \'{$0}\' nem található',
-        'it' => 'percorso di url \'{$0}\' non trovato',
-        'lt' => 'maršrutas " url " {$0}\' nerasta',
-        'lv' => 'maršruts url \'{$0}\' nav atrasts',
-        'mk' => 'пат за url \'{$0}\' не е пронајден',
-        'nl' => 'route voor url \'{$0}\' niet gevonden',
-        'no' => 'ruten for url \'{$0}\' ble ikke funnet',
-        'pt' => 'encaminhar para a url \'{$0}\' não encontrado',
-        'ru' => 'маршрут для url \'{$0}\' не найден',
-        'sk' => 'trasy pre adresu url, \'{$0}\' nebol nájdený',
-        'sl' => 'pot za url \'{$0}\' ni mogoče najti',
-        'sq' => 'rruga për url \'{$0}\' nuk u gjet',
-        'sv' => 'rutten för url \'{$0}\' hittades inte',
-        'tr' => 'url route{$0} \'\' bulunamadı ',
-        'uk' => 'маршрут для url \'{$0}\' не знайдений',
+    'Param {$0} not found in config {$1}' => [
+        'ru' => 'Param {$0} not found in config {$1}',
     ],
-    '' => [
-        'ru' => null,
+    'Primary key is empty' => [
+        'en' => 'Primary key is empty',
     ],
-    'Validator:Is_Widget_Menu -> param \'{$0}\' with value \'{$1}\' is not valid' => [
-        'en' => 'Validator:Is_Widget_Menu -> param \'{$0}\' with value \'{$1}\' is not valid',
-        'ru' => 'Validator:Is_Widget_Menu -> param \'{$0}\' with value \'{$1}\' is not valid',
+    'Query body is empty' => [
+        'en' => 'Query body is empty',
     ],
-    'Validator:Not_Empty -> param \'{$0}\' with value \'{$1}\' is not valid' => [
-        'en' => 'Validator:Not_Empty -> param \'{$0}\' with value \'{$1}\' is not valid',
-        'ru' => 'Validator:Not_Empty -> param \'{$0}\' with value \'{$1}\' is not valid',
+    'Query is empty' => [
+        'en' => 'Query is empty',
     ],
-    'Validator:Is_Query_Result -> param \'{$0}\' with value \'{$1}\' is not valid' => [
-        'en' => 'Validator:Is_Query_Result -> param \'{$0}\' with value \'{$1}\' is not valid',
-        'ru' => 'Validator:Is_Query_Result -> param \'{$0}\' with value \'{$1}\' is not valid',
+    'Redis::connect(): connect() failed: Connection refused' => [
+        'en' => 'Redis::connect(): connect() failed: Connection refused',
+    ],
+    'Request data provider is not unchangeable' => [
+        'en' => 'Request data provider is not unchangeable',
+    ],
+    'Session regenerate failed' => [
+        'en' => 'Session regenerate failed',
+    ],
+    'Sql query is empty' => [
+        'ru' => 'Sql query is empty',
+    ],
+    'Unknown data source query statment type ""' => [
+        'en' => 'Unknown data source query statment type ""',
+    ],
+    'Validator:Email -> param \'{$0}\' with value \'{$1}\' is not valid' => [
+        'en' => 'Validator:Email -> param \'{$0}\' with value \'{$1}\' is not valid',
+        'ru' => 'Валидатор:Электронная почта -> параметр \'{$0}\' со значением \'{$1}\' не является допустимым',
+    ],
+    'Validator:Is_QueryResult -> param \'{$0}\' with value \'{$1}\' is not valid' => [
+        'en' => 'Validator:Is_QueryResult -> param \'{$0}\' with value \'{$1}\' is not valid',
+        'ru' => 'Validator:Is_QueryResult -> param \'{$0}\' with value \'{$1}\' is not valid',
     ],
     'Validator:Is_Widget_Data -> param \'{$0}\' with value \'{$1}\' is not valid' => [
         'en' => 'Validator:Is_Widget_Data -> param \'{$0}\' with value \'{$1}\' is not valid',
@@ -175,7 +245,65 @@ return [
         'en' => 'Validator:Is_Widget_Form -> param \'{$0}\' with value \'{$1}\' is not valid',
         'ru' => 'Validator:Is_Widget_Form -> param \'{$0}\' with value \'{$1}\' is not valid',
     ],
+    'Validator:Is_Widget_Menu -> param \'{$0}\' with value \'{$1}\' is not valid' => [
+        'en' => 'Validator:Is_Widget_Menu -> param \'{$0}\' with value \'{$1}\' is not valid',
+        'ru' => 'Validator:Is_Widget_Menu -> param \'{$0}\' with value \'{$1}\' is not valid',
+    ],
+    'Validator:Length_Min -> param \'{$0}\' with value \'{$1}\' is not valid' => [
+        'en' => 'Validator:Length_Min -> param \'{$0}\' with value \'{$1}\' is not valid',
+        'ru' => 'Валидатор:Length_Min -> параметр \'{$0}\' со значением \'{$1}\' не является допустимым',
+    ],
+    'Validator:LettersNumbers -> param \'{$0}\' with value \'{$1}\' is not valid' => [
+        'en' => 'Validator:LettersNumbers -> param \'{$0}\' with value \'{$1}\' is not valid',
+        'ru' => 'Валидатор:LettersNumbers -> параметр \'{$0}\' со значением \'{$1}\' не является допустимым',
+    ],
+    'Validator:Not_Empty -> param \'{$0}\' with value \'{$1}\' is not valid' => [
+        'en' => 'Validator:Not_Empty -> param \'{$0}\' with value \'{$1}\' is not valid',
+        'ru' => 'Validator:Not_Empty -> param \'{$0}\' with value \'{$1}\' is not valid',
+    ],
+    'action class not found' => [
+        'ru' => 'action class not found',
+    ],
+    'deprecated value option' => [
+        'en' => 'deprecated value option',
+        'ru' => 'устаревший параметр значение',
+    ],
+    'empty message' => [
+        'en' => 'empty message',
+        'ru' => 'пустые сообщения',
+    ],
+    'fix' => [
+        'ru' => 'fix',
+    ],
+    'mysql - #1049: {$0}' => [
+        'en' => 'mysql - #1049: {$0}',
+    ],
+    'mysql - #2002: {$0}' => [
+        'en' => 'mysql - #2002: {$0}',
+    ],
+    'mysqli::select_db(): invalid object or resource mysqli
+' => [
+        'en' => 'mysqli::select_db(): invalid object or resource mysqli
+',
+    ],
+    'mysql - #2002: {$0}' => [
+        'en' => 'mysql - #2002: {$0}',
+    ],
+    'mysqli::select_db(): invalid object or resource mysqli
+' => [
+        'en' => 'mysqli::select_db(): invalid object or resource mysqli
+',
+    ],
+    'require_once(): Failed opening required \'/home/dp/_projects/ice/vendor/ifacesoft/ice-core/source/bootstrap.php\' (include_path=\'.:/usr/share/php7:/usr/share/php7/PEAR\') [peak: 6 MB]' => [
+        'en' => 'require_once(): Failed opening required \'/home/dp/_projects/ice/vendor/ifacesoft/ice-core/source/bootstrap.php\' (include_path=\'.:/usr/share/php7:/usr/share/php7/PEAR\') [peak: 6 MB]',
+    ],
+    'var_export does not handle circular references [peak: 10 MB]' => [
+        'en' => 'var_export does not handle circular references [peak: 10 MB]',
+    ],
     'Доступ запрещен!' => [
         'ru' => 'Доступ запрещен!',
+    ],
+    'Не удалось забиндить параметры' => [
+        'en' => 'Не удалось забиндить параметры',
     ],
 ];

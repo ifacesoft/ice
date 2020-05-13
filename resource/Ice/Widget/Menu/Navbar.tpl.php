@@ -1,12 +1,13 @@
 <nav class="navbar<?php if (!empty($classes)) { ?> <?= $classes ?><?php } ?>">
     <div class="container-fluid">
         <div class="collapse navbar-collapse">
-            <?php if ($brand) : ?>
+            <?php if (isset($brand)) : ?>
                 <div class="navbar-header">
-                    <a href="/" class="navbar-brand"><?= $brand?></a>
+                    <a href="/" class="navbar-brand"><?= $brand ?></a>
                 </div>
             <?php endif; ?>
-            <?php foreach ($items as $position => $block): ?>
+            <?php $parts = reset($result) ?>
+            <?php foreach ($parts as $position => $block): ?>
                 <ul class="nav navbar-nav <?php if ($position) : ?> navbar-<?= $position ?><?php endif; ?>">
                     <?php foreach ($block as $item): ?>
                         <?= $item ?>

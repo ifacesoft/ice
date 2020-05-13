@@ -7,33 +7,47 @@
  * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
-namespace Ice\Data\Provider;
+namespace Ice\DataProvider;
 
 use Ice\Core\Config;
-use Ice\Core\Data_Provider;
+use Ice\Core\DataProvider;
 use Ice\Core\Debuger;
 use Ice\Core\Environment;
 use Ice\Core\Exception;
+use Ice\Core\Logger;
 use Ice\Core\Request as Core_Request;
 use Ice\Core\Route;
+use Ice\Exception\Error;
 use Ice\Exception\Http_Not_Found;
-use Ice\Exception\Redirect;
+use Ice\Exception\Http_Redirect;
+use Ice\Exception\RouteNotFound;
 
 /**
  * Class Router
  *
  * Data provider for router data
  *
- * @see Ice\Core\Data_Provider
+ * @see \Ice\Core\DataProvider
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
  * @package    Ice
- * @subpackage Data_Provider
+ * @subpackage DataProvider
  */
-class Router extends Data_Provider
+class Router extends DataProvider
 {
-    const DEFAULT_DATA_PROVIDER_KEY = 'Ice:Router/default';
+    private static $cacheData = [];
+
+    /**
+     * @param string $key
+     * @param string $index
+     * @return Router|DataProvider
+     * @throws Exception
+     */
+    public static function getInstance($key = null, $index = 'default')
+    {
+        return parent::getInstance($key, $index);
+    }
 
     /**
      * Return default data provider key
@@ -47,38 +61,50 @@ class Router extends Data_Provider
      */
     protected static function getDefaultKey()
     {
-        return Core_Request::getMethod() . Core_Request::uri(true);
-    }
-
-    /**
-     * Return default data provider key
-     *
-     * @return string
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since   0.0
-     */
-    protected static function getDefaultDataProviderKey()
-    {
-        return Router::DEFAULT_DATA_PROVIDER_KEY;
+        return Core_Request::method() . Core_Request::uri(true);
     }
 
     /**
      * Get data from data provider by key
      *
      * @param  string $key
+     * @param null $default
+     * @param bool $require
      * @return mixed
-     *
+     * @throws Error
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 1.3
      * @since   0.0
+     * @throws Exception
      */
-    public function get($key = null)
+    public function get($key = null, $default = null, $require = false)
     {
-        return $key ? $this->getConnection()[$key] : $this->getConnection();
+        $connection = null;
+
+        try {
+            $connection = $this->getConnection();
+
+            if (empty($key)) {
+                return $connection;
+            }
+
+            $value = array_key_exists($key, $connection) ? $connection[$key] : $default;
+        } catch (Http_Redirect $e) {
+            throw $e;
+        } catch (\Exception $e) {
+//            $value = null;
+//            Logger::getInstance(__CLASS__)->warning(['Param {$0} not found', $key], __FILE__, __LINE__, $e, $connection);
+            throw $e;
+        }
+
+        if ($require && ($value === null || $value === '')) {
+            $dataProviderClass = get_class($this);
+
+            throw new Error(['Param {$0} from data provider {$1} is require', [$key, $dataProviderClass]]);
+        }
+
+        return $value;
     }
 
     /**
@@ -100,20 +126,22 @@ class Router extends Data_Provider
     /**
      * Set data to data provider
      *
-     * @param  string $key
-     * @param  $value
+     * @param array $values
      * @param  null $ttl
-     * @throws \Exception
-     * @return mixed setted value
+     * @return array
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 1.2
      * @since   0.0
      */
-    public function set($key, $value = null, $ttl = null)
+    public function set(array $values = null, $ttl = null)
     {
-        throw new \Exception('Not implemented!');
+        if ($ttl === -1) {
+            return $values;
+        }
+
+        // TODO: Implement getKeys() method.
     }
 
     /**
@@ -208,10 +236,12 @@ class Router extends Data_Provider
      *
      * @version 0.6
      * @since   0.0
+     * @throws RouteNotFound
      */
     protected function connect(&$connection)
     {
         $dataProvider = Route::getDataProvider('route');
+
         $key = $this->getKey();
 
         if ($route = $dataProvider->get($key)) {
@@ -227,47 +257,39 @@ class Router extends Data_Provider
 
         $url = strstr($key, '/');
 
+        // todo: $key must be METHOD/url format
+        if ($url === false) {
+            $url = '/';
+        }
+
         $route = $this->getRoute($url, $method);
 
         $baseMatches = [];
         preg_match_all($route['pattern'], $url, $baseMatches, PREG_SET_ORDER);
 
         if (count($baseMatches[0]) - 1 < count($route['params'])) {
-            $baseMatches[0][] = '';
+            $baseMatches[0][] = null;
         }
 
-        $route = array_merge($route, array_combine(array_keys($route['params']), array_slice($baseMatches[0], 1)));
+        $route['routeParams'] += array_combine(array_keys($route['params']), array_slice($baseMatches[0], 1));
 
-        return (bool)$connection = $dataProvider->set($key, $route);
+        $route += $route['routeParams'];
+
+        return (bool)$connection = $dataProvider->set([$key => $route])[$key];
     }
 
-    private function getRoute($url, $method)
+    public function getRoute($url, $method)
     {
         list($matchedRoutes, $foundRoutes) = $this->getRoutes($url, $method);
 
         if (empty($foundRoutes)) {
-            if (!empty($matchedRoutes)) {
-                $this->getLogger()->warning(
-                    [
-                        'Route not found for {$0} request of {$1}, but matched for other method',
-                        [$method, $url]
-                    ],
-                    __FILE__,
-                    __LINE__,
-                    null,
-                    ['matched' => $matchedRoutes, 'found' => $foundRoutes]
-                );
+            if (empty($matchedRoutes)) {
+                throw new RouteNotFound(['Route for {$0} {$1} not found', [$method, $url]]);
             }
 
-            Router::getLogger()->exception(
-                ['route for url \'{$0}\' not found', $url],
-                __FILE__,
-                __LINE__,
-                null,
-                null,
-                -1,
-                Http_Not_Found::getClass()
-            );
+            krsort($matchedRoutes, SORT_NUMERIC);
+
+            return reset($matchedRoutes);
         }
 
         krsort($foundRoutes, SORT_NUMERIC);
@@ -279,53 +301,75 @@ class Router extends Data_Provider
      * @param $url
      * @param $method
      * @return array
-     * @throws Redirect
+     * @throws Error
+     * @throws Exception
+     * @throws Http_Redirect
+     * @throws \Ice\Exception\Config_Error
+     * @throws \Ice\Exception\RouteNotFound
      */
     private function getRoutes($url, $method)
     {
+        if (empty($url) || empty($method)) {
+            throw new Error('Method and Uri is required');
+        }
+
+        $cacheTag = $method . ':' . $url;
+
+        if (isset(Router::$cacheData[$cacheTag])) {
+            return Router::$cacheData[$cacheTag];
+        }
+
         $matchedRoutes = [];
         $foundRoutes = [];
+
+        $isDebug = Environment::getInstance()->isDevelopment() && Core_Request::getParam('routing');
+
+        if ($isDebug) {
+            Debuger::dump($cacheTag);
+        }
 
         /**
          * @var string $routeName
          * @var Route $route
          */
         foreach (Route::getRoutes() as $routeName => $route) {
-            if (Environment::getInstance()->isDevelopment() && Core_Request::getParam('routing')) {
-                Debuger::dump(
-                    $routeName . ': ' . $url . ' || ' .
-                    $route->get('pattern') . ' || ' .
-                    (int)preg_match($route->get('pattern'), $url)
-                );
-            }
-
-            if (!preg_match($route->get('pattern'), $url)) {
-                continue;
+            if ($isDebug) {
+                Debuger::dump($routeName . ': ' . $route->get('pattern') . ' || ' . (int)preg_match($route->get('pattern'), $url));
             }
 
             $redirect = $route->get('redirect', false);
 
-            $matchedRoutes[] = [
-                'routeName' => $routeName,
-                'redirect' => $redirect
-            ];
-
-            if (!count($route->gets('request/' . $method, false))) {
+            // Так не делаю, потому, что приходится запрашивать урл по роуту (например GET... а у нас находится только по POST... такая фигня)
+            // if (!preg_match($route->get('pattern'), $url) || (!$route->get('request/' . $method, null) && !$redirect)) {
+            if (!preg_match($route->get('pattern'), $url)) {
                 continue;
             }
 
             $weight = $route->get('weight');
 
-            if (!isset($foundRoutes[$weight])) {
-                $foundRoutes[$weight] = [
+            if (!isset($matchedRoutes[$weight])) {
+                $matchedRoutes[$weight] = [
                     'routeName' => $routeName,
                     'pattern' => $route->get('pattern'),
                     'params' => $route->gets('params'),
                     'url' => $url,
                     'method' => $method,
-                    'redirect' => $redirect
+                    'redirect' => $redirect,
+                    'routeParams' => (array)$route->gets('request/' . $method, [])
                 ];
             }
+
+            if (empty($matchedRoutes[$weight]['routeParams'])) {
+                continue;
+            }
+
+            if (!isset($foundRoutes[$weight])) {
+                $foundRoutes[$weight] = $matchedRoutes[$weight];
+            }
+        }
+
+        if ($isDebug) {
+            die();
         }
 
         if (!empty($matchedRoutes)) {
@@ -338,11 +382,11 @@ class Router extends Data_Provider
                     ? $route['routeName'] . $route['redirect']
                     : $route['redirect'];
 
-                throw new Redirect(Route::getInstance($routeName)->getUrl());
+                throw new Http_Redirect(Route::getInstance($routeName)->getUrl());
             }
         }
 
-        return array($matchedRoutes, $foundRoutes);
+        return Router::$cacheData[$cacheTag] = array($matchedRoutes, $foundRoutes);
     }
 
     /**
@@ -360,5 +404,38 @@ class Router extends Data_Provider
     {
         $connection = null;
         return true;
+    }
+
+    /**
+     * Set expire time (seconds)
+     *
+     * @param  $key
+     * @param  int $ttl
+     * @return mixed new value
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since   0
+     */
+    public function expire($key, $ttl)
+    {
+        // TODO: Implement expire() method.
+    }
+
+    /**
+     * Check for errors
+     *
+     * @return void
+     *
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since   0.0
+     */
+    function checkErrors()
+    {
+        // TODO: Implement checkErrors() method.
     }
 }

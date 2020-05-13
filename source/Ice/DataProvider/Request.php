@@ -7,27 +7,56 @@
  * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
-namespace Ice\Data\Provider;
+namespace Ice\DataProvider;
 
-use Ice\Core\Data_Provider;
+use ArrayObject;
+use Ice\Core\DataProvider;
 use Ice\Core\Exception;
+use Ice\Core\Request as Core_Request;
+use Ice\Exception\Error;
 
 /**
  * Class Request
  *
  * Data provider for request data
  *
- * @see Ice\Core\Data_Provider
+ * @see \Ice\Core\DataProvider
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
  * @package    Ice
- * @subpackage Data_Provider
+ * @subpackage DataProvider
  */
-class Request extends Data_Provider
+class Request extends Registry
 {
-    const DEFAULT_DATA_PROVIDER_KEY = 'Ice:Request/default';
-    const DEFAULT_KEY = 'instance';
+    const DEFAULT_KEY = 'default';
+
+    /**
+     * Set data to data provider
+     *
+     * @param array $values
+     * @param  null $ttl
+     * @return array
+     * @throws Error
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 1.3
+     * @since   0.0
+     */
+    public function set(array $values = null, $ttl = null)
+    {
+        throw new Error('Request data provider is not unchangeable');
+    }
+
+    public function getIndex()
+    {
+        return Core_Request::class;
+    }
+
+    public function getKey()
+    {
+        return Request::getDefaultKey();
+    }
 
     /**
      * Return default data provider key
@@ -45,48 +74,6 @@ class Request extends Data_Provider
     }
 
     /**
-     * Return default data provider key
-     *
-     * @return string
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since   0.4
-     */
-    protected static function getDefaultDataProviderKey()
-    {
-        return self::DEFAULT_DATA_PROVIDER_KEY;
-    }
-
-    /**
-     * Set data to data provider
-     *
-     * @param  string $key
-     * @param  $value
-     * @param  null $ttl
-     * @throws Exception
-     * @return mixed setted value
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since   0.0
-     */
-    public function set($key, $value = null, $ttl = null)
-    {
-        if (is_array($key) && $value === null) {
-            foreach ($key as $index => $value) {
-                $this->set($index, $value, $ttl);
-            }
-
-            return $key;
-        }
-
-        return $_REQUEST[$key] = $value;
-    }
-
-    /**
      * Delete from data provider by key
      *
      * @param  string $key
@@ -96,149 +83,65 @@ class Request extends Data_Provider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.4
+     * @todo 1.3 implement multiply (array keys) delete for other providers
+     *
+     * @version 1.3
      * @since   0.0
      */
     public function delete($key, $force = true)
     {
-        if ($force) {
-            unset($_REQUEST[$key]);
-            return true;
-        }
-
-        $value = $this->get($key);
-
-        unset($_REQUEST[$key]);
-
-        return $value;
-    }
-
-    /**
-     * Get data from data provider by key
-     *
-     * @param  string $key
-     * @return mixed
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since   0.0
-     */
-    public function get($key = null)
-    {
-        if (empty($key)) {
-            return $_REQUEST;
-        }
-
-        if (!is_array($key)) {
-            return isset($_REQUEST[$key]) ? $_REQUEST[$key] : null;
-        }
-
-        $params = [];
-
-        foreach ($key as $name) {
-            $params[$name] = empty($_REQUEST[$name]) ? null : $_REQUEST[$name];
-        }
-
-        return $params;
-    }
-
-    /**
-     * Increment value by key with defined step (default 1)
-     *
-     * @param  $key
-     * @param  int $step
-     * @throws Exception
-     * @return mixed new value
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since   0.0
-     */
-    public function incr($key, $step = 1)
-    {
-        return $_REQUEST[$key] += $step;
-    }
-
-    /**
-     * Decrement value by key with defined step (default 1)
-     *
-     * @param  $key
-     * @param  int $step
-     * @throws Exception
-     * @return mixed new value
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since   0.0
-     */
-    public function decr($key, $step = 1)
-    {
-        return $_REQUEST[$key] -= $step;
-    }
-
-    /**
-     * Flush all stored data
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since   0.0
-     */
-    public function flushAll()
-    {
-        $_REQUEST = [];
-    }
-
-    /**
-     * Return keys by pattern
-     *
-     * @param  string $pattern
-     * @return array
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @todo    0.4 implements filter by pattern
-     * @version 0.4
-     * @since   0.0
-     */
-    public function getKeys($pattern = null)
-    {
-        return array_keys($_REQUEST);
+        throw new Error('Request data provider is not unchangeable');
     }
 
     /**
      * Connect to data provider
      *
-     * @param  $connection
+     * @param  ArrayObject $connection
      * @return boolean
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.4
+     * @version 1.3
      * @since   0.0
      */
     protected function connect(&$connection)
     {
-        return isset($_REQUEST);
+        parent::connect($connection);
+
+        $connection->offsetSet(
+            $this->getKeyPrefix(),
+            array_merge(
+                Core_Request::getParam(),
+                [
+                    'agent' => Core_Request::agent(),
+                    'ip' => Core_Request::ip(),
+                    'host' => Core_Request::host(),
+                    'method' => Core_Request::method(),
+                    'locale' => Core_Request::locale(),
+                    'query_string' => Core_Request::queryString(),
+                    'referer' => Core_Request::referer(),
+                    'uri' => Core_Request::uri(),
+                    'protocol' => Core_Request::protocol()
+                ]
+            )
+        );
+
+        return true;
     }
 
     /**
-     * Close connection with data provider
+     * Check for errors
      *
-     * @param  $connection
-     * @return boolean
+     * @return void
+     *
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.4
+     * @version 0.0
      * @since   0.0
      */
-    protected function close(&$connection)
+    function checkErrors()
     {
-        unset($_REQUEST);
-        return true;
+        // TODO: Implement checkErrors() method.
     }
 }

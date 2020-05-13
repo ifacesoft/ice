@@ -22,7 +22,10 @@ namespace Ice\Core;
  * @version 0.0
  * @since   0.0
  */
-interface Model_Factory_Delegate
+abstract class Model_Factory_Delegate
 {
-
+    public static function getConfig()
+    {
+        return Config::getInstance(get_called_class());
+    }
 }

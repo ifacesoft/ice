@@ -14,7 +14,7 @@ namespace Ice\Core;
  *
  * Core factory abstract model class
  *
- * @see Ice\Core\Model
+ * @see \Ice\Core\Model
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
@@ -43,7 +43,7 @@ abstract class Model_Factory extends Model_Defined
         return Query::getBuilder(self::getClass())
             ->eq(['/delegate_name' => $delegateName])
             ->is('/active')
-            ->getSelectQuery('/delegate_name')
+            ->getSelectQuery(['/pk', '/delegate_name'])
             ->getModel($sourceName, $ttl);
     }
 }

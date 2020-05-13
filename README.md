@@ -53,10 +53,10 @@ an example file:
     },
     "scripts": {
         "post-install-cmd": [
-            "Ice\\App::update"
+            Http
         ],
         "post-update-cmd": [
-            "Ice\\App::update"
+            Http
         ]
     }
 }
@@ -82,7 +82,7 @@ The basics
 Routes
 ------
 
-sample /Config/Ice/Core/Route.php:
+sample /config/Ice/Core/Route.php:
 
 ```php
 <?php
@@ -129,7 +129,7 @@ class Page extends Action
             'actions' => [],
             'input' => [],
             'output' => [],
-            'ttl' => -1,
+            'cache' => ['ttl' => -1, 'count' => 1000],
             'access' => [
                 'roles' => [],
                 'request' => null,

@@ -7,22 +7,19 @@
  * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
-namespace Ice\Data\Source;
+namespace Ice\DataSource;
 
 /**
  * Class Factory
  *
  * Implements factory data source
  *
- * @see Ice\Core\Data_Source
+ * @see \Ice\Core\DataSource
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
  * @package    Ice
- * @subpackage Data_Source
- *
- * @version 0.0
- * @since   0.0
+ * @subpackage DataSource
  */
 class Factory extends Defined
 {

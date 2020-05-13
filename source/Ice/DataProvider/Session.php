@@ -7,9 +7,9 @@
  * @license   https://github.com/ifacesoft/Ice/blob/master/LICENSE.md
  */
 
-namespace Ice\Data\Provider;
+namespace Ice\DataProvider;
 
-use Ice\Core\Data_Provider;
+use Ice\Core\DataProvider;
 use Ice\Core\Exception;
 
 /**
@@ -17,32 +17,16 @@ use Ice\Core\Exception;
  *
  * Data provider for session data
  *
- * @see Ice\Core\Data_Provider
+ * @see \Ice\Core\DataProvider
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
  * @package    Ice
- * @subpackage Data_Provider
+ * @subpackage DataProvider
  */
-class Session extends Data_Provider
+class Session extends DataProvider
 {
-    const DEFAULT_DATA_PROVIDER_KEY = 'Ice:Session/default';
-    const DEFAULT_KEY = 'instance';
-
-    /**
-     * Return default data provider key
-     *
-     * @return string
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.4
-     * @since   0.4
-     */
-    protected static function getDefaultDataProviderKey()
-    {
-        return self::DEFAULT_DATA_PROVIDER_KEY;
-    }
+    const DEFAULT_KEY = 'default';
 
     /**
      * Return default key
@@ -62,27 +46,26 @@ class Session extends Data_Provider
     /**
      * Set data to data provider
      *
-     * @param  string $key
-     * @param  $value
+     * @param array $values
      * @param  null $ttl
-     * @return mixed setted value
+     * @return array
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 1.2
      * @since   0.0
      */
-    public function set($key, $value = null, $ttl = null)
+    public function set(array $values = null, $ttl = null)
     {
-        if (is_array($key) && $value === null) {
-            foreach ($key as $index => $value) {
-                $this->set($index, $value, $ttl);
-            }
-
-            return $key;
+        if ($ttl === -1) {
+            return $values;
         }
 
-        return $_SESSION[$key] = $value;
+        foreach ($values as $key => $value) {
+            $_SESSION[$this->getKey()][$this->getIndex()][$key] = $value;
+        }
+
+        return $values;
     }
 
     /**
@@ -95,19 +78,19 @@ class Session extends Data_Provider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 1.1
      * @since   0.0
      */
     public function delete($key, $force = true)
     {
         if ($force) {
-            unset($_SESSION[$key]);
+            unset($_SESSION[$this->getKey()][$this->getIndex()][$key]);
             return true;
         }
 
         $value = $this->get($key);
 
-        unset($_SESSION[$key]);
+        unset($_SESSION[$this->getKey()][$this->getIndex()][$key]);
 
         return $value;
     }
@@ -116,20 +99,25 @@ class Session extends Data_Provider
      * Get data from data provider by key
      *
      * @param  string $key
+     * @param null $default
+     * @param bool $require
      * @return mixed
-     *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.4
+     * @version 1.1
      * @since   0.0
      */
-    public function get($key = null)
+    public function get($key = null, $default = null, $require = false)
     {
         if (empty($key)) {
-            return $_SESSION;
+            return isset($_SESSION[$this->getKey()][$this->getIndex()])
+                ? $_SESSION[$this->getKey()][$this->getIndex()]
+                : [];
         }
 
-        return isset($_SESSION[$key]) ? $_SESSION[$key] : null;
+        return isset($_SESSION[$this->getKey()][$this->getIndex()][$key])
+            ? $_SESSION[$this->getKey()][$this->getIndex()][$key]
+            : $default;
     }
 
     /**
@@ -141,12 +129,12 @@ class Session extends Data_Provider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.4
+     * @version 1.1
      * @since   0.0
      */
     public function incr($key, $step = 1)
     {
-        return $_SESSION[$key] += $step;
+        return $_SESSION[$this->getKey()][$this->getIndex()][$key] += $step;
     }
 
     /**
@@ -158,12 +146,12 @@ class Session extends Data_Provider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.4
+     * @version 1.1
      * @since   0.0
      */
     public function decr($key, $step = 1)
     {
-        return $_SESSION[$key] -= $step;
+        return $_SESSION[$this->getKey()][$this->getIndex()][$key] -= $step;
     }
 
     /**
@@ -171,12 +159,12 @@ class Session extends Data_Provider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 1.1
      * @since   0.0
      */
     public function flushAll()
     {
-        $_SESSION = [];
+        $_SESSION[$this->getKey()][$this->getIndex()] = [];
     }
 
     /**
@@ -188,12 +176,12 @@ class Session extends Data_Provider
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @todo    0.4 implements filter by pattern
-     * @version 0.4
+     * @version 1.1
      * @since   0.0
      */
     public function getKeys($pattern = null)
     {
-        return array_keys($_SESSION);
+        return array_keys([$this->getKey()][$this->getIndex()]);
     }
 
     /**
@@ -204,12 +192,16 @@ class Session extends Data_Provider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.0
+     * @version 1.1
      * @since   0.0
      */
     protected function connect(&$connection)
     {
-        return isset($_SESSION);
+        if (!isset($_SESSION[$this->getKey()][$this->getIndex()])) {
+            $_SESSION[$this->getKey()][$this->getIndex()] = [];
+        }
+
+        return true;
     }
 
     /**
@@ -220,12 +212,44 @@ class Session extends Data_Provider
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
-     * @version 0.4
+     * @version 1.1
      * @since   0.0
      */
     protected function close(&$connection)
     {
-        unset($_SESSION);
         return true;
+    }
+
+    /**
+     * Set expire time (seconds)
+     *
+     * @param  $key
+     * @param  int $ttl
+     * @return mixed new value
+     *
+     * @author anonymous <email>
+     *
+     * @version 0
+     * @since   0
+     */
+    public function expire($key, $ttl)
+    {
+        // TODO: Implement expire() method.
+    }
+
+    /**
+     * Check for errors
+     *
+     * @return void
+     *
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since   0.0
+     */
+    function checkErrors()
+    {
+        // TODO: Implement checkErrors() method.
     }
 }

@@ -10,24 +10,22 @@
 namespace Ice\Action;
 
 use Ice\Core\Action;
+use Ice\Core\Container;
 use Ice\Core\Environment;
 use Ice\Core\Logger;
 
 /**
  * Class Cache_Clear
  *
- * Clear all data provider storages
+ * Clear all data provider storage
  *
- * @see Ice\Core\Action
- * @see Ice\Core\Action_Context
+ * @see \Ice\Core\Action
+ * @see \Ice\Core\Action_Context
  *
  * @author dp <denis.a.shestakov@gmail.com>
  *
  * @package    Ice
  * @subpackage Action
- *
- * @version 0.0
- * @since   0.0
  */
 class Cache_Clear extends Action
 {
@@ -56,7 +54,7 @@ class Cache_Clear extends Action
      *          ]
      *      ],
      *      'output' => ['Ice:Resource/Ice\Action\Index'],
-     *      'ttl' => 3600,
+     *      'cache' => ['ttl' => -1, 'count' => 1000],
      *      'roles' => []
      *  ];
      * ```
@@ -71,7 +69,8 @@ class Cache_Clear extends Action
     protected static function config()
     {
         return [
-            'view' => ['template' => '']
+            'view' => ['template' => ''],
+            'cache' => ['ttl' => -1, 'count' => 1000],
         ];
     }
 
@@ -88,8 +87,12 @@ class Cache_Clear extends Action
      */
     public function run(array $input)
     {
-        $logger = Cache_Clear::getLogger();
+        $logger = $this->getLogger();
 
+        /**
+         * @var Container $class
+         * @var  $dataProviderKeys
+         */
         foreach (Environment::getInstance()->gets('dataProviderKeys') as $class => $dataProviderKeys) {
             foreach ($dataProviderKeys as $key => $dataProviderKey) {
                 $class::getDataProvider($key)->flushAll();
@@ -98,7 +101,7 @@ class Cache_Clear extends Action
                     $dataProviderKey = reset($dataProviderKey);
                 }
 
-                $logger->info(['{$0}: {$1} - {$2}... cleared', [$class, $key, $dataProviderKey]], Logger::SUCCESS);
+                $logger->info(['{$0}: {$1} - {$2}... cleared', [$class, $key, $dataProviderKey]], Logger::SUCCESS, true);
             }
         }
     }

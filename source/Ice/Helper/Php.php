@@ -22,23 +22,29 @@ namespace Ice\Helper;
 class Php
 {
     const INTEGER = 'integer';
+    const BOOLEAN = 'boolean';
 
     /**
      * Pretty formatting php data (array)
      *
      * @param  $var
      * @param  bool $withPhpTag
+     * @param bool $isPretty
      * @return mixed|string
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
      * @since   0.0
      */
-    public static function varToPhpString($var, $withPhpTag = true)
+    public static function varToPhpString($var, $withPhpTag = true, $isPretty = true)
     {
         $string = $withPhpTag
             ? '<?php' . "\n" . 'return ' . var_export($var, true) . ';'
             : var_export($var, true) . ';';
+
+        if (!$isPretty) {
+            return $string;
+        }
 
         $string = str_replace('array (', '[', $string);
         $string = str_replace('(array(', '([', $string);
@@ -52,6 +58,7 @@ class Php
         }
         $string = str_replace("\t", '    ', $string);
         $string = str_replace('NULL', 'null', $string);
+        
         return $string;
     }
 
@@ -62,39 +69,34 @@ class Php
      */
     public static function passingByReference(&$var)
     {
-        $var = String::getRandomString();
+        $var = Type_String::getRandomString();
     }
 
+    /**
+     * @param $type
+     * @param $var
+     * @return array|bool|float|int|object|string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 1.0
+     * @since   1.0
+     */
     public static function castTo($type, $var)
     {
-        $varType = gettype($var);
-
-        if ($varType == $type) {
-            return $var;
-        }
-
-        switch ($type) {
-            case 'integer':
-                return (int)$var;
-            case 'string':
-                return (string)$var;
-            case 'boolean':
-                return (bool)$var;
-            case 'array':
-                return (array)$var;
-            case 'object':
-                return (object)$var;
-            case 'float':
-                return (float)$var;
-            case 'double':
-                return (double)$var;
-            case 'real':
-                return (real)$var;
-        }
-
         return $var;
     }
 
+    /**
+     * @param $filePath
+     * @return array
+     *
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 1.0
+     * @since   1.0
+     */
     public static function getClassNamesFromFile($filePath)
     {
         $phpString = file_get_contents($filePath);
@@ -102,6 +104,15 @@ class Php
         return $classNames;
     }
 
+    /**
+     * @param $php_code
+     * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 1.0
+     * @since   1.0
+     */
     public static function getClassNamesFromPhpString($php_code)
     {
         $classNames = array();
@@ -117,5 +128,34 @@ class Php
             }
         }
         return $classNames;
+    }
+
+
+    /**
+     * Make a string with _ characters to camelCase method name
+     *
+     * @param $name
+     * @param null $prefix
+     * @return string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 1.1
+     * @since   1.1
+     */
+    public static function camelCaseMethodName($name, $prefix = null)
+    {
+        $name = str_replace(' ', '', ucwords(str_replace('_', ' ', $name)));
+        return $prefix ? $prefix . $name : lcfirst($name);
+    }
+
+    public static function iniSet($param, $value)
+    {
+        return ini_set($param, $value);
+    }
+
+    public static function iniSetMemoryLimit($value)
+    {
+        return Php::iniSet('memory_limit', $value);
     }
 }
