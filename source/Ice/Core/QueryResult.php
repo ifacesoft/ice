@@ -49,7 +49,7 @@ class QueryResult implements Cacheable
         QueryResult::FOUND_ROWS => 0,
         QueryResult::INSERT_ID => null,
         QueryResult::QUERY_BODY => null,
-        QueryResult::QUERY_PARAMS => []
+        QueryResult::QUERY_PARAMS => [],
     ];
 
     /**
@@ -103,6 +103,9 @@ class QueryResult implements Cacheable
         return $queryResult;
     }
 
+    /**
+     * @param $invalidateTags
+     */
     public static function invalidateCache($invalidateTags)
     {
         Cache::invalidate(__CLASS__, $invalidateTags);
@@ -594,4 +597,35 @@ class QueryResult implements Cacheable
     //
     //        return $pagination;
     //    }
+
+    /**
+     * @param $columnFieldNames
+     * @param array|null $groups
+     * @param null $indexFieldNames
+     * @param null $indexGroupFieldNames
+     * @param array $aggregate
+     * @param array $exclude
+     * @return array
+     * @throws Exception
+     */
+    public function getGroup($columnFieldNames, array $groups = null, $indexFieldNames = null, $indexGroupFieldNames = null, array $aggregate = [], array $exclude = []) {
+        $modelClass = $this->getQuery()->getQueryBuilder()->getModelClass();
+
+        $columns = [];
+        $index = [];
+
+        foreach ((array)$columnFieldNames as $columnFieldName) {
+            $columns[] = $modelClass::getFieldName($columnFieldName);
+        }
+
+        if ($indexFieldNames === true) {
+            $indexFieldNames = $columnFieldNames;
+        }
+
+        foreach ((array)$indexFieldNames as $indexFieldName) {
+            $index[] = $modelClass::getFieldName($indexFieldName);
+        }
+
+        return Type_Array::group($this->getRows(), $columns, $groups, $index, $indexGroupFieldNames, $aggregate, $exclude);
+    }
 }

@@ -125,7 +125,7 @@ class Type_Array
      */
     public static function group($array, $columnFieldNames, $groups = null, $indexFieldNames = null, $indexGroupFieldNames = null, array $aggregate = [], array $exclude = [])
     {
-       return ArrayValue::create($array)->group((array)$columnFieldNames, (array)$groups, (array)$indexFieldNames, (array)$indexGroupFieldNames, (array)$aggregate, (array)$exclude);
+        return ArrayValue::create($array)->group((array)$columnFieldNames, (array)$groups, (array)$indexFieldNames, (array)$indexGroupFieldNames, $aggregate, $exclude);
     }
 
     /**

@@ -1,4 +1,5 @@
 <form id="<?= $widgetId ?>"
+      <?php if (!empty($widget->getOption('target'))) : ?>target="<?= $widget->getOption('target') ?>"<?php endif; ?>
       class="<?= $widgetClass ?><?php if (!empty($classes)) : ?> <?= $classes ?><?php endif; ?>"
       data-widget='<?= $dataWidget ?>'
       data-params='<?= $dataParams ?>'

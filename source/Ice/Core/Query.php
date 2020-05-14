@@ -585,30 +585,15 @@ class Query
      * @param null $indexFieldNames
      * @param null $ttl
      * @param null $indexGroupFieldNames
+     * @param array $aggregate
+     * @param array $exclude
      * @return array
+     * @throws Exception
      * @TODO отсортировать аргументы
-     * @throws \Exception
      */
     public function getGroup($columnFieldNames, array $groups = null, $indexFieldNames = null, $ttl = null, $indexGroupFieldNames = null, array $aggregate = [], array $exclude = [])
     {
-        $modelClass = $this->getQueryBuilder()->getModelClass();
-
-        $columns = [];
-        $index = [];
-
-        foreach ((array)$columnFieldNames as $columnFieldName) {
-            $columns[] = $modelClass::getFieldName($columnFieldName);
-        }
-
-        if ($indexFieldNames === true) {
-            $indexFieldNames = $columnFieldNames;
-        }
-
-        foreach ((array)$indexFieldNames as $indexFieldName) {
-            $index[] = $modelClass::getFieldName($indexFieldName);
-        }
-
-        return Type_Array::group($this->getRows($ttl, false), $columns, $groups, $index, $indexGroupFieldNames, $aggregate, $exclude);
+        return $this->getQueryResult($ttl, false)->getGroup($columnFieldNames, $groups, $indexFieldNames, $indexGroupFieldNames, $aggregate, $exclude);
     }
 
     /**

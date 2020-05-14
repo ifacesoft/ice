@@ -11,6 +11,7 @@ namespace Ice\Core;
 
 use Ice\DataProvider\Repository;
 use Ice\Exception\Error;
+use Ice\Exception\FileNotFound;
 
 /**
  * Class Cache
@@ -69,11 +70,12 @@ class Cache
     /**
      * Validate time tags
      *
-     * @param  Cacheable $cacheable
+     * @param Cacheable $cacheable
+     * @param array $validateTags
      * @param  $cacheTime
-     * @param  array $validateTags
      * @return Cacheable|null
      *
+     * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.5
@@ -106,9 +108,10 @@ class Cache
     /**
      * Return cache repository
      *
-     * @param  Cacheable $cacheable
-     * @return Repository
+     * @param Cacheable $cacheable
+     * @return DataProvider|Repository
      *
+     * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.5
@@ -154,10 +157,11 @@ class Cache
     /**
      * Invalidation cache
      *
-     * @param  Cacheable $cacheable
-     * @param  array $invalidateTags
+     * @param Cacheable $cacheable
+     * @param array $invalidateTags
      * @return Cacheable
      *
+     * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.5
@@ -180,6 +184,7 @@ class Cache
      * Validate cache
      * @return Cacheable|null
      * @throws Error
+     * @throws FileNotFound
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 1.2
