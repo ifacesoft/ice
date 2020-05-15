@@ -16,7 +16,6 @@ use Ice\Core\Query;
 use Ice\Core\QueryBuilder;
 use Ice\Core\QueryTranslator;
 use Ice\Exception\DataSource_Error;
-use Ice\Exception\Error;
 use Ice\Helper\Date;
 use Ice\Helper\Mapping;
 
@@ -87,7 +86,7 @@ class Sql extends QueryTranslator
     /**
      * Translate set part
      *
-     * @param  array $part
+     * @param array $part
      * @param $modelClassTableAlias
      * @return string
      *
@@ -152,7 +151,7 @@ class Sql extends QueryTranslator
     /**
      * Translate values part
      *
-     * @param  array $part
+     * @param array $part
      * @param $modelClassTableAlias
      * @return string
      *
@@ -245,15 +244,15 @@ class Sql extends QueryTranslator
     /**
      * Translate where part
      *
-     * @param  array $part
+     * @param array $part
      * @param $modelClassTableAlias
      * @return string
      *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
+     * @throws Exception
      * @version 1.13
      * @since   0.0
-     * @throws Exception
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
      */
     protected function translateWhere(Query $query, DataSource $dataSource)
     {
@@ -418,7 +417,7 @@ class Sql extends QueryTranslator
     /**
      * Translate select part
      *
-     * @param  array $part
+     * @param array $part
      * @param $modelClassTableAlias
      * @param DataSource $dataSource
      * @return string
@@ -514,24 +513,40 @@ class Sql extends QueryTranslator
         }
 
         if (is_array($select['table'])) {
-            $sql .= implode(
-                "\n" . Sql::SQL_CLAUSE_UNION . "\n",
-                array_map(
-                    function ($query) use ($dataSource) {
-                        if ($query instanceof QueryBuilder) {
-                            $query = $query->getSelectQuery(null);
-                        }
+            $unionTable = reset($select['table']);
 
-                        return '(' . $query->getBody($dataSource) . "\n" . ')';
-                    },
-                    $select['table']
-                )
-            );
+            if ($unionTable instanceof QueryBuilder) {
+                $unionTable->setCalcFoundRows(false);
+
+                $unionTable = $unionTable->getSelectQuery(null); // todo Не должно быть никаких Query, только QueryBuilder
+            }
+
+            $table = $unionTable instanceof Query
+                ? '(' . $unionTable->getBody($dataSource) . ')'
+                : '`' . $mainModelClass::getSchemeName() . '`.`' . $mainModelClass::getTableName() . '`';
+
+            $sql .= "\n" . Sql::SQL_STATEMENT_SELECT . ($distinct ? ' ' . Sql::SQL_DISTINCT . ' ' : '') . ($calcFoundRows ? ' ' . Sql::SQL_CALC_FOUND_ROWS . ' ' : '') . ($sqlNoCache ? ' ' . Sql::SQL_SQL_NO_CACHE . ' ' : '') .
+                "\n\t" . implode(',' . "\n\t", $fields) .
+                "\n" . Sql::SQL_CLAUSE_FROM .
+                "\n" . '('. implode(
+                    "\n" . Sql::SQL_CLAUSE_UNION . "\n",
+                    array_map(
+                        function ($query) use ($dataSource) {
+                            if ($query instanceof QueryBuilder) {
+                                $query = $query->getSelectQuery(null);
+                            }
+
+                            return '(' . $query->getBody($dataSource) . "\n" . ')';
+                        },
+                        $select['table']
+                    )
+                ) . ')' .
+                "\n\t" . ' `' . $mainTableAlias . '`';
 
             return $sql;
         }
 
-        if (empty($fields) ) {
+        if (empty($fields)) {
             if ($query->getQueryBuilder()->getSqlParts(QueryBuilder::PART_JOIN)) {
                 throw new DataSource_Error('Empty column list for query');
             }
@@ -549,7 +564,7 @@ class Sql extends QueryTranslator
             ? '(' . $select['table']->getBody($dataSource) . ')'
             : '`' . $mainModelClass::getSchemeName() . '`.`' . $mainModelClass::getTableName() . '`';
 
-        $sql .= "\n" . Sql::SQL_STATEMENT_SELECT . ($distinct ? ' ' . Sql::SQL_DISTINCT . ' ' : '') . ($calcFoundRows ? ' ' . Sql::SQL_CALC_FOUND_ROWS . ' ' : '')  . ($sqlNoCache ? ' ' . Sql::SQL_SQL_NO_CACHE . ' ' : '').
+        $sql .= "\n" . Sql::SQL_STATEMENT_SELECT . ($distinct ? ' ' . Sql::SQL_DISTINCT . ' ' : '') . ($calcFoundRows ? ' ' . Sql::SQL_CALC_FOUND_ROWS . ' ' : '') . ($sqlNoCache ? ' ' . Sql::SQL_SQL_NO_CACHE . ' ' : '') .
             "\n\t" . implode(',' . "\n\t", $fields) .
             "\n" . Sql::SQL_CLAUSE_FROM .
             "\n\t" . $table . ' `' . $mainTableAlias . '`';
@@ -579,7 +594,7 @@ class Sql extends QueryTranslator
     /**
      * Translate join part
      *
-     * @param  array $part
+     * @param array $part
      * @param $modelClassTableAlias
      * @param DataSource $dataSource
      * @return string
@@ -619,18 +634,18 @@ class Sql extends QueryTranslator
                 $table = '(' . $joinModelClass->getBody($dataSource) . ')';
             } else if (is_array($joinModelClass)) {
                 $table = '(' . implode(
-                    "\n" . Sql::SQL_CLAUSE_UNION . "\n",
-                    array_map(
-                        function ($query) use ($dataSource) {
-                            if ($query instanceof QueryBuilder) {
-                                $query = $query->getSelectQuery(null);
-                            }
+                        "\n" . Sql::SQL_CLAUSE_UNION . "\n",
+                        array_map(
+                            function ($query) use ($dataSource) {
+                                if ($query instanceof QueryBuilder) {
+                                    $query = $query->getSelectQuery(null);
+                                }
 
-                            return '(' . $query->getBody($dataSource) . "\n" . ')';
-                        },
-                        $joinModelClass
-                    )
-                ) . ')';
+                                return '(' . $query->getBody($dataSource) . "\n" . ')';
+                            },
+                            $joinModelClass
+                        )
+                    ) . ')';
             } else {
                 $table = '`' . $joinModelClass::getSchemeName() . '`.`' . $joinModelClass::getTableName() . '`';
             }
@@ -644,7 +659,7 @@ class Sql extends QueryTranslator
     /**
      * Translate order part
      *
-     * @param  array $part
+     * @param array $part
      * @param $modelClassTableAlias
      * @return string
      *
@@ -698,7 +713,7 @@ class Sql extends QueryTranslator
     /**
      * Translate group part
      *
-     * @param  array $part
+     * @param array $part
      * @param $modelClassTableAlias
      * @return string
      *
@@ -748,7 +763,7 @@ class Sql extends QueryTranslator
     /**
      * Translate limit part
      *
-     * @param  array $part
+     * @param array $part
      * @param $modelClassTableAlias
      * @return string
      *
@@ -779,7 +794,7 @@ class Sql extends QueryTranslator
     /**
      * Translate create part
      *
-     * @param  array $part
+     * @param array $part
      * @param $modelClassTableAlias
      * @return string
      *

@@ -12,7 +12,6 @@ namespace Ice\Core;
 use Ice\Core;
 use Ice\DataProvider\Registry;
 use Ice\DataProvider\Request as DataProvider_Request;
-use Ice\Exception\Error;
 use Ice\Helper\Class_Object;
 
 /**
@@ -75,11 +74,11 @@ abstract class DataProvider
      * @param $key
      * @param $index
      *
-     * @throws \Ice\Exception\Config_Error
-     * @version 1.13
-     * @since   0.0
      * @author dp <denis.a.shestakov@gmail.com>
      *
+     * @version 1.13
+     * @since   0.0
+     * @throws \Ice\Exception\Config_Error
      */
     protected function __construct($key, $index)
     {
@@ -105,7 +104,7 @@ abstract class DataProvider
         $environment = Environment::getInstance();
 
         try {
-            if ($key === Resource::class || $key === Api_Client_Yandex_Translate::class) {
+            if ($key == Resource::class || $key == Api_Client_Yandex_Translate::class) {
                 $dataProviderKey = __CLASS__ . '/' . $class . '/default';
             }
 
@@ -113,7 +112,7 @@ abstract class DataProvider
 
             return;
         } catch (\Exception $e) {
-            if ($key === 'default') {
+            if ($key == 'default') {
                 throw $e;
             }
 
@@ -129,23 +128,24 @@ abstract class DataProvider
      * Return new instance of data provider
      *
      * @param  $key
-     * @param string $index
+     * @param  string $index
      * @return DataProvider
      *
-     * @throws Exception
-     * @version 0.0
-     * @since   0.0
      * @author dp <denis.a.shestakov@gmail.com>
      *
+     * @version 0.0
+     * @since   0.0
+     * @throws Exception
      */
     public static function getInstance($key = null, $index = DataProvider::DEFAULT_INDEX)
     {
+
         /**
          * @var DataProvider $class
          */
         $class = self::getClass();
 
-        if (!$key && $class === __CLASS__) {
+        if (!$key && $class == __CLASS__) {
             Logger::getInstance(__CLASS__)->exception(
                 'Not known how create instance of data provider. Need data provider key.',
                 __FILE__,
@@ -158,7 +158,7 @@ abstract class DataProvider
             $class = __CLASS__;
         }
 
-        if ($class === __CLASS__) {
+        if ($class == __CLASS__) {
             if ($pos = strpos($key, '/')) {
                 $class = Class_Object::getClass(__CLASS__, substr($key, 0, $pos));
                 $key = substr($key, $pos + 1);
@@ -168,7 +168,7 @@ abstract class DataProvider
             }
         }
 
-        if ($key === 'default') {
+        if ($key == 'default') {
             $key = $class::getDefaultKey();
         }
 
@@ -272,9 +272,9 @@ abstract class DataProvider
     /**
      * Get instance connection of data provider
      *
+     * @throws Exception
      * @return mixed
      *
-     * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
@@ -287,10 +287,14 @@ abstract class DataProvider
         }
 
         if (!$this->connect($this->connection)) {
-            throw new \Ice\Exception\DataSource(['Data provider "{$0}" connection failed', get_class($this) . '/' . $this->getKey() . ' (index: ' . $this->getIndex() . ')']);
+            $e = new \Ice\Exception\DataSource(['Data provider "{$0}" connection failed', get_class($this) . '/' . $this->getKey() . ' (index: ' . $this->getIndex() . ')']);
+
+//            Logger::getInstance(__CLASS__)->error('Connection failed', __FILE__, __LINE__, $e);
+
+            throw $e;
         }
 
-        return $this->connection;
+            return $this->connection;
     }
 
     public function reconnect()
@@ -356,7 +360,7 @@ abstract class DataProvider
     /**
      * Get data from data provider by key
      *
-     * @param string $key
+     * @param  string $key
      * @param null $default
      * @param bool $require
      * @return mixed
@@ -371,7 +375,7 @@ abstract class DataProvider
      * Set data to data provider
      *
      * @param array $values
-     * @param null $ttl
+     * @param  null $ttl
      * @return mixed setted value
      *
      * @author anonymous <email>
@@ -384,11 +388,11 @@ abstract class DataProvider
     /**
      * Delete from data provider by key
      *
-     * @param string $key
-     * @param bool $force if true return boolean else deleted value
+     * @param  string $key
+     * @param  bool $force if true return boolean else deleted value
+     * @throws Exception
      * @return mixed|boolean
      *
-     * @throws Exception
      * @author anonymous <email>
      *
      * @version 0
@@ -400,7 +404,7 @@ abstract class DataProvider
      * Increment value by key with defined step (default 1)
      *
      * @param  $key
-     * @param int $step
+     * @param  int $step
      * @return mixed new value
      *
      * @author anonymous <email>
@@ -414,7 +418,7 @@ abstract class DataProvider
      * Decrement value by key with defined step (default 1)
      *
      * @param  $key
-     * @param int $step
+     * @param  int $step
      * @return mixed new value
      *
      * @author anonymous <email>
@@ -428,7 +432,7 @@ abstract class DataProvider
      * Set expire time (seconds)
      *
      * @param  $key
-     * @param int $ttl
+     * @param  int $ttl
      * @return mixed new value
      *
      * @author anonymous <email>
@@ -451,7 +455,7 @@ abstract class DataProvider
     /**
      * Return keys by pattern
      *
-     * @param string $pattern
+     * @param  string $pattern
      * @return array
      *
      * @author anonymous <email>

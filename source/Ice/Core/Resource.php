@@ -169,7 +169,7 @@ class Resource implements Cacheable
 
     public function set($message)
     {
-        if (!Environment::getInstance()->isDevelopment()) {
+        if (Environment::getInstance()->isProduction()) {
             return $message;
         }
 
