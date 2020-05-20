@@ -24,7 +24,7 @@ return [
         'vcs' => 'git',
         'source' => 'https://github.com/ifacesoft/Ice.git',
         'Ice\Core\DataSource' => [
-            'Ice\DataSource\Mysqli/default.moex' => 'ice_',
+            'Ice\DataSource\Mysqli/default.test' => 'ice_',
         ],
         'pathes' => [
             'configDir' => 'config/',
