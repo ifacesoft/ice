@@ -1188,7 +1188,7 @@ abstract class Widget extends Container
         if (!$instanceKey || $instanceKey[0] == '_') {
             $key = strtolower(Class_Object::getClassName(get_class($this)));
 
-            if ($instanceKey[0] == '_') {
+            if ($instanceKey && $instanceKey[0] == '_') {
                 $key .= $instanceKey;
             }
         } else {
