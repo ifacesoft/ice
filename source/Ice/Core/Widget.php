@@ -582,7 +582,7 @@ abstract class Widget extends Container
             $this->templateClass = $widgetClass;
         }
 
-        if ($this->templateClass[0] == '_') {
+        if ($this->templateClass[0] === '_') {
             $this->templateClass = $widgetClass . $this->templateClass;
         }
 
@@ -875,7 +875,7 @@ abstract class Widget extends Container
             return 'div.' . Class_Object::getClassName($class) . $attributes;
         }
 
-        if ($this->layout[0] == '_') {
+        if ($this->layout[0] === '_') {
             return 'div.' . Class_Object::getClassName($class) . $this->layout . $attributes;
         }
 
@@ -1075,7 +1075,8 @@ abstract class Widget extends Container
             ? Widget::getClass($widgetClass)
             : get_class($this);
 
-        return Widget_Scope::getInstance(str_replace('Widget', 'Widget\Scope', $widgetClass))->$scope($this, $data, $widgetClass);
+        return Widget_Scope::getInstance(str_replace('Widget', 'Widget\Scope', $widgetClass))
+            ->$scope($this, $data, $widgetClass);
     }
 
     /**
