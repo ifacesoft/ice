@@ -72,7 +72,7 @@ class Render extends Action
             /** @var Widget $widgetClass */
             $widgetClass = Widget::getClass($widgetClass);
 
-            if ($key == 'content') {
+            if ($key === 'content') {
                 $widgets['content'] = $widgetClass::getInstance($key, null, $params)->render();
             } else {
                 $content = $widgetClass::getInstance($key, null, $params);
