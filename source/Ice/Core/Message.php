@@ -84,7 +84,7 @@ abstract class Message
 
     /**
      * @param MessageTransport|string|null $messageTransport
-     * @return Model
+     * @return Log_Message
      * @throws Exception
      * @throws \Exception
      */
