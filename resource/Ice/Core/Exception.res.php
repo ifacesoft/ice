@@ -306,4 +306,19 @@ return [
     'Не удалось забиндить параметры' => [
         'en' => 'Не удалось забиндить параметры',
     ],
+    'Widget {$0} init failed' => [
+        'ru' => 'Widget {$0} init failed',
+    ],
+    'Application (Http): run action failure' => [
+        'ru' => 'Application (Http): run action failure',
+    ],
+    'Module alias {$0} not found in module config files' => [
+        'ru' => 'Module alias {$0} not found in module config files',
+    ],
+    'Render widget {$0} was failed' => [
+        'ru' => 'Render widget {$0} was failed',
+    ],
+    'Route for {$0} {$1} not found' => [
+        'ru' => 'Route for {$0} {$1} not found',
+    ],
 ];
