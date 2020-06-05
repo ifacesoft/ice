@@ -95,9 +95,9 @@ class Scheme extends Model
                 'columns__json' => [
                     'scheme' => [
                         'extra' => '',
-                        'type' => 'text',
-                        'dataType' => 'text',
-                        'length' => '65535',
+                        'type' => 'longtext',
+                        'dataType' => 'longtext',
+                        'length' => '4294967295',
                         'characterSet' => 'utf8',
                         'nullable' => false,
                         'default' => '[]',
@@ -171,6 +171,7 @@ class Scheme extends Model
             ],
             'revision' => '05121856_nvf',
             'moduleAlias' => 'Ice',
+            'modelClass' => 'Ice\Model\Scheme',
         ];
     }
 }
