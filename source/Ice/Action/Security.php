@@ -73,7 +73,7 @@ abstract class Security extends Widget_Form_Event
                 
                 if ($accountForm->get('mobile', 0)) {
                     User_Data::create([
-                        'user__fk' => $account->get('user__fk'),
+                        '/pk' => $account->get('user__fk'),
                         'greeting_date' => Date::get()
                     ])->save(true);
                 }
