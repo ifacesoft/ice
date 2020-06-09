@@ -9,9 +9,9 @@
 
 namespace Ice\Core;
 
-use Ice\Core;
 use Ice\Exception\Access_Denied_Environment;
-use Ice\Helper\Type_String;
+use Ice\Exception\Config_Error;
+use Ice\Exception\FileNotFound;
 
 /**
  * Class Environment
@@ -43,8 +43,8 @@ class Environment extends Config
      * @param $message
      * @throws Access_Denied_Environment
      * @throws Exception
-     * @throws \Ice\Exception\Config_Error
-     * @throws \Ice\Exception\FileNotFound
+     * @throws Config_Error
+     * @throws FileNotFound
      */
     public static function checkAccess($environments, $message)
     {
@@ -65,8 +65,8 @@ class Environment extends Config
      * @param array $selfConfig
      * @return Environment|Config
      * @throws Exception
-     * @throws \Ice\Exception\Config_Error
-     * @throws \Ice\Exception\FileNotFound
+     * @throws Config_Error
+     * @throws FileNotFound
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.5
@@ -185,6 +185,7 @@ class Environment extends Config
     public function getDataProviderKey($class, $key)
     {
         $dataProviderKey = $this->get('dataProviderKeys/' . $class::getBaseClass() . '/' . $key);
+
         return $pos = strpos($dataProviderKey, '/') ? $dataProviderKey : $dataProviderKey . '/' . $class;
     }
 }
