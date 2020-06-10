@@ -44,7 +44,8 @@ class Vendor_PHPExcel
      * @return Spreadsheet
      * @throws \PhpOffice\PhpSpreadsheet\Reader\Exception
      */
-    public static function loadFromFile($fileName) {
+    public static function loadFromFile($fileName)
+    {
         return IOFactory::load($fileName);
     }
 
@@ -59,7 +60,7 @@ class Vendor_PHPExcel
      * @todo: $columnNames mast by required
      *
      */
-    public static function getData(Spreadsheet $objPHPExcel, $activeSheetIndex = 0, array $columnNames = [])
+    public static function getData(Spreadsheet $objPHPExcel, $activeSheetIndex = 0, array $columnNames = [], $offsetRows = 0)
     {
         $objPHPExcel->setActiveSheetIndex($activeSheetIndex);
 
@@ -68,6 +69,12 @@ class Vendor_PHPExcel
         $rows = [];
 
         foreach ($objPHPExcel->getActiveSheet()->getRowIterator() as $row) {
+
+            if ($offsetRows > 0) {
+                $offsetRows--;
+                continue;
+            }
+
             $cellIterator = $row->getCellIterator();
 
             $cells = [];
