@@ -236,6 +236,7 @@ class Logger
 //            return;
 //        }
 
+        
         if ($errno == E_WARNING && strpos($errstr, 'filemtime():') !== false
             || $errno == E_WARNING && strpos($errstr, 'mysqli::real_connect():') !== false
         ) {
