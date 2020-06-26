@@ -52,7 +52,15 @@ class Date extends Validator
     {
         $value = array_key_exists($name, $data) ? $data[$name] : null;
 
-        $format = empty($params) ? \Ice\Helper\Date::FORMAT_MYSQL : reset($params);
+        if (!$value) {
+            return false;
+        }
+
+        if (empty($params)) {
+            $format = \Ice\Helper\Date::FORMAT_MYSQL;
+        } else {
+            $format = isset($params['format']) ? $params['format'] : reset($params);
+        }
 
         $d = DateTime::createFromFormat($format, $value);
 
