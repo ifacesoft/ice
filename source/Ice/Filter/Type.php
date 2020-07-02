@@ -36,12 +36,8 @@ class Type extends Filter
 
         $value = array_key_exists($name, $data) ? $data[$name] : null;
 
-        $type = reset($filterOptions);
-
-        dump([$value, $filterOptions]);
         settype($value, reset($filterOptions));
 
-        dump((int) $value);die();
         return $value;
     }
 }
