@@ -12,6 +12,7 @@ namespace Ice\Core;
 use Composer\Autoload\ClassLoader;
 use Ice\Core;
 use Ice\DataProvider\Repository;
+use Ice\Exception\Config_Error;
 use Ice\Exception\FileNotFound;
 use Ice\Helper\Class_Object;
 
@@ -60,75 +61,21 @@ class Loader
         return null;
     }
 
-    public static function isExistsClass($class)
-    {
-        return class_exists($class, false) || interface_exists($class, false) || trait_exists($class, false);
-    }
-
-    /**
-     * Load class
-     *
-     * @param  $class
-     * @return bool
-     * @throws Exception
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 1.10
-     * @since   0.0
-     */
-    public static function load($class)
-    {
-        if (class_exists($class, false)) {
-            return true;
-        }
-
-        if (Loader::$repository) {
-            if ($fileName = Loader::$repository->get($class)) {
-                include_once $fileName;
-                return true;
-            }
-        }
-
-        foreach (Loader::$autoloaders as $autoLoader) {
-            $fileName = null;
-            if ($autoLoader[0] instanceof ClassLoader) {
-                if ($fileName = $autoLoader[0]->findFile($class)) {
-                    include_once $fileName;
-                }
-            } else {
-                $fileName = call_user_func($autoLoader, $class);
-            }
-
-            if (is_string($fileName) && !empty($fileName) && Loader::isExistsClass($class)) {
-                if (Loader::$repository) {
-                    Loader::$repository->set([$class => $fileName]);
-                }
-
-                return true;
-            }
-        }
-
-        // todo: раскомментить
-//        Logger::getInstance(__CLASS__)->warning(['Class {$0} not found', $class], __FILE__, __LINE__, null);
-
-        return false;
-    }
-
     /**
      * Return class path
      *
      * @param  $class
      * @param  $ext
      * @param  $path
-     * @param  bool $isRequired
-     * @param  bool $isNotEmpty
-     * @param  bool $isOnlyFirst
-     * @param  bool $allMatchedPathes
+     * @param bool $isRequired
+     * @param bool $isNotEmpty
+     * @param bool $isOnlyFirst
+     * @param bool $allMatchedPathes
      * @return null|string
      *
      * @throws Exception
      * @throws FileNotFound
-     * @throws \Ice\Exception\Config_Error
+     * @throws Config_Error
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
@@ -198,6 +145,60 @@ class Loader
         }
 
         return $isNotEmpty && !empty($fullStackPathes) ? reset($fullStackPathes) : '';
+    }
+
+    public static function isExistsClass($class)
+    {
+        return class_exists($class, false) || interface_exists($class, false) || trait_exists($class, false);
+    }
+
+    /**
+     * Load class
+     *
+     * @param  $class
+     * @return bool
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 1.10
+     * @since   0.0
+     */
+    public static function load($class)
+    {
+        if (class_exists($class, false)) {
+            return true;
+        }
+
+        if (Loader::$repository) {
+            if ($fileName = Loader::$repository->get($class)) {
+                include_once $fileName;
+                return true;
+            }
+        }
+
+        foreach (Loader::$autoloaders as $autoLoader) {
+            $fileName = null;
+
+            if (is_array($autoLoader) && $autoLoader[0] instanceof ClassLoader) { // old composer
+                if ($fileName = $autoLoader[0]->findFile($class)) {
+                    include_once $fileName;
+                }
+            } else {
+                $fileName = call_user_func($autoLoader, $class);
+            }
+
+            if (is_string($fileName) && !empty($fileName) && Loader::isExistsClass($class)) {
+                if (Loader::$repository) {
+                    Loader::$repository->set([$class => $fileName]);
+                }
+
+                return true;
+            }
+        }
+
+        // todo: раскомментить
+//        Logger::getInstance(__CLASS__)->warning(['Class {$0} not found', $class], __FILE__, __LINE__, null);
+
+        return false;
     }
 
     public static function init()

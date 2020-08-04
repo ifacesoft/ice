@@ -992,7 +992,7 @@ class QueryBuilder
      * Set inner join query part
      *
      * @param  $modelTableData
-     * @param string|array $fieldNames
+     * @param null $fieldNames
      * @param null $condition
      * @param bool $isUse
      * @return QueryBuilder
@@ -1000,7 +1000,6 @@ class QueryBuilder
      * @version 1.5
      * @since   0.0
      * @author dp <denis.a.shestakov@gmail.com>
-     *
      */
     public function inner($modelTableData, $fieldNames = null, $condition = null, $isUse = true)
     {
@@ -2418,10 +2417,12 @@ class QueryBuilder
 
     /**
      * @param $funcName
-     * @param argumentString
+     * @param $argumentString
      * @param array $modelTableData
      * @return $this
      * @throws Exception
+     *
+     * @todo feature using: ->func('fieldAlias', 'funcName', 'funcArgument', $modelTableData)
      */
     public function func($funcName, $argumentString, $modelTableData = [])
     {

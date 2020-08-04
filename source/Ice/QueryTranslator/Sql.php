@@ -43,7 +43,7 @@ class Sql extends QueryTranslator
     const SQL_STATEMENT_UPDATE = 'UPDATE';
     const SQL_STATEMENT_DELETE = 'DELETE';
     const SQL_CLAUSE_FROM = 'FROM';
-    const SQL_CLAUSE_UNION = 'UNION';
+    const SQL_CLAUSE_UNION = 'UNION ALL';
     const SQL_CLAUSE_INTO = 'INTO';
     const SQL_CLAUSE_SET = 'SET';
     const SQL_CLAUSE_VALUES = 'VALUES';
