@@ -31,7 +31,7 @@ class Request
     /**
      * Return param from request
      *
-     * @param  string $paramName Param name
+     * @param null $paramName Param name
      * @param null $default
      * @return mixed
      * @author dp <denis.a.shestakov@gmail.com>
