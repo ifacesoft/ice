@@ -185,7 +185,7 @@ class Profiler
             }
 
             if ($xhprof_data) {
-                $xhprof_runs = new XHProfRuns_Default();
+                $xhprof_runs = new XHProfRuns_Default('/tmp');
                 $xhprof_runs->save_run($xhprof_data, "xhprof_testing");
             }
 
