@@ -88,6 +88,9 @@ return [
             'Ice\DataProvider\Request_Http_Raw' => [
                 'default' => []
             ],
+            'Ice\DataProvider\Request_Http_RawQueryString' => [
+                'default' => []
+            ],
             'Ice\DataProvider\QueryResultRow' => [
                 'default' => []
             ],
