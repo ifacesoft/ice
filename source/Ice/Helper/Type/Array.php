@@ -290,6 +290,9 @@ class Type_Array
      */
     public static function diff($old, $new, $onlyChanges = false)
     {
+        $old = array_filter($old); // пока так, кому надо -
+        $new = array_filter($new); // реализует сравнение null-ов )
+
         $diff = [
             'added' => [],
             'deleted' => []

@@ -449,6 +449,81 @@ class QueryBuilder
     }
 
     /**
+     * Return table alias for model class for query
+     *
+     * @return Model|string
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.0
+     * @since   0.0
+     */
+    public function getTableAlias()
+    {
+        return $this->tableAlias;
+    }
+
+    /**
+     * Set in query part where expression 'in (?)'
+     *
+     * @param  $fieldName
+     * @param array $fieldValue
+     * @param array $modelTableData
+     * @param string $sqlLogical
+     * @param bool $isUse
+     * @return QueryBuilder
+     * @throws Exception
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 1.13
+     * @since   0.0
+     */
+    public function in($fieldName, $fieldValue, $modelTableData = [], $sqlLogical = QueryBuilder::SQL_LOGICAL_AND, $isUse = true)
+    {
+        if (empty($fieldValue)) {
+            $fieldValue = [0];
+        }
+
+        return $this->where(
+            [$fieldName => $fieldValue],
+            $modelTableData,
+            QueryBuilder::SQL_COMPARISON_KEYWORD_IN,
+            $sqlLogical,
+            $isUse
+        );
+    }
+
+    /**
+     * Set in query part where expression 'not in (?)'
+     *
+     * @param  $fieldName
+     * @param array $fieldValue
+     * @param array $modelTableData
+     * @param string $sqlLogical
+     * @param bool $isUse
+     * @return QueryBuilder
+     * @throws Exception
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 1.3
+     * @since   0.0
+     */
+    public function notIn($fieldName, array $fieldValue, $modelTableData = [], $sqlLogical = QueryBuilder::SQL_LOGICAL_AND, $isUse = true)
+    {
+        if (empty($fieldValue)) {
+            $fieldValue = [0];
+        }
+
+        return $this->where(
+            [$fieldName => $fieldValue],
+            $modelTableData,
+            QueryBuilder::SQL_COMPARISON_KEYWORD_NOT_IN,
+            $sqlLogical,
+            $isUse
+        );
+    }
+
+    /**
      * Append cache validate or invalidate tags for this query builder
      *
      * @param Model $modelClass
@@ -838,36 +913,6 @@ class QueryBuilder
     }
 
     /**
-     * Set in query part where expression 'not in (?)'
-     *
-     * @param  $fieldName
-     * @param array $fieldValue
-     * @param array $modelTableData
-     * @param string $sqlLogical
-     * @param bool $isUse
-     * @return QueryBuilder
-     * @throws Exception
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 1.3
-     * @since   0.0
-     */
-    public function notIn($fieldName, array $fieldValue, $modelTableData = [], $sqlLogical = QueryBuilder::SQL_LOGICAL_AND, $isUse = true)
-    {
-        if (empty($fieldValue)) {
-            $fieldValue = [0];
-        }
-
-        return $this->where(
-            [$fieldName => $fieldValue],
-            $modelTableData,
-            QueryBuilder::SQL_COMPARISON_KEYWORD_NOT_IN,
-            $sqlLogical,
-            $isUse
-        );
-    }
-
-    /**
      * Set in query part where expression '== 1' is boolean true(1)
      *
      * @param  $fieldName
@@ -1106,21 +1151,6 @@ class QueryBuilder
     }
 
     /**
-     * Return table alias for model class for query
-     *
-     * @return Model|string
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.0
-     * @since   0.0
-     */
-    public function getTableAlias()
-    {
-        return $this->tableAlias;
-    }
-
-    /**
      * @param $joinType
      * @param Model $modelTableData
      * @param array $joins
@@ -1311,6 +1341,11 @@ class QueryBuilder
         return false;
     }
 
+    public function getBindParts()
+    {
+        return $this->bindParts;
+    }
+
     /**
      * Prepare select query part
      *
@@ -1418,11 +1453,6 @@ class QueryBuilder
         }
 
         return $this;
-    }
-
-    public function getBindParts()
-    {
-        return $this->bindParts;
     }
 
     /**
@@ -1751,36 +1781,6 @@ class QueryBuilder
         }
 
         return $this->in(reset($pkFieldNames), $value, $modelTableData, $sqlLogical);
-    }
-
-    /**
-     * Set in query part where expression 'in (?)'
-     *
-     * @param  $fieldName
-     * @param array $fieldValue
-     * @param array $modelTableData
-     * @param string $sqlLogical
-     * @param bool $isUse
-     * @return QueryBuilder
-     * @throws Exception
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 1.13
-     * @since   0.0
-     */
-    public function in($fieldName, $fieldValue, $modelTableData = [], $sqlLogical = QueryBuilder::SQL_LOGICAL_AND, $isUse = true)
-    {
-        if (empty($fieldValue)) {
-            $fieldValue = [0];
-        }
-
-        return $this->where(
-            [$fieldName => $fieldValue],
-            $modelTableData,
-            QueryBuilder::SQL_COMPARISON_KEYWORD_IN,
-            $sqlLogical,
-            $isUse
-        );
     }
 
     /**
@@ -2173,11 +2173,6 @@ class QueryBuilder
         return $this->addTrigger('afterSelect', $trigger, $params, $modelClass, $isUse);
     }
 
-    public function afterSelectCallback($callback, $params = [], $modelClass = null, $isUse = true)
-    {
-        return $this->addTrigger('afterSelect', $callback, $params, $modelClass, $isUse);
-    }
-
     private function addTrigger($type, $trigger, $params, $modelClass, $isUse)
     {
         if (!$isUse) {
@@ -2193,6 +2188,11 @@ class QueryBuilder
         $this->triggers[$type][] = [$trigger, $params, $modelClass];
 
         return $this;
+    }
+
+    public function afterSelectCallback($callback, $params = [], $modelClass = null, $isUse = true)
+    {
+        return $this->addTrigger('afterSelect', $callback, $params, $modelClass, $isUse);
     }
 
     public function beforeSelect($trigger, $params = [], $modelClass = null, $isUse = true)
@@ -2452,7 +2452,10 @@ class QueryBuilder
 
         $this->select(
             ($fieldName ? strtoupper($fieldName) : '') . '(' .
-            (isset($fieldColumns[$argumentString]) ? $tableAlias . '.' . $fieldColumns[$argumentString] : $argumentString) .
+            (isset($fieldColumns[$argumentString])
+                ? $tableAlias . '.' . $fieldColumns[$argumentString]
+                : ($argumentString === '' ? '""' : $argumentString)
+            ) .
             ')',
             $fieldAlias,
             $modelTableData
