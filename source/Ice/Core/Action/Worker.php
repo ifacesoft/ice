@@ -190,7 +190,7 @@ abstract class Action_Worker extends Action
 
                 $taskLog = Type_String::printR($task, false);
 
-                Logger::log(get_class($this) . ' (' . $i . '/' . $dispatchWorker['tasks'] . ') #' . $hash . ' ' . $taskLog . ' left: ' . $leftTime, 'job');
+                Logger::log('[ '. $i . '/' . $dispatchWorker['tasks'] .' : ' . ($dispatchWorker['tasks'] - $i) . ' ] #' . $hash .' ' .  $taskLog . ' [left: ' . $leftTime . ']', get_class($this));
                 $class::call(['workerKey' => $workerKey, 'hash' => $hash, 'task' => $taskLog], 0, $bg);
             } catch (\Exception $e) {
                 $this->getLogger()->error(['Worker {$0}: Task #{$1} failed - {$2}', [get_class($this), $hash, Type_String::printR($task)]], __FILE__, __LINE__, $e);
