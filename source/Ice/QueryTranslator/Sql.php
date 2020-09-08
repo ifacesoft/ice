@@ -500,7 +500,7 @@ class Sql extends QueryTranslator
                     } else {
                         if ($tableAlias === '') {
                             $fieldAlias = $fieldName . ' AS `' . $fieldAlias . '`';
-                        } elseif ($fieldName[0] == '\'') {
+                        } elseif ($fieldName[0] === '\'') {
                             $fieldAlias = $fieldName . ' AS `' . $fieldAlias . '`';
                         } else {
                             $fieldAlias = $fieldName . ' AS `' . trim($fieldAlias, '`') . '`';
@@ -594,8 +594,7 @@ class Sql extends QueryTranslator
     /**
      * Translate join part
      *
-     * @param array $part
-     * @param $modelClassTableAlias
+     * @param Query $query
      * @param DataSource $dataSource
      * @return string
      *
@@ -620,9 +619,7 @@ class Sql extends QueryTranslator
         }
 
         foreach ($part as $tableAlias => $joinTable) {
-            /**
-             * @var Model $joinModelClass
-             */
+             /** @var Model $joinModelClass */
             $joinModelClass = $joinTable['class'];
 
             if ($joinModelClass instanceof QueryBuilder) {
