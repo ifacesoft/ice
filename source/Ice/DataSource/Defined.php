@@ -38,7 +38,7 @@ class Defined extends DataSource
      * Execute query select to data source
      *
      * @param  Query $query
-     * @param bool $indexKeys
+     * @param bool $indexFieldNames
      * @return array
      * @throws \Ice\Core\Exception
      * @author dp <denis.a.shestakov@gmail.com>
@@ -46,7 +46,7 @@ class Defined extends DataSource
      * @version 0.0
      * @since   0.0
      */
-    public function executeSelect(Query $query, $indexKeys = true)
+    public function executeSelect(Query $query, $indexFieldNames = true)
     {
         /**
          * @var Model $modelClass

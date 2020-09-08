@@ -261,11 +261,12 @@ class QueryBuilder
      *      ];
      * ```
      *
-     * @param $sqlLogical
      * @param $fieldNameValues
-     * @param $sqlComparison
      * @param array|string $modelTableData Key -> modelClass, value -> tableAlias
-     * @param $isUse
+     * @param string $sqlComparison
+     * @param string $sqlLogical
+     * @param bool $isUse
+     * @param string $part
      * @return QueryBuilder
      * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
@@ -918,13 +919,13 @@ class QueryBuilder
      * @param  $fieldName
      * @param array $modelTableData
      * @param string $sqlLogical
+     * @param bool $isUse
      * @return QueryBuilder
      *
      * @throws Exception
      * @version 1.13
      * @since   0.0
      * @author dp <denis.a.shestakov@gmail.com>
-     *
      */
     public function is($fieldName, $modelTableData = [], $sqlLogical = QueryBuilder::SQL_LOGICAL_AND, $isUse = true)
     {
@@ -943,13 +944,13 @@ class QueryBuilder
      * @param  $fieldName
      * @param array $modelTableData
      * @param string $sqlLogical
+     * @param bool $isUse
      * @return QueryBuilder
      *
      * @throws Exception
      * @version 1.13
      * @since   0.0
      * @author dp <denis.a.shestakov@gmail.com>
-     *
      */
     public function not($fieldName, $modelTableData = [], $sqlLogical = QueryBuilder::SQL_LOGICAL_AND, $isUse = true)
     {

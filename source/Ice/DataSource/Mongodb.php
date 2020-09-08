@@ -43,7 +43,7 @@ class Mongodb extends DataSource
      * Execute query select to data source
      *
      * @param  Query $query
-     * @param bool $indexKeys
+     * @param bool $indexFieldNames
      * @return array
      * @throws \Ice\Core\Exception
      * @throws \Ice\Exception\Error
@@ -53,7 +53,7 @@ class Mongodb extends DataSource
      * @version 0.4
      * @since   0.4
      */
-    public function executeSelect(Query $query, $indexKeys = true)
+    public function executeSelect(Query $query, $indexFieldNames = true)
     {
         $data = [];
 
