@@ -35,6 +35,7 @@ abstract class Action_Worker extends Action
         $config['input']['limit'] = ['providers' => ['default', Cli::class], 'default' => null];
         $config['input']['report'] = ['providers' => ['default', Cli::class], 'default' => 0];
         $config['input']['async'] = ['providers' => ['default', Cli::class], 'default' => 0];
+        $config['input']['isLastTask'] = ['providers' => ['default', Cli::class], 'default' => 0];
 
         return $config;
     }
@@ -62,6 +63,10 @@ abstract class Action_Worker extends Action
 
         if ($input['hash']) {
             $this->task($workerKey, $input['hash']);
+
+            if ($input['isLastTask']) {
+                $this->finish($input);
+            }
 
             return;
         }
@@ -154,6 +159,10 @@ abstract class Action_Worker extends Action
 
         foreach ($tasks as $task) {
             $i++;
+
+            $leftTasks = $dispatchWorker['tasks'] - $i;
+            $isLastTask = (int) !$leftTasks;
+
             $worker = $provider->hGet($workerKey);
 
             if ($dispatchWorker['started_at'] !== $worker['started_at']) {
@@ -190,8 +199,14 @@ abstract class Action_Worker extends Action
 
                 $taskLog = Type_String::printR($task, false);
 
-                Logger::log('[ '. $i . '/' . $dispatchWorker['tasks'] .' : ' . ($dispatchWorker['tasks'] - $i) . ' ] #' . $hash .' ' .  $taskLog . ' [left: ' . $leftTime . ']', get_class($this));
-                $class::call(['workerKey' => $workerKey, 'hash' => $hash, 'task' => $taskLog], 0, $bg);
+                Logger::log('[ ' . $i . '/' . $dispatchWorker['tasks'] . ' : ' . $leftTasks . ' ] #' . $hash . ' ' . $taskLog . ' [left: ' . $leftTime . ']', get_class($this));
+
+
+                if ($isLastTask) {
+                    Logger::log('Finishing..', get_class($this));
+                }
+
+                $class::call(['workerKey' => $workerKey, 'hash' => $hash, 'task' => $taskLog, 'isLastTask' => $isLastTask], 0, $bg);
             } catch (\Exception $e) {
                 $this->getLogger()->error(['Worker {$0}: Task #{$1} failed - {$2}', [get_class($this), $hash, Type_String::printR($task)]], __FILE__, __LINE__, $e);
             } catch (\Throwable $e) {
@@ -276,4 +291,19 @@ abstract class Action_Worker extends Action
     {
         $this->getProvider()->getKeys();
     }
+
+    /**
+     * @param array $input
+     * @return mixed
+     */
+    private function finish(array $input)
+    {
+        $report = $this->flush($input);
+
+        Logger::log('Finish done.', get_class($this));
+
+        return $report;
+    }
+
+    abstract protected function flush(array $input);
 }
