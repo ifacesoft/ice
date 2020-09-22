@@ -157,7 +157,7 @@ abstract class WidgetComponent
             ? $widgetComponentClass::getConfig()->get('render/template', true)
             : $templateClass;
 
-        if ($this->templateClass && $this->templateClass[0] == '_') {
+        if ($this->templateClass && is_string($this->templateClass) && $this->templateClass[0] == '_') {
             $this->templateClass = $widgetComponentClass . $this->templateClass;
         }
 
