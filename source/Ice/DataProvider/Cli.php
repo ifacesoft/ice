@@ -11,6 +11,7 @@ namespace Ice\DataProvider;
 
 use Ice\Core\Action;
 use Ice\Core\DataProvider;
+use Ice\Core\Exception;
 use Ice\Exception\Error;
 
 /**
@@ -47,12 +48,12 @@ class Cli extends DataProvider
     /**
      * Get data from data provider by key
      *
-     * @param string $key
+     * @param null $key
      * @param null $default
      * @param bool $require
      * @return mixed
      * @throws Error
-     * @throws \Ice\Core\Exception
+     * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 1.2
@@ -80,11 +81,11 @@ class Cli extends DataProvider
     /**
      * Set data to data provider
      *
-     * @param array $values
+     * @param array|null $values
      * @param null $ttl
      * @return array
      *
-     * @throws \Ice\Core\Exception
+     * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 1.2
