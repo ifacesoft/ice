@@ -129,6 +129,7 @@ abstract class Action_Worker extends Action
     /**
      * @param array $dispatchWorker
      * @param array $params
+     * @return array
      * @throws Config_Error
      * @throws Error
      * @throws Exception
@@ -140,6 +141,8 @@ abstract class Action_Worker extends Action
         $tasks = (array)$this->getAllTasks(array_merge($params, $dispatchWorker));
 
         $dispatchWorker['tasks'] = count($tasks);
+        $dispatchWorker['completed'] = 0;
+        $dispatchWorker['leftTime'] = '';
 
         $workerKey = $dispatchWorker['workerKey'];
 
@@ -201,6 +204,7 @@ abstract class Action_Worker extends Action
 
                 Logger::log('[ ' . $i . '/' . $dispatchWorker['tasks'] . ' : ' . $leftTasks . ' ] #' . $hash . ' ' . $taskLog . ' [left: ' . $leftTime . ']', get_class($this));
 
+                $provider->hSet($workerKey, ['completed' => $i, 'leftTime' => $leftTime]);
 
                 if ($isLastTask) {
                     Logger::log('Finishing..', get_class($this));

@@ -65,6 +65,22 @@ return [
             ]
         ]
     ],
+    'ice_worker_status' => [
+        'route' => '/worker/{$worker_key}/status',
+        'params' => [
+            'worker_key' => '(\d+)'
+        ],
+        'request' => [
+            'GET' => [
+                'actionClass' => 'Ice:Worker_Status',
+                'response' => ['contentType' => 'json']
+            ],
+            'POST' => [
+                'actionClass' => 'Ice:Worker_Status',
+                'response' => ['contentType' => 'json']
+            ],
+        ],
+    ],
     '_Security' => '/security',
     '_Private' => '/private',
     '_CKEditor' => '/ckeditor',
