@@ -135,7 +135,7 @@ class Mysqli extends DataSource
             if ($indexFieldNames === true) {
                 $indexFieldNames = array_flip($modelClass::getScheme()->getPkFieldNames());
             } else {
-                $indexFieldNames = array_flip((array) $indexFieldNames);
+                $indexFieldNames = array_flip((array)$indexFieldNames);
             }
         }
 
@@ -191,12 +191,12 @@ class Mysqli extends DataSource
                 continue;
             }
 
-            if ($indexFieldNames) {
-                $indexFieldValues = implode('__', array_intersect_key($row, $indexFieldNames));
+            $indexFieldValues = $indexFieldNames
+                ? implode('__', array_intersect_key($row, $indexFieldNames))
+                : '';
 
-                if (!isset($data[QueryResult::ROWS][$indexFieldValues])) {
-                    $data[QueryResult::ROWS][$indexFieldValues] = $row;
-                }
+            if ($indexFieldValues) {
+                $data[QueryResult::ROWS][$indexFieldValues] = $row;
             } else {
                 $data[QueryResult::ROWS][] = $row;
             }
@@ -205,10 +205,9 @@ class Mysqli extends DataSource
 
         $data[QueryResult::NUM_ROWS] = count($data[QueryResult::ROWS]);
 
-        // todo: Это надо!!
-//        if ($numRows != $data[QueryResult::NUM_ROWS]) {
-//            throw new DataSource_Select_Error('Real selected rows not equal result num rows: duplicate primary key');
-//        }
+        if ($numRows != $data[QueryResult::NUM_ROWS]) {
+            throw new DataSource_Select_Error('Real selected rows not equal result num rows: duplicate primary key');
+        }
 
         foreach ($query->getQueryBuilder()->getTransforms() as list($transform, $params, $transformModelClass)) {
             $data = $transformModelClass::$transform($data, $params);
