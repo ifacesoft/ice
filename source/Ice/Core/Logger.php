@@ -156,7 +156,7 @@ class Logger
      */
     public static function init()
     {
-        self::$reserveMemory = str_repeat('#', pow(2, 20));
+        self::$reserveMemory = str_repeat('#', pow(2, 25));
 
         if (Environment::getInstance()->isProduction()) {
             error_reporting(E_ALL & ~E_STRICT & ~E_NOTICE & ~E_USER_NOTICE & ~E_DEPRECATED & ~E_USER_DEPRECATED);
@@ -167,6 +167,7 @@ class Logger
 
         error_reporting(E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED); // Оставить только E_ALL
         ini_set('display_errors', 1);
+        ini_set('display_startup_errors', 1);
 
         ini_set('xdebug.var_display_max_depth', -1);
         ini_set('xdebug.profiler_enable', 1);
@@ -185,6 +186,7 @@ class Logger
     public static function shutdownHandler()
     {
         self::$reserveMemory = null;
+//        gc_collect_cycles();
 
         //todo: Response output mast by here
         if ($error = error_get_last()) {

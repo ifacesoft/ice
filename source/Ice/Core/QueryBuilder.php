@@ -2420,13 +2420,17 @@ class QueryBuilder
      * @param $funcName
      * @param $argumentString
      * @param array $modelTableData
+     * @param bool $isUse
      * @return $this
      * @throws Exception
-     *
      * @todo feature using: ->func('fieldAlias', 'funcName', 'funcArgument', $modelTableData)
      */
-    public function func($funcName, $argumentString, $modelTableData = [])
+    public function func($funcName, $argumentString, $modelTableData = [], $isUse = true)
     {
+        if (!$isUse) {
+            return $this;
+        }
+
         /**
          * @var Model $modelClass
          */
