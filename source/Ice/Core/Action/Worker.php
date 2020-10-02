@@ -2,7 +2,6 @@
 
 namespace Ice\Core;
 
-use Ebs\DataProvider\Redis_Twins;
 use Ice\DataProvider\Cli;
 use Ice\DataProvider\Redis;
 use Ice\Exception\Config_Error;
@@ -124,6 +123,7 @@ abstract class Action_Worker extends Action
     /**
      * @param array $dispatchWorker
      * @param array $params
+     * @return array|mixed|null
      * @throws Config_Error
      * @throws Error
      * @throws Exception
@@ -170,11 +170,10 @@ abstract class Action_Worker extends Action
 
             usleep((int)$worker['delay']);
 
-            while (count($provider->getKeys($this->getTaskKey($workerKey))) >= (int)$worker['max'] && (int)$worker['max'] !== 0) {
+            while (($activeTasks = count($provider->getKeys($this->getTaskKey($workerKey)))) >= (int)$worker['max'] && (int)$worker['max'] !== 0) {
+                Logger::log('worker wait... (' . $activeTasks  . '/' . $worker['max'] . ')', get_class($this));
                 usleep((int)$worker['delay']);
             }
-
-            $task = array_merge($params, $task);
 
             $hash = crc32(Json::encode($task));
 
@@ -183,17 +182,18 @@ abstract class Action_Worker extends Action
             /** @var Action_Worker $class */
             $class = get_class($this);
 
-//            $this->getLogger()->info($taskCount . '/' . $totalTasks . ': #' . $hash . ' ' . Type_String::printR($task));
-
             try {
                 $avgTime = round((microtime(true) - $startTime) / $i, 3);
+                $estimateTime = Profiler::getPrettyTime(microtime(true) - $worker['started_at']);
                 $leftTime = Profiler::getPrettyTime(($dispatchWorker['tasks'] - $i) * $avgTime);
                 $perSec = round(1 / $avgTime, 3);
 
                 $taskLog = Type_String::printR($task, false);
 
-                Logger::log(get_class($this) . ' (' . $i . '/' . $dispatchWorker['tasks'] . ') #' . $hash . ' ' . $taskLog . ' [perSec: ' . $perSec . ' avg: ' . $avgTime . ' left: ' . $leftTime . ']', 'job');
-                Logger::log('[ '. $i . '/' . $dispatchWorker['tasks'] .' : ' . ($dispatchWorker['tasks'] - $i) . ' ] #' . $hash .' ' .  $taskLog . ' [left: ' . $leftTime . ']', get_class($this));
+                $runLog = '[ ' . $i . '/' . $dispatchWorker['tasks'] . ' (' . ($dispatchWorker['tasks'] - $i) . ') - ' . $activeTasks  . '/' . $worker['max'] . ' : ' . $estimateTime . ']';
+
+                Logger::log($runLog . ' #' . $hash .' ' .  $taskLog . ' [ timePerTask: ' . $avgTime . ' | tasksPerSec: ' . $perSec . ' | leftTime: ' . $leftTime . ' ]', get_class($this));
+
                 $class::call(['workerKey' => $workerKey, 'hash' => $hash, 'task' => $taskLog], 0, $bg);
             } catch (\Exception $e) {
                 $this->getLogger()->error(['Worker {$0}: Task #{$1} failed - {$2}', [get_class($this), $hash, Type_String::printR($task)]], __FILE__, __LINE__, $e);
@@ -203,7 +203,7 @@ abstract class Action_Worker extends Action
         }
 
         $worker['finish_datetime'] = Date::get();
-        $worker['time'] = (microtime(true) - $worker['started_at']) . ' ms.';
+        $worker['time'] = Profiler::getPrettyTime(microtime(true) - $worker['started_at']);
 
         $this->getLogger()->info('Worker ' . get_class($this) . ' complete! ' . Type_String::printR($worker));
 

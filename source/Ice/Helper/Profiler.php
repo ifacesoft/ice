@@ -75,7 +75,7 @@ class Profiler
     {
         $seconds = (int)$time;
 
-        $miliseconds = round(($time - $seconds) * 1000, 3);
+        $miliseconds = round(($time - $seconds) * 1000, 0);
 
         $diff = (new DateTime('@0'))->diff(new DateTime("@$seconds"));
 
@@ -90,11 +90,11 @@ class Profiler
         }
 
         if ($diff->format('%i')) {
-            $date .= $diff->format(' %i minutes');
+            $date .= $diff->format(' %i min.');
         }
 
         if ($diff->format('%s')) {
-            $date .= $diff->format(' %s seconds');
+            $date .= $diff->format(' %s sec.');
         }
 
         return trim($date . ' ' . $miliseconds . ' ms');
