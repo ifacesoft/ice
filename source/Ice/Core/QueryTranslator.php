@@ -9,6 +9,7 @@
 
 namespace Ice\Core;
 
+use Ice\Core;
 use Ice\Exception\DataSource as Exception_DataSource;
 
 /**
@@ -33,7 +34,7 @@ abstract class QueryTranslator extends Container
      * @param  null $instanceKey
      * @param  null $ttl
      * @param array $params
-     * @return \Ice\Core|Container
+     * @return Core|Container
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
@@ -49,11 +50,10 @@ abstract class QueryTranslator extends Container
     /**
      * Translate query body
      *
-     * @param  array $sqlParts
-     * @param $modelClassTableAlias
+     * @param Query $query
      * @param DataSource $dataSource
      * @return string|array
-     * @throws Exception
+     * @throws Exception_DataSource
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4

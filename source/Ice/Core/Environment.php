@@ -11,6 +11,8 @@ namespace Ice\Core;
 
 use Ice\Core;
 use Ice\Exception\Access_Denied_Environment;
+use Ice\Exception\Config_Error;
+use Ice\Exception\FileNotFound;
 use Ice\Helper\Type_String;
 
 /**
@@ -43,8 +45,8 @@ class Environment extends Config
      * @param $message
      * @throws Access_Denied_Environment
      * @throws Exception
-     * @throws \Ice\Exception\Config_Error
-     * @throws \Ice\Exception\FileNotFound
+     * @throws Config_Error
+     * @throws FileNotFound
      */
     public static function checkAccess($environments, $message)
     {
@@ -65,8 +67,8 @@ class Environment extends Config
      * @param array $selfConfig
      * @return Environment|Config
      * @throws Exception
-     * @throws \Ice\Exception\Config_Error
-     * @throws \Ice\Exception\FileNotFound
+     * @throws Config_Error
+     * @throws FileNotFound
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.5
@@ -96,6 +98,14 @@ class Environment extends Config
                 $environmentName = is_array($name) ? reset($name) : $name;
                 break;
             }
+        }
+
+        if ($environmentName !== self::PRODUCTION && !empty($_SERVER['argv'])) {
+            foreach ($_SERVER['argv'] as $arg) {
+               if ($pos = strpos($arg, 'iceEnv') !== false) {
+                   $environmentName = substr($arg, 7);
+               }
+           }
         }
 
         $environment = [];

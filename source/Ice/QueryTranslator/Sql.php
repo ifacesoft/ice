@@ -86,10 +86,11 @@ class Sql extends QueryTranslator
     /**
      * Translate set part
      *
-     * @param array $part
-     * @param $modelClassTableAlias
+     * @param Query $query
+     * @param DataSource $dataSource
      * @return string
      *
+     * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 1.13
@@ -105,7 +106,7 @@ class Sql extends QueryTranslator
 
         if ($part['rowCount'] > 1) {
             $part['_update'] = true;
-            return $this->translateValues($part, $modelClassTableAlias);
+            return $this->translateValues($query, $dataSource, $part);
         }
 
         $modelClass = $query->getQueryBuilder()->getModelClass();
@@ -151,21 +152,25 @@ class Sql extends QueryTranslator
     /**
      * Translate values part
      *
-     * @param array $part
-     * @param $modelClassTableAlias
+     * @param Query $query
+     * @param DataSource $dataSource
+     * @param null $updatePart
      * @return string
      *
+     * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 1.13
      * @since   0.0
      */
-    protected function translateValues(Query $query, DataSource $dataSource)
+    protected function translateValues(Query $query, DataSource $dataSource, $updatePart = null)
     {
-        $part = $query->getQueryBuilder()->getSqlParts(strtolower(substr(__FUNCTION__, strlen('translate'))));
+        $part = $updatePart
+            ? $updatePart
+            : $query->getQueryBuilder()->getSqlParts(strtolower(substr(__FUNCTION__, strlen('translate'))));
 
-        $update = $part['_update'];
-        unset($part['_update']);
+            $update = $part['_update'];
+            unset($part['_update']);
 
         if (!$part) {
             return '';
@@ -528,7 +533,7 @@ class Sql extends QueryTranslator
             $sql .= "\n" . Sql::SQL_STATEMENT_SELECT . ($distinct ? ' ' . Sql::SQL_DISTINCT . ' ' : '') . ($calcFoundRows ? ' ' . Sql::SQL_CALC_FOUND_ROWS . ' ' : '') . ($sqlNoCache ? ' ' . Sql::SQL_SQL_NO_CACHE . ' ' : '') .
                 "\n\t" . implode(',' . "\n\t", $fields) .
                 "\n" . Sql::SQL_CLAUSE_FROM .
-                "\n" . '('. implode(
+                "\n" . '(' . implode(
                     "\n" . Sql::SQL_CLAUSE_UNION . "\n",
                     array_map(
                         function ($query) use ($dataSource) {
@@ -619,7 +624,7 @@ class Sql extends QueryTranslator
         }
 
         foreach ($part as $tableAlias => $joinTable) {
-             /** @var Model $joinModelClass */
+            /** @var Model $joinModelClass */
             $joinModelClass = $joinTable['class'];
 
             if ($joinModelClass instanceof QueryBuilder) {

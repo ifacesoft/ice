@@ -2,6 +2,7 @@
 
 namespace Ice\Widget;
 
+use Ice\Core\Exception;
 use Ice\Core\Widget;
 use Ice\WidgetComponent\Table_Row_A;
 use Ice\WidgetComponent\Table_Row_Td;
@@ -30,9 +31,10 @@ class Bootstrap3_Table_Row extends Widget
      * Build a tag part
      *
      * @param  $columnName
-     * @param  array $options
-     * @param  string $template
+     * @param array $options
+     * @param null $template
      * @return $this
+     * @throws Exception
      */
     public function a($columnName, array $options = [], $template = null)
     {
@@ -43,9 +45,10 @@ class Bootstrap3_Table_Row extends Widget
      * Build a tag part
      *
      * @param  $columnName
-     * @param  array $options
-     * @param  string $template
+     * @param array $options
+     * @param null $template
      * @return $this
+     * @throws Exception
      */
     public function td($columnName, array $options = [], $template = null)
     {
@@ -56,9 +59,10 @@ class Bootstrap3_Table_Row extends Widget
      * Build a tag part
      *
      * @param  $columnName
-     * @param  array $options
-     * @param  string $template
+     * @param array $options
+     * @param null $template
      * @return $this
+     * @throws Exception
      */
     public function th($columnName, array $options = [], $template = null)
     {
@@ -68,7 +72,7 @@ class Bootstrap3_Table_Row extends Widget
     /** Build widget
      *
      * @param array $input
-     * @return array
+     * @return void
      */
     protected function build(array $input)
     {

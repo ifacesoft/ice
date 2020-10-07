@@ -1166,7 +1166,6 @@ class QueryBuilder
         list($table, $tableAlias) = $this->getModelClassTableAlias($modelTableData);
 
         if ($table instanceof Query) {
-//                $table = $table->getQueryBuilder();
             $modelClass = $table->getQueryBuilder()->getModelClass();
         } else if ($table instanceof QueryBuilder) {
             $modelClass = $table->getModelClass();
@@ -1196,6 +1195,11 @@ class QueryBuilder
                 ? $join['class']->getModelClass()
                 : $join['class'];
 
+            // todo: это лишнее, ломает кейс джойна юниона - fix it
+            if (is_array($joinModelClass)) {
+                continue;
+            }
+
             $joinModelScheme = $joinModelClass::getScheme();
 
             $oneToMany = $joinModelScheme->gets('relations/' . ModelScheme::ONE_TO_MANY);
@@ -1218,6 +1222,12 @@ class QueryBuilder
                 ? $join['class']->getModelClass()
                 : $join['class'];
 
+
+            // todo: это лишнее, ломает кейс джойна юниона - fix it
+            if (is_array($joinModelClass)) {
+                continue;
+            }
+
             $joinModelScheme = $joinModelClass::getScheme();
 
             $manyToOne = $joinModelScheme->gets('relations/' . ModelScheme::MANY_TO_ONE);
@@ -1226,8 +1236,8 @@ class QueryBuilder
                 $this->sqlParts[self::PART_JOIN][$tableAlias] = [
                     'type' => $joinType,
                     'class' => $table,
-                    'on' => '`' . $tableAlias . '`.`' . $manyToOne[$modelClass] . '` = `' .
-                        $joinTableAlias . '`.`' . $joinModelClass::getPkColumnName() . '`'
+                    'on' => '`' . $tableAlias . '`.`' . $manyToOne[$modelClass] .
+                        '` = `' . $joinTableAlias . '`.`' . $joinModelClass::getPkColumnName() . '`'
                 ];
 
                 return true;
@@ -1239,6 +1249,11 @@ class QueryBuilder
             $joinModelClass = $join['class'] instanceof QueryBuilder || $join['class'] instanceof Query
                 ? $join['class']->getModelClass()
                 : $join['class'];
+
+            // todo: это лишнее, ломает кейс джойна юниона - fix it
+            if (is_array($joinModelClass)) {
+                continue;
+            }
 
             $joinModelScheme = $joinModelClass::getScheme();
 

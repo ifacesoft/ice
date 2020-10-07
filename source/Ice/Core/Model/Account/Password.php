@@ -50,7 +50,10 @@ abstract class Model_Account_Password extends Model_Account
         Mail::create()
             ->setRecipients([$accountForm->get('email') => $accountForm->get('fio')])
             ->setSubject('Подтверждение регистрации в ЭБС Лань')
-            ->setBody('<p>Для подтверждения учетной записи перейдите по ссылке <a href="' . $urlFull . '">' . $urlFull . '</a></p>')
+            ->setBody('<p>Благодарим за регистрацию в ЭБС Лань!</p>
+<p>Для подтверждения адреса электронной почты пожалуйста перейдите по ссылке: <a href="' . $urlFull . '">' . $urlFull . '</a></p>
+<p>После подтверждения e-mail адреса Вы можете войти в учетную запись на нашем ресурсе по адресу https://e.lanbook.com и пользоваться подпиской организации, к которой Вы прикреплены.</p>
+<p>С уважением, Команда ЭБС Лань</p>')
             ->send();
     }
 
@@ -89,8 +92,12 @@ abstract class Model_Account_Password extends Model_Account
         Mail::create()
             ->setRecipients([$this->get('email') => Security::getInstance()->getUser()->get('user_name')])
             ->setSubject('Подтверждение электронного адреса в ЭБС Лань')
-            ->setBody('<p>Для подтверждения учетной записи перейдите по ссылке <a href="' . $urlFull . '">' . $urlFull . '</a></p>')
+            ->setBody('<p>Благодарим за регистрацию в ЭБС Лань!</p>
+<p>Для подтверждения адреса электронной почты пожалуйста перейдите по ссылке: <a href="' . $urlFull . '">' . $urlFull . '</a></p>
+<p>После подтверждения e-mail адреса Вы можете войти в учетную запись на нашем ресурсе по адресу https://e.lanbook.com и пользоваться подпиской организации, к которой Вы прикреплены.</p>
+<p>С уважением, Команда ЭБС Лань</p>')
             ->send();
+
 
         $this->set('token__fk', $token->getPkValue());
         $this->save();
