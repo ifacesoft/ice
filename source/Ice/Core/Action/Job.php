@@ -114,7 +114,7 @@ abstract class Action_Job extends Action
             $task->set([
                 '/finished_at' => Date::get(),
                 'log' => ob_get_clean(),
-                'errors' => Helper_Logger::getMessage($e)
+                'errors' => Helper_Logger::getMessage($e) . "\n" . $e->getTraceAsString()
             ]);
 
             $this->transacionRestart(

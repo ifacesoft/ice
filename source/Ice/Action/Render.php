@@ -4,6 +4,7 @@ namespace Ice\Action;
 
 use Ice\Core\Action;
 use Ice\Core\Debuger;
+use Ice\Core\Exception;
 use Ice\Core\Widget;
 use Ice\DataProvider\Request;
 use Ice\Exception\Access_Denied;
@@ -36,7 +37,7 @@ class Render extends Action
      * @param  array $input
      * @return array
      * @throws Http_Forbidden
-     * @throws \Ice\Core\Exception
+     * @throws Exception
      */
     public function run(array $input)
     {

@@ -27,8 +27,6 @@ class Worker_Status extends Action
     {
         $provider = Redis::getInstance('default', $input['action']);
 
-        $result = $provider->hGet($input['worker_key']);
-
-        return $result ? $result : ['status' => '0'];
+        return $provider->hGet($input['worker_key']);
     }
 }

@@ -4,6 +4,8 @@ namespace Ice\Core;
 
 use Ice\Exception\Access_Denied;
 use Ice\Exception\Access_Denied_Security;
+use Ice\Exception\Config_Error;
+use Ice\Exception\Error;
 use Ice\Exception\FileNotFound;
 use Ice\Exception\Http;
 use Ice\Exception\Http_Forbidden;
@@ -147,7 +149,7 @@ abstract class Widget extends Container
     /**
      * @param $data
      * @throws Exception
-     * @throws \Ice\Exception\Config_Error
+     * @throws Config_Error
      * @throws FileNotFound
      */
     protected function init($data)
@@ -327,8 +329,8 @@ abstract class Widget extends Container
      * @param null $default
      * @return mixed
      * @throws Exception
-     * @throws \Ice\Exception\Config_Error
-     * @throws \Ice\Exception\Error
+     * @throws Config_Error
+     * @throws Error
      * @throws FileNotFound
      */
     public function get($paramName = null, $default = null)
@@ -556,10 +558,12 @@ abstract class Widget extends Container
     }
 
     /**
-     * @param string $templateClass
+     * @param null $templateClass
      *
      * @return $this
+     * @throws Config_Error
      * @throws Exception
+     * @throws FileNotFound
      * @todo: Написать обработчик (init) конфига, где будет отдельный вызов setTemplateClass
      */
     public function setTemplateClass($templateClass = null)
@@ -909,7 +913,7 @@ abstract class Widget extends Container
      *
      * @param  $columnName
      * @param array $options
-     * @param string $template
+     * @param null $template
      * @return $this
      * @throws Exception
      */
@@ -923,7 +927,7 @@ abstract class Widget extends Container
      *
      * @param  $columnName
      * @param array $options
-     * @param string $template
+     * @param null $template
      * @return $this
      * @throws Exception
      */
@@ -983,7 +987,7 @@ abstract class Widget extends Container
      *
      * @param  $columnName
      * @param array $options
-     * @param string $template
+     * @param null $template
      * @return $this $this_Data
      * @throws Exception
      */
@@ -1065,7 +1069,7 @@ abstract class Widget extends Container
     /**
      * @param $scope
      * @param array $data
-     * @param Widget|string $widgetClass
+     * @param null $widgetClass
      * @return $this
      * @throws Exception
      */
@@ -1291,7 +1295,7 @@ abstract class Widget extends Container
      * @param null $default
      * @return mixed
      * @throws Exception
-     * @throws \Ice\Exception\Error
+     * @throws Error
      * @throws FileNotFound
      */
     public function getAll($paramName = null, $default = null)
