@@ -206,9 +206,6 @@ abstract class Action_Worker extends Action
 
                 Logger::log($runLog . ' #' . $hash .' ' .  $taskLog . ' [ timePerTask: ' . $avgTime . ' | tasksPerSec: ' . $perSec . ' | leftTime: ' . $leftTime . ' ]', get_class($this));
 
-                $class::call(['workerKey' => $workerKey, 'hash' => $hash, 'task' => $taskLog], 0, $bg);
-                Logger::log('[ ' . $i . '/' . $dispatchWorker['tasks'] . ' : ' . $leftTasks . ' ] #' . $hash . ' ' . $taskLog . ' [left: ' . $leftTime . ']', get_class($this));
-
                 $provider->hSet($workerKey, ['completed' => $i, 'leftTime' => $leftTime]);
 
                 if ($isLastTask) {
