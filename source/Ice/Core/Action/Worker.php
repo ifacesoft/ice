@@ -187,6 +187,8 @@ abstract class Action_Worker extends Action
                 usleep((int)$worker['delay']);
             }
 
+            $task = array_merge($params, $task);
+
             $hash = crc32(Json::encode($task));
 
             $provider->hSet($this->getTaskKey($workerKey, $hash), ['started_at' => time(), 'task' => $task], $worker['ttl']);
