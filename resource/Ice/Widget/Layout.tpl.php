@@ -16,7 +16,7 @@
 <!--    <link href="../../dist/css/bootstrap.min.css" rel="stylesheet">-->
 
     <script>
-        var CKEDITOR_BASEPATH = '/resource/node_modules/ckeditor/';
+        var CKEDITOR_BASEPATH = '/resource/node_modules/ckeditor4/';
     </script>
 
     <?= $parts['staticResources']->render() ?>
