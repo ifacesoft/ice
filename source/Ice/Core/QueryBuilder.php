@@ -83,6 +83,8 @@ class QueryBuilder
     const SQL_ORDERING_ASC = 'ASC';
     const SQL_ORDERING_DESC = 'DESC';
     const SEARCH_KEYWORD = '$search';
+    const DEFAULT_PAGINATION_PAGE = 1;
+    const DEFAULT_PAGINATION_LIMIT = 10;
 
     /**
      * Main model class for builded query
@@ -2289,6 +2291,7 @@ class QueryBuilder
      *
      * @param $page
      * @param $limit
+     * @param int $allowAll
      * @return QueryBuilder
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -2296,14 +2299,18 @@ class QueryBuilder
      * @version 0.6
      * @since   0.0
      */
-    public function setPagination($page, $limit)
+    public function setPagination($page, $limit, $allowAll = 0)
     {
-        if (empty($page)) {
-            $page = 1;
+        if (!$page && $allowAll) {
+            return $this;
         }
 
-        if (!isset($limit)) {
-            $limit = 0;
+        if (!$page) {
+            $page = self::DEFAULT_PAGINATION_PAGE;
+        }
+
+        if (!$limit) {
+            $limit = self::DEFAULT_PAGINATION_LIMIT;
         }
 
         return $this
