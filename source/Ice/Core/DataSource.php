@@ -9,6 +9,10 @@
 
 namespace Ice\Core;
 
+use Ice\Exception\Error;
+use Ice\Exception\FileNotFound;
+use Throwable;
+
 /**
  * Class DataSource
  *
@@ -309,15 +313,18 @@ abstract class DataSource extends Container
      *
      * @param Query $query
      * @param $ttl
-     * @param bool $indexKeys
+     * @param bool|string|array $indexFieldNames
      * @return QueryResult
      * @throws Exception
+     * @throws Error
+     * @throws FileNotFound
+     * @throws Throwable
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 1.1
      * @since 0.2
      */
-    public function executeQuery(Query $query, $ttl, $indexKeys = true)
+    public function executeQuery(Query $query, $ttl, $indexFieldNames = true)
     {
         $startTime = Profiler::getMicrotime();
         $startMemory = Profiler::getMemoryGetUsage();
@@ -338,7 +345,7 @@ abstract class DataSource extends Container
                     $query->getQueryBuilder()->setSqlNoCache();
                 }
 
-                $queryResult = QueryResult::create($query, $this->$queryCommand($query, $indexKeys));
+                $queryResult = QueryResult::create($query, $this->$queryCommand($query, $indexFieldNames));
 
                 Profiler::setPoint($queryResult->__toString(), $startTime, $startMemory);
                 Logger::log(Profiler::getReport($queryResult->__toString()), 'sql (not cache)', 'SQL/' . strtoupper($queryType) . '_WARN');
@@ -362,7 +369,7 @@ abstract class DataSource extends Container
                         return $queryResult;
                     }
 
-                    $queryResult = QueryResult::create($query, $this->$queryCommand($query, $indexKeys));
+                    $queryResult = QueryResult::create($query, $this->$queryCommand($query, $indexFieldNames));
                     Profiler::setPoint($queryResult->__toString(), $startTime, $startMemory);
                     Logger::log(Profiler::getReport($queryResult->__toString()), 'sql (new - ' . $dataProviderClassName . ')', 'SQL/' . strtoupper($queryType) . '_INFO');
 
@@ -395,7 +402,7 @@ abstract class DataSource extends Container
             Logger::log(Profiler::getReport($message), 'sql (error)', 'SQL/' . strtoupper($queryType) . '_ERROR');
 
             throw $e;
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $message = $e->getMessage() . ': ' . preg_replace('/\s\s+/', ' ', print_r($query->getBody(), true) . ' (' . print_r($query->getBinds(), true) . ')');
 
             Profiler::setPoint($message, $startTime, $startMemory);

@@ -10,8 +10,10 @@
 namespace Ice\Core;
 
 use Ice\Exception\Error;
+use Ice\Exception\FileNotFound;
 use Ice\Helper\Type_Array;
 use Ice\Helper\Json;
+use Throwable;
 
 /**
  * Class Query
@@ -277,22 +279,25 @@ class Query
     /**
      * Execute query
      *
-     * @param  int $ttl
-     * @param bool $indexKeys
+     * @param int $ttl
+     * @param bool|string|array $indexFieldNames
      * @return QueryResult
      *
+     * @throws Error
      * @throws Exception
+     * @throws FileNotFound
+     * @throws Throwable
      * @author dp <denis.a.shestakov@gmail.com>
      * @todo: Реализовать indexKeys (по умолчанию false, true = индекс - первичный ключ.. )
      * @version 1.1
      * @since   0.4
      */
-    public function getQueryResult($ttl = null, $indexKeys = true)
+    public function getQueryResult($ttl = null, $indexFieldNames = true)
     {
         /** @var DataSource $dataSource */
         $dataSource = $this->getDataSource();
 
-        $queryResult = $dataSource->executeQuery($this, $ttl, $indexKeys);
+        $queryResult = $dataSource->executeQuery($this, $ttl, $indexFieldNames);
 
         foreach ($this->queryBuilder->getWidgets() as $widget) {
             $widget->setQueryResult($queryResult);
@@ -395,7 +400,7 @@ class Query
      * Return all rows from data as array
      *
      * @param  null $ttl
-     * @param bool $indexKeys
+     * @param bool $indexFieldNames
      * @return array
      * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
@@ -403,9 +408,9 @@ class Query
      * @version 0.6
      * @since   0.0
      */
-    public function getRows($ttl = null, $indexKeys = true)
+    public function getRows($ttl = null, $indexFieldNames = true)
     {
-        return $this->getQueryResult($ttl, $indexKeys)->getRows();
+        return $this->getQueryResult($ttl, $indexFieldNames)->getRows();
     }
 
     /**

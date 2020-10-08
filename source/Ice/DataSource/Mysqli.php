@@ -31,6 +31,8 @@ use Ice\Exception\DataSource_Statement_Error;
 use Ice\Exception\DataSource_Statement_TableNotFound;
 use Ice\Exception\DataSource_Statement_UnknownColumn;
 use Ice\Exception\DataSource_Update;
+use Ice\Exception\Error;
+use Ice\Exception\FileNotFound;
 use Ice\Helper\Model as Helper_Model;
 use Ice\Helper\Type_Array;
 use Ice\Helper\Type_String;
@@ -65,17 +67,17 @@ class Mysqli extends DataSource
      * Execute query select to data source
      *
      * @param Query $query
-     * @param bool $indexKeys
+     * @param bool $indexFieldNames
      * @return array
      * @throws Exception
-     * @throws \Ice\Exception\Error
-     * @throws \Ice\Exception\FileNotFound
+     * @throws Error
+     * @throws FileNotFound
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
      * @since   0.0
      */
-    public function executeSelect(Query $query, $indexKeys = true)
+    public function executeSelect(Query $query, $indexFieldNames = true)
     {
         $data = [];
 
@@ -129,7 +131,13 @@ class Mysqli extends DataSource
 
         $modelClass = $query->getQueryBuilder()->getModelClass();
 
-        $pkFieldNamesAsKeys = array_flip($modelClass::getScheme()->getPkFieldNames());
+        if ($indexFieldNames) {
+            if ($indexFieldNames === true) {
+                $indexFieldNames = array_flip($modelClass::getScheme()->getPkFieldNames());
+            } else {
+                $indexFieldNames = array_flip((array)$indexFieldNames);
+            }
+        }
 
 //        $statementResultMetadata = $statement->result_metadata();
 //
@@ -183,12 +191,12 @@ class Mysqli extends DataSource
                 continue;
             }
 
-            $id = implode('_', array_intersect_key($row, $pkFieldNamesAsKeys));
+            $indexFieldValues = $indexFieldNames
+                ? implode('__', array_intersect_key($row, $indexFieldNames))
+                : '';
 
-            if ($id && $indexKeys) {
-                if (!isset($data[QueryResult::ROWS][$id])) {
-                    $data[QueryResult::ROWS][$id] = $row;
-                }
+            if ($indexFieldValues) {
+                $data[QueryResult::ROWS][$indexFieldValues] = $row;
             } else {
                 $data[QueryResult::ROWS][] = $row;
             }
@@ -197,10 +205,9 @@ class Mysqli extends DataSource
 
         $data[QueryResult::NUM_ROWS] = count($data[QueryResult::ROWS]);
 
-        // todo: Это надо!!
-//        if ($numRows != $data[QueryResult::NUM_ROWS]) {
-//            throw new DataSource_Select_Error('Real selected rows not equal result num rows: duplicate primary key');
-//        }
+        if ($numRows != $data[QueryResult::NUM_ROWS]) {
+            throw new DataSource_Select_Error('Real selected rows not equal result num rows: duplicate primary key');
+        }
 
         foreach ($query->getQueryBuilder()->getTransforms() as list($transform, $params, $transformModelClass)) {
             $data = $transformModelClass::$transform($data, $params);
@@ -650,8 +657,8 @@ class Mysqli extends DataSource
             $data = &$tables[$table['TABLE_NAME']];
 
             $data['revision'] = date('mdHi') . '_' . strtolower(Type_String::getRandomString(3));
-            $data['moduleAlias'] =  $moduleAlias;
-            $data['modelClass'] =  Module::getInstance($moduleAlias)->getModelClass($table['TABLE_NAME'], $this->getDataSourceKey());
+            $data['moduleAlias'] = $moduleAlias;
+            $data['modelClass'] = Module::getInstance($moduleAlias)->getModelClass($table['TABLE_NAME'], $this->getDataSourceKey());
 
             $dataScheme = &$data['scheme'];
             $dataScheme = [

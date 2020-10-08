@@ -75,11 +75,29 @@ class Profiler
     {
         $seconds = (int)$time;
 
-        $miliseconds = round(($time - $seconds) * 1000, 3);
+        $miliseconds = round(($time - $seconds) * 1000, 0);
 
         $diff = (new DateTime('@0'))->diff(new DateTime("@$seconds"));
 
-        return $diff->format('%a days, %h hours, %i minutes and %s seconds') . ' (' . $miliseconds . ' ms)';
+        $date = '';
+
+        if ($diff->format('%a')) {
+            $date .= $diff->format(' %a days');
+        }
+
+        if ($diff->format('%h')) {
+            $date .= $diff->format(' %h hours');
+        }
+
+        if ($diff->format('%i')) {
+            $date .= $diff->format(' %i min.');
+        }
+
+        if ($diff->format('%s')) {
+            $date .= $diff->format(' %s sec.');
+        }
+
+        return trim($date . ' ' . $miliseconds . ' ms');
     }
 
     /**
