@@ -187,7 +187,7 @@ abstract class Action_Worker extends Action
                 usleep((int)$worker['delay']);
             }
 
-            $task = array_merge($params, $task);
+            $task = array_merge($task, $params);
 
             $hash = crc32(Json::encode($task));
 

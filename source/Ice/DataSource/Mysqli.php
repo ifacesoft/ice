@@ -11,7 +11,6 @@ namespace Ice\DataSource;
 
 use Ice\Core\DataProvider;
 use Ice\Core\DataSource;
-use Ice\Core\Debuger;
 use Ice\Core\Exception;
 use Ice\Core\Logger;
 use Ice\Core\Model;
@@ -27,6 +26,7 @@ use Ice\Exception\DataSource_Delete;
 use Ice\Exception\DataSource_Insert;
 use Ice\Exception\DataSource_Insert_DuplicateEntry;
 use Ice\Exception\DataSource_Select;
+use Ice\Exception\DataSource_Select_Error;
 use Ice\Exception\DataSource_Statement_Error;
 use Ice\Exception\DataSource_Statement_TableNotFound;
 use Ice\Exception\DataSource_Statement_UnknownColumn;

@@ -2289,9 +2289,8 @@ class QueryBuilder
     /**
      * Set Limits and offset by page and limit
      *
-     * @param $page
-     * @param $limit
-     * @param int $allowAll
+     * @param null $page
+     * @param null $limit
      * @return QueryBuilder
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -2299,19 +2298,15 @@ class QueryBuilder
      * @version 0.6
      * @since   0.0
      */
-    public function setPagination($page, $limit, $allowAll = 0)
+    public function setPagination($page = null, $limit = null)
     {
-        if (!$page && $allowAll) {
-            return $this;
-        }
+        $page = $page
+            ? (int)$page
+            : self::DEFAULT_PAGINATION_PAGE;
 
-        if (!$page) {
-            $page = self::DEFAULT_PAGINATION_PAGE;
-        }
-
-        if (!$limit) {
-            $limit = self::DEFAULT_PAGINATION_LIMIT;
-        }
+        $limit = $limit
+            ? (int) $limit
+            :  self::DEFAULT_PAGINATION_LIMIT;
 
         return $this
             ->setCalcFoundRows()
