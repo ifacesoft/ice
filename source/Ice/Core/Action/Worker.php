@@ -2,7 +2,6 @@
 
 namespace Ice\Core;
 
-use Ebs\DataProvider\Redis_Twins;
 use Ice\DataProvider\Cli;
 use Ice\DataProvider\Redis;
 use Ice\Exception\Config_Error;
@@ -247,7 +246,7 @@ abstract class Action_Worker extends Action
      */
     private function task($workerKey, $hash)
     {
-        /** @var Redis_Twins $provider */
+        /** @var Redis $provider */
         $provider = $this->getProvider();
 
         $taskKey = $this->getTaskKey($workerKey, $hash);
