@@ -533,7 +533,7 @@ class QueryResult implements Cacheable
     /**
      * Return count of rows returned by query
      *
-     * @return mixed
+     * @return int
      *
      * @author dp <denis.a.shestakov@gmail.com>
      *
@@ -542,7 +542,7 @@ class QueryResult implements Cacheable
      */
     public function getNumRows()
     {
-        return $this->result[QueryResult::NUM_ROWS];
+        return (int)$this->result[QueryResult::NUM_ROWS];
     }
 
     /**
@@ -557,12 +557,15 @@ class QueryResult implements Cacheable
      */
     public function getAffectedRows()
     {
-        return $this->result[QueryResult::AFFECTED_ROWS];
+        return (int)$this->result[QueryResult::AFFECTED_ROWS];
     }
 
+    /**
+     * @return int
+     */
     public function getFoundRows()
     {
-        return $this->result[QueryResult::FOUND_ROWS];
+        return (int)$this->result[QueryResult::FOUND_ROWS];
     }
 
     /**

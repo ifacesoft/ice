@@ -9,6 +9,7 @@
 
 namespace Ice\Core;
 
+use Ice\Core;
 use Ice\Exception\Error;
 use Ice\Exception\FileNotFound;
 use Throwable;
@@ -66,11 +67,11 @@ abstract class DataSource extends Container
      *
      * @return DataProvider
      *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
+     * @throws Exception
      * @version 0.0
      * @since   0.0
-     * @throws Exception
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
      */
     public function getSourceDataProvider()
     {
@@ -103,16 +104,16 @@ abstract class DataSource extends Container
     /**
      * Return instance of data source
      *
-     * @param  DataSource|string|null $instanceKey
-     * @param  null $ttl
+     * @param DataSource|string|null $instanceKey
+     * @param null $ttl
      * @param array $params
-     * @return \Ice\Core|Container
+     * @return Core|Container
      *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
+     * @throws Exception
      * @version 0.2
      * @since   0.2
-     * @throws Exception
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
      */
     public static function getInstance($instanceKey = null, $ttl = null, array $params = [])
     {
@@ -124,11 +125,11 @@ abstract class DataSource extends Container
      *
      * @return string
      *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
+     * @throws Exception
      * @version 0.4
      * @since   0.0
-     * @throws Exception
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
      */
     protected static function getDefaultKey()
     {
@@ -144,11 +145,11 @@ abstract class DataSource extends Container
      * Return default class key
      *
      * @return string
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
+     * @throws Exception
      * @version 0.4
      * @since   0.4
-     * @throws Exception
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
      */
     public static function getDefaultClassKey()
     {
@@ -172,7 +173,7 @@ abstract class DataSource extends Container
     /**
      * Execute query select to data source
      *
-     * @param  Query $query
+     * @param Query $query
      * @param bool $indexKey
      * @return array
      *
@@ -186,7 +187,7 @@ abstract class DataSource extends Container
     /**
      * Execute query insert to data source
      *
-     * @param  Query $query
+     * @param Query $query
      * @return array
      *
      * @author anonymous <email>
@@ -199,7 +200,7 @@ abstract class DataSource extends Container
     /**
      * Execute query update to data source
      *
-     * @param  Query $query
+     * @param Query $query
      * @return array
      *
      * @author anonymous <email>
@@ -212,7 +213,7 @@ abstract class DataSource extends Container
     /**
      * Execute query update to data source
      *
-     * @param  Query $query
+     * @param Query $query
      * @return array
      *
      * @author anonymous <email>
@@ -225,7 +226,7 @@ abstract class DataSource extends Container
     /**
      * Execute query create table to data source
      *
-     * @param  Query $query
+     * @param Query $query
      * @return array
      *
      * @author anonymous <email>
@@ -238,7 +239,7 @@ abstract class DataSource extends Container
     /**
      * Execute query drop table to data source
      *
-     * @param  Query $query
+     * @param Query $query
      * @return array
      *
      * @author anonymous <email>
@@ -251,7 +252,7 @@ abstract class DataSource extends Container
     /**
      * Get data Scheme from data source
      *
-     * @param  Module $module
+     * @param Module $module
      * @return array
      *
      * @author anonymous <email>
@@ -379,11 +380,17 @@ abstract class DataSource extends Container
 
                 case QueryBuilder::TYPE_INSERT:
                 case QueryBuilder::TYPE_UPDATE:
+                    $queryResult = QueryResult::create($query, $this->$queryCommand($query))->invalidate();
+
+                    Profiler::setPoint($queryResult->__toString(), $startTime, $startMemory);
+                    Logger::log(Profiler::getReport($queryResult->__toString()), 'sql (query)', 'SQL/' . strtoupper($queryType) . '_WARN');
+
+                    return $queryResult;
                 case QueryBuilder::TYPE_DELETE:
                     $queryResult = QueryResult::create($query, $this->$queryCommand($query))->invalidate();
 
                     Profiler::setPoint($queryResult->__toString(), $startTime, $startMemory);
-                    Logger::log(Profiler::getReport($queryResult->__toString()), 'sql (query)', 'SQL/' . strtoupper($queryType) . '_INFO');
+                    Logger::log(Profiler::getReport($queryResult->__toString()), 'sql (query)', 'SQL/' . strtoupper($queryType) . '_ERROR');
 
                     return $queryResult;
                 default:
@@ -463,7 +470,7 @@ abstract class DataSource extends Container
      * Prepare query statement for query
      *
      * @param  $body
-     * @param  array $binds
+     * @param array $binds
      * @return mixed
      * @author anonymous <email>
      *
@@ -487,11 +494,11 @@ abstract class DataSource extends Container
     /**
      * Begin transaction
      *
-     * @author anonymous <email>
-     *
+     * @param string $isolationLevel
      * @version 0
      * @since   0
-     * @param string $isolationLevel
+     * @author anonymous <email>
+     *
      */
     abstract public function beginTransaction($isolationLevel = null);
 
@@ -508,11 +515,11 @@ abstract class DataSource extends Container
     /**
      * Rollback transaction
      *
-     * @author anonymous <email>
-     *
+     * @param $e
      * @version 0
      * @since   0
-     * @param $e
+     * @author anonymous <email>
+     *
      */
     abstract public function rollbackTransaction($e);
 
@@ -563,14 +570,14 @@ abstract class DataSource extends Container
      *  ];
      * ```
      *
-     * @param  string|array $iceql
+     * @param string|array $iceql
      * @return array
      *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
+     * @throws Exception
      * @version 1.1
      * @since   1.1
-     * @throws Exception
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
      */
     public function get($iceql)
     {
@@ -628,11 +635,11 @@ abstract class DataSource extends Container
      *
      * @return Object
      *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
+     * @throws Exception
      * @version 0.0
      * @since   0.0
-     * @throws Exception
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
      */
     public function getConnection()
     {
@@ -666,11 +673,11 @@ abstract class DataSource extends Container
      * @param array $iceql
      * @return mixed setted value
      *
-     * @author anonymous <email>
-     *
+     * @throws Exception
      * @version 0
      * @since   0
-     * @throws Exception
+     * @author anonymous <email>
+     *
      */
     public function set(array $iceql)
     {
@@ -714,11 +721,11 @@ abstract class DataSource extends Container
      *
      * @param array $iceql
      * @return bool|mixed
-     * @author anonymous <email>
-     *
+     * @throws Exception
      * @version 0
      * @since   0
-     * @throws Exception
+     * @author anonymous <email>
+     *
      */
     public function delete(array $iceql)
     {
@@ -757,11 +764,12 @@ abstract class DataSource extends Container
      * @return array|string
      * @throws Exception
      */
-    public function translate(Query $query) {
+    public function translate(Query $query)
+    {
 
         /** @var QueryTranslator $queryTranslator */
         $queryTranslator = QueryTranslator::getInstance($this->getQueryTranslatorClass());
-        
+
         return $queryTranslator->translate($query, $this);
     }
 }
