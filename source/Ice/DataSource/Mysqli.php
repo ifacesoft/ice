@@ -193,7 +193,7 @@ class Mysqli extends DataSource
 
             $indexFieldValues = $indexFieldNames
                 ? implode('__', array_intersect_key($row, $indexFieldNames))
-                : '';
+                : null;
 
             if ($indexFieldValues) {
                 $data[QueryResult::ROWS][$indexFieldValues] = $row;
