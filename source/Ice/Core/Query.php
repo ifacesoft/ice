@@ -279,7 +279,7 @@ class Query
     /**
      * Execute query
      *
-     * @param int $ttl
+     * @param null $ttl
      * @param bool|string|array $indexFieldNames
      * @return QueryResult
      *
@@ -593,7 +593,10 @@ class Query
      * @param array $aggregate
      * @param array $exclude
      * @return array
+     * @throws Error
      * @throws Exception
+     * @throws FileNotFound
+     * @throws Throwable
      * @TODO отсортировать аргументы
      */
     public function getGroup($columnFieldNames, array $groups = null, $indexFieldNames = null, $ttl = null, $indexGroupFieldNames = null, array $aggregate = [], array $exclude = [])
