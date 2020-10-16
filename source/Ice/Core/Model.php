@@ -733,14 +733,21 @@ abstract class Model
      *
      * @param null $tableAlias
      * @return Query
+     * @throws Exception
      * @todo add order param
      *
-     * @throws Exception
      */
     public static function getSelectQuery($selectFields, array $filterFields = [], array $pagination = null, $dataSourceKey = null, $tableAlias = null)
     {
-        if (!$pagination) {
-            $pagination = ['page' => 1, 'limit' => 0];
+        $pagination = (array) $pagination;
+
+
+        if (!isset($pagination['page'])) {
+            $pagination['page'] = 1;
+        }
+
+        if (!isset($pagination['limit'])) {
+            $pagination['limit'] = 0;
         }
 
         return Query::getBuilder(self::getClass(), $tableAlias)
