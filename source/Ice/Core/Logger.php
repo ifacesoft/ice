@@ -131,7 +131,6 @@ class Logger
      * @param string $class Class (Logger for this class)
      *
      * @throws Error
-     * @throws \Ice\Exception\FileNotFound
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
@@ -202,7 +201,7 @@ class Logger
         }
 
         if (ob_get_level()) {
-            ob_get_flush();
+            echo ob_get_flush();
         }
     }
 
