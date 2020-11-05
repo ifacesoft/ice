@@ -121,13 +121,17 @@ class Directory
         }
 
         $old = umask(0);
+
         if (!file_exists($path)) {
             try {
                 mkdir($path, $chmod);
             } catch (\Exception $e) {
-                Core_Logger::getInstance(__CLASS__)->warning(['Directory {$0} alredy exists or can not create', $path], __FILE__, __LINE__);
+                Core_Logger::getInstance(__CLASS__)->warning(['Directory {$0} already exists or can not create', $path], __FILE__, __LINE__);
+            } catch (\Throwable $e) {
+                Core_Logger::getInstance(__CLASS__)->warning(['Directory {$0} already exists or can not create', $path], __FILE__, __LINE__);
             }
         }
+
         umask($old);
 
 //        if (function_exists('posix_getuid') && posix_getuid() == fileowner($path)) {
