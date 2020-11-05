@@ -78,7 +78,7 @@ class ModelScheme extends Config
 
         $fieldNames = array_values($this->getColumnFieldMap());
 
-        if (empty($fields) || $fields = '*') {
+        if (empty($fields) || $fields === '*') {
             return $fieldNames;
         }
 

@@ -121,6 +121,10 @@ class Environment extends Config
             }
         }
 
+        if ($environmentName !== self::PRODUCTION && function_exists('opcache_reset')) {
+            opcache_reset();
+        }
+
         return self::$instance = self::create($environmentName, $environment);
     }
 

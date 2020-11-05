@@ -50,7 +50,7 @@ if ($iceRealPath = realpath(VENDOR_DIR . ICE_VENDOR_NAME)) {
 try {
     global $loader;
 
-    if (empty($loader) ) {
+    if (empty($loader)) {
         $loader = require VENDOR_DIR . 'autoload.php';
     }
 
