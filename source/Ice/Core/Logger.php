@@ -347,7 +347,7 @@ class Logger
         /**
          * @var Exception $exceptionClass
          */
-        $exceptionClass = Class_Object::getClass(Exception::getClass(), $exceptionClass);
+        $exceptionClass = Class_Object::getClass(\Ice\Core\Exception::getClass(), $exceptionClass);
 
         if (is_array($errcontext) && isset($errcontext['e'])) {
             unset($errcontext['e']);
