@@ -1317,12 +1317,15 @@ abstract class Model
             ->getInsertId();
 
         if ($affected) {
-            if ($isSmart && $model = $modelClass::create(array_filter($this->row, function ($value) {
+            if ($isSmart) {
+                $model = $modelClass::create(array_filter($this->row, function ($value) {
                     return $value !== null;
-                }))->find('/pk')
-            ) {
-
-                $this->set($model->getPk());
+                }));
+                if ($model) {
+                    $uniqueFieldNames = ModelScheme::getInstance(get_class($model))->getUniqueFieldNames();
+                    $model->find($uniqueFieldNames);
+                    $this->set($model->get($uniqueFieldNames));
+                }
             }
         }
 
