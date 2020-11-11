@@ -1072,7 +1072,7 @@ abstract class Model
                     }
 
                     Logger::getInstance(__CLASS__)->exception(
-                        ['field "{$0}" of model "{$1}" is null', [$fieldName, $modelName]],
+                        ['field "{$0}" of model "{$1}" is null', [$fieldName, $modelClass]],
                         __FILE__,
                         __LINE__
                     );
@@ -1227,7 +1227,6 @@ abstract class Model
             return $this->clearAffected();
         }
 
-        /** @var ModelScheme $modelScheme */
         $modelScheme = $modelClass::getScheme();
 
         $this->affected = array_merge(
@@ -1318,7 +1317,7 @@ abstract class Model
 
         if ($affected) {
             if ($isSmart) {
-                $model = $modelClass::create(array_filter($this->row, function ($value) {
+                $model = $modelClass::create(array_filter($this->get(), function ($value) {
                     return $value !== null;
                 }));
                 if ($model) {

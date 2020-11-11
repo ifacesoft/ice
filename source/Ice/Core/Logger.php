@@ -231,6 +231,11 @@ class Logger
             return;
         }
 
+        // Выпилить
+        if (in_array($errno, [E_USER_DEPRECATED])) {
+            return;
+        }
+
         if (($errno == E_WARNING && strpos($errstr, 'filemtime():') !== false)
             || ($errno == E_WARNING && strpos($errstr, 'mysqli::real_connect():') !== false)
         ) {
