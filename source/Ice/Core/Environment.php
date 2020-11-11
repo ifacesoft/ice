@@ -100,12 +100,16 @@ class Environment extends Config
             }
         }
 
-        if ($environmentName !== self::PRODUCTION && !empty($_SERVER['argv'])) {
-            foreach ($_SERVER['argv'] as $arg) {
-               if ($pos = strpos($arg, 'iceEnv') !== false) {
-                   $environmentName = substr($arg, 7);
-               }
-           }
+        if ($environmentName !== self::PRODUCTION && (!empty($_SERVER['argv']) || !empty($_REQUEST['iceEnv']))) {
+            if (!empty($_REQUEST['iceEnv'])) {
+                $environmentName = $_REQUEST['iceEnv'];
+            } else {
+                foreach ($_SERVER['argv'] as $arg) {
+                    if ($pos = strpos($arg, 'iceEnv') !== false) {
+                        $environmentName = substr($arg, 7);
+                    }
+                }
+            }
         }
 
         $environment = [];
