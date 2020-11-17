@@ -127,9 +127,9 @@ abstract class Model_Account extends Model
      * @param Account_Form $accountForm
      * @param array $container
      * @return Model|User
+     * @throws Error
      * @throws Exception
      * @throws Security_Account_AttachForbidden
-     * @throws \Ice\Exception\FileNotFound
      */
     private function signUpUser(Account_Form $accountForm, array $container = [])
     {
@@ -154,6 +154,7 @@ abstract class Model_Account extends Model
                 if (empty($userData['/email'])) {
                     throw new Error('Empty email for attach');
                 }
+
                 return $user->set(['/email' => $userData['/email'], '/login' => $userData['/email']])->save();
             }
 
@@ -167,6 +168,7 @@ abstract class Model_Account extends Model
      * @param Account_Form $accountForm
      * @param array $container
      * @return array
+     * @throws \Exception
      */
     private function getCommonUserData(Account_Form $accountForm, array $container = [])
     {
