@@ -1360,6 +1360,7 @@ abstract class Model
      * @version 0.2
      * @since   0.2
      * @throws Exception
+     * @todo Не делать запрос, если данные уже загружены
      */
     public function find($fieldNames, $dataSourceKey = null, $ttl = null, $return = true)
     {
