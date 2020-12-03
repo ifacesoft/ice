@@ -24,6 +24,7 @@ use Ice\Helper\Profiler as Helper_Profiler;
 use Ice\Helper\Type_String;
 use Ice\Model\Log_Error;
 use Exception;
+use Ifacesoft\Ice\Core\Infrastructure\Core\Application;
 use Throwable;
 
 /**
@@ -309,7 +310,7 @@ class Logger
 //        }
 
         if (Request::isCli()) {
-            fwrite(STDOUT, $exceptionText . "\n");
+            fwrite(STDOUT, Application::debugExceptionString($exception));
         } else {
             Logger::addLog($exceptionText);
         }
