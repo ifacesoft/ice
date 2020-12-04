@@ -47,9 +47,9 @@ class Action extends Code_Generator
     {
         $class = $this->getInstanceKey();
 
-        $module = Module::getInstance();
+        $module = Module::getInstance($data['alias']);
 
-        $filePath = \getSourceDir(Class_Object::getModuleAlias($class)) . str_replace(['\\', '_'], '/', $class) . '.php';
+        $filePath =  $module->getPath(Module::SOURCE_DIR) . str_replace(['\\', '_'], '/', $class) . '.php';
 
         $isFileExists = file_exists($filePath);
 
