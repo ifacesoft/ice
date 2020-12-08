@@ -9,9 +9,10 @@
 
 namespace Ice\Action;
 
-use Ice\Core\Debuger;
+use Ice\Core\Exception;
 use Ice\Core\Widget;
 use Ice\DataProvider\Request;
+use Ice\Exception\Http_Forbidden;
 
 abstract class Widget_Form_Event extends Render
 {
@@ -29,8 +30,6 @@ abstract class Widget_Form_Event extends Render
             ]
         );
 
-//        $config['input']['widget'] = ['default' => null, 'providers' => ['default', Request::class]];
-
         return $config;
     }
 
@@ -38,8 +37,8 @@ abstract class Widget_Form_Event extends Render
      * @param array $input
      *
      * @return array
-     * @throws \Ice\Core\Exception
-     * @throws \Ice\Exception\Http_Forbidden
+     * @throws Exception
+     * @throws Http_Forbidden
      * @todo в этом методе не должно быть реализации - вынеси в другой метод (чилдренские классы должны видеть что нужно его реализовать самим)
      */
     public function run(array $input)
