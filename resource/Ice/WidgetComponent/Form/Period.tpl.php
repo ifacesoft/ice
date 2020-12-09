@@ -9,8 +9,8 @@
             <input
                 <?= $component->getClassAttribute($component->getOption('resetFormClass', false) ? '' : 'form-control') ?>
                 type="text"
-                name="<?= $component->getName() ?>_from"
-                value="<?= $component->get($component->getName() . '_from', '') ?>"
+                name="<?= $component->getFromName() ?>"
+                value="<?= $component->get($component->getFromName(), '') ?>"
                 <?= $component->getPlaceholderAttribute() ?>
                 <?= $component->getEventAttributesCode() ?>
                 <?php if ($component->getOption('disabled', false)) : ?>disabled="disabled"<?php endif; ?>
@@ -26,8 +26,8 @@
             <input
                 <?= $component->getClassAttribute($component->getOption('resetFormClass', false) ? '' : 'form-control') ?>
                 type="text"
-                name="<?= $component->getName() ?>_to"
-                value="<?= $component->get($component->getName() . '_to', '') ?>"
+                name="<?= $component->getToName() ?>"
+                value="<?= $component->get($component->getToName(), '') ?>"
                 <?= $component->getPlaceholderAttribute() ?>
                 <?= $component->getEventAttributesCode() ?>
                 <?php if ($component->getOption('disabled', false)) : ?>disabled="disabled"<?php endif; ?>
