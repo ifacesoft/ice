@@ -454,7 +454,7 @@ class Logger
 
         if (Environment::getInstance()->isDevelopment()) {
             $name = Request::isCli() ? Console::getCommand(null) : Request::uri();
-            $logFile = getLogDir() . \date(Date::FORMAT_MYSQL_DATE) . '/' . $typePath . '/' . urlencode($name) . '.log';
+            $logFile = getLogDir() . \date('Y-m-d_H') . '/' . $typePath . '/' . urlencode($name) . '.log';
 
             if (strlen($logFile) > 255) {
                 $logFilename = substr($logFile, 0, 255 - 11);
@@ -564,7 +564,7 @@ class Logger
 
         if (Environment::getInstance()->isDevelopment()) {
             $name = Request::isCli() ? Console::getCommand(null) : Request::uri();
-            $logFile = getLogDir() . \date('Y-m-d') . '/INFO/' . urlencode($name) . '.log';
+            $logFile = getLogDir() . \date('Y-m-d_H') . '/INFO/' . urlencode($name) . '.log';
 
             if (strlen($logFile) > 255) {
                 $logFilename = substr($logFile, 0, 255 - 11);

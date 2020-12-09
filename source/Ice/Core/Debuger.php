@@ -2,7 +2,9 @@
 
 namespace Ice\Core;
 
+use Ice\Exception\Config_Error;
 use Ice\Helper\Console as Helper_Console;
+use Ice\Helper\Directory;
 use Ice\Helper\File;
 use Ice\Helper\Php;
 
@@ -39,15 +41,15 @@ class Debuger
      *
      * @return mixed
      * @throws Exception
-     * @throws \Ice\Exception\Config_Error
+     * @throws Config_Error
      * @version 0.0
      * @since   0.0
      * @author dp <denis.a.shestakov@gmail.com>
      */
     public static function dump($arg)
     {
-        foreach (func_get_args() as $arg) {
-            $var = stripslashes(Php::varToPhpString($arg));
+        foreach (func_get_args() as $arg1) {
+            $var = stripslashes(Php::varToPhpString($arg1));
 
             $var = str_replace("\x1e", Helper_Console::getText('\x1E', Helper_Console::C_YELLOW), $var);
 
@@ -60,7 +62,11 @@ class Debuger
             }
 
             $name = Request::isCli() ? Console::getCommand(null) : Request::uri();
-            $logFile = Module::getInstance()->getPath(Module::LOG_DIR) . date('Y-m-d') . '/DEBUG/' . urlencode($name) . '.log';
+
+            $logFile = Directory::get(
+                    \getLogDir() . date('Y-m-d_H') . '/' .
+                    '/DEBUG/'
+                ) . urlencode($name) . '.log';
 
             if (strlen($logFile) > 255) {
                 $logFilename = substr($logFile, 0, 255 - 11);
@@ -69,13 +75,13 @@ class Debuger
 
             File::createData($logFile, $var, false, FILE_APPEND);
 
-            Logger::fb($arg, 'debug', 'INFO');
+            Logger::fb($arg1, 'debug', 'INFO');
 
         }
 
         return $arg;
     }
-    
+
     /**
      * Debug variables
      *
@@ -83,20 +89,24 @@ class Debuger
      *
      * @return mixed
      * @throws Exception
-     * @throws \Ice\Exception\Config_Error
+     * @throws Config_Error
      * @version 0.0
      * @since   0.0
      * @author dp <denis.a.shestakov@gmail.com>
      */
     public static function dumpToFile($arg)
     {
-        foreach (func_get_args() as $arg) {
-            $var = stripslashes(Php::varToPhpString($arg));
+        foreach (func_get_args() as $arg1) {
+            $var = stripslashes(Php::varToPhpString($arg1));
 
             $var = str_replace("\x1e", Helper_Console::getText('\x1E', Helper_Console::C_YELLOW), $var);
 
             $name = Request::isCli() ? Console::getCommand(null) : Request::uri();
-            $logFile = Module::getInstance()->getPath(Module::LOG_DIR) . date('Y-m-d') . '/DEBUG/' . urlencode($name) . '.log';
+
+            $logFile = Directory::get(
+                    \getLogDir() . date('Y-m-d_H') . '/' .
+                    '/DEBUG/'
+                ) . urlencode($name) . '.log';
 
             if (strlen($logFile) > 255) {
                 $logFilename = substr($logFile, 0, 255 - 11);
@@ -105,7 +115,7 @@ class Debuger
 
             File::createData($logFile, $var, false, FILE_APPEND);
 
-            Logger::fb($arg, 'debug', 'INFO');
+            Logger::fb($arg1, 'debug', 'INFO');
 
         }
 

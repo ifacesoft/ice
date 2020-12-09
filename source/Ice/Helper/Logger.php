@@ -17,7 +17,10 @@ use Ice\Core\Render;
 use Ice\Core\Request;
 use Ice\Core\Request as Core_Request;
 use Ice\DataProvider\Request as DataProvider_Request;
+use Ice\Exception\Config_Error;
+use Ice\Exception\FileNotFound;
 use Ice\Render\Php as Render_Php;
+use Ifacesoft\Ice\Core\Infrastructure\Core\Application;
 
 /**
  * Class Logger
@@ -37,6 +40,9 @@ class Logger
      * @param \Exception $exception
      * @param $output
      *
+     * @throws Exception
+     * @throws Config_Error
+     * @throws FileNotFound
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
@@ -82,37 +88,42 @@ class Logger
      */
     public static function outputFile($exception, $output, $class)
     {
-        $e = $exception->getPrevious();
-
-        if ($e) {
-            self::outputFile($e, $output, $class);
-        }
-
-        $errcontext = $exception instanceof Exception
-            ? Profiler::getVar(memory_get_usage(), $exception->getErrorContext(), true)
-            : '';
-
-        $output['message'] = Core_Logger::getErrorType($exception->getCode()) . ': ' . $exception->getMessage();
-        $output['errPoint'] = '(' . $exception->getFile() . ':' . $exception->getLine() . ')';
-        $output['errcontext'] = $errcontext;
-        $output['stackTrace'] = $exception->getTraceAsString();
+//        $e = $exception->getPrevious();
+//
+//        if ($e) {
+//            self::outputFile($e, $output, $class);
+//        }
+//
+//        $errcontext = $exception instanceof Exception
+//            ? Profiler::getVar(memory_get_usage(), $exception->getErrorContext(), true)
+//            : '';
+//
+//        $output['message'] = Core_Logger::getErrorType($exception->getCode()) . ': ' . $exception->getMessage();
+//        $output['errPoint'] = '(' . $exception->getFile() . ':' . $exception->getLine() . ')';
+//        $output['errcontext'] = $errcontext;
+//        $output['stackTrace'] = $exception->getTraceAsString();
 
         $name = Request::isCli() ? Core_Console::getCommand(null) : Request::uri();
 
-        $logFile = Directory::get(\getLogDir() . date('Y-m-d')) .
-            Core_Logger::getErrorType($exception->getCode()) . '/' . Class_Object::getClassName($class) . '/' . urlencode($name) . '.log';
+        $logFile = Directory::get(
+                \getLogDir() . date('Y-m-d_H') . '/' .
+                Core_Logger::getErrorType($exception->getCode()) . '/' .
+                Class_Object::getClassName($class)
+            ) . urlencode($name) . '.log';
 
         if (strlen($logFile) > 255) {
             $logFilename = substr($logFile, 0, 255 - 11);
             $logFile = $logFilename . '_' . crc32(substr($logFile, 255 - 11));
         }
 
-        File::createData(
-            $logFile,
-            Render_Php::getInstance()->fetch(Core_Logger::getClass() . '/File', $output),
-            false,
-            FILE_APPEND
-        );
+        file_put_contents($logFile, Application::debugExceptionString($exception, 0, false), FILE_APPEND);
+
+//        File::createData(
+//            $logFile,
+//            Render_Php::getInstance()->fetch(Core_Logger::getClass() . '/File', [Application::debugExceptionString($exception)]),
+//            false,
+//            FILE_APPEND
+//        );
     }
 
 //    public static function outputDb($exception)
@@ -151,16 +162,16 @@ class Logger
     /**
      * Return message data from exception
      *
-     * @param  \Exception $exception
-     * @param  null $previousMessage
-     * @param  int $level
+     * @param \Exception $exception
+     * @param null $previousMessage
+     * @param int $level
      * @return mixed
      *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
+     * @throws \Exception
      * @version 0.0
      * @since   0.0
-     * @throws \Exception
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
      */
     public static function getMessage($exception, $previousMessage = null, $level = 1)
     {
