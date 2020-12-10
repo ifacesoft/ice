@@ -152,14 +152,6 @@ class DataProvider extends SessionHandler
      */
     public function read($session_id)
     {
-        if (filter_var(Request::host(), FILTER_VALIDATE_IP)) {
-            die('Ip host detected');
-
-//            header("HTTP/1.1 301 Moved Permanently");
-//            header("Location: /" );
-//            exit();
-        }
-
         $dataProvider = $this->getSessionDataProvider();
 
         $this->setSessionPk($session_id);

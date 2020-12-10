@@ -310,7 +310,7 @@ class Logger
 //        }
 
         if (Request::isCli()) {
-            fwrite(STDOUT, Application::debugExceptionString($exception));
+            fwrite(STDOUT, Application::debugExceptionString($exception, 0, 'cli'));
         } else {
             Logger::addLog($exceptionText);
         }
