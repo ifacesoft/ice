@@ -82,7 +82,7 @@ class App
             $actionClass = Action::getClass($actionClass);
 
             if (!Loader::load($actionClass)) {
-                throw new Error('Action class not load (Expected: ' . $actionClass . ')');
+                throw new Error(['Action class not load (Expected: {$0})', $actionClass]);
             }
 
             $result = $actionClass::call($params);

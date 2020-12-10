@@ -114,7 +114,7 @@ abstract class Action
     public static function call(array $params = [], $level = 0, $background = false, array $options = [])
     {
         if ($background) {
-            array_walk($params, function (&$value, $key) {
+            array_walk($params, static function (&$value, $key) {
                 return $value = $key . '=' . (trim($value) ? escapeshellarg(trim($value)) : '');
             });
 
@@ -141,7 +141,6 @@ abstract class Action
 //            $actionCacher = Action::getCacher($actionClass);
 //        }
 
-        /** @var Action $action */
         $action = $actionClass::create($params, $options);
 
         $inputString = Json::encode($action->getInput());
