@@ -164,7 +164,6 @@ abstract class Action_Worker extends Action
         if (empty($tasks)) {
             if ($dispatchWorker['forceFlush']) {
                 $this->finish(array_merge($worker, $params));
-                return;
             }
         }
 
