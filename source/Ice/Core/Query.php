@@ -374,7 +374,6 @@ class Query
      *
      * @param null $pk
      * @param null $ttl
-     * @param bool $indexFieldNames
      * @return array|null
      * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
@@ -382,9 +381,9 @@ class Query
      * @version 0.6
      * @since   0.0
      */
-    public function getRow($pk = null, $ttl = null, $indexFieldNames = true)
+    public function getRow($pk = null, $ttl = null)
     {
-        $rows = $this->getRows($ttl,$indexFieldNames);
+        $rows = $this->getRows($ttl);
 
         if (empty($rows)) {
             return null;
