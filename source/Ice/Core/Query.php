@@ -372,18 +372,19 @@ class Query
      *
      * @desc Результат запроса - единственная запись таблицы.
      *
-     * @param  null $pk
-     * @param  null $ttl
+     * @param null $pk
+     * @param null $ttl
+     * @param bool $indexFieldNames
      * @return array|null
+     * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
      * @since   0.0
-     * @throws \Exception
      */
-    public function getRow($pk = null, $ttl = null)
+    public function getRow($pk = null, $ttl = null, $indexFieldNames = true)
     {
-        $rows = $this->getRows($ttl);
+        $rows = $this->getRows($ttl,$indexFieldNames);
 
         if (empty($rows)) {
             return null;
