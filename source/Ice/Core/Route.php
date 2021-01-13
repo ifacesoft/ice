@@ -9,6 +9,7 @@
 
 namespace Ice\Core;
 
+use Ice\Exception\Config_Error;
 use Ice\Exception\Error;
 use Ice\Exception\RouteNotFound;
 use Ice\Helper\File;
@@ -43,7 +44,7 @@ class Route extends Config
     /**
      * Generate url by route with query string
      *
-     * @param  array $params
+     * @param array $params
      * @return string
      * @throws \Exception
      * @author dp <denis.a.shestakov@gmail.com>
@@ -63,7 +64,23 @@ class Route extends Config
             return $param !== null && $param !== '' && !is_array($param);
         });
 
-        $url = Replace::getInstance()->fetch($this->getRoute(), array_intersect_key($params, $this->gets('params')), null, Render::TEMPLATE_TYPE_STRING);
+        $routeParams = $this->gets('params');
+
+        foreach ($routeParams as $name => $param) {
+            $param = array_pad($param, 2, false);
+
+            if (!array_key_exists($name, $params) && $param[1]) {
+                $params[$name] = '';
+            }
+
+            if (array_key_exists($name, $params)) {
+                $routeParams[$name] = $params[$name];
+            } else {
+                unset($routeParams[$name]);
+            }
+        }
+
+        $url = Replace::getInstance()->fetch($this->getRoute(), $routeParams, null, Render::TEMPLATE_TYPE_STRING);
 
         return $params ? $url . '?' . http_build_query(array_diff_key($params, $this->gets('params'))) : $url;
     }
@@ -73,11 +90,11 @@ class Route extends Config
      *
      * @return mixed
      *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
+     * @throws Exception
      * @version 0.0
      * @since   0.0
-     * @throws Exception
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
      */
     public function getRoute()
     {
@@ -107,7 +124,6 @@ class Route extends Config
      * @return Route
      * @throws Exception
      * @throws RouteNotFound
-     * @throws \Ice\Exception\Config_Error
      */
     public static function getInstance($routeName, $postfix = null, $isRequired = false, $ttl = null, array $selfConfig = [])
     {
@@ -181,10 +197,10 @@ class Route extends Config
     /**
      * Return route data from file
      *
-     * @param  array $routeFilePathes
+     * @param array $routeFilePathes
      * @return array
      * @throws Exception
-     * @throws \Ice\Exception\Config_Error
+     * @throws Config_Error
      * @throws \Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
