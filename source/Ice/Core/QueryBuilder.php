@@ -2304,9 +2304,9 @@ class QueryBuilder
             ? (int)$page
             : self::DEFAULT_PAGINATION_PAGE;
 
-        $limit = $limit
-            ? (int) $limit
-            :  self::DEFAULT_PAGINATION_LIMIT;
+        $limit = $limit === null
+            ? self::DEFAULT_PAGINATION_LIMIT
+            : (int)$limit;
 
         return $this
             ->setCalcFoundRows()

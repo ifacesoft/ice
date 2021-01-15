@@ -2,6 +2,9 @@
 
 namespace Ice\Core;
 
+use Ice\Exception\Config_Error;
+use Ice\Exception\FileNotFound;
+
 class ModelScheme extends Config
 {
     const ONE_TO_MANY = 'oneToMany';
@@ -15,6 +18,9 @@ class ModelScheme extends Config
      * @param null $ttl
      * @param array $config
      * @return ModelScheme|Config
+     * @throws Exception
+     * @throws Config_Error
+     * @throws FileNotFound
      */
     public static function getInstance($class, $postfix = null, $isRequired = false, $ttl = null, array $config = [])
     {
@@ -60,10 +66,10 @@ class ModelScheme extends Config
     /**
      * Return full field names
      *
-     * @param  array $fields
-     * @throws Exception
+     * @param array $fields
      * @return array
      *
+     * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.5
@@ -78,7 +84,7 @@ class ModelScheme extends Config
 
         $fieldNames = array_values($this->getColumnFieldMap());
 
-        if (empty($fields) || $fields = '*') {
+        if (empty($fields) || $fields === '*') {
             return $fieldNames;
         }
 
@@ -87,22 +93,22 @@ class ModelScheme extends Config
         foreach ($fields as &$fieldName) {
             $fieldName = $modelClass::getFieldName($fieldName);
 
-            if (in_array($fieldName, $fieldNames)) {
+            if (in_array($fieldName, $fieldNames, true)) {
                 continue;
             }
 
-            if (in_array($fieldName . '__json', $fieldNames)) {
-                $fieldName = $fieldName . '__json';
+            if (in_array($fieldName . '__json', $fieldNames, true)) {
+                $fieldName .= '__json';
                 continue;
             }
 
-            if (in_array($fieldName . '__fk', $fieldNames)) {
-                $fieldName = $fieldName . '__fk';
+            if (in_array($fieldName . '__fk', $fieldNames, true)) {
+                $fieldName .= '__fk';
                 continue;
             }
 
-            if (in_array($fieldName . '__geo', $fieldNames)) {
-                $fieldName = $fieldName . '__geo';
+            if (in_array($fieldName . '__geo', $fieldNames, true)) {
+                $fieldName .= '__geo';
                 continue;
             }
 

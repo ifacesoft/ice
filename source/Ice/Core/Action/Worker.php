@@ -35,6 +35,7 @@ abstract class Action_Worker extends Action
         $config['input']['report'] = ['providers' => ['default', Cli::class], 'default' => 0];
         $config['input']['async'] = ['providers' => ['default', Cli::class], 'default' => 0];
         $config['input']['isLastTask'] = ['providers' => ['default', Cli::class], 'default' => 0];
+        $config['input']['forceFlush'] = ['providers' => ['default', Cli::class], 'default' => 0];
 
         return $config;
     }
@@ -159,6 +160,12 @@ abstract class Action_Worker extends Action
 
         $startTime = microtime(true);
 
+        if (empty($tasks)) {
+            if ($dispatchWorker['forceFlush']) {
+                $this->finish(array_merge($worker, $params));
+            }
+        }
+
         foreach ($tasks as $task) {
             $i++;
 
@@ -186,7 +193,7 @@ abstract class Action_Worker extends Action
                 usleep((int)$worker['delay']);
             }
 
-            $task = array_merge($task, $params);
+            $task = array_merge($params, $task); // именно в этом порядке, ибо нехер
 
             $hash = crc32(Json::encode($task));
 

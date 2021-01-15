@@ -114,9 +114,10 @@ class Type_String
     /**
      * Return random string
      *
-     * @param  int $length
+     * @param int $length
      * @param array $blocks
      * @return string
+     * @throws \Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * A possible way to generate a random salt is by running the following command from a unix shell:
@@ -143,7 +144,7 @@ class Type_String
         $randomString = '';
 
         for ($i = 0; $i < $length; $i++) {
-            $randomString .= $characters[rand(0, $charactersLength - 1)];
+            $randomString .= $characters[random_int(0, $charactersLength - 1)];
         }
 
         return $randomString;

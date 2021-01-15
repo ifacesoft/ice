@@ -12,6 +12,7 @@ namespace Ice\Core;
 use Ice\Core;
 use Ice\Exception\Access_Denied_Environment;
 use Ice\Exception\Config_Error;
+use Ice\Exception\Error;
 use Ice\Exception\FileNotFound;
 use Ice\Helper\Type_String;
 
@@ -75,7 +76,7 @@ class Environment extends Config
      * @since   0.5
      */
     public static function getInstance(
-        $environmentName = Environment::PRODUCTION,
+        $environmentName = null,
         $postfix = null,
         $isRequired = false,
         $ttl = null,
@@ -100,12 +101,16 @@ class Environment extends Config
             }
         }
 
-        if ($environmentName !== self::PRODUCTION && !empty($_SERVER['argv'])) {
-            foreach ($_SERVER['argv'] as $arg) {
-               if ($pos = strpos($arg, 'iceEnv') !== false) {
-                   $environmentName = substr($arg, 7);
-               }
-           }
+        if ($environmentName !== self::PRODUCTION && (!empty($_SERVER['argv']) || !empty($_REQUEST['iceEnv']))) {
+            if (!empty($_REQUEST['iceEnv'])) {
+                $environmentName = $_REQUEST['iceEnv'];
+            } else {
+                foreach ($_SERVER['argv'] as $arg) {
+                    if ($pos = strpos($arg, 'iceEnv') !== false) {
+                        $environmentName = substr($arg, 7);
+                    }
+                }
+            }
         }
 
         $environment = [];
@@ -119,6 +124,10 @@ class Environment extends Config
             if ($name === $environmentName) {
                 break;
             }
+        }
+
+        if (!$environmentName) {
+            throw new \RuntimeException('Host not configured in environment');
         }
 
         return self::$instance = self::create($environmentName, $environment);

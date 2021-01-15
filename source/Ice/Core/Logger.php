@@ -12,7 +12,9 @@ namespace Ice\Core;
 use ChromePhp;
 use Ice\Core;
 use Ice\DataProvider\Request as DataProvider_Request;
+use Ice\Exception\Config_Error;
 use Ice\Exception\Error;
+use Ice\Exception\FileNotFound;
 use Ice\Helper\Console as Helper_Console;
 use Ice\Helper\Date;
 use Ice\Helper\File;
@@ -21,6 +23,8 @@ use Ice\Helper\Class_Object;
 use Ice\Helper\Profiler as Helper_Profiler;
 use Ice\Helper\Type_String;
 use Ice\Model\Log_Error;
+use Exception;
+use Ifacesoft\Ice\Core\Infrastructure\Core\Application;
 use Throwable;
 
 /**
@@ -131,7 +135,6 @@ class Logger
      * @param string $class Class (Logger for this class)
      *
      * @throws Error
-     * @throws \Ice\Exception\FileNotFound
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
@@ -233,23 +236,14 @@ class Logger
         if (in_array($errno, [E_USER_DEPRECATED])) {
             return;
         }
-//
-//        if (Type_String::startsWith($errstr, ['include(/var/www/ebs/var/cache/', 'unlink(/var/www/ebs/var/cache/'])) {
-//            return;
-//        }
 
-        
-        if ($errno == E_WARNING && strpos($errstr, 'filemtime():') !== false
-            || $errno == E_WARNING && strpos($errstr, 'mysqli::real_connect():') !== false
+        if (($errno == E_WARNING && strpos($errstr, 'filemtime():') !== false)
+            || ($errno == E_WARNING && strpos($errstr, 'mysqli::real_connect():') !== false)
         ) {
             return; // подавляем ошибку смарти и ошибку подключения mysql (пароль в открытом виде)
         }
 
-//        if (in_array($errno, [E_PARSE, E_ERROR, E_COMPILE_ERROR, E_CORE_ERROR])) {
-//            self::getInstance()->exception($errstr, $errfile, $errline, null, $errcontext, $errno);
-//        } else {
-            self::getInstance()->error($errstr, $errfile, $errline, null, $errcontext, $errno);
-//        }
+        self::getInstance()->error($errstr, $errfile, $errline, null, $errcontext, $errno);
     }
 
     /**
@@ -258,17 +252,17 @@ class Logger
      * @param  $message
      * @param  $file
      * @param  $line
-     * @param  \Exception|Throwable $e
-     * @param  null $errcontext
-     * @param  int $errno
+     * @param Exception|Throwable $e
+     * @param null $errcontext
+     * @param int $errno
      * @return string
      * @throws Exception
      *
+     * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
      * @since   0.0
-     * @throws \Exception
      */
     public function error($message, $file, $line, $e = null, $errcontext = null, $errno = 0)
     {
@@ -316,7 +310,7 @@ class Logger
 //        }
 
         if (Request::isCli()) {
-            fwrite(STDOUT, $exceptionText . "\n");
+            fwrite(STDOUT, Application::debugExceptionString($exception, 0, 'cli'));
         } else {
             Logger::addLog($exceptionText);
         }
@@ -330,10 +324,10 @@ class Logger
      * @param  $message
      * @param  $file
      * @param  $line
-     * @param  \Exception $e
-     * @param  array|null $errcontext
-     * @param  int $errno
-     * @param  string $exceptionClass
+     * @param Exception $e
+     * @param array|null $errcontext
+     * @param int $errno
+     * @param string $exceptionClass
      * @return Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
@@ -359,7 +353,7 @@ class Logger
         /**
          * @var Exception $exceptionClass
          */
-        $exceptionClass = Class_Object::getClass(Exception::getClass(), $exceptionClass);
+        $exceptionClass = Class_Object::getClass(\Ice\Core\Exception::getClass(), $exceptionClass);
 
         if (is_array($errcontext) && isset($errcontext['e'])) {
             unset($errcontext['e']);
@@ -370,7 +364,6 @@ class Logger
 
     /**
      * @param Model $log
-     * @throws Exception
      */
     public function save($log)
     {
@@ -380,9 +373,9 @@ class Logger
                     'logger_class' => $this->class,
                     'session__fk' => session_id()
                 ])->save();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
 
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
 
         }
     }
@@ -406,11 +399,10 @@ class Logger
     /**
      * Return new instance of logger
      *
-     * @param  string $class
+     * @param string $class
      * @return Logger
      *
      * @throws Error
-     * @throws \Ice\Exception\FileNotFound
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
@@ -462,7 +454,7 @@ class Logger
 
         if (Environment::getInstance()->isDevelopment()) {
             $name = Request::isCli() ? Console::getCommand(null) : Request::uri();
-            $logFile = getLogDir() . \date(Date::FORMAT_MYSQL_DATE) . '/' . $typePath . '/' . urlencode($name) . '.log';
+            $logFile = getLogDir() . \date('Y-m-d_H') . '/' . $typePath . '/' . urlencode($name) . '.log';
 
             if (strlen($logFile) > 255) {
                 $logFilename = substr($logFile, 0, 255 - 11);
@@ -491,15 +483,16 @@ class Logger
     /**
      *
      * @param $value
+     * @param null $label
      * @param string $type (LOG|INFO|WARN|ERROR|DUMP|TRACE|EXCEPTION|TABLE|GROUP_START|GROUP_END)
-     * @param string $label
      * @param array $options
      *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
+     * @throws Exception
+     * @throws Config_Error
+     * @throws FileNotFound
      * @version 1.13
      * @since   0.0
-     * @throws \Ice\Exception\Config_Error
+     * @author dp <denis.a.shestakov@gmail.com>
      */
     public static function fb($value, $label = null, $type = 'LOG', $options = [])
     {
@@ -532,14 +525,14 @@ class Logger
      * Info message
      *
      * @param  $message
-     * @param  string|null $type
-     * @param  bool $isResource @todo: передаем сюда сам объект Resource или null (Статически типизуруем аргумент в методе)
-     * @param  bool $logging
+     * @param string|null $type
+     * @param bool $isResource @todo: передаем сюда сам объект Resource или null (Статически типизуруем аргумент в методе)
+     * @param bool $logging
      * @return string
      *
      * @throws Exception
-     * @throws \Ice\Exception\Config_Error
-     * @throws \Ice\Exception\FileNotFound
+     * @throws Config_Error
+     * @throws FileNotFound
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
@@ -571,7 +564,7 @@ class Logger
 
         if (Environment::getInstance()->isDevelopment()) {
             $name = Request::isCli() ? Console::getCommand(null) : Request::uri();
-            $logFile = getLogDir() . \date('Y-m-d') . '/INFO/' . urlencode($name) . '.log';
+            $logFile = getLogDir() . \date('Y-m-d_H') . '/INFO/' . urlencode($name) . '.log';
 
             if (strlen($logFile) > 255) {
                 $logFilename = substr($logFile, 0, 255 - 11);
@@ -621,16 +614,16 @@ class Logger
      * @param  $message
      * @param  $file
      * @param  $line
-     * @param  \Exception $e
-     * @param  null $errcontext
-     * @param  int $errno
+     * @param Exception $e
+     * @param null $errcontext
+     * @param int $errno
      * @return null|string
      *
+     * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
      * @since   0.0
-     * @throws Exception
      */
     public function notice($message, $file, $line, $e = null, $errcontext = null, $errno = E_USER_NOTICE)
     {
@@ -643,16 +636,16 @@ class Logger
      * @param  $message
      * @param  $file
      * @param  $line
-     * @param  \Exception $e
-     * @param  null $errcontext
-     * @param  int $errno
+     * @param Exception $e
+     * @param null $errcontext
+     * @param int $errno
      * @return null|string
      *
+     * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
      * @since   0.0
-     * @throws Exception
      */
     public function warning($message, $file, $line, $e = null, $errcontext = null, $errno = E_USER_WARNING)
     {
@@ -665,10 +658,10 @@ class Logger
      * @param  $message
      * @param  $file
      * @param  $line
-     * @param  \Exception $e
-     * @param  null $errcontext
-     * @param  int $errno
-     * @param  string $exceptionClass
+     * @param Exception|null $e
+     * @param null $errcontext
+     * @param int $errno
+     * @param string $exceptionClass
      * @return null
      * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
@@ -680,7 +673,7 @@ class Logger
         $message,
         $file,
         $line,
-        \Exception $e = null,
+        Exception $e = null,
         $errcontext = null,
         $errno = -1,
         $exceptionClass = 'Ice:Error'
@@ -689,7 +682,8 @@ class Logger
         throw $this->createException($message, $file, $line, $e, $errcontext, $errno, $exceptionClass);
     }
 
-    public static function getErrorType($code) {
+    public static function getErrorType($code)
+    {
         return isset(self::$errorCodes[$code]) ? Logger::$errorCodes[$code] : 'UNKNOWN_ERROR';
     }
 }

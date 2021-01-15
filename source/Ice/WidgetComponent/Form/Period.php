@@ -12,4 +12,18 @@ class Form_Period extends Form_Date
 
         return $config;
     }
+
+    /**
+     * @return string
+     */
+    public function getFromName() {
+        return $this->getOption('fromName', $this->getName() . '_from');
+    }
+
+    /**
+     * @return string
+     */
+    public function getToName() {
+        return $this->getOption('toName', $this->getName() . '_to');
+    }
 }

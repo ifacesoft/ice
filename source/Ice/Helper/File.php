@@ -108,7 +108,6 @@ class File
      * @return mixed
      * @throws Error
      * @throws Exception
-     * @throws \Ice\Exception\FileNotFound
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 1.2
@@ -116,11 +115,11 @@ class File
      */
     public static function move($from, $to, $isRequire = true)
     {
-        if ($from == $to || empty($from) || empty($to)) {
+        if ($from === $to || empty($from) || empty($to)) {
             return false;
         }
 
-        if (File::copy($from, $to, $isRequire)) {
+        if (self::copy($from, $to, $isRequire)) {
             if (unlink($from)) {
                 return true;
             } else {

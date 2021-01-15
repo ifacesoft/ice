@@ -50,7 +50,6 @@ abstract class Security extends Widget_Form_Event
         ]);
 
         try {
-            /** @var Model_Account $account */
             $account = $accountForm->getAccount();
 
             if ($account) {
@@ -67,7 +66,7 @@ abstract class Security extends Widget_Form_Event
                 $account->registerVerify($accountForm->validate());
 
                 $account = $account->signUp($accountForm, $container);
-                
+
                 if ($accountForm->get('mobile', 0)) {
                     User_Data::create([
                         '/pk' => $account->get('user__fk'),

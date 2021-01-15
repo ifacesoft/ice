@@ -10,10 +10,13 @@
 namespace Ice\Helper;
 
 use FilesystemIterator;
+use Ice\Core\Exception;
 use Ice\Core\Logger as Core_Logger;
 use Ice\Exception\Error;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
+use RuntimeException;
+use Throwable;
 
 /**
  * Class Directory
@@ -40,7 +43,7 @@ class Directory
      *
      * @version 1.11
      * @since   0.0
-     * @throws \Ice\Core\Exception
+     * @throws Exception
      */
     public static function copy($from, $to, $chmod = 0777)
     {
@@ -94,40 +97,50 @@ class Directory
      *
      * @param  $path
      * @param int $chmod
+     * @param bool $throwException
      * @return string
-     * @throws \Ice\Core\Exception
+     * @throws Error
+     * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 1.0
      * @since   0.0
      */
-    public static function get($path, $chmod = 0777)
+    public static function get($path, $chmod = 0777, $throwException = true)
     {
         if (is_dir($path)) {
             return realpath($path) . DIRECTORY_SEPARATOR;
         }
 
-        $dir = Directory::get(dirname($path));
+        $dir = self::get(dirname($path));
 
         if (!is_writable($dir)) {
-            Core_Logger::getInstance(__CLASS__)->exception(
-                [
-                    'Make directory {$0} failed. Permissions is wrong ({$1})',
-                    [$path, substr(sprintf('%o', fileperms($dir)), -4)]
-                ],
-                __FILE__,
-                __LINE__
-            );
+            $error = ['Make directory {$0} failed. Permissions is wrong ({$1})', [$path, substr(sprintf('%o', fileperms($dir)), -4)]];
+
+            if ($throwException) {
+                Core_Logger::getInstance(__CLASS__)->exception($error,__FILE__, __LINE__);
+            } else {
+                Core_Logger::getInstance(__CLASS__)->warning($error, __FILE__, __LINE__);
+            }
+
         }
 
         $old = umask(0);
+
         if (!file_exists($path)) {
+            $error = ['Directory {$0} already exists or can not create', $path];
+
             try {
-                mkdir($path, $chmod);
+                if (!mkdir($path, $chmod) && !is_dir($path)) {
+                    throw new RuntimeException(sprintf('Directory "%s" was not created', $path));
+                }
             } catch (\Exception $e) {
-                Core_Logger::getInstance(__CLASS__)->warning(['Directory {$0} alredy exists or can not create', $path], __FILE__, __LINE__);
+                Core_Logger::getInstance(__CLASS__)->warning($error, __FILE__, __LINE__);
+            } catch (Throwable $e) {
+                Core_Logger::getInstance(__CLASS__)->warning($error, __FILE__, __LINE__);
             }
         }
+
         umask($old);
 
 //        if (function_exists('posix_getuid') && posix_getuid() == fileowner($path)) {

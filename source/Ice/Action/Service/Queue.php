@@ -17,7 +17,6 @@ class Queue extends Action_Service
      */
     public function service(array $input)
     {
-        // todo: see ebs-data Util_UpdateText
         $dataProvider = $this->getServiceDataProvider();
 
         foreach ($this->getConfigData('queue_groups', []) as $queueGroup) {

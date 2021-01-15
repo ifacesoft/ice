@@ -50,7 +50,7 @@ if ($iceRealPath = realpath(VENDOR_DIR . ICE_VENDOR_NAME)) {
 try {
     global $loader;
 
-    if (empty($loader) ) {
+    if (empty($loader)) {
         $loader = require VENDOR_DIR . 'autoload.php';
     }
 
@@ -72,6 +72,6 @@ try {
     echo '<span style="font-weight: bold;">Bootstrapping failed: ' .
         str_replace(MODULE_DIR, '', $e->getMessage()) .
         '</span><br>';
-    echo nl2br(str_replace(MODULE_DIR, '', $e->getTraceAsString()) . "\n");
+    //echo nl2br(str_replace(MODULE_DIR, '', $e->getTraceAsString()) . "\n");
     die('Terminated. Bye-bye...' . "\n");
 }

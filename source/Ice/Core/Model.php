@@ -733,14 +733,21 @@ abstract class Model
      *
      * @param null $tableAlias
      * @return Query
+     * @throws Exception
      * @todo add order param
      *
-     * @throws Exception
      */
     public static function getSelectQuery($selectFields, array $filterFields = [], array $pagination = null, $dataSourceKey = null, $tableAlias = null)
     {
-        if (!$pagination) {
-            $pagination = ['page' => 1, 'limit' => 0];
+        $pagination = (array) $pagination;
+
+
+        if (!isset($pagination['page'])) {
+            $pagination['page'] = 1;
+        }
+
+        if (!isset($pagination['limit'])) {
+            $pagination['limit'] = 0;
         }
 
         return Query::getBuilder(self::getClass(), $tableAlias)
@@ -1065,7 +1072,7 @@ abstract class Model
                     }
 
                     Logger::getInstance(__CLASS__)->exception(
-                        ['field "{$0}" of model "{$1}" is null', [$fieldName, $modelName]],
+                        ['field "{$0}" of model "{$1}" is null', [$fieldName, $modelClass]],
                         __FILE__,
                         __LINE__
                     );
@@ -1220,7 +1227,6 @@ abstract class Model
             return $this->clearAffected();
         }
 
-        /** @var ModelScheme $modelScheme */
         $modelScheme = $modelClass::getScheme();
 
         $this->affected = array_merge(
@@ -1310,12 +1316,15 @@ abstract class Model
             ->getInsertId();
 
         if ($affected) {
-            if ($isSmart && $model = $modelClass::create(array_filter($this->row, function ($value) {
+            if ($isSmart) {
+                $model = $modelClass::create(array_filter($this->get(), function ($value) {
                     return $value !== null;
-                }))->find('/pk')
-            ) {
-
-                $this->set($model->getPk());
+                }));
+                if ($model) {
+                    $uniqueFieldNames = ModelScheme::getInstance(get_class($model))->getUniqueFieldNames();
+                    $model->find($uniqueFieldNames);
+                    $this->set($model->get($uniqueFieldNames));
+                }
             }
         }
 
@@ -1351,6 +1360,7 @@ abstract class Model
      * @version 0.2
      * @since   0.2
      * @throws Exception
+     * @todo Не делать запрос, если данные уже загружены
      */
     public function find($fieldNames, $dataSourceKey = null, $ttl = null, $return = true)
     {

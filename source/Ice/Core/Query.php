@@ -279,7 +279,7 @@ class Query
     /**
      * Execute query
      *
-     * @param int $ttl
+     * @param null $ttl
      * @param bool|string|array $indexFieldNames
      * @return QueryResult
      *
@@ -372,14 +372,14 @@ class Query
      *
      * @desc Результат запроса - единственная запись таблицы.
      *
-     * @param  null $pk
-     * @param  null $ttl
+     * @param null $pk
+     * @param null $ttl
      * @return array|null
+     * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
      * @since   0.0
-     * @throws \Exception
      */
     public function getRow($pk = null, $ttl = null)
     {
@@ -593,7 +593,10 @@ class Query
      * @param array $aggregate
      * @param array $exclude
      * @return array
+     * @throws Error
      * @throws Exception
+     * @throws FileNotFound
+     * @throws Throwable
      * @TODO отсортировать аргументы
      */
     public function getGroup($columnFieldNames, array $groups = null, $indexFieldNames = null, $ttl = null, $indexGroupFieldNames = null, array $aggregate = [], array $exclude = [])

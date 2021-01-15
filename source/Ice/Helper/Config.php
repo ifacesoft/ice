@@ -2,18 +2,19 @@
 
 namespace Ice\Helper;
 
-use Ice\Core\Logger;
 use Ice\Exception\Config_Param_NotFound;
+use RuntimeException;
 
 class Config
 {
     /**
      * Get more then one params of config
      *
-     * @param  array $config
-     * @param  $key
-     * @param  bool $isRequired_default todo: Подутать, как сделать понятнее
+     * @param array $config
+     * @param null $key
+     * @param bool $isRequired_default todo: Подумать, как сделать понятнее
      * @return array
+     * @throws Config_Param_NotFound
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
@@ -30,7 +31,7 @@ class Config
 
             foreach (explode('/', $key) as $keyPart) {
                 if (!array_key_exists($keyPart, $params)) {
-                    throw new \Exception('Param ' . $key . ' not found'); // Именно не Config_Param_NotFound
+                    throw new RuntimeException('Param ' . $key . ' not found'); // Именно не Config_Param_NotFound
                 }
 
                 $params = $params[$keyPart];
