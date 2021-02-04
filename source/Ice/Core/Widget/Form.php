@@ -13,7 +13,7 @@ use Ice\Core;
 use Ice\Helper\Arrays;
 use Ice\Helper\Emmet;
 use Ice\Helper\Json;
-use Ice\Helper\String;
+use Ice\Helper\Type_String;
 use Ice\View\Render\Php;
 use Ice\Widget\Form\Model as Widget_Form_Model;
 
@@ -96,7 +96,7 @@ abstract class Widget_Form extends Widget
     {
         $widget = parent::create($url, $action, $block, $event);
 
-        $widget->token = md5(String::getRandomString());
+        $widget->token = md5(Type_String::getRandomString());
 
         $widget->hidden('token', ['default' => $widget->getToken()]);
 

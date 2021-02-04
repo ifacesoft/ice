@@ -3,7 +3,7 @@
 namespace Ice\Core;
 
 use Ice\Data\Source\Mongodb;
-use Ice\Helper\String;
+use Ice\Helper\Type_String;
 use Ice\Model\Test;
 use PHPUnit_Framework_TestCase;
 
@@ -14,7 +14,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
         foreach (Module::getInstance()->getDataSourceKeys() as $dataSourceKey) {
             Logger::getInstance(__CLASS__)->info('test ' . __CLASS__ . ' ' . $dataSourceKey . '...', null, false);
 
-            if (String::startsWith($dataSourceKey, Mongodb::getClass())) {
+            if (Type_String::startsWith($dataSourceKey, Mongodb::getClass())) {
                 $id4 = '543457734521999473008348';
                 $id3 = '540957798821997873008349';
                 $id5 = '543454734521499443008348';

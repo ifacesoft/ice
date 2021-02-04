@@ -26,7 +26,6 @@ class Security_Password_Email_Register_Submit extends Security
         return $config;
     }
 
-
     /** Run action
      *
      * @param array $input
