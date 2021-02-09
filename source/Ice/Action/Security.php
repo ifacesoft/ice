@@ -2,28 +2,28 @@
 
 namespace Ice\Action;
 
+use Ebs\Action\Private_Subscriber_RegistrationRequest_New_Confirm;
 use Ebs\Model\Account_Email_Password;
 use Ebs\Model\Account_Login_Password;
 use Ebs\Model\Subscriber;
 use Ebs\Model\User_Data;
+use Ice\Core\Exception;
+use Ice\Core\Logger as Core_Logger;
+use Ice\Core\Model_Account;
+use Ice\Core\Request;
 use Ice\Exception\Config_Error;
 use Ice\Exception\Error;
 use Ice\Exception\FileNotFound;
 use Ice\Exception\Security_Account_EmailNotConfirmed;
 use Ice\Exception\Security_Account_NotFound;
-use Ice\Model\User;
-use Ice\Core\Exception;
-use Ice\Core\Logger as Core_Logger;
-use Ice\Core\Model_Account;
-use Ice\Core\Request;
 use Ice\Exception\Security_Account_Register;
 use Ice\Helper\Date;
 use Ice\Helper\Logger;
 use Ice\Helper\Type_String;
 use Ice\Model\Log_Security;
 use Ice\Model\Token;
+use Ice\Model\User;
 use Ice\Widget\Account_Form;
-use Ebs\Action\Private_Subscriber_RegistrationRequest_New_Confirm;
 
 abstract class Security extends Widget_Form_Event
 {
@@ -222,8 +222,10 @@ abstract class Security extends Widget_Form_Event
             '/data' => $tokenData
         ]);
 
+        $expiredAt = isset($tokenData['account_expired']) ? $tokenData['account_expired'] : $user->get('/expired_at');
+
         $account->set([
-            '/expired' => isset($tokenData['account_expired']) ? $tokenData['account_expired'] : $user->get('/expired_at'),
+            '/expired' => $expiredAt,
             'token__fk' => null,
             '/confirm_at' => Date::get(),
             'confirm_data' => ['ip' => Request::ip(), 'session' => session_id()],
@@ -231,13 +233,13 @@ abstract class Security extends Widget_Form_Event
         ]);
 
         $user->set([
-            '/expired_at' => isset($tokenData['account_expired']) ? $tokenData['account_expired'] : $user->get('/expired_at'),
+            '/expired_at' => $expiredAt,
             '/active' => 1
         ]);
 
-        if ($tokenData['function'] == 'registerConfirm') {
-            $subscriber = Subscriber::getSelectQuery(['domain', '/pk', 'auto_confirmation'], ['/pk' => $user->get('previous_subscriber_id')])->getModel();
-            //
+        $subscriber = Subscriber::getSelectQuery(['domain', '/pk', 'auto_confirmation'], ['/pk' => $user->get('previous_subscriber_id')])->getModel();
+
+        if ($subscriber && $tokenData['function'] == 'registerConfirm') {
             $writeUserCallback = function ($user) {
                 Private_Subscriber_RegistrationRequest_New_Confirm::call(
                     [
@@ -248,6 +250,7 @@ abstract class Security extends Widget_Form_Event
                     true
                 );
             };
+
             //если авторегистрация включена
             if ($subscriber->get('auto_confirmation', 0)) {
                 $writeUserCallback($user);
@@ -353,6 +356,18 @@ abstract class Security extends Widget_Form_Event
     }
 
     /**
+     * Return confirm token and confirm token expired
+     *
+     * @param Token $token
+     * @throws Exception
+     */
+    public function sendRestorePasswordConfirm(Token $token, array $input)
+    {
+        Core_Logger::getInstance(__CLASS__)
+            ->exception(['Implement {$0} for {$1}', [__FUNCTION__, get_class($this)]], __FILE__, __LINE__);
+    }
+
+    /**
      * @param Model_Account $account
      * @param $input
      * @return null
@@ -397,18 +412,6 @@ abstract class Security extends Widget_Form_Event
         $logger->save($log);
 
         return $account;
-    }
-
-    /**
-     * Return confirm token and confirm token expired
-     *
-     * @param Token $token
-     * @throws Exception
-     */
-    public function sendRestorePasswordConfirm(Token $token, array $input)
-    {
-        Core_Logger::getInstance(__CLASS__)
-            ->exception(['Implement {$0} for {$1}', [__FUNCTION__, get_class($this)]], __FILE__, __LINE__);
     }
 
     /**
