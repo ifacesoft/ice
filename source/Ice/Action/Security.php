@@ -239,7 +239,7 @@ abstract class Security extends Widget_Form_Event
 
         $subscriber = Subscriber::getSelectQuery(['domain', '/pk', 'auto_confirmation'], ['/pk' => $user->get('previous_subscriber_id')])->getModel();
 
-        if ($tokenData['function'] == 'registerConfirm') {
+        if ($subscriber && $tokenData['function'] == 'registerConfirm') {
             $writeUserCallback = function ($user) {
                 Private_Subscriber_RegistrationRequest_New_Confirm::call(
                     [
