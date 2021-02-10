@@ -189,8 +189,21 @@ abstract class Action_Worker extends Action
 
             usleep((int)$worker['delay']);
 
+            $waitTime = 0;
+
             while (($activeTasks = count($provider->getKeys($this->getTaskKey($workerKey)))) >= (int)$worker['max'] && (int)$worker['max'] !== 0) {
-                Logger::log('worker wait... (' . $activeTasks  . '/' . $worker['max'] . ')', get_class($this));
+                if (!$waitTime) {
+                    Logger::log('(' . $activeTasks  . '/' . $worker['max'] . ') worker wait... ', get_class($this));
+                }
+
+                $waitTime++;
+
+                fwrite(STDOUT, '.');
+
+                if (! ($waitTime % 60)) {
+                    fwrite(STDOUT, '(' . ($waitTime * (int)$worker['delay'] / 1000000) . ')');
+                }
+
                 usleep((int)$worker['delay']);
             }
 
@@ -211,7 +224,7 @@ abstract class Action_Worker extends Action
 
                 $taskLog = Type_String::printR($task, false);
 
-                $runLog = '[ ' . $i . '/' . $dispatchWorker['tasks'] . ' (' . ($dispatchWorker['tasks'] - $i) . ') - ' . $activeTasks  . '/' . $worker['max'] . ' : ' . $estimateTime . ']';
+                $runLog = '[ ' . $i . '/' . $dispatchWorker['tasks'] . ' (' . ($dispatchWorker['tasks'] - $i) . ') - ' . ($activeTasks + 1)  . '/' . $worker['max'] . ' : ' . $estimateTime . ']';
 
                 Logger::log($runLog . ' #' . $hash .' ' .  $taskLog . ' [ timePerTask: ' . $avgTime . ' | tasksPerSec: ' . $perSec . ' | leftTime: ' . $leftTime . ' ]', get_class($this));
 
@@ -294,7 +307,7 @@ abstract class Action_Worker extends Action
      * @return DataProvider|Redis
      * @throws Exception
      */
-    private function getProvider()
+    protected function getProvider()
     {
         return Redis::getInstance('default', get_class($this));
     }
