@@ -189,6 +189,7 @@ abstract class Action_Worker extends Action
             usleep((int)$worker['delay']);
 
             $waitTime = 0;
+            $startWeightTime = microtime(true);
 
             while (($activeTasks = count($provider->getKeys($this->getTaskKey($workerKey)))) >= (int)$worker['max'] && (int)$worker['max'] !== 0) {
                 if (!$waitTime) {
@@ -196,14 +197,19 @@ abstract class Action_Worker extends Action
                 }
 
                 $waitTime++;
+                $waitPrettyTime = Profiler::getPrettyTime(microtime(true) - $startWeightTime);
 
                 fwrite(STDOUT, '.');
 
-                if (! ($waitTime % 60)) {
-                    fwrite(STDOUT, '(' . ($waitTime * (int)$worker['delay'] / 1000000) . ')');
+                if (! ($waitTime % 100)) {
+                    fwrite(STDOUT, '[' . $waitPrettyTime . ']');
                 }
 
                 usleep((int)$worker['delay']);
+            }
+
+            if ($waitTime) {
+                fwrite(STDOUT, "\n");
             }
 
             $task = array_merge($params, $task); // именно в этом порядке, ибо нехер
