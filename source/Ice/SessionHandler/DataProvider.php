@@ -9,12 +9,12 @@
 
 namespace Ice\SessionHandler;
 
+use Ice\Core\DataProvider as Core_DataProvider;
 use Ice\Core\Environment;
 use Ice\Core\Exception;
 use Ice\Core\Request;
 use Ice\Core\SessionHandler;
 use Ice\DataProvider\Redis;
-use Ice\Core\DataProvider as Core_DataProvider;
 use Ice\Exception\Error;
 
 /**
@@ -60,7 +60,7 @@ class DataProvider extends SessionHandler
      * Destroy a session
      *
      * @link   http://php.net/manual/en/sessionhandlerinterafce.destroy.php
-     * @param  int $session_id The session ID being destroyed.
+     * @param int $session_id The session ID being destroyed.
      * @return bool <p>
      * The return value (usually TRUE on success, FALSE on failure).
      * Note this value is returned internally to PHP for processing.
@@ -86,6 +86,15 @@ class DataProvider extends SessionHandler
             );
 
         return true;
+    }
+
+    /**
+     * @return Redis|Core_DataProvider
+     * @throws Exception
+     */
+    public function getSessionDataProvider()
+    {
+        return Core_DataProvider::getInstance(Redis::class, 'session');
     }
 
     /**
@@ -136,7 +145,7 @@ class DataProvider extends SessionHandler
      * Read session data
      *
      * @link   http://php.net/manual/en/sessionhandlerinterafce.read.php
-     * @param  string $session_id The session id to read data for.
+     * @param string $session_id The session id to read data for.
      * @return string <p>
      * Returns an encoded string of the read data.
      * If nothing was read, it must return an empty string.
@@ -154,52 +163,43 @@ class DataProvider extends SessionHandler
     {
         $dataProvider = $this->getSessionDataProvider();
 
-        $this->setSessionPk($session_id);
+        $session = $dataProvider->hGet($session_id);
 
-        // Todo: получать hgetом ВСЕ данные (слишком много запросов к редусу)
-
-        $this->setSessionCreatedAt($dataProvider->hGet($session_id, 'session_created_at', null));
-
-        $currentTime = time();
         // TODO: Нужно через настройки
 //        $currentIp = Request::ip();
 //        $currentAgent = Request::agent();
 
-        if (!$this->getSessionCreatedAt()) {
-            return '';
-        }
-
-        $deletedAt = $dataProvider->hGet($session_id, 'session_deleted_at', null);
-        $updatedAt = $dataProvider->hGet($session_id, 'session_updated_at', $currentTime);
-        // TODO: Нужно через настройки
-//        $userIp = $dataProvider->hGet($session_id, 'session_user_ip', null);
-//        $userAgent = $dataProvider->hGet($session_id, 'session_user_agent', null);
-
-        $sessionConfig = Environment::getInstance()->getConfig('ini_set_session');
-
-        $sessionLifetime = $sessionConfig->get('gc_maxlifetime');
-
         if (
-            $deletedAt
-            || $currentTime - $updatedAt >= $sessionLifetime
-            // TODO: Нужно через настройки
+            empty($session['session_created_at']) ||
+            !empty($session['session_deleted_at'])
 //            || $userIp != $currentIp
 //            || $userAgent != $currentAgent
         ) {
-            if (!$deletedAt) {
-                $dataProvider->hSet(
-                    $session_id,
-                    ['session_deleted_at' => $currentTime],
-                    $sessionLifetime
-                );
-            }
-
             // todo: !!!здесь нужно перегенерировать session_id
 
             return '';
         }
 
-        return $this->setSessionDataHash($dataProvider->hGet($session_id, 'session_data', ''));
+        $this->setSessionPk($session_id);
+
+        $this->setSessionCreatedAt($session['session_created_at']);
+
+        $sessionLifetime = Environment::getInstance()->getConfig('ini_set_session')->get('gc_maxlifetime');
+
+        $currentTime = time();
+
+        if (!empty($session['session_updated_at']) && $currentTime - $session['session_updated_at'] >= $sessionLifetime) {
+            $dataProvider->hSet($session_id, ['session_deleted_at' => $currentTime], $sessionLifetime);
+            // todo: !!!здесь нужно перегенерировать session_id
+
+            return '';
+        }
+
+        if (empty($session['session_data'])) {
+            $session['session_data'] = '';
+        }
+
+        return $this->setSessionDataHash($session['session_data']);
     }
 
     /**
@@ -207,8 +207,8 @@ class DataProvider extends SessionHandler
      * Write session data
      *
      * @link   http://php.net/manual/en/sessionhandlerinterafce.write.php
-     * @param  string $session_id The session id.
-     * @param  string $session_data <p>
+     * @param string $session_id The session id.
+     * @param string $session_data <p>
      * The encoded session data. This data is the
      * result of the PHP internally encoding
      * the $_SESSION superglobal to a serialized
@@ -315,14 +315,5 @@ class DataProvider extends SessionHandler
         }
 
         return true;
-    }
-
-    /**
-     * @return Redis|Core_DataProvider
-     * @throws Exception
-     */
-    public function getSessionDataProvider()
-    {
-        return Core_DataProvider::getInstance(Redis::class, 'session');
     }
 }

@@ -7,7 +7,7 @@ use Ice\Core\Action;
 use Ice\Core\Module;
 use Ice\Core\Request;
 use Ice\Core\Route;
-use Ice\Helper\String;
+use Ice\Helper\Type_String;
 use Ice\Widget\Menu\Navbar;
 
 class Admin_Navigation extends Action
@@ -66,9 +66,9 @@ class Admin_Navigation extends Action
                 $routeUrl = Route::getInstance($item['routeName'])->getUrl();
                 $title = Route::getResource()->get($item['routeName']);
 
-                $navbarMenu->link($routeUrl, $title, ['active' => String::startsWith($currentUrl, $routeUrl) ? true : false]);
+                $navbarMenu->link($routeUrl, $title, ['active' => Type_String::startsWith($currentUrl, $routeUrl) ? true : false]);
             } else {
-                $navbarMenu->link($item['url'], $item['title'], ['active' => String::startsWith($currentUrl, $item['url']) ? true : false]);
+                $navbarMenu->link($item['url'], $item['title'], ['active' => Type_String::startsWith($currentUrl, $item['url']) ? true : false]);
             }
         }
 

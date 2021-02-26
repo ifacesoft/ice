@@ -119,4 +119,13 @@ abstract class Exception extends ErrorException
     {
         return $this->errorContext;
     }
+
+    /**
+     * Ice 2 using
+     * 
+     * @return array|null
+     */
+    public function getContext() {
+        return $this->errorContext;
+    }
 }

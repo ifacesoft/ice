@@ -115,7 +115,7 @@ abstract class Action
     {
         if ($background) {
             array_walk($params, static function (&$value, $key) {
-                return $value = $key . '=' . (trim($value) ? escapeshellarg(trim($value)) : '');
+                return $value = $key . '=' . (trim($value) !== '' ? escapeshellarg(trim($value)) : '');
             });
 
             $commands = ICE_DIR . 'bin/ice ' . escapeshellarg(get_called_class()) . ' ' . implode(' ', $params);

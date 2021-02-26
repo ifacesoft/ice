@@ -10,7 +10,6 @@
 namespace Ice\Core;
 
 use Ice\Exception\Config_Error;
-use Ice\Exception\Error;
 use Ice\Exception\RouteNotFound;
 use Ice\Helper\File;
 use Ice\Render\Replace;
@@ -67,7 +66,7 @@ class Route extends Config
         $routeParams = $this->gets('params');
 
         foreach ($routeParams as $name => $param) {
-            $param = array_pad($param, 2, false);
+            $param = array_pad((array)$param, 2, false);
 
             if (!array_key_exists($name, $params) && $param[1]) {
                 $params[$name] = '';
