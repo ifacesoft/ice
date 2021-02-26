@@ -15,9 +15,8 @@ $cell = $render->getColumn() . $render->getIndex();
 $column = $render->getColumn();
 
 $finishCell = $render->decrementLetter($render->columnInc($colspan)) . $render->getIndex();
-
 if ($cell != $finishCell) {
-    $sheet->mergeCells($cell . ':' . $render->decrementLetter($render->columnInc($col)) . $render->getIndex());
+    $sheet->mergeCells($cell . ':' . $render->decrementLetter($render->columnInc($colspan)) . $render->getIndex());
 }
 
 $sheet->setCellValue($cell, strip_tags($component->getValue()));

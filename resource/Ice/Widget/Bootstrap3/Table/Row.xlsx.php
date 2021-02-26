@@ -62,8 +62,7 @@ $sheet = $render->getSheet();
 //$sheet->setShowSummaryBelow(false);
 
 
-$columnCount = 31;
-
+$columnCount = 59;
 foreach ($result as $offset => $row) {
     $count = 0;
 

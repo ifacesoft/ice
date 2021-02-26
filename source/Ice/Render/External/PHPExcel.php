@@ -101,7 +101,7 @@ class External_PHPExcel extends Render
 //        foreach(range(1, 100) as $rowID) {
 //            $xls->getActiveSheet()->getRowDimension($rowID)->setRowHeight(-1);
 //        }
-        
+
         if ($widget->getOption('landscapeAutofit', false)) {
             $this->getSpreadsheet()->getActiveSheet()->getPageSetup()->setOrientation(PageSetup::ORIENTATION_LANDSCAPE);
             $this->getSpreadsheet()->getActiveSheet()->getPageSetup()->setFitToWidth(1);
@@ -228,10 +228,11 @@ class External_PHPExcel extends Render
         if (ord($char[$len - 1]) === 65 || ord($char[$len - 1]) === 97) {
             if ($len === 1) { // one character left
                 return '';
-            } else if ($len === 2) {
+            } else if ($char == 'AA' || $char == 'aa') {
                 return $z;
             } else { // 'ABA'--;  => 'AAZ'; recursive call
-                $char = $this->decrementLetter(substr($char, 0, -1)) . $z;
+                return $this->decrementLetter(substr($char, 0, -1)) . $z;
+                // $char = $this->decrementLetter(substr($char, 0, -1)) . $z;
             }
         } else {
             $char[$len - 1] = chr(ord($char[$len - 1]) - 1);

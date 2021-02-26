@@ -18,7 +18,6 @@ $sheet = $render->getSheet($colspan);
 
 $cell = $render->getColumn() . $render->getIndex();
 $finishCell = $render->decrementLetter($render->columnInc($colspan)) . $render->getIndex();
-
 if ($cell != $finishCell) {
     $sheet->mergeCells($cell . ':' . $finishCell);
 }
