@@ -159,11 +159,7 @@ class Type_String
 
     public static function truncate($string, $length = 100, $append = '...')
     {
-        if (!is_numeric($length)) {
-            $length = 100;
-        }
-
-        return \mb_strimwidth($string, 0, $length, $append);
+        return StringValue::create($string)->truncate($length, $append);
     }
 
     public static function substrpos($haystack, $needle, $offset = 0, $numOffset = 0)

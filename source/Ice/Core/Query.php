@@ -507,7 +507,7 @@ class Query
 
     public function dumpQuery($die = false)
     {
-        Debuger::dump($this->getBody(), $this->getBinds());
+        Debuger::dump($this->getBody(), Json::encode($this->getBinds()));
 
         if ($die) {
             die();

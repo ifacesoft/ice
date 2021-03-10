@@ -9,6 +9,8 @@
 
 namespace Ice\Helper;
 
+use Ifacesoft\Ice\Core\Domain\Value\StringValue;
+
 /**
  * Class Transliterator
  *
@@ -18,6 +20,8 @@ namespace Ice\Helper;
  *
  * @package    Ice
  * @subpackage Helper
+ *
+ * @deprecated use StringValue::create($string)->transliterate()
  *
  * @version 0.0
  * @since   0.0
@@ -37,16 +41,6 @@ class Transliterator
      */
     public static function transliterate($string)
     {
-        $string = str_replace('-', ' p r o b e l ', $string);
-
-        $string = \transliterator_transliterate(
-            "Any-Latin; NFD; [:Nonspacing Mark:] Remove; NFC; [:Punctuation:] Remove; Lower();",
-            $string
-        );
-
-        $string = str_replace(' p r o b e l ', '-', $string);
-
-        $string = str_replace(['ʹ', 'ʺ', '+', '`'], '', preg_replace('/[\s]+/', '_', $string));
-        return trim($string, '_');
+       return StringValue::create($string)->transliterate();
     }
 }
