@@ -37,7 +37,7 @@ class Debuger
     /**
      * Debug variables
      *
-     * @param $arg
+     * @param $data
      *
      * @return mixed
      * @throws Exception
@@ -46,40 +46,35 @@ class Debuger
      * @since   0.0
      * @author dp <denis.a.shestakov@gmail.com>
      */
-    public static function dump($arg)
+    public static function dump($data, $display = true, $prefix = '')
     {
-        foreach (func_get_args() as $arg1) {
-            $var = stripslashes(Php::varToPhpString($arg1));
+        $var = stripslashes(Php::varToPhpString($data));
 
-            $var = str_replace("\x1e", Helper_Console::getText('\x1E', Helper_Console::C_YELLOW), $var);
+        $var = str_replace("\x1e", Helper_Console::getText('\x1E', Helper_Console::C_YELLOW), $var);
 
-            if (!Request::isAjax()) {
-                if (Request::isCli()) {
-                    fwrite(STDOUT, Helper_Console::getText($var, Helper_Console::C_CYAN) . "\n");
-                } else {
-                    echo '<div class="alert alert-' . Logger::INFO . '">' . str_replace('<span style="color: #0000BB">&lt;?php&nbsp;</span>', '', highlight_string('<?php // Debug value:' . "\n" . $var . "\n", true)) . '</div>';
-                }
-            }
+        fwrite(STDOUT, Helper_Console::getText($var, Helper_Console::C_CYAN) . "\n");
 
-            $name = Request::isCli() ? Console::getCommand(null) : Request::uri();
-
-            $logFile = Directory::get(
-                    \getLogDir() . date('Y-m-d_H') . '/' .
-                    '/DEBUG/'
-                ) . urlencode($name) . '.log';
-
-            if (strlen($logFile) > 255) {
-                $logFilename = substr($logFile, 0, 255 - 11);
-                $logFile = $logFilename . '_' . crc32(substr($logFile, 255 - 11));
-            }
-
-            File::createData($logFile, $var, false, FILE_APPEND);
-
-            Logger::fb($arg1, 'debug', 'INFO');
-
+        if (!Request::isCli() && $display) {
+            echo '<div class="alert alert-' . Logger::INFO . '">' . str_replace('<span style="color: #0000BB">&lt;?php&nbsp;</span>', '', highlight_string('<?php // Debug value:' . "\n" . $var . "\n", true)) . '</div>';
         }
 
-        return $arg;
+        $name = Request::isCli() ? Console::getCommand(null) : Request::uri();
+
+        $logFile = Directory::get(
+                \getLogDir() . date('Y-m-d_H') . '/' .
+                '/DEBUG/'
+            ) . $prefix . urlencode($name) . '.log';
+
+        if (strlen($logFile) > 255) {
+            $logFilename = substr($logFile, 0, 255 - 11);
+            $logFile = $logFilename . '_' . crc32(substr($logFile, 255 - 11));
+        }
+
+        File::createData($logFile, $var, false, FILE_APPEND);
+
+        Logger::fb($arg, 'debug', 'INFO');
+
+        return $data;
     }
 
     /**
@@ -96,29 +91,6 @@ class Debuger
      */
     public static function dumpToFile($arg)
     {
-        foreach (func_get_args() as $arg1) {
-            $var = stripslashes(Php::varToPhpString($arg1));
-
-            $var = str_replace("\x1e", Helper_Console::getText('\x1E', Helper_Console::C_YELLOW), $var);
-
-            $name = Request::isCli() ? Console::getCommand(null) : Request::uri();
-
-            $logFile = Directory::get(
-                    \getLogDir() . date('Y-m-d_H') . '/' .
-                    '/DEBUG/'
-                ) . urlencode($name) . '.log';
-
-            if (strlen($logFile) > 255) {
-                $logFilename = substr($logFile, 0, 255 - 11);
-                $logFile = $logFilename . '_' . crc32(substr($logFile, 255 - 11));
-            }
-
-            File::createData($logFile, $var, false, FILE_APPEND);
-
-            Logger::fb($arg1, 'debug', 'INFO');
-
-        }
-
-        return $arg;
+       return self::dump($arg, false, 'emil_');
     }
 }

@@ -516,9 +516,17 @@ class QueryResult implements Cacheable
     {
         $string = '';
 
+        $sql = DataSource::$isLogSql
+            ? preg_replace('/\s+/', ' ', print_r($this->getQuery()->getBody(), true))
+            : '';
+
+        $binds = DataSource::$isLogBinds
+            ? ' ("' . implode('", "', $this->getQuery()->getBinds()) . '")'
+            : '';
+        
         try {
-            $string = preg_replace('/\s+/', ' ', print_r($this->getQuery()->getBody(), true)) .
-                ' ("' . implode('", "', $this->getQuery()->getBinds()) . '") result: \'' .
+            $string = $sql .
+                $binds . ' result: \'' .
                 QueryResult::NUM_ROWS . '\' => ' . $this->getNumRows() . ', \'' .
                 QueryResult::AFFECTED_ROWS . '\' => ' . $this->getAffectedRows() . ', \'' .
                 QueryResult::FOUND_ROWS . '\' => ' . $this->getFoundRows() . ', \'' .
