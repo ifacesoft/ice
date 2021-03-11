@@ -436,15 +436,6 @@ class Mysqli extends DataSource
      */
     public function executeInsert(Query $query)
     {
-//        // выпилить когда надо будет
-//        if (in_array('roles', $query->getQueryBuilder()->getSqlParts()['values']['fieldNames'])) {
-//            \file_put_contents(
-//                MODULE_DIR . 'rolesInsert_' . \Ice\Helper\Date::get(null, \Ice\Helper\Date::FORMAT_MYSQL_DATE) . '.log',
-//                print_r(['session' => session_id(), 'server' => $_SERVER, 'values' => $query->getBindParts()['values']], true),
-//                FILE_APPEND
-//            );
-//        }
-
         $data = [];
 
         $statement = $this->getStatement($query->getBody(), $query->getBinds());
