@@ -3,6 +3,7 @@
 namespace Ice\Helper;
 
 use PhpOffice\PhpSpreadsheet\Cell\Cell;
+use PhpOffice\PhpSpreadsheet\Exception;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\RichText\RichText;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -53,12 +54,10 @@ class Vendor_PHPExcel
      * @param Spreadsheet $objPHPExcel
      * @param int $activeSheetIndex
      * @param array $columnNames
-     *
+     * @param int $offsetRows
      * @return array
-     * @throws \PhpOffice\PhpSpreadsheet\Exception
-     * @throws \Exception
+     * @throws Exception
      * @todo: $columnNames mast by required
-     *
      */
     public static function getData(Spreadsheet $objPHPExcel, $activeSheetIndex = 0, array $columnNames = [], $offsetRows = 0)
     {
@@ -139,7 +138,7 @@ class Vendor_PHPExcel
      * @param array $columnNames
      *
      * @return Spreadsheet
-     * @throws \PhpOffice\PhpSpreadsheet\Exception
+     * @throws Exception
      * @todo: указывать имена колонок, например ['A' => 'dsada', 'B' => 'sdad', 'D' => 'dsadas'], но не обязательно
      *
      */
@@ -163,5 +162,10 @@ class Vendor_PHPExcel
             ->fromArray($rows, null, 'A1');
 
         return $objPHPExcel;
+    }
+
+    public static function getDataFromFile(string $filePath, $ignoreFirstRow = 1, $columnNames = [])
+    {
+        return array_slice(Vendor_PHPExcel::getData(IOFactory::load($filePath), 0, $columnNames), (int) $ignoreFirstRow);
     }
 }
