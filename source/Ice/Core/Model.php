@@ -345,7 +345,7 @@ abstract class Model
     {
         $fieldName = trim($fieldName);
 
-        if ($fieldName[0] == '/') {
+        if ($fieldName[0] === '/') {
             $fieldName[0] = '_';
 
             if (!$tableAlias) {
