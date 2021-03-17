@@ -40,6 +40,7 @@ class Date
     const FORMAT_MYSQL_DATE = 'Y-m-d';
     const FORMAT_DATE = 'd.m.y';
     const FORMAT_DATETIME = 'd.m.y H:i:s';
+    const START = '1970-01-01 00:00:00';
 
     public static function getMonthMap($lang = 'ru')
     {

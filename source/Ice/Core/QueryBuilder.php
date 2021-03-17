@@ -82,6 +82,7 @@ class QueryBuilder
     const SQL_COMPARISON_KEYWORD_IS_NOT_NULL = 'IS NOT NULL';
     const SQL_ORDERING_ASC = 'ASC';
     const SQL_ORDERING_DESC = 'DESC';
+    const SQL_ORDERING_RAND = 'RAND()';
     const SEARCH_KEYWORD = '$search';
     const DEFAULT_PAGINATION_PAGE = 1;
     const DEFAULT_PAGINATION_LIMIT = 10;
@@ -676,6 +677,7 @@ class QueryBuilder
      *
      * @param  $limit
      * @param int|null $offset
+     * @param bool $isUse
      * @return QueryBuilder
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -683,8 +685,12 @@ class QueryBuilder
      * @version 0.0
      * @since   0.0
      */
-    public function limit($limit, $offset = 0)
+    public function limit($limit, $offset = 0, $isUse = true)
     {
+        if (!$isUse) {
+            return $this;
+        }
+
         $this->sqlParts[self::PART_LIMIT] = [
             'limit' => $limit,
             'offset' => $offset
@@ -1939,15 +1945,15 @@ class QueryBuilder
     /**
      * Ascending ordering
      *
-     * @param  $fieldName
+     * @param string $fieldName
      * @param array|string $modelTableData
+     * @param bool $isUse
      * @return QueryBuilder
      *
      * @throws Exception
      * @version 0.6
      * @since   0.0
      * @author dp <denis.a.shestakov@gmail.com>
-     *
      */
     public function asc($fieldName = '/pk', $modelTableData = [], $isUse = true)
     {
@@ -1956,6 +1962,17 @@ class QueryBuilder
         }
 
         return $this->order($fieldName, QueryBuilder::SQL_ORDERING_ASC, $modelTableData);
+    }
+
+    /**
+     * Order by RAND()
+     *
+     * @return QueryBuilder
+     * @throws Exception
+     */
+    public function rand()
+    {
+        return $this->order(null, QueryBuilder::SQL_ORDERING_RAND);
     }
 
     /**
@@ -1990,7 +2007,7 @@ class QueryBuilder
         $this->sqlParts[self::PART_ORDER][] = [
             'modelClass' => $modelClass,
             'tableAlias' => $tableAlias,
-            'fieldName' => $modelClass::getFieldName($fieldName),
+            'fieldName' => $fieldName ? $modelClass::getFieldName($fieldName) : null,
             'order' => $ascOrDesc
         ];
 
