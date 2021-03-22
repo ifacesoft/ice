@@ -1,3 +1,4 @@
+<?php $parts = reset($result); ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,15 +10,15 @@
     <meta name="author" content="">
     <link rel="icon" href="/favicon.ico">
 
-    <title><?= $title ?></title>
+    <title><?= $title ? $title : $parts['title']->render() ?></title>
 
-    <?= $staticResources ?>
-    <?= $dynamicResources ?>
+    <?= $staticResources ? $staticResources : $parts['staticResources']->render() ?>
+    <?= $dynamicResources ? $dynamicResources : $parts['dynamicResources']->render() ?>
 </head>
 
 <body>
-<?= $main ?>
+<?= $main ? $main : $parts['main']->render() ?>
 
-<?= $footerJs ?>
+<?= $footerJs ? $footerJs : $parts['footerJs']->render() ?>
 </body>
 </html>

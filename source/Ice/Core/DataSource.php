@@ -46,6 +46,9 @@ abstract class DataSource extends Container
      */
     private $key = null;
 
+    public static $isLogSql = true;
+    public static $isLogBinds = true;
+    
     /**
      * DataSource constructor.
      * @param array $data
