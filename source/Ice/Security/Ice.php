@@ -63,10 +63,6 @@ class Ice extends Security
      */
     public function check(array $roles)
     {
-        if (!$this->isCheckRoles()) {
-            return true;
-        }
-
         $userRoles = $this->getRoles();
 
         return array_intersect($roles, $userRoles) || \in_array('ROLE_ICE_SUPER_ADMIN', $userRoles);

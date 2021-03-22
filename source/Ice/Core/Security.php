@@ -19,8 +19,6 @@ abstract class Security extends Container
 
     public static $loaded = false;
 
-    private $checkRoles = null;
-
     public static function init() {
         Security::$loaded = false;
         Security::getInstance();
@@ -31,17 +29,7 @@ abstract class Security extends Container
     {
         parent::__construct($data);
 
-        $this->checkRoles = Config::getInstance(Security::class)->get('checkRoles', 1);
-
         $this->autologin();
-    }
-
-    /**
-     * @return null|string
-     */
-    public function isCheckRoles()
-    {
-        return (boolean) $this->checkRoles;
     }
 
     abstract protected function autologin();

@@ -33,7 +33,6 @@ return [
     ],
     'Ice\Core\Security' => [
         'defaultClassName' => 'Ice\Security\Ice',
-        'checkRoles' => 1
     ],
     'Ice\Core\Router' => [
         'defaultClassName' => 'Ice\Router\Ice',

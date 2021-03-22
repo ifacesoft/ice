@@ -7,12 +7,10 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Doctrine\ORM\TransactionRequiredException;
-use Ice\Core\Debuger;
 use Ice\Core\Exception;
 use Ice\Core\Model_Account;
 use Ice\Exception\Error;
 use Ice\Exception\FileNotFound;
-use Ice\Exception\Security_Auth;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
@@ -21,36 +19,6 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
 class Symfony extends Ice
 {
     private $symfonyUser = null;
-
-//    /**
-//     * Check access by roles
-//     *
-//     * @param array $roles
-//     * @return bool
-//     */
-//    public function check(array $roles)
-//    {
-//        if (!$roles || !$this->isCheckRoles()) {
-//            return true;
-//        }
-//
-//        if (Symfony::isSymfony()) {
-//            /** @var AuthorizationChecker $securityAuthorizationChecker */
-//            $securityAuthorizationChecker = $this->getKernel()->getContainer()->get('security.authorization_checker');
-//
-//            foreach ($roles as $role) {
-//                try {
-//                    if (true === $securityAuthorizationChecker->isGranted($role)) {
-//                        return true;
-//                    }
-//                } catch (\Exception $e) {
-//                    return false;
-//                }
-//            }
-//        }
-//
-//        return parent::check($roles);
-//    }
 
     public static function isSymfony()
     {
