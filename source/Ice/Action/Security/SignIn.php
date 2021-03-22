@@ -32,9 +32,9 @@ class Security_SignIn extends Security
         $logger = $accountForm ? $accountForm->getLogger() : $this->getLogger();
 
         try {
-            $this->signIn($accountForm);
+            $account = $this->signIn($accountForm);
 
-            return array_merge(parent::run($input), ['success' => 'Авторизация прошла успешно']);
+            return array_merge(parent::run($input), ['account_class' => get_class($account), 'account_key' => $account->getPkValue(), 'success' => 'Авторизация прошла успешно']);
         } catch (Not_Good $e) {
             return ['error' => $logger->error('Плохие параметры', __FILE__, __LINE__, $e)];
         } catch (Not_Valid $e) {

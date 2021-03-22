@@ -10,7 +10,7 @@
     <meta name="author" content="">
     <link rel="icon" href="/favicon.ico">
 
-    <title>Starter Template for Bootstrap</title>
+    <title><?= $title ? $title : $parts['title']->render() ?></title>
 
     <!-- Bootstrap core CSS -->
 <!--    <link href="../../dist/css/bootstrap.min.css" rel="stylesheet">-->
@@ -19,8 +19,8 @@
         var CKEDITOR_BASEPATH = '/resource/node_modules/ckeditor4/';
     </script>
 
-    <?= $parts['staticResources']->render() ?>
-    <?= $parts['dynamicResources']->render() ?>
+    <?= $staticResources ? $staticResources : $parts['staticResources']->render() ?>
+    <?= $dynamicResources ? $dynamicResources : $parts['dynamicResources']->render() ?>
 
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
 <!--    <link href="../../assets/css/ie10-viewport-bug-workaround.css" rel="stylesheet">-->
@@ -74,7 +74,7 @@
 <div class="container">
 
     <div class="starter-template">
-        <?= $parts['main']->render() ?>
+        <?= $main ? $main : $parts['main']->render() ?>
     </div>
 
 </div><!-- /.container -->
@@ -88,6 +88,6 @@
 <!--<script src="../../dist/js/bootstrap.min.js"></script>-->
 <!--<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
 <!--<script src="../../assets/js/ie10-viewport-bug-workaround.js"></script>-->
-<?= $parts['footerJs']->render() ?>
+<?= $footerJs ? $footerJs : $parts['footerJs']->render() ?>
 </body>
 </html>

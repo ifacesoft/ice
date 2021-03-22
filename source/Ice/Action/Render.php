@@ -52,10 +52,21 @@ class Render extends Action
             }
 
             try {
+                if (is_array($widgetClass)) {
+                    list($widgetClass, $config) = array_pad($widgetClass, 2, []);
+                }
+
                 /** @var Widget $widgetClass */
                 $widgetClass = Widget::getClass($widgetClass);
 
-                return ['content' => $widgetClass::getInstance(null, null, $params)];
+                
+                $widget = $widgetClass::getInstance(null, null, $params);
+                
+                if (isset($config['render']['template'])) {
+                    $widget->setTemplateClass($config['render']['template']);
+                }
+                
+                return ['content' => $widget];
             } catch (Access_Denied $e) {
                 throw new Http_Forbidden('В доступе отказано', [], $e);
             }

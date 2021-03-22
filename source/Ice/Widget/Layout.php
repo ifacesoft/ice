@@ -17,7 +17,8 @@ class Layout extends Block_Render
             'resource' => ['js' => null, 'css' => null, 'less' => null, 'img' => null],
             'cache' => ['ttl' => -1, 'count' => 1000],
             'input' => [
-                'main' => ['default' => Dashboard::class, 'providers' => 'default'],
+                'main' => ['default' => Block::class, 'providers' => 'default'],
+                'title' => ['default' => Title_Route::class, 'providers' => 'default'],
             ],
             'output' => [],
         ];
@@ -33,9 +34,11 @@ class Layout extends Block_Render
     {
         $output = parent::build($input);
 
-        $this->widget('staticResources', ['widget' => $this->getWidget('Ice:Resource_Static')]);
+        $this->widget('title', ['widget' => $this->getWidget($input['title'])]);
+        $this->widget('main', ['widget' => $this->getWidget($input['main'])]);
+        $this->widget('staticResources', ['widget' => $this->getWidget(Resource_Static::class)]);
         $this->widget('dynamicResources', ['widget' => $this->getWidget(Resource_Dynamic::class)]);
-        $this->widget('footerJs', ['widget' => $this->getWidget('Ice:Resource_FooterJs')]);
+        $this->widget('footerJs', ['widget' => $this->getWidget(Resource_FooterJs::class)]);
 
         return $output;
     }
