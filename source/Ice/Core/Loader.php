@@ -106,7 +106,7 @@ class Loader
             $modules = Module::getAll();
         }
 
-        foreach ($modules as $module) {
+        foreach ((array)$modules as $module) {
             $typePathes = $module->gets('pathes/' . $path, []);
 
             if (empty($typePathes)) {
