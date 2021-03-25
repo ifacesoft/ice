@@ -2,8 +2,8 @@
 
 namespace Ice\Core;
 
+use Ice\Action\Render as Action_Render;
 use Ice\Exception\Access_Denied;
-use Ice\Exception\Access_Denied_Security;
 use Ice\Exception\Config_Error;
 use Ice\Exception\Error;
 use Ice\Exception\FileNotFound;
@@ -11,20 +11,19 @@ use Ice\Exception\Http;
 use Ice\Exception\Http_Forbidden;
 use Ice\Exception\RouteNotFound;
 use Ice\Helper\Access;
+use Ice\Helper\Class_Object;
 use Ice\Helper\Input;
 use Ice\Helper\Json;
-use Ice\Helper\Class_Object;
-use Ice\Helper\Type_String;
 use Ice\Helper\Transliterator;
+use Ice\Helper\Type_String;
 use Ice\Widget\Form;
 use Ice\Widget\Resource_Dynamic;
+use Ice\WidgetComponent\Alert as WidgetComponent_Alert;
 use Ice\WidgetComponent\FormElement_Button;
 use Ice\WidgetComponent\HtmlTag;
 use Ice\WidgetComponent\HtmlTag_A;
 use Ice\WidgetComponent\Special;
 use Ice\WidgetComponent\Widget as WidgetComponent_Widget;
-use Ice\WidgetComponent\Alert as WidgetComponent_Alert;
-use Ice\Action\Render as Action_Render;
 
 abstract class Widget extends Container
 {
@@ -147,31 +146,6 @@ abstract class Widget extends Container
     }
 
     /**
-     * @param $data
-     * @throws Exception
-     * @throws Config_Error
-     * @throws FileNotFound
-     */
-    protected function init($data)
-    {
-        /** @var Widget $widgetClass */
-        $widgetClass = get_class($this);
-
-        $this->set(Input::get($widgetClass::getConfig()->gets('input', []), $data, $widgetClass));
-    }
-
-    /**
-     * @param string $style
-     * @return Widget
-     */
-    public function setStyle($style)
-    {
-        $this->style = $style;
-
-        return $this;
-    }
-
-    /**
      * Init resource class
      *
      * @param Resource|string|null $resourceClass
@@ -221,6 +195,20 @@ abstract class Widget extends Container
         }
 
         return $this;
+    }
+
+    /**
+     * @param $data
+     * @throws Exception
+     * @throws Config_Error
+     * @throws FileNotFound
+     */
+    protected function init($data)
+    {
+        /** @var Widget $widgetClass */
+        $widgetClass = get_class($this);
+
+        $this->set(Input::get($widgetClass::getConfig()->gets('input', []), $data, $widgetClass));
     }
 
     /**
@@ -394,6 +382,52 @@ abstract class Widget extends Container
     }
 
     /**
+     * Build a tag part
+     *
+     * @param  $columnName
+     * @param array $options
+     * @param null $template
+     * @return $this
+     * @throws Exception
+     */
+    public function alert($columnName, array $options = [], $template = null)
+    {
+        return $this->addPart(new WidgetComponent_Alert($columnName, $options, $template, $this));
+    }
+
+    /**
+     * @param WidgetComponent $part
+     * @return $this
+     * @throws Exception
+     */
+    protected function addPart(WidgetComponent $part)
+    {
+        if (!$part->getOption('isShow', true)) {
+            return $this;
+        }
+
+        $access = $part->getOption('access', ['roles' => []]);
+
+        if ($access['roles'] && !Security::getInstance()->check((array)$access['roles'])) {
+            return $this;
+        }
+
+        $componentName = $part->getComponentName();
+
+        if (!empty($options['rewrite']) && isset($this->parts[$componentName])) {
+            unset($this->parts[$componentName]);
+        }
+
+        if (!empty($options['unshift'])) {
+            $this->parts = [$componentName => $part] + $this->parts;
+        } else {
+            $this->parts[$componentName] = $part;
+        }
+
+        return $this;
+    }
+
+    /**
      * Widget config
      *
      * @return array
@@ -416,17 +450,14 @@ abstract class Widget extends Container
     }
 
     /**
-     * @param $name
-     * @param null $default
-     * @return mixed
+     * @param string $style
+     * @return Widget
      */
-    public function getOption($name = null, $default = null)
+    public function setStyle($style)
     {
-        if ($name === null) {
-            return $this->options;
-        }
+        $this->style = $style;
 
-        return array_key_exists($name, $this->options) ? $this->options[$name] : $default;
+        return $this;
     }
 
     /**
@@ -705,14 +736,6 @@ abstract class Widget extends Container
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    public function getFilterParts()
-    {
-        return $this->filterParts;
-    }
-
     //    /**
 //     * @param array $params
 //     * @return Widget_Data
@@ -744,12 +767,12 @@ abstract class Widget extends Container
 //        return $this;
 //    }
 
-    private function getWidgetClassName()
+    /**
+     * @return array
+     */
+    public function getFilterParts()
     {
-        /** @var Widget $widgetClass */
-        $widgetClass = get_class($this);
-
-        return $widgetClass::getClassName();
+        return $this->filterParts;
     }
 
 //    /**
@@ -788,6 +811,14 @@ abstract class Widget extends Container
 //
 //        return $values;
 //    }
+
+    private function getWidgetClassName()
+    {
+        /** @var Widget $widgetClass */
+        $widgetClass = get_class($this);
+
+        return $widgetClass::getClassName();
+    }
 
     /**
      * @return null
@@ -920,52 +951,6 @@ abstract class Widget extends Container
     public function a($columnName, array $options = [], $template = null)
     {
         return $this->addPart(new HtmlTag_A($columnName, $options, $template, $this));
-    }
-
-    /**
-     * Build a tag part
-     *
-     * @param  $columnName
-     * @param array $options
-     * @param null $template
-     * @return $this
-     * @throws Exception
-     */
-    public function alert($columnName, array $options = [], $template = null)
-    {
-        return $this->addPart(new WidgetComponent_Alert($columnName, $options, $template, $this));
-    }
-
-    /**
-     * @param WidgetComponent $part
-     * @return $this
-     * @throws Exception
-     */
-    protected function addPart(WidgetComponent $part)
-    {
-        if (!$part->getOption('isShow', true)) {
-            return $this;
-        }
-
-        $access = $part->getOption('access', ['roles' => []]);
-
-        if ($access['roles'] && !Security::getInstance()->check((array)$access['roles'])) {
-            return $this;
-        }
-
-        $componentName = $part->getComponentName();
-
-        if (!empty($options['rewrite']) && isset($this->parts[$componentName])) {
-            unset($this->parts[$componentName]);
-        }
-
-        if (!empty($options['unshift'])) {
-            $this->parts = [$componentName => $part] + $this->parts;
-        } else {
-            $this->parts[$componentName] = $part;
-        }
-
-        return $this;
     }
 
     /**
@@ -1109,8 +1094,7 @@ abstract class Widget extends Container
             $this->redirect = $route === true
                 ? Router::getInstance()->getUrl([null, $params])
                 : Router::getInstance()->getUrl([$route, $params]);
-        } catch (
-        RouteNotFound $e) {
+        } catch (RouteNotFound $e) {
             $this->redirect = $route;
         }
 
@@ -1265,6 +1249,20 @@ abstract class Widget extends Container
             'callback' => null,
             'confirm_massage' => null
         ];
+    }
+
+    /**
+     * @param $name
+     * @param null $default
+     * @return mixed
+     */
+    public function getOption($name = null, $default = null)
+    {
+        if ($name === null) {
+            return $this->options;
+        }
+
+        return array_key_exists($name, $this->options) ? $this->options[$name] : $default;
     }
 
     /**

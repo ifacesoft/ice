@@ -10,15 +10,15 @@
     <meta name="author" content="">
     <link rel="icon" href="/favicon.ico">
 
-    <title><?= $title ? $title : $parts['title']->render() ?></title>
+    <title><?= isset($title) ? $title : $parts['title']->render() ?></title>
 
-    <?= $staticResources ? $staticResources : $parts['staticResources']->render() ?>
-    <?= $dynamicResources ? $dynamicResources : $parts['dynamicResources']->render() ?>
+    <?= isset($staticResources) ? $staticResources : $parts['staticResources']->render() ?>
+    <?= isset($dynamicResources) ? $dynamicResources : $parts['dynamicResources']->render() ?>
 </head>
 
 <body>
-<?= $main ? $main : $parts['main']->render() ?>
+<?= isset($main) ? $main : $parts['main']->render() ?>
 
-<?= $footerJs ? $footerJs : $parts['footerJs']->render() ?>
+<?= isset($footerJs) ? $footerJs : $parts['footerJs']->render() ?>
 </body>
 </html>

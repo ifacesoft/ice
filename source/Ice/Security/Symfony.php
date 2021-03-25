@@ -3,12 +3,10 @@
 namespace Ice\Security;
 
 use Application\Sonata\UserBundle\Entity\User;
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\OptimisticLockException;
-use Doctrine\ORM\ORMException;
-use Doctrine\ORM\TransactionRequiredException;
+use Ice\Core\Environment;
 use Ice\Core\Exception;
 use Ice\Core\Model_Account;
+use Ice\Exception\Config_Error;
 use Ice\Exception\Error;
 use Ice\Exception\FileNotFound;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -20,9 +18,26 @@ class Symfony extends Ice
 {
     private $symfonyUser = null;
 
-    public static function isSymfony()
+    /**
+     * Ebs constructor.
+     * @param array $data
+     * @throws Config_Error
+     * @throws Exception
+     * @throws FileNotFound
+     */
+    protected function __construct(array $data)
     {
-        return class_exists(\App\Kernel::class, false);
+        if (session_status() === PHP_SESSION_NONE) {
+            Environment::getInstance();
+
+            if ($kernel = $this->getKernel()) {
+                if ($container = $this->getKernel()->getContainer()) {
+                    $container->get('session')->start();
+                }
+            }
+        }
+
+        parent::__construct($data);
     }
 
     /**
@@ -51,24 +66,9 @@ class Symfony extends Ice
         return parent::isAuth() && ($securityContext->isGranted('IS_AUTHENTICATED_FULLY') || $securityContext->isGranted('IS_AUTHENTICATED_REMEMBERED'));
     }
 
-    /**
-     * @throws Error
-     * @throws Exception
-     * @throws FileNotFound
-     */
-    protected function autologin()
+    public static function isSymfony()
     {
-        parent::autologin();
-
-        if (!Symfony::isSymfony()) {
-            return;
-        }
-
-        try {
-            $this->reloadToken();
-        } catch (\Exception $e) {
-            $this->getLogger()->exception('Symfony security login failed', __FILE__, __LINE__, $e);
-        }
+        return class_exists(\App\Kernel::class, false);
     }
 
     /**
@@ -100,51 +100,6 @@ class Symfony extends Ice
         return $account;
     }
 
-    /**
-     * @param string $firewall
-     * @throws ORMException
-     * @throws OptimisticLockException
-     * @throws TransactionRequiredException
-     * @throws Exception
-     */
-    public function reloadToken($firewall = 'default')
-    {
-        /** @var User $symfonyUser */
-        $symfonyUser = null;
-
-        if ($entityManager = $this->getEntityManager()) {
-            $symfonyUser = $entityManager->find(User::class, $this->getUser()->getPkValue());
-        }
-
-        if (!$symfonyUser) {
-            $this->getLogger()->exception('Symfony user not found', __FILE__, __LINE__);
-        }
-
-        /** @var ContainerInterface $container */
-        $container = $this->getKernel()->getContainer();
-
-        $token = new UsernamePasswordToken($symfonyUser, null, $firewall, $symfonyUser->getRoles());
-        $container->get('security.token_storage')->setToken($token);
-
-        $session = $container->get('session');
-        $session->set('_security_' . $firewall, serialize($token));
-
-        $this->setSymfonyUser($symfonyUser);
-    }
-
-    /**
-     * @return EntityManager
-     *
-     */
-    private function getEntityManager()
-    {
-        if ($kernel = $this->getKernel()) {
-            return $kernel->getContainer()->get('doctrine')->getManager();
-        }
-
-        return null;
-    }
-
     public function logout()
     {
         if (Symfony::isSymfony()) {
@@ -162,9 +117,6 @@ class Symfony extends Ice
      * All user roles
      *
      * @return string[]
-     * @throws ORMException
-     * @throws OptimisticLockException
-     * @throws TransactionRequiredException
      * @throws Exception
      */
     public function getRoles()
@@ -214,5 +166,70 @@ class Symfony extends Ice
     protected function setSymfonyUser($symfonyUser)
     {
         $this->symfonyUser = $symfonyUser;
+    }
+
+    /**
+     * @throws Error
+     * @throws Exception
+     * @throws FileNotFound
+     */
+    protected function autologin()
+    {
+        parent::autologin();
+
+        if (!Symfony::isSymfony()) {
+            return;
+        }
+
+        try {
+            $this->reloadToken();
+        } catch (\Exception $e) {
+            $this->getLogger()->exception('Symfony security login failed', __FILE__, __LINE__, $e);
+        }
+    }
+
+    /**
+     * @param string $firewall
+     * @throws ORMException
+     * @throws OptimisticLockException
+     * @throws TransactionRequiredException
+     * @throws Exception
+     */
+    public function reloadToken($firewall = 'default')
+    {
+        /** @var User $symfonyUser */
+        $symfonyUser = null;
+
+        if ($entityManager = $this->getEntityManager()) {
+            $symfonyUser = $entityManager->find(User::class, $this->getUser()->getPkValue());
+        }
+
+        if (!$symfonyUser) {
+            $this->getLogger()->exception('Symfony user not found', __FILE__, __LINE__);
+        }
+
+        /** @var ContainerInterface $container */
+        $container = $this->getKernel()->getContainer();
+
+        $token = new UsernamePasswordToken($symfonyUser, null, $firewall, $symfonyUser->getRoles());
+        $container->get('security.token_storage')->setToken($token);
+
+        $session = $container->get('session');
+        $session->set('_security_' . $firewall, serialize($token));
+
+        $this->setSymfonyUser($symfonyUser);
+    }
+
+    /**
+     * @return EntityManager
+     *
+     */
+    private function getEntityManager()
+    {
+        if ($kernel = $this->getKernel()) {
+            return $kernel->getContainer()->get('doctrine')->getManager();
+        }
+
+        return null;
     }
 }

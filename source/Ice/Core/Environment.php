@@ -127,7 +127,7 @@ class Environment extends Config
         }
 
         if (!$environmentName) {
-            throw new \RuntimeException('Host not configured in environment');
+            throw new \RuntimeException('Host '. $host . ' not configured in environment');
         }
 
         return self::$instance = self::create($environmentName, $environment);

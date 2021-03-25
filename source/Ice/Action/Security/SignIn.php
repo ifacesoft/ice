@@ -34,7 +34,15 @@ class Security_SignIn extends Security
         try {
             $account = $this->signIn($accountForm);
 
-            return array_merge(parent::run($input), ['account_class' => get_class($account), 'account_key' => $account->getPkValue(), 'success' => 'Авторизация прошла успешно']);
+            return array_merge(
+                parent::run($input),
+                [
+                    'account_class' => get_class($account),
+                    'account_key' => $account->getPkValue(),
+                    'user_key' => $account->get('user__fk'),
+                    'success' => 'Авторизация прошла успешно'
+                ]
+            );
         } catch (Not_Good $e) {
             return ['error' => $logger->error('Плохие параметры', __FILE__, __LINE__, $e)];
         } catch (Not_Valid $e) {

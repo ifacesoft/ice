@@ -3,6 +3,7 @@
 namespace Ice\Model;
 
 use Ice\Core\Model;
+use Ice\Helper\Date;
 
 /**
  * Class User
@@ -20,7 +21,7 @@ use Ice\Core\Model;
  *
  * @package Ice\Model
  */
-class User extends Model
+final class User extends Model
 {
     protected static function config()
     {
@@ -47,42 +48,6 @@ class User extends Model
                     'fieldName' => 'user_pk',
                     'Ice\Widget\Model_Form' => 'Field_Number',
                     'Ice\Core\Validator' => [],
-                    'Ice\Widget\Model_Table' => 'text',
-                ],
-                'user_phone' => [
-                    'scheme' => [
-                        'extra' => '',
-                        'type' => 'varchar(11)',
-                        'dataType' => 'varchar',
-                        'length' => '11',
-                        'characterSet' => 'utf8',
-                        'nullable' => false,
-                        'default' => null,
-                        'comment' => '',
-                    ],
-                    'fieldName' => 'user_phone',
-                    'Ice\Widget\Model_Form' => 'Field_Text',
-                    'Ice\Core\Validator' => [
-                        'Ice:Length_Max' => 11,
-                    ],
-                    'Ice\Widget\Model_Table' => 'text',
-                ],
-                'user_email' => [
-                    'scheme' => [
-                        'extra' => '',
-                        'type' => 'varchar(255)',
-                        'dataType' => 'varchar',
-                        'length' => '255',
-                        'characterSet' => 'utf8',
-                        'nullable' => false,
-                        'default' => null,
-                        'comment' => '',
-                    ],
-                    'fieldName' => 'user_email',
-                    'Ice\Widget\Model_Form' => 'Field_Text',
-                    'Ice\Core\Validator' => [
-                        'Ice:Length_Max' => 255,
-                    ],
                     'Ice\Widget\Model_Table' => 'text',
                 ],
                 'user_name' => [
@@ -142,7 +107,7 @@ class User extends Model
                 'user_active' => [
                     'scheme' => [
                         'extra' => '',
-                        'type' => 'tinyint(4)',
+                        'type' => 'tinyint(1)',
                         'dataType' => 'tinyint',
                         'length' => '3,0',
                         'characterSet' => null,
@@ -157,7 +122,7 @@ class User extends Model
                     ],
                     'Ice\Widget\Model_Table' => 'text',
                 ],
-                'user_created' => [
+                'user_logined_at' => [
                     'scheme' => [
                         'extra' => '',
                         'type' => 'timestamp',
@@ -168,7 +133,55 @@ class User extends Model
                         'default' => 'CURRENT_TIMESTAMP',
                         'comment' => '',
                     ],
-                    'fieldName' => 'user_created',
+                    'fieldName' => 'user_logined_at',
+                    'Ice\Widget\Model_Form' => 'Field_Date',
+                    'Ice\Core\Validator' => [],
+                    'Ice\Widget\Model_Table' => 'text',
+                ],
+                'user_expired_at' => [
+                    'scheme' => [
+                        'extra' => '',
+                        'type' => 'timestamp',
+                        'dataType' => 'timestamp',
+                        'length' => '0',
+                        'characterSet' => null,
+                        'nullable' => false,
+                        'default' => 'CURRENT_TIMESTAMP',
+                        'comment' => '',
+                    ],
+                    'fieldName' => 'user_expired_at',
+                    'Ice\Widget\Model_Form' => 'Field_Date',
+                    'Ice\Core\Validator' => [],
+                    'Ice\Widget\Model_Table' => 'text',
+                ],
+                'user_created_at' => [
+                    'scheme' => [
+                        'extra' => '',
+                        'type' => 'timestamp',
+                        'dataType' => 'timestamp',
+                        'length' => '0',
+                        'characterSet' => null,
+                        'nullable' => false,
+                        'default' => 'CURRENT_TIMESTAMP',
+                        'comment' => '',
+                    ],
+                    'fieldName' => 'user_created_at',
+                    'Ice\Widget\Model_Form' => 'Field_Date',
+                    'Ice\Core\Validator' => [],
+                    'Ice\Widget\Model_Table' => 'text',
+                ],
+                'user_updated_at' => [
+                    'scheme' => [
+                        'extra' => '',
+                        'type' => 'timestamp',
+                        'dataType' => 'timestamp',
+                        'length' => '0',
+                        'characterSet' => null,
+                        'nullable' => false,
+                        'default' => 'CURRENT_TIMESTAMP',
+                        'comment' => '',
+                    ],
+                    'fieldName' => 'user_updated_at',
                     'Ice\Widget\Model_Form' => 'Field_Date',
                     'Ice\Core\Validator' => [],
                     'Ice\Widget\Model_Table' => 'text',
@@ -195,15 +208,6 @@ class User extends Model
         ];
     }
 
-    public function getTimezone()
-    {
-        if ($timezone = $this->get('timezone', false)) {
-            return $timezone;
-        }
-
-        return Module::getInstance()->getDefault('date')->get('client_timezone');
-    }
-
     /**
      * Check is active user
      *
@@ -213,5 +217,14 @@ class User extends Model
     public function isActive()
     {
         return (bool)$this->get('/active', 0);
+    }
+
+    /**
+     * @return bool
+     * @throws \Ice\Core\Exception
+     */
+    public function isExpired()
+    {
+        return Date::expired($this->get('/expired_at'));
     }
 }

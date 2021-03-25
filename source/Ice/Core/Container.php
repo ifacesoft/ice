@@ -122,7 +122,7 @@ abstract class Container
 //            Profiler::setPoint($message, $startTime, $startMemory);
 //            Logger::log(Profiler::getReport($message), 'container (error)', 'Error');
 
-            if ($baseClass == Code_Generator::getClass()) {
+            if ($baseClass === Code_Generator::getClass()) {
                 $logger->exception(['Code generator for {$0} not found', $instanceKey], __FILE__, __LINE__, $e);
             }
 
@@ -143,8 +143,6 @@ abstract class Container
      * @return string
      *
      * @throws Error
-     * @throws Exception
-     * @throws FileNotFound
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.4
@@ -200,15 +198,5 @@ abstract class Container
     public function getInstanceKey()
     {
         return $this->instanceKey;
-    }
-
-    /**
-     * @param string $index
-     * @return DataProvider
-     * @throws Exception
-     */
-    protected function getDataProviderSession($index = 'default')
-    {
-        return DataProvider_Session::getInstance(get_class($this), $index);
     }
 }
