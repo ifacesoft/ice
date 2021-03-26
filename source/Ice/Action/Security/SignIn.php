@@ -2,9 +2,6 @@
 
 namespace Ice\Action;
 
-use Ice\Core\Debuger;
-use Ice\Core\Logger;
-use Ice\Exception\DataSource_Insert_DuplicateEntry;
 use Ice\Exception\Not_Good;
 use Ice\Exception\Not_Valid;
 use Ice\Exception\Not_Verify;
@@ -13,7 +10,6 @@ use Ice\Exception\Security_Account_NotFound;
 use Ice\Exception\Security_Account_Verify;
 use Ice\Exception\Security_User_NotActive;
 use Ice\Widget\Account_Form;
-use Ice\Core\Security as Core_Security;
 
 class Security_SignIn extends Security
 {
@@ -28,7 +24,6 @@ class Security_SignIn extends Security
         /** @var Account_Form $accountForm */
         $accountForm = $input['widget'];
 
-        /** @var Logger $logger */
         $logger = $accountForm ? $accountForm->getLogger() : $this->getLogger();
 
         try {
@@ -54,7 +49,7 @@ class Security_SignIn extends Security
         } catch (Security_User_NotActive $e) {
             return ['error' => 'Запрос на авторизацию отклонен:' . $e->getMessage(), 'exception' => $e];
         } catch (Security_Account_EmailNotConfirmed $e) {
-            return ['error' => 'Запрос на авторизацию отклонен:' . $e->getMessage(), 'exception' => $e];
+            return ['error' => 'Email не подтвержден:' . $e->getMessage(), 'exception' => $e];
         } catch (Security_Account_NotFound $e) {
             return ['error' => 'Учетная запись не найдена'];
         } catch (\Exception $e) {

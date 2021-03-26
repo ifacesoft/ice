@@ -104,6 +104,8 @@ abstract class Security extends Container
     /**
      * @return bool
      * @throws Exception
+     * @throws Config_Error
+     * @throws FileNotFound
      */
     public function logout()
     {
