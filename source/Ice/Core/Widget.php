@@ -1159,33 +1159,19 @@ abstract class Widget extends Container
             return $widgetClass;
         }
 
-        $widgetClass = (array)$widgetClass;
+        list($widgetClass, $widgetParams, $instanceKey) = array_pad((array)$widgetClass, 3, null);
 
-        if (count($widgetClass) == 3) {
-            list($widgetClass, $widgetParams, $instanceKey) = $widgetClass;
-        } else if (count($widgetClass) == 2) {
-            list($widgetClass, $widgetParams) = $widgetClass;
-            $instanceKey = null;
-        } else {
-            $widgetClass = reset($widgetClass);
-            $widgetParams = [];
-            $instanceKey = null;
-        }
+        $widgetParams = (array)$widgetParams;
 
-        $key = null;
-
-        if (!$instanceKey || $instanceKey[0] == '_') {
+        if (!$instanceKey || $instanceKey[0] === '_') {
             $key = strtolower(Class_Object::getClassName(get_class($this)));
 
-            if ($instanceKey && $instanceKey[0] == '_') {
+            if ($instanceKey && $instanceKey[0] === '_') {
                 $key .= $instanceKey;
             }
         } else {
             $key = $instanceKey;
         }
-
-        /** @var Widget $widget */
-        $widget = null;
 
         $widgetParams['parentWidgetId'] = $this->getInstanceKey();
         $widgetParams['parentWidgetClass'] = get_class($this);
@@ -1196,6 +1182,7 @@ abstract class Widget extends Container
             ? get_class($this) . $widgetClass
             : Widget::getClass($widgetClass);
 
+         /** @var Widget $widget */
         $widget = $widgetClass::getInstance($key . $postfixKey, null, $widgetParams);
 //        } catch (\Exception $e) {
 //            //todo: заменять на виджет сообщения об ошибке
