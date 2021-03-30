@@ -39,7 +39,7 @@ class Security_SignUp extends Security
         } catch (DataSource_Insert_DuplicateEntry $e) {
             return ['error' => $logger->error('Пользователь или учетная запись уже существует', __FILE__, __LINE__, $e)];
         } catch (Security_Account_AttachForbidden $e) {
-            return ['error' => $logger->error('Пользователь или учетная запись уже существует', __FILE__, __LINE__, $e)];
+            return ['error' => $logger->error('Не удалось прикрепить аккаунт', __FILE__, __LINE__, $e)];
         } catch (\Exception | \Throwable $e) {
             return ['error' => $logger->error('При регистрации что-то пошло не так', __FILE__, __LINE__, $e)];
         }
