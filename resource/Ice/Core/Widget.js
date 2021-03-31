@@ -166,7 +166,7 @@ var Ice_Core_Widget = {
                     if ($widget && $iceMessage.length) {
                         $iceMessage.html(result.error);
                     } else {
-                        Ice.notify($('#iceMessages'), '<div class="alert alert-danger">' + result.error + '</div>', 5000);
+                        Ice.notify($('#iceMessages'), '<div class="alert alert-danger alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' + result.error + '</div>', 60000);
                     }
                 } else {
                     setTimeout(
@@ -189,7 +189,7 @@ var Ice_Core_Widget = {
                                                 widgetCallback(result.widgets[widgetId].params);
                                             }
                                         } else {
-                                            Ice.notify($('#iceMessages'), '<div class="alert alert-danger">#' + widgetId + ' not found</div>', 5000);
+                                            Ice.notify($('#iceMessages'), '<div class="alert alert-danger alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>#' + widgetId + ' not found</div>', 60000);
                                         }
                                     }
                                 }
@@ -208,7 +208,7 @@ var Ice_Core_Widget = {
                         if ($widget && $iceMessage.length) {
                             $iceMessage.html(result.success);
                         } else {
-                            Ice.notify($('#iceMessages'), '<div class="alert alert-success">' + result.success + '</div>', 5000);
+                            Ice.notify($('#iceMessages'), '<div class="alert alert-success alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' + result.success + '</div>', 5000);
                         }
                     }
                 }
