@@ -52,7 +52,7 @@ class Debuger
 
         $var = str_replace("\x1e", Helper_Console::getText('\x1E', Helper_Console::C_YELLOW), $var);
 
-        fwrite(STDOUT, Helper_Console::getText($var, Helper_Console::C_CYAN) . "\n");
+        fwrite(fopen('php://stdout', 'w'), Helper_Console::getText($var, Helper_Console::C_CYAN) . "\n");
 
         if (!Request::isCli() && $display) {
             echo '<div class="alert alert-' . Logger::INFO . '">' . str_replace('<span style="color: #0000BB">&lt;?php&nbsp;</span>', '', highlight_string('<?php // Debug value:' . "\n" . $var . "\n", true)) . '</div>';
@@ -72,7 +72,7 @@ class Debuger
 
         File::createData($logFile, $var, false, FILE_APPEND);
 
-        Logger::fb($arg, 'debug', 'INFO');
+        Logger::fb($data, 'debug', 'INFO');
 
         return $data;
     }

@@ -924,7 +924,6 @@ abstract class Model
         /** @var Model $modelClass */
         $modelClass = self::getClass();
 
-
         $modelScheme = $modelClass::getScheme();
 
         $uniqueFieldNames = array_intersect_key($modelScheme->getColumnFieldMap(), array_flip($modelClass::getScheme()->getUniqueColumnNames()));
