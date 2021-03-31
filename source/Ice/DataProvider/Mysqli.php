@@ -237,7 +237,7 @@ class Mysqli extends DataProvider
             if ($error) {
                 $connection = null;
 
-                throw new DataSource($error);
+                throw new DataSource($error . ' (' . $options->get('name') . ')');
             }
         } catch (\Exception $e) {
             $connection = null;

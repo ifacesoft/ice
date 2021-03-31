@@ -2,7 +2,6 @@
 
 namespace Ice\Action;
 
-use Ice\Core\Logger;
 use Ice\Widget\Account_Form;
 use Ice\Core\Security as Core_Security;
 
@@ -37,19 +36,18 @@ class Security_SignOut extends Security
         /** @var Account_Form $accountForm */
         $accountForm = $input['widget'];
 
-        /** @var Logger $logger */
         $logger = $accountForm ? $accountForm->getLogger() : $this->getLogger();
 
         try {
             $userAccount = Core_Security::getInstance()->getAccount();
-            //если по каким-то причинам аккаунт уже удален или не активен, выходим просто так
-            if (isset($userAccount)) {
+
+            if (isset($userAccount)) { // если по каким-то причинам аккаунт уже удален или не активен, выходим просто так
                 $this->signOut($userAccount);
             } else {
                 session_unset();
             }
-            return array_merge(parent::run($input), ['success' => 'Выход прошел успешно']);
 
+            return array_merge(parent::run($input), ['success' => 'Выход прошел успешно']);
         } catch (\Exception $e) {
             return ['error' => $logger->error('При выходе что-то пошло не так', __FILE__, __LINE__, $e)];
         } catch (\Throwable $e) {
