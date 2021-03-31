@@ -42,11 +42,11 @@ var Ice = {
                 if (data.responseJSON) {
                     result = data.responseJSON;
                     if (result.error) {
-                        Ice.notify($('#iceMessages'), result.error, 5000);
+                        Ice.notify($('#iceMessages'), '<div class="alert alert-danger alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' + result.error + '</div>', 60000);
                         console.warn(result.error);
                     }
                 } else {
-                    Ice.notify($('#iceMessages'), '<div class="alert alert-danger">' + data.statusText + '</div>', 5000);
+                    Ice.notify($('#iceMessages'), '<div class="alert alert-danger alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' + data.statusText + '</div>', 60000);
                     console.warn(data.statusText);
                 }
 
