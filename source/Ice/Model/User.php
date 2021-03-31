@@ -26,12 +26,12 @@ final class User extends Model
     protected static function config()
     {
         return [
-            'dataSourceKey' => 'Ice\DataSource\Mysqli/default.test',
+            'dataSourceKey' => 'Ice\DataSource\Mysqli/security.lan_security',
             'scheme' => [
                 'tableName' => 'ice_user',
                 'engine' => 'InnoDB',
                 'charset' => 'utf8_general_ci',
-                'comment' => '',
+                'comment' => 'Пользователи',
             ],
             'columns' => [
                 'user_pk' => [
@@ -75,7 +75,7 @@ final class User extends Model
                         'dataType' => 'varchar',
                         'length' => '255',
                         'characterSet' => 'utf8',
-                        'nullable' => false,
+                        'nullable' => true,
                         'default' => null,
                         'comment' => '',
                     ],
@@ -93,7 +93,7 @@ final class User extends Model
                         'dataType' => 'varchar',
                         'length' => '255',
                         'characterSet' => 'utf8',
-                        'nullable' => false,
+                        'nullable' => true,
                         'default' => null,
                         'comment' => '',
                     ],
@@ -112,7 +112,7 @@ final class User extends Model
                         'length' => '3,0',
                         'characterSet' => null,
                         'nullable' => false,
-                        'default' => '1',
+                        'default' => '0',
                         'comment' => '',
                     ],
                     'fieldName' => 'user_active',
@@ -125,12 +125,12 @@ final class User extends Model
                 'user_logined_at' => [
                     'scheme' => [
                         'extra' => '',
-                        'type' => 'timestamp',
-                        'dataType' => 'timestamp',
+                        'type' => 'datetime',
+                        'dataType' => 'datetime',
                         'length' => '0',
                         'characterSet' => null,
-                        'nullable' => false,
-                        'default' => 'CURRENT_TIMESTAMP',
+                        'nullable' => true,
+                        'default' => null,
                         'comment' => '',
                     ],
                     'fieldName' => 'user_logined_at',
@@ -141,12 +141,12 @@ final class User extends Model
                 'user_expired_at' => [
                     'scheme' => [
                         'extra' => '',
-                        'type' => 'timestamp',
-                        'dataType' => 'timestamp',
+                        'type' => 'datetime',
+                        'dataType' => 'datetime',
                         'length' => '0',
                         'characterSet' => null,
                         'nullable' => false,
-                        'default' => 'CURRENT_TIMESTAMP',
+                        'default' => '2099-12-31 23:59:59',
                         'comment' => '',
                     ],
                     'fieldName' => 'user_expired_at',
@@ -172,7 +172,7 @@ final class User extends Model
                 ],
                 'user_updated_at' => [
                     'scheme' => [
-                        'extra' => '',
+                        'extra' => 'on update current_timestamp()',
                         'type' => 'timestamp',
                         'dataType' => 'timestamp',
                         'length' => '0',
@@ -193,14 +193,33 @@ final class User extends Model
                         1 => 'user_pk',
                     ],
                 ],
-                'FOREIGN KEY' => [],
+                'FOREIGN KEY' => [
+                    'user_role' => [
+                        'FK_ice_user_lan_role' => 'user_role',
+                    ],
+                ],
                 'UNIQUE' => [],
             ],
-            'references' => [],
+            'references' => [
+                'lan_role' => [
+                    'constraintName' => 'FK_ice_user_lan_role',
+                    'onUpdate' => 'NO ACTION',
+                    'onDelete' => 'NO ACTION',
+                ],
+            ],
             'relations' => [
-                'oneToMany' => [],
-                'manyToOne' => [],
-                'manyToMany' => [],
+                'oneToMany' => [
+                    'Lan\Security\Model\Role' => 'user_role',
+                ],
+                'manyToOne' => [
+                    'Lan\Security\Model\User_Role_Link' => 'user_id',
+                    'Lan\Security\Model\Account_Password' => 'user_id',
+                ],
+                'manyToMany' => [
+                    'Lan\Security\Model\Role' => [
+                        0 => 'Lan\Security\Model\User_Role_Link',
+                    ],
+                ],
             ],
             'revision' => '05201942_5yc',
             'modelClass' => 'Ice\Model\User',
@@ -216,7 +235,7 @@ final class User extends Model
      */
     public function isActive()
     {
-        return (bool)$this->get('/active', 0);
+        return (bool)$this->get('/active');
     }
 
     /**

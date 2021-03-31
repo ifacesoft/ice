@@ -95,9 +95,9 @@ class Scheme extends Model
                 'columns__json' => [
                     'scheme' => [
                         'extra' => '',
-                        'type' => 'longtext',
-                        'dataType' => 'longtext',
-                        'length' => '4294967295',
+                        'type' => 'text',
+                        'dataType' => 'text',
+                        'length' => '65535',
                         'characterSet' => 'utf8',
                         'nullable' => false,
                         'default' => '[]',

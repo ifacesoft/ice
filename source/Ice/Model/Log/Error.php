@@ -213,9 +213,9 @@ class Log_Error extends Model
                 'request_string' => [
                     'scheme' => [
                         'extra' => '',
-                        'type' => 'varchar(255)',
+                        'type' => 'varchar(511)',
                         'dataType' => 'varchar',
-                        'length' => '255',
+                        'length' => '511',
                         'characterSet' => 'utf8',
                         'nullable' => true,
                         'default' => null,
