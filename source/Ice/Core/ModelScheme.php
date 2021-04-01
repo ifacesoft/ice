@@ -57,6 +57,10 @@ class ModelScheme extends Config
         $columns = [];
 
         foreach ($this->gets('columns') as $columnName => $column) {
+            if (reset($column) === null) {
+                continue;
+            }
+
             $columns[$columnName] = $column['fieldName'];
         }
 
