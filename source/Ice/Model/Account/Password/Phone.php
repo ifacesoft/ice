@@ -3,13 +3,13 @@
 namespace Ice\Model;
 
 use Ice\Core\Exception;
-use Ice\Core\Model_Account_Password;
+use Ice\Core\Model_Account;
 use Ice\Exception\Config_Error;
 use Ice\Exception\Error;
 use Ice\Exception\FileNotFound;
 use Ice\Widget\Account_Form;
 
-class Account_Password_Phone extends Model_Account_Password
+class Account_Password_Phone extends Model_Account
 {
     protected static function config()
     {
@@ -225,6 +225,11 @@ class Account_Password_Phone extends Model_Account_Password
         throw new Error('Implement prolongate() method.');
     }
 
+    public function registerVerify(array $values)
+    {
+        return $values;
+    }
+
     protected function getAccountData(Account_Form $accountForm)
     {
         return [
@@ -250,8 +255,13 @@ class Account_Password_Phone extends Model_Account_Password
         ];
     }
 
-    public function registerVerify(array $values)
+    protected function sendRegisterConfirm(Account_Form $accountForm, Token $token)
     {
-        return $values;
+        // TODO: Implement sendRegisterConfirm() method.
+    }
+
+    public function loginVerify(array $values)
+    {
+        // TODO: Implement loginVerify() method.
     }
 }
