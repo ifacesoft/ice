@@ -26,7 +26,7 @@ final class User extends Model
     protected static function config()
     {
         return [
-            'dataSourceKey' => 'Ice\DataSource\Mysqli/security.lan_security',
+            'dataSourceKey' => 'Ice\DataSource\Mysqli/default.test',
             'scheme' => [
                 'tableName' => 'ice_user',
                 'engine' => 'InnoDB',
@@ -193,34 +193,10 @@ final class User extends Model
                         1 => 'user_pk',
                     ],
                 ],
-                'FOREIGN KEY' => [
-                    'user_role' => [
-                        'FK_ice_user_lan_role' => 'user_role',
-                    ],
-                ],
                 'UNIQUE' => [],
             ],
-            'references' => [
-                'lan_role' => [
-                    'constraintName' => 'FK_ice_user_lan_role',
-                    'onUpdate' => 'NO ACTION',
-                    'onDelete' => 'NO ACTION',
-                ],
-            ],
-            'relations' => [
-                'oneToMany' => [
-                    'Lan\Security\Model\Role' => 'user_role',
-                ],
-                'manyToOne' => [
-                    'Lan\Security\Model\User_Role_Link' => 'user_id',
-                    'Lan\Security\Model\Account_Password' => 'user_id',
-                ],
-                'manyToMany' => [
-                    'Lan\Security\Model\Role' => [
-                        0 => 'Lan\Security\Model\User_Role_Link',
-                    ],
-                ],
-            ],
+            'references' => [],
+            'relations' => [],
             'revision' => '05201942_5yc',
             'modelClass' => 'Ice\Model\User',
             'moduleAlias' => 'Ice',
