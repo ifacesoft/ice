@@ -141,20 +141,20 @@ class Ice extends Security
         $this->firstVisit = !$this->getDataProviderSessionAuth()->get();
 
         /** @var User $user */
-        $user = User::getModel($this->getUserKey(), '*', 'Ice\DataSource\Mysqli/front.ebs', -1);
+        $user = User::getModel($this->getUserKey(), '*', null, -1);
 
         /** @var Model_Account|string $accountModelClass */
         $accountModelClass = $this->getAccountModelClass();
 
         if ($accountKey = $this->getAccountKey()) {
             /** @var Model_Account $account */
-            $account = $accountModelClass::getModel($accountKey, '*', 'Ice\DataSource\Mysqli/front.ebs', -1);
+            $account = $accountModelClass::getModel($accountKey, '*', null, -1);
         } else {
             $account = $accountModelClass::create(['user__fk' => $user->getPkValue()]);
         }
 
         if ($this->isFirstVisit()) {
-            $this->login($account, 'Ice\DataSource\Mysqli/front.ebs');
+            $this->login($account, null);
         } else {
             $this->setUser($user);
             $this->setAccount($account);

@@ -2,8 +2,7 @@
 
 namespace Ice\Widget;
 
-use Ebs\Model\Account_Login_Password;
-use Ebs\Security\Ebs;
+use Ice\Model\Account_Login_Password;
 use Ice\Action\Security_SignIn;
 use Ice\Core\Model;
 use Ice\Core\QueryBuilder;
@@ -32,7 +31,6 @@ class Account_Password_Login_Login extends Account_Form
     protected function build(array $input)
     {
         $this
-            ->setProlongate(Ebs::class . '::softAutoProlongate')
             ->widget('header', ['widget' => $this->getWidget(Header::class)->h1('Login')])
             ->text(
                 'login',
@@ -83,7 +81,7 @@ class Account_Password_Login_Login extends Account_Form
             ->inner(User::class)
             ->eq(['login' => $login])
             ->eq(['email_canonical' => mb_strtolower($login)], User::class, QueryBuilder::SQL_LOGICAL_OR)
-            ->getSelectQuery('*', [], 'Ice\DataSource\Mysqli/front.ebs')
+            ->getSelectQuery('*')
             ->getModel();
     }
 }

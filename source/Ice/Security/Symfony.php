@@ -19,7 +19,7 @@ class Symfony extends Ice
     private $symfonyUser = null;
 
     /**
-     * Ebs constructor.
+     * Symfony constructor.
      * @param array $data
      * @throws Config_Error
      * @throws Exception

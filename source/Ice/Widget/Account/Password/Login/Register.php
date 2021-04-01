@@ -84,7 +84,7 @@ class Account_Password_Login_Register extends Account_Form
 
         return $accountClass::createQueryBuilder()
             ->eq(['login' => $this->get('login')])
-            ->getSelectQuery('*', [], 'Ice\DataSource\Mysqli/front.ebs')
+            ->getSelectQuery('*')
             ->getModel();
     }
 }

@@ -79,7 +79,7 @@ class Account_Password_Email_Login extends Account_Form
             ->inner(User::class)
             ->eq(['email' => $email])
             ->eq(['email_canonical' => mb_strtolower($email)], User::class, QueryBuilder::SQL_LOGICAL_OR)
-            ->getSelectQuery('*', [], 'Ice\DataSource\Mysqli/front.ebs')
+            ->getSelectQuery('*')
             ->getModel();
         
         if ($account && !$account->get('email_confirmed', 0)) {

@@ -1,4 +1,6 @@
-<?php namespace Ice\Model;
+<?php
+
+namespace IceModel;
 
 use Ice\Core\Model;
 
@@ -12,7 +14,7 @@ use Ice\Core\Model;
  *
  * @see \Ice\Core\Model
  *
- * @package Ebs\Model
+ * @package Ice\Model
  */
 class Message_Template extends Model
 {

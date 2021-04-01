@@ -2,8 +2,8 @@
 
 namespace Ice\Action;
 
-use Ebs\Model\Account_Email_Password;
-use Ebs\Model\Account_Login_Password;
+use Ice\Model\Account_Email_Password;
+use Ice\Model\Account_Login_Password;
 use Ice\Core\Debuger;
 use Ice\Exception\Security_Account_NotFound;
 use Ice\Exception\Security_Account_Verify;

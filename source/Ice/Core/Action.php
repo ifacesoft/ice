@@ -23,8 +23,6 @@ use Ice\Helper\Access;
 use Ice\Helper\Input;
 use Ice\Helper\Json;
 use Ice\Helper\Console as Helper_Console;
-use Ebs\Action\Private_Subscriber_RegistrationRequest_New_Confirm;
-
 
 /**
  * Class Action

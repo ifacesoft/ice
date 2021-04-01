@@ -2,7 +2,7 @@
 
 namespace Ice\Action;
 
-use Ebs\Model\Account_Email_Password;
+use Ice\Model\Account_Email_Password;
 use Ice\Core\Exception;
 use Ice\Core\Logger;
 use Ice\Core\Model_Account;

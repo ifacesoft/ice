@@ -9,9 +9,6 @@
 
 namespace Ice\Helper;
 
-use Ebs\Model\Publisher;
-use Ice\Core\Debuger;
-
 /**
  * Class Model
  *

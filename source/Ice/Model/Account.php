@@ -1,4 +1,6 @@
-<?php namespace Ice\Model;
+<?php
+
+namespace IceModel;
 
 use Ice\Core\Model;
 

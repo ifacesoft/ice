@@ -2,7 +2,7 @@
 
 namespace Ice\Action;
 
-use Ebs\Model\Account_Login_Password;
+use Ice\Model\Account_Login_Password;
 use Ice\Core\QueryBuilder;
 use Ice\Exception\Security_Account_NotFound;
 use Ice\Exception\Security_Account_RestorePasswordForbidden;

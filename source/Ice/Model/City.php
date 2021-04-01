@@ -1,4 +1,6 @@
-<?php namespace Ice\Model;
+<?php
+
+namespace IceModel;
 
 use Ice\Core\Model;
 
@@ -58,17 +60,6 @@ class City extends Model
                     'options' => [
                         'name' => 'city_pk',
                         'type' => 'number',
-                        'show' => [
-                            'roles' => 'ROLE_LAN_STAFF',
-                        ],
-                        'edit' => [
-                            'roles' => 'ROLE_LAN_STAFF',
-                            'readonly' => true,
-                        ],
-                        'filter' => [
-                            'roles' => 'ROLE_LAN_STAFF',
-                            'comparison' => '=',
-                        ],
                     ],
                 ],
                 'city_name' => [
@@ -107,7 +98,6 @@ class City extends Model
                         'edit' => [
                             'required' => true,
                         ],
-                        'roles' => 'ROLE_LAN_STAFF',
                     ],
                 ],
                 'city_short' => [
@@ -134,7 +124,6 @@ class City extends Model
                         'edit' => [
                             'required' => true,
                         ],
-                        'roles' => 'ROLE_LAN_STAFF',
                     ],
                 ],
                 'country__fk' => [
@@ -152,7 +141,6 @@ class City extends Model
                     'options' => [
                         'name' => 'country__fk',
                         'type' => 'oneToMany',
-                        'roles' => 'ROLE_LAN_STAFF',
                         'show' => [
                             'valueKey' => 'country_name',
                         ],
