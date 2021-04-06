@@ -10,42 +10,14 @@ use Ice\Exception\FileNotFound;
 use Ice\Helper\Date;
 use Ice\Helper\Json;
 use Ice\Helper\Php;
+use Ice\Helper\Profiler;
 use Ice\Helper\Type_String;
 use Ice\Message\Mail;
-use Ice\Helper\Profiler;
 
 abstract class Action_Worker extends Action
 {
     const WORKER_KEY = 'worker';
     const TASK_KEY = 'task';
-
-    protected static function config()
-    {
-        $config = parent::config();
-
-        $config['input']['force'] = ['providers' => ['default', Cli::class], 'default' => 0];
-        $config['input']['update'] = ['providers' => ['default', Cli::class], 'default' => 0];
-        $config['input']['max'] = ['providers' => ['default', Cli::class], 'default' => 1];
-        $config['input']['delay'] = ['providers' => ['default', Cli::class], 'default' => 100000];
-        $config['input']['ttl'] = ['providers' => ['default', Cli::class], 'default' => 600];
-        $config['input']['workerKey'] = ['providers' => ['default', Cli::class]];
-        $config['input']['hash'] = ['providers' => ['default', Cli::class]];
-        $config['input']['bg'] = ['providers' => ['default', Cli::class], 'default' => null];
-        $config['input']['limit'] = ['providers' => ['default', Cli::class], 'default' => null];
-        $config['input']['report'] = ['providers' => ['default', Cli::class], 'default' => 0];
-        $config['input']['async'] = ['providers' => ['default', Cli::class], 'default' => 0];
-        $config['input']['isLastTask'] = ['providers' => ['default', Cli::class], 'default' => 0];
-        $config['input']['forceFlush'] = ['providers' => ['default', Cli::class], 'default' => 0];
-
-        return $config;
-    }
-
-    /**
-     * @param array $input
-     * @return array
-     * @throws Exception
-     */
-    abstract public function getAllTasks(array $input);
 
     /**
      * @param array $input
@@ -107,13 +79,12 @@ abstract class Action_Worker extends Action
     }
 
     /**
-     * @param $workerKey
-     * @param null $hash
-     * @return string
+     * @return DataProvider|Redis
+     * @throws Exception
      */
-    private function getTaskKey($workerKey, $hash = null)
+    protected function getProvider()
     {
-        return $workerKey . '/' . self::TASK_KEY . '/' . ($hash ? $hash : '');
+        return Redis::getInstance('default', get_class($this));
     }
 
     /**
@@ -124,6 +95,96 @@ abstract class Action_Worker extends Action
     private function getWorkerKey($async = null)
     {
         return self::WORKER_KEY . '/' . get_class($this) . ($async ? '/' . crc32(random_int(0, 999999999)) : '');
+    }
+
+    /**
+     * @param $workerKey
+     * @param $hash
+     * @throws Error
+     * @throws Exception
+     * @throws FileNotFound
+     */
+    private function task($workerKey, $hash)
+    {
+        /** @var Redis $provider */
+        $provider = $this->getProvider();
+
+        $taskKey = $this->getTaskKey($workerKey, $hash);
+
+        $task = [];
+
+        try {
+            $task = $provider->hGet($taskKey);
+
+            if (!isset($task['task'])) {
+                $this->getLogger()->exception(['Worker task #{$1} not found - {$2}', [get_class($this), $taskKey, Type_String::printR($task)]], __FILE__, __LINE__);
+            }
+
+            $this->job($task['task']);
+
+            $provider->delete($taskKey);
+        } catch (\Exception $e) {
+            $this->getLogger()->error(['Worker task #{$1} failed - {$2}', [get_class($this), $taskKey, Type_String::printR($task)]], __FILE__, __LINE__, $e);
+
+            $provider->delete($taskKey);
+        } catch (\Throwable $e) {
+            $this->getLogger()->error(['Worker task #{$1} failed - {$2}', [get_class($this), $taskKey, Type_String::printR($task)]], __FILE__, __LINE__, $e);
+
+            $provider->delete($taskKey);
+        }
+    }
+
+    /**
+     * @param $workerKey
+     * @param null $hash
+     * @return string
+     */
+    private function getTaskKey($workerKey, $hash = null)
+    {
+        return $workerKey . '/' . self::TASK_KEY . '/' . ($hash ? $hash : '');
+    }
+
+    /**
+     * @param array $task
+     * @return void
+     */
+    abstract public function job(array $task);
+
+    /**
+     * @param array $input
+     * @return mixed
+     */
+    private function finish(array $input)
+    {
+        $report = $this->flush($input);
+
+        Logger::log('Finish done.', get_class($this));
+
+        return $report;
+    }
+
+    abstract protected function flush(array $input);
+
+    protected static function config()
+    {
+        $config = parent::config();
+
+        $config['input']['force'] = ['providers' => ['default', Cli::class], 'default' => 0];
+        $config['input']['update'] = ['providers' => ['default', Cli::class], 'default' => 0];
+        $config['input']['max'] = ['providers' => ['default', Cli::class], 'default' => 1];
+        $config['input']['delay'] = ['providers' => ['default', Cli::class], 'default' => 100000];
+        $config['input']['ttl'] = ['providers' => ['default', Cli::class], 'default' => 600];
+        $config['input']['workerKey'] = ['providers' => ['default', Cli::class]];
+        $config['input']['hash'] = ['providers' => ['default', Cli::class]];
+        $config['input']['bg'] = ['providers' => ['default', Cli::class], 'default' => null];
+        $config['input']['limit'] = ['providers' => ['default', Cli::class], 'default' => null];
+        $config['input']['report'] = ['providers' => ['default', Cli::class], 'default' => 0];
+        $config['input']['async'] = ['providers' => ['default', Cli::class], 'default' => 0];
+        $config['input']['isLastTask'] = ['providers' => ['default', Cli::class], 'default' => 0];
+        $config['input']['forceFlush'] = ['providers' => ['default', Cli::class], 'default' => 0];
+        $config['input']['showParams'] = ['providers' => ['default', Cli::class], 'default' => 1];
+
+        return $config;
     }
 
     /**
@@ -170,7 +231,7 @@ abstract class Action_Worker extends Action
             $i++;
 
             $leftTasks = $dispatchWorker['tasks'] - $i;
-            $isLastTask = (int) !$leftTasks;
+            $isLastTask = (int)!$leftTasks;
 
             $worker = $provider->hGet($workerKey);
 
@@ -193,7 +254,7 @@ abstract class Action_Worker extends Action
 
             while (($activeTasks = count($provider->getKeys($this->getTaskKey($workerKey)))) >= (int)$worker['max'] && (int)$worker['max'] !== 0) {
                 if (!$waitTime) {
-                    Logger::log('(' . $activeTasks  . '/' . $worker['max'] . ') worker wait... ', get_class($this));
+                    Logger::log('(' . $activeTasks . '/' . $worker['max'] . ') worker wait... ', get_class($this));
                 }
 
                 $waitTime++;
@@ -201,7 +262,7 @@ abstract class Action_Worker extends Action
 
                 fwrite(STDOUT, '.');
 
-                if (! ($waitTime % 100)) {
+                if (!($waitTime % 100)) {
                     fwrite(STDOUT, '[' . $waitPrettyTime . ']');
                 }
 
@@ -227,11 +288,11 @@ abstract class Action_Worker extends Action
                 $leftTime = Profiler::getPrettyTime(($dispatchWorker['tasks'] - $i) * $avgTime);
                 $perSec = round(1 / $avgTime, 3);
 
-                $taskLog = Type_String::printR($task, false);
+                $taskLog = $dispatchWorker['showParams'] ? Type_String::printR($task, false) : '';
 
-                $runLog = '[ ' . $i . '/' . $dispatchWorker['tasks'] . ' (' . ($dispatchWorker['tasks'] - $i) . ') - ' . ($activeTasks + 1)  . '/' . $worker['max'] . ' : ' . $estimateTime . ']';
+                $runLog = '[ ' . $i . '/' . $dispatchWorker['tasks'] . ' (' . ($dispatchWorker['tasks'] - $i) . ') - ' . ($activeTasks + 1) . '/' . $worker['max'] . ' : ' . $estimateTime . ']';
 
-                Logger::log($runLog . ' #' . $hash .' ' .  $taskLog . ' [ timePerTask: ' . $avgTime . ' | tasksPerSec: ' . $perSec . ' | leftTime: ' . $leftTime . ' ]', get_class($this));
+                Logger::log($runLog . ' #' . $hash . ' ' . $taskLog . ' [ timePerTask: ' . $avgTime . ' | tasksPerSec: ' . $perSec . ' | leftTime: ' . $leftTime . ' ]', get_class($this));
 
                 $provider->hSet($workerKey, ['completed' => $i, 'leftTime' => $leftTime]);
 
@@ -266,56 +327,11 @@ abstract class Action_Worker extends Action
     }
 
     /**
-     * @param $workerKey
-     * @param $hash
-     * @throws Error
-     * @throws Exception
-     * @throws FileNotFound
-     */
-    private function task($workerKey, $hash)
-    {
-        /** @var Redis $provider */
-        $provider = $this->getProvider();
-
-        $taskKey = $this->getTaskKey($workerKey, $hash);
-
-        $task = [];
-
-        try {
-            $task = $provider->hGet($taskKey);
-
-            if (!isset($task['task'])) {
-                $this->getLogger()->exception(['Worker task #{$1} not found - {$2}', [get_class($this), $taskKey, Type_String::printR($task)]], __FILE__, __LINE__);
-            }
-
-            $this->job($task['task']);
-
-            $provider->delete($taskKey);
-        } catch (\Exception $e) {
-            $this->getLogger()->error(['Worker task #{$1} failed - {$2}', [get_class($this), $taskKey, Type_String::printR($task)]], __FILE__, __LINE__, $e);
-
-            $provider->delete($taskKey);
-        } catch (\Throwable $e) {
-            $this->getLogger()->error(['Worker task #{$1} failed - {$2}', [get_class($this), $taskKey, Type_String::printR($task)]], __FILE__, __LINE__, $e);
-
-            $provider->delete($taskKey);
-        }
-    }
-
-    /**
-     * @param array $task
-     * @return void
-     */
-    abstract public function job(array $task);
-
-    /**
-     * @return DataProvider|Redis
+     * @param array $input
+     * @return array
      * @throws Exception
      */
-    protected function getProvider()
-    {
-        return Redis::getInstance('default', get_class($this));
-    }
+    abstract public function getAllTasks(array $input);
 
     /**
      * @throws Exception
@@ -324,19 +340,4 @@ abstract class Action_Worker extends Action
     {
         $this->getProvider()->getKeys();
     }
-
-    /**
-     * @param array $input
-     * @return mixed
-     */
-    private function finish(array $input)
-    {
-        $report = $this->flush($input);
-
-        Logger::log('Finish done.', get_class($this));
-
-        return $report;
-    }
-
-    abstract protected function flush(array $input);
 }

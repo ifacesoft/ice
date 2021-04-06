@@ -326,6 +326,7 @@ class QueryBuilder
 
             $comparison = $sqlComparison;
 
+
             if ($value === null) {
                 if ($comparison !== QueryBuilder::SQL_COMPARISON_KEYWORD_IS_NOT_NULL) {
                     $comparison = QueryBuilder::SQL_COMPARISON_KEYWORD_IS_NULL;
@@ -333,7 +334,7 @@ class QueryBuilder
 
                 $valueCount = 1;
             } else {
-                $valueCount = is_string($value) && trim($value, '`') !== $value
+                $valueCount = is_string($value) && mb_strpos($value, '`') === 0 && mb_substr($value, -1) === '`'
                     ? $value
                     : count((array)$value);
             }
@@ -1965,17 +1966,6 @@ class QueryBuilder
     }
 
     /**
-     * Order by RAND()
-     *
-     * @return QueryBuilder
-     * @throws Exception
-     */
-    public function rand()
-    {
-        return $this->order(null, QueryBuilder::SQL_ORDERING_RAND);
-    }
-
-    /**
      * Ordering
      *
      * @param  $fieldName
@@ -2012,6 +2002,17 @@ class QueryBuilder
         ];
 
         return $this;
+    }
+
+    /**
+     * Order by RAND()
+     *
+     * @return QueryBuilder
+     * @throws Exception
+     */
+    public function rand()
+    {
+        return $this->order(null, QueryBuilder::SQL_ORDERING_RAND);
     }
 
     /**

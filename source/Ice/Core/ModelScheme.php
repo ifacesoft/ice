@@ -199,6 +199,7 @@ class ModelScheme extends Config
      *
      * @version 1.1
      * @since   1.1
+     * @deprecated need refactor with use ::getUniqueIndexes()
      */
     public function getUniqueFieldNames()
     {
@@ -233,17 +234,23 @@ class ModelScheme extends Config
      *
      * @version 1.1
      * @since   1.1
+     * @deprecated use ::getUniqueIndexes()
      */
     public function getUniqueColumnNames()
     {
         $uniqueColumnNames = [];
 
-        foreach ($this->getIndexes()['UNIQUE'] as $SeqInIndex => $columnNames) {
+        foreach ($this->getUniqueIndexes() as $columnNames) {
             foreach ($columnNames as $columnName) {
                 $uniqueColumnNames[] = $columnName;
             }
         }
 
-        return array_merge($this->getIndexes()['PRIMARY KEY']['PRIMARY'], $uniqueColumnNames);
+        return $uniqueColumnNames;
+    }
+
+    public function getUniqueIndexes()
+    {
+        return array_merge($this->getIndexes()['PRIMARY KEY'], $this->getIndexes()['UNIQUE']);
     }
 }
