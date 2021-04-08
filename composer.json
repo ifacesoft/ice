@@ -59,6 +59,7 @@
   },
   "bin": [
     "bin/ice",
-    "bin/ice-exec-ice"
+    "bin/ice-exec-ice",
+    "bin/ice-release"
   ]
 }
