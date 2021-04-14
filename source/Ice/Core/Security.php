@@ -6,6 +6,7 @@ use Ice\Core;
 use Ice\Exception\Access_Denied_Security;
 use Ice\Exception\Config_Error;
 use Ice\Exception\FileNotFound;
+use Ice\Exception\Security_Account_NotFound;
 use Ice\Model\User;
 
 /**
@@ -23,14 +24,40 @@ abstract class Security extends Container
      */
     public static $loaded = false;
 
+    /**
+     * @var Model_Account
+     */
+    private $account = null;
+
     protected function __construct(array $data)
     {
         parent::__construct($data);
 
-        $this->autologin();
+        $this->login($this->getAccount());
     }
 
-    abstract protected function autologin();
+    /**
+     * @param Model_Account $account
+     * @param null $dataSourceKey
+     * @return Model_Account|null
+     * @throws Security_Account_NotFound
+     */
+    public function login(Model_Account $account, $dataSourceKey = null)
+    {
+        if (!$account) {
+            throw new Security_Account_NotFound('Account not found');
+        }
+
+        return $this->account = $account;
+    }
+
+    /**
+     * @return Model_Account
+     */
+    public function getAccount($dataSourceKey = null)
+    {
+        return $this->account;
+    }
 
     public static function checkAccess($roles, $message)
     {
@@ -88,18 +115,6 @@ abstract class Security extends Container
      * @return User
      */
     abstract public function getUser();
-
-    /**
-     * @return Model_Account
-     */
-    abstract public function getAccount();
-
-    /**
-     * @param Model_Account $account
-     * @param null $dataSourceKey
-     * @return Model_Account|null
-     */
-    abstract public function login(Model_Account $account, $dataSourceKey = null);
 
     /**
      * @return bool
@@ -161,5 +176,12 @@ abstract class Security extends Container
     final public function getConfig()
     {
         return Config::getInstance(self::class);
+    }
+
+    /**
+     * @deprecated not need
+     */
+    final protected function autologin()
+    {
     }
 }

@@ -16,7 +16,7 @@ class Account_Password_Phone extends Model_Account
         return [
             'dataSourceKey' => 'Ice\DataSource\Mysqli/default.test',
             'scheme' => [
-                'tableName' => 'ice_account_phone_password',
+                'tableName' => 'ice_account_password_phone',
                 'engine' => 'InnoDB',
                 'charset' => 'utf8_general_ci',
                 'comment' => '',
@@ -33,7 +33,7 @@ class Account_Password_Phone extends Model_Account
                         'default' => null,
                         'comment' => '',
                     ],
-                    'fieldName' => 'account_phone_password_pk',
+                    'fieldName' => 'account_password_phone_pk',
                     'Ice\Widget\Model_Form' => [
                         'type' => 'number',
                         'roles' => [
@@ -140,7 +140,7 @@ class Account_Password_Phone extends Model_Account
                         ],
                     ],
                 ],
-                'account_phone_password_expired' => [
+                'account_password_phone_expired' => [
                     'scheme' => [
                         'extra' => '',
                         'type' => 'datetime',
@@ -151,7 +151,7 @@ class Account_Password_Phone extends Model_Account
                         'default' => null,
                         'comment' => '',
                     ],
-                    'fieldName' => 'account_phone_password_expired',
+                    'fieldName' => 'account_password_phone_expired',
                     'Ice\Widget\Model_Form' => [
                         'type' => 'date',
                         'roles' => [

@@ -115,6 +115,7 @@ class HtmlTag extends WidgetComponent
                 'params' => [],
                 'withGet' => false,
                 'withDomain' => false,
+                'replaceContext' => [],
                 'method' => 'POST'
             ],
             (array)$route
