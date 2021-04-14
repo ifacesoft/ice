@@ -68,7 +68,7 @@ class HtmlTag extends WidgetComponent
 
         if ($route) {
             try {
-                return Router::getInstance()->getUrl([$route['name'], $route['params'], $route['withGet'], $route['withDomain']]);
+                return Router::getInstance()->getUrl([$route['name'], $route['params'], $route['withGet'], $route['withDomain'], $route['replaceContext']]);
             } catch (\Exception $e) {
                 throw new Error(
                     [
@@ -115,6 +115,7 @@ class HtmlTag extends WidgetComponent
                 'params' => [],
                 'withGet' => false,
                 'withDomain' => false,
+                'replaceContext' => [],
                 'method' => 'POST'
             ],
             (array)$route

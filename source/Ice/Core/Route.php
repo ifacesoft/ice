@@ -55,10 +55,6 @@ class Route extends Config
      */
     public function getUrl(array $params = [])
     {
-//        $params = array_filter($params, function ($param) {
-//            return !is_array($param);
-//        });
-
         $params = array_filter($params, function ($param) {
             return $param !== null && $param !== '' && !is_array($param);
         });

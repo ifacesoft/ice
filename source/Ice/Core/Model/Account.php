@@ -232,24 +232,20 @@ abstract class Model_Account extends Model
 
     /**
      * @return mixed
-     * @throws \Ice\Core\Exception
+     * @throws Exception
      */
     final public function signOut()
     {
-//        $user = $this->getUser();
-
-//        $user->set(['last_login' => Date::get()])->save();
-
         return Security::getInstance()->logout();
     }
 
     /**
      * @param null $dataSourceKey
-     * @return User|Model
+     * @return Model|Model_Account|null
      */
-    public function getUser($dataSourceKey = null)
+    public function getUser($userClass = User::class, $dataSourceKey = null)
     {
-        return $this->fetchOne(User::class, '*', true, -1, $dataSourceKey);
+        return $this->fetchOne($userClass, '*', true, -1, $dataSourceKey);
     }
 
     /**

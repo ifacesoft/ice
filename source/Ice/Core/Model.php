@@ -111,6 +111,7 @@ abstract class Model
          */
         $modelClass = self::getClass();
         $lowercaseModelName = strtolower(self::getClassName());
+        $length = strlen($lowercaseModelName);
 
         $modelScheme = $modelClass::getScheme();
 
@@ -127,9 +128,9 @@ abstract class Model
                 continue;
             }
 
-            $length = strlen($lowercaseModelName);
             if (strpos($fieldName, $lowercaseModelName) === 0) {
                 $shortFieldName = '/' . substr($fieldName, $length + 1);
+
                 if (array_key_exists($shortFieldName, $row)) {
                     $this->set($fieldName, $row[$shortFieldName]);
                     unset($this->raw[$shortFieldName]);
