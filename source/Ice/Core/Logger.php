@@ -171,11 +171,6 @@ class Logger
         error_reporting(E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED); // Оставить только E_ALL
         ini_set('display_errors', 1);
         ini_set('display_startup_errors', 1);
-
-        ini_set('xdebug.var_display_max_depth', -1);
-        ini_set('xdebug.profiler_enable', 1);
-        ini_set('xdebug.max_nesting_level', 200);
-        ini_set('xdebug.profiler_output_dir', Module::getInstance()->getPath(Module::LOG_DIR) . 'xdebug');
     }
 
     /**
