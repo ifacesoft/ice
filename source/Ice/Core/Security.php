@@ -27,7 +27,7 @@ abstract class Security extends Container
     /**
      * @var Model_Account
      */
-    private $account = null;
+    private $account;
 
     protected function __construct(array $data)
     {
@@ -124,31 +124,10 @@ abstract class Security extends Container
      */
     public function logout()
     {
+        $this->account = null;
+
         self::getInstance()->removeInstance();
         self::init();
-
-        if (isset($_SERVER['HTTP_COOKIE'])) {
-            $cookieParams = session_get_cookie_params();
-
-            $cookies = explode(';', $_SERVER['HTTP_COOKIE']);
-            foreach ($cookies as $cookie) {
-                $parts = explode('=', $cookie);
-                $name = trim($parts[0]);
-
-                setcookie(
-                    $name,
-                    '',
-                    time() - 3600,
-                    $cookieParams['path'],
-                    $cookieParams['domain'],
-                    $cookieParams['secure'],
-                    $cookieParams['httponly']
-                );
-
-//                setcookie($name, '', time()-1000);
-//                setcookie($name, '', time()-1000, '/');
-            }
-        }
 
         return true;
     }
