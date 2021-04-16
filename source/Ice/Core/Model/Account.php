@@ -209,7 +209,7 @@ abstract class Model_Account extends Model
         /** @var Logger $logger */
         $logger = $accountForm->getLogger();
 
-        $user = $this->getUser($dataSourceKey);
+        $user = $this->getUser();
 
         if (!$user) {
 //            file_put_contents(\getLogDir() . $this->getPkValue() . '.user.debug.log',print_r([$accountForm, $this, $this->getUser()], true) . "\n\n\n", FILE_APPEND);
@@ -243,9 +243,9 @@ abstract class Model_Account extends Model
      * @param null $dataSourceKey
      * @return Model|Model_Account|null
      */
-    public function getUser($userClass = User::class, $dataSourceKey = null)
+    public function getUser($dataSourceKey = null)
     {
-        return $this->fetchOne($userClass, '*', true, -1, $dataSourceKey);
+        return $this->fetchOne(User::class, '*', true, -1, $dataSourceKey);
     }
 
     /**
