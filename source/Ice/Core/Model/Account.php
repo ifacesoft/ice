@@ -209,7 +209,7 @@ abstract class Model_Account extends Model
         /** @var Logger $logger */
         $logger = $accountForm->getLogger();
 
-        $user = $this->getUser($dataSourceKey);
+        $user = $this->getUser();
 
         if (!$user) {
 //            file_put_contents(\getLogDir() . $this->getPkValue() . '.user.debug.log',print_r([$accountForm, $this, $this->getUser()], true) . "\n\n\n", FILE_APPEND);
@@ -232,20 +232,16 @@ abstract class Model_Account extends Model
 
     /**
      * @return mixed
-     * @throws \Ice\Core\Exception
+     * @throws Exception
      */
     final public function signOut()
     {
-//        $user = $this->getUser();
-
-//        $user->set(['last_login' => Date::get()])->save();
-
         return Security::getInstance()->logout();
     }
 
     /**
      * @param null $dataSourceKey
-     * @return User|Model
+     * @return Model|Model_Account|null
      */
     public function getUser($dataSourceKey = null)
     {

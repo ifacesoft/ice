@@ -1,0 +1,5 @@
+#!/bin/sh
+
+cd $(dirname $(dirname $(dirname $0)));
+
+cd vendor/ifacesoft/ice && git tag $1 && git push --tags;

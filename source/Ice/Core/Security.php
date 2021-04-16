@@ -6,6 +6,7 @@ use Ice\Core;
 use Ice\Exception\Access_Denied_Security;
 use Ice\Exception\Config_Error;
 use Ice\Exception\FileNotFound;
+use Ice\Exception\Security_Account_NotFound;
 use Ice\Model\User;
 
 /**
@@ -23,14 +24,40 @@ abstract class Security extends Container
      */
     public static $loaded = false;
 
+    /**
+     * @var Model_Account
+     */
+    private $account;
+
     protected function __construct(array $data)
     {
         parent::__construct($data);
 
-        $this->autologin();
+        $this->login($this->getAccount());
     }
 
-    abstract protected function autologin();
+    /**
+     * @param Model_Account $account
+     * @param null $dataSourceKey
+     * @return Model_Account|null
+     * @throws Security_Account_NotFound
+     */
+    public function login(Model_Account $account, $dataSourceKey = null)
+    {
+        if (!$account) {
+            throw new Security_Account_NotFound('Account not found');
+        }
+
+        return $this->account = $account;
+    }
+
+    /**
+     * @return Model_Account
+     */
+    public function getAccount($dataSourceKey = null)
+    {
+        return $this->account;
+    }
 
     public static function checkAccess($roles, $message)
     {
@@ -42,12 +69,16 @@ abstract class Security extends Container
     }
 
     /**
-     * Check access by roles
-     *
      * @param array $roles
      * @return bool
+     * @throws Exception
      */
-    abstract public function check(array $roles);
+    public function check(array $roles)
+    {
+        $userRoles = $this->getRoles();
+
+        return array_intersect($roles, $userRoles) || in_array('ROLE_ICE_SUPER_ADMIN', $userRoles, true);
+    }
 
     /**
      * @param null $instanceKey
@@ -81,25 +112,26 @@ abstract class Security extends Container
      * All user roles
      *
      * @return string[]
+     * @throws Exception
      */
-    abstract public function getRoles();
+    public function getRoles()
+    {
+        return $this->isGuest() ? ['ROLE_ICE_GUEST'] : ['ROLE_ICE_USER'];
+    }
+
+    /**
+     * @return bool
+     * @throws Exception
+     */
+    public function isGuest()
+    {
+        return $this->getAccount()->get('user__fk') == 1;
+    }
 
     /**
      * @return User
      */
     abstract public function getUser();
-
-    /**
-     * @return Model_Account
-     */
-    abstract public function getAccount();
-
-    /**
-     * @param Model_Account $account
-     * @param null $dataSourceKey
-     * @return Model_Account|null
-     */
-    abstract public function login(Model_Account $account, $dataSourceKey = null);
 
     /**
      * @return bool
@@ -109,31 +141,22 @@ abstract class Security extends Container
      */
     public function logout()
     {
-        self::getInstance()->removeInstance();
-        self::init();
+        $this->account = null;
 
-        if (isset($_SERVER['HTTP_COOKIE'])) {
-            $cookieParams = session_get_cookie_params();
-
-            $cookies = explode(';', $_SERVER['HTTP_COOKIE']);
-            foreach ($cookies as $cookie) {
-                $parts = explode('=', $cookie);
-                $name = trim($parts[0]);
-
-                setcookie(
-                    $name,
-                    '',
-                    time() - 3600,
-                    $cookieParams['path'],
-                    $cookieParams['domain'],
-                    $cookieParams['secure'],
-                    $cookieParams['httponly']
-                );
-
-//                setcookie($name, '', time()-1000);
-//                setcookie($name, '', time()-1000, '/');
+        if (!empty($_COOKIE)) {
+            foreach (array_keys($_COOKIE) as $cookieName) {
+                unset($_COOKIE[$cookieName]);
             }
         }
+
+        if (!empty($_SESSION)) {
+            foreach (array_keys($_SESSION) as $sessionParam) {
+                unset($_SESSION[$sessionParam]);
+            }
+        }
+
+        self::getInstance()->removeInstance();
+        self::init();
 
         return true;
     }
@@ -161,5 +184,12 @@ abstract class Security extends Container
     final public function getConfig()
     {
         return Config::getInstance(self::class);
+    }
+
+    /**
+     * @deprecated not need
+     */
+    final protected function autologin()
+    {
     }
 }
