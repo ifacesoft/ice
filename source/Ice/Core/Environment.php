@@ -9,12 +9,9 @@
 
 namespace Ice\Core;
 
-use Ice\Core;
 use Ice\Exception\Access_Denied_Environment;
 use Ice\Exception\Config_Error;
-use Ice\Exception\Error;
 use Ice\Exception\FileNotFound;
-use Ice\Helper\Type_String;
 
 /**
  * Class Environment
@@ -61,10 +58,10 @@ class Environment extends Config
     /**
      * Return application environment
      *
-     * @param  string $environmentName
-     * @param  null $postfix
-     * @param  bool $isRequired
-     * @param  null $ttl
+     * @param string $environmentName
+     * @param null $postfix
+     * @param bool $isRequired
+     * @param null $ttl
      * @param array $selfConfig
      * @return Environment|Config
      * @throws Exception
@@ -106,7 +103,7 @@ class Environment extends Config
                 $environmentName = $_REQUEST['iceEnv'];
             } else {
                 foreach ($_SERVER['argv'] as $arg) {
-                    if ($pos = strpos($arg, 'iceEnv') !== false) {
+                    if (strpos($arg, 'iceEnv') !== false) {
                         $environmentName = substr($arg, 7);
                     }
                 }
@@ -127,7 +124,7 @@ class Environment extends Config
         }
 
         if (!$environmentName) {
-            throw new \RuntimeException('Host '. $host . ' not configured in environment');
+            throw new \RuntimeException('Host ' . $host . ' not configured in environment');
         }
 
         return self::$instance = self::create($environmentName, $environment);
@@ -174,15 +171,15 @@ class Environment extends Config
     /**
      * Retern Data Provider by class name
      *
-     * @param  string $class Class (found data provider for this class)
+     * @param string $class Class (found data provider for this class)
      * @param $key
-     * @param  string $index Index of data provider
+     * @param string $index Index of data provider
      * @return DataProvider
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
+     * @throws Exception
      * @version 0.0
      * @since   0.0
-     * @throws Exception
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
      */
     public function getProvider($class, $key, $index = 'default')
     {
@@ -195,11 +192,11 @@ class Environment extends Config
      * @param $class
      * @param $key
      * @return string
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
+     * @throws Exception
      * @version 1.1
      * @since   0.0
-     * @throws Exception
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
      */
     public function getDataProviderKey($class, $key)
     {
