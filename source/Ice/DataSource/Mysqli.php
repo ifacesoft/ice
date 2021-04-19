@@ -474,7 +474,7 @@ class Mysqli extends DataSource
 
         foreach ($query->getBindParts()[QueryBuilder::PART_VALUES] as $row) {
             if ($pkFieldName) {
-                if (!isset($row[$pkFieldName])) {
+                if (!isset($row[$pkFieldName]) && $insertId) {
                     $row[$pkFieldName] = $insertId;
                     $insertId++;
                 } else {
