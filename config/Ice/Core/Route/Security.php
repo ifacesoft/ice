@@ -32,7 +32,8 @@ return [
         'route' => '/logout',
         'request' => [
             'GET' => [
-                'actionClass' => 'Ice:Security_SignOut'
+                'actionClass' => 'Ice:Security_SignOut',
+                'response' => ['contentType' => 'json']
             ]
         ],
         'parent' => 'ice_security'
