@@ -25,7 +25,7 @@ class Log_Error extends Model
     protected static function config()
     {
         return [
-            'dataSourceKey' => 'Ice\DataSource\Mysqli/default.test',
+            'dataSourceKey' => 'Ice\DataSource\Mysqli/security.lan_security',
             'scheme' => [
                 'tableName' => 'ice_log_error',
                 'engine' => 'InnoDB',
@@ -89,7 +89,7 @@ class Log_Error extends Model
                     ],
                     'fieldName' => 'exception',
                 ],
-                'session__fk' => [
+                'session' => [
                     'scheme' => [
                         'extra' => '',
                         'type' => 'varchar(64)',
@@ -101,13 +101,13 @@ class Log_Error extends Model
                         'comment' => '',
                     ],
                     'options' => [
-                        'name' => 'session__fk',
+                        'name' => 'session',
                         'type' => 'text',
                         'validators' => [
                             'Ice:Length_Max' => 64,
                         ],
                     ],
-                    'fieldName' => 'session__fk',
+                    'fieldName' => 'session',
                 ],
                 'logger_class' => [
                     'scheme' => [
@@ -313,6 +313,23 @@ class Log_Error extends Model
                         ],
                     ],
                     'fieldName' => 'hostname',
+                ],
+                'user_id' => [
+                    'fieldName' => 'user_id',
+                    'scheme' => [
+                        'extra' => '',
+                        'type' => 'bigint(20)',
+                        'dataType' => 'bigint',
+                        'length' => '19,0',
+                        'characterSet' => null,
+                        'nullable' => true,
+                        'default' => null,
+                        'comment' => '',
+                    ],
+                    'options' => [
+                        'name' => 'user_id',
+                        'type' => 'number',
+                    ],
                 ],
             ],
             'indexes' => [

@@ -110,33 +110,12 @@ class Log_Security extends Model
                         ],
                     ],
                 ],
-                'form_class' => [
-                    'scheme' => [
-                        'extra' => '',
-                        'type' => 'varchar(255)',
-                        'dataType' => 'varchar',
-                        'length' => '255',
-                        'characterSet' => 'utf8',
-                        'nullable' => false,
-                        'default' => null,
-                        'comment' => '',
-                    ],
-                    'fieldName' => 'form_class',
-                    'options' => [
-                        'name' => 'form_class',
-                        'type' => 'text',
-                        'validators' => [
-                            'Ice:Length_Max' => 255,
-                            0 => 'Ice:Not_Null',
-                        ],
-                    ],
-                ],
                 'error' => [
                     'scheme' => [
                         'extra' => '',
-                        'type' => 'text',
-                        'dataType' => 'text',
-                        'length' => '65535',
+                        'type' => 'longtext',
+                        'dataType' => 'longtext',
+                        'length' => '4294967295',
                         'characterSet' => 'utf8',
                         'nullable' => true,
                         'default' => null,
@@ -148,27 +127,6 @@ class Log_Security extends Model
                         'type' => 'textarea',
                         'validators' => [
                             'Ice:Length_Max' => 65535,
-                        ],
-                    ],
-                ],
-                'logger_class' => [
-                    'scheme' => [
-                        'extra' => '',
-                        'type' => 'varchar(255)',
-                        'dataType' => 'varchar',
-                        'length' => '255',
-                        'characterSet' => 'utf8',
-                        'nullable' => false,
-                        'default' => null,
-                        'comment' => '',
-                    ],
-                    'fieldName' => 'logger_class',
-                    'options' => [
-                        'name' => 'logger_class',
-                        'type' => 'text',
-                        'validators' => [
-                            'Ice:Length_Max' => 255,
-                            0 => 'Ice:Not_Null',
                         ],
                     ],
                 ],
@@ -191,6 +149,48 @@ class Log_Security extends Model
                         ],
                     ],
                     'fieldName' => 'session',
+                ],
+                'widget_class' => [
+                    'fieldName' => 'widget_class',
+                    'scheme' => [
+                        'extra' => '',
+                        'type' => 'varchar(255)',
+                        'dataType' => 'varchar',
+                        'length' => '255',
+                        'characterSet' => 'utf8',
+                        'nullable' => false,
+                        'default' => null,
+                        'comment' => '',
+                    ],
+                    'options' => [
+                        'name' => 'widget_class',
+                        'type' => 'text',
+                        'validators' => [
+                            'Ice:Length_Max' => 255,
+                            0 => 'Ice:Not_Null',
+                        ],
+                    ],
+                ],
+                'action_class' => [
+                    'fieldName' => 'action_class',
+                    'scheme' => [
+                        'extra' => '',
+                        'type' => 'varchar(255)',
+                        'dataType' => 'varchar',
+                        'length' => '255',
+                        'characterSet' => 'utf8',
+                        'nullable' => false,
+                        'default' => null,
+                        'comment' => '',
+                    ],
+                    'options' => [
+                        'name' => 'action_class',
+                        'type' => 'text',
+                        'validators' => [
+                            'Ice:Length_Max' => 255,
+                            0 => 'Ice:Not_Null',
+                        ],
+                    ],
                 ],
             ],
             'indexes' => [
