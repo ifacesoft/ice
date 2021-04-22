@@ -89,7 +89,7 @@ class Log_Error extends Model
                     ],
                     'fieldName' => 'exception',
                 ],
-                'session' => [
+                'session__fk' => [
                     'scheme' => [
                         'extra' => '',
                         'type' => 'varchar(64)',
