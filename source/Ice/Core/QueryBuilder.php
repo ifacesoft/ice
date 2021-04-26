@@ -292,21 +292,36 @@ class QueryBuilder
             $this->sqlParts[$part][] = [
                 'class' => $modelClass,
                 'alias' => $tableAlias,
-                'data' => [[$sqlLogical, $fieldNameValues, QueryBuilder::SQL_COMPARISON_OPERATOR_RAW, null]]
+                'data' => [[$sqlLogical, $fieldNameValues, self::SQL_COMPARISON_OPERATOR_RAW, null]]
             ];
 
             return $this;
         }
 
         foreach ($fieldNameValues as $fieldName => $value) {
+            if ($fieldName === '/pk') {
+                $pkFieldNames = $modelClass::getScheme()->getPkFieldNames();
+
+                $this->where(
+                    array_combine($pkFieldNames, array_pad((array)$value, (count($pkFieldNames)), null)),
+                    $modelTableData,
+                    $sqlComparison,
+                    $sqlLogical,
+                    $isUse,
+                    $part
+                );
+
+                continue;
+            }
+
             if (is_array($value)) {
-                if ($sqlComparison === QueryBuilder::SQL_COMPARISON_OPERATOR_EQUAL) {
+                if ($sqlComparison === self::SQL_COMPARISON_OPERATOR_EQUAL) {
                     $this->in($fieldName, $value, $modelTableData, $sqlLogical, $isUse);
 
                     continue;
                 }
 
-                if ($sqlComparison === QueryBuilder::SQL_COMPARISON_OPERATOR_NOT_EQUAL) {
+                if ($sqlComparison === self::SQL_COMPARISON_OPERATOR_NOT_EQUAL) {
                     $this->notIn($fieldName, $value, $modelTableData, $sqlLogical, $isUse);
 
                     continue;
@@ -469,6 +484,31 @@ class QueryBuilder
     }
 
     /**
+     * Set in query part where expression '= ?'
+     *
+     * @param array $fieldNameValues
+     * @param array $modelTableData
+     * @param string $sqlLogical
+     * @param bool $isUse
+     * @return QueryBuilder
+     * @throws Exception
+     * @version 1.3
+     * @since   0.0
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     */
+    public function eq(array $fieldNameValues, $modelTableData = [], $sqlLogical = QueryBuilder::SQL_LOGICAL_AND, $isUse = true)
+    {
+        return $this->where(
+            $fieldNameValues,
+            $modelTableData,
+            QueryBuilder::SQL_COMPARISON_OPERATOR_EQUAL,
+            $sqlLogical,
+            $isUse
+        );
+    }
+
+    /**
      * Set in query part where expression 'in (?)'
      *
      * @param  $fieldName
@@ -616,61 +656,21 @@ class QueryBuilder
             );
         }
 
-        $eq = [];
-
-        /**
-         * @var Model $modelClass
-         */
-        $modelClass = $this->getModelClassTableAlias($modelTableData)[0];
+        /** @var Model $modelClass */
+        list($modelClass, $tableAlias) = $this->getModelClassTableAlias($modelTableData);
 
         $pkFieldNames = $modelClass::getScheme()->getPkFieldNames();
 
-        foreach ((array)$pk as $pkName => $pkValue) {
-            if (empty($pkFieldNames)) {
-                break;
-            }
-
-            if (is_int($pkName)) {
-                $eq[array_shift($pkFieldNames)] = $pkValue;
-                continue;
-            }
-
-            if (($key = array_search($pkName, $pkFieldNames)) !== false) {
-                unset($pkFieldNames[$key]);
-                $eq[$pkName] = $pkValue;
-            }
-        }
-
-        $this->eq($eq, $modelTableData, $sqlLogical);
-
-        return $modelClass == $this->getModelClass()
-            ? $this->limit(1)
-            : $this;
-    }
-
-    /**
-     * Set in query part where expression '= ?'
-     *
-     * @param array $fieldNameValues
-     * @param array $modelTableData
-     * @param string $sqlLogical
-     * @param bool $isUse
-     * @return QueryBuilder
-     * @throws Exception
-     * @version 1.3
-     * @since   0.0
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     */
-    public function eq(array $fieldNameValues, $modelTableData = [], $sqlLogical = QueryBuilder::SQL_LOGICAL_AND, $isUse = true)
-    {
-        return $this->where(
-            $fieldNameValues,
+        $this->eq(
+            array_combine($pkFieldNames, array_pad((array)$pk, (count($pkFieldNames)), null)),
             $modelTableData,
-            QueryBuilder::SQL_COMPARISON_OPERATOR_EQUAL,
             $sqlLogical,
             $isUse
         );
+
+        return $modelClass === $this->getModelClass()
+            ? $this->limit(1)
+            : $this;
     }
 
     /**
@@ -1412,21 +1412,21 @@ class QueryBuilder
             ];
         }
 
-        if ($fieldName == '/pk') {
+        if ($fieldName === '/pk') {
             $fieldName = $modelClass::getScheme()->getPkFieldNames();
-
-            if (count($fieldName) === 1) {
-                $fieldName = reset($fieldName);
-
-                if (!$fieldAlias) {
-                    $fieldAlias = $modelClass::getFieldName('/pk', $tableAlias);
-                }
-            }
+//
+//            if (count($fieldName) === 1) {
+//                $fieldName = reset($fieldName);
+//
+//                if (!$fieldAlias) {
+//                    $fieldAlias = $modelClass::getFieldName('/pk', $tableAlias);
+//                }
+//            }
         }
 
         $modelScheme = $modelClass::getScheme();
 
-        if ($fieldName == '*') {
+        if ($fieldName === '*') {
             $fieldName = array_merge($modelScheme->getFieldNames(), $modelScheme->getPkFieldNames());
         }
 
