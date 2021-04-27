@@ -53,7 +53,7 @@
     "squizlabs/php_codesniffer": "dev-master",
     "ccampbell/chromephp": "dev-master",
     "lox/xhprof": "dev-master",
-    "codeception/codeception": "5.0.x-dev",
+    "codeception/codeception": "5.0.x-dev"
   },
   "bin": [
     "bin/ice",
