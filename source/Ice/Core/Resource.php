@@ -9,7 +9,6 @@
 namespace Ice\Core;
 
 use Ice\Core;
-use Ice\DataProvider\Repository;
 use Ice\Exception\FileNotFound;
 use Ice\Helper\Api_Client_Yandex_Translate;
 use Ice\Helper\File;
