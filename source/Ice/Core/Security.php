@@ -129,6 +129,15 @@ abstract class Security extends Container
     }
 
     /**
+     * @return bool
+     * @throws Exception
+     */
+    public function isSuperAdmin()
+    {
+        return in_array('ROLE_ICE_SUPER_ADMIN', $this->getRoles());
+    }
+
+    /**
      * @return User
      */
     abstract public function getUser();
