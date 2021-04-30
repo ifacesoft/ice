@@ -22,23 +22,6 @@
       "email": "denis.a.shestakov@gmail.com"
     }
   ],
-  "autoload": {
-    "psr-4": {
-      "Ice\\": "source/Ice/",
-      "Ice\\Core\\": "source/Ice/Core/",
-      "Ice\\Helper\\": "source/Ice/Helper/",
-      "Ice\\Exception\\": "source/Ice/Exception/",
-      "Ice\\DateProvider\\": "source/Ice/DataProvider/",
-      "Ice\\Render\\": "source/Ice/Render/"
-    }
-  },
-  "autoload-dev": {
-    "psr-4": {
-      "Test\\Ifacesoft\\Ice\\Core\\": "test/unit/core",
-      "Test\\Ifacesoft\\Ice\\Cli\\": "test/unit/cli",
-      "Test\\Ifacesoft\\Ice\\Http\\": "test/unit/http"
-    }
-  },
   "require": {
     "php": "5.6.* || 7.0.* || 7.1.* || 7.2.* || 7.3.* || 7.4.* || 8.0.*",
     "ifacesoft/ice-cli": "0.0.*",
