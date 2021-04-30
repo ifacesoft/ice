@@ -4,4 +4,4 @@ command=vendor/bin/ice
 
 cd $(dirname $(dirname $(dirname $0))) && printf "\ndirectory: $(pwd)" && printf "\ncommand: $command $*\n\n";
 
-docker exec -it $(basename $(pwd)) $command $*
+docker exec -it -u1000 $(basename $(pwd)) $command $*
