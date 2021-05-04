@@ -484,31 +484,6 @@ class QueryBuilder
     }
 
     /**
-     * Set in query part where expression '= ?'
-     *
-     * @param array $fieldNameValues
-     * @param array $modelTableData
-     * @param string $sqlLogical
-     * @param bool $isUse
-     * @return QueryBuilder
-     * @throws Exception
-     * @version 1.3
-     * @since   0.0
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     */
-    public function eq(array $fieldNameValues, $modelTableData = [], $sqlLogical = QueryBuilder::SQL_LOGICAL_AND, $isUse = true)
-    {
-        return $this->where(
-            $fieldNameValues,
-            $modelTableData,
-            QueryBuilder::SQL_COMPARISON_OPERATOR_EQUAL,
-            $sqlLogical,
-            $isUse
-        );
-    }
-
-    /**
      * Set in query part where expression 'in (?)'
      *
      * @param  $fieldName
@@ -671,6 +646,31 @@ class QueryBuilder
         return $modelClass === $this->getModelClass()
             ? $this->limit(1)
             : $this;
+    }
+
+    /**
+     * Set in query part where expression '= ?'
+     *
+     * @param array $fieldNameValues
+     * @param array $modelTableData
+     * @param string $sqlLogical
+     * @param bool $isUse
+     * @return QueryBuilder
+     * @throws Exception
+     * @version 1.3
+     * @since   0.0
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     */
+    public function eq(array $fieldNameValues, $modelTableData = [], $sqlLogical = QueryBuilder::SQL_LOGICAL_AND, $isUse = true)
+    {
+        return $this->where(
+            $fieldNameValues,
+            $modelTableData,
+            QueryBuilder::SQL_COMPARISON_OPERATOR_EQUAL,
+            $sqlLogical,
+            $isUse
+        );
     }
 
     /**
@@ -1414,14 +1414,12 @@ class QueryBuilder
 
         if ($fieldName === '/pk') {
             $fieldName = $modelClass::getScheme()->getPkFieldNames();
-//
-//            if (count($fieldName) === 1) {
-//                $fieldName = reset($fieldName);
-//
-//                if (!$fieldAlias) {
-//                    $fieldAlias = $modelClass::getFieldName('/pk', $tableAlias);
-//                }
-//            }
+
+            $fieldAlias = count($fieldName) === 1 && !$fieldAlias
+                ?  [$modelClass::getFieldName('/pk', $tableAlias)]
+                : array_pad((array)$fieldAlias, count($fieldName), null);
+
+            $fieldName = array_combine($fieldName, $fieldAlias);
         }
 
         $modelScheme = $modelClass::getScheme();

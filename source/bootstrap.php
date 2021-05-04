@@ -54,7 +54,22 @@ try {
         $loader = require VENDOR_DIR . 'autoload.php';
     }
 
-    require_once ICE_DIR . 'source/Ice/Helper/Class/Object.php';
+    require_once ICE_DIR . 'source/Ice/Core.php';
+    require_once ICE_DIR . 'source/Ice/Core/DataProvider.php';
+    require_once ICE_DIR . 'source/Ice/DataProvider/Repository.php';
+    require_once ICE_DIR . 'source/Ice/Helper/Config.php';
+    require_once ICE_DIR . 'source/Ice/Core/Loader.php';
+    require_once ICE_DIR . 'source/Ice/Helper/Console.php';
+    require_once ICE_DIR . 'source/Ice/Core/Logger.php';
+    require_once ICE_DIR . 'source/Ice/DataProvider/Registry.php';
+    require_once ICE_DIR . 'source/Ice/Core/Request.php';
+    require_once ICE_DIR . 'source/Ice/Core/Stored.php';
+    require_once ICE_DIR . 'source/Ice/Core/Config.php';
+    require_once ICE_DIR . 'source/Ice/Core/Environment.php';
+    require_once ICE_DIR . 'source/Ice/Helper/Directory.php';
+    require_once ICE_DIR . 'source/Ice/Helper/File.php';
+    require_once ICE_DIR . 'source/Ice/Core/Config.php';
+    require_once ICE_DIR . 'source/Ice/Core/Module.php';
 
     Module::init();
     Environment::getInstance();

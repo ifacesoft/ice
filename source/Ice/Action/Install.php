@@ -274,9 +274,6 @@ class Install extends Action
                 'locale' => $input['defaultLocale'],
                 'cors' => []
             ],
-            'Ice\Helper\Api_Client_Yandex_Translate' => [
-                'translateKey' => null
-            ],
             'Ice\Core\Environment' => [
                 'environments' => [
                     '/' . strtolower($projectName) . '\\.global$/' => 'production',

@@ -13,7 +13,6 @@ use Ice\Core;
 use Ice\DataProvider\Registry;
 use Ice\DataProvider\Request as DataProvider_Request;
 use Ice\Exception\FileNotFound;
-use Ice\Helper\Api_Client_Yandex_Translate;
 use Ice\Helper\Class_Object;
 
 /**
@@ -107,7 +106,7 @@ abstract class DataProvider
         $environment = Environment::getInstance();
 
         try {
-            if ($key === Resource::class || $key === Api_Client_Yandex_Translate::class) {
+            if ($key === Resource::class) {
                 $dataProviderKey = __CLASS__ . '/' . $class . '/default';
             }
 
