@@ -239,7 +239,7 @@ class Orm_Sync_DataScheme extends Action
 
                 if ($isModelFieldsUpdated) {
                     Scheme::createQueryBuilder()
-                        ->pk($tableName)
+                        ->eq(['table_name' => $tableName])
                         ->getUpdateQuery(['columns__json' => Json::encode($table['columns'])], $dataSourceKey)
                         ->getQueryResult();
                 }
@@ -383,7 +383,7 @@ class Orm_Sync_DataScheme extends Action
         $modelIndexes = $tableIndexes;
 
         Scheme::createQueryBuilder()
-            ->pk($tableName)
+            ->eq(['table_name' => $tableName])
             ->getUpdateQuery(['indexes__json' => $tableIndexesJson], $dataSourceKey)
             ->getQueryResult();
 
