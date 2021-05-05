@@ -14,6 +14,14 @@ use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
 
+/**
+ * Class Symfony
+ *
+ * @package Ice\Security
+ *
+ * @deprecated
+ *
+ */
 class Symfony extends Ice
 {
     private $symfonyUser = null;
@@ -73,11 +81,13 @@ class Symfony extends Ice
 
     /**
      * @param Model_Account $account
-     * @param null $dataSourceKey
+     * @param array $data
      * @return Model_Account|null
+     * @throws Error
      * @throws Exception
+     * @throws FileNotFound
      */
-    public function login(Model_Account $account, $dataSourceKey = null)
+    public function login(Model_Account $account, array $data)
     {
         $account = parent::login($account);
 

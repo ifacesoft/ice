@@ -33,16 +33,16 @@ abstract class Security extends Container
     {
         parent::__construct($data);
 
-        $this->login($this->getAccount());
+        $this->login($this->getAccount(), $data);
     }
 
     /**
      * @param Model_Account $account
-     * @param null $dataSourceKey
+     * @param array $data
      * @return Model_Account|null
      * @throws Security_Account_NotFound
      */
-    public function login(Model_Account $account, $dataSourceKey = null)
+    public function login(Model_Account $account, array $data)
     {
         if (!$account) {
             throw new Security_Account_NotFound('Account not found');

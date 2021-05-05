@@ -189,16 +189,18 @@ class Ice extends Security
 
     /**
      * @param Model_Account $account
-     * @param null $dataSourceKey
+     * @param array $data
      * @return bool|Model_Account
      * @throws Exception
+     * @throws FileNotFound
+     * @throws \Ice\Exception\Error
      */
-    public function login(Model_Account $account, $dataSourceKey = null)
+    public function login(Model_Account $account, array $data)
     {
         try {
             $dataProviderSessionAuth = $this->getDataProviderSessionAuth();
 
-            $user = $account->getUser($dataSourceKey);
+            $user = $account->getUser();
 
             $dataProviderSessionAuth->set([Ice::SESSION_USER_CLASS => get_class($user)]);
             $dataProviderSessionAuth->set([Ice::SESSION_USER_KEY => $user->getPkValue()]);

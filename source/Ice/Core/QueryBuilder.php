@@ -341,7 +341,6 @@ class QueryBuilder
 
             $comparison = $sqlComparison;
 
-
             if ($value === null) {
                 if ($comparison !== QueryBuilder::SQL_COMPARISON_KEYWORD_IS_NOT_NULL) {
                     $comparison = QueryBuilder::SQL_COMPARISON_KEYWORD_IS_NULL;

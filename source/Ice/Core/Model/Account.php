@@ -3,12 +3,12 @@
 namespace Ice\Core;
 
 use Ice\Exception\Error;
-use Ice\Exception\Security_User_NotActive;
-use Ice\Model\User;
 use Ice\Exception\Security_Account_AttachForbidden;
+use Ice\Exception\Security_User_NotActive;
 use Ice\Helper\Date;
 use Ice\Helper\Type_String;
 use Ice\Model\Token;
+use Ice\Model\User;
 use Ice\Widget\Account_Form;
 
 abstract class Model_Account extends Model
@@ -42,12 +42,6 @@ abstract class Model_Account extends Model
 
         return $this;
     }
-
-    /**
-     * @param array $values
-     * @return array
-     */
-    abstract public function registerVerify(array $values);
 
     /**
      * @param Account_Form $accountForm
@@ -199,12 +193,18 @@ abstract class Model_Account extends Model
     abstract protected function getUserData(Account_Form $accountForm, array $container = []);
 
     /**
+     * @param array $values
+     * @return array
+     */
+    abstract public function registerVerify(array $values);
+
+    /**
      * @param Account_Form $accountForm
      * @param null $dataSourceKey
      * @return mixed
      * @throws Exception
      */
-    final public function signIn(Account_Form $accountForm, $dataSourceKey = null)
+    final public function signIn(Account_Form $accountForm)
     {
         /** @var Logger $logger */
         $logger = $accountForm->getLogger();
@@ -221,38 +221,20 @@ abstract class Model_Account extends Model
 
         $this->autoProlongate($accountForm);
 
-        try {
-            $user->set(['last_login' => Date::get()])->save();
-        } catch (\Exception $e) {
-        } catch (\Throwable $e) {
-        }
+        $user
+            ->set(['/logined_at' => Date::get()])
+            ->save();
 
-        return Security::getInstance()->login($this, $dataSourceKey);
+        return Security::getInstance()->login($this, $accountForm->get());
     }
 
     /**
-     * @return mixed
-     * @throws Exception
-     */
-    final public function signOut()
-    {
-        return Security::getInstance()->logout();
-    }
-
-    /**
-     * @param null $dataSourceKey
      * @return Model|Model_Account|null
      */
-    public function getUser($dataSourceKey = null)
+    public function getUser()
     {
-        return $this->fetchOne(User::class, '*', true, -1, $dataSourceKey);
+        return $this->fetchOne(User::class, '*', true, -1);
     }
-
-    /**
-     * @param array $values
-     * @return array
-     */
-    abstract public function loginVerify(array $values);
 
     /**
      * @param Account_Form $accountForm
@@ -297,4 +279,19 @@ abstract class Model_Account extends Model
     }
 
     abstract public function prolongate($expired);
+
+    /**
+     * @return mixed
+     * @throws Exception
+     */
+    final public function signOut()
+    {
+        return Security::getInstance()->logout();
+    }
+
+    /**
+     * @param array $values
+     * @return array
+     */
+    abstract public function loginVerify(array $values);
 }
