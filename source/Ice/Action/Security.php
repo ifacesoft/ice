@@ -45,8 +45,9 @@ abstract class Security extends Widget_Form_Event
         $accountModelClass = $accountForm->getAccountModelClass();
 
         $logSecurity = Log_Security::create([
-            'form_class' => get_class($accountForm),
+            'widget_class' => get_class($accountForm),
             'account_class' => $accountModelClass,
+            'action_class' => get_class($this)
         ]);
 
         try {
@@ -87,7 +88,10 @@ abstract class Security extends Widget_Form_Event
 
             $logger->save($logSecurity);
         } catch (\Exception $e) {
-            $logSecurity->set('error', Logger::getMessage($e));
+            $logSecurity->set([
+                'error' => $e->getMessage(),
+                'exception' => \Ifacesoft\Ice\Core\Domain\Exception\Error::create(__METHOD__, 'Failed', $accountForm->get(), $e)->get()
+            ]);
 
             $logger->save($logSecurity);
 
@@ -107,16 +111,15 @@ abstract class Security extends Widget_Form_Event
         $logger = $this->getLogger();
 
         $logSecurity = Log_Security::create([
-            'form_class' => get_class($accountForm),
+            'widget_class' => get_class($accountForm),
             'account_class' => $accountForm->getAccountModelClass(),
+            'action_class' => $accountForm->get('subject', get_class($this))
         ]);
 
         try {
             $account = $accountForm->getAccount();
 
             if (!$account) {
-//                file_put_contents(\getLogDir() . '.account.debug.log',print_r([get_class($accountForm) => $accountForm->get()], true) . "\n\n\n", FILE_APPEND);
-
                 throw new Security_Account_NotFound('Account not found');
             }
 
@@ -132,7 +135,10 @@ abstract class Security extends Widget_Form_Event
         } catch (Security_Account_EmailNotConfirmed $e) {
             throw $e;
         } catch (\Exception $e) {
-            $logSecurity->set('error', Logger::getMessage($e));
+            $logSecurity->set([
+                'error' => $e->getMessage(),
+                'exception' => \Ifacesoft\Ice\Core\Domain\Exception\Error::create(__METHOD__, 'Failed', $accountForm->get(), $e)->get()
+            ]);
 
             $logger->save($logSecurity);
 
@@ -151,8 +157,9 @@ abstract class Security extends Widget_Form_Event
         $logger = $this->getLogger();
 
         $logSecurity = Log_Security::create([
-            'form_class' => '',
+            'widget_class' => '',
             'account_class' => get_class($account),
+            'action_class' => get_class($this),
             'account_key' => $account->getPkValue(),
         ]);
 
@@ -163,7 +170,10 @@ abstract class Security extends Widget_Form_Event
 
             return $account;
         } catch (\Exception $e) {
-            $logSecurity->set('error', Logger::getMessage($e));
+            $logSecurity->set([
+                'error' => $e->getMessage(),
+                'exception' => \Ifacesoft\Ice\Core\Domain\Exception\Error::create(__METHOD__, 'Failed', [], $e)->get()
+            ]);
 
             $logger->save($logSecurity);
 
@@ -188,8 +198,9 @@ abstract class Security extends Widget_Form_Event
         $accountClass = $token->get('modelClass');
 
         $logSecurity = Log_Security::create([
-            'form_class' => get_class($accountForm),
+            'widget_class' => get_class($accountForm),
             'account_class' => $accountClass,
+            'action_class' => get_class($this)
         ]);
 
         /** @var Model_Account $account */
@@ -198,7 +209,7 @@ abstract class Security extends Widget_Form_Event
         if (!$account) {
             $error = 'Account not found';
 
-            $logSecurity->set('error', $logger->info($error, Core_Logger::DANGER, true));
+            $logSecurity->set(['error' => $error]);
 
             $logger->save($logSecurity);
 
@@ -285,7 +296,6 @@ abstract class Security extends Widget_Form_Event
                 if (!$accountLogin) {
                     $user->set('/login', $tokenData['email_to_change']);
                 }
-
             }
 
             $user->set(['/email' => $tokenData['email_to_change']]);
@@ -302,6 +312,11 @@ abstract class Security extends Widget_Form_Event
         $account->save();
         $token->save();
         $user->save();
+
+//        $logSecurity->set([
+//            'error' => $e->getMessage(),
+//            'exception' => \Ifacesoft\Ice\Core\Domain\Exception\Error::create(__METHOD__, 'Failed', $accountForm->get(), $e)->get()
+//        ]);
 
         $logger->save($logSecurity);
 
@@ -323,10 +338,11 @@ abstract class Security extends Widget_Form_Event
 
         $accountModelClass = get_class($account);
 
-        $log = Log_Security::create([
+        $logSecurity = Log_Security::create([
             'account_class' => $accountModelClass,
             'account_key' => $account->getPkValue(),
-            'form_class' => get_class($accountForm)
+            'widget_class' => get_class($accountForm),
+            'action_class' => $accountForm->get('subject', get_class($this))
         ]);
 
         $token = Token::getModel($account->get('token__fk', false), '*');
@@ -350,7 +366,13 @@ abstract class Security extends Widget_Form_Event
 
         $this->sendRestorePasswordConfirm($token, $input);
 
-        $logger->save($log);
+//        $logSecurity->set([
+//            'error' => $e->getMessage(),
+//            'exception' => \Ifacesoft\Ice\Core\Domain\Exception\Error::create(__METHOD__, 'Failed', $accountForm->get(), $e)->get()
+//        ]);
+
+        $logger->save($logSecurity);
+
 
         return $account;
     }
@@ -359,7 +381,8 @@ abstract class Security extends Widget_Form_Event
      * Return confirm token and confirm token expired
      *
      * @param Token $token
-     * @throws Exception
+     * @param array $input
+     * @throws Error
      */
     public function sendRestorePasswordConfirm(Token $token, array $input)
     {
@@ -382,10 +405,11 @@ abstract class Security extends Widget_Form_Event
 
         $accountModelClass = get_class($account);
 
-        $log = Log_Security::create([
+        $logSecurity = Log_Security::create([
             'account_class' => $accountModelClass,
             'account_key' => $account->getPkValue(),
-            'form_class' => get_class($accountForm)
+            'widget_class' => get_class($accountForm),
+            'action_class' => $accountForm->get('subject', get_class($this))
         ]);
 
         $token = Token::getModel($account->get('token__fk', false), '*');
@@ -409,7 +433,12 @@ abstract class Security extends Widget_Form_Event
 
         $this->sendChangeEmailConfirm($token, $input);
 
-        $logger->save($log);
+//        $logSecurity->set([
+//            'error' => $e->getMessage(),
+//            'exception' => \Ifacesoft\Ice\Core\Domain\Exception\Error::create(__METHOD__, 'Failed', $accountForm->get(), $e)->get()
+//        ]);
+
+        $logger->save($logSecurity);
 
         return $account;
     }
@@ -418,7 +447,8 @@ abstract class Security extends Widget_Form_Event
      * Return confirm token and confirm token expired
      *
      * @param Token $token
-     * @throws Exception
+     * @param array $input
+     * @throws Error
      */
     public function sendChangeEmailConfirm(Token $token, array $input)
     {
@@ -443,10 +473,11 @@ abstract class Security extends Widget_Form_Event
         /** @var Account_Form $accountForm */
         $accountForm = $input['widget'];
 
-        $log = Log_Security::create([
+        $logSecurity = Log_Security::create([
             'account_class' => get_class($account),
             'account_key' => $account->getPkValue(),
-            'form_class' => get_class($accountForm)
+            'widget_class' => get_class($accountForm),
+            'action_class' => $accountForm->get('subject', get_class($this))
         ]);
 
         /** @var User $user */
@@ -455,9 +486,9 @@ abstract class Security extends Widget_Form_Event
         if (!$user || !$user->isActive()) {
             $error = 'User is blocked or not found';
 
-            $log->set('error', $logger->info($error, Core_Logger::DANGER, true));
+            $logSecurity->set(['error' => $error]);
 
-            $logger->save($log);
+            $logger->save($logSecurity);
 
             return $accountForm->getLogger()->exception([$error, [], $accountForm->getResource()], __FILE__, __LINE__);
         }
@@ -465,7 +496,7 @@ abstract class Security extends Widget_Form_Event
         /** @var Model_Account $account */
         $account = $account->set($accountData)->save();
 
-        $logger->save($log);
+        $logger->save($logSecurity);
 
         return $account;
     }

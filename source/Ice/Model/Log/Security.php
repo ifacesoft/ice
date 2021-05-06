@@ -113,6 +113,27 @@ class Log_Security extends Model
                 'error' => [
                     'scheme' => [
                         'extra' => '',
+                        'type' => 'varchar(255)',
+                        'dataType' => 'varchar',
+                        'length' => '255',
+                        'characterSet' => 'utf8',
+                        'nullable' => false,
+                        'default' => null,
+                        'comment' => '',
+                    ],
+                    'fieldName' => 'error',
+                    'options' => [
+                        'name' => 'error',
+                        'type' => 'text',
+                        'validators' => [
+                            'Ice:Length_Max' => 255,
+                            0 => 'Ice:Not_Null',
+                        ],
+                    ],
+                ],
+                'exception' => [
+                    'scheme' => [
+                        'extra' => '',
                         'type' => 'longtext',
                         'dataType' => 'longtext',
                         'length' => '4294967295',
@@ -121,9 +142,9 @@ class Log_Security extends Model
                         'default' => null,
                         'comment' => '',
                     ],
-                    'fieldName' => 'error',
+                    'fieldName' => 'exception',
                     'options' => [
-                        'name' => 'error',
+                        'name' => 'exception',
                         'type' => 'textarea',
                         'validators' => [
                             'Ice:Length_Max' => 65535,

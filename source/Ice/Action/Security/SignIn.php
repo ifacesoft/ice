@@ -6,6 +6,8 @@ use Ice\Exception\Not_Good;
 use Ice\Exception\Not_Valid;
 use Ice\Exception\Not_Verify;
 use Ice\Exception\Security_Account_EmailNotConfirmed;
+use Ice\Exception\Security_Account_Expired;
+use Ice\Exception\Security_Account_NotActive;
 use Ice\Exception\Security_Account_NotFound;
 use Ice\Exception\Security_Account_Verify;
 use Ice\Exception\Security_User_NotActive;
@@ -52,6 +54,10 @@ class Security_SignIn extends Security
             return ['error' => 'Email не подтвержден:' . $e->getMessage(), 'exception' => $e];
         } catch (Security_Account_NotFound $e) {
             return ['error' => 'Учетная запись не найдена'];
+        } catch (Security_Account_NotActive $e) {
+            return ['error' => $e->getMessage()];
+        } catch (Security_Account_Expired $e) {
+            return ['error' => $e->getMessage()];
         } catch (\Exception $e) {
             return ['error' => $logger->error('При авторизации что-то пошло не так', __FILE__, __LINE__, $e)];
         }

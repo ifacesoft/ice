@@ -363,9 +363,7 @@ class Logger
     public function save($log)
     {
         try {
-            $log
-                ->set([
-                    'logger_class' => $this->class,
+            $log->set([
                     'session' => session_id()
                 ])->save();
         } catch (Exception $e) {
