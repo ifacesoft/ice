@@ -636,7 +636,7 @@ class QueryBuilder
         $pkFieldNames = $modelClass::getScheme()->getPkFieldNames();
 
         $this->eq(
-            array_combine($pkFieldNames, array_pad((array)$pk, (count($pkFieldNames)), null)),
+            array_combine($pkFieldNames, array_pad((array)$pk, count($pkFieldNames), null)),
             $modelTableData,
             $sqlLogical,
             $isUse
