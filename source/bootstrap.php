@@ -13,6 +13,10 @@ define('ICE_CONFIG_PATH', 'config/Ice/Core/Module.php');
 define('ICE_RUN_PATH', 'source/run.php');
 define('ICE_BOOTSTRAP_PATH', 'source/bootstrap.php');
 
+if(!defined('STDIN'))  define('STDIN',  fopen('php://stdin',  'rb'));
+if(!defined('STDOUT')) define('STDOUT', fopen('php://stdout', 'wb'));
+if(!defined('STDERR')) define('STDERR', fopen('php://stderr', 'wb'));
+
 $vendorRealPath = dirname(dirname(dirname(dirname(__DIR__)))) . '/vendor';
 
 if (!$vendorRealPath) {

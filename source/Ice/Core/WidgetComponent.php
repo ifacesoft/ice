@@ -34,6 +34,7 @@ abstract class WidgetComponent
     private $value = null;
     private $active = null;
     private $classes = null;
+    private $styles = null;
 
     private $params = [];
 
@@ -446,6 +447,30 @@ abstract class WidgetComponent
         }
 
         return $this->classes = $this->getComponentName() . ' ' . $classes;
+    }
+
+    /**
+     * @param string $styles
+     * @return null
+     */
+    public function getStyleAttribute($styles = '')
+    {
+        return 'style="' . $this->getClasses($styles) . '"';
+    }
+
+    protected function getStyles($styles = '')
+    {
+        if ($this->styles !== null) {
+            return $this->styles;
+        }
+
+        $style = (array)$this->getOption('style', []);
+
+        if ($style) {
+            $styles .= ' ' . implode(' ', $style);
+        }
+
+        return $this->styles = $styles;
     }
 
     /**
