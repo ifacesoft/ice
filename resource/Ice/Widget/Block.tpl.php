@@ -1,5 +1,6 @@
 <div id="<?= $widgetId ?>"
      class="<?= $widgetClass ?> <?php if (!empty($classes)) : ?> <?= $classes ?><?php endif; ?>"
+     style="<?= $style ?>"
      data-widget='<?= $dataWidget ?>'
      data-params='<?= $dataParams ?>'
      data-for="<?= $parentWidgetId ?>"
