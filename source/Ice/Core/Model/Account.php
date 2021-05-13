@@ -143,7 +143,7 @@ abstract class Model_Account extends Model
 
         if ($user) {
             if (!$accountForm->isAttachAccount()) {
-                throw new Security_Account_AttachForbidden('Attach account forbidden');
+                throw new Security_Account_AttachForbidden('Attach account forbidden', ['user' => $user]);
             }
 
             if ($accountForm->isUpdateUserDataOnAttachAccount()) {
