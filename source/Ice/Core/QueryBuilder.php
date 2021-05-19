@@ -302,16 +302,20 @@ class QueryBuilder
             if ($fieldName === '/pk') {
                 $pkFieldNames = $modelClass::getScheme()->getPkFieldNames();
 
-                $this->where(
-                    array_combine($pkFieldNames, array_pad((array)$value, (count($pkFieldNames)), null)),
-                    $modelTableData,
-                    $sqlComparison,
-                    $sqlLogical,
-                    $isUse,
-                    $part
-                );
+                if (count($pkFieldNames) > 1) {
+                    $this->where(
+                        array_combine($pkFieldNames, array_pad((array)$value, (count($pkFieldNames)), null)),
+                        $modelTableData,
+                        $sqlComparison,
+                        $sqlLogical,
+                        $isUse,
+                        $part
+                    );
 
-                continue;
+                    continue;
+                }
+
+                $fieldName = reset($pkFieldNames);
             }
 
             if (is_array($value)) {

@@ -183,6 +183,7 @@ abstract class Action_Worker extends Action
         $config['input']['isLastTask'] = ['providers' => ['default', Cli::class], 'default' => 0];
         $config['input']['forceFlush'] = ['providers' => ['default', Cli::class], 'default' => 0];
         $config['input']['showParams'] = ['providers' => ['default', Cli::class], 'default' => 1];
+        $config['input']['iceEnv'] = ['providers' => ['default', Cli::class]];
 
         return $config;
     }
@@ -300,7 +301,13 @@ abstract class Action_Worker extends Action
                     Logger::log('Finishing..', get_class($this));
                 }
 
-                $class::call(['workerKey' => $workerKey, 'hash' => $hash, 'task' => $taskLog, 'isLastTask' => $isLastTask], 0, $bg);
+                $taskParams = ['workerKey' => $workerKey, 'hash' => $hash, 'task' => $taskLog, 'isLastTask' => $isLastTask];
+
+                if ($worker['iceEnv']) {
+                    $taskParams['iceEnv'] = $worker['iceEnv'];
+                }
+
+                $class::call($taskParams, 0, $bg);
             } catch (\Exception $e) {
                 $this->getLogger()->error(['Worker {$0}: Task #{$1} failed - {$2}', [get_class($this), $hash, Type_String::printR($task)]], __FILE__, __LINE__, $e);
             } catch (\Throwable $e) {

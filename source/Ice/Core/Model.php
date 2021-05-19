@@ -1320,6 +1320,10 @@ abstract class Model
             ->getQueryResult()
             ->getInsertId();
 
+        if ($this->pk === null) {
+            $this->set(reset($insertId));
+        }
+
         if ($affected) {
             if ($isSmart) {
                 $model = $modelClass::create(array_filter($this->get(), function ($value) {
@@ -1327,14 +1331,12 @@ abstract class Model
                 }));
                 if ($model) {
                     $uniqueFieldNames = ModelScheme::getInstance(get_class($model))->getUniqueFieldNames();
+
                     $model->find($uniqueFieldNames); // bug: Need use getUniqueIndex  => WHERE ('PRIMARY' = id) OR (first_unique = first AND second_unique = second)
+
                     $this->set($model->get($uniqueFieldNames));
                 }
             }
-        }
-
-        if ($this->pk === null) {
-            $this->set(reset($insertId));
         }
 
         $this->afterInsert();
