@@ -60,6 +60,8 @@ class Security_SignIn extends Security
             return ['error' => $e->getMessage()];
         } catch (\Exception $e) {
             return ['error' => $logger->error('При авторизации что-то пошло не так', __FILE__, __LINE__, $e)];
+        } catch (\Throwable $e) {
+            return ['error' => $logger->error('При авторизации что-то пошло не так', __FILE__, __LINE__, $e)];
         }
     }
 }
