@@ -335,7 +335,7 @@ class Orm_Sync_DataScheme extends Action
         $modelScheme = $tableScheme;
 
         Scheme::createQueryBuilder()
-            ->pk($tableName)
+            ->eq(['table_name' => $tableName])
             ->getUpdateQuery(['table__json' => $tableSchemeJson], $dataSourceKey)
             ->getQueryResult();
 
