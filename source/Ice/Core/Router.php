@@ -31,11 +31,11 @@ abstract class Router extends Container
     }
 
     /**
-     * @param null $routeName
+     * @param null $routeOptions
      * @param bool $force
      * @return mixed
      */
-    public abstract function getUrl($routeName = null, $force = false);
+    public abstract function getUrl($routeOptions = null, $force = false);
 
     public abstract function getName($url = null, $method = null);
 

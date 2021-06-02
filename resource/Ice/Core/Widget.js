@@ -1,7 +1,7 @@
 /**
  * Created by dp on 28.05.15.
  */
-var Ice_Core_Widget = {
+const Ice_Core_Widget = module.exports = {
     waitClick: false,
 
     click: function ($element, url, method, callback, confirm_message, dataCallback) {

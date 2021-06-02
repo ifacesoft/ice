@@ -6,46 +6,35 @@ use Ice\Exception\RouteNotFound;
 
 class Symfony extends Ice
 {
-    public function getUrl($routeName = null, $force = false)
+    public function getUrl($routeOptions = null, $force = false)
     {
-        if (!$routeName) {
-            $routeName = $this->getName();
+        if (!$routeOptions) {
+            $routeOptions = $this->getName();
         }
-
-        $routeName = (array)$routeName;
 
         $routeParams = [];
         $urlWithGet = false;
         $urlWithDomain = false;
 
-        $url = null;
-
         try {
-            if (count($routeName) == 4) {
-                list($routeName, $routeParams, $urlWithGet, $urlWithDomain) = $routeName;
-            } elseif (count($routeName) == 3) {
-                list($routeName, $routeParams, $urlWithGet) = $routeName;
-            } elseif (count($routeName) == 2) {
-                list($routeName, $routeParams) = $routeName;
-            } else {
-                $routeName = reset($routeName);
-            }
-
             if (!$force) {
-                return parent::getUrl([$routeName, $routeParams, $urlWithGet, $urlWithDomain]);
+                return parent::getUrl($routeOptions);
             }
-
         } catch (RouteNotFound $e) {
             //
         }
 
+        $url = null;
+
         global $kernel;
 
-        if (!$url) {
+        if ($kernel) {
+            list($routeOptions, $routeParams, $urlWithGet, $urlWithDomain, $replaceContext) = array_pad((array)$routeOptions, 5, false);
+
             $url = $kernel
                 ->getContainer()
                 ->get('router')
-                ->generate($routeName, array_merge((array)$this->getParams($force), $routeParams)); // todo: должно быть как строчкой ниже
+                ->generate($routeOptions, array_merge((array)$this->getParams($force), $routeParams)); // todo: должно быть как строчкой ниже
 //                ->generate($routeName, $routeParams);
         }
 
