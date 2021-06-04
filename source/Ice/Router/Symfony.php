@@ -12,10 +12,6 @@ class Symfony extends Ice
             $routeOptions = $this->getName();
         }
 
-        $routeParams = [];
-        $urlWithGet = false;
-        $urlWithDomain = false;
-
         try {
             if (!$force) {
                 return parent::getUrl($routeOptions);
@@ -34,7 +30,7 @@ class Symfony extends Ice
             $url = $kernel
                 ->getContainer()
                 ->get('router')
-                ->generate($routeOptions, array_merge((array)$this->getParams($force), $routeParams)); // todo: должно быть как строчкой ниже
+                ->generate($routeOptions, array_merge((array)$this->getParams($force), (array)$routeParams)); // todo: должно быть как строчкой ниже
 //                ->generate($routeName, $routeParams);
         }
 

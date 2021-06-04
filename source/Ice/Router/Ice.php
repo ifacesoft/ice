@@ -2,18 +2,21 @@
 
 namespace Ice\Router;
 
-use Ice\Core\Debuger;
+use Ice\Core\Exception;
 use Ice\Core\Request;
 use Ice\Core\Route;
 use Ice\Core\Router;
 use Ice\DataProvider\Router as DataProvider_Router;
+use Ice\Exception\RouteNotFound;
 
 class Ice extends Router
 {
     /**
-     * @param null $routeName
+     * @param null $routeOptions
      * @param bool $force
      * @return null|string
+     * @throws Exception
+     * @throws RouteNotFound
      */
     public function getUrl($routeOptions = null, $force = false)
     {
@@ -70,7 +73,7 @@ class Ice extends Router
     /**
      * @param bool $force
      * @return array
-     * @throws \Ice\Core\Exception
+     * @throws Exception
      * @throws \Ice\Exception\Error
      */
     public function getParams($force = false)

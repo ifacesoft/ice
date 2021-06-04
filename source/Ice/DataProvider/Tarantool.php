@@ -384,8 +384,7 @@ class Tarantool extends DataProvider
         $host = $options->get('host');
         $port = $options->get('port');
 
-        $streamConnection = new StreamConnection('tcp://' . $host . ':' . $port);
-        $client = new Client($streamConnection, new PurePacker());
+        $client = Client::fromDsn('tcp://' . $host . ':' . $port);
 
         $connection = $client->getSpace($this->getIndex());
 

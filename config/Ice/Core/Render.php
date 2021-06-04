@@ -17,8 +17,8 @@ return [
         'cache' => 'twig/cache/',
         'extensions' => [
             'production' => [],
-            'test' => ['\Twig_Extension_Debug'],
-            'development' => ['\Twig_Extension_Debug']
+            'test' => ['\Twig\Extension\DebugExtension'],
+            'development' => ['\Twig\Extension\DebugExtension']
         ]
     ],
     'Ice\Render\External_PHPExcel' => [

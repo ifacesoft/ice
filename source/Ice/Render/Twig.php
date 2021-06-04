@@ -10,11 +10,11 @@
 namespace Ice\Render;
 
 use Ice\Core\Config;
-use Ice\Core\Debuger;
 use Ice\Core\Environment;
 use Ice\Core\Logger;
 use Ice\Core\Module;
 use Ice\Core\Render;
+use Twig\Loader\FilesystemLoader;
 use Ice\Code\Generator\Render_Twig as CodeGenerator_Render_Twig;
 
 /**
@@ -74,7 +74,7 @@ class Twig extends Render
      * Render view via current view render
      *
      * @param string $template
-     * @param  array $data
+     * @param array $data
      * @param null $layout
      * @param string $templateType
      * @return mixed
@@ -103,8 +103,8 @@ class Twig extends Render
                 $options['cache'] = \getCacheDir() . $config->get('cache');
             }
 
-            if ($templateType == Render::TEMPLATE_TYPE_STRING) {
-                $twig = new \Twig_Environment(new \Twig_Loader_String(), $options);
+            if ($templateType === Render::TEMPLATE_TYPE_STRING) {
+                $twig = new \Twig\Environment(new \Twig_Loader_String(), $options);
 
                 foreach ($config->gets('extensions/' . $environment->getName()) as $extensionClass) {
                     $twig->addExtension(new $extensionClass());
@@ -112,7 +112,7 @@ class Twig extends Render
 
                 return $twig->render($template, $data);
             } else {
-                $twig = new \Twig_Environment(new \Twig_Loader_Filesystem($this->templateDirs), $options);
+                $twig = new \Twig\Environment(new FilesystemLoader($this->templateDirs), $options);
 
                 foreach ($config->gets('extensions/' . $environment->getName()) as $extensionClass) {
                     $twig->addExtension(new $extensionClass());
@@ -130,9 +130,9 @@ class Twig extends Render
                     Logger::WARNING
                 );
                 try {
-                    $twig = new \Twig_Environment(new \Twig_Loader_Array());
+                    $twig = new \Twig\Environment(new \Twig\Loader\ArrayLoader());
 
-                    return $twig->createTemplate(Twig::getCodeGenerator($template)->generate())->render($data);
+                    return $twig->createTemplate(CodeGenerator_Render_Twig::getInstance($template)->generate())->render($data);
                 } catch (\Exception $e1) {
                     return $this->getLogger()->error(
                         $e1->getMessage(),
