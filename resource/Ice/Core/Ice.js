@@ -1,4 +1,4 @@
-const Ice = module.exports = {
+const Ice = {
     _callbacks: {},
     _lastback: 0,
 
@@ -145,3 +145,7 @@ const Ice = module.exports = {
         }
     }
 };
+
+if (typeof module === "object") {
+    module.exports = Ice;
+}

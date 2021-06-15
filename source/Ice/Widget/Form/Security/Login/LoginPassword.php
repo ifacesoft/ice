@@ -8,7 +8,7 @@ use Ice\Helper\Json;
 use Ice\Helper\Object;
 use Ice\Model\Account;
 use Ice\Model\User_Role_Link;
-use Ice\View\Render\Php;
+use Ice\Render\Php;
 
 class LoginPassword extends Widget_Form_Security_Login
 {

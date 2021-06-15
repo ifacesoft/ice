@@ -5,7 +5,7 @@ namespace Ice\Widget\Menu;
 use Ice\Core\Query_Result;
 use Ice\Core\Widget_Menu;
 use Ice\Helper\Json;
-use Ice\View\Render\Php;
+use Ice\Render\Php;
 
 class Pagination extends Widget_Menu
 {

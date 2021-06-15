@@ -1,8 +1,7 @@
 <?php
 
-namespace Ice\View\Render;
+namespace Ice\Render;
 
-use Ice\Core\View_Render;
 use Michelf\MarkdownExtra;
 
 class Smarty_Markdown extends Smarty

@@ -7,7 +7,7 @@ use Ice\Core\Query_Builder;
 use Ice\Core\Route;
 use Ice\Core\Widget_Data;
 use Ice\Helper\Json;
-use Ice\View\Render\Php;
+use Ice\Render\Php;
 
 class Table extends Widget_Data
 {

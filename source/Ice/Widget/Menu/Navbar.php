@@ -3,7 +3,7 @@
 namespace Ice\Widget\Menu;
 
 use Ice\Core\Widget_Menu;
-use Ice\View\Render\Php;
+use Ice\Render\Php;
 
 class Navbar extends Widget_Menu
 {

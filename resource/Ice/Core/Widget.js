@@ -1,7 +1,4 @@
-/**
- * Created by dp on 28.05.15.
- */
-const Ice_Core_Widget = module.exports = {
+const Ice_Core_Widget = {
     waitClick: false,
 
     click: function ($element, url, method, callback, confirm_message, dataCallback) {
@@ -72,7 +69,7 @@ const Ice_Core_Widget = module.exports = {
 
         if (!$form || $form != $element) {
             try {
-            data = Ice.objectMerge(data, Ice.jsonToObject(Base64.decode($element.attr('data-params'))))
+                data = Ice.objectMerge(data, Ice.jsonToObject(Base64.decode($element.attr('data-params'))))
             } catch (e) {
                 // todo: обязательно кодировать в base64                                      // Это
                 data = Ice.objectMerge(data, Ice.jsonToObject($element.attr('data-params')))  // Нужно
@@ -231,3 +228,6 @@ const Ice_Core_Widget = module.exports = {
     }
 };
 
+if (typeof module === "object") {
+    module.exports = Ice_Core_Widget;
+}

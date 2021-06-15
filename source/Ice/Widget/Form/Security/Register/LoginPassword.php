@@ -6,7 +6,7 @@ namespace Ice\Widget\Form\Security\Register;
 use Ice\Core\Widget_Form_Security_Register;
 use Ice\Helper\Json;
 use Ice\Helper\Object;
-use Ice\View\Render\Php;
+use Ice\Render\Php;
 
 class LoginPassword extends Widget_Form_Security_Register
 {

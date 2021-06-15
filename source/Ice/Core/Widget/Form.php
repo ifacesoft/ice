@@ -14,7 +14,7 @@ use Ice\Helper\Arrays;
 use Ice\Helper\Emmet;
 use Ice\Helper\Json;
 use Ice\Helper\Type_String;
-use Ice\View\Render\Php;
+use Ice\Render\Php;
 use Ice\Widget\Form\Model as Widget_Form_Model;
 
 /**

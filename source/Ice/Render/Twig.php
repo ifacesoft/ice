@@ -70,6 +70,18 @@ class Twig extends Render
         return parent::getInstance($instanceKey, $ttl, $params);
     }
 
+    private function getTwigExtensionInstance($extension) {
+        if (is_array($extension)) {
+            list($class, $args) = array_pad($extension, 2, []);
+
+            $extensionClass = new \ReflectionClass($class);
+
+            return $extensionClass->newInstanceArgs((array) $args);
+        }
+
+        return new $extension();
+    }
+
     /**
      * Render view via current view render
      *
@@ -106,8 +118,8 @@ class Twig extends Render
             if ($templateType === Render::TEMPLATE_TYPE_STRING) {
                 $twig = new \Twig\Environment(new \Twig_Loader_String(), $options);
 
-                foreach ($config->gets('extensions/' . $environment->getName()) as $extensionClass) {
-                    $twig->addExtension(new $extensionClass());
+                foreach ($config->gets('extensions/' . $environment->getName()) as $extension) {
+                    $twig->addExtension($this->getTwigExtensionInstance($extension));
                 }
 
                 return $twig->render($template, $data);
@@ -115,7 +127,7 @@ class Twig extends Render
                 $twig = new \Twig\Environment(new FilesystemLoader($this->templateDirs), $options);
 
                 foreach ($config->gets('extensions/' . $environment->getName()) as $extensionClass) {
-                    $twig->addExtension(new $extensionClass());
+                    $twig->addExtension($this->getTwigExtensionInstance($extensionClass));
                 }
 
                 return $twig->render(str_replace(['_', '\\'], '/', $template) . Twig::TEMPLATE_EXTENSION, $data);

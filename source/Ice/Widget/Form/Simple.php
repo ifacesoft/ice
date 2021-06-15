@@ -7,7 +7,7 @@ use Ice\Core\Widget_Form;
 use Ice\Helper\Emmet;
 use Ice\Helper\Json;
 use Ice\Helper\Object;
-use Ice\View\Render\Php;
+use Ice\Render\Php;
 
 class Simple extends Widget_Form
 {
