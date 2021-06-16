@@ -51,6 +51,8 @@ if ($iceRealPath = realpath(VENDOR_DIR . ICE_VENDOR_NAME)) {
     define('ICE_DIR', MODULE_DIR);
 }
 
+define('ICE_CORE_DIR', VENDOR_DIR . 'ifacesoft/ice-core/');
+
 try {
     global $loader;
 
@@ -74,6 +76,14 @@ try {
     require_once ICE_DIR . 'source/Ice/Helper/File.php';
     require_once ICE_DIR . 'source/Ice/Core/Config.php';
     require_once ICE_DIR . 'source/Ice/Core/Module.php';
+    require_once ICE_CORE_DIR . 'source/backend/Domain/Value/ValueObject.php';
+    require_once ICE_CORE_DIR . 'source/backend/Domain/Value/StringValue.php';
+    require_once ICE_CORE_DIR . 'source/backend/Domain/Value/ArrayValue.php';
+    require_once ICE_CORE_DIR . 'source/backend/Domain/Exception/Error.php';
+    require_once ICE_CORE_DIR . 'source/backend/Infrastructure/Core/Singleton.php';
+    require_once ICE_CORE_DIR . 'source/backend/Infrastructure/Core/Service.php';
+    require_once ICE_CORE_DIR . 'source/backend/Infrastructure/Core/SingletonService.php';
+    require_once ICE_CORE_DIR . 'source/backend/Infrastructure/Core/Application.php';
 
     Module::init();
     Environment::getInstance();
