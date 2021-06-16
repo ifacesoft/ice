@@ -123,7 +123,7 @@ class Response
         }
 
         if ($this->content === null) {
-            $this->content = $this->contentType == 'json' || Request::isAjax()
+            $this->content = $this->contentType === 'json' || Request::isAjax()
                 ? str_replace(dirname(MODULE_DIR), '', Json::encode($result))
                 : str_replace(dirname(MODULE_DIR), '', reset($result));
         }

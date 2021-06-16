@@ -5,19 +5,17 @@ namespace Ice;
 use Composer\Script\Event;
 use Ice\Core\Action;
 use Ice\Core\Action_Context;
+use Ice\Core\Environment;
 use Ice\Core\Loader;
 use Ice\Core\Logger;
 use Ice\Core\Profiler;
 use Ice\Core\Request;
 use Ice\Core\Response;
-use Ice\Core\Session;
 use Ice\DataProvider\Cli as DataProvider_Cli;
 use Ice\DataProvider\Request as DataProvider_Request;
 use Ice\DataProvider\Router as DataProvider_Router;
 use Ice\Exception\Error;
-use Ice\Exception\Http_Bad_Request;
-use Ice\Exception\Http_Forbidden;
-use Ice\Exception\Http_Not_Found;
+use Ice\Exception\Http;
 use Ice\Exception\Http_Redirect;
 use Ice\Widget\Http_Status;
 
@@ -100,12 +98,20 @@ class App
                     throw $e;
                 } catch (Http_Redirect $e) {
                     $result['redirect'] = $e->getRedirectUrl();
-                } catch (Http_Bad_Request $e) {
-                    $result = ['content' => Http_Status::getInstance('app', null, ['code' => 400, 'message' => $e->getMessage(), 'stackTrace' => $e->getTraceAsString()])];
-                } catch (Http_Forbidden $e) {
-                    $result = ['content' => Http_Status::getInstance('app', null, ['code' => 403, 'message' => $e->getMessage(), 'stackTrace' => $e->getTraceAsString()])];
-                } catch (Http_Not_Found $e) {
-                    $result = ['content' => Http_Status::getInstance('app', null, ['code' => 404, 'message' => $e->getMessage(), 'stackTrace' => $e->getTraceAsString()])];
+                } catch (Http $e) {
+                    $result = [
+                        'content' => Http_Status::getInstance(
+                            'app',
+                            null,
+                            [
+                                'status' => $e->getHttpMessage(),
+                                'code' => $e->getHttpCode(),
+                                'message' => $e->getMessage(),
+                                'stackTrace' => Environment::getInstance()->isProduction() ? '' : $e->getTraceAsString()
+                            ]
+                        )->render(),
+                    ];
+                    App::getResponse()->setStatusCode($e->getHttpCode());
                 } catch (\Exception $e) {
                     Logger::getInstance(__CLASS__)->error('Application (Http): run action failure', __FILE__, __LINE__, $e);
                     $result = [
@@ -128,12 +134,20 @@ class App
                     throw $e;
                 } catch (Http_Redirect $e) {
                     $result['redirect'] = $e->getRedirectUrl();
-                } catch (Http_Bad_Request $e) {
-                    $result = ['content' => Http_Status::getInstance('app', null, ['code' => 400, 'message' => $e->getMessage(), 'stackTrace' => $e->getTraceAsString()])];
-                } catch (Http_Forbidden $e) {
-                    $result = ['content' => Http_Status::getInstance('app', null, ['code' => 403, 'message' => $e->getMessage(), 'stackTrace' => $e->getTraceAsString()])];
-                } catch (Http_Not_Found $e) {
-                    $result = ['content' => Http_Status::getInstance('app', null, ['code' => 404, 'message' => $e->getMessage(), 'stackTrace' => $e->getTraceAsString()])];
+                } catch (Http $e) {
+                    $result = [
+                        'content' => Http_Status::getInstance(
+                            'app',
+                            null,
+                            [
+                                'status' => $e->getHttpMessage(),
+                                'code' => $e->getHttpCode(),
+                                'message' => $e->getMessage(),
+                                'stackTrace' => Environment::getInstance()->isProduction() ? '' : $e->getTraceAsString()
+                            ]
+                        )->render(),
+                    ];
+                    App::getResponse()->setStatusCode($e->getHttpCode());
                 } catch (\Exception $e) {
                     Logger::getInstance(__CLASS__)->error('Application (Http): run action failure', __FILE__, __LINE__, $e);
                     $result = [

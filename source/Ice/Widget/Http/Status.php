@@ -47,6 +47,7 @@ class Http_Status extends Block
             'resource' => ['js' => null, 'css' => null, 'less' => null, 'img' => null],
             'cache' => ['ttl' => -1, 'count' => 1000],
             'input' => [
+                'status' => ['default' => 'Error'],
                 'code' => ['default' => 500],
                 'message' => ['default' => ''],
                 'stackTrace' => ['default' => '']
@@ -67,7 +68,7 @@ class Http_Status extends Block
     {
         Http::setStatusCodeHeader($input['code']);
 
-        $this->setTemplateClass('_' . $input['code']);
+//        $this->setTemplateClass('_' . $input['code']);
 
         $stackTrace = Environment::getInstance()->isProduction()
             ? '' :
@@ -77,7 +78,9 @@ class Http_Status extends Block
 
         return [
             'message' => strip_tags($input['message']),
-            'stackTrace' => $stackTrace
+            'stackTrace' => $stackTrace,
+            'code' => $input['code'],
+            'status' => $input['status']
         ];
     }
 }
