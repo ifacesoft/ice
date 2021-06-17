@@ -42,6 +42,7 @@
   "bin": [
     "bin/ice",
     "bin/ice-exec-ice",
-    "bin/ice-release"
+    "bin/ice-release",
+    "bin/ice-orm-sync"
   ]
 }
