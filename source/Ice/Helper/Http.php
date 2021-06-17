@@ -106,7 +106,9 @@ class Http
      */
     public static function getContentTypeHeader($extension)
     {
-        return 'Content-Type: ' . Http::$mimeTypes[$extension] . '; charset=utf-8';
+        $mimeType = isset(Http::$mimeTypes[$extension]) ? Http::$mimeTypes[$extension] : $extension;
+
+        return 'Content-Type: ' . $mimeType . '; charset=utf-8';
     }
 
     /**
