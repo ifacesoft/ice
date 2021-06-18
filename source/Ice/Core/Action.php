@@ -184,8 +184,8 @@ abstract class Action
             $newLevel = $level + 1;
 
             foreach ($actionData as $subActionClass => $actionItem) {
-                /**@var Action $subActionClass */
-                list($subActionClass, $subActionParams) = each($actionItem);
+                $subActionClass = key($actionItem);
+                $subActionParams = current($actionItem);
 
                 $result = [];
 
@@ -425,7 +425,8 @@ abstract class Action
         $params = [];
 
         if (is_array($action)) {
-            list($class, $key) = each($action);
+            $class = key($action);
+            $key = current($action);
 
             if (is_int($class)) {
                 $class = $key;
