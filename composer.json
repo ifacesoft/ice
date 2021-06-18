@@ -27,9 +27,9 @@
     "ifacesoft/ice-cli": "0.0.*",
     "ifacesoft/ice-http": "0.0.*",
     "mrclay/minify": "3.0.*",
-    "phpmailer/phpmailer": "6.4.*",
+    "phpmailer/phpmailer": "6.5.*",
     "phpoffice/phpword": "0.18.*",
-    "phpoffice/phpspreadsheet": "1.17.*.*",
+    "phpoffice/phpspreadsheet": "1.18.*.*",
     "tarantool/client": "0.9.*",
     "rybakit/msgpack": "0.8.*"
   },
