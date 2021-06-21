@@ -57,7 +57,7 @@ return [
                             ],
                             'module' => [
                                 'path' => 'Ice/',
-                                'js' => ['Helper/String.js', 'Core/Widget.js'],
+                                'js' => ['Helper/String.js', 'Core/Base64.js', 'Core/Ice.js', 'Core/Widget.js'],
                                 'isCopy' => false,
                             ],
                         ],
