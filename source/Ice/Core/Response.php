@@ -122,6 +122,10 @@ class Response
             return;
         }
 
+        if ($contentType = Request::getParam('contentType')) {
+            $this->contentType = $contentType;
+        }
+
         if ($this->content === null) {
             $this->content = $this->contentType === 'json' || Request::isAjax()
                 ? str_replace(dirname(MODULE_DIR), '', Json::encode($result))

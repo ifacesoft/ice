@@ -85,77 +85,9 @@ class App
 
             $result = $actionClass::call($params);
         } catch (\Exception $e) {
-            if (Request::isCli()) {
-                Logger::getInstance(__CLASS__)->error('Application (App): run action failure', __FILE__, __LINE__, $e);
-
-                $result = ['error' => Logger::getInstance(__CLASS__)->info($e->getMessage(), Logger::DANGER)];
-            } else {
-                if ($throwException) {
-                    throw $e;
-                }
-
-                try {
-                    throw $e;
-                } catch (Http_Redirect $e) {
-                    $result['redirect'] = $e->getRedirectUrl();
-                } catch (Http $e) {
-                    $result = [
-                        'content' => Http_Status::getInstance(
-                            'app',
-                            null,
-                            [
-                                'status' => $e->getHttpMessage(),
-                                'code' => $e->getHttpCode(),
-                                'message' => $e->getMessage(),
-                                'stackTrace' => Environment::getInstance()->isProduction() ? '' : $e->getTraceAsString()
-                            ]
-                        )->render(),
-                    ];
-                    App::getResponse()->setStatusCode($e->getHttpCode());
-                } catch (\Exception $e) {
-                    Logger::getInstance(__CLASS__)->error('Application (Http): run action failure', __FILE__, __LINE__, $e);
-                    $result = [
-                        'content' => Http_Status::getInstance('app', null, ['message' => $e->getMessage(), 'stackTrace' => $e->getTraceAsString()]),
-                        'error' => Logger::getInstance(__CLASS__)->info($e->getMessage(), Logger::DANGER)
-                    ];
-                }
-            }
+            $result = self::exception($e, $throwException);
         } catch (\Throwable $e) {
-            if (Request::isCli()) {
-                Logger::getInstance(__CLASS__)->error('Application (App): run action failure', __FILE__, __LINE__, $e);
-
-                $result = ['error' => Logger::getInstance(__CLASS__)->info($e->getMessage(), Logger::DANGER)];
-            } else {
-                if ($throwException) {
-                    throw $e;
-                }
-
-                try {
-                    throw $e;
-                } catch (Http_Redirect $e) {
-                    $result['redirect'] = $e->getRedirectUrl();
-                } catch (Http $e) {
-                    $result = [
-                        'content' => Http_Status::getInstance(
-                            'app',
-                            null,
-                            [
-                                'status' => $e->getHttpMessage(),
-                                'code' => $e->getHttpCode(),
-                                'message' => $e->getMessage(),
-                                'stackTrace' => Environment::getInstance()->isProduction() ? '' : $e->getTraceAsString()
-                            ]
-                        )->render(),
-                    ];
-                    App::getResponse()->setStatusCode($e->getHttpCode());
-                } catch (\Exception $e) {
-                    Logger::getInstance(__CLASS__)->error('Application (Http): run action failure', __FILE__, __LINE__, $e);
-                    $result = [
-                        'content' => Http_Status::getInstance('app', null, ['message' => $e->getMessage(), 'stackTrace' => $e->getTraceAsString()]),
-                        'error' => Logger::getInstance(__CLASS__)->info($e->getMessage(), Logger::DANGER)
-                    ];
-                }
-            }
+            $result = self::exception($e, $throwException);
         }
 
         if (Request::isCli()) {
@@ -233,5 +165,62 @@ class App
 //        $composerConfig = $composer->getConfig();
 
         system(realpath(__DIR__ . '/../../bin/') . '/ice Ice:Upgrade');
+    }
+
+    private static function exception($e, $throwException)
+    {
+        if (Request::isCli()) {
+            Logger::getInstance(__CLASS__)->error('Application (App): run action failure', __FILE__, __LINE__, $e);
+
+            return ['error' => Logger::getInstance(__CLASS__)->info($e->getMessage(), Logger::DANGER)];
+        }
+
+        if ($throwException) {
+            throw $e;
+        }
+
+        try {
+            throw $e;
+        } catch (Http_Redirect $e) {
+            $result['redirect'] = $e->getRedirectUrl();
+        } catch (Http $e) {
+            $result = [
+                'content' => self::getHttpStatusContent($e, $e->getHttpCode(), $e->getHttpMessage()),
+                'error' => Logger::getInstance(__CLASS__)->info($e->getMessage(), Logger::DANGER)
+            ];
+        } catch (\Exception $e) {
+            Logger::getInstance(__CLASS__)->error('Application (Http): run action failure', __FILE__, __LINE__, $e);
+
+            $result = [
+                'content' => self::getHttpStatusContent($e),
+                'error' => Logger::getInstance(__CLASS__)->info($e->getMessage(), Logger::DANGER)
+            ];
+        } catch (\Throwable $e) {
+            Logger::getInstance(__CLASS__)->error('Application (Http): run action failure', __FILE__, __LINE__, $e);
+
+            $result = [
+                'content' => self::getHttpStatusContent($e),
+                'error' => Logger::getInstance(__CLASS__)->info($e->getMessage(), Logger::DANGER)
+            ];
+        }
+
+        return $result;
+    }
+
+    private static function getHttpStatusContent($e, $code = 500, $status = 'Internal Server Error') {
+        App::getResponse()->setStatusCode($code);
+
+        return Http_Status::getInstance(
+            'app',
+            null,
+            [
+                'status' => $status,
+                'code' => $code,
+                'message' => $e->getMessage(),
+                'stackTrace' => Environment::getInstance()->isProduction()
+                    ? ''
+                    : \Ifacesoft\Ice\Core\Domain\Exception\Error::create(__FILE__, 'Application failed', [], $e)->get('html')
+            ]
+        )->render();
     }
 }
