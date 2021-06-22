@@ -20,9 +20,9 @@ use Ice\Exception\Http;
 use Ice\Exception\Http_Redirect;
 use Ice\Exception\Http_Unauthorized;
 use Ice\Helper\Access;
+use Ice\Helper\Console as Helper_Console;
 use Ice\Helper\Input;
 use Ice\Helper\Json;
-use Ice\Helper\Console as Helper_Console;
 
 /**
  * Class Action
@@ -183,9 +183,8 @@ abstract class Action
         foreach ($action->getActions($rawActions) as $actionKey => $actionData) {
             $newLevel = $level + 1;
 
-            foreach ($actionData as $subActionClass => $actionItem) {
-                $subActionClass = key($actionItem);
-                $subActionParams = current($actionItem);
+            foreach ($actionData as $actionItem) {
+                list($subActionClass, $subActionParams) = $actionItem;
 
                 $result = [];
 
@@ -388,12 +387,73 @@ abstract class Action
         }
     }
 
-    /** Run action
-     *
-     * @param array $input
-     * @return array
+    private function transaction($callback)
+    {
+        $result = null;
+
+        try {
+            $this->transactionBegin();
+
+            $result = $callback($this);
+
+            $this->transactionCommit();
+        } catch (Exception $e) {
+            $this->transactionRollback();
+
+            throw $e;
+        }
+
+        return $result;
+    }
+
+    public function transactionBegin()
+    {
+        foreach ($this->getConfigData('dataSources', []) as $dataSourceName => $dataSourceData) {
+            if (!empty($dataSourceData['transaction'])) {
+                $this->getDataSource($dataSourceName)->beginTransaction();
+            }
+        }
+    }
+
+    public function getConfigData($configPart, $default)
+    {
+        /** @var Action $actionClass */
+        $actionClass = get_class($this);
+
+        return is_array($default)
+            ? $actionClass::getConfig()->gets($configPart, $default)
+            : $actionClass::getConfig()->get($configPart, $default);
+    }
+
+    /**
+     * @param $dataSourceName
+     * @return \Ice\Core|Container|DataSource
+     * @throws Exception
      */
-    abstract public function run(array $input);
+    protected function getDataSource($dataSourceName)
+    {
+        return DataSource::getInstance(
+            $this->getConfigData('dataSources/' . $dataSourceName . '/classKey', null)
+        );
+    }
+
+    public function transactionCommit()
+    {
+        foreach ($this->getConfigData('dataSources', []) as $dataSourceName => $dataSourceData) {
+            if (!empty($dataSourceData['transaction'])) {
+                $this->getDataSource($dataSourceName)->commitTransaction();
+            }
+        }
+    }
+
+    public function transactionRollback()
+    {
+        foreach ($this->getConfigData('dataSources', []) as $dataSourceName => $dataSourceData) {
+            if (!empty($dataSourceData['transaction'])) {
+                $this->getDataSource($dataSourceName)->rollbackTransaction(new Error('Transaction rollback'));
+            }
+        }
+    }
 
     /**
      * @param array $rawActions
@@ -403,81 +463,19 @@ abstract class Action
     {
         $actions = [];
 
-        foreach ($rawActions as $key => $action) {
+        foreach ($rawActions as $action) {
             if (empty($action)) {
                 continue;
             }
 
-            list($key, $class, $params) = $this->prepareAction($key, $action);
+            list($class, $params) = array_pad((array)$action, 2, []);
 
-            if (empty($key) || is_int($key)) {
-                $key = $class::getClassName();
-            }
+            $class = self::getClass($class, $this);
 
-            $actions[$key][] = [$class => $params];
+            $actions[$class::getClassName()][] = [$class, $params];
         }
 
         return $actions;
-    }
-
-    private function prepareAction($key, $action)
-    {
-        $params = [];
-
-        if (is_array($action)) {
-            $class = key($action);
-            $key = current($action);
-
-            if (is_int($class)) {
-                $class = $key;
-                $key = 0;
-            }
-
-            $params = count($action) < 2 ? [] : current($action);
-        } else {
-            if (!is_int($key)) {
-                $class = $key;
-                $key = $action;
-            } else {
-                $class = $action;
-            }
-        }
-
-        return [$key, Action::getClass($class, $this), $params];
-    }
-
-    /**
-     * @return null
-     */
-    public function getTtl()
-    {
-        return $this->ttl;
-    }
-
-    /**
-     * Set action result cache ttl
-     *
-     * @param integer $ttl
-     *
-     * @throws Exception
-     * @throws Config_Error
-     * @throws FileNotFound
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 0.5
-     * @since   0.5
-     */
-    protected function setTtl($ttl)
-    {
-        if ($ttl === null) {
-            /**
-             * @var Action $actionClass
-             */
-            $actionClass = get_class($this);
-            $ttl = $actionClass::getConfig()->get('cache/ttl', false);
-        }
-
-        $this->ttl = $ttl;
     }
 
     /**
@@ -517,6 +515,47 @@ abstract class Action
         ];
     }
 
+    /** Run action
+     *
+     * @param array $input
+     * @return array
+     */
+    abstract public function run(array $input);
+
+    /**
+     * @return null
+     */
+    public function getTtl()
+    {
+        return $this->ttl;
+    }
+
+    /**
+     * Set action result cache ttl
+     *
+     * @param integer $ttl
+     *
+     * @throws Exception
+     * @throws Config_Error
+     * @throws FileNotFound
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 0.5
+     * @since   0.5
+     */
+    protected function setTtl($ttl)
+    {
+        if ($ttl === null) {
+            /**
+             * @var Action $actionClass
+             */
+            $actionClass = get_class($this);
+            $ttl = $actionClass::getConfig()->get('cache/ttl', false);
+        }
+
+        $this->ttl = $ttl;
+    }
+
     /**
      * @param array $output
      * @throws Exception
@@ -551,6 +590,20 @@ abstract class Action
     }
 
     /**
+     * @return array
+     *
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @deprecated 1.10 use Action::getConfigData
+     * @version 1.9
+     * @since   1.9
+     */
+    public function getInputConfig()
+    {
+        return $this->getConfigData('input', []);
+    }
+
+    /**
      * Invalidate cacheable object
      *
      * @return Action
@@ -576,42 +629,6 @@ abstract class Action
     }
 
     /**
-     * @return array
-     *
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @deprecated 1.10 use Action::getConfigData
-     * @version 1.9
-     * @since   1.9
-     */
-    public function getInputConfig()
-    {
-        return $this->getConfigData('input', []);
-    }
-
-    public function getConfigData($configPart, $default)
-    {
-        /** @var Action $actionClass */
-        $actionClass = get_class($this);
-
-        return is_array($default)
-            ? $actionClass::getConfig()->gets($configPart, $default)
-            : $actionClass::getConfig()->get($configPart, $default);
-    }
-
-    /**
-     * @param $dataSourceName
-     * @return \Ice\Core|Container|DataSource
-     * @throws Exception
-     */
-    protected function getDataSource($dataSourceName)
-    {
-        return DataSource::getInstance(
-            $this->getConfigData('dataSources/' . $dataSourceName . '/classKey', null)
-        );
-    }
-
-    /**
      * @param DataProvider|string $dataProviderClass
      * @param string $key
      * @param string $index
@@ -629,33 +646,6 @@ abstract class Action
         return $dataProviderClass::getInstance($key, $index);
     }
 
-    public function transactionBegin()
-    {
-        foreach ($this->getConfigData('dataSources', []) as $dataSourceName => $dataSourceData) {
-            if (!empty($dataSourceData['transaction'])) {
-                $this->getDataSource($dataSourceName)->beginTransaction();
-            }
-        }
-    }
-
-    public function transactionCommit()
-    {
-        foreach ($this->getConfigData('dataSources', []) as $dataSourceName => $dataSourceData) {
-            if (!empty($dataSourceData['transaction'])) {
-                $this->getDataSource($dataSourceName)->commitTransaction();
-            }
-        }
-    }
-
-    public function transactionRollback()
-    {
-        foreach ($this->getConfigData('dataSources', []) as $dataSourceName => $dataSourceData) {
-            if (!empty($dataSourceData['transaction'])) {
-                $this->getDataSource($dataSourceName)->rollbackTransaction(new Error('Transaction rollback'));
-            }
-        }
-    }
-
     public function transacionRestart($callback = null)
     {
         $this->transactionRollback();
@@ -665,24 +655,5 @@ abstract class Action
         }
 
         $this->transactionBegin();
-    }
-
-    private function transaction($callback)
-    {
-        $result = null;
-
-        try {
-            $this->transactionBegin();
-
-            $result = $callback($this);
-
-            $this->transactionCommit();
-        } catch (Exception $e) {
-            $this->transactionRollback();
-
-            throw $e;
-        }
-
-        return $result;
     }
 }
