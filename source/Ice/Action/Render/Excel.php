@@ -3,6 +3,7 @@
 namespace Ice\Action;
 
 use Ice\Core\Action;
+use Ice\Core\Exception;
 use Ice\Core\Widget;
 use Ice\DataProvider\Request;
 use Ice\Render\External_PHPExcel;
@@ -22,7 +23,6 @@ class Render_Excel extends Action
             'actions' => [],
             'input' => [
                 'class' => ['providers' => ['default', Request::class]],
-                'params' => ['providers' => Request::class, 'default' => []],
             ],
             'output' => []
         ];
@@ -30,9 +30,9 @@ class Render_Excel extends Action
 
     /** Run action
      *
-     * @param  array $input
+     * @param array $input
      * @return array
-     * @throws \Ice\Core\Exception
+     * @throws Exception
      */
     public function run(array $input)
     {
@@ -40,7 +40,7 @@ class Render_Excel extends Action
         $widgetClass = Widget::getClass($input['class']);
 
         /** @var Widget $widget */
-        $widget = $widgetClass::getInstance(null, null, $input['params']);
+        $widget = $widgetClass::getInstance(null, null, Request::getInstance()->get());
 
         $headers = [
             'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',

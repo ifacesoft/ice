@@ -1,5 +1,7 @@
 <?php
 
+namespace Ice\Action;
+
 return [
     'ice_main' => [
         'route' => '/',
@@ -58,10 +60,10 @@ return [
         'route' => '/render/excel',
         'request' => [
             'GET' => [
-                'actionClass' => 'Ice:Render_Excel',
+                'actionClass' => Render_Excel::class,
             ],
             'POST' => [
-                'actionClass' => 'Ice:Render_Excel',
+                'actionClass' => Render_Excel::class,
             ]
         ]
     ],
