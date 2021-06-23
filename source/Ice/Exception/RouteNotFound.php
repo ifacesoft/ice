@@ -9,8 +9,6 @@
 
 namespace Ice\Exception;
 
-use Ice\Core\Exception;
-
 /**
  * Class RouteNotFound
  *
@@ -23,6 +21,6 @@ use Ice\Core\Exception;
  * @package    Ice
  * @subpackage Exception
  */
-class RouteNotFound extends Exception
+class RouteNotFound extends Http_Bad_Request
 {
 }
