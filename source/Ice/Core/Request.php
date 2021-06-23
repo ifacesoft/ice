@@ -226,7 +226,7 @@ class Request
             Http::setHeader('Access-Control-Allow-Methods: ' . implode(', ', $cors[$_SERVER['HTTP_ORIGIN']]['methods']));
             Http::setHeader('Access-Control-Allow-Headers: ' . implode(', ', $cors[$_SERVER['HTTP_ORIGIN']]['headers']));
 
-            $credentials = empty($cors[$_SERVER['HTTP_ORIGIN']]['credentials']) || $cors[$_SERVER['HTTP_ORIGIN']]['credentials'] == 'false'
+            $credentials = empty($cors[$_SERVER['HTTP_ORIGIN']]['credentials']) || $cors[$_SERVER['HTTP_ORIGIN']]['credentials'] === 'false'
                 ? 'false' : 'true';
 
             Http::setHeader('Access-Control-Allow-Credentials: ' . $credentials);
@@ -239,7 +239,7 @@ class Request
 
     public static function isOptions()
     {
-        return isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] == 'OPTIONS';
+        return isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'OPTIONS';
     }
 
     public static function checkAccess($requests, $message)
