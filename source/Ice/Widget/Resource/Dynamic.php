@@ -12,6 +12,7 @@ use Ice\Helper\Hash;
 class Resource_Dynamic extends Resource
 {
     private $loaded = false;
+
     private $widgetClasses = [
         'js' => [],
         'css' => [],
@@ -43,6 +44,8 @@ class Resource_Dynamic extends Resource
     public function addResource($widgetClass, $type)
     {
         $this->widgetClasses[$type][] = $widgetClass;
+        
+        return $this;
     }
 
     public function render(Render $render = null)
@@ -51,6 +54,7 @@ class Resource_Dynamic extends Resource
             $this->loaded = true;
 
             Action_Resource_Dynamic::call(['widgetClasses' => $this->widgetClasses]);
+            
             $this->build($this->get());
         }
 
@@ -69,7 +73,7 @@ class Resource_Dynamic extends Resource
         $javascripts = File::loadData($javascriptCacheFile, false);
 
         if ($javascripts === null) {
-            return;
+            $javascripts = Action_Resource_Dynamic::call(['widgetClasses' => ['js' => $this->widgetClasses['js'], 'css' => [], 'less' => []]])['javascripts'];
         } else {
             if (!Environment::getInstance()->isProduction()) {
                 $cacheFiletime = filemtime($javascriptCacheFile);
@@ -93,7 +97,7 @@ class Resource_Dynamic extends Resource
         $styles = File::loadData($styleCacheFile, false);
 
         if ($styles === null) {
-            return;
+            $styles = Action_Resource_Dynamic::call(['widgetClasses' => ['js' => [], 'css' => $this->widgetClasses['css'], 'less' => []]])['styles'];
         } else {
             if (!Environment::getInstance()->isProduction()) {
                 $cacheFiletime = filemtime($styleCacheFile);

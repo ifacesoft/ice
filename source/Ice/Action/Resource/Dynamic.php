@@ -147,8 +147,8 @@ class Resource_Dynamic extends Action
         $jsResource = Directory::get($compiledResourceDir . $jsRes) . $jsFile;
         $cssResource = Directory::get($compiledResourceDir . $cssRes) . $cssFile;
 
-        foreach ($input['widgetClasses']['js'] as $actionClass) {
-            if (file_exists($jsSource = Loader::getFilePath($actionClass, '.js', Module::RESOURCE_DIR, false))) {
+        foreach ($input['widgetClasses']['js'] as $resourceFile) {
+            if (file_exists($jsSource = Loader::getFilePath($resourceFile, '', Module::RESOURCE_DIR))) {
                 $resources['js'][] = [
                     'source' => $jsSource,
                     'resource' => $jsResource,
@@ -158,8 +158,8 @@ class Resource_Dynamic extends Action
             }
         }
 
-        foreach ($input['widgetClasses']['css'] as $actionClass) {
-            if (file_exists($cssSource = Loader::getFilePath($actionClass, '.css', Module::RESOURCE_DIR, false))) {
+        foreach ($input['widgetClasses']['css'] as $resourceFile) {
+            if (file_exists($cssSource = Loader::getFilePath($resourceFile, '', Module::RESOURCE_DIR))) {
                 $resources['css'][] = [
                     'source' => $cssSource,
                     'resource' => $cssResource,
