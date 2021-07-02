@@ -73,7 +73,7 @@ class Resource_Dynamic extends Resource
         $javascripts = File::loadData($javascriptCacheFile, false);
 
         if ($javascripts === null) {
-            $javascripts = Action_Resource_Dynamic::call(['widgetClasses' => ['js' => $this->widgetClasses['js'], 'css' => [], 'less' => []]])['javascripts'];
+            return;
         } else {
             if (!Environment::getInstance()->isProduction()) {
                 $cacheFiletime = filemtime($javascriptCacheFile);
@@ -97,7 +97,7 @@ class Resource_Dynamic extends Resource
         $styles = File::loadData($styleCacheFile, false);
 
         if ($styles === null) {
-            $styles = Action_Resource_Dynamic::call(['widgetClasses' => ['js' => [], 'css' => $this->widgetClasses['css'], 'less' => []]])['styles'];
+            return;
         } else {
             if (!Environment::getInstance()->isProduction()) {
                 $cacheFiletime = filemtime($styleCacheFile);
