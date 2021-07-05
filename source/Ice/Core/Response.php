@@ -181,11 +181,11 @@ class Response
     }
 
     /**
-     * @return string
+     * @return int
      */
     public function getStatusCode()
     {
-        return $this->statusCode;
+        return (int)$this->statusCode;
     }
 
     /**

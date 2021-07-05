@@ -11,7 +11,11 @@ abstract class Http extends Exception
     {
         parent::__construct($message, $errcontext, $previous, $errfile, $errline, $errno);
 
-        App::getResponse()->setStatusCode($this->getHttpCode());
+        $response = App::getResponse();
+
+        if ($response->getStatusCode() === 200) {
+            $response->setStatusCode($this->getHttpCode());
+        }
     }
 
     abstract function getHttpCode();
