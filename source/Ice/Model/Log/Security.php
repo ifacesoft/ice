@@ -117,7 +117,7 @@ class Log_Security extends Model
                         'dataType' => 'varchar',
                         'length' => '255',
                         'characterSet' => 'utf8',
-                        'nullable' => false,
+                        'nullable' => true,
                         'default' => null,
                         'comment' => '',
                     ],
