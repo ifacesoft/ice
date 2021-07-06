@@ -22,11 +22,11 @@ class Symfony extends Ice
 
         $url = null;
 
+        list($routeName, $routeParams, $urlWithGet, $urlWithDomain, $replaceContext) = array_pad((array)$routeOptions, 5, false);
+
         global $kernel;
 
         if ($kernel) {
-            list($routeName, $routeParams, $urlWithGet, $urlWithDomain, $replaceContext) = array_pad((array)$routeOptions, 5, false);
-
             $url = $kernel
                 ->getContainer()
                 ->get('router')
