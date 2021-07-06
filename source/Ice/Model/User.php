@@ -194,7 +194,9 @@ final class User extends Model
                     ],
                 ],
                 'FOREIGN KEY' => [],
-                'UNIQUE' => [],
+                'UNIQUE' => [
+                    'UNIQUE' => [],
+                ],
             ],
             'relations' => [
                 'manyToOne' => [
