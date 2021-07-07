@@ -116,7 +116,7 @@ class Log_Error extends Model
                         'dataType' => 'varchar',
                         'length' => '255',
                         'characterSet' => 'utf8',
-                        'nullable' => true,
+                        'nullable' => false,
                         'default' => null,
                         'comment' => '',
                     ],
@@ -313,6 +313,23 @@ class Log_Error extends Model
                         ],
                     ],
                     'fieldName' => 'hostname',
+                ],
+                'user_id' => [
+                    'fieldName' => 'user_id',
+                    'scheme' => [
+                        'extra' => '',
+                        'type' => 'bigint(20)',
+                        'dataType' => 'bigint',
+                        'length' => '19,0',
+                        'characterSet' => null,
+                        'nullable' => true,
+                        'default' => null,
+                        'comment' => '',
+                    ],
+                    'options' => [
+                        'name' => 'user_id',
+                        'type' => 'number',
+                    ],
                 ],
             ],
             'indexes' => [

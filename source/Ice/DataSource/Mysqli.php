@@ -24,7 +24,7 @@ use Ice\Exception\DataSource as Exception_DataSource;
 use Ice\Exception\DataSource_Deadlock;
 use Ice\Exception\DataSource_Delete;
 use Ice\Exception\DataSource_Insert;
-use Ice\Exception\DataSource_Insert_DuplicateEntry;
+use Ice\Exception\DataSource_DuplicateEntry;
 use Ice\Exception\DataSource_Select;
 use Ice\Exception\DataSource_Select_Error;
 use Ice\Exception\DataSource_Statement_Error;
@@ -371,7 +371,7 @@ class Mysqli extends DataSource
 
             switch ($errno) {
                 case 1062:
-                    $exceptionClass = DataSource_Insert_DuplicateEntry::class;
+                    $exceptionClass = DataSource_DuplicateEntry::class;
                     break;
                 case 1213:
                     $exceptionClass = DataSource_Deadlock::class;
@@ -447,7 +447,7 @@ class Mysqli extends DataSource
 
             switch ($errno) {
                 case 1062:
-                    $exceptionClass = DataSource_Insert_DuplicateEntry::class;
+                    $exceptionClass = DataSource_DuplicateEntry::class;
                     break;
                 case 1213:
                     $exceptionClass = DataSource_Deadlock::class;
@@ -529,6 +529,9 @@ class Mysqli extends DataSource
             $statement->close();
 
             switch ($errno) {
+                case 1062:
+                    $exceptionClass = DataSource_DuplicateEntry::class;
+                    break;
                 case 1213:
                     $exceptionClass = DataSource_Deadlock::class;
                     break;

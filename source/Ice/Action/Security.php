@@ -2,11 +2,6 @@
 
 namespace Ice\Action;
 
-use Ebs\Action\Private_Subscriber_RegistrationRequest_New_Confirm;
-use Ebs\Model\Account_Email_Password;
-use Ebs\Model\Account_Login_Password;
-use Ebs\Model\Subscriber;
-use Ebs\Model\User_Data;
 use Ice\Core\Exception;
 use Ice\Core\Logger as Core_Logger;
 use Ice\Core\Model_Account;
@@ -18,7 +13,6 @@ use Ice\Exception\Security_Account_EmailNotConfirmed;
 use Ice\Exception\Security_Account_NotFound;
 use Ice\Exception\Security_Account_Register;
 use Ice\Helper\Date;
-use Ice\Helper\Logger;
 use Ice\Helper\Type_String;
 use Ice\Model\Log_Security;
 use Ice\Model\Token;
@@ -67,13 +61,6 @@ abstract class Security extends Widget_Form_Event
                 $account->registerVerify($accountForm->validate());
 
                 $account = $account->signUp($accountForm, $container);
-
-                if ($accountForm->get('mobile', 0)) {
-                    User_Data::create([
-                        '/pk' => $account->get('user__fk'),
-                        'greeting_date' => Date::get()
-                    ])->save(true);
-                }
             }
 
             if (!$account) {
@@ -220,18 +207,8 @@ abstract class Security extends Widget_Form_Event
 
         $logger->save($logSecurity);
 
-        $tokenData = $token->get('/data');
-
-        $tokenData['used_class'] = get_class($account);
-        $tokenData['used_id'] = $account->getPkValue();
-
         /** @var User $user */
         $user = $account->fetchOne(User::class, '*', true);
-
-        $token->set([
-            '/used_at' => Date::get(),
-            '/data' => $tokenData
-        ]);
 
         $expiredAt = isset($tokenData['account_expired']) ? $tokenData['account_expired'] : $user->get('/expired_at');
 
@@ -241,82 +218,22 @@ abstract class Security extends Widget_Form_Event
             '/confirm_at' => Date::get(),
             'confirm_data' => ['ip' => Request::ip(), 'session' => session_id()],
             'email_confirmed' => 1
-        ]);
+        ])->save();
+
+        $tokenData = $token->get('/data');
+
+        $tokenData['used_class'] = get_class($account);
+        $tokenData['used_id'] = $account->getPkValue();
+
+        $token->set([
+            '/used_at' => Date::get(),
+            '/data' => $tokenData
+        ])->save();
 
         $user->set([
             '/expired_at' => $expiredAt,
             '/active' => 1
-        ]);
-
-        $subscriber = Subscriber::getSelectQuery(['domain', '/pk', 'auto_confirmation'], ['/pk' => $user->get('previous_subscriber_id')])->getModel();
-
-        if ($subscriber && $tokenData['function'] == 'registerConfirm') {
-            $writeUserCallback = function ($user) {
-                Private_Subscriber_RegistrationRequest_New_Confirm::call(
-                    [
-                        'user_pk' => $user->getPkValue(),
-                        'subscriber_pk' => $user->get('previous_subscriber_id')
-                    ],
-                    0,
-                    true
-                );
-            };
-
-            //если авторегистрация включена
-            if ($subscriber->get('auto_confirmation', 0)) {
-                $writeUserCallback($user);
-                //если есть домены для автоподверждения
-            } else {
-                if ($subscriberDomains = $subscriber->get('domain')) {
-                    foreach (explode(',', $subscriberDomains) as $subscriberDomain) {
-                        $subscriberDomain = mb_strtolower(trim($subscriberDomain));
-                        if (!empty($subscriberDomain) && (Type_String::endsWith(mb_strtolower($user->getEmail()), $subscriberDomain) || $subscriberDomain === '*')) {
-                            $writeUserCallback($user);
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-
-        if ($tokenData['function'] == 'createChangeMailToken') {
-            if (empty($tokenData['email_to_change'])) {
-                throw new Error('Пустой электронный адрес для изменения');
-            }
-
-            //эбс модель
-            if ($account instanceof Account_Email_Password) {
-                $account->set(['email' => $tokenData['email_to_change']]);
-
-                $accountLogin = Account_Login_Password::createQueryBuilder()
-                    ->eq(['user' => $user])
-                    ->getSelectQuery('/pk')
-                    ->getModel();
-
-                if (!$accountLogin) {
-                    $user->set('/login', $tokenData['email_to_change']);
-                }
-            }
-
-            $user->set(['/email' => $tokenData['email_to_change']]);
-
-//            if ($account instanceof Account_Login_Password && Email::getInstance()->validate(['email' => $account->get('login')], 'email', [])) {
-//                $account->set(['login' => $tokenData['email_to_change']]);
-//            }
-
-//            if (Email::getInstance()->validate(['login' => $user->get('/login')], 'login', [])) {
-//                $user->set('/login', $tokenData['email_to_change']);
-//            }
-        }
-
-        $account->save();
-        $token->save();
-        $user->save();
-
-//        $logSecurity->set([
-//            'error' => $e->getMessage(),
-//            'exception' => \Ifacesoft\Ice\Core\Domain\Exception\Error::create(__METHOD__, 'Failed', $accountForm->get(), $e)->get()
-//        ]);
+        ])->save();
 
         $logger->save($logSecurity);
 
@@ -345,16 +262,6 @@ abstract class Security extends Widget_Form_Event
             'action_class' => $accountForm->get('subject', get_class($this))
         ]);
 
-        $token = Token::getModel($account->get('token__fk', false), '*');
-
-//        if ($token) {
-//            $tokenData = $token->get('token_data');
-//
-//            if (isset($tokenData['function']) && $tokenData['function'] != __FUNCTION__) {
-//                throw new Error('Account not confirmed');
-//            }
-//        }
-
         $token = Token::create([
             '/' => md5(Type_String::getRandomString()),
             '/expired' => $accountForm->getConfirmationExpired(),
@@ -366,13 +273,7 @@ abstract class Security extends Widget_Form_Event
 
         $this->sendRestorePasswordConfirm($token, $input);
 
-//        $logSecurity->set([
-//            'error' => $e->getMessage(),
-//            'exception' => \Ifacesoft\Ice\Core\Domain\Exception\Error::create(__METHOD__, 'Failed', $accountForm->get(), $e)->get()
-//        ]);
-
         $logger->save($logSecurity);
-
 
         return $account;
     }

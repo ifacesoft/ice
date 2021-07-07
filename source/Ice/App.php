@@ -77,6 +77,7 @@ class App
                 throw new Error('Action class is empty');
             }
 
+            /** @var Action|string $actionClass */
             $actionClass = Action::getClass($actionClass);
 
             if (!Loader::load($actionClass)) {

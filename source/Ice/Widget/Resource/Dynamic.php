@@ -12,6 +12,7 @@ use Ice\Helper\Hash;
 class Resource_Dynamic extends Resource
 {
     private $loaded = false;
+
     private $widgetClasses = [
         'js' => [],
         'css' => [],
@@ -43,6 +44,8 @@ class Resource_Dynamic extends Resource
     public function addResource($widgetClass, $type)
     {
         $this->widgetClasses[$type][] = $widgetClass;
+        
+        return $this;
     }
 
     public function render(Render $render = null)
@@ -51,6 +54,7 @@ class Resource_Dynamic extends Resource
             $this->loaded = true;
 
             Action_Resource_Dynamic::call(['widgetClasses' => $this->widgetClasses]);
+            
             $this->build($this->get());
         }
 

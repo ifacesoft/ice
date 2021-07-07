@@ -615,7 +615,7 @@ class Orm_Sync_DataScheme extends Action
     {
         $tableFieldJson = Json::encode($tableField);
 
-        if (crc32($tableFieldJson) == crc32(Json::encode($modelField))) {
+        if (crc32($tableFieldJson) === crc32(Json::encode($modelField))) {
             return false;
         }
 

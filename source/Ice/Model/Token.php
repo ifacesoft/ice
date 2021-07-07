@@ -9,7 +9,12 @@ use Ice\Core\Model;
  *
  * @property mixed token_pk
  * @property mixed token
+ * @property mixed token_created_at
  * @property mixed token_expired
+ * @property mixed token_used_at
+ * @property mixed token_data__json
+ * @property mixed action_class
+ * @property mixed user__fk
  *
  * @see \Ice\Core\Model
  *
@@ -21,11 +26,6 @@ class Token extends Model
     {
         return [
             'dataSourceKey' => 'Ice\DataSource\Mysqli/default.test',
-            'relations' => [
-                'oneToMany' => [],
-                'manyToOne' => [],
-                'manyToMany' => [],
-            ],
             'scheme' => [
                 'tableName' => 'ice_token',
                 'engine' => 'InnoDB',
@@ -34,6 +34,7 @@ class Token extends Model
             ],
             'columns' => [
                 'id' => [
+                    'fieldName' => 'token_pk',
                     'scheme' => [
                         'extra' => 'auto_increment',
                         'type' => 'bigint(20)',
@@ -44,13 +45,13 @@ class Token extends Model
                         'default' => null,
                         'comment' => '',
                     ],
-                    'fieldName' => 'token_pk',
                     'options' => [
                         'name' => 'token_pk',
                         'type' => 'number',
                     ],
                 ],
                 'token' => [
+                    'fieldName' => 'token',
                     'scheme' => [
                         'extra' => '',
                         'type' => 'varchar(64)',
@@ -61,73 +62,17 @@ class Token extends Model
                         'default' => null,
                         'comment' => '',
                     ],
-                    'fieldName' => 'token',
                     'options' => [
                         'name' => 'token',
                         'type' => 'text',
                         'validators' => [
                             'Ice:Length_Max' => 64,
-                        ],
-                    ],
-                ],
-                'token_expired' => [
-                    'scheme' => [
-                        'extra' => '',
-                        'type' => 'datetime',
-                        'dataType' => 'datetime',
-                        'length' => '0',
-                        'characterSet' => null,
-                        'nullable' => false,
-                        'default' => null,
-                        'comment' => '',
-                    ],
-                    'fieldName' => 'token_expired',
-                    'options' => [
-                        'name' => 'token_expired',
-                        'type' => 'date',
-                    ],
-                ],
-                'token_data__json' => [
-                    'scheme' => [
-                        'extra' => '',
-                        'type' => 'text',
-                        'dataType' => 'text',
-                        'length' => '65535',
-                        'characterSet' => 'utf8',
-                        'nullable' => false,
-                        'default' => '[]',
-                        'comment' => '',
-                    ],
-                    'fieldName' => 'token_data__json',
-                    'options' => [
-                        'name' => 'token_data__json',
-                        'type' => 'textarea',
-                        'validators' => [
-                            'Ice:Length_Max' => 65535,
-                        ],
-                    ],
-                ],
-                'modelClass' => [
-                    'scheme' => [
-                        'extra' => '',
-                        'type' => 'varchar(255)',
-                        'dataType' => 'varchar',
-                        'length' => '255',
-                        'characterSet' => 'utf8',
-                        'nullable' => false,
-                        'default' => null,
-                        'comment' => '',
-                    ],
-                    'fieldName' => 'modelClass',
-                    'options' => [
-                        'name' => 'modelClass',
-                        'type' => 'text',
-                        'validators' => [
-                            'Ice:Length_Max' => 255,
+                            0 => 'Ice:Not_Null',
                         ],
                     ],
                 ],
                 'token_created_at' => [
+                    'fieldName' => 'token_created_at',
                     'scheme' => [
                         'extra' => '',
                         'type' => 'timestamp',
@@ -145,9 +90,29 @@ class Token extends Model
                             0 => 'Ice:Not_Null',
                         ],
                     ],
-                    'fieldName' => 'token_created_at',
+                ],
+                'token_expired_at' => [
+                    'fieldName' => 'token_expired_at',
+                    'scheme' => [
+                        'extra' => '',
+                        'type' => 'datetime',
+                        'dataType' => 'datetime',
+                        'length' => '0',
+                        'characterSet' => null,
+                        'nullable' => false,
+                        'default' => null,
+                        'comment' => '',
+                    ],
+                    'options' => [
+                        'name' => 'token_expired_at',
+                        'type' => 'date',
+                        'validators' => [
+                            0 => 'Ice:Not_Null',
+                        ],
+                    ],
                 ],
                 'token_used_at' => [
+                    'fieldName' => 'token_used_at',
                     'scheme' => [
                         'extra' => '',
                         'type' => 'datetime',
@@ -162,7 +127,86 @@ class Token extends Model
                         'name' => 'token_used_at',
                         'type' => 'date',
                     ],
-                    'fieldName' => 'token_used_at',
+                ],
+                'token_data__json' => [
+                    'fieldName' => 'token_data__json',
+                    'scheme' => [
+                        'extra' => '',
+                        'type' => 'text',
+                        'dataType' => 'text',
+                        'length' => '65535',
+                        'characterSet' => 'utf8',
+                        'nullable' => false,
+                        'default' => '[]',
+                        'comment' => '',
+                    ],
+                    'options' => [
+                        'name' => 'token_data__json',
+                        'type' => 'textarea',
+                        'validators' => [
+                            'Ice:Length_Max' => 65535,
+                            0 => 'Ice:Not_Null',
+                        ],
+                    ],
+                ],
+                'action_class' => [
+                    'fieldName' => 'action_class',
+                    'scheme' => [
+                        'extra' => '',
+                        'type' => 'varchar(255)',
+                        'dataType' => 'varchar',
+                        'length' => '255',
+                        'characterSet' => 'utf8',
+                        'nullable' => false,
+                        'default' => null,
+                        'comment' => '',
+                    ],
+                    'options' => [
+                        'name' => 'action_class',
+                        'type' => 'text',
+                        'validators' => [
+                            'Ice:Length_Max' => 255,
+                            0 => 'Ice:Not_Null',
+                        ],
+                    ],
+                ],
+                'user__fk' => [
+                    'fieldName' => 'user__fk',
+                    'scheme' => [
+                        'extra' => '',
+                        'type' => 'bigint(20)',
+                        'dataType' => 'bigint',
+                        'length' => '19,0',
+                        'characterSet' => null,
+                        'nullable' => true,
+                        'default' => null,
+                        'comment' => '',
+                    ],
+                    'options' => [
+                        'name' => 'user__fk',
+                        'type' => 'number',
+                    ],
+                ],
+                'error' => [
+                    'fieldName' => 'error',
+                    'scheme' => [
+                        'extra' => '',
+                        'type' => 'text',
+                        'dataType' => 'text',
+                        'length' => '65535',
+                        'characterSet' => 'utf8',
+                        'nullable' => true,
+                        'default' => null,
+                        'comment' => '',
+                    ],
+                    'options' => [
+                        'name' => 'error',
+                        'type' => 'textarea',
+                        'validators' => [
+                            'Ice:Length_Max' => 65535,
+                            0 => 'Ice:Not_Null',
+                        ],
+                    ],
                 ],
             ],
             'indexes' => [
@@ -171,15 +215,32 @@ class Token extends Model
                         1 => 'id',
                     ],
                 ],
-                'FOREIGN KEY' => [],
+                'FOREIGN KEY' => [
+                    'user__fk' => [
+                        'FK_ice_token_ice_user' => 'user__fk',
+                    ],
+                ],
                 'UNIQUE' => [
                     'token' => [
                         1 => 'token',
                     ],
                 ],
             ],
-            'references' => [],
-            'revision' => '10201240_4ng',
+            'references' => [
+                'ice_user' => [
+                    'constraintName' => 'FK_ice_token_ice_user',
+                    'onUpdate' => 'NO ACTION',
+                    'onDelete' => 'NO ACTION',
+                ],
+            ],
+            'relations' => [
+                'oneToMany' => [
+                    'Ice\Model\User' => 'user__fk',
+                ],
+                'manyToOne' => [],
+                'manyToMany' => [],
+            ],
+            'revision' => '07061135_gzl',
             'moduleAlias' => 'Ice',
             'modelClass' => 'Ice\Model\Token',
         ];

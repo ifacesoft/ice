@@ -194,14 +194,18 @@ final class User extends Model
                     ],
                 ],
                 'FOREIGN KEY' => [],
-                'UNIQUE' => [],
+                'UNIQUE' => [
+                    'UNIQUE' => [],
+                ],
+            ],
+            'relations' => [
+                'manyToOne' => [
+                    'Ice\Model\Token' => 'user__fk',
+                ],
+                'manyToMany' => [],
+                'oneToMany' => [],
             ],
             'references' => [],
-            'relations' => [
-                'oneToMany' => [],
-                'manyToOne' => [],
-                'manyToMany' => [],
-            ],
             'revision' => '05201942_5yc',
             'modelClass' => 'Ice\Model\User',
             'moduleAlias' => 'Ice',
