@@ -129,7 +129,7 @@ abstract class Widget extends Container
                 (array)$this->build($this->get())
             );
 
-        } catch (Http_Forbidden $e) {
+        } catch (Access_Denied $e) {
 //            Logger::getInstance(__CLASS__)->error(['Widget {$0} access denied', $widgetClass], __FILE__, __LINE__, $e);
             $this->setTemplateClass('Ice\Widget\Blank');
 
