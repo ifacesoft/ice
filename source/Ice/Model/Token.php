@@ -187,6 +187,27 @@ class Token extends Model
                         'type' => 'number',
                     ],
                 ],
+                'error' => [
+                    'fieldName' => 'error',
+                    'scheme' => [
+                        'extra' => '',
+                        'type' => 'text',
+                        'dataType' => 'text',
+                        'length' => '65535',
+                        'characterSet' => 'utf8',
+                        'nullable' => true,
+                        'default' => null,
+                        'comment' => '',
+                    ],
+                    'options' => [
+                        'name' => 'error',
+                        'type' => 'textarea',
+                        'validators' => [
+                            'Ice:Length_Max' => 65535,
+                            0 => 'Ice:Not_Null',
+                        ],
+                    ],
+                ],
             ],
             'indexes' => [
                 'PRIMARY KEY' => [

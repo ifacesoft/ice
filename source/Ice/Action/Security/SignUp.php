@@ -3,7 +3,7 @@
 namespace Ice\Action;
 
 use Ice\Core\Logger;
-use Ice\Exception\DataSource_Insert_DuplicateEntry;
+use Ice\Exception\DataSource_DuplicateEntry;
 use Ice\Exception\Not_Good;
 use Ice\Exception\Not_Valid;
 use Ice\Exception\Not_Verify;
@@ -36,7 +36,7 @@ class Security_SignUp extends Security
             return ['error' => $logger->error('Регистрационные данные не прошли валидацию: ' . $e->getMessage(), __FILE__, __LINE__, $e)];
         } catch (Not_Verify $e) {
             return ['error' => $logger->error('Запрос на регистрацию отклонен: ' . $e->getMessage(), __FILE__, __LINE__, $e)];
-        } catch (DataSource_Insert_DuplicateEntry $e) {
+        } catch (DataSource_DuplicateEntry $e) {
             return ['error' => $logger->error('Пользователь или учетная запись уже существует', __FILE__, __LINE__, $e)];
         } catch (Security_Account_AttachForbidden $e) {
             return ['error' => $logger->error('Не удалось прикрепить аккаунт', __FILE__, __LINE__, $e)];

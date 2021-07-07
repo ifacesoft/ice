@@ -4,7 +4,7 @@ namespace Ice\Action;
 
 use Ice\Core\Logger;
 use Ice\Core\Model;
-use Ice\Exception\DataSource_Insert_DuplicateEntry;
+use Ice\Exception\DataSource_DuplicateEntry;
 use Ice\Exception\Not_Valid;
 use Ice\Widget\Account_Form;
 
@@ -57,7 +57,7 @@ class Security_Password_Login_Register_Submit extends Security
             return [
                 'error' => $logger->info($e->getMessage(), Logger::DANGER, true)
             ];
-        } catch (DataSource_Insert_DuplicateEntry $e) {
+        } catch (DataSource_DuplicateEntry $e) {
             return [
                 'error' => $logger->info('Пользователь уже существует', Logger::DANGER, true)
             ];
