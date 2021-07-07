@@ -91,8 +91,8 @@ class Token extends Model
                         ],
                     ],
                 ],
-                'token_expired' => [
-                    'fieldName' => 'token_expired',
+                'token_expired_at' => [
+                    'fieldName' => 'token_expired_at',
                     'scheme' => [
                         'extra' => '',
                         'type' => 'datetime',
@@ -104,7 +104,7 @@ class Token extends Model
                         'comment' => '',
                     ],
                     'options' => [
-                        'name' => 'token_expired',
+                        'name' => 'token_expired_at',
                         'type' => 'date',
                         'validators' => [
                             0 => 'Ice:Not_Null',
