@@ -16,6 +16,8 @@ use Ice\Helper\Json;
 use Ice\Helper\Model as Helper_Model;
 use Ice\Helper\Spatial;
 use Ice\Path;
+use Ifacesoft\Ice\Core\Domain\Value\StringValue;
+use Ifacesoft\Ice\Core\Domain\Value\ValueObject;
 
 /**
  * Class Model
@@ -1923,5 +1925,51 @@ abstract class Model
     public function is($fileName)
     {
         return (bool)$this->get($fileName);
+    }
+
+    /**
+     * @param array $map
+     * @return array|Model|mixed|string
+     * @throws Exception
+     */
+    public function map(array $map)
+    {
+        /** @var Model $modelClass */
+        $modelClass = get_class($this);
+
+        $array = $this->get();
+
+        $deleted = [];
+
+        foreach ($map as $alias => $field) {
+            $type = null;
+
+            if (is_array($field)) {
+                /** @var ValueObject $type */
+                list($field, $type) = array_pad($field, 2, StringValue::class);
+            }
+
+            $field = $modelClass::getFieldName($field);
+
+            if (is_int($alias)) {
+                $alias = $field;
+            }
+
+            $array[$alias] = $this->get($field, '');
+
+            if ($type) {
+                $array[$alias] = $type::create($array[$alias])->getValue();
+            }
+
+            if ($field !== $alias) {
+                $deleted[] = $field;
+            }
+        }
+
+        foreach (array_unique($deleted) as $field) {
+            unset($array[$field]);
+        }
+
+        return $array;
     }
 }

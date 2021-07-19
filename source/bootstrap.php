@@ -13,9 +13,9 @@ define('ICE_CONFIG_PATH', 'config/Ice/Core/Module.php');
 define('ICE_RUN_PATH', 'source/run.php');
 define('ICE_BOOTSTRAP_PATH', 'source/bootstrap.php');
 
-if(!defined('STDIN'))  define('STDIN',  fopen('php://stdin',  'rb'));
-if(!defined('STDOUT')) define('STDOUT', fopen('php://stdout', 'wb'));
-if(!defined('STDERR')) define('STDERR', fopen('php://stderr', 'wb'));
+if (!defined('STDIN')) define('STDIN', fopen('php://stdin', 'rb'));
+if (!defined('STDOUT')) define('STDOUT', fopen('php://stdout', 'wb'));
+if (!defined('STDERR')) define('STDERR', fopen('php://stderr', 'wb'));
 
 $vendorRealPath = dirname(dirname(dirname(dirname(__DIR__)))) . '/vendor';
 
@@ -79,6 +79,8 @@ try {
     require_once ICE_CORE_DIR . 'source/backend/Domain/Value/ValueObject.php';
     require_once ICE_CORE_DIR . 'source/backend/Domain/Value/StringValue.php';
     require_once ICE_CORE_DIR . 'source/backend/Domain/Value/ArrayValue.php';
+    require_once ICE_CORE_DIR . 'source/backend/Domain/Value/BooleanValue.php';
+    require_once ICE_CORE_DIR . 'source/backend/Domain/Value/IntegerValue.php';
     require_once ICE_CORE_DIR . 'source/backend/Domain/Exception/Error.php';
     require_once ICE_CORE_DIR . 'source/backend/Infrastructure/Core/Singleton.php';
     require_once ICE_CORE_DIR . 'source/backend/Infrastructure/Core/Service.php';
@@ -98,9 +100,11 @@ try {
     set_error_handler('Ice\Core\Logger::errorHandler');
     register_shutdown_function('Ice\Core\Logger::shutdownHandler');
 } catch (Exception $e) {
-    echo '<span style="font-weight: bold;">Bootstrapping failed: ' .
-        str_replace(MODULE_DIR, '', $e->getMessage()) .
-        '</span><br>';
-    //echo nl2br(str_replace(MODULE_DIR, '', $e->getTraceAsString()) . "\n");
+    $message = str_replace(MODULE_DIR, '', $e->getMessage());
+
+    echo '<span style="font-weight: bold;">Bootstrapping failed: ' . $message . '</span><br>';
+
+    echo nl2br(str_replace(MODULE_DIR, '', $e->getTraceAsString()) . "\n");
+
     die('Terminated. Bye-bye...' . "\n");
 }

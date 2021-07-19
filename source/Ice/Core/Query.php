@@ -416,24 +416,24 @@ class Query
     /**
      * Return model from data
      *
-     * @param  null $pk
-     * @param  null $ttl
+     * @param null $modelCLass
+     * @param null $ttl
      * @return Model|null
+     * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.6
      * @since   0.0
-     * @throws \Exception
      */
-    public function getModel($pk = null, $ttl = null)
+    public function getModel($modelCLass = null, $ttl = null)
     {
-        $row = $this->getRow($pk, $ttl);
+        $row = $this->getRow(null, $ttl);
 
         if (empty($row)) {
             return null;
         }
 
-        $modelClass = $this->queryBuilder->getModelClass();
+        $modelClass = $modelCLass ? $modelCLass : $this->queryBuilder->getModelClass();
 
         return $modelClass::create($row)->clearAffected();
     }
