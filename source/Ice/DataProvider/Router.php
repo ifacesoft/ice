@@ -265,7 +265,7 @@ class Router extends DataProvider
         $route = $this->getRoute($url, $method);
 
         $baseMatches = [];
-        preg_match_all($route['pattern'], $url, $baseMatches, PREG_SET_ORDER);
+        preg_match_all($route['pattern'], $url, $baseMatches, PREG_SET_ORDER | PREG_UNMATCHED_AS_NULL);
 
         if (count($baseMatches[0]) - 1 < count($route['params'])) {
             $baseMatches[0][] = null;
