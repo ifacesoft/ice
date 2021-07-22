@@ -166,6 +166,27 @@ class Redis extends DataProvider
     }
 
     /**
+     * @param $key
+     * @return bool
+     * @throws Exception
+     * @todo Define in parent (need for all providers)
+     */
+    public function persist($key)
+    {
+        $connection = $this->getConnection();
+
+        $return = true;
+
+        foreach ((array)$key as $k) {
+            if (!$connection->persist($k)) {
+                $return = false;
+            }
+        }
+
+        return $return;
+    }
+
+    /**
      * Set expire time (seconds)
      *
      * @param  $key
@@ -186,27 +207,6 @@ class Redis extends DataProvider
 
         foreach ((array)$key as $k) {
             if (!$connection->expire($k, $ttl)) {
-                $return = false;
-            }
-        }
-
-        return $return;
-    }
-
-    /**
-     * @param $key
-     * @return bool
-     * @throws Exception
-     * @todo Define in parent (need for all providers)
-     */
-    public function persist($key)
-    {
-        $connection = $this->getConnection();
-
-        $return = true;
-
-        foreach ((array)$key as $k) {
-            if (!$connection->persist($k)) {
                 $return = false;
             }
         }
@@ -398,12 +398,10 @@ class Redis extends DataProvider
      */
     protected function connect(&$connection)
     {
-        $options = $this->getOptions();
-
         $connection = new \Redis();
 
         try {
-            $authHost = $options->get('host');
+            list($authHost, $port, $timeout) = $this->getParams(['host', 'port', 'timeout']);
 
             $auth = null;
 
@@ -413,17 +411,32 @@ class Redis extends DataProvider
                 $host = $authHost;
             }
 
-            $port = $options->get('port');
-
-            if (!$connection->connect($host, $port, $options->get('timeout'), null, 500)) {
-                Logger::getInstance(__CLASS__)->error('Redis not connected! ' . $host . ':' . $port . ' - ' . $connection->getLastError(), __FILE__, __LINE__);
+            if (!$connection->connect($host, $port, $timeout, null, 500)) {
+                Logger::getInstance(__CLASS__)
+                    ->error(
+                        [
+                            'Redis not connected ({$0} {$1}:{$2}): {$3}',
+                            [$this->getOptions()->getName(), $host, $port, $connection->getLastError()]
+                        ],
+                        __FILE__,
+                        __LINE__
+                    );
 
                 return null;
             }
 
             if ($auth) {
                 if (!$connection->auth($auth)) {
-                    Logger::getInstance(__CLASS__)->error('Redis not authenticated! ' . $host . ':' . $port . ' - ' . $connection->getLastError(), __FILE__, __LINE__);
+                    Logger::getInstance(__CLASS__)
+                        ->error(
+                            [
+                                'Redis not authenticated ({$0} {$1}:{$2}): {$3}',
+                                [$this->getOptions()->getName(), $host, $port, $connection->getLastError()]
+                            ],
+                            __FILE__,
+                            __LINE__
+                        );
+                    
                     return null;
                 }
             }
@@ -440,11 +453,39 @@ class Redis extends DataProvider
                 return $connection;
             }
 
-            Logger::getInstance(__CLASS__)->error('Redis not pinged! ' . $host . ':' . $port . ' - ' . $connection->getLastError(), __FILE__, __LINE__);
+                 Logger::getInstance(__CLASS__)
+                     ->error(
+                         [
+                             'Redis not pinged ({$0} {$1}:{$2}): {$3}',
+                             [$this->getOptions()->getName(), $host, $port, $connection->getLastError()]
+                         ],
+                         __FILE__,
+                         __LINE__
+                     );
 
             return null;
-        } catch (\Exception $e) {
-            Logger::getInstance(__CLASS__)->error('Redis failed! ' . $host . ':' . $port . ' - ' . $e->getMessage(), __FILE__, __LINE__);
+        } catch (\Throwable $e) {
+            Logger::getInstance(__CLASS__)
+                ->error(
+                    [
+                        'Redis failed ({$0} {$1}:{$2}): {$3}',
+                        [$this->getOptions()->getName(), $host, $port, $connection->getLastError()]
+                    ],
+                    __FILE__,
+                    __LINE__
+                );
+
+            return null;
+         } catch (\Exception $e) {
+            Logger::getInstance(__CLASS__)
+                ->error(
+                    [
+                        'Redis failed ({$0} {$1}:{$2}): {$3}',
+                        [$this->getOptions()->getName(), $host, $port, $connection->getLastError()]
+                    ],
+                    __FILE__,
+                    __LINE__
+                );
 
             return null;
         }
