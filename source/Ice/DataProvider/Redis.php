@@ -401,7 +401,9 @@ class Redis extends DataProvider
         $connection = new \Redis();
 
         try {
-            list($authHost, $port, $timeout) = $this->getParams(['host', 'port', 'timeout']);
+            $options = $this->getOptions();
+            
+            list($authHost, $port, $timeout) = $options->getParams(['host', 'port', 'timeout']);
 
             $auth = null;
 
@@ -416,7 +418,7 @@ class Redis extends DataProvider
                     ->error(
                         [
                             'Redis not connected ({$0} {$1}:{$2}): {$3}',
-                            [$this->getOptions()->getName(), $host, $port, $connection->getLastError()]
+                            [$options->getName(), $host, $port, $connection->getLastError()]
                         ],
                         __FILE__,
                         __LINE__
@@ -431,7 +433,7 @@ class Redis extends DataProvider
                         ->error(
                             [
                                 'Redis not authenticated ({$0} {$1}:{$2}): {$3}',
-                                [$this->getOptions()->getName(), $host, $port, $connection->getLastError()]
+                                [$options->getName(), $host, $port, $connection->getLastError()]
                             ],
                             __FILE__,
                             __LINE__
@@ -457,7 +459,7 @@ class Redis extends DataProvider
                      ->error(
                          [
                              'Redis not pinged ({$0} {$1}:{$2}): {$3}',
-                             [$this->getOptions()->getName(), $host, $port, $connection->getLastError()]
+                             [$options->getName(), $host, $port, $connection->getLastError()]
                          ],
                          __FILE__,
                          __LINE__
@@ -469,7 +471,7 @@ class Redis extends DataProvider
                 ->error(
                     [
                         'Redis failed ({$0} {$1}:{$2}): {$3}',
-                        [$this->getOptions()->getName(), $host, $port, $connection->getLastError()]
+                        [$options->getName(), $host, $port, $connection->getLastError()]
                     ],
                     __FILE__,
                     __LINE__
@@ -481,7 +483,7 @@ class Redis extends DataProvider
                 ->error(
                     [
                         'Redis failed ({$0} {$1}:{$2}): {$3}',
-                        [$this->getOptions()->getName(), $host, $port, $connection->getLastError()]
+                        [$options->getName(), $host, $port, $connection->getLastError()]
                     ],
                     __FILE__,
                     __LINE__

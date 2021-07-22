@@ -219,7 +219,9 @@ class Mysqli extends DataProvider
      */
     protected function connect(&$connection)
     {
-        list($user, $pass, $host, $port, $charset) = $this->getParams(['username', 'password', 'host', 'port', 'charset']);
+        $options = $this->getOptions();
+        
+        list($user, $pass, $host, $port, $charset) = $options->getParams(['username', 'password', 'host', 'port', 'charset']);
 
         $connection = \mysqli_init();
 
@@ -231,7 +233,7 @@ class Mysqli extends DataProvider
             if ($error) {
                 $connection = null;
 
-                throw new DataSource($error . ' (' . $this->getOptions()->getName() . ')');
+                throw new DataSource($error . ' (' . $options->getName() . ')');
             }
         } catch (\Exception $e) {
             $connection = null;

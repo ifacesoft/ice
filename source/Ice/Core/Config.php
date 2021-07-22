@@ -16,9 +16,10 @@ use Ice\Exception\Config_Error;
 use Ice\Exception\Config_Param_NotFound;
 use Ice\Exception\Error;
 use Ice\Exception\FileNotFound;
+use Ice\Helper\Class_Object;
 use Ice\Helper\Config as Helper_Config;
 use Ice\Helper\File;
-use Ice\Helper\Class_Object;
+use Ifacesoft\Ice\Core\Domain\Value\StringValue;
 
 /**
  * Class Config
@@ -100,7 +101,7 @@ class Config
      * Return new Config
      *
      * @param  $configRouteName
-     * @param  array $configData
+     * @param array $configData
      * @return Config
      *
      * @author dp <denis.a.shestakov@gmail.com>
@@ -139,8 +140,8 @@ class Config
     /**
      * Get config param values
      *
-     * @param  string|null $key
-     * @param  bool $isRequired_default @todo: разделить эти аргументы
+     * @param string|null $key
+     * @param bool $isRequired_default @todo: разделить эти аргументы
      * @return array
      * @throws Config_Error
      * @throws FileNotFound
@@ -169,10 +170,10 @@ class Config
     /**
      * Get config object by type or key
      *
-     * @param  mixed $class
-     * @param  null $postfix
-     * @param  bool $isRequired
-     * @param  integer $ttl
+     * @param mixed $class
+     * @param null $postfix
+     * @param bool $isRequired
+     * @param integer $ttl
      * @param array $selfConfig
      * @return Config
      * @throws Config_Error
@@ -273,11 +274,11 @@ class Config
     /**
      * Get config param value
      *
-     * @param  string|null $key
-     * @param  bool $isRequired_default
-     * @throws Exception
+     * @param string|null $key
+     * @param bool $isRequired_default
      * @return string|array
      *
+     * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 1.10
@@ -378,5 +379,28 @@ class Config
         File::createData($filePath, $this->config);
 
         return $this;
+    }
+
+    public function getParams(array $paramNames)
+    {
+        static $env = 'ENV_';
+
+        $params = [];
+
+        foreach ($paramNames as $option => $paramName) {
+            $param = $this->get($paramName);
+
+            if (StringValue::create($param)->startsWith($env)) {
+                $param = substr($param, strlen($env));
+
+                if ($envParam = getenv($param)) {
+                    $param = $envParam;
+                }
+            }
+
+            $params[] = $param;
+        }
+
+        return $params;
     }
 }

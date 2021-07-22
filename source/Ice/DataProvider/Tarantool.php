@@ -380,7 +380,9 @@ class Tarantool extends DataProvider
      */
     protected function connect(&$connection)
     {
-        list($host, $port) = $this->getParams(['host', 'port']);
+        $options = $this->getOptions();
+        
+        list($host, $port) = $options->getParams(['host', 'port']);
         
         $client = Client::fromDsn('tcp://' . $host . ':' . $port);
 
@@ -393,7 +395,7 @@ class Tarantool extends DataProvider
                 ->error(
                     [
                         'Tarantool failed ({$0} {$1}:{$2})',
-                        [$this->getOptions()->getName(), $host, $port]
+                        [$options->getName(), $host, $port]
                     ],
                     __FILE__,
                     __LINE__

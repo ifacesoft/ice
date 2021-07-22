@@ -530,31 +530,6 @@ abstract class DataProvider
         return rand(1, PHP_INT_MAX);
     }
 
-    protected function getParams(array $paramNames)
-    {
-        static $env = 'ENV_';
-
-        $params = [];
-
-        $options = $this->getOptions();
-
-        foreach ($paramNames as $option => $paramName) {
-            $param = $options->get($paramName);
-
-            if (StringValue::create($param)->startsWith($env)) {
-                $param = substr($param, strlen($env));
-
-                if ($envParam = getenv($param)) {
-                    $param = $envParam;
-                }
-            }
-
-            $params[] = $param;
-        }
-
-        return $params;
-    }
-
     /**
      * Return connection options
      *
