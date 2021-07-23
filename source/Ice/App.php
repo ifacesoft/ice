@@ -184,6 +184,7 @@ class App
             throw $e;
         } catch (Http_Redirect $e) {
             $result['redirect'] = $e->getRedirectUrl();
+            self::getResponse()->setStatusCode(302);
         } catch (Http $e) {
             $result = [
                 'content' => self::getHttpStatusContent($e, $e->getHttpCode(), $e->getHttpMessage()),

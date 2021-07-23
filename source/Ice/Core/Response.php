@@ -102,13 +102,11 @@ class Response
     {
         $redirectUrl = isset($result['redirect']) ? $result['redirect'] : null;
 
-        if ($redirectUrl && !Request::isAjax()) {
+        if ($redirectUrl && $this->statusCode === 302 && !Request::isAjax()) {
             if (headers_sent()) {
                 echo '<script type="text/javascript">location.href="' . $redirectUrl . '"</script>';
                 return;
             }
-
-            $this->statusCode = 302; // todo: обязательно должен быть код редиректа (Иначе апач игнорирует хедер локейшн)
 
             Http::setHeader('Location: ' . $redirectUrl, $this->statusCode);
 
@@ -200,7 +198,7 @@ class Response
      */
     public function setStatusCode($statusCode)
     {
-        $this->statusCode = $statusCode;
+        $this->statusCode = (int)$statusCode;
 
         return $this;
     }
