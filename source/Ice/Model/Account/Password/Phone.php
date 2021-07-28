@@ -255,7 +255,7 @@ class Account_Password_Phone extends Model_Account
         ];
     }
 
-    protected function sendRegisterConfirm(Account_Form $accountForm, Token $token)
+    protected function sendConfirmToken(Account_Form $accountForm, Token $token)
     {
         // TODO: Implement sendRegisterConfirm() method.
     }

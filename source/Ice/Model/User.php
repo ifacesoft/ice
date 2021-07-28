@@ -2,6 +2,7 @@
 
 namespace Ice\Model;
 
+use Ice\Core\Exception;
 use Ice\Core\Model;
 use Ice\Helper\Date;
 
@@ -216,7 +217,7 @@ final class User extends Model
      * Check is active user
      *
      * @return bool
-     * @throws \Ice\Core\Exception
+     * @throws Exception
      */
     public function isActive()
     {
@@ -225,7 +226,7 @@ final class User extends Model
 
     /**
      * @return bool
-     * @throws \Ice\Core\Exception
+     * @throws Exception
      */
     public function isExpired()
     {

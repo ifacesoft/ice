@@ -12,12 +12,14 @@ use Ice\Exception\FileNotFound;
 use Ice\Exception\Security_Account_EmailNotConfirmed;
 use Ice\Exception\Security_Account_NotFound;
 use Ice\Exception\Security_Account_Register;
+use Ice\Exception\Security_User_NotActive;
 use Ice\Helper\Date;
 use Ice\Helper\Type_String;
 use Ice\Model\Log_Security;
 use Ice\Model\Token;
 use Ice\Model\User;
 use Ice\Widget\Account_Form;
+use Throwable;
 
 abstract class Security extends Widget_Form_Event
 {
@@ -44,9 +46,9 @@ abstract class Security extends Widget_Form_Event
             'action_class' => get_class($this)
         ]);
 
-        try {
-            $account = $accountForm->getAccount();
+        $account = $accountForm->getAccount();
 
+        try {
             if ($account) {
                 $logSecurity->set('account_key', $account->getPkValue());
 
@@ -70,7 +72,7 @@ abstract class Security extends Widget_Form_Event
             $logSecurity->set('account_key', $account->getPkValue());
 
             $logger->save($logSecurity);
-        } catch (\Exception $e) {
+        } catch (\Exception  | Throwable $e) {
             $logSecurity->set([
                 'error' => $e->getMessage(),
                 'exception' => \Ifacesoft\Ice\Core\Domain\Exception\Error::create(__METHOD__, 'Failed', $accountForm->get(), $e)->get()
@@ -90,8 +92,16 @@ abstract class Security extends Widget_Form_Event
 
     /**
      * @param Account_Form $accountForm
+     * @param array $container
      * @return Model_Account
-     * @throws \Exception
+     * @throws Config_Error
+     * @throws Error
+     * @throws Exception
+     * @throws FileNotFound
+     * @throws Security_Account_EmailNotConfirmed
+     * @throws Security_Account_NotFound
+     * @throws Security_User_NotActive
+     * @throws Throwable
      */
     final protected function signIn(Account_Form $accountForm, array $container = [])
     {
@@ -103,9 +113,9 @@ abstract class Security extends Widget_Form_Event
             'action_class' => $accountForm->get('subject', get_class($this))
         ]);
 
-        try {
-            $account = $accountForm->getAccount();
+        $account = $accountForm->getAccount();
 
+        try {
             if (!$account) {
                 throw new Security_Account_NotFound('Account not found');
             }
@@ -117,11 +127,7 @@ abstract class Security extends Widget_Form_Event
             $account = $account->signIn($accountForm);
 
             $logger->save($logSecurity);
-
-            return $account;
-        } catch (Security_Account_EmailNotConfirmed $e) {
-            throw $e;
-        } catch (\Exception $e) {
+        } catch (\Exception  | Throwable $e) {
             $logSecurity->set([
                 'error' => $e->getMessage(),
                 'exception' => \Ifacesoft\Ice\Core\Domain\Exception\Error::create(__METHOD__, 'Failed', $accountForm->get(), $e)->get()
@@ -131,6 +137,8 @@ abstract class Security extends Widget_Form_Event
 
             throw $e;
         }
+
+        return $account;
     }
 
     /**
