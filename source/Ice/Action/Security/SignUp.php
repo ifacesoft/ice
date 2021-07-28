@@ -37,7 +37,7 @@ class Security_SignUp extends Security
         try {
             $this->signUp($accountForm);
 
-            return array_merge(parent::run($input), ['success' => 'Регистрация прошла успешно']);
+            return array_merge(parent::run($input), ['success' => 'Регистрация прошла успешно', 'error' => '']);
         } catch (Not_Good $e) {
             return ['error' => $logger->error('Плохие параметры', __FILE__, __LINE__, $e)];
         } catch (Not_Valid $e) {

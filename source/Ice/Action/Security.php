@@ -69,10 +69,6 @@ abstract class Security extends Widget_Form_Event
 
             $logSecurity->set('account_key', $account->getPkValue());
 
-            if ($accountForm->isAutologin()) {
-                $account->signIn($accountForm);
-            }
-
             $logger->save($logSecurity);
         } catch (\Exception $e) {
             $logSecurity->set([
@@ -85,6 +81,10 @@ abstract class Security extends Widget_Form_Event
             throw $e;
         }
 
+        if ($accountForm->isAutologin()) {
+            $this->signIn($accountForm, $container);
+        }
+
         return $account;
     }
 
@@ -93,7 +93,7 @@ abstract class Security extends Widget_Form_Event
      * @return Model_Account
      * @throws \Exception
      */
-    final protected function signIn(Account_Form $accountForm)
+    final protected function signIn(Account_Form $accountForm, array $container = [])
     {
         $logger = $this->getLogger();
 

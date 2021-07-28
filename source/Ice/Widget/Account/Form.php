@@ -206,6 +206,7 @@ abstract class Account_Form extends Form
      */
     public function isAutologin()
     {
+        return $this->autologin;
         return (!$this->isConfirm() || ($this->isConfirm() && !$this->isConfirmRequired())) && $this->autologin;
     }
 

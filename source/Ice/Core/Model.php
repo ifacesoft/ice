@@ -1922,9 +1922,9 @@ abstract class Model
         return $this->getModuleDataFile(get_class($this) . '/' . $pk . '/' . $path, $fileName, $isCreate);
     }
 
-    public function is($fileName)
+    public function is($fileName, $default = null)
     {
-        return (bool)$this->get($fileName);
+        return (bool)$this->get($fileName, $default);
     }
 
     /**

@@ -37,7 +37,8 @@ class Security_SignIn extends Security
                     'account_class' => get_class($account),
                     'account_key' => $account->getPkValue(),
                     'user_key' => $account->get('user__fk'),
-                    'success' => 'Авторизация прошла успешно'
+                    'success' => 'Авторизация прошла успешно',
+                    'error' => ''
                 ]
             );
         } catch (Not_Good $e) {

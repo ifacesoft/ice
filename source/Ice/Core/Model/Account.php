@@ -43,6 +43,8 @@ abstract class Model_Account extends Model
         return $this;
     }
 
+    abstract protected function isConfirmed(Account_Form $accountForm);
+    
     /**
      * @param Account_Form $accountForm
      * @param Model_Account $account
@@ -50,7 +52,13 @@ abstract class Model_Account extends Model
      */
     private function registerConfirm(Account_Form $accountForm, Model_Account $account, $container = [])
     {
-        if ($accountForm->isConfirm()) {
+        $isConfirmed = $this->isConfirmed($accountForm);
+        
+        if ($isConfirmed === null) {
+            return;
+        }
+        
+        if (!$isConfirmed && $accountForm->isConfirm()) {
             $token = isset($container['token'])
                 ? $container['token']
                 : Token::create(['/data' => []]);
