@@ -31,7 +31,6 @@ class Security_SignUp extends Security
         /** @var Account_Form $accountForm */
         $accountForm = $input['widget'];
 
-        /** @var Logger $logger */
         $logger = $accountForm ? $accountForm->getLogger() : $this->getLogger();
 
         try {
@@ -52,7 +51,9 @@ class Security_SignUp extends Security
             }
 
             return ['error' => $logger->error(['Регистрация не удалась: {$0}', $e->getMessage()], __FILE__, __LINE__, $e)];
-        } catch (\Exception | \Throwable $e) {
+        } catch (\Exception $e) {
+            return ['error' => $logger->error('При регистрации что-то пошло не так', __FILE__, __LINE__, $e)];
+        } catch (\Throwable $e) {
             return ['error' => $logger->error('При регистрации что-то пошло не так', __FILE__, __LINE__, $e)];
         }
     }

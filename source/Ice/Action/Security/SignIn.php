@@ -15,6 +15,15 @@ use Ice\Widget\Account_Form;
 
 class Security_SignIn extends Security
 {
+    protected static function config()
+    {
+        $config = parent::config();
+
+        $config['input']['securityExceptionThrow'] = ['providers' => 'default', 'default' => 0];
+
+        return $config;
+    }
+
     /** Run action
      *
      * @param array $input
@@ -47,18 +56,12 @@ class Security_SignIn extends Security
             return ['error' => $logger->error('Авторизационные данные не прошли валидацию: ' . $e->getMessage(), __FILE__, __LINE__, $e)];
         } catch (Not_Verify $e) {
             return ['error' => $logger->error('Запрос на авторизацию отклонен: ' . $e->getMessage(), __FILE__, __LINE__, $e)];
-        } catch (Security_Account_Verify $e) {
-            return ['error' => 'Запрос на авторизацию отклонен: неверное имя пользователя или пароль', 'exception' => $e];
-        } catch (Security_User_NotActive $e) {
-            return ['error' => 'Запрос на авторизацию отклонен:' . $e->getMessage(), 'exception' => $e];
-        } catch (Security_Account_EmailNotConfirmed $e) {
-            return ['error' => 'Email не подтвержден:' . $e->getMessage(), 'exception' => $e];
-        } catch (Security_Account_NotFound $e) {
-            return ['error' => 'Учетная запись не найдена'];
-        } catch (Security_Account_NotActive $e) {
-            return ['error' => $e->getMessage()];
-        } catch (Security_Account_Expired $e) {
-            return ['error' => $e->getMessage()];
+        } catch (\Ice\Exception\Security $e) {
+            if ($input['securityExceptionThrow']) {
+                throw $e;
+            }
+
+            return ['error' => $logger->error(['Авторизация не удалась: {$0}', $e->getMessage()], __FILE__, __LINE__, $e)];
         } catch (\Exception $e) {
             return ['error' => $logger->error('При авторизации что-то пошло не так', __FILE__, __LINE__, $e)];
         } catch (\Throwable $e) {
