@@ -264,4 +264,16 @@ class Account_Password_Phone extends Model_Account
     {
         // TODO: Implement loginVerify() method.
     }
+
+    protected function isConfirmed(Account_Form $accountForm)
+    {
+        // TODO: Implement isConfirmed() method.
+    }
+
+    protected function getConfirmToken(Account_Form $accountForm)
+    {
+        // TODO: Implement getConfirmToken() method.
+    }
+
+
 }
