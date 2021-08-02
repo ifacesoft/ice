@@ -179,9 +179,7 @@ class Type_String
     }
 
     public static function replaceMultiplyWhitespases($string, $replacement = ' ') {
-//        $page['page_content'] = trim(preg_replace('/\s+/', ' ', $page['page_content'])); // TODO: ЭТО ЛУЧШЕ
-        
-        return trim(preg_replace('/\s{2,}/', $replacement, $string));
+        return StringValue::create($string)->replaceMultipleWhitespaces($replacement);
     }
 
     public static function replaceControlCharacters($string, $replacement = ' ') {
