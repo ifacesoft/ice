@@ -1,0 +1,3 @@
+#!/bin/sh
+
+cd $(dirname $(dirname $(dirname $0))) && vendor/bin/ice-exec-ice Ice:Orm_Sync_DataScheme
