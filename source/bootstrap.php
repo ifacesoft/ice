@@ -4,6 +4,7 @@ use Ice\Core\Environment;
 use Ice\Core\Loader;
 use Ice\Core\Logger;
 use Ice\Core\Module;
+use Ifacesoft\Ice\Core\Infrastructure\Core\Application;
 
 ob_start();
 ob_implicit_flush(false);
@@ -81,10 +82,20 @@ try {
     require_once ICE_CORE_DIR . 'source/backend/Domain/Value/ArrayValue.php';
     require_once ICE_CORE_DIR . 'source/backend/Domain/Value/BooleanValue.php';
     require_once ICE_CORE_DIR . 'source/backend/Domain/Value/IntegerValue.php';
+    require_once ICE_CORE_DIR . 'source/backend/Domain/Singleton.php';
+    require_once ICE_CORE_DIR . 'source/backend/Domain/Data/Dto.php';
+    require_once ICE_CORE_DIR . 'source/backend/Domain/Data/EmptyDto.php';
+    require_once ICE_CORE_DIR . 'source/backend/Domain/Core/Config.php';
+    require_once ICE_CORE_DIR . 'source/backend/Domain/Core/EmptyConfig.php';
+    require_once ICE_CORE_DIR . 'source/backend/Domain/Core/Module.php';
+    require_once ICE_CORE_DIR . 'source/backend/Domain/Core/Environment.php';
     require_once ICE_CORE_DIR . 'source/backend/Domain/Exception/Error.php';
     require_once ICE_CORE_DIR . 'source/backend/Infrastructure/Core/Singleton.php';
     require_once ICE_CORE_DIR . 'source/backend/Infrastructure/Core/Service.php';
     require_once ICE_CORE_DIR . 'source/backend/Infrastructure/Core/SingletonService.php';
+    require_once ICE_CORE_DIR . 'source/backend/Infrastructure/Core/Container.php';
+    require_once ICE_CORE_DIR . 'source/backend/Infrastructure/Core/SingletonContainer.php';
+    require_once ICE_CORE_DIR . 'source/backend/Infrastructure/Core/EmptyContainer.php';
     require_once ICE_CORE_DIR . 'source/backend/Infrastructure/Core/Application.php';
 
     Module::init();
@@ -99,6 +110,8 @@ try {
 
     set_error_handler('Ice\Core\Logger::errorHandler');
     register_shutdown_function('Ice\Core\Logger::shutdownHandler');
+
+    Application::getInstance();
 } catch (Exception $e) {
     $message = str_replace(MODULE_DIR, '', $e->getMessage());
 

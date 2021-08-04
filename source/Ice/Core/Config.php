@@ -272,30 +272,6 @@ class Config
     }
 
     /**
-     * Get config param value
-     *
-     * @param string|null $key
-     * @param bool $isRequired_default
-     * @return string|array
-     *
-     * @throws Exception
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
-     * @version 1.10
-     * @since   0.0
-     */
-    public function get($key = null, $isRequired_default = true)
-    {
-        $params = $this->gets($key, $isRequired_default);
-
-        if (is_array($isRequired_default)) {
-            return $params;
-        }
-
-        return empty($params) ? null : reset($params);
-    }
-
-    /**
      * Set config param
      *
      * @param $key
@@ -387,20 +363,46 @@ class Config
 
         $params = [];
 
+        $ENV = array_merge(getenv(), $_ENV);
+
         foreach ($paramNames as $option => $paramName) {
             $param = $this->get($paramName);
 
-            if (StringValue::create($param)->startsWith($env)) {
-                $param = substr($param, strlen($env));
+            if (!StringValue::create($param)->startsWith($env)) {
+                $params[] = $param;
 
-                if ($envParam = getenv($param)) {
-                    $param = $envParam;
-                }
+                continue;
             }
 
-            $params[] = $param;
+            $param = substr($param, strlen($env));
+
+            $params[] = isset($ENV[$param]) ? $ENV[$param] : $param;
         }
 
         return $params;
+    }
+
+    /**
+     * Get config param value
+     *
+     * @param string|null $key
+     * @param bool $isRequired_default
+     * @return string|array
+     *
+     * @throws Exception
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
+     * @version 1.10
+     * @since   0.0
+     */
+    public function get($key = null, $isRequired_default = true)
+    {
+        $params = $this->gets($key, $isRequired_default);
+
+        if (is_array($isRequired_default)) {
+            return $params;
+        }
+
+        return empty($params) ? null : reset($params);
     }
 }
