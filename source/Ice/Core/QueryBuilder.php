@@ -175,6 +175,8 @@ class QueryBuilder
 
     private $transforms = [];
 
+    private $rowsTransformCallbacks = [];
+
     /**
      * Private constructor of query builder
      *
@@ -1419,7 +1421,7 @@ class QueryBuilder
             $fieldName = $modelClass::getScheme()->getPkFieldNames();
 
             $fieldAlias = count($fieldName) === 1 && !$fieldAlias
-                ?  [$modelClass::getFieldName('/pk', $tableAlias)]
+                ? [$modelClass::getFieldName('/pk', $tableAlias)]
                 : array_pad((array)$fieldAlias, count($fieldName), null);
 
             $fieldName = array_combine($fieldName, $fieldAlias);
@@ -2399,6 +2401,20 @@ class QueryBuilder
         return $this;
     }
 
+    public function addRowsTransformCallback(\Closure $callback, array $data = [], $modelClass = null, $isUse = true)
+    {
+        if (!$isUse) {
+            return $this;
+        }
+
+        $modelClass = $modelClass
+            ? Model::getClass($modelClass)
+            : $this->getModelClass();
+
+        $this->rowsTransformCallbacks[] = [$callback, $data, $modelClass];
+        return $this;
+    }
+
     /**
      * @return string
      */
@@ -2442,6 +2458,14 @@ class QueryBuilder
     public function getTransforms()
     {
         return $this->transforms;
+    }
+
+    /**
+     * @return array
+     */
+    public function getRowsTransformCallbacks()
+    {
+        return $this->rowsTransformCallbacks;
     }
 
     /**

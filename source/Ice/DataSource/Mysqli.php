@@ -221,6 +221,18 @@ class Mysqli extends DataSource
             }
         }
 
+        foreach ($query->getQueryBuilder()->getRowsTransformCallbacks() as list($rowTransformCallback, $params, $transformModelClass)) {
+            $data = $rowTransformCallback($data['rows'], $params);
+            
+            if (!$data) {
+                $logger->exception(
+                    ['TransformCallback (method) {$0} for model {$1} must return row. Fix it.', [$transform, $transformModelClass]],
+                    __FILE__,
+                    __LINE__
+                );
+            }
+        }
+
         return $data;
     }
 

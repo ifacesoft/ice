@@ -170,7 +170,7 @@ abstract class Container
      * @version 1.1
      * @since   0.4
      */
-    private static function create(array $params)
+    protected static function create(array $params)
     {
         return new static($params);
     }
