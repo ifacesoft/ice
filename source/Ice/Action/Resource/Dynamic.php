@@ -106,7 +106,7 @@ class Resource_Dynamic extends Action
             'input' => [
                 'js' => ['default' => []],
                 'css' => ['default' => []],
-                'routeName' => ['providers' => Router::class, 'default' => '/'],
+                'routeName' => ['providers' => ['default', Router::class], 'default' => '/'],
                 'context' => ['default' => '/resource/'],
                 'widgetClasses' => ['default' => ['js' => [], 'css' => [], 'less' => []]],
             ],

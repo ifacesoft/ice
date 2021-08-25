@@ -31,7 +31,7 @@ class Resource_Dynamic extends Resource
             'access' => ['roles' => [], 'request' => null, 'env' => null, 'message' => ''],
             'resource' => ['js' => null, 'css' => null, 'less' => null, 'img' => null],
             'cache' => ['ttl' => -1, 'count' => 1000],
-            'input' => ['routeName' => ['providers' => Router::class, 'default' => '/']],
+            'input' => ['routeName' => ['providers' => ['default', Router::class], 'default' => '/']],
             'output' => [],
         ];
     }
@@ -53,7 +53,7 @@ class Resource_Dynamic extends Resource
         if (!$this->loaded) {
             $this->loaded = true;
 
-            Action_Resource_Dynamic::call(['widgetClasses' => $this->widgetClasses]);
+            Action_Resource_Dynamic::call(['routeName' => $this->get('routeName'), 'widgetClasses' => $this->widgetClasses]);
             
             $this->build($this->get());
         }
