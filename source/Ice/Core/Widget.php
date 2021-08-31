@@ -3,6 +3,7 @@
 namespace Ice\Core;
 
 use Ice\Action\Render as Action_Render;
+use Ice\App;
 use Ice\Exception\Access_Denied;
 use Ice\Exception\Config_Error;
 use Ice\Exception\Error;
@@ -1094,6 +1095,8 @@ abstract class Widget extends Container
             $this->redirect = $route === true
                 ? Router::getInstance()->getUrl([null, $params])
                 : Router::getInstance()->getUrl([$route, $params]);
+
+            App::getResponse()->setStatusCode(302);
         } catch (RouteNotFound $e) {
             $this->redirect = $route;
         }
