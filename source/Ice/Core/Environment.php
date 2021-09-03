@@ -88,16 +88,19 @@ class Environment extends Config
 
         $config = Config::getInstance(__CLASS__, null, true);
 
-        foreach ($config->gets('environments') as $hostPattern => $name) {
-            $matches = [];
-            preg_match($hostPattern, $host, $matches);
+        if ($environmentName = getenv('ICE_ENV')) {
+        } else {
+            foreach ($config->gets('environments') as $hostPattern => $name) {
+                $matches = [];
+                preg_match($hostPattern, $host, $matches);
 
-            if (!empty($matches)) {
-                $environmentName = is_array($name) ? reset($name) : $name;
-                break;
+                if (!empty($matches)) {
+                    $environmentName = is_array($name) ? reset($name) : $name;
+                    break;
+                }
             }
         }
-
+        
         if ($environmentName !== self::PRODUCTION && (!empty($_SERVER['argv']) || !empty($_REQUEST['iceEnv']))) {
             if (!empty($_REQUEST['iceEnv'])) {
                 $environmentName = $_REQUEST['iceEnv'];
