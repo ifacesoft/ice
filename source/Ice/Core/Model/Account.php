@@ -159,10 +159,10 @@ abstract class Model_Account extends Model
     abstract protected function getUserData(Account_Form $accountForm, array $container = []);
 
     /**
-     * @param Account_Form $accountForm
+     * @param Account_Form|null $accountForm
      * @return bool
      */
-    abstract protected function isConfirmed(Account_Form $accountForm);
+    abstract protected function isConfirmed(Account_Form $accountForm = null);
 
     /**
      * @param Account_Form $accountForm

@@ -265,7 +265,7 @@ class Account_Password_Phone extends Model_Account
         // TODO: Implement loginVerify() method.
     }
 
-    protected function isConfirmed(Account_Form $accountForm)
+    protected function isConfirmed(Account_Form $accountForm = null)
     {
         // TODO: Implement isConfirmed() method.
     }
