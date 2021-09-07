@@ -9,7 +9,6 @@
 
 namespace Ice\Helper;
 
-use Ice\Core\Debuger;
 use Ice\Core\Exception;
 use Ice\Core\Logger as Core_Logger;
 use Ice\Exception\Error;
@@ -34,16 +33,16 @@ class File
      *
      * @param  $path
      * @param  $data
-     * @param  bool $phpData
-     * @param  int $file_put_contents_flag
+     * @param bool $phpData
+     * @param int $file_put_contents_flag
      * @param bool $isPretty
      * @return mixed
      *
+     * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
      *
      * @version 0.0
      * @since   0.0
-     * @throws Exception
      */
     public static function createData($path, $data, $phpData = true, $file_put_contents_flag = LOCK_EX, $isPretty = true)
     {
@@ -71,7 +70,7 @@ class File
      * Load data from file
      *
      * @param  $path
-     * @param  bool $isRequire
+     * @param bool $isRequire
      * @return mixed
      * @throws Exception
      * @author dp <denis.a.shestakov@gmail.com>
@@ -147,11 +146,11 @@ class File
      * @param bool $isRequire
      * @return bool
      * @throws Error
-     * @author dp <denis.a.shestakov@gmail.com>
-     *
+     * @throws Exception
      * @version 1.2
      * @since   0.2
-     * @throws Exception
+     * @author dp <denis.a.shestakov@gmail.com>
+     *
      */
     public static function copy($from, $to, $isRequire = true)
     {
@@ -214,10 +213,10 @@ class File
      * Return data from csv-file
      *
      * @param  $path
-     * @param  string $delimiter
-     * @param  string $enclosure
-     * @param  string $escape
-     * @param  bool $isRequire
+     * @param string $delimiter
+     * @param string $enclosure
+     * @param string $escape
+     * @param bool $isRequire
      * @return array|null
      * @throws Exception
      *
@@ -258,5 +257,47 @@ class File
         }
 
         return null;
+    }
+
+    public static function getContents($url, array $headers = [])
+    {
+        // create curl resource
+        $ch = curl_init();
+
+        // set url
+        curl_setopt($ch, CURLOPT_URL, $url);
+
+        //return the transfer as a string
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+
+        if (!empty($headers)) {
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+            curl_setopt($ch, CURLOPT_HEADER, 1);
+        }
+
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+
+
+        // $output contains the output string
+        $output = curl_exec($ch);
+
+        if ($errno = curl_errno($ch)) {
+            throw new Error(['Curl error #{0}: ${1}', [$errno, curl_error($ch)]]);
+        }
+
+        return $output;
+
+        // close curl resource to free up system resources
+        curl_close($ch);
+
+        $arrContextOptions = [
+            'ssl' => [
+                'verify_peer' => false,
+                'verify_peer_name' => false
+            ]
+        ];
+
+        return file_get_contents($url, false, stream_context_create($arrContextOptions));
     }
 }

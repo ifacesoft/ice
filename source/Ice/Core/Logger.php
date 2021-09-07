@@ -234,6 +234,7 @@ class Logger
 
         if (($errno == E_WARNING && strpos($errstr, 'filemtime():') !== false)
             || ($errno == E_WARNING && strpos($errstr, 'mysqli::real_connect():') !== false)
+            || ($errno == E_WARNING && strpos($errstr, 'zend.assertions') !== false)
         ) {
             return; // подавляем ошибку смарти и ошибку подключения mysql (пароль в открытом виде)
         }
