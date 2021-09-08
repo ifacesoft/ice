@@ -102,7 +102,9 @@ class Response
     {
         $redirectUrl = isset($result['redirect']) ? $result['redirect'] : null;
 
-        if ($redirectUrl && $this->statusCode === 302 && !Request::isAjax()) {
+        $isRedirect = $redirectUrl && in_array((int)$this->statusCode, [301, 302]);
+
+        if ($isRedirect && !Request::isAjax()) {
             if (headers_sent()) {
                 echo '<script type="text/javascript">location.href="' . $redirectUrl . '"</script>';
                 return;
@@ -118,6 +120,7 @@ class Response
         }
 
         if ($this->content === null) {
+
             $this->content = $this->contentType === 'json' || Request::isAjax()
                 ? str_replace(dirname(MODULE_DIR), '', Json::encode($result))
                 : str_replace(dirname(MODULE_DIR), '', reset($result));
@@ -129,7 +132,7 @@ class Response
             Http::setHeader(Http::getContentTypeHeader($this->contentType));
         }
 
-        if ($this->statusCode) {
+        if ($this->statusCode && (!Request::isAjax() || !$isRedirect)) {
             Http::setStatusCodeHeader($this->statusCode);
         }
 
