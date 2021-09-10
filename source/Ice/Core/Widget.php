@@ -1083,19 +1083,18 @@ abstract class Widget extends Container
      * @return $this
      * @throws Exception
      */
-    public function setRedirect($route, $timeout = 0)
+    public function setRedirect($routeOptions, $timeout = 0)
     {
-        if (is_array($route)) {
-            list($route, $params) = $route;
+        if (is_array($routeOptions)) {
+            list($route, $params, $urlWithGet, $urlWithDomain, $replaceContext) = array_pad((array)$routeOptions, 5, false);
         } else {
             $params = [];
         }
 
         try {
             $this->redirect = $route === true
-                ? Router::getInstance()->getUrl([null, $params])
-                : Router::getInstance()->getUrl([$route, $params]);
-
+                ? Router::getInstance()->getUrl([null, $params, $urlWithGet, $urlWithDomain, $replaceContext])
+                : Router::getInstance()->getUrl([$route, $params, $urlWithGet, $urlWithDomain, $replaceContext]);
             App::getResponse()->setStatusCode(302);
         } catch (RouteNotFound $e) {
             $this->redirect = $route;
