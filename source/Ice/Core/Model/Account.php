@@ -34,7 +34,7 @@ abstract class Model_Account extends Model
 
             $this->signUpAccount($accountForm, $this->signUpUser($accountForm, $container), $container);
 
-            if ($accountForm->isConfirm() && $this->isConfirmed($accountForm) === false) {
+            if ($this->isConfirmed($accountForm) === false && $accountForm->isConfirm()) { // именно в такой послеовательности
                 $this->sendConfirmToken($accountForm, $this->getConfirmToken($accountForm));
             }
 
@@ -178,10 +178,10 @@ abstract class Model_Account extends Model
     abstract protected function getConfirmToken(Account_Form $accountForm);
 
     /**
-     * @param array $values
+     * @param Account_Form $accountForm
      * @return array
      */
-    abstract public function registerVerify(array $values);
+    abstract public function registerVerify(Account_Form $accountForm);
 
     /**
      * @param Account_Form $accountForm
@@ -284,8 +284,8 @@ abstract class Model_Account extends Model
     }
 
     /**
-     * @param array $values
+     * @param Account_Form $accountForm
      * @return array
      */
-    abstract public function loginVerify(array $values);
+    abstract public function loginVerify(Account_Form $accountForm);
 }

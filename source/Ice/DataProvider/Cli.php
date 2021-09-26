@@ -203,7 +203,13 @@ class Cli extends DataProvider
     protected function connect(&$connection)
     {
         $connection = [];
-        
+
+        global $argv;
+
+        if (!empty($argv)) {
+            $_SERVER['argv'] = $argv;
+        }
+
         if (empty($_SERVER['argv'])) {
             return (bool)$connection;
         }

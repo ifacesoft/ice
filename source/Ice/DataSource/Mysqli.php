@@ -483,11 +483,21 @@ class Mysqli extends DataSource
 
         $insertId = $statement->insert_id;
 
+        $autoIncrement = 1;
+
+        if (count($query->getBindParts()[QueryBuilder::PART_VALUES]) > 1) {
+            $result = $this->query('SHOW VARIABLES LIKE "auto_increment_increment"');
+            $foundRows = $result->fetch_row();
+            $result->close();
+
+            $autoIncrement = $foundRows[1];
+        }
+
         foreach ($query->getBindParts()[QueryBuilder::PART_VALUES] as $row) {
             if ($pkFieldName) {
                 if (!isset($row[$pkFieldName]) && $insertId) {
                     $row[$pkFieldName] = $insertId;
-                    $insertId++;
+                    $insertId += $autoIncrement;
                 } else {
                     $insertId = null;
                 }

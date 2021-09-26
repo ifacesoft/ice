@@ -2,7 +2,6 @@
 
 namespace Ice\Action;
 
-use Ice\Core\Logger;
 use Ice\Exception\DataSource_DuplicateEntry;
 use Ice\Exception\Not_Good;
 use Ice\Exception\Not_Valid;
@@ -34,9 +33,18 @@ class Security_SignUp extends Security
         $logger = $accountForm ? $accountForm->getLogger() : $this->getLogger();
 
         try {
-            $this->signUp($accountForm);
+            $account = $this->signUp($accountForm);
 
-            return array_merge(parent::run($input), ['success' => 'Регистрация прошла успешно', 'error' => '']);
+            return array_merge(
+                parent::run($input),
+                [
+                    'account_class' => get_class($account),
+                    'account_key' => $account->getPkValue(),
+                    'user_key' => $account->get('user__fk'),
+                    'success' => 'Регистрация прошла успешно',
+                    'error' => ''
+                ]
+            );
         } catch (Not_Good $e) {
             return ['error' => $logger->error('Плохие параметры', __FILE__, __LINE__, $e)];
         } catch (Not_Valid $e) {

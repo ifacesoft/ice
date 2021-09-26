@@ -94,6 +94,7 @@ class App
         if (Request::isCli()) {
             if (isset($result['error'])) {
                 fwrite(STDERR, $result['error'] . "\n");
+                exit(1);
             } else {
                 try {
                     if (isset($result['content'])) {
@@ -101,6 +102,7 @@ class App
                     }
                 } catch (\Exception $e) {
                     fwrite(STDERR, Logger::getInstance(__CLASS__)->error('Application (App): render content failure', __FILE__, __LINE__, $e) . "\n");
+                    exit(1);
                 }
             }
         } else {
@@ -108,6 +110,7 @@ class App
                 App::getResponse()->send($result);
             } catch (\Exception $e) {
                 echo Logger::getInstance(__CLASS__)->error('Application (Http): render content failure', __FILE__, __LINE__, $e);
+                exit(1);
             }
         }
 
@@ -173,7 +176,9 @@ class App
         if (Request::isCli()) {
             Logger::getInstance(__CLASS__)->error('Application (App): run action failure', __FILE__, __LINE__, $e);
 
-            return ['error' => Logger::getInstance(__CLASS__)->info($e->getMessage(), Logger::DANGER)];
+            return [
+                'error' => Logger::getInstance(__CLASS__)->info($e->getMessage(), Logger::DANGER)
+            ];
         }
 
         if ($throwException) {

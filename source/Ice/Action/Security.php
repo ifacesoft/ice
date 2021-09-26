@@ -46,13 +46,13 @@ abstract class Security extends Widget_Form_Event
             'action_class' => get_class($this)
         ]);
 
-        $account = $accountForm->getAccount();
-
         try {
+            $account = $accountForm->getAccount();
+
             if ($account) {
                 $logSecurity->set('account_key', $account->getPkValue());
 
-                $account->registerVerify($accountForm->validate());
+                $account->registerVerify($accountForm);
 
                 if (!$accountForm->isSuccessOnExists()) {
                     throw new Security_Account_Register('Account already exists');
@@ -60,7 +60,7 @@ abstract class Security extends Widget_Form_Event
             } else {
                 $account = $accountModelClass::create();
 
-                $account->registerVerify($accountForm->validate());
+                $account->registerVerify($accountForm);
 
                 $account = $account->signUp($accountForm, $container);
             }
@@ -75,7 +75,7 @@ abstract class Security extends Widget_Form_Event
         } catch (\Exception  | Throwable $e) {
             $logSecurity->set([
                 'error' => $e->getMessage(),
-                'exception' => \Ifacesoft\Ice\Core\Domain\Exception\Error::create(__METHOD__, 'Failed', $accountForm->get(), $e)->get()
+                'exception' => \Ifacesoft\Ice\Core\Domain\Exception\Error::create(__METHOD__, 'Sign Up Failed', $accountForm->get(), $e)->get()
             ]);
 
             $logger->save($logSecurity);
@@ -122,7 +122,7 @@ abstract class Security extends Widget_Form_Event
 
             $logSecurity->set(['account_key' => $account->getPkValue()]);
 
-            $account->loginVerify($accountForm->validate());
+            $account->loginVerify($accountForm);
 
             $account = $account->signIn($accountForm);
 

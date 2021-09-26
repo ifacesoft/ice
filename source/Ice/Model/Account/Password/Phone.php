@@ -225,9 +225,22 @@ class Account_Password_Phone extends Model_Account
         throw new Error('Implement prolongate() method.');
     }
 
-    public function registerVerify(array $values)
+    /**
+     * @param Account_Form $accountForm
+     * @return array|null
+     */
+    public function registerVerify(Account_Form $accountForm)
     {
-        return $values;
+        return $accountForm->validate();
+    }
+
+    /**
+     * @param Account_Form $accountForm
+     * @return array|void
+     */
+    public function loginVerify(Account_Form $accountForm)
+    {
+        return $accountForm->validate();
     }
 
     protected function getAccountData(Account_Form $accountForm)
@@ -260,11 +273,6 @@ class Account_Password_Phone extends Model_Account
         // TODO: Implement sendRegisterConfirm() method.
     }
 
-    public function loginVerify(array $values)
-    {
-        // TODO: Implement loginVerify() method.
-    }
-
     protected function isConfirmed(Account_Form $accountForm = null)
     {
         // TODO: Implement isConfirmed() method.
@@ -274,6 +282,4 @@ class Account_Password_Phone extends Model_Account
     {
         // TODO: Implement getConfirmToken() method.
     }
-
-
 }

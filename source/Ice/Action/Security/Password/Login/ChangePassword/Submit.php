@@ -32,7 +32,7 @@ class Security_Password_Login_ChangePassword_Submit extends Security
         }
 
         try {
-            $values = $form->validate();
+            $values = $form->validate(); // deprecated// used in loginVerify
 
             /** @var Model_Account $account */
             $account = $accountModelClass::createQueryBuilder()
@@ -45,7 +45,7 @@ class Security_Password_Login_ChangePassword_Submit extends Security
                 $form->getLogger()->exception('Account not found', __FILE__, __LINE__);
             }
 
-            if (!$account->loginVerify($values)) {
+            if (!$account->loginVerify($form)) {
                 $form->getLogger()->exception('Authentication data is not valid. Please, check input.', __FILE__, __LINE__);
             }
 

@@ -272,7 +272,7 @@ class File
 
         if (!empty($headers)) {
             curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-            curl_setopt($ch, CURLOPT_HEADER, 1);
+//            curl_setopt($ch, CURLOPT_HEADER, 1);
         }
 
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
@@ -283,7 +283,7 @@ class File
         $output = curl_exec($ch);
 
         if ($errno = curl_errno($ch)) {
-            throw new Error(['Curl error #{0}: ${1}', [$errno, curl_error($ch)]]);
+            throw new Error('Curl (' . $url . ') error #' . $errno . ': ' .  curl_error($ch));
         }
 
         return $output;

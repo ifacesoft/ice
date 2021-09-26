@@ -1088,7 +1088,7 @@ abstract class Widget extends Container
         if (is_array($routeOptions)) {
             list($route, $params, $urlWithGet, $urlWithDomain, $replaceContext) = array_pad((array)$routeOptions, 5, false);
         } else {
-            $params = [];
+            list($route, $params, $urlWithGet, $urlWithDomain, $replaceContext) = [$routeOptions, [], null, null, null];
         }
 
         try {
