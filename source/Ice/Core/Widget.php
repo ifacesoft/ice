@@ -1078,23 +1078,18 @@ abstract class Widget extends Container
     }
 
     /**
-     * @param string $route
+     * @param $routeOptions
      * @param int $timeout
      * @return $this
      * @throws Exception
      */
     public function setRedirect($routeOptions, $timeout = 0)
     {
-        if (is_array($routeOptions)) {
-            list($route, $params, $urlWithGet, $urlWithDomain, $replaceContext) = array_pad((array)$routeOptions, 5, false);
-        } else {
-            list($route, $params, $urlWithGet, $urlWithDomain, $replaceContext) = [$routeOptions, [], null, null, null];
-        }
+        list($route, $params, $urlWithGet, $urlWithDomain, $replaceContext) = array_pad((array)$routeOptions, 5, null);
 
         try {
-            $this->redirect = $route === true
-                ? Router::getInstance()->getUrl([null, $params, $urlWithGet, $urlWithDomain, $replaceContext])
-                : Router::getInstance()->getUrl([$route, $params, $urlWithGet, $urlWithDomain, $replaceContext]);
+            $this->redirect = Router::getInstance()->getUrl([$route, (array)$params, $urlWithGet, $urlWithDomain, $replaceContext]);
+
             App::getResponse()->setStatusCode(302);
         } catch (RouteNotFound $e) {
             $this->redirect = $route;
@@ -1184,7 +1179,7 @@ abstract class Widget extends Container
             ? get_class($this) . $widgetClass
             : Widget::getClass($widgetClass);
 
-         /** @var Widget $widget */
+        /** @var Widget $widget */
         $widget = $widgetClass::getInstance($key . $postfixKey, null, $widgetParams);
 //        } catch (\Exception $e) {
 //            //todo: заменять на виджет сообщения об ошибке
