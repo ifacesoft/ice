@@ -23,7 +23,6 @@
     }
   ],
   "require": {
-    "php": "5.6.* || 7.0.* || 7.1.* || 7.2.* || 7.3.* || 7.4.* || 8.0.*",
     "ifacesoft/ice-cli": "0.0.*",
     "ifacesoft/ice-http": "0.0.*",
     "mrclay/minify": "3.0.*",
